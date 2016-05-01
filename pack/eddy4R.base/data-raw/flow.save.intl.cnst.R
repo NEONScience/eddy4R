@@ -74,7 +74,7 @@
 library(devtools)
 
 # Package directory
-dirPack <- "C:/Users/csturtevant/Documents/R/NEON-FIU-algorithm-covesturtevant/pkgs"
+dirPack <- "C:/Users/csturtevant/Documents/R/NEON-FIU-algorithm-covesturtevant/pack"
 namePack <- "eddy4R.base"
 
 # WARNING: Do not change/delete constants here without updating the package functions that depend on them
