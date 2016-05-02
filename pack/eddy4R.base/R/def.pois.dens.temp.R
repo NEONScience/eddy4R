@@ -1,0 +1,36 @@
+##############################################################################################
+#' @title Poisson's equation (adiabatic change) - density as function of temperature change
+
+#' @author 
+#' Stefan Metzger \email{eddy4R.info@gmail.com} \cr
+#' Natchaya P-Durden
+
+#' @description Poisson's equation (adiabatic change) - density as function of temperature change.
+
+#' @param \code{dens01} Measured density, Amount per volume [same unit as returned density, e.g. kg/m3 or kmol/m3].
+#' @param \code{temp01} Measured air temperature [K]
+#' @param \code{temp02} Reference temperature [K]
+#' @param \code{Kppa} Ratio of specific gas constant to specific heat at constant pressure. Default as KppaDry [-]
+
+#' @return Densities at reference temperature [same unit as measured density]
+
+#' @references Currently none
+
+#' @keywords Currently none
+
+#' @examples dens02 <- def.pois.dens.temp(dens01 = 1.056, temp01 = 298.15, temp02 = 288.15, Kppa = eddy4R.base::Natu$KppaDry)
+
+#' @seealso Currently none
+
+#' @export
+
+# changelog and author contributions / copyrights
+#   Stefan Metzger (2012-04-18)
+#     original creation
+#   Stefan Metzger (2015-11-28)
+#     re-formualtion as function() to allow packaging
+#   Natchaya P-Durden (2016-02-26)
+#     Initail naming convention for eddy4R
+##############################################################################################
+
+def.pois.dens.temp <- function(dens01, temp01, temp02, Kppa = eddy4R.base::Natu$KppaDry)  dens02 <- dens01 * (temp02/temp01)^((1-Kppa)/Kppa)
