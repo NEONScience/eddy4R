@@ -1,0 +1,21 @@
+Package: eddy4R.turb
+Title: Eddy-covariance calculation for R: Turbulent flux
+Version: 0.0.1
+Authors@R: c( person("Stefan", "Metzger", email = "eddy4R.info@gmail.com", role = c("aut", "cre")),
+              person("Ke", "Xu", email = "xuke2012abroad@gmail.com", role = c("aut")))
+Description: Eddy-covariance calculation for R: Turbulent flux
+Depends:
+    R (>= 3.2.3)
+Imports:
+    eddy4R.base (>= 0.0.1),
+    EBImage (>= 4.12.2),
+    GenKern (>= 1.2-60),
+    matlab (>= 1.0.2),
+    robustbase (>= 0.92-5),
+    sfsmisc (>= 1.1-0),
+    splus2R (>= 1.2-0)
+Suggests:
+    DataCombine (>= 0.2.20)
+License: Terms of use of the NEON FIU algorithm repository dated 2015-01-16
+LazyData: true
+RoxygenNote: 5.0.1
