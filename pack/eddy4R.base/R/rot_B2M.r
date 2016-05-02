@@ -1,5 +1,5 @@
 ##############################################################################################
-#' @title Coordinate transformation from CSAT3 body coordinate system to meteorological coordiante system
+#' @title Coordinate transformation from CSAT3 body coordinate system to meteorological coordinate system
 
 #' @author Stefan Metzger \email{eddy4R.info@gmail.com} \cr
 #' @author Hongyan Luo \email{eddy4R.info@gmail.com}
@@ -30,7 +30,7 @@
 #     adjust to eddy4R terms
 ##############################################################################################
 
-rot_B2M <- function(
+def.conv.body.met <- function(
   #"boom angle" of sonic
   #direction against true north in which the transducer array is pointing [radians]
     az_boom = eddy4R.base::def.conv.unit(data=189.28,unitFrom="deg",unitTo="rad")$dataConv[[1]],
@@ -84,7 +84,7 @@ rot_B2M <- function(
 
 
 # #test example
-# test <- rot_B2M(
+# test <- def.conv.body.met(
 #   #"boom angle" of sonic
 #   #direction against true north in which the transducer array is pointing [radians]
 #     az_boom = eddy4R.base::def.conv.unit(data=189.28,unitFrom="deg",unitTo="rad")$dataConv[[1]],
