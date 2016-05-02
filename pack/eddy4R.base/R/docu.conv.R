@@ -1,0 +1,129 @@
+#' Conversion Factors
+#'
+#' Conversion factors, such as between units of radians and degrees, for use across eddy4R package suite.
+#' Conversion factors are always specified as n-element vectors of polynomial coefficients 
+#' a0,a1,a2,... corresponding to a0 + a1*x + a2*x^2 + ..., where n is 1 + the polynomial degree
+#' 
+#'
+#' @format A named list of numerical polynomial conversion coefficients. Names are constructed from 
+#' the quantities to be converted. The quantity to be converted from is named first, followed by the 
+#' quantity to be converted to.
+#' \describe{
+#'   \item{ExaNone}{unit prefix conversion, Exa to no-prefix = c(0,1e18)}
+#'   \item{NoneExa}{unit prefix conversion, no-prefix to Exa = c(0,1e-18)}
+#'   \item{PetaNone}{unit prefix conversion, Peta to no-prefix = c(0,1e15)}
+#'   \item{NonePeta}{unit prefix conversion, no-prefix to Peta = c(0,1e-15)}
+#'   \item{TeraNone}{unit prefix conversion, Tera to no-prefix = c(0,1e12)}
+#'   \item{NoneTera}{unit prefix conversion, no-prefix to Tera = c(0,1e-12)}
+#'   \item{GigaNone}{unit prefix conversion, Giga to no-prefix = c(0,1e9)}
+#'   \item{NoneGiga}{unit prefix conversion, no-prefix to Giga = c(0,1e-9)}
+#'   \item{MegaNone}{unit prefix conversion, Mega to no-prefix = c(0,1e6)}
+#'   \item{NoneMega}{unit prefix conversion, no-prefix to Mega = c(0,1e-6)}
+#'   \item{KiloNone}{unit prefix conversion, Kilo to no-prefix = c(0,1e3)}
+#'   \item{NoneKilo}{unit prefix conversion, no-prefix to Kilo = c(0,1e-3)}
+#'   \item{HectNone}{unit prefix conversion, Hect to no-prefix = c(0,1e2)}
+#'   \item{NoneHect}{unit prefix conversion, no-prefix to Hect = c(0,1e-2)}
+#'   \item{DecaNone}{unit prefix conversion, Deca to no-prefix = c(0,1e1)}
+#'   \item{NoneDeca}{unit prefix conversion, no-prefix to Deca = c(0,1e-1)}
+#'   \item{DeciNone}{unit prefix conversion, Deci to no-prefix = c(0,1e-1)}
+#'   \item{NoneDeci}{unit prefix conversion, no-prefix to Deci = c(0,1e1)}
+#'   \item{CntiNone}{unit prefix conversion, Cnti to no-prefix = c(0,1e-2)}
+#'   \item{NoneCnti}{unit prefix conversion, no-prefix to Cnti = c(0,1e2)}
+#'   \item{MiliNone}{unit prefix conversion, Mili to no-prefix = c(0,1e-3)}
+#'   \item{NoneMili}{unit prefix conversion, no-prefix to Mili = c(0,1e3)}
+#'   \item{MicrNone}{unit prefix conversion, Micr to no-prefix = c(0,1e-6)}
+#'   \item{NoneMicr}{unit prefix conversion, no-prefix to Micr = c(0,1e6)}
+#'   \item{NanoNone}{unit prefix conversion, Nano to no-prefix = c(0,1e-9)}
+#'   \item{NoneNano}{unit prefix conversion, no-prefix to Nano = c(0,1e9)}
+#'   \item{PicoNone}{unit prefix conversion, Pico to no-prefix = c(0,1e-12)}
+#'   \item{NonePico}{unit prefix conversion, no-prefix to Pico = c(0,1e12)}
+#'   \item{FemtNone}{unit prefix conversion, Femt to no-prefix = c(0,1e-15)}
+#'   \item{NoneFemt}{unit prefix conversion, no-prefix to Femt = c(0,1e15)}
+#'   \item{AttoNone}{unit prefix conversion, Atto to no-prefix = c(0,1e-18)}
+#'   \item{NoneAtto}{unit prefix conversion, no-prefix to Atto = c(0,1e18)}
+#'   \item{ScndMint}{time conversion, seconds to minutes = c(0,1/60) [min s-1]}
+#'   \item{ScndHour}{time conversion, seconds to hours = c(0,1/60/60) [h s-1]}
+#'   \item{ScndDay}{time conversion, seconds to days = c(0,1/60/60/24) [d s-1]}
+#'   \item{ScndYear}{time conversion, seconds to years = c(0,1/60/60/24/365.25) [y s-1]}
+#'   \item{MintScnd}{time conversion, minutes to seconds = c(0,60) [s min-1]}
+#'   \item{MintHour}{time conversion, minutes to hours = c(0,1/60) [hr min-1]}
+#'   \item{MintDay}{time conversion, minutes to days = c(0,1/60/24) [d min-1]}
+#'   \item{MintYear}{time conversion, minutes to years = c(0,1/60/24/365.25) [y min-1]}
+#'   \item{HourScnd}{time conversion, hours to seconds = c(0,60*60) [s h-1]}
+#'   \item{HourMint}{time conversion, hours to minutes = c(0,60) [min h-1]}
+#'   \item{HourDay}{time conversion, hours to days = c(0,1/24) [d h-1]}
+#'   \item{HourYear}{time conversion, hours to years = c(0,1/24/365.25) [y h-1]}
+#'   \item{DayScnd}{time conversion, days to seconds = c(0,60*60*24) [s d-1]}
+#'   \item{DayMint}{time conversion, days to minutes = c(0,60*24) [min d-1]}
+#'   \item{DayHour}{time conversion, days to hours = c(0,24) [h d-1]}
+#'   \item{DayYear}{time conversion, days to years = c(0,1/365.25) [y d-1]}
+#'   \item{YearScnd}{time conversion, years to seconds = c(0,60*60*24*365.25) [s y-1]}
+#'   \item{YearMint}{time conversion, years to minutes = c(0,60*24*365.25) [min y-1]}
+#'   \item{YearHour}{time conversion, years to hours = c(0,24*365.25) [h y-1]}
+#'   \item{YearDay}{time conversion, years to days = c(0,365.25) [d y-1]}
+#'   \item{MetrInch}{distance conversion, meters to inches = c(0,39.3701) [in m-1]}
+#'   \item{InchMetr}{distance conversion, inches to meters = c(0,1/39.3701) [m in-1]}
+#'   \item{MetrFeet}{distance conversion, meters to feet = c(0,3.28084) [ft m-1]}
+#'   \item{FeetMetr}{distance conversion, feet to meters = c(0,0.3048) [m ft-1]}
+#'   \item{MetrMile}{distance conversion, meters to statute miles = c(0,1/1609.34) [mi m-1]}
+#'   \item{MileMetr}{distance conversion, statute miles to meters = c(0,1609.34) [m mi-1]}
+#'   \item{MetrMileNaut}{distance conversion, meters to natuical miles = c(0,1/1852) [NM m-1]}
+#'   \item{MileNautMetr}{distance conversion, nautical miles to meters = c(0,1852) [m NM-1]}
+#'   \item{InchFeet}{distance conversion, inches to feet = c(0,1/12) [ft in-1]}
+#'   \item{FeetInch}{distance conversion, feet to inches = c(0,12) [in ft-1]}
+#'   \item{InchMile}{distance conversion, inches to statute miles = c(0,1/12/5280) [mi in-1]}
+#'   \item{MileInch}{distance conversion, statute miles to inches = c(0,12*5280) [in mi-1]}
+#'   \item{InchMileNaut}{distance conversion, inches to nautical miles = c(0,1/12/6076.11549) [NM in-1]}
+#'   \item{MileNautInch}{distance conversion, nautical miles to inches = c(0,12*6076.11549) [in NM-1]}
+#'   \item{FeetMile}{distance conversion, feet to statute miles = c(0,1/5280) [mi ft-1]}
+#'   \item{MileFeet}{distance conversion, statute miles to feet = c(0,5280) [ft mi-1]}
+#'   \item{FeetMileNaut}{distance conversion, feet to nautical miles = c(0,1/6076.11549) [NM ft-1]}
+#'   \item{MileNautFeet}{distance conversion, nautical miles to feet = c(0,6076.11549) [ft NM-1]}
+#'   \item{MileMileNaut}{distance conversion, statute miles to nautical miles = c(0,1/1.15077945) [NM mi-1]}
+#'   \item{MileNautMile}{distance conversion, nautical miles to statute miles = c(0,1.15077945) [mi NM-1]}
+#'   \item{GramPnd}{mass conversion, grams to pounds = c(0,1/453.592) [lb g-1]}
+#'   \item{PndGram}{mass conversion, pounds to grams = c(0,453.592) [g lb-1]}
+#'   \item{GramTonUs}{mass conversion, grams to US tons = c(0,1/453.592/2000) [ST g-1]}
+#'   \item{TonUsGram}{mass conversion, US tons to grams = c(0,453.592*2000) [g ST-1]}
+#'   \item{GramTon}{mass conversion, grams to metric tons = c(0,1e-6) [t g-1]}
+#'   \item{TonGram}{mass conversion, metric tons to grams = c(0,1e6) [g t-1]}
+#'   \item{PndTonUs}{mass conversion, pounds to US tons = c(0,1/2000) [ST lb-1]}
+#'   \item{TonUsPnd}{mass conversion, US tons to pounds = c(0,2000) [lb ST-1]}
+#'   \item{PndTon}{mass conversion, pounds to metric tons = c(0,4.53592e-4) [t lb-1]}
+#'   \item{TonPnd}{mass conversion, metric tons to pounds = c(0,2204.624) [lb t-1]}
+#'   \item{TonUsTon}{mass conversion, US tons to metric tons = c(0,0.907185) [t ST-1]}
+#'   \item{TonTonUs}{mass conversion, metric tons to US tons = c(0,1.10231) [ST t-1]}
+#'   \item{PascBar}{pressure conversion, Pascal to bar = c(0,1e-5) [bar Pa-1]}
+#'   \item{BarPasc}{pressure conversion, bar to Pascal = c(0,1e5) [Pa bar-1]}
+#'   \item{PascAtm}{pressure conversion, Pascal to atm = c(0,9.8692e-6) [atm Pa-1]}
+#'   \item{AtmPasc}{pressure conversion, atm to Pascal = c(0,101324.6646142) [Pa atm-1]}
+#'   \item{PascTorr}{pressure conversion, Pascal to Torr = c(0,0.0075005920011807008727) [Torr Pa-1]}
+#'   \item{TorrPasc}{pressure conversion, torr to Pascal = c(0,133.3219271028947901) [Pa Torr-1]}
+#'   \item{PascPsi}{pressure conversion, Pascal to psi = c(0,0.00014503725765876738303) [psi Pa-1]}
+#'   \item{PsiPasc}{pressure conversion, psi to Pascal = c(0,6894.734471349956948) [Pa psi-1]}
+#'   \item{BarAtm}{pressure conversion, bar to atm = c(0,0.98692) [atm bar-1]}
+#'   \item{AtmBar}{pressure conversion, atm to bar = c(0,1.013246646142) [bar atm-1]}
+#'   \item{BarTorr}{pressure conversion, bar to Torr = c(0,750.05920011807006631) [Torr bar-1]}
+#'   \item{TorrBar}{pressure conversion, Torr to bar = c(0,0.0013332192710289478364) [bar Torr-1]}
+#'   \item{BarPsi}{pressure conversion, bar to psi = c(0,14.503725765876739118) [psi bar-1]}
+#'   \item{PsiBar}{pressure conversion, psi to bar = c(0,0.06894734471349957261) [bar psi-1]}
+#'   \item{AtmTorr}{pressure conversion, atm to Torr = c(0,759.99748451963432672) [Torr atm-1]}
+#'   \item{TorrAtm}{pressure conversion, Torr to atm = c(0,0.001315785118212630311) [atm Torr-1]}
+#'   \item{AtmPsi}{pressure conversion, atm to psi = c(0,14.695900132274603678) [psi atm-1]}
+#'   \item{PsiAtm}{pressure conversion, psi to atm = c(0,0.068045738676042008541) [atm psi-1]}
+#'   \item{TorrPsi}{pressure conversion, Torr to psi = c(0,0.019336710697307905871) [psi Torr-1]}
+#'   \item{PsiTorr}{pressure conversion, psi to Torr = c(0,51.714761401958099896) [Torr psi-1]}
+#'   \item{RadDeg}{angle conversion, radians to degree = c(0,180/pi) [deg rad-1]}
+#'   \item{DegRad}{angle conversion, degree to radians = c(0,pi/180) [rad deg-1]}
+#'   \item{KelvCels}{temperature conversion, Kelvin to Celcius = c(-273.15,1)}
+#'   \item{CelsKelv}{temperature conversion, Celcius to Kelvin = c(+273.15,1)}
+#'   \item{KelvFrht}{temperature conversion, Kelvin to Fahrenheit = c(-459.67,9/5)}
+#'   \item{FrhtKelv}{temperature conversion, Fahrenheit to Kelvin = c(-32*5/9+273.15,5/9)}
+#'   \item{CelsFrht}{temperature conversion, Celcius to Fahrenheit = c(32,9/5)}
+#'   \item{FrhtCels}{temperature conversion, Fahrenheit to Celcius = c(-32*5/9,5/9)}
+#'   \item{NewtPndf}{force conversion, Newton to pound-force = c(0,0.224809) [lbf N-1]}
+#'   \item{PndfNewt}{force conversion, pound-force to Newton = c(0,4.44822) [N lbf-1]}
+#' }
+#' @source Conversion factors are defined within flow.save.intl.cnst.R,
+#'  available in the data-raw/ folder of the source version of the package
+"Conv"
