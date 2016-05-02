@@ -106,7 +106,13 @@ def.conv.unit <- function(
   unitTo="arb",
   coefPoly=base::lapply(base::as.data.frame(data),function(x) c(0,1))
   ) {
- 
+  
+  # Check whether we have a vector input for data. If so, we will 
+  # return the converted output in the same format
+  if(is.vector(data) && !is.list(data)) {
+    flagVect <- TRUE
+  }
+  
   # Pre-processing
   data <- base::as.data.frame(data)
   nameVars <- base::names(data)  
@@ -414,9 +420,16 @@ def.conv.unit <- function(
     
   } # End loop around variables
 
+  # If data was entered as single vector inputs, return the converted output as such
+  if(flagVect) {
+    dataConv <- dataConv[[1]]
+    unitFrom <- unitFrom[[1]]
+    unitTo <- unitTo[[1]]
+    coefPoly <- coefPoly[[1]]
+  }
   
   # Output
-  rpt <- base::list(dataConv=dataConv,coefPoly=coefPoly,unitFrom=unitFrom,unitTo=unitTo)
+  rpt <- base::list(dataConv=dataConv,unitFrom=unitFrom,unitTo=unitTo,coefPoly=coefPoly)
   base::return(rpt)
   
 }
