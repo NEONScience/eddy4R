@@ -8,15 +8,12 @@
 
 #' @param Currently none
 
-#' @return
-#' Sys.setlocale('LC_ALL','C') \cr
-#' if(.Platform$OS.type == "windows") windowsFonts(times=windowsFont("TT Times New Roman"))
+#' @return Currently none
 
 #' @references
-#' License: Terms of use of the NEON FIU algorithm repository dated 2015-01-16. \cr
-#' \url{http://www.inside-r.org/r-doc/base/Sys.setlocale}
+#' License: Terms of use of the NEON FIU algorithm repository dated 2015-01-16. 
 
-#' @keywords global environment
+#' @keywords coordinate, sonic anemometer, transformation
 
 #' @examples Currently none
 
