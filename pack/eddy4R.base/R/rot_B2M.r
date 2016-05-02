@@ -8,7 +8,7 @@
 
 #' @param \code{AzSoniInst}  Parameter of class numeric. Azimuth direction against true north in which sonic anemometer installation (transducer array) is pointing [rad]
 #' @param \code{AzSoniOfst} Parameter of class integer or numeric.  Azimuth Offset of meteorological x-axis against true north. That is, angle by which sonic data has to be clockwise azimuth-rotated when sonic anemometer body x-axis points perfectly north (az_body = 0) [rad]
-
+#' @param \code{veloBody}  Variable of class numeric. Data frame containing wind speeds along x-axis (xaxs), y-axis (yaxs),and z-axis (zaxs) in sonic anemometer body coordinate system. For example: \code{veloBody <- data.frame(xaxs=rnorm(20), yaxs=rnorm(20), zaxs=rnorm(20))} [m s-1]
 
 
 #' @return Currently none
@@ -36,8 +36,7 @@
 def.conv.body.met <- function(
     AzSoniInst,
     AzSoniOfst =  eddy4R.base::def.conv.unit(data=90,unitFrom="deg",unitTo="rad")$dataConv[[1]],
-  #data.frame with wind speeds u, v, w in BCS
-    veloBody = data.frame(xaxs=0, yaxs=0, zaxs=0)
+     veloBody 
   ) {
 
 #body coordinate system (BCS)
