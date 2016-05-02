@@ -67,16 +67,16 @@ def.conv.body.met <- function(
     if(az_B2M < 0)  az_B2M <- az_B2M + 2 * pi
 
   #prepare data.frame for output
-    MCS_uvw <- veloBody
-    MCS_uvw$u <- NA
-    MCS_uvw$v <- NA
+    veloMet <- veloBody
+    veloMet$xaxs <- NA
+    veloMet$yaxs <- NA
 
   #perform actual rotation
-    MCS_uvw$u <- veloBody$xaxs * cos(az_B2M) - veloBody$yaxs * sin(az_B2M)  
-    MCS_uvw$v <- veloBody$xaxs * sin(az_B2M) + veloBody$yaxs * cos(az_B2M)
+    veloMet$xaxs <- veloBody$xaxs * cos(az_B2M) - veloBody$yaxs * sin(az_B2M)  
+    veloMet$yaxs <- veloBody$xaxs * sin(az_B2M) + veloBody$yaxs * cos(az_B2M)
 
   #return results
-    return(MCS_uvw)
+    return(veloMet)
     
 }
 
