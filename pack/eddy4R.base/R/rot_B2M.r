@@ -1,35 +1,37 @@
 ##############################################################################################
 #' @title Coordinate transformation from CSAT3 body coordinate system to meteorological coordiante system
 
-# type (one of function defintion, function wrapper, workflow, demo): function defintion
+#' @author Stefan Metzger \email{eddy4R.info@gmail.com} \cr
+#' @author Hongyan Luo \email{eddy4R.info@gmail.com}
 
-# license: Terms of use of the NEON FIU algorithm repository dated 2015-01-16
-
-#' @author Stefan Metzger \email{eddy4R.info@gmail.com}
-
-# changelog and author contributions / copyrights
-#   Stefan Metzger (2013-06-27)
-#     original creation
-#   Stefan Metzger (2015-11-28)
-#     re-formualtion as function() to allow packaging
-
-#' @description Coordinate transformation from CSAT3 body coordinate system to meteorological coordiante system.
+#' @description Function defintion. Coordinate transformation from CSAT3 body coordinate system to meteorological coordiante system.
 
 #' @param Currently none
 
-#' @return Currently none
+#' @return
+#' Sys.setlocale('LC_ALL','C') \cr
+#' if(.Platform$OS.type == "windows") windowsFonts(times=windowsFont("TT Times New Roman"))
 
-#' @references Currently none
+#' @references
+#' License: Terms of use of the NEON FIU algorithm repository dated 2015-01-16. \cr
+#' \url{http://www.inside-r.org/r-doc/base/Sys.setlocale}
 
-#' @keywords Currently none
+#' @keywords global environment
 
 #' @examples Currently none
 
 #' @seealso Currently none
 
 #' @export
-##############################################################################################
 
+# changelog and author contributions / copyrights
+#   Stefan Metzger (2013-06-27)
+#     original creation
+#   Stefan Metzger (2015-11-28)
+#     re-formualtion as function() to allow packaging
+#   Hongyan Luo (2016-05-02)
+#     adjust to eddy4R terms
+##############################################################################################
 
 rot_B2M <- function(
   #"boom angle" of sonic
