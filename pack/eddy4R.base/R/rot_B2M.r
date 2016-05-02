@@ -7,6 +7,8 @@
 #' @description Function defintion. Coordinate transformation from CSAT3 body coordinate system to meteorological coordiante system.
 
 #' @param \code{AzSoniInst}  Parameter of class numeric. Azimuth direction against true north in which sonic anemometer installation (transducer array) is pointing [rad]
+#' @param \code{AzSoniOfst} Parameter of class integer or numeric.  Azimuth Offset of meteorological x-axis against true north. That is, angle by which sonic data has to be clockwise azimuth-rotated when sonic anemometer body x-axis points perfectly north (az_body = 0) [rad]
+
 
 
 #' @return Currently none
@@ -32,11 +34,8 @@
 ##############################################################################################
 
 def.conv.body.met <- function(
-    AzSoniInst = eddy4R.base::def.conv.unit(data=189.28,unitFrom="deg",unitTo="rad")$dataConv[[1]],
-  #Offset of MCS x-axis against north
-  #That is, angle by which sonic data has to be clockwise azimuth-rotated 
-  #when BCS x-axis points perfectly north (az_body == 0) [radians]
-    az_B2M_0 =  eddy4R.base::def.conv.unit(data=90,unitFrom="deg",unitTo="rad")$dataConv[[1]],
+    AzSoniInst,
+    AzSoniOfst =  eddy4R.base::def.conv.unit(data=90,unitFrom="deg",unitTo="rad")$dataConv[[1]],
   #data.frame with wind speeds u, v, w in BCS
     BCS_uvw = data.frame(u=0, v=0, w=0)
   ) {
@@ -64,7 +63,7 @@ def.conv.body.met <- function(
     if(az_body < 0)  az_body <- az_body + 2 * pi  
 
   #resulting clockwise azimuth rotation angle from BCS to MCS  [radians]
-    az_B2M <- az_B2M_0 - az_body
+    az_B2M <- AzSoniOfst - az_body
     if(az_B2M < 0)  az_B2M <- az_B2M + 2 * pi
 
   #prepare data.frame for output
@@ -90,7 +89,7 @@ def.conv.body.met <- function(
 #   #Offset of MCS x-axis against north
 #   #That is, angle by which sonic data has to be clockwise azimuth-rotated 
 #   #when BCS x-axis points perfectly north (az_body == 0) [radians]
-#     az_B2M_0 = eddy4R.base::def.conv.unit(data=90,unitFrom="deg",unitTo="rad")$dataConv[[1]],
+#     AzSoniOfst = eddy4R.base::def.conv.unit(data=90,unitFrom="deg",unitTo="rad")$dataConv[[1]],
 #   #data.frame with wind speeds u, v, w in BCS
 #     BCS_uvw = data.frame(u=ns.data$fst_u, v=ns.data$fst_v, w=ns.data$fst_w)
 # )
