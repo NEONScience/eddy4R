@@ -7,7 +7,7 @@
 def.aply.conv.poly(data, coefPoly = c(0, 1))
 }
 \arguments{
-\item{\code{data}}{Required. A vector or matrix or type numeric, containing the data to be converted}
+\item{\code{data}}{Required. A vector or matrix of type numeric, containing the data to be converted}
 
 \item{\code{coefPoly}}{Optional. A vector of type numeric, containing the polynomial 
 coefficients (in increasing order) to apply to \code{data}. 

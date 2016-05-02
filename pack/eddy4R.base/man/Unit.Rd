@@ -12,7 +12,8 @@
        \code{Metr = "m"}  (meter)\cr
        \code{Feet = "ft"}  (foot)\cr
        \code{Inch = "in"}  (inch)\cr
-       \code{Mile = "mi"}  (mile)\cr
+       \code{Mile = "mi"}  (statute mile)\cr
+       \code{MileNaut = "NM"} (nautical mile)\cr
        \code{Gram = "g"}  (gram)\cr
        \code{Pnd  = "lb"}  (pound-mass)\cr
        \code{Ton  = "t"}  (metric ton)\cr
@@ -50,6 +51,7 @@
        \code{Feet = "Dist"}  (distance)\cr
        \code{Inch = "Dist"}  (distance)\cr
        \code{Mile = "Dist"}  (distance)\cr
+       \code{MileNaut = "Dist"} (distance)\cr
        \code{Gram = "Mass"}  (mass)\cr
        \code{Pnd  = "Mass"}  (mass)\cr
        \code{Ton  = "Mass"}  (mass)\cr

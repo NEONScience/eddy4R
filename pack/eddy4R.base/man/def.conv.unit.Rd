@@ -4,19 +4,11 @@
 \alias{def.conv.unit}
 \title{Unit conversion}
 \usage{
-def.conv.unit(data, coefPoly = lapply(as.data.frame(data), function(x) c(0,
-  1)), unitFrom = "arb", unitTo = "arb")
+def.conv.unit(data, unitFrom = "arb", unitTo = "arb",
+  coefPoly = base::lapply(base::as.data.frame(data), function(x) c(0, 1)))
 }
 \arguments{
 \item{\code{data}}{Required. Named data frame of type numeric, containing the data to be converted}
-
-\item{\code{coefPoly}}{Optional. A named list of type numeric, containing the polynomial 
-coefficients (in increasing order) to apply to the corresponding variable in \code{data}. 
-Each entry in the named list contains a numerical vector of [a0 a1 a2 a3 ...] signifying the 
-coeficients of the equation a0 + a1*x + a2*x^2 + a3*x^3 ... , where x is the input data.
-Default is c(0,1) for each variable in \code{data}. Note: If unitFrom and unitTo are input along
-with coefPoly, coefPoly is applied first. Then the unit transformation from \code{unitFrom} to
-\code{unitTo} is performed.}
 
 \item{\code{unitFrom}}{Optional. The current units of \code{data}. Either: \cr 
 (1) the case-sensitive character string "intl", signifying the current units are in the internal 
@@ -26,7 +18,8 @@ in \code{data} (see rules below for formatting unit character strings). \cr
 (3) the case-sensitive character string "arb" (default), signifying the current units are arbitrarily 
 defined and numerical scale factors for conversion are given within input parameter \code{coefPoly}.}
 
-\item{\code{unitTo}}{The units to convert to. Either: \cr
+\item{\code{unitTo}}{Optional if \code{unitFrom = "arb"}. The units to convert to.
+Either: \cr 
 (1) the character string "intl", signifying to convert to the internal unit base. In this case, 
 input parameter \code{unitFrom} must be a named list of units to convert from). \cr
 (2) a named list of type character containing the desired output units of the corresponding variable 
@@ -73,13 +66,22 @@ in the other (i.e. the derivative). \cr
 (6) If converting to/from the eddy4R internal unit base, mass to mol conversions are only allowed
 for single gas species (i.e. CO2, H2O, CH4). No gas mixtures other than dry air are allowed. This 
 is relevant for moist air, which must be converted to molar units outside of this unit conversion 
-function.}
+function.
+\cr}
+
+\item{\code{coefPoly}}{Optional. A named list of type numeric, containing the polynomial 
+coefficients (in increasing order) to apply to the corresponding variable in \code{data}. 
+Each entry in the named list contains a numerical vector of [a0 a1 a2 a3 ...] signifying the 
+coeficients of the equation a0 + a1*x + a2*x^2 + a3*x^3 ... , where x is the input data.
+Default is c(0,1) for each variable in \code{data}. Note: If unitFrom and unitTo are input along
+with coefPoly, coefPoly is applied first. Then the unit transformation from \code{unitFrom} to
+\code{unitTo} is performed.}
 }
 \value{
-A named list containing the following:
-dataConv = a named data frame (matching the input variables of \code{data}) with unit conversion applied
-coefPoly = a named list containing the numerical scaling coefficients applied for each variable
-unitFrom = a named list containing the unit character strings of each input variable
+A named list containing the following:\cr
+dataConv = a named data frame (matching the input variables of \code{data}) with unit conversion applied \cr
+coefPoly = a named list containing the numerical scaling coefficients applied for each variable \cr
+unitFrom = a named list containing the unit character strings of each input variable \cr
 unitTo = a named list containing the unit character strings of each output variable
 }
 \description{
