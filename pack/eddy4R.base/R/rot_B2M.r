@@ -6,7 +6,8 @@
 
 #' @description Function defintion. Coordinate transformation from CSAT3 body coordinate system to meteorological coordiante system.
 
-#' @param Currently none
+#' @param \code{AzSoniInst}  Parameter of class numeric. Azimuth direction against true north in which sonic anemometer installation (transducer array) is pointing [rad]
+
 
 #' @return Currently none
 
@@ -31,9 +32,7 @@
 ##############################################################################################
 
 def.conv.body.met <- function(
-  #"boom angle" of sonic
-  #direction against true north in which the transducer array is pointing [radians]
-    az_boom = eddy4R.base::def.conv.unit(data=189.28,unitFrom="deg",unitTo="rad")$dataConv[[1]],
+    AzSoniInst = eddy4R.base::def.conv.unit(data=189.28,unitFrom="deg",unitTo="rad")$dataConv[[1]],
   #Offset of MCS x-axis against north
   #That is, angle by which sonic data has to be clockwise azimuth-rotated 
   #when BCS x-axis points perfectly north (az_body == 0) [radians]
@@ -61,7 +60,7 @@ def.conv.body.met <- function(
   
   #determine "body angle" of the sonic
   #the direction against true north in which the sonic x-axis is pointing [radians]
-    az_body <- az_boom - pi
+    az_body <- AzSoniInst - pi
     if(az_body < 0)  az_body <- az_body + 2 * pi  
 
   #resulting clockwise azimuth rotation angle from BCS to MCS  [radians]
@@ -87,7 +86,7 @@ def.conv.body.met <- function(
 # test <- def.conv.body.met(
 #   #"boom angle" of sonic
 #   #direction against true north in which the transducer array is pointing [radians]
-#     az_boom = eddy4R.base::def.conv.unit(data=189.28,unitFrom="deg",unitTo="rad")$dataConv[[1]],
+#     AzSoniInst = eddy4R.base::def.conv.unit(data=189.28,unitFrom="deg",unitTo="rad")$dataConv[[1]],
 #   #Offset of MCS x-axis against north
 #   #That is, angle by which sonic data has to be clockwise azimuth-rotated 
 #   #when BCS x-axis points perfectly north (az_body == 0) [radians]
