@@ -18,7 +18,9 @@
 
 #' @keywords coordinate, sonic anemometer, transformation
 
-#' @examples Currently none
+#' @examples 
+#' veloIn01 <- data.frame(xaxs=rnorm(20), yaxs=rnorm(20), zaxs=rnorm(20)) 
+#' def.conv.body.met(AzSoniInst=60, veloBody=veloIn01)
 
 #' @seealso Currently none
 
@@ -80,28 +82,16 @@ def.conv.body.met <- function(
 }
 
 
+
 # #test example
-# test <- def.conv.body.met(
-#   #"boom angle" of sonic
-#   #direction against true north in which the transducer array is pointing [radians]
-#     AzSoniInst = eddy4R.base::def.conv.unit(data=189.28,unitFrom="deg",unitTo="rad")$dataConv[[1]],
-#   #Offset of MCS x-axis against north
-#   #That is, angle by which sonic data has to be clockwise azimuth-rotated 
-#   #when BCS x-axis points perfectly north (azSonic == 0) [radians]
-#     AzSoniOfst = eddy4R.base::def.conv.unit(data=90,unitFrom="deg",unitTo="rad")$dataConv[[1]],
-#   #data.frame with wind speeds u, v, w in BCS
-#     veloBody = data.frame(u=ns.data$fst_u, v=ns.data$fst_v, w=ns.data$fst_w)
-# )
+#veloIn01 <- data.frame(xaxs=rnorm(20), yaxs=rnorm(20), zaxs=rnorm(20))
+#veloIn02 <- veloIn01
+#dimnames(veloIn02)[[2]] <- c("u", "v", "w")
 
+##test new function
+#def.conv.body.met(AzSoniInst=60, veloBody=veloIn01)
 
-veloIn01 <- data.frame(xaxs=rnorm(20), yaxs=rnorm(20), zaxs=rnorm(20))
-veloIn02 <- veloIn01
-dimnames(veloIn02)[[2]] <- c("u", "v", "w")
-
-#test new function
-def.conv.body.met(AzSoniInst=60, veloBody=veloIn01)
-
-#test old function
-rot_B2M(Psi_boom = 60, BCS_uvw = veloIn02)
+##test old function
+#rot_B2M(Psi_boom = 60, BCS_uvw = veloIn02)
 
 
