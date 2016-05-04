@@ -92,3 +92,16 @@ def.conv.body.met <- function(
 #   #data.frame with wind speeds u, v, w in BCS
 #     veloBody = data.frame(u=ns.data$fst_u, v=ns.data$fst_v, w=ns.data$fst_w)
 # )
+
+
+veloIn01 <- data.frame(xaxs=rnorm(20), yaxs=rnorm(20), zaxs=rnorm(20))
+veloIn02 <- veloIn01
+dimnames(veloIn02)[[2]] <- c("u", "v", "w")
+
+#test new function
+def.conv.body.met(AzSoniInst=60, veloBody=veloIn01)
+
+#test old function
+rot_B2M(Psi_boom = 60, BCS_uvw = veloIn02)
+
+
