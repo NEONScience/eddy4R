@@ -1,5 +1,5 @@
 ##############################################################################################
-#' @title Regularize time series to a fixed exact frequency according to NEON Cyber Infrastructure protocol
+#' @title Regularize time series
 
 #' @author 
 #' Cove Sturtevant \email{csturtevant@neoninc.org}
