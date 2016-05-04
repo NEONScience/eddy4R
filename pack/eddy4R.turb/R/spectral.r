@@ -1133,9 +1133,9 @@ find_F0 <- function(
 		  dummy_bin <- def.bin(
 			idep=ide,
 			depe=trans_dat,
-			minMaxRng=NULL,
-			binNum=BINS,
-			binWidt=c("lin", "log10", "exp10", "logExp", "expLog")[1],
+			RngMinMax=NULL,
+			NumBin=BINS,
+			widtBin=c("lin", "log10", "exp10", "logExp", "expLog")[1],
 			meanFunc=c("mean", "median")[2]
 		  )
 		  ide <- dummy_bin$idep
