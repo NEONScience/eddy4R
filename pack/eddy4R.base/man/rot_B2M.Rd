@@ -5,9 +5,8 @@
 \title{Coordinate transformation from CSAT3 body coordinate system to meteorological coordiante system}
 \usage{
 rot_B2M(Psi_boom = eddy4R.base::def.conv.unit(data = 189.28, unitFrom = "deg",
-  unitTo = "rad")$dataConv[[1]], Psi_B2M_0 = eddy4R.base::def.conv.unit(data =
-  90, unitFrom = "deg", unitTo = "rad")$dataConv[[1]], BCS_uvw = data.frame(u
-  = 0, v = 0, w = 0))
+  unitTo = "rad"), Psi_B2M_0 = eddy4R.base::def.conv.unit(data = 90, unitFrom
+  = "deg", unitTo = "rad"), BCS_uvw = data.frame(u = 0, v = 0, w = 0))
 }
 \arguments{
 \item{Currently}{none}
