@@ -13,7 +13,8 @@
 #' (1) the case-sensitive character string "intl", signifying the current units are in the internal 
 #' unit base (see documentation for eddy4R.base internal data Unit$Intl). \cr
 #' (2) a named list or vector of type character containing the existing units of the corresponding variable 
-#' in \code{data} (see rules below for formatting unit character strings). \cr
+#' in \code{data} (see rules below for formatting unit character strings). Note, if a character vector 
+#' containing only one unit string is specified, it will be used for all variables in \code{data}.\cr
 #' (3) the case-sensitive character string "arb" (default), signifying the current units are arbitrarily 
 #' defined and numerical scale factors for conversion are given within input parameter \code{coefPoly}.
 #' @param \code{unitTo} Optional if \code{unitFrom = "arb"}. The units to convert to.
@@ -21,7 +22,8 @@
 #' (1) the character string "intl", signifying to convert to the internal unit base. In this case, 
 #' input parameter \code{unitFrom} must be a named list of units to convert from). \cr
 #' (2) a named list or vector of type character containing the desired output units of the corresponding variable 
-#' in \code{data} (see rules below for formatting unit character strings). \cr
+#' in \code{data} (see rules below for formatting unit character strings). Note, if a character vector 
+#' containing only one unit string is specified, it will be used for all variables in \code{data}.\cr
 #' (3) the character string "arb" (default), signifying the current units are arbitrarily defined and numerical
 #' scale factors for conversion are given within input parameter \code{coefPoly}.
 #' \cr
@@ -141,13 +143,14 @@ def.conv.unit <- function(
                 "unitTo == \"arb\", and specify polynomial scaling coefficients in a list."),call. = FALSE)
   }
   
-  # If internal unit base being used, make a list assigning to each variable
-  if((base::length(unitFrom) == 1) && (unitFrom == "intl")){
-    unitFrom <- base::as.list(rep("intl",length=length(nameVars)))
+  # If internal unit base being used, make a list assigning to each variable.
+  # Also allow single inputs of input and output units, to be farmed out to all variables.
+  if((base::length(unitFrom) == 1) && is.character(unitFrom)){
+    unitFrom <- base::as.list(rep(unitFrom,length=length(nameVars)))
     base::names(unitFrom) <- nameVars
   }
-  if((length(unitTo) == 1) && (unitTo == "intl")){
-    unitTo <- base::as.list(rep("intl",length=base::length(nameVars)))
+  if((length(unitTo) == 1) && is.character(unitTo)){
+    unitTo <- base::as.list(rep(unitTo,length=base::length(nameVars)))
     base::names(unitTo) <- nameVars
   }
   
