@@ -34,11 +34,11 @@
 rot_B2M <- function(
   #"boom angle" of sonic
   #direction against true north in which the transducer array is pointing [radians]
-    Psi_boom = eddy4R.base::def.conv.unit(data=189.28,unitFrom="deg",unitTo="rad")$dataConv[[1]],
+    Psi_boom = eddy4R.base::def.conv.unit(data=189.28,unitFrom="deg",unitTo="rad"),
   #Offset of MCS x-axis against north
   #That is, angle by which sonic data has to be clockwise azimuth-rotated 
   #when BCS x-axis points perfectly north (Psi_body == 0) [radians]
-    Psi_B2M_0 =  eddy4R.base::def.conv.unit(data=90,unitFrom="deg",unitTo="rad")$dataConv[[1]],
+    Psi_B2M_0 =  eddy4R.base::def.conv.unit(data=90,unitFrom="deg",unitTo="rad"),
   #data.frame with wind speeds u, v, w in BCS
     BCS_uvw = data.frame(u=0, v=0, w=0)
   ) {
@@ -88,11 +88,11 @@ rot_B2M <- function(
 # test <- rot_B2M(
 #   #"boom angle" of sonic
 #   #direction against true north in which the transducer array is pointing [radians]
-#     Psi_boom = eddy4R.base::def.conv.unit(data=189.28,unitFrom="deg",unitTo="rad")$dataConv[[1]],
+#     Psi_boom = eddy4R.base::def.conv.unit(data=189.28,unitFrom="deg",unitTo="rad"),
 #   #Offset of MCS x-axis against north
 #   #That is, angle by which sonic data has to be clockwise azimuth-rotated 
 #   #when BCS x-axis points perfectly north (Psi_body == 0) [radians]
-#     Psi_B2M_0 = eddy4R.base::def.conv.unit(data=90,unitFrom="deg",unitTo="rad")$dataConv[[1]],
+#     Psi_B2M_0 = eddy4R.base::def.conv.unit(data=90,unitFrom="deg",unitTo="rad"),
 #   #data.frame with wind speeds u, v, w in BCS
 #     BCS_uvw = data.frame(u=ns.data$fst_u, v=ns.data$fst_v, w=ns.data$fst_w)
 # )
