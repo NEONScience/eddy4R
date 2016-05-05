@@ -76,9 +76,16 @@
 #' with coefPoly, coefPoly is applied first. Then the unit transformation from \code{unitFrom} to
 #' \code{unitTo} is performed.
 #'  
-#' @return A vector or named data frame (matching the input format of \code{data}) with unit conversion 
+#' @return Function output format depends on input parameter \code{vrbs}. \cr
+#' If \code{vrbs} is set to \code{FALSE} (default), the function returns a vector or named data frame 
+#' (matching the input format of \code{data}) with unit conversion 
 #' applied. Attribute \code{unit} (queried by base::attributes()) specifies the output units. All 
 #' attributes attached to input \code{data} are retained. \cr
+#' If \code{vrbs} is set to \code{TRUE}, the function returns a named list containing the following:\cr
+#' dataConv = a named data frame (matching the input variables of \code{data}) with unit conversion applied \cr
+#' coefPoly = a named list containing the numerical scaling coefficients applied for each variable \cr
+#' unitFrom = a named list containing the unit character strings of each input variable \cr
+#' unitTo = a named list containing the unit character strings of each output variable
 #' 
 #' @references 
 #' license: Terms of use of the NEON FIU algorithm repository dated 2015-01-16
@@ -101,15 +108,18 @@
 #     added acceptance of vector input for coefPoly if data has only 1 variable
 #   Cove Sturtevant (2016-05-04)
 #     function now accepts vector input for input data, and returns same
-#     function output now a vector or data frame (matching input data) with output units
-#        specified as an attribute (attribute name: unit)
+#     added vrbs option to control whether output is a list explicitly calling out dataConv,
+#        unitFrom,unitTo, and coefPoly OR as a vector or data frame (matching input data) with 
+#        output units specified as an attribute (attribute name: unit)
+#     
 ##############################################################################################
 
 def.conv.unit <- function(
   data,
   unitFrom="arb",
   unitTo="arb",
-  coefPoly=base::lapply(base::as.data.frame(data),function(x) c(0,1))
+  coefPoly=base::lapply(base::as.data.frame(data),function(x) c(0,1)),
+  vrbs=FALSE
   ) {
   
   # Check whether we have a vector input for data. If so, we will 
@@ -145,11 +155,11 @@ def.conv.unit <- function(
   
   # If internal unit base being used, make a list assigning to each variable.
   # Also allow single inputs of input and output units, to be farmed out to all variables.
-  if((base::length(unitFrom) == 1) && is.character(unitFrom)){
+  if((base::length(unitFrom) == 1) && is.character(unitFrom) && (unitFrom != "arb")){
     unitFrom <- base::as.list(rep(unitFrom,length=length(nameVars)))
     base::names(unitFrom) <- nameVars
   }
-  if((length(unitTo) == 1) && is.character(unitTo)){
+  if((length(unitTo) == 1) && is.character(unitTo) && (unitTo != "arb")){
     unitTo <- base::as.list(rep(unitTo,length=base::length(nameVars)))
     base::names(unitTo) <- nameVars
   }
@@ -430,17 +440,31 @@ def.conv.unit <- function(
   # If data was entered as single vector inputs, return the converted output as such
   if(flagVect) {
     dataConv <- dataConv[[1]]
+    unitFrom <- unitFrom[[1]]
+    unitTo <- unitTo[[1]]
+    coefPoly <- coefPoly[[1]]
   }
   
-  # Assign units as attributes
-  attr <- base::attributes(dataConv) # Get current attributes
-  attr$unit <- base::unlist(unitTo) # Add/modify units
-  names(attr$unit) <- NULL # Remove the names (they may not make sense if data was input as a vector)
-  base::attributes(dataConv) <- attr # Re-load the attributes to the output
-  
-  # Output
-  rpt <- dataConv
-  base::return(rpt)
+  # As default, assign units as attribute attached to output data frame. 
+  # But if vrbs is set to TRUE, return output as a list explicitly identifying 
+  # input & output units and conversion polynomial
+  if(vrbs == FALSE) {
+    
+    # Assign units as attributes to output data (data frame or vector)
+    attr <- base::attributes(dataConv) # Get current attributes
+    attr$unit <- base::unlist(unitTo) # Add/modify units
+    names(attr$unit) <- NULL # Remove the names (they may not make sense if data was input as a vector)
+    base::attributes(dataConv) <- attr # Re-load the attributes to the output
+    rpt <- dataConv
+    
+  } else {
+      
+    # Report as list
+    rpt <- base::list(dataConv=dataConv,coefPoly=coefPoly,unitFrom=unitFrom,unitTo=unitTo)
+    
+    }
+    # Output
+    base::return(rpt)
   
 }
 
