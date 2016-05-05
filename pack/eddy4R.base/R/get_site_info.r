@@ -5,13 +5,17 @@
 
 # license: Terms of use of the NEON FIU algorithm repository dated 2015-01-16
 
-#' @author Stefan Metzger \email{eddy4R.info@gmail.com}
+#' @author 
+#' Stefan Metzger \email{eddy4R.info@gmail.com}\cr
+#' David Durden \email{eddy4R.info@gmail.com}
 
 # changelog and author contributions / copyrights
 #   Stefan Metzger (2014-10-02)
 #     original creation
 #   Stefan Metzger (2015-11-28)
 #     re-formualtion as function() to allow packaging
+#   Dave Durden (2016-05-04)
+#     Adding site information for SERC
 
 #' @description Load pre-defined site location info into global environment.
 
@@ -31,7 +35,7 @@
 ##############################################################################################
 
 get_site_info <- function(
-  location=c("IM", "LOS", "NR", "NS", "PF")[3]
+  location=c("IM", "LOS", "NR", "NS", "PF", "SERC")[6]
   ) {
 
   #allocate empty list
@@ -101,6 +105,30 @@ get_site_info <- function(
       #height of tower base above sea level [m]
         site_info$d_z_tower_base <- 470 
       }
+    
+    #Smithsonian Environmental Research Center, MD, U.S.A.
+    if(location == "SERC") {
+        #UTC to local time difference (Eastern standard time, EST)
+        site_info$UTC2LT <- -5
+        site_info$tz <- "MST"
+        #UTC to local time difference (Eastern daylight saving time, EDT)
+        #      UTC2LT <- -4  
+        #coordinates in UTM [m]
+        site_info$UTM <- data.frame(zone=18, easting=364703.4, northing=4305740.9)
+        #height of tower base above sea level [m]
+        site_info$d_z_base <- 33.23
+        #measurement height [m]
+        site_info$d_z_m <- 61.94
+        #displacement height 7.8+/-1.1[m]
+        site_info$d_z_d <- 32
+        #canopy height 11 - 13[m]
+        site_info$d_z_c <- 38
+        #CSAT3 boom angle [degrees from true North]
+        site_info$PSI_SONIC <- 230
+        #planar fit coefficients [degree] [degree] [m s-1]        
+        #site_info$PF_coeff <- data.frame(alpha = 2.29, beta = 5.62, offset = -0.0185)
+    }
+    
 
  #return site info
   return(site_info)
