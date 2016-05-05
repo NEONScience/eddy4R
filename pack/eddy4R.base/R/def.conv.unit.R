@@ -7,20 +7,23 @@
 #' @description Function definition. Convert data between units using unit character strings 
 #' or numerical conversion factors
 
-#' @param \code{data} Required. Named data frame of type numeric, containing the data to be converted
+#' @param \code{data} Required. A named data frame of type numeric, containing the data to be converted. 
+#' A numeric vector input is also allowed if only 1 variable is to be converted.
 #' @param \code{unitFrom} Optional. The current units of \code{data}. Either: \cr 
 #' (1) the case-sensitive character string "intl", signifying the current units are in the internal 
 #' unit base (see documentation for eddy4R.base internal data Unit$Intl). \cr
-#' (2) a named list of type character containing the existing units of the corresponding variable 
-#' in \code{data} (see rules below for formatting unit character strings). \cr
+#' (2) a named list or vector of type character containing the existing units of the corresponding variable 
+#' in \code{data} (see rules below for formatting unit character strings). Note, if a character vector 
+#' containing only one unit string is specified, it will be used for all variables in \code{data}.\cr
 #' (3) the case-sensitive character string "arb" (default), signifying the current units are arbitrarily 
 #' defined and numerical scale factors for conversion are given within input parameter \code{coefPoly}.
 #' @param \code{unitTo} Optional if \code{unitFrom = "arb"}. The units to convert to.
 #' Either: \cr 
 #' (1) the character string "intl", signifying to convert to the internal unit base. In this case, 
 #' input parameter \code{unitFrom} must be a named list of units to convert from). \cr
-#' (2) a named list of type character containing the desired output units of the corresponding variable 
-#' in \code{data} (see rules below for formatting unit character strings). \cr
+#' (2) a named list or vector of type character containing the desired output units of the corresponding variable 
+#' in \code{data} (see rules below for formatting unit character strings). Note, if a character vector 
+#' containing only one unit string is specified, it will be used for all variables in \code{data}.\cr
 #' (3) the character string "arb" (default), signifying the current units are arbitrarily defined and numerical
 #' scale factors for conversion are given within input parameter \code{coefPoly}.
 #' \cr
@@ -73,7 +76,12 @@
 #' with coefPoly, coefPoly is applied first. Then the unit transformation from \code{unitFrom} to
 #' \code{unitTo} is performed.
 #'  
-#' @return A named list containing the following:\cr
+#' @return Function output format depends on input parameter \code{vrbs}. \cr
+#' If \code{vrbs} is set to \code{FALSE} (default), the function returns a vector or named data frame 
+#' (matching the input format of \code{data}) with unit conversion 
+#' applied. Attribute \code{unit} (queried by base::attributes()) specifies the output units. All 
+#' attributes attached to input \code{data} are retained. \cr
+#' If \code{vrbs} is set to \code{TRUE}, the function returns a named list containing the following:\cr
 #' dataConv = a named data frame (matching the input variables of \code{data}) with unit conversion applied \cr
 #' coefPoly = a named list containing the numerical scaling coefficients applied for each variable \cr
 #' unitFrom = a named list containing the unit character strings of each input variable \cr
@@ -98,15 +106,29 @@
 #   Cove Sturtevant (2016-04-29)
 #     update all function calls to use double-colon operator
 #     added acceptance of vector input for coefPoly if data has only 1 variable
+#   Cove Sturtevant (2016-05-04)
+#     function now accepts vector input for input data, and returns same
+#     added vrbs option to control whether output is a list explicitly calling out dataConv,
+#        unitFrom,unitTo, and coefPoly OR as a vector or data frame (matching input data) with 
+#        output units specified as an attribute (attribute name: unit)
+#     
 ##############################################################################################
 
 def.conv.unit <- function(
   data,
   unitFrom="arb",
   unitTo="arb",
-  coefPoly=base::lapply(base::as.data.frame(data),function(x) c(0,1))
+  coefPoly=base::lapply(base::as.data.frame(data),function(x) c(0,1)),
+  vrbs=FALSE
   ) {
- 
+  
+  # Check whether we have a vector input for data. If so, we will 
+  # return the converted output in the same format
+  flagVect <- FALSE
+  if(is.vector(data) && !is.list(data)) {
+    flagVect <- TRUE
+  }
+  
   # Pre-processing
   data <- base::as.data.frame(data)
   nameVars <- base::names(data)  
@@ -131,13 +153,14 @@ def.conv.unit <- function(
                 "unitTo == \"arb\", and specify polynomial scaling coefficients in a list."),call. = FALSE)
   }
   
-  # If internal unit base being used, make a list assigning to each variable
-  if((base::length(unitFrom) == 1) && (unitFrom == "intl")){
-    unitFrom <- base::as.list(rep("intl",length=length(nameVars)))
+  # If internal unit base being used, make a list assigning to each variable.
+  # Also allow single inputs of input and output units, to be farmed out to all variables.
+  if((base::length(unitFrom) == 1) && is.character(unitFrom) && (unitFrom != "arb")){
+    unitFrom <- base::as.list(rep(unitFrom,length=length(nameVars)))
     base::names(unitFrom) <- nameVars
   }
-  if((length(unitTo) == 1) && (unitTo == "intl")){
-    unitTo <- base::as.list(rep("intl",length=base::length(nameVars)))
+  if((length(unitTo) == 1) && is.character(unitTo) && (unitTo != "arb")){
+    unitTo <- base::as.list(rep(unitTo,length=base::length(nameVars)))
     base::names(unitTo) <- nameVars
   }
   
@@ -220,9 +243,9 @@ def.conv.unit <- function(
     
     # Check to make sure the "From" and "To" units have the same number of base unit terms
     if (base::length(infoUnitTo$posBase) != base::length(infoUnitFrom$posBase)) {
-      base::warning(base::paste("Number of terms in unitTo and unitFrom must be the same. Unit conversion 
-                    for variable",idxVar, "not possible. Output data for this variable will be NA.
-                     Check unit terms or use polynomial scaling coefficients instead."))
+      base::warning(base::paste("Number of terms in unitTo and unitFrom must be the same. Unit conversion", 
+                    "for variable",idxVar, "not possible. Output data for this variable will be NA.",
+                     "Check unit terms or use polynomial scaling coefficients instead."))
       dataConv[[idxVar]][] <- NA
       next
     }
@@ -414,10 +437,34 @@ def.conv.unit <- function(
     
   } # End loop around variables
 
+  # If data was entered as single vector inputs, return the converted output as such
+  if(flagVect) {
+    dataConv <- dataConv[[1]]
+    unitFrom <- unitFrom[[1]]
+    unitTo <- unitTo[[1]]
+    coefPoly <- coefPoly[[1]]
+  }
   
-  # Output
-  rpt <- base::list(dataConv=dataConv,coefPoly=coefPoly,unitFrom=unitFrom,unitTo=unitTo)
-  base::return(rpt)
+  # As default, assign units as attribute attached to output data frame. 
+  # But if vrbs is set to TRUE, return output as a list explicitly identifying 
+  # input & output units and conversion polynomial
+  if(vrbs == FALSE) {
+    
+    # Assign units as attributes to output data (data frame or vector)
+    attr <- base::attributes(dataConv) # Get current attributes
+    attr$unit <- base::unlist(unitTo) # Add/modify units
+    names(attr$unit) <- NULL # Remove the names (they may not make sense if data was input as a vector)
+    base::attributes(dataConv) <- attr # Re-load the attributes to the output
+    rpt <- dataConv
+    
+  } else {
+      
+    # Report as list
+    rpt <- base::list(dataConv=dataConv,coefPoly=coefPoly,unitFrom=unitFrom,unitTo=unitTo)
+    
+    }
+    # Output
+    base::return(rpt)
   
 }
 

@@ -47,11 +47,11 @@ def.pres.h2o.sat <- function(temp) {
         if (tempMean >= eddy4R.base::Conv$CelsKelv[1]) {
           #temp >= 273.15 K (0 degC):
           #Saturation water vapor pressure:
-          presH2oSat <- (CnstLoc$Cnst01 * exp((CnstLoc$Cnst02 * eddy4R.base::def.conv.unit(data=temp,unitFrom="K",unitTo="C")$dataConv[[1]]) / (CnstLoc$Cnst03 + eddy4R.base::def.conv.unit(data=temp,unitFrom="K",unitTo="C")$dataConv[[1]])))*100
+          presH2oSat <- (CnstLoc$Cnst01 * exp((CnstLoc$Cnst02 * eddy4R.base::def.conv.unit(data=temp,unitFrom="K",unitTo="C")) / (CnstLoc$Cnst03 + eddy4R.base::def.conv.unit(data=temp,unitFrom="K",unitTo="C"))))*100
 
           } else {
             #temp < 273.15 K (0 degC):
-          presH2oSat <- (CnstLoc$Cnst01 * exp((CnstLoc$Cnst04 * eddy4R.base::def.conv.unit(data=temp,unitFrom="K",unitTo="C")$dataConv[[1]]) / (CnstLoc$Cnst05 + eddy4R.base::def.conv.unit(data=temp,unitFrom="K",unitTo="C")$dataConv[[1]])))*100
+          presH2oSat <- (CnstLoc$Cnst01 * exp((CnstLoc$Cnst04 * eddy4R.base::def.conv.unit(data=temp,unitFrom="K",unitTo="C")) / (CnstLoc$Cnst05 + eddy4R.base::def.conv.unit(data=temp,unitFrom="K",unitTo="C"))))*100
           }
     
     
