@@ -4,7 +4,7 @@
 #' @author Stefan Metzger \email{eddy4R.info@gmail.com} \cr
 #' Natchaya Pingintha-Durden
 
-#' @description Smooth data using Binning method.
+#' @description Function definition. Smooth data using Binning method.
 
 #' @param \code{idep} Either a vector or matrix of class numeric or integer containing the independent variable and of the same length as \code{depe}. []
 #' @param \code{depe} Either a vector or matrix of class numeric or integer containing the dependent variable and of the same length as \code{idep}. []
@@ -13,8 +13,7 @@
 #' @param \code{widtBin} An object of class string containing the functions ("lin", "log10", "exp10", "logExp", "expLog") to determine bin width distribution of the independent variable. []
 #' @param \code{meanFunc} An object of class string containing the arithmetic "mean" and "median". []
 
-#' @return \code{idep} A list object of class "numeric" containing the resulted binning of independent variable and of the same length as {widtBin}. [] \cr
-#' @return \code{depe} A matrix containing the the resulted binning of dependent variable and of the same length as {widtBin}. [] \cr
+#' @return \code{idep} A list object of class "numeric" containing the resulted binning of independent variable and of the same length as {widtBin} and \code{depe} a matrix containing the the resulted binning of dependent variable and of the same length as {widtBin}. \cr
 
 #' @references
 #' License: Terms of use of the NEON FIU algorithm repository dated 2015-01-16

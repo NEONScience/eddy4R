@@ -1,14 +1,15 @@
 ##############################################################################################
-#' @title Kernel smoother
+#' @title Data smoothing
 
 #' @author 
 #' Stefan Metzger \email{eddy4R.info@gmail.com} \cr
 #' Natchaya Pingintha-Durden
 
-#' @description Smooth data using Kernel method.
+#' @description Function definition.Data smoothing method.
 
 #' @param \code{data} A vector containing the input data. Of class "numeric" or "integer". []
 #' @param \code{span} A Vector containing the span values. Of class "numeric" or "integer". The option \code{span} controls the degree of smoothing. For example; using span = c(15) to apply a long smoothing filter, or using spans = c(3,3) to apply two short filters in succession. [-]
+#' @param \code{smthFunc} An object of class string containing the smooth functions ("smthKern"). []
 
 #' @return Estimated smooth values and of the same length as \code{data}. []
 
@@ -19,8 +20,8 @@
 #' @keywords Kernel smoother
 
 #' @examples 
-#' def.kern.smth(data = rnorm(100), span = c(15))
-#' def.kern.smth(data = rnorm(100), span = c(3,3))
+#' def.smth(data = rnorm(100), span = c(15), smthFunc = c("smthKern"))
+#' def.smth(data = rnorm(100), span = c(3,3))
 
 #' @seealso
 #' \code{\link[stats]{kernel}}, \code{\link[stats]{kernapply}}
@@ -37,9 +38,11 @@
 ##############################################################################################
 #KERNEL SMOOTHER
 
-def.kern.smth <- function(data, span) {
+def.smth <- function(data, span, smthFunc = c("smthKern")) {
 #http://www.stat.rutgers.edu/home/rebecka/Stat565/lab42007.pdf: We reduce variance by applying a frequency domain smoothing filter. The option spans controls the degree of smoothing. For example; you can apply a long smoothing filter with spans=c(15), or two short filters in succession with spans=c(3,3).
 
+#Smoothing data using the Kernel method
+  if(smthFunc == "smthKern") {
 #configure kernel
   kern <- stats::kernel("modified.daniell", span)
   #df <- df.kernel(kern)
@@ -59,9 +62,9 @@ def.kern.smth <- function(data, span) {
     
     dimnames(rpt) <- dimnames(data)
   }
-
+}
 #return outputs
   return(rpt)
-# end function def.kern.smth()
+# end function def.smth()
 
 }
