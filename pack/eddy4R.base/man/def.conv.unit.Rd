@@ -5,16 +5,19 @@
 \title{Unit conversion}
 \usage{
 def.conv.unit(data, unitFrom = "arb", unitTo = "arb",
-  coefPoly = base::lapply(base::as.data.frame(data), function(x) c(0, 1)))
+  coefPoly = base::lapply(base::as.data.frame(data), function(x) c(0, 1)),
+  vrbs = FALSE)
 }
 \arguments{
-\item{\code{data}}{Required. Named data frame of type numeric, containing the data to be converted}
+\item{\code{data}}{Required. A named data frame of type numeric, containing the data to be converted. 
+A numeric vector input is also allowed if only 1 variable is to be converted.}
 
 \item{\code{unitFrom}}{Optional. The current units of \code{data}. Either: \cr 
 (1) the case-sensitive character string "intl", signifying the current units are in the internal 
 unit base (see documentation for eddy4R.base internal data Unit$Intl). \cr
-(2) a named list of type character containing the existing units of the corresponding variable 
-in \code{data} (see rules below for formatting unit character strings). \cr
+(2) a named list or vector of type character containing the existing units of the corresponding variable 
+in \code{data} (see rules below for formatting unit character strings). Note, if a character vector 
+containing only one unit string is specified, it will be used for all variables in \code{data}.\cr
 (3) the case-sensitive character string "arb" (default), signifying the current units are arbitrarily 
 defined and numerical scale factors for conversion are given within input parameter \code{coefPoly}.}
 
@@ -22,8 +25,9 @@ defined and numerical scale factors for conversion are given within input parame
 Either: \cr 
 (1) the character string "intl", signifying to convert to the internal unit base. In this case, 
 input parameter \code{unitFrom} must be a named list of units to convert from). \cr
-(2) a named list of type character containing the desired output units of the corresponding variable 
-in \code{data} (see rules below for formatting unit character strings). \cr
+(2) a named list or vector of type character containing the desired output units of the corresponding variable 
+in \code{data} (see rules below for formatting unit character strings). Note, if a character vector 
+containing only one unit string is specified, it will be used for all variables in \code{data}.\cr
 (3) the character string "arb" (default), signifying the current units are arbitrarily defined and numerical
 scale factors for conversion are given within input parameter \code{coefPoly}.
 \cr
@@ -78,7 +82,12 @@ with coefPoly, coefPoly is applied first. Then the unit transformation from \cod
 \code{unitTo} is performed.}
 }
 \value{
-A named list containing the following:\cr
+Function output format depends on input parameter \code{vrbs}. \cr
+If \code{vrbs} is set to \code{FALSE} (default), the function returns a vector or named data frame 
+(matching the input format of \code{data}) with unit conversion 
+applied. Attribute \code{unit} (queried by base::attributes()) specifies the output units. All 
+attributes attached to input \code{data} are retained. \cr
+If \code{vrbs} is set to \code{TRUE}, the function returns a named list containing the following:\cr
 dataConv = a named data frame (matching the input variables of \code{data}) with unit conversion applied \cr
 coefPoly = a named list containing the numerical scaling coefficients applied for each variable \cr
 unitFrom = a named list containing the unit character strings of each input variable \cr
