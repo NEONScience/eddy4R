@@ -1130,16 +1130,16 @@ find_F0 <- function(
 	  #binning
 		if(!is.null(BINS)) {
 		  
-		  dummy_bin <- binning(
-			IDE=ide,
-			DEP=trans_dat,
-			MM=NULL,
-			bins=BINS,
-			bwd=c("lin", "log10", "exp10", "logE", "expE")[1],
-			mfun=c("mean", "median")[2]
+		  dummy_bin <- def.bin(
+			idep=ide,
+			depe=trans_dat,
+			RngMinMax=NULL,
+			NumBin=BINS,
+			widtBin=c("lin", "log10", "exp10", "logExp", "expLog")[1],
+			meanFunc=c("mean", "median")[2]
 		  )
-		  ide <- dummy_bin$IDE
-		  trans_dat <- dummy_bin$DEP
+		  ide <- dummy_bin$idep
+		  trans_dat <- dummy_bin$depe
 		  rm(dummy_bin)          
 	  
 		}
