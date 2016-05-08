@@ -23,17 +23,22 @@
 #' @keywords regularization, equidistant
 
 #' @examples
+#' # make sure that fractional seconds can be seen from the console
 #' options(digits.secs=3)
+#' # assign measured time vector
+#' timeMeas <- base::as.POSIXlt(seq.POSIXt(
+#'   from = base::as.POSIXlt("2016-01-01 00:00:00.001", format="%Y-%m-%d %H:%M:%OS", tz="UTC"),
+#'   to = base::as.POSIXlt("2016-01-01 00:00:01.002", format="%Y-%m-%d %H:%M:%OS", tz="UTC"),
+#'   by = 1/10), tz = "UTC")[-c(5,6,8)]
+#' # assign fake observations
+#' dataMeas <- base::data.frame("wind01" = rnorm(base::length(timeMeas)), "wind02" = rnorm(base::length(timeMeas))),
+#' # regularize
 #' def.rglr(
-#'   timeMeas = base::as.POSIXlt(seq.POSIXt(
-#'     from = base::as.POSIXlt("2016-01-01 00:00:00.001", format="%Y-%m-%d %H:%M:%OS", tz="UTC"),
-#'     to = base::as.POSIXlt("2016-01-01 00:00:01.002", format="%Y-%m-%d %H:%M:%OS", tz="UTC"),
-#'     by = 1/10), tz = "UTC")[-c(5,6,8)],
-#'   dataMeas = base::data.frame("wind01" = rnorm(base::length(timeMeas)), "wind02" = rnorm(base::length(timeMeas))),
+#'   timeMeas = timeMeas,
+#'   dataMeas = dataMeas,
 #'   unitMeas = c("metersPerSecond", "metersPerSecond"),
 #'   BgnRglr = base::as.POSIXlt("2016-01-01 00:00:00.000", format="%Y-%m-%d %H:%M:%OS", tz="UTC"),
 #'   EndRglr = base::as.POSIXlt("2016-01-01 00:00:01.000", format="%Y-%m-%d %H:%M:%OS", tz="UTC"),
-#'   TzRglr = attributes(BgnRglr)$tzone,
 #'   FreqRglr = 10,
 #'   MethRglr = "zoo"
 #' )
