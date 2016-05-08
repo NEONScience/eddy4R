@@ -1,15 +1,62 @@
+##############################################################################################
+#' @title Resampling irregular data to strictly regular / equidistant data
 
+#' @author Stefan Metzger \email{eddy4R.info@gmail.com}
 
-#function for regularization
+#' @description Function defintion. 
+#' Takes a (potentially) irregularly spaced timeseries \code{timeMeas} of data \code{dataMeas} and returns a strictuly regularly spaced timeseries \code{timeRegl} of data \code{dataRegl}. \strong{ATTENTION}: \code{MethRglr = "zoo"} uses the zoo:na.approx() function, which does not currently abide by its \code{maxgap} argument. In result, where gaps exist currently the last known value is repeated instead of NAs being inserted. An Email with a request for bugfixing has been sent to \email{Achim.Zeileis@R-project.org} (2016-05-08).
+
+#' @param \code{timeMeas} A vector containing the observation times. Of class "POSIXlt" including timezone attribute, and of the same length as \code{dataMeas}. [-]
+#' @param \code{dataMeas} A named data.frame containing the observations. Columns may be of class "numeric" or "integer", and of the same length as \code{timeMeas}. Columns of classes other than "numeric" or "integer" are removed and not included in the returned \code{dataRegl}. [user-defined]
+#' @param \code{unitMeas} A vector containing the unit of each column in \code{dataMeas}. Of class "character".
+#' @param \code{BgnRglr} Desired begin time for the regularized dataset. Of class "POSIXlt" including timezone attribute, and \code{length(BgnRglr) = 1}. [-]
+#' @param \code{EndRglr} Desired end time for the regularized dataset. Of class "POSIXlt" including timezone attribute, and \code{length(EndRglr) = 1}. [-]
+#' @param \code{TzRglr} Desired timezone for the regularized dataset. Of class "character" and \code{length(TzRglr) = 1}, defaults to the same timezone as \code{BgnRglr}. [-]
+#' @param \code{FreqRglr} Desired frequency of  the regularized dataset. Of class "numeric" or "integer" and \code{length(FreqRglr) = 1}. [Hz]
+#' @param \code{MethRglr} Switch for different regularization methods. Of class "character", currently defaults to "zoo". [-]
+
+#' @return Returns a list with elements \code{TzRglr}, \code{FreqRglr}, \code{MethRglr}, \code{timeRglr}, and \code{dataRglr}.
+
+#' @references
+#' License: Terms of use of the NEON FIU algorithm repository dated 2015-01-16. \cr
+
+#' @keywords regularization, equidistant
+
+#' @examples
+#' options(digits.secs=3)
+#' def.rglr(
+#'   timeMeas = base::as.POSIXlt(seq.POSIXt(
+#'     from = base::as.POSIXlt("2016-01-01 00:00:00.001", format="%Y-%m-%d %H:%M:%OS", tz="UTC"),
+#'     to = base::as.POSIXlt("2016-01-01 00:00:01.002", format="%Y-%m-%d %H:%M:%OS", tz="UTC"),
+#'     by = 1/10), tz = "UTC")[-c(5,6,8)],
+#'   dataMeas = base::data.frame("wind01" = rnorm(base::length(timeMeas)), "wind02" = rnorm(base::length(timeMeas))),
+#'   unitMeas = c("metersPerSecond", "metersPerSecond"),
+#'   BgnRglr = base::as.POSIXlt("2016-01-01 00:00:00.000", format="%Y-%m-%d %H:%M:%OS", tz="UTC"),
+#'   EndRglr = base::as.POSIXlt("2016-01-01 00:00:01.000", format="%Y-%m-%d %H:%M:%OS", tz="UTC"),
+#'   TzRglr = attributes(BgnRglr)$tzone,
+#'   FreqRglr = 10,
+#'   MethRglr = "zoo"
+#' )
+
+#' @seealso ?zoo:na.approx, ?stats::approx
+
+#' @export
+
+# changelog and author contributions / copyrights
+#   Stefan Metzger (2016-05-08)
+#     original creation
+##############################################################################################
+
+# start function for regularization
 def.rglr <- function(
-  timeMeas = base::as.POSIXlt(paste(DATA$irga$date, " ", DATA$irga$time, sep=""), format="%Y-%m-%d %H:%M:%OS", tz="UTC"),
-  dataMeas = DATA$soni,
-  unitMeas = attributes(DATA$soni)$units,
-  BgnRglr = base::as.POSIXlt(paste(date, " ", "00:00:00.00", sep=""), format="%Y-%m-%d %H:%M:%OS", tz="UTC"),
-  EndRglr = base::as.POSIXlt(paste(date, " ", "23:59:59.95", sep=""), format="%Y-%m-%d %H:%M:%OS", tz="UTC"),
+  timeMeas,
+  dataMeas,
+  unitMeas,
+  BgnRglr,
+  EndRglr,
   TzRglr = attributes(BgnRglr)$tzone,
-  FreqRglr = freq_res,
-  MethRglr = "zoo"
+  FreqRglr,
+  MethRglr
 ){
   
   # assign list for storing the results
@@ -62,6 +109,11 @@ def.rglr <- function(
         
         rpt$dataRglr[,idx] <- zoo::na.approx(object = dataMeas[,idx], x = timeMeas, xout = rpt$timeRglr,
                                              method = "constant", maxgap = 0, na.rm = FALSE, rule = 1, f = 0)
+        # example for current maxgap bug
+        # xout <- 1:10
+        # x = xout[-c(4:8)]
+        # object = rnorm(length(x))
+        # zoo::na.approx(object = object, x = x, xout = xout, method = "constant", maxgap = 0, na.rm = FALSE, rule = 1, f = 0)
         
       }
       
