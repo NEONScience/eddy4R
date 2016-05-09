@@ -125,7 +125,8 @@ def.conv.unit <- function(
   # Check whether we have a vector input for data. If so, we will 
   # return the converted output in the same format
   flagVect <- FALSE
-  if(is.vector(data) && !is.list(data)) {
+  if(base::is.numeric(data) && !base::is.list(data) && 
+     (base::dim(data)[2] <= 1 || base::is.null(base::dim(data)[2]) || base::is.na(base::dim(data)[2]))) {
     flagVect <- TRUE
   }
   
