@@ -126,7 +126,7 @@ def.conv.unit <- function(
   # return the converted output in the same format
   flagVect <- FALSE
   if(base::is.numeric(data) && !base::is.list(data) && 
-     (base::dim(data)[2] <= 1 || base::is.null(base::dim(data)[2]))) {
+     (base::dim(data)[2] <= 1 || base::is.null(base::dim(data)[2]) || base::is.na(base::dim(data)[2]))) {
     flagVect <- TRUE
   }
   
