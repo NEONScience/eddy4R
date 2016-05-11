@@ -110,7 +110,7 @@ get_site_info <- function(
     if(location == "SERC") {
         #UTC to local time difference (Eastern standard time, EST)
         site_info$UTC2LT <- -5
-        site_info$tz <- "MST"
+        site_info$tz <- "EST"
         #UTC to local time difference (Eastern daylight saving time, EDT)
         #      UTC2LT <- -4  
         #coordinates in UTM [m]
