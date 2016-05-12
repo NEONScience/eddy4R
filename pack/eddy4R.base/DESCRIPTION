@@ -1,6 +1,6 @@
 Package: eddy4R.base
 Title: Eddy-covariance calculation for R: Base package
-Version: 0.0.2
+Version: 0.0.3
 Authors@R: c( person("Stefan", "Metzger", email = "eddy4R.info@gmail.com", role = c("aut", "cre")),
               person("Cove", "Sturtevant", email = "csturtevant@neoninc.org", role = c("aut")),
               person("Natchaya", "Pingintha-Durden", email = "ndurden@neoninc.org", role = c("aut"))
