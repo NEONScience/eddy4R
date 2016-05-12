@@ -7,7 +7,7 @@ Description: Eddy-covariance calculation for R: Turbulent flux
 Depends:
     R (>= 3.2.3)
 Imports:
-    eddy4R.base (>= 0.0.2),
+    eddy4R.base (>= 0.0.3),
     EBImage (>= 4.12.2),
     GenKern (>= 1.2-60),
     matlab (>= 1.0.2),
