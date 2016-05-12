@@ -69,6 +69,8 @@
 #   Cove Sturtevant (2016-04-25)
 #     Changed standard pressure (Pres00) from 1e5 [Pa] to NIST standard pressure 101325 [Pa]
 #     Added NIST standard temperature 293.15 [K]
+#   Cove Sturtevant (2016-05-12)
+#     Added percent to dimensionless unit conversion
 ##############################################################################################
 
 library(devtools)
@@ -108,6 +110,8 @@ Natu <- list() # Natural constants
       Mole = "mol",
       Rad  = "rad", # (geometry)
       Deg  = "deg", # (geometry)
+      Perc = "%",
+      Rtio = "-",
       Ampr = "A",
       Volt = "V",
       Ohm  = "ohm",
@@ -149,6 +153,8 @@ Natu <- list() # Natural constants
       Mole = "Num",
       Rad  = "Ang",
       Deg  = "Ang",
+      Perc = "Dmls",
+      Rtio = "Dmls",
       Ampr = "Curr",
       Volt = "Epot",
       Ohm  = "Eres",
@@ -203,6 +209,7 @@ Natu <- list() # Natural constants
       Temp = "K",
       Num  = "mol",
       Ang  = "rad",
+      Dmls = "-",
       Curr = "A",
       Epot = "V",
       Eres = "ohm",
@@ -334,6 +341,10 @@ Natu <- list() # Natural constants
 # Angles
     Conv$RadDeg <- c(0,180/pi)		# [a0 a1] convert radians to degree [deg rad-1]
     Conv$DegRad <- c(0,pi/180)		# [a0 a1] convert degree to radians [rad deg-1]
+    
+# Percent/dimensionless
+    Conv$PercRtio <- c(0,0.01)		# [a0 a1] convert percent to dimensionless ratio [[]  %-1]
+    Conv$RtioPerc <- c(0,100)		  # [a0 a1] convert dimensionless ratio to percent [%  []-1]
     
 # Temperature
     Conv$KelvCels <- c(-273.15,1)			# [a0 a1] conversion from °C to K
