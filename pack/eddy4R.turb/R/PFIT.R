@@ -105,7 +105,7 @@ PFIT_det <- function(
 
 PFIT_apply <- function(
 #measured wind velocity vector [m s-1]
-  u_m = data.frame(u, v, w),
+  u_m = data.frame(xaxs, yaxs, zaxs),
 #pitch rotation angle [rad]
   al = 0,
 #roll rotation angle [rad]
@@ -115,7 +115,7 @@ PFIT_apply <- function(
 ) {
 
 #mean offset correction for vertical wind
-  u_m$w <- u_m$w - b0
+  u_m$zaxs <- u_m$zaxs - b0
 
 #partial rotation matrix for the pitch angle (Wilczak et al., 2001, Eq. 2)
   Dmat <- c(cos(al), 0, -sin(al), 0, 1, 0, sin(al), 0, cos(al))
