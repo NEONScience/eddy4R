@@ -9,7 +9,7 @@ Description: Eddy-covariance calculation for R: Quality assurance and quality
 Depends:
     R (>= 3.2.3)
 Imports:
-    eddy4R.base (>= 0.0.1),
+    eddy4R.base (>= 0.0.3),
     ggplot2 (>= 2.0.0),
     gridExtra (>= 2.0.0),
     gtable (>= 0.1.2),
