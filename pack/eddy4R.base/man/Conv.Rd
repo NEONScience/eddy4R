@@ -6,7 +6,10 @@
 \title{Conversion Factors}
 \format{A named list of numerical polynomial conversion coefficients. Names are constructed from 
 the quantities to be converted. The quantity to be converted from is named first, followed by the 
-quantity to be converted to.
+quantity to be converted to.\cr
+\cr
+\cr
+\emph{Unit Prefix Conversions}
 \describe{
   \item{ExaNone}{unit prefix conversion, Exa to no-prefix = c(0,1e18)}
   \item{NoneExa}{unit prefix conversion, no-prefix to Exa = c(0,1e-18)}
@@ -40,6 +43,11 @@ quantity to be converted to.
   \item{NoneFemt}{unit prefix conversion, no-prefix to Femt = c(0,1e15)}
   \item{AttoNone}{unit prefix conversion, Atto to no-prefix = c(0,1e-18)}
   \item{NoneAtto}{unit prefix conversion, no-prefix to Atto = c(0,1e18)}
+  }
+\cr
+\cr
+\emph{Time Conversions}
+\describe{
   \item{ScndMint}{time conversion, seconds to minutes = c(0,1/60) [min s-1]}
   \item{ScndHour}{time conversion, seconds to hours = c(0,1/60/60) [h s-1]}
   \item{ScndDay}{time conversion, seconds to days = c(0,1/60/60/24) [d s-1]}
@@ -60,6 +68,11 @@ quantity to be converted to.
   \item{YearMint}{time conversion, years to minutes = c(0,60*24*365.25) [min y-1]}
   \item{YearHour}{time conversion, years to hours = c(0,24*365.25) [h y-1]}
   \item{YearDay}{time conversion, years to days = c(0,365.25) [d y-1]}
+  }
+\cr
+\cr
+\emph{Distance/Length Conversions}
+\describe{
   \item{MetrInch}{distance conversion, meters to inches = c(0,39.3701) [in m-1]}
   \item{InchMetr}{distance conversion, inches to meters = c(0,1/39.3701) [m in-1]}
   \item{MetrFeet}{distance conversion, meters to feet = c(0,3.28084) [ft m-1]}
@@ -80,6 +93,11 @@ quantity to be converted to.
   \item{MileNautFeet}{distance conversion, nautical miles to feet = c(0,6076.11549) [ft NM-1]}
   \item{MileMileNaut}{distance conversion, statute miles to nautical miles = c(0,1/1.15077945) [NM mi-1]}
   \item{MileNautMile}{distance conversion, nautical miles to statute miles = c(0,1.15077945) [mi NM-1]}
+  }
+\cr
+\cr
+\emph{Mass Conversions}
+\describe{
   \item{GramPnd}{mass conversion, grams to pounds = c(0,1/453.592) [lb g-1]}
   \item{PndGram}{mass conversion, pounds to grams = c(0,453.592) [g lb-1]}
   \item{GramTonUs}{mass conversion, grams to US tons = c(0,1/453.592/2000) [ST g-1]}
@@ -92,6 +110,11 @@ quantity to be converted to.
   \item{TonPnd}{mass conversion, metric tons to pounds = c(0,2204.624) [lb t-1]}
   \item{TonUsTon}{mass conversion, US tons to metric tons = c(0,0.907185) [t ST-1]}
   \item{TonTonUs}{mass conversion, metric tons to US tons = c(0,1.10231) [ST t-1]}
+  }
+\cr
+\cr
+\emph{Pressure Conversions}
+\describe{
   \item{PascBar}{pressure conversion, Pascal to bar = c(0,1e-5) [bar Pa-1]}
   \item{BarPasc}{pressure conversion, bar to Pascal = c(0,1e5) [Pa bar-1]}
   \item{PascAtm}{pressure conversion, Pascal to atm = c(0,9.8692e-6) [atm Pa-1]}
@@ -112,14 +135,36 @@ quantity to be converted to.
   \item{PsiAtm}{pressure conversion, psi to atm = c(0,0.068045738676042008541) [atm psi-1]}
   \item{TorrPsi}{pressure conversion, Torr to psi = c(0,0.019336710697307905871) [psi Torr-1]}
   \item{PsiTorr}{pressure conversion, psi to Torr = c(0,51.714761401958099896) [Torr psi-1]}
+  }
+\cr
+\cr
+\emph{Geometry Conversions}
+\describe{
   \item{RadDeg}{angle conversion, radians to degree = c(0,180/pi) [deg rad-1]}
   \item{DegRad}{angle conversion, degree to radians = c(0,pi/180) [rad deg-1]}
+  }
+\cr
+\cr
+\emph{Dimensionless Conversions}
+\describe{
+  \item{PercRtio}{dimensionless conversion, percent to ratio = c(0,0.01) [rtio  perc-1]}
+  \item{RtioPerc}{dimensionless conversion, ratio to percent = c(0,100) [perc  rtio-1]}
+  }
+\cr
+\cr
+\emph{Temperature Conversions}
+\describe{
   \item{KelvCels}{temperature conversion, Kelvin to Celcius = c(-273.15,1)}
   \item{CelsKelv}{temperature conversion, Celcius to Kelvin = c(+273.15,1)}
   \item{KelvFrht}{temperature conversion, Kelvin to Fahrenheit = c(-459.67,9/5)}
   \item{FrhtKelv}{temperature conversion, Fahrenheit to Kelvin = c(-32*5/9+273.15,5/9)}
   \item{CelsFrht}{temperature conversion, Celcius to Fahrenheit = c(32,9/5)}
   \item{FrhtCels}{temperature conversion, Fahrenheit to Celcius = c(-32*5/9,5/9)}
+  }
+\cr
+\cr
+\emph{Force Conversions}
+\describe{
   \item{NewtPndf}{force conversion, Newton to pound-force = c(0,0.224809) [lbf N-1]}
   \item{PndfNewt}{force conversion, pound-force to Newton = c(0,4.44822) [N lbf-1]}
 }}

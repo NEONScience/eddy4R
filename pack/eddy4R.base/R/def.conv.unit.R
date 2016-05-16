@@ -209,6 +209,16 @@ def.conv.unit <- function(
   # Apply unit conversion using character strings
   for(idxVar in nameVars) {
     
+    # Check for character unit inputs 
+    if(!base::is.character(unitFrom[[idxVar]]) || !base::is.character(unitTo[[idxVar]]))  {
+      base::stop("Input and output units for each variable must be character strings. Check inputs.",call. = FALSE)
+    }
+    
+    # If we have the exact same input and output unit character strings, move on
+    if (unitFrom[[idxVar]] == unitTo[[idxVar]]) {
+      next
+    }
+    
     # Intpret "From" units
     if(unitFrom[[idxVar]] == "intl"){
       # Using the internal unit base. Find internal units corresponding to "To" units
