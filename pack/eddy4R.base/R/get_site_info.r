@@ -125,10 +125,9 @@ get_site_info <- function(
         site_info$d_z_c <- 38
         #CSAT3 boom angle [degrees from true North]
         site_info$PSI_SONIC <- 230
-        #planar fit coefficients [degree] [degree] [m s-1]        
-        site_info$PF_coeff <- data.frame(alpha = 0, beta = 0, offset = 0)
+        #planar fit coefficients (April 22 to May 3, 2016) [degree] [degree] [m s-1]
+        site_info$PF_coeff <- data.frame(alpha = -0.7056, beta = -1.8718, offset = 0.0549)
     }
-    
 
  #return site info
   return(site_info)
