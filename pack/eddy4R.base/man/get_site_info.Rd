@@ -4,7 +4,7 @@
 \alias{get_site_info}
 \title{Load pre-defined site location info into global environment}
 \usage{
-get_site_info(location = c("IM", "LOS", "NR", "NS", "PF")[3])
+get_site_info(location = c("IM", "LOS", "NR", "NS", "PF", "SERC")[6])
 }
 \arguments{
 \item{Currently}{none}
@@ -19,7 +19,8 @@ Load pre-defined site location info into global environment.
 Currently none
 }
 \author{
-Stefan Metzger \email{eddy4R.info@gmail.com}
+Stefan Metzger \email{eddy4R.info@gmail.com}\cr
+David Durden \email{eddy4R.info@gmail.com}
 }
 \references{
 Currently none
