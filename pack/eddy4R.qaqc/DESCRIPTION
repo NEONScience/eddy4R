@@ -1,6 +1,6 @@
 Package: eddy4R.qaqc
 Title: Eddy-covariance calculation for R: Quality assurance and quality control
-Version: 0.0.2
+Version: 0.0.3
 Authors@R: c( person("Cove", "Sturtevant", email = "csturtevant@neoninc.org", role = c("aut", "cre")),
               person("Stefan", "Metzger", email = "eddy4R.info@gmail.com", role = c("aut")),
               person("Tim", "Meehan", email = "tmeehan@neoninc.org", role = c("aut")))
@@ -9,7 +9,7 @@ Description: Eddy-covariance calculation for R: Quality assurance and quality
 Depends:
     R (>= 3.2.3)
 Imports:
-    eddy4R.base (>= 0.0.4),
+    eddy4R.base (>= 0.0.5),
     ggplot2 (>= 2.1.0),
     gridExtra (>= 2.2.1),
     gtable (>= 0.2.0),
