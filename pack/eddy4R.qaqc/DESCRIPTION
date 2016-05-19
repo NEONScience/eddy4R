@@ -1,6 +1,6 @@
 Package: eddy4R.qaqc
 Title: Eddy-covariance calculation for R: Quality assurance and quality control
-Version: 0.0.1
+Version: 0.0.2
 Authors@R: c( person("Cove", "Sturtevant", email = "csturtevant@neoninc.org", role = c("aut", "cre")),
               person("Stefan", "Metzger", email = "eddy4R.info@gmail.com", role = c("aut")),
               person("Tim", "Meehan", email = "tmeehan@neoninc.org", role = c("aut")))
@@ -9,10 +9,10 @@ Description: Eddy-covariance calculation for R: Quality assurance and quality
 Depends:
     R (>= 3.2.3)
 Imports:
-    eddy4R.base (>= 0.0.3),
-    ggplot2 (>= 2.0.0),
-    gridExtra (>= 2.0.0),
-    gtable (>= 0.1.2),
+    eddy4R.base (>= 0.0.4),
+    ggplot2 (>= 2.1.0),
+    gridExtra (>= 2.2.1),
+    gtable (>= 0.2.0),
     reshape2 (>= 1.4.1),
     Rmisc (>= 1.5)
 License: Terms of use of the NEON FIU algorithm repository dated 2015-01-16
