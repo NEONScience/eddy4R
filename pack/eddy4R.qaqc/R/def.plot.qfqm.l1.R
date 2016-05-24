@@ -92,42 +92,85 @@ def.plot.qfqm.l1 <- function (
     dataIdxQf <- data.frame(ts=dataIdx$ts,val=dataIdx$mean,valQfFinlFail=dataIdx$mean)
     dataIdxQf$valQfFinlFail[dataIdx$qfFinl==0] <- NA
     dataIdxQf <- reshape2::melt(dataIdxQf,id="ts")
-    plotMean <- ggplot(data=dataIdx,aes(x=ts,y=mean)) + geom_line() +
-      geom_point() + 
-      geom_point(data=dataIdxQf,aes(x=ts,y=value,color=factor(variable))) + 
+    if(base::sum(dataIdx$mean,na.rm=TRUE) == 0) {
+      # No non-NA data, generate empty plot
+      plotMean <- ggplot(data=dataIdx,aes(x=ts)) + geom_blank()
+    } else {
+      # Data to plot!
+      plotMean <- ggplot(data=dataIdx,aes(x=ts,y=mean)) + geom_line() +
+        geom_point() + 
+        geom_point(data=dataIdxQf,aes(x=ts,y=value,color=factor(variable))) 
+    }
+    plotMean <- plotMean +
       theme_bw()+
       scale_colour_manual(name="",values=c("black","red"),labels=c("Final QF=0","Final QF=1")) +
       theme(legend.title=element_blank(),legend.position=c(1,1),legend.justification=c(1,1)) +
       theme(legend.background=element_blank(),legend.key=element_blank()) + 
       labs(title=" ",x="Date/Time",y="Mean")
     
-    plotMin <- ggplot() + geom_line(data=dataIdx,aes(x=dataIdx$ts,y=dataIdx$min)) +
-      geom_point(data=dataIdx,aes(x=dataIdx$ts,y=dataIdx$min)) + 
-      labs(title=nameVarsIdx,x="Date/Time",y="Minimum") + theme_bw() +
-      geom_point(aes(x=dataIdx$ts[dataIdx[,"qfFinl"]==1],y=dataIdx$min[dataIdx[,"qfFinl"]==1]),color="red")
+    if(base::sum(dataIdx$min,na.rm=TRUE) == 0) {
+      # No non-NA data, generate empty plot
+      plotMin <- ggplot(data=dataIdx,aes(x=ts)) + geom_blank() + 
+        labs(title=nameVarsIdx,x="Date/Time",y="Minimum") + theme_bw()
+    } else {
+      # Data to plot!
+      plotMin <- ggplot() + geom_line(data=dataIdx,aes(x=dataIdx$ts,y=dataIdx$min)) +
+        geom_point(data=dataIdx,aes(x=dataIdx$ts,y=dataIdx$min)) +
+        labs(title=nameVarsIdx,x="Date/Time",y="Minimum") + theme_bw() +
+        geom_point(aes(x=dataIdx$ts[dataIdx[,"qfFinl"]==1],y=dataIdx$min[dataIdx[,"qfFinl"]==1]),color="red") 
+    }
+
     
-    plotMax <- ggplot() + geom_line(data=dataIdx,aes(x=dataIdx$ts,y=dataIdx$max)) +
-      geom_point(data=dataIdx,aes(x=dataIdx$ts,y=dataIdx$max)) + 
-      labs(title=" ",x="Date/Time",y="Maximum") + theme_bw() +
-      geom_point(aes(x=dataIdx$ts[dataIdx[,"qfFinl"]==1],y=dataIdx$max[dataIdx[,"qfFinl"]==1]),color="red")
+    if(base::sum(dataIdx$max,na.rm=TRUE) == 0) {
+      # No non-NA data, generate empty plot
+      plotMax <- ggplot(data=dataIdx,aes(x=ts)) + geom_blank() + 
+        labs(title=" ",x="Date/Time",y="Maximum") + theme_bw()
+    } else {
+      # Data to plot!
+      plotMax <- ggplot() + geom_line(data=dataIdx,aes(x=dataIdx$ts,y=dataIdx$max)) +
+        geom_point(data=dataIdx,aes(x=dataIdx$ts,y=dataIdx$max)) + 
+        labs(title=" ",x="Date/Time",y="Maximum") + theme_bw() +
+        geom_point(aes(x=dataIdx$ts[dataIdx[,"qfFinl"]==1],y=dataIdx$max[dataIdx[,"qfFinl"]==1]),color="red") 
+    }
     
     
-    plotVar <- ggplot() + geom_line(data=dataIdx,aes(x=dataIdx$ts,y=dataIdx$var)) +
-      geom_point(data=dataIdx,aes(x=dataIdx$ts,y=dataIdx$var)) + 
-      labs(title=" ",x="Date/Time",y="Variance") + theme_bw() +
-      geom_point(aes(x=dataIdx$ts[dataIdx[,"qfFinl"]==1],y=dataIdx$var[dataIdx[,"qfFinl"]==1]),color="red")
+    if(base::sum(dataIdx$var,na.rm=TRUE) == 0) {
+      # No non-NA data, generate empty plot
+      plotVar <- ggplot(data=dataIdx,aes(x=ts)) + geom_blank() + 
+        labs(title=" ",x="Date/Time",y="Variance") + theme_bw()
+    } else {
+      # Data to plot!
+      plotVar <- ggplot() + geom_line(data=dataIdx,aes(x=dataIdx$ts,y=dataIdx$var)) +
+        geom_point(data=dataIdx,aes(x=dataIdx$ts,y=dataIdx$var)) + 
+        labs(title=" ",x="Date/Time",y="Variance") + theme_bw() +
+        geom_point(aes(x=dataIdx$ts[dataIdx[,"qfFinl"]==1],y=dataIdx$var[dataIdx[,"qfFinl"]==1]),color="red") 
+    }
+
+    if(base::sum(dataIdx$ste,na.rm=TRUE) == 0) {
+      # No non-NA data, generate empty plot
+      plotSte <- ggplot(data=dataIdx,aes(x=ts)) + geom_blank() + 
+        labs(title=" ",x="Date/Time",y="Standard error") + theme_bw()
+    } else {
+      # Data to plot!
+      plotSte <- ggplot() + geom_line(data=dataIdx,aes(x=dataIdx$ts,y=dataIdx$ste)) +
+        geom_point(data=dataIdx,aes(x=dataIdx$ts,y=dataIdx$ste)) + 
+        labs(title=" ",x="Date/Time",y="Standard error") + theme_bw() +
+        geom_point(aes(x=dataIdx$ts[dataIdx[,"qfFinl"]==1],y=dataIdx$ste[dataIdx[,"qfFinl"]==1]),color="red") 
+    }
     
+
+    if(base::sum(dataIdx$numPts,na.rm=TRUE) == 0) {
+      # No non-NA data, generate empty plot
+      plotNumPts <- ggplot(data=dataIdx,aes(x=ts)) + geom_blank() + 
+        labs(title=" ",x="Date/Time",y="Number of points") + theme_bw()
+    } else {
+      # Data to plot!
+      plotNumPts <- ggplot() + geom_line(data=dataIdx,aes(x=dataIdx$ts,y=dataIdx$numPts)) +
+        geom_point(data=dataIdx,aes(x=dataIdx$ts,y=dataIdx$numPts)) + 
+        labs(title=" ",x="Date/Time",y="Number of points") + theme_bw() +
+        geom_point(aes(x=dataIdx$ts[dataIdx[,"qfFinl"]==1],y=dataIdx$numPts[dataIdx[,"qfFinl"]==1]),color="red")
+    }
     
-    plotSte <- ggplot() + geom_line(data=dataIdx,aes(x=dataIdx$ts,y=dataIdx$ste)) +
-      geom_point(data=dataIdx,aes(x=dataIdx$ts,y=dataIdx$ste)) + 
-      labs(title=" ",x="Date/Time",y="Standard error") + theme_bw() +
-      geom_point(aes(x=dataIdx$ts[dataIdx[,"qfFinl"]==1],y=dataIdx$ste[dataIdx[,"qfFinl"]==1]),color="red")
-    
- 
-    plotNumPts <- ggplot() + geom_line(data=dataIdx,aes(x=dataIdx$ts,y=dataIdx$numPts)) +
-      geom_point(data=dataIdx,aes(x=dataIdx$ts,y=dataIdx$numPts)) + 
-      labs(title=" ",x="Date/Time",y="Number of points") + theme_bw() +
-      geom_point(aes(x=dataIdx$ts[dataIdx[,"qfFinl"]==1],y=dataIdx$numPts[dataIdx[,"qfFinl"]==1]),color="red")
       
     
     Rmisc::multiplot(plotMean,plotVar,plotMin,plotSte,plotMax,plotNumPts,cols=3)
