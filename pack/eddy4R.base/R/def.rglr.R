@@ -8,10 +8,10 @@
 
 #' @param \code{timeMeas} A vector containing the observation times. Of class "POSIXlt" including timezone attribute, and of the same length as \code{dataMeas}. [-]
 #' @param \code{dataMeas} A named data.frame containing the observations. Columns may be of class "numeric" or "integer", and of the same length as \code{timeMeas}. Columns of classes other than "numeric" or "integer" are removed and not included in the returned \code{dataRegl}. [user-defined]
-#' @param \code{unitMeas} A vector containing the unit of each column in \code{dataMeas}. Of class "character".
-#' @param \code{BgnRglr} Desired begin time for the regularized dataset. Of class "POSIXlt" including timezone attribute, and \code{length(BgnRglr) = 1}. [-]
-#' @param \code{EndRglr} Desired end time for the regularized dataset. Of class "POSIXlt" including timezone attribute, and \code{length(EndRglr) = 1}. [-]
-#' @param \code{TzRglr} Desired timezone for the regularized dataset. Of class "character" and \code{length(TzRglr) = 1}, defaults to the same timezone as \code{BgnRglr}. [-]
+#' @param \code{unitMeas} A vector containing the unit of each column in \code{dataMeas}. Of class "character". It is recommended to conform to the "unit representation" guidelines documented in the eddy4R.base package.
+#' @param \code{BgnRglr} Desired begin time for the regularized dataset. Of class "POSIXlt" including timezone attribute, and \code{length(BgnRglr) = 1}. This input is not used in the "cybiDflt" method. [-]
+#' @param \code{EndRglr} Desired end time for the regularized dataset. Of class "POSIXlt" including timezone attribute, and \code{length(EndRglr) = 1}. This input is not used in the "cybiDflt" method. [-]
+#' @param \code{TzRglr} Desired timezone for the regularized dataset. Of class "character" and \code{length(TzRglr) = 1}, defaults to the same timezone as \code{BgnRglr}. This input is not used in the "cybiDflt" method. [-]
 #' @param \code{FreqRglr} Desired frequency of  the regularized dataset. Of class "numeric" or "integer" and \code{length(FreqRglr) = 1}. [Hz]
 #' @param \code{MethRglr} Switch for different regularization methods. Of class "character", currently defaults to "zoo". [-]
 
@@ -50,22 +50,27 @@
 # changelog and author contributions / copyrights
 #   Stefan Metzger (2016-05-08)
 #     original creation
+#   Cove Sturtevant (2016-05-19)
+#     Addition of NEON CI default regularization procedure
+#     Added Null defaults for unitMeas, BgnRglr, and EndRglr 
+#     Added checks on inputs specific to "zoo" method
 ##############################################################################################
 
 # start function for regularization
 def.rglr <- function(
   timeMeas,
   dataMeas,
-  unitMeas,
-  BgnRglr,
-  EndRglr,
+  unitMeas=NULL,
+  BgnRglr=NULL,
+  EndRglr=NULL,
   TzRglr = attributes(BgnRglr)$tzone,
   FreqRglr,
-  MethRglr
+  MethRglr="zoo"
 ){
+
   
   # assign list for storing the results
-  rpt <- list()
+  rpt <- base::list()
   rpt$TzRglr <- TzRglr
   rpt$FreqRglr <- FreqRglr
   rpt$MethRglr <- MethRglr
@@ -74,6 +79,18 @@ def.rglr <- function(
   # takes 3 s for 1,728,000 observations, i.e. one day of one 20 Hz variable
   # tested to work with types "double" and "integer"; definitly does not work with type "character"
   if(MethRglr == "zoo") {
+    
+    # Check inputs specific to zoo method
+    if(base::is.null(unitMeas)) {
+      stop("Input 'unitMeas' is required for the 'zoo' method")
+    }
+    if(base::is.null(BgnRglr)) {
+      stop("Input 'BgnRglr' is required for the 'zoo' method")
+    }
+    if(base::is.null(TzRglr)) {
+      stop("Input 'TzRglr' is required for the 'zoo' method")
+    }
+    
     
     # add a small amount of time to avoid "down-rounding" by R-internal POSIX
     timeMeas$sec <- timeMeas$sec + 0.0001
@@ -132,6 +149,58 @@ def.rglr <- function(
     attributes(rpt$dataRglr)$unit <- unitMeas
     
     # end MethRglr == zoo
+  }
+  
+  
+  
+  # Regularize time series according to default NEON cyber infrastructure (CI) L0 -> L0' procedure. 
+  # NEON CI transforms raw L0 data into a regularized time series according to the expected data frequency.
+  # Namely, a new time series is created from the first measurement time, rounded toward zero, using the 
+  # expected data frequency. The first measurement falling in between one time stamp and the next is assigned
+  # to the first of these, and all other measurements falling in this range are ignored. 
+  # This code replicates this procedure in order to compare expected output to that produced by CI.
+  if(MethRglr == "cybiDflt") {
+    
+    numVar <- base::length(dataMeas[1,])
+    
+    # Check timeMeas
+    timeMeas <- try(base::as.POSIXlt(timeMeas),silent=TRUE)
+    numData <- base::length(dataMeas[,1])
+    if(base::class(timeMeas)[1] == "try-error"){
+      stop("Input variable timeMeas must be of class POSIXlt")
+    } else if (base::length(timeMeas) != numData) {
+      stop("Length of input variable timeMeas must be equal to the sample size of dataMeas.")
+    } 
+    
+    # Check FreqRglr
+    if(!base::is.numeric(FreqRglr) || (base::length(FreqRglr) != 1)) {
+      stop("Input parameter FreqRglr must be single number.")
+    }
+    
+    # CI uses the first value as the starting point for the regularization, rounding down to the nearest second
+    # Note: the rounding down aspect is a change implemented week of 1 May 2016. Previously the starting point was
+    # the exact time (to the decimal second).
+    timeRglr <- base::as.POSIXlt(base::seq.POSIXt(from=base::trunc.POSIXt(timeMeas[1],units="secs"),
+                                                to=timeMeas[length(timeMeas)],by=1/FreqRglr))
+    
+    # Pull the first value that falls within each bin
+    dataRglr <- base::vapply(base::seq(from=1,to=length(timeRglr),by=1),FUN=function(x){
+      idx <- base::which((timeMeas >= timeRglr[x]) & (timeMeas < (timeRglr[x]+1/FreqRglr)))
+      if(base::length(idx)>0){
+        return(base::as.double(dataMeas[idx[1],]))
+      } else {
+        return(base::rep(NA,numVar))
+      }
+    },FUN.VALUE=base::numeric(length=numVar))
+    dataRglr <- base::as.data.frame(base::matrix(dataRglr,ncol=numVar,byrow=TRUE)) # Need to transpose
+    base::names(dataRglr) <- base::names(dataMeas) # Assign names same as dataMeas
+    
+    # Report output
+    rpt$timeRglr <- timeRglr
+    rpt$dataRglr <- dataRglr
+    
+    # assign unit attributes
+    attributes(rpt$dataRglr)$unit <- unitMeas
   }
   
   # return results
