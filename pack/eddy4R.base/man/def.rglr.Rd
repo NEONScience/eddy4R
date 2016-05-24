@@ -4,25 +4,29 @@
 \alias{def.rglr}
 \title{Resampling irregular data to strictly regular / equidistant data}
 \usage{
-def.rglr(timeMeas, dataMeas, unitMeas, BgnRglr, EndRglr,
-  TzRglr = attributes(BgnRglr)$tzone, FreqRglr, MethRglr)
+def.rglr(timeMeas, dataMeas, unitMeas = NULL, BgnRglr = NULL,
+  EndRglr = NULL, TzRglr = attributes(BgnRglr)$tzone, FreqRglr,
+  MethRglr = "zoo")
 }
 \arguments{
 \item{\code{timeMeas}}{A vector containing the observation times. Of class "POSIXlt" including timezone attribute, and of the same length as \code{dataMeas}. [-]}
 
 \item{\code{dataMeas}}{A named data.frame containing the observations. Columns may be of class "numeric" or "integer", and of the same length as \code{timeMeas}. Columns of classes other than "numeric" or "integer" are removed and not included in the returned \code{dataRegl}. [user-defined]}
 
-\item{\code{unitMeas}}{A vector containing the unit of each column in \code{dataMeas}. Of class "character".}
+\item{\code{unitMeas}}{A vector containing the unit of each column in \code{dataMeas}. Of class "character". It is recommended to conform to the "unit representation" guidelines documented in the eddy4R.base package.}
 
-\item{\code{BgnRglr}}{Desired begin time for the regularized dataset. Of class "POSIXlt" including timezone attribute, and \code{length(BgnRglr) = 1}. [-]}
+\item{\code{BgnRglr}}{Desired begin time for the regularized dataset. Of class "POSIXlt" including timezone attribute, and \code{length(BgnRglr) = 1}. This input is not used in the "cybiDflt" method. [-]}
 
-\item{\code{EndRglr}}{Desired end time for the regularized dataset. Of class "POSIXlt" including timezone attribute, and \code{length(EndRglr) = 1}. [-]}
+\item{\code{EndRglr}}{Desired end time for the regularized dataset. Of class "POSIXlt" including timezone attribute, and \code{length(EndRglr) = 1}. This input is not used in the "cybiDflt" method. [-]}
 
-\item{\code{TzRglr}}{Desired timezone for the regularized dataset. Of class "character" and \code{length(TzRglr) = 1}, defaults to the same timezone as \code{BgnRglr}. [-]}
+\item{\code{TzRglr}}{Desired timezone for the regularized dataset. Of class "character" and \code{length(TzRglr) = 1}, defaults to the same timezone as \code{BgnRglr}. This input is not used in the "cybiDflt" method. [-]}
 
 \item{\code{FreqRglr}}{Desired frequency of  the regularized dataset. Of class "numeric" or "integer" and \code{length(FreqRglr) = 1}. [Hz]}
 
-\item{\code{MethRglr}}{Switch for different regularization methods. Of class "character", currently defaults to "zoo". [-]}
+\item{\code{MethRglr}}{Switch for different regularization methods. Of class "character", currently defaults to "zoo". [-] \cr
+Method "cybiDflt" implements the default regularization performed by NEON CI. Namely, a new time series is created 
+from the first measurement time, rounded toward zero, using the expected data frequency. The first measurement falling 
+in between one time stamp and the next is assigned to the first of these, and all other measurements falling in this range are ignored.}
 }
 \value{
 Returns a list with elements \code{TzRglr}, \code{FreqRglr}, \code{MethRglr}, \code{timeRglr}, and \code{dataRglr}.
