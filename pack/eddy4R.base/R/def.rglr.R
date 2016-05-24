@@ -13,7 +13,10 @@
 #' @param \code{EndRglr} Desired end time for the regularized dataset. Of class "POSIXlt" including timezone attribute, and \code{length(EndRglr) = 1}. This input is not used in the "cybiDflt" method. [-]
 #' @param \code{TzRglr} Desired timezone for the regularized dataset. Of class "character" and \code{length(TzRglr) = 1}, defaults to the same timezone as \code{BgnRglr}. This input is not used in the "cybiDflt" method. [-]
 #' @param \code{FreqRglr} Desired frequency of  the regularized dataset. Of class "numeric" or "integer" and \code{length(FreqRglr) = 1}. [Hz]
-#' @param \code{MethRglr} Switch for different regularization methods. Of class "character", currently defaults to "zoo". [-]
+#' @param \code{MethRglr} Switch for different regularization methods. Of class "character", currently defaults to "zoo". [-] \cr
+#' Method "cybiDflt" implements the default regularization performed by NEON CI. Namely, a new time series is created 
+#' from the first measurement time, rounded toward zero, using the expected data frequency. The first measurement falling 
+#' in between one time stamp and the next is assigned to the first of these, and all other measurements falling in this range are ignored.
 
 #' @return Returns a list with elements \code{TzRglr}, \code{FreqRglr}, \code{MethRglr}, \code{timeRglr}, and \code{dataRglr}.
 
