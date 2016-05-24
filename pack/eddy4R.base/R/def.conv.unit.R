@@ -197,6 +197,11 @@ def.conv.unit <- function(
   
   # Apply polynomial transformation
   for(idxVar in nameVars) {
+    # If no transformation, skip
+    if((length(coefPoly[[idxVar]]) == 2) && (coefPoly[[idxVar]][1] == 0) && (coefPoly[[idxVar]][2] == 1)) {
+      dataConv[[idxVar]] <- data[[idxVar]]
+      next
+    }
     dataConv[[idxVar]] <- eddy4R.base::def.aply.conv.poly(data=data[[idxVar]],coefPoly=coefPoly[[idxVar]])
   }
 
