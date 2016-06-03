@@ -1,17 +1,8 @@
 ##############################################################################################
 #' @title Resampling using rollapply() function
 
-# type (one of function defintion, function wrapper, workflow, demo): function defintion
-
-# license: Terms of use of the NEON FIU algorithm repository dated 2015-01-16
-
-#' @author Stefan Metzger \email{eddy4R.info@gmail.com}
-
-# changelog and author contributions / copyrights
-#   Stefan Metzger (2013-05-19)
-#     original creation
-#   Stefan Metzger (2015-11-28)
-#     re-formualtion as function() to allow packaging
+#' @author Stefan Metzger \email{eddy4R.info@gmail.com} \cr
+#' Natchaya Pingintha-Durden
 
 #' @description Resampling using rollapply() function.
 
@@ -20,6 +11,7 @@
 #' @return Currently none
 
 #' @references Currently none
+#' License: Terms of use of the NEON FIU algorithm repository dated 2015-01-16
 
 #' @keywords Currently none
 
@@ -28,6 +20,14 @@
 #' @seealso Currently none
 
 #' @export
+
+# changelog and author contributions / copyrights
+#   Stefan Metzger (2013-05-19)
+#     original creation
+#   Stefan Metzger (2015-11-28)
+#     re-formualtion as function() to allow packaging
+#   Natchaya P-Durden (2016-06-02)
+#     Initail naming convention for eddy4R
 ##############################################################################################
 
 resamp <- function(
