@@ -48,21 +48,34 @@ def.vari.seSq.agr <- function(data =
   # assign list for the reported variables
   rpt <- list()
   
-  # calculate mean
-  rpt$mean = base::mean(data$mean, na.rm = TRUE)
+  # if there is not data in mean and vari, return a list of NaN
+  if (length(which(!is.na(data$mean)) & !is.na(data$vari)) == 0){
+    rpt <- list(
+      mean = NaN,
+      variExt = NaN,
+      variIntl = NaN,
+      vari = NaN,
+      seSq = NaN
+    )
+  } else {
+    # calculate mean
+    rpt$mean = base::mean(data$mean, na.rm = TRUE)
+    
+    # calculate external variance
+    rpt$variExt = stats::var(data$mean, na.rm = TRUE)
+    
+    # calculate internal variance
+    rpt$variIntl = base::mean(data$vari, na.rm = TRUE)
+    
+    # calculate total variance = external variance + internal variance
+    rpt$vari = rpt$variExt + rpt$variIntl
+    
+    # calculate squared standard error = external variance / sample size:
+    # how far is the sample mean likely to be from the population mean
+    rpt$seSq = rpt$variExt / length(na.omit(data$mean))
+  }
   
-  # calculate external variance
-  rpt$variExt = stats::var(data$mean, na.rm = TRUE)
   
-  # calculate internal variance
-  rpt$variIntl = base::mean(data$vari, na.rm = TRUE)
-  
-  # calculate total variance = external variance + internal variance
-  rpt$vari = rpt$variExt + rpt$variIntl
-  
-  # calculate squared standard error = external variance / sample size:
-  # how far is the sample mean likely to be from the population mean
-  rpt$seSq = rpt$variExt / length(na.omit(data$mean))
   
   # return results
   return(rpt)
