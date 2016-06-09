@@ -48,7 +48,7 @@ def.vari.seSq.agr <- function(data =
   # assign list for the reported variables
   rpt <- list()
   
-  # if there is not data in mean and vari, return a list of NaN
+  # if there is not data in the input: mean and vari, return a list of NaN
   if (length(which(!is.na(data$mean)) & !is.na(data$vari)) == 0){
     rpt <- list(
       mean = NaN,
