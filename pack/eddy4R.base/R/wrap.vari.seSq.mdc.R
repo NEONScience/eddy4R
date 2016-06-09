@@ -85,11 +85,11 @@ wrap.sd.se.mdc <- function(
     
     if(length(whr) > 0){
       
-      tmp <-  def.sd.se.agr(
+      tmp <-  def.sd.se.agr(data = data.frame(
         mean = rpt$hrly$mean[whr], 
         vari = rpt$hrly$vari[whr],
         seSq = rpt$hrly$seSq[whr]
-      )
+      ))
       
       list(
         hour = floor(rpt$hrly$hour[whr][1]),

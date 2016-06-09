@@ -73,7 +73,7 @@ wrap.sd.se.moly <- function(
       seSq = rpt$mdc$seSq[whr]
     )
   } else {
-    rpt$moly <- data.frame(
+    rpt$moly <- list(
       mean = NaN,
       vari = NaN,
       sd = NaN,
