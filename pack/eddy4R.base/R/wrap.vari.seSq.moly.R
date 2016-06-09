@@ -75,10 +75,11 @@ wrap.sd.se.moly <- function(
   } else {
     rpt$moly <- list(
       mean = NaN,
+      variExt = NaN,
+      variIntl = NaN,
       vari = NaN,
-      sd = NaN,
-      seSq = NaN,
-      se = NaN)
+      seSq = NaN
+    )
   }
   
   
