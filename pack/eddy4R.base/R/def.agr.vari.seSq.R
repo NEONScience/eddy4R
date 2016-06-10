@@ -48,8 +48,8 @@ def.vari.seSq.agr <- function(data =
   # assign list for the reported variables
   rpt <- list()
   
-  # if there is not data in the input: mean and vari, return a list of NaN
-  if (length(which(!is.na(data$mean)) & !is.na(data$vari)) == 0){
+  # if there is no data in the mean,  return a list of NaN
+  if (length(which(!is.na(data$mean))) == 0){
     rpt <- list(
       mean = NaN,
       variExt = NaN,
@@ -74,7 +74,6 @@ def.vari.seSq.agr <- function(data =
     # how far is the sample mean likely to be from the population mean
     rpt$seSq = rpt$variExt / length(na.omit(data$mean))
   }
-  
   
   
   # return results
