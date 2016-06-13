@@ -35,22 +35,15 @@
 #     Initail naming convention for eddy4R
 ##############################################################################################
 
-#resamp1<-function(mat.raw,freq,freq_res,EIDAS) {#
 def.resp <- function (data, FreqInp, FreqOut, MethResp, Col=NULL) {
-#--------------------------------------------------------------------------------------------
-#RESAMPLING
-  #creating cartesian vector angles from azimuth angles
-#mat.raw<-rawdata
-  #if(EIDAS == T) {#
-    #mat.raw<-cbind(mat.raw,def.conv.az.cart(mat.raw[,22]))	#heading nacelle#
-    #mat.raw<-cbind(mat.raw,def.conv.az.cart(mat.raw[,38]))	#heading TCM#
-  #}#
+  
+#creating a new data frame for the discontinuity variables
 if (!is.null(Col)){
-  #creating a new data frame for the discontinuity variables
+  
   colData <-data[Col]
   temp01 <-c()
   
-  #converting the discontinuity variables from azimuth angles to cartesian vector angles
+  #converting the discontinuity variables e.g. wind direction data from azimuth angles to cartesian vector angles
   for (i in 1:length(Col)){
     
     temp01[[i]]<- def.conv.az.cart(colData[,i]) 
@@ -60,54 +53,33 @@ if (!is.null(Col)){
 }
 
   #calculation of control variables
-  #avg_no=freq/freq_res			#number of datasets to be averaged over#
   NumSamp = FreqInp/FreqOut #number of datasets to be averaged over
-  #rows=as.integer(nrow(mat.raw)/avg_no)	#number of rows of the output data#
   NumRow = as.integer(nrow(data)/NumSamp) #number of rows of the output data
   
-#allocate matrix
- # mat.raw.res=matrix(nrow=rows, ncol=ncol(mat.raw),#
-  #  dimnames = list(c(as.character(1:rows)),dimnames(mat.raw) [[2]])) #
-
-  #actual resampling
-  #for (i in 1:ncol(mat.raw)){#
-   # mat.raw.res[,i]<-zoo::rollapply(zoo(mat.raw[,i]),avg_no,mean,na.rm=T,by=avg_no)#
-  #}#
-
 #resampling method1 by using rollapply in zoo
 if (MethResp == "zoo"){
   
   for (i in 1:ncol(data)){
-    
     temp02 <- zoo::rollapply(zoo::zoo(data[,i]), NumSamp, mean, na.rm=T, by=NumSamp)
-    if(i == 1) temp03 <- temp02 else temp03 <- cbind(temp03, temp02)
+    if(i == 1) rpt <- temp02 else rpt <- cbind(rpt, temp02)
   }
 }
 
-#resampling method1 by using filter() function 
+#resampling method2 by using filter() function 
 if (MethResp == "filt"){
   
   for(i in 1:ncol(data)) {
     temp02 <- stats::filter(data[,i], rep(1 / NumSamp, NumSamp), sides=2)
     if(i == 1) temp03 <- temp02 else temp03 <- cbind(temp03, temp02)
   }  
-  
+  #discard non-used data intervals
+  idx <- seq(ceiling(NumSamp), nrow(temp03), by=NumSamp)
+  rpt <- temp03[idx,] 
 }
 
-dimnames(temp03)[[2]] <- dimnames(data)[[2]]
+dimnames(rpt)[[2]] <- dimnames(data)[[2]]
 
-#discard non-used data intervals
-whr <- seq(ceiling(NumSamp), nrow(temp03), by=NumSamp)
-rpt <- temp03[whr,]
-
-
-
-  #overwriting the azimuth angle averages with the re-calculation from cartesian vector averages
-  #if(EIDAS == T) {#
-    #mat.raw.res[,22]<-def.conv.cart.az(mat.raw.res[,(ncol(mat.raw)-3):(ncol(mat.raw)-2)])	#heading nacelle#
-   # mat.raw.res[,38]<-def.conv.cart.az(mat.raw.res[,(ncol(mat.raw)-1):(ncol(mat.raw)-0)])	#heading TCM #
-  #  mat.raw.res<-mat.raw.res[,1:(ncol(mat.raw)-4)] #
-  #}#
+#overwriting the azimuth angle averages with the re-calculation from average of cartesian vector 
 if (!is.null(Col)){
   
   for (i in 1:length(Col)){
@@ -121,11 +93,15 @@ if (!is.null(Col)){
   
   rpt[,Col[i]] <- def.conv.cart.az(rpt[,col01:col02])  
 }
-rpt <- rpt[,1:(2*(length(Col)))]  #delete
+
+rpt <- rpt[,1:(ncol(rpt)-(2*(length(Col))))]  #discard non-used columns (the cartesian vector data)
+
 }
 
+rpt <- data.frame(rpt,row.names = NULL) 
 
-return(data.frame(rpt))
+return(rpt)
+
 }
 
 
@@ -204,6 +180,6 @@ resamp2 <- function(
     
   #return result
     return(data.frame(OUT))
-    
+  
 }
 
