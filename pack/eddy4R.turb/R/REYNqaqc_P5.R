@@ -1,0 +1,1022 @@
+##############################################################################################
+#' @title Integral over the universal function
+
+#' @author
+#' Stefan Metzger \email{eddy4R.info@gmail.com}
+
+#' @description 
+#' Function defintion. Integral over the universal function.
+
+#' @param Currently none
+
+#' @return Currently none
+
+#' @references Currently none
+
+#' @keywords eddy-covariance, turbulent flux
+
+#' @examples Currently none
+
+#' @seealso Currently none
+
+#' @export
+
+# changelog and author contributions / copyrights
+#   Stefan Metzger (2015-03-18)
+#     original creation
+#   Stefan Metzger (2015-11-29)
+#     added Roxygen2 tags
+##############################################################################################
+
+############################################################
+#CALCULATION OF THE INTEGRAL OVER THE UNIVERSAL FUNCTION
+  #after Businger (1971) in the form of Hogstrom (1988)
+  #from Foken (2006) Eq. (2.85) - (2.88)
+############################################################
+
+univfun <- function(
+  d_z_m,
+  d_L_v_0,
+  sigma_range=c(-2, 1)
+) {
+
+  #calculation of local stability sigma [-]
+    sigma <- d_z_m / d_L_v_0
+  
+  #assign a flag for universal function being calculated within defined stability range
+    sigma_flag <- 0
+    
+  #instable case
+    if(!is.na(sigma) & sigma < 0) {
+      
+      #catch cases for which parametrization is not defined
+        if (sigma < sigma_range[1]) { 
+            sigma <- sigma_range[1]
+            sigma_flag <- -1
+        }
+  
+      #actual calculation
+        x <- (1 - 19.3 * sigma)^(1/4)
+        y <- 0.95 * (1 - 11.6 * sigma)^(1/2)
+        Psi <- log(((1 + x^2) / 2) * ((1 + x) / 2)^2) - 2 * atan(x) + pi / 2
+        rm(x, y)
+  
+  #stable case
+    } else {
+      
+      #catch cases for which parametrization is not defined
+        if (!is.na(sigma) & sigma > sigma_range[2]) {
+            sigma <- sigma_range[2]
+            sigma_flag <- 1
+        }
+  
+      #actual calculation
+        Psi <- -6 * sigma
+      
+    }
+  
+  #return result
+    OUT <- list(Psi=Psi, sigma_flag=sigma_flag)
+    return(OUT)
+  
+  #universal function for momentum exchange after Skeib (1980)
+    #not integrated, only defined for sigma_range <- c(-2,2)
+    #only defined for sigma_range <- c(-2,2)
+  
+    #any case not fulfilling sigma_range
+      #Psi <- NA
+    #labile case
+      #if(sigma > sigma_range[1] & sigma < -0.0625) Psi <- (-sigma / 0.0625)^(-1/4)
+    #neutral case
+      #if(sigma >= -0.0625 & sigma <= 0.125) Psi <- 1
+    #stable case
+      #if(sigma > 0.125 & sigma < sigma_range[2]) Psi <- (sigma / 0.125)
+
+}
+
+
+
+##############################################################################################
+#' @title Aerodynamic roughness length
+
+#' @author
+#' Stefan Metzger \email{eddy4R.info@gmail.com}
+
+#' @description 
+#' Function defintion. Aerodynamic roughness length.
+
+#' @param Currently none
+
+#' @return Currently none
+
+#' @references Currently none
+
+#' @keywords eddy-covariance, turbulent flux
+
+#' @examples Currently none
+
+#' @seealso Currently none
+
+#' @export
+
+# changelog and author contributions / copyrights
+#   Stefan Metzger (2015-03-18)
+#     original creation
+#   Stefan Metzger (2015-11-29)
+#     added Roxygen2 tags
+##############################################################################################
+
+############################################################
+#CALCULATION OF AERODYNAMIC ROUGHNESS LENGTH d_z_0 (NEEDED FOR K04 footprint model)
+############################################################
+
+roughness <- function(
+  d_z_m,
+  d_L_v_0,
+  u_hor,
+  u_star,
+  sigma_range=c(-2, 1)
+) {
+
+  #integral over the universal function after Businger (1971) in the form of Hoegstroem (1988)
+  #Foken (2006) Eq. (2.85) - (2.88)
+    dum <- sapply(1:length(d_L_v_0), function(x) univfun(d_z_m=d_z_m[x],
+                                                         d_L_v_0=d_L_v_0[x],
+                                                         sigma_range=sigma_range
+                                                         )
+                  )
+    dum <- data.frame(t(dum))
+    Psi <- unlist(dum$Psi)
+    sigma_flag <- unlist(dum$sigma_flag)
+    rm(dum)
+  
+  #calculation of roughness length d_z_0 [m]
+    d_z_0 <- d_z_m / exp(eddy4R.base::Natu$VonkFokn * u_hor / u_star + Psi)
+    names(d_z_0) <- "d_z_0"
+  
+  #return result
+    return(d_z_0)
+
+}
+
+
+
+##############################################################################################
+#' @title Stationarity tests
+
+#' @author
+#' Stefan Metzger \email{eddy4R.info@gmail.com}
+
+#' @description 
+#' Function defintion. Stationarity tests.
+
+#' @param Currently none
+
+#' @return Currently none
+
+#' @references Currently none
+
+#' @keywords eddy-covariance, turbulent flux
+
+#' @examples Currently none
+
+#' @seealso Currently none
+
+#' @export
+
+# changelog and author contributions / copyrights
+#   Stefan Metzger (2015-03-18)
+#     original creation
+#   Stefan Metzger (2015-11-29)
+#     added Roxygen2 tags
+##############################################################################################
+
+############################################################
+#STATIONARITY TESTS
+############################################################
+
+REYNstat_FD_mole_dry <- function(
+  data,			#data frame with EC data
+  type=c(1, 2, 3)[2],	#analysis with trend (1) or internal stationarity (2) or both (3)
+  whr_flux, #for which fluxes to perform stationarity test?
+  NOsusa=6,		#number of subsamples for trend==FALSE
+  FcorPOT,
+  FcorPOTl=FcorPOTl
+) {
+
+#-----------------------------------------------------------
+#BASIC SETUP
+
+  #fluxes including trend
+    tren <- REYNflux_FD_mole_dry(
+      data=data,
+      AlgBase="mean",
+      FcorPOT=FcorPOT,
+      FcorPOTl=FcorPOTl
+    )
+
+
+###
+if(type %in% c(1, 3)) {
+###
+
+#-----------------------------------------------------------
+#TREND EFFECT
+
+  #fluxes after trend removal
+    detr <- REYNflux_FD_mole_dry(
+      data=data,
+      AlgBase="trnd",
+      FcorPOT=FcorPOT,
+      FcorPOTl=FcorPOTl
+    )
+
+  #deviation [%]
+    crit_t <- ((detr$mn - tren$mn) / tren$mn * 100)[whr_flux]
+
+  #clean up
+    rm(detr)
+
+
+###
+} else crit_t <- NULL
+###
+
+
+###
+if(type %in% c(2, 3)) {
+###
+
+#-----------------------------------------------------------
+#INTERNAL INSTATIONARITIES
+
+  #class boundaries
+    sampBO <- round(seq(1, nrow(data), length.out=NOsusa + 1))
+    sampBO[length(sampBO)] <- sampBO[length(sampBO)] + 1
+
+  #list with indexes of subsamples
+    sampLU <- sapply(1:(length(sampBO) - 1), function(x) seq(sampBO[x], sampBO[x + 1] - 1))
+
+  #results for the subsamples
+    sampRE <- sapply(1:NOsusa, function(x) REYNflux_FD_mole_dry(
+    	data=data[sampLU[[x]],],
+    	AlgBase="mean",
+    	FcorPOT=FcorPOT,
+    	FcorPOTl=FcorPOTl
+      )$mn[,whr_flux]
+    )
+    sampRE <- data.frame(matrix(unlist(sampRE), ncol=length(whr_flux), byrow=TRUE))
+    dimnames(sampRE)[[2]] <- whr_flux
+
+  #stationarity criteria
+    crit_i <- (colMeans(sampRE) - tren$mn[whr_flux]) / tren$mn[whr_flux] * 100
+
+  #clean up
+    rm(tren, NOsusa, sampBO, sampLU, sampRE)
+
+###
+} else crit_i <- NULL
+###
+
+
+#-----------------------------------------------------------
+#AGGREGATE AND RETURN RESULTS
+
+  #aggregate results
+    crit <- list()
+    if(!is.null(crit_t)) crit$trend=crit_t
+    if(!is.null(crit_i)) crit$subsa=crit_i
+
+  #return results
+    return(crit)
+
+}
+
+
+
+##############################################################################################
+#' @title Integral turbulence characteristics
+
+#' @author
+#' Stefan Metzger \email{eddy4R.info@gmail.com}
+
+#' @description 
+#' Function defintion. Integral turbulence characteristics.
+
+#' @param Currently none
+
+#' @return Currently none
+
+#' @references Currently none
+
+#' @keywords eddy-covariance, turbulent flux
+
+#' @examples Currently none
+
+#' @seealso Currently none
+
+#' @export
+
+# changelog and author contributions / copyrights
+#   Stefan Metzger (2015-03-18)
+#     original creation
+#   Stefan Metzger (2015-11-29)
+#     added Roxygen2 tags
+##############################################################################################
+
+############################################################
+#INTEGRAL TURBULENCE CHARACTERISTICS
+############################################################
+
+
+REYNitcs <- function(
+  sigma,
+  latitude,
+  stdev,
+  scale
+) {
+
+
+#-----------------------------------------------------------
+#MODELLED ITCS
+
+  #STANDARD MODEL
+    #assign model coefficients
+      #stdevU / u_star
+      	ITCuC <- if(sigma < -0.032) c(4.15, 1/8) else c(2.7, 0)
+      #stdevW / u_star
+	      ITCwC <- if(sigma < -0.032) c(2.0, 1/8) else c(1.3, 0)
+      #stdevT / T_star_SL
+  	    ITCtC <-  if(sigma < -1) c(1, -1/3) else 
+  		  if(sigma >= -1 & sigma < -0.062) c(1, -1/4) else
+  		  if(sigma >= -0.062 & sigma < 0.02) c(0.5, -1/2) else
+  		  if(sigma >= 0.02) c(1.4,  -1/4)
+      #calculate models; the absolute value of stability is used, since negative values often result in NAs of the potency
+        ITCuM <- ITCuC[1] * abs(sigma)^ITCuC[2]
+        ITCwM <- ITCwC[1] * abs(sigma)^ITCwC[2]
+        ITCtM <- ITCtC[1] * abs(sigma)^ITCtC[2]
+
+  #UPDATED MODEL (THOMAS AND FOKEN, 2002)
+    #coriolis parameter
+      f <- def.coef.corl(latitude)
+    #update models
+      if(sigma > -0.2 & sigma < 0.4) {
+      	ITCuM <- 0.44 * log(f / scale$u_star) + 6.3
+      	ITCwM <- 0.21 * log(f / scale$u_star) + 3.1
+      }
+    #clean up
+      rm(ITCuC, ITCwC, ITCtC, f)
+
+
+#-----------------------------------------------------------
+#COMPARE TO MEASURED ITCS
+
+  #calculate observed ITCs
+    ITCuO <- stdev$u_hor / scale$u_star
+    ITCwO <- stdev$w_hor / scale$u_star
+    ITCtO <- stdev$T_air / scale$T_star_SL
+
+  #final criteria [%]
+    #individual
+      ITC <- data.frame(
+      	u_hor=(abs(ITCuO - ITCuM) / ITCuM) * 100,
+      	w_hor=(abs(ITCwO - ITCwM) / ITCwM) * 100,
+      	T_air=(abs(ITCtO - ITCtM) / ITCtM) * 100
+      )
+
+    #combined
+      ITC$u_star=sqrt(ITC$u_hor^2 + ITC$w_hor^2)
+      ITC$F_H_kin=sqrt(ITC$w_hor^2 + ITC$T_air^2)
+
+  #clean up
+    rm(ITCuO, ITCuM, ITCwO, ITCwM, ITCtO, ITCtM)
+
+#-----------------------------------------------------------
+#EXPORT RESULTS
+
+  return(ITC)
+
+}
+
+
+
+##############################################################################################
+#' @title Integral length scales
+
+#' @author
+#' Stefan Metzger \email{eddy4R.info@gmail.com}
+
+#' @description 
+#' Function defintion. Integral length scales.
+
+#' @param Currently none
+
+#' @return Currently none
+
+#' @references Currently none
+
+#' @keywords eddy-covariance, turbulent flux
+
+#' @examples Currently none
+
+#' @seealso Currently none
+
+#' @export
+
+# changelog and author contributions / copyrights
+#   Stefan Metzger (2015-03-18)
+#     original creation
+#   Stefan Metzger (2015-11-29)
+#     added Roxygen2 tags
+##############################################################################################
+
+############################################################
+#INTEGERAL LENGTH SCALES
+############################################################
+
+
+INTsca <- function(
+  d_xy_flow,
+  depe
+) {
+
+  #fill gaps via linear interpolation
+    depe <- approx(d_xy_flow, depe, xout=d_xy_flow)[[2]]
+
+  #get rid of NAs at start and end
+    dum_NA <- na.omit(data.frame(d_xy_flow=d_xy_flow, depe=depe))
+    d_xy_flow <- dum_NA$d_xy_flow
+    depe <- dum_NA$depe
+    rm(dum_NA)
+
+  #demeaning and detrending
+    depe <- lm(depe ~ d_xy_flow)$residuals
+
+  #path through air [m] per increment, the stepwidth of the integral scale
+    incr <- max(d_xy_flow - min(d_xy_flow)) / length(d_xy_flow)
+
+  #calculate auto-correlation function
+    lag <- 10; crit <- 1
+    while(crit > 0) {
+      lag <- lag * 2
+      ACF <- acf(depe, lag.max = lag, type = "correlation", plot = FALSE, na.action = na.fail, demean = TRUE)
+      crit <- min(ACF$acf)
+    }
+
+  #integral length scale: typical size of the largest or most energy-transporting eddies.
+  #a) integral over acf until first zero crossing (Bange, 2002);
+  #b) first maximum of the integral (Lenschow, 1986);
+    #find first zero crossing
+#      whr_zero <- ACF$lag[zeroCross(ACF$acf, slope="negative")[1]]
+#      whr_zero <- ACF$lag[GenKern::nearest(x=ACF$acf, xval=0)[1]]
+       require(EMD)
+       #data needs have extrema, otherwise it will not identify the zero crossing
+       #hence attaching sin(1:10) to the end
+       whr_zero <- EMD::extrema(y=c(ACF$acf, sin(1:10)))$cross[1,2]
+    
+    #for each cell, weight distance increment with correlation coefficient
+      I <- sum(ACF$acf[1:whr_zero]) * incr
+    #alternatively: all in one, assume that correlation monotonously decreases after peak
+      #I <- max(cumsum(ACF$acf)) * incr
+
+  #return result
+    return(I)
+
+}
+
+
+
+##############################################################################################
+#' @title Statistical errors for fluxes
+
+#' @author
+#' Stefan Metzger \email{eddy4R.info@gmail.com}
+
+#' @description 
+#' Function defintion. Statistical errors for fluxes.
+
+#' @param Currently none
+
+#' @return Currently none
+
+#' @references Currently none
+
+#' @keywords eddy-covariance, turbulent flux
+
+#' @examples Currently none
+
+#' @seealso Currently none
+
+#' @export
+
+# changelog and author contributions / copyrights
+#   Stefan Metzger (2015-03-18)
+#     original creation
+#   Stefan Metzger (2015-11-29)
+#     added Roxygen2 tags
+##############################################################################################
+
+############################################################
+#STATISTICAL ERROR FOR FLUXES
+############################################################
+
+REYNerro_FD_mole_dry <- function(
+  isca,		    #integral scale lengths
+  mn,		      #mean values
+  rc,		      #flux correlation coefficient
+  Lf,		      #averaging distance (flight length)
+  COI = 0     #e-folding time for the autocorrelation of wavelet power at
+              #each scale (Torrence and Compo, 1998, Table 1). This e-folding time is chosen
+              #so that the wavelet power for a discontinuity at the
+              #edge drops by a factor e-2 and ensures that the edge
+              #effects are negligible beyond this point. 
+              #For Morlet Wavelet sqrt(2) * scale for one side (for or aft), so 2 * sqrt(2) * scale for both sides (fore and aft)
+) {
+
+
+#-----------------------------------------------------------
+#VARIABLES
+
+  #scalar length scales
+    ls <- isca$scal
+  #lookup table for matching scalar length scales to flux correlation coefficients
+    whr_ls <- rbind(  
+      c("u_star2_x", "u_hor"),
+      c("u_star2_y", "v_hor"),
+      c("F_H_en", "T_air"),
+      c("F_LE_en", "FD_mole_H2O"),
+      c("F_CH4_mass",  "FD_mole_CH4")
+    )
+  #variance length scales
+    lv <- isca$vari
+  #flux length scales
+    lf <- isca$flux
+  #matching flux correlation coefficients
+    rc <- rc[match(dimnames(lf)[[2]], dimnames(rc)[[2]])]
+
+
+#-----------------------------------------------------------
+#RANDOM ERROR
+
+  #variance (Lenschow, 1994 Eq. 36)
+    #in case of Wavelet, the convolution of the mother Wavelet at a particular scale of interest (here: the integral length scale) 
+    #is influced by a multiple of that scale fore and aft the averaging interval (e-folding time).
+    #This should be considered for the random error ( + COI * lv in denominator)
+      erra_vari <- sqrt(2 * lv / (Lf + COI * lv)) * 100
+
+  #fluxes
+
+    #directly from flux length scales (Lenschow, 1986 Eq. (7) == Lenschow, 1994 Eq. (48))
+      #error estimate
+      #large error in F_CH4_mass due to four times lower correlation coefficient
+      	erra_flux <- data.frame(sqrt(2 * lf / (Lf + COI * lf) * (rc^(-2) + 1)) * 100)
+      #error reproduction
+    	#Bange: u_star2_x and u_star2_y are orthogonal == indepenend -> for random error we can use Gauss reproduction
+    	  erra_flux$u_star <- (
+    	    (mn$u_star2_x * erra_flux$u_star2_x / 100 * mn$u_star2_x / mn$u_star^2)^2 +
+      		(mn$u_star2_y * erra_flux$u_star2_y / 100 * mn$u_star2_y / mn$u_star^2)^2
+    	  )^(1/4) / mn$u_star * 100
+
+    #upper limit from scalar length scales
+      #upper limt for lenght scale following Mann (1994) Eq. (9), Bange (2002) Eq. (10)
+	      lf_max <- data.frame(sapply(1:length(rc), function(x) {
+          #get corresponding scalar length scale from conversion table
+	            ls_loc <- ls[,whr_ls[match(dimnames(rc)[[2]][x], whr_ls[,1]),2]]
+              sqrt(ls$w_hor * ls_loc) / abs(rc[x])
+	          }
+          ))
+      #error estimate
+      	#with Mann / Bange length scale
+      	  errm_flux <- data.frame(sapply(1:length(rc), function(x) sqrt(2 * lf_max[x] / (Lf + COI * lf_max[x]) * (rc[x]^(-2) + 1)) * 100))
+      	#according to Lenschow, 1994 Eq. (49); Bange (2002) Eq. (16) says: WRONG
+      	  #errm <- data.frame(sapply(1:length(rc), function(x) abs(2 / rc[x] * sqrt(min(ls$w_hor, ls[,x]) / (Lf + COI * ls[,x]))) * 100))
+      #error reproduction (Bange, 2007 Eq.(3.32))
+    	#u_star: Bange u_star2_x and u_star2_y are orthogonal == indepenend -> for random error we can use Gauss reproduction
+    	  errm_flux$u_star <- (
+    	    (mn$u_star2_x * errm_flux$u_star2_x / 100 * mn$u_star2_x / mn$u_star^2)^2 +
+      		(mn$u_star2_y * errm_flux$u_star2_y / 100 * mn$u_star2_y / mn$u_star^2)^2
+    	  )^(1/4) / mn$u_star * 100
+
+    #save to list
+      ran <- list()
+      #sampling error in variance
+        ran$vari$act=erra_vari
+      #actual flux random error (flux length scales)
+      	ran$flux$act=erra_flux		
+      #maximum flux random error (scalar length scales)
+      	ran$flux$max=errm_flux		
+
+    #clean up
+      rm(erra_flux, erra_vari, errm_flux)
+
+
+#-----------------------------------------------------------
+#SYSTEMATIC ERROR
+
+  #variance (Lenschow, 1994 Eq. 36)
+    ersa_vari <- 2 * lv / Lf * 100
+
+  #fluxes
+
+    #directly from flux length scales (Lenschow, 1994 Eq. (27) == Bange, 2007 Eq. (3.20))
+      #error estimate
+	      ersa_flux <- data.frame(2 * lf / Lf * 100)
+      #error reproduction
+    	#u_star upper bound (no independence and randomness required)
+    	  ersa_flux$u_star <- (
+    	    (mn$u_star2_x * ersa_flux$u_star2_x / 100 * mn$u_star2_x / mn$u_star^2)^2 +
+      		(mn$u_star2_y * ersa_flux$u_star2_y / 100 * mn$u_star2_y / mn$u_star^2)^2
+    	  )^(1/4) / mn$u_star * 100
+
+    #upper limit from scalar length scales
+      #error estimate
+      	#with Mann / Bange length scale
+      	  ersm_flux <- data.frame(sapply(1:length(rc), function(x) 2 * lf_max[x] / Lf * 100))
+      	#according to Lenschow, 1994 Eq. (29); same!
+      	  #ersm <- data.frame(sapply(1:length(rc), function(x) abs(2 / rc[x] * sqrt(ls$w_hor * ls[,x] ) / Lf) * 100))
+      #error reproduction
+    	#u_star upper bound (no independence and randomness required)
+    	  ersm_flux$u_star <- (
+    	    (mn$u_star2_x * ersm_flux$u_star2_x / 100 * mn$u_star2_x / mn$u_star^2)^2 +
+      		(mn$u_star2_y * ersm_flux$u_star2_y / 100 * mn$u_star2_y / mn$u_star^2)^2
+    	  )^(1/4) / mn$u_star * 100
+
+    #save to list
+      sys <- list()
+      #sampling error in variance
+        sys$vari$act=ersa_vari
+      #actual flux systematic error (flux length scales)
+        sys$flux$act=ersa_flux
+      #maximum flux systematic error (scalar length scales)
+        sys$flux$max=ersm_flux
+
+    #clean up
+      rm(ls, lv, lf, ersa_flux, ersa_vari, ersm_flux, lf_max)
+
+
+#-----------------------------------------------------------
+#AGGREGATE AND EXPORT RESULTS
+
+  #aggregate
+    export <- list(
+      ran=ran,
+      sys=sys
+    )
+  #clean up
+    rm(ran, sys)
+  #export
+    return(export)
+
+}
+
+
+
+##############################################################################################
+#' @title Detection limit for fluxes
+
+#' @author
+#' Stefan Metzger \email{eddy4R.info@gmail.com}
+
+#' @description 
+#' Function defintion. Detection limit for fluxes.
+
+#' @param Currently none
+
+#' @return Currently none
+
+#' @references Currently none
+
+#' @keywords eddy-covariance, turbulent flux
+
+#' @examples Currently none
+
+#' @seealso Currently none
+
+#' @export
+
+# changelog and author contributions / copyrights
+#   Stefan Metzger (2015-03-18)
+#     original creation
+#   Stefan Metzger (2015-11-29)
+#     added Roxygen2 tags
+##############################################################################################
+
+############################################################
+#DETECTION LIMIT FOR FLUXES
+############################################################
+#determine noise level of fluxes using "random shuffle" of w_met (Billesbach, 2011)
+
+NOISE_rs <- function(
+  #data set
+    eddy.data_random=eddy.data_loc,
+  #actual (correct) fluxes
+    REYN_loc=REYN_loc,
+  #what to use as basis to determine fluctuations
+    AlgBase=AlgBase,
+  #use potential quantities?
+    FcorPOT=FcorPOT,
+  #pressure level for potential quantities
+    FcorPOTl=FcorPOTl,
+  #which entries are fluxes?
+    whr_flux=whr_flux,
+  #confidence level for detection limit
+    conf_level=0.95,
+  #criterion to stop iteration (0.01 = 1% change among subsequent realizations)
+    crit_iter=0.01
+) {
+  
+  
+  ###
+  #start loop around sample size of manipulations
+  noise_dete_prior <- 1e5
+  crit <- FALSE
+  r <- 0
+  while(r < 3 | crit == FALSE) {
+  ###
+    
+    #keep counting
+      r <- r + 1
+    
+    #randomize w_met
+      whr_random <- sample(x=1:nrow(eddy.data_random), size=nrow(eddy.data_random), replace=FALSE)
+      eddy.data_random$w_met <- eddy.data_random$w_met[whr_random]
+    
+    #calculate fluxes
+      REYN_noise <- REYNflux_FD_mole_dry(
+        data=eddy.data_random,
+        AlgBase=AlgBase,
+        FcorPOT=FcorPOT,
+        FcorPOTl=FcorPOTl
+      )
+    
+    #store output
+      if(r == 1) NOISE <- REYN_noise$mn[, whr_flux]
+      if(r > 1)  NOISE <- rbind(NOISE, REYN_noise$mn[, whr_flux])
+    
+    #distributions stats
+      MEma <- sapply(1:ncol(NOISE), function(x) def.med.mad(NOISE[,x]))
+      #average offset/level/location of noise
+        noise_loca <- MEma[1,]
+        names(noise_loca) <- whr_flux
+      #actual dispersion of noise
+        noise_disp <- MEma[2,]
+        names(noise_disp) <- whr_flux
+      #detection limit (recast of signal-to-noise criterion after Park et al., 2013), at provided confidence level
+        conf_fac <- qnorm((1 - conf_level)/2, lower.tail = FALSE)
+        noise_dete <- abs(noise_loca) + conf_fac * noise_disp
+        names(noise_dete) <- whr_flux
+      #signal to noise ratio
+        noise_s2n <- ( abs(REYN_loc$mn[, whr_flux]) - abs(noise_loca) ) / noise_disp
+        names(noise_s2n) <- whr_flux
+    
+    #stop criterion: change in signal to noise ratio < 10%
+      CRIT <- abs( (noise_dete - noise_dete_prior) / noise_dete_prior )
+      #condition1: CRIT has to consist of finite values
+      if(length(which(is.infinite(unlist(CRIT)))) == 0) {
+        #condition 2: change in signal to noise ratio < 1% between steps
+        if(length(which(abs(CRIT) < crit_iter)) == length(CRIT)) crit <- TRUE else crit <- FALSE
+      } else {
+        crit <- FALSE
+      }
+    
+    #save posterior as prior for next loop
+      noise_dete_prior <- noise_dete
+    
+  ###
+  if(r%%10 == 0) print(paste("Iteration ", r, " of flux noise determination finished.", sep=""))
+  }
+  print(paste("Flux noise determination completed after ", r, " iterations.", sep=""))
+  #end loop around sample size of manipulations
+  ###
+  
+  
+  
+  #save to list
+    noise <- list()
+    #noise location
+      noise$mn <- noise_loca
+    #noise location
+      noise$sd <- noise_disp
+    #detection limit
+      noise$dl <- noise_dete
+    #signal-to-noise ratio
+      noise$sn <- noise_s2n
+  
+  #clean up
+    rm(crit, CRIT, eddy.data_random, MEma, NOISE, r, REYN_noise, whr_random)
+  
+  #return results
+    return(noise)
+
+}
+
+
+
+##############################################################################################
+#' @title Flux computation sequence
+
+#' @author
+#' Stefan Metzger \email{eddy4R.info@gmail.com}
+
+#' @description 
+#' Function wrapper. Flux computation sequence.
+
+#' @param Currently none
+
+#' @return Currently none
+
+#' @references Currently none
+
+#' @keywords eddy-covariance, turbulent flux
+
+#' @examples Currently none
+
+#' @seealso Currently none
+
+#' @export
+
+# changelog and author contributions / copyrights
+#   Stefan Metzger (2015-03-18)
+#     original creation
+#   Stefan Metzger (2015-11-29)
+#     added Roxygen2 tags
+##############################################################################################
+
+
+############################################################
+#COMPLETE FLUX COMPUTATION SEQUENCE
+############################################################
+
+REYNcomp_FD_mole_dry <- function(
+  eddy.data_loc=eddy.data,
+  whr_scal=c("u_hor", "v_hor", "w_hor", "T_air", "T_air_0", "T_v_0", "FD_mole_H2O", "FD_mole_CH4", "T_surface", "R_SW_down"),
+  whr_flux=c("u_star2_x", "u_star2_y", "u_star", "F_H_en", "F_LE_en", "F_CH4_mass"),
+  latitude,
+  AlgBase=c("mean", "trnd", "ord03")[1],
+  stattype=c(1, 2, 3)[3],
+  NOsusa=6,
+  FcorPOT=TRUE,
+  FcorPOTl=NULL,
+  #perform determination of detection limit, siganl-to-noise ratio etc.? 
+  noise_determination=FALSE,
+  #confidence level for detection limit
+  conf_level=0.95,
+  #criterion to stop iteration (0.01 = 1% change among subsequent realizations)
+  crit_iter=0.01
+) {
+
+
+#-----------------------------------------------------------
+#CALCULATE FLUXES
+  REYN_loc <- REYNflux_FD_mole_dry(
+    data=eddy.data_loc,
+    AlgBase=AlgBase,
+    FcorPOT=FcorPOT,
+    FcorPOTl=FcorPOTl
+  )
+
+
+#-----------------------------------------------------------
+#CALCULATE AERODYNAMIC ROUGHNESS LENGTH
+  REYN_loc$mn$d_z_0 <- roughness(
+    d_z_m=REYN_loc$mn$d_z_m,
+    d_L_v_0=REYN_loc$mn$d_L_v_0,
+    u_hor=REYN_loc$mn$u_hor,
+    u_star=REYN_loc$mn$u_star,
+    sigma_range=c(-2, 1)
+  )
+
+
+#-----------------------------------------------------------
+#STATIONARITY CRITERIA [%]
+  REYN_loc$stat <- REYNstat_FD_mole_dry(
+    data=eddy.data_loc,
+    type=c(1, 2, 3)[stattype],
+    whr_flux=whr_flux,
+    NOsusa=NOsusa,
+    FcorPOT=FcorPOT,
+    FcorPOTl=FcorPOTl
+  )
+
+
+#-----------------------------------------------------------
+#INTEGRAL TURBULENCE CHARACTERISTICS [%]
+
+  #data frame for deviations
+    stdev <- data.frame(
+      u_hor=REYN_loc$sd$u_hor,
+      w_hor=REYN_loc$sd$w_hor,
+      T_air=REYN_loc$sd$T_air
+    )
+
+  #data frame for scales
+    scale <- data.frame(
+      u_star=REYN_loc$mn$u_star,
+      T_star_SL=REYN_loc$mn$T_star_SL
+    )
+
+  #calculation
+    REYN_loc$itcs <- REYNitcs(
+      sigma=REYN_loc$mn$sigma,  #stability
+      latitude=latitude,
+      stdev=stdev,
+      scale=scale
+    )
+
+  #clean up
+    rm(stdev, scale)
+
+
+#-----------------------------------------------------------
+#INTEGRAL LENGTH SCALES
+
+  #scalar length scales
+    #calculate scales
+      isca_scal <- sapply(whr_scal, function(x) INTsca(
+    	  d_xy_flow=REYN_loc$data$d_xy_flow,
+    	  depe=REYN_loc$imfl[,x]
+      	)
+      )
+      isca_scal <- as.data.frame( matrix(isca_scal, ncol=length(whr_scal)) )
+      attributes(isca_scal)$names <- whr_scal
+
+  #variance length scales
+    #calculate scales
+      isca_vari <- sapply(whr_scal, function(x) INTsca(
+    	  d_xy_flow=REYN_loc$data$d_xy_flow,
+    	  depe=REYN_loc$imfl[,x]^2
+      	)
+      )
+      isca_vari <- as.data.frame( matrix(isca_vari, ncol=length(whr_scal)) )
+      attributes(isca_vari)$names <- whr_scal
+
+  #flux length scales
+    #exclude data with > 10% immidiate flucuations not available, e.g. u_star;
+    #sampling error in u_star has to be assessed by its both components u_star_x and u_star_y
+      whr_not <- sapply(whr_flux, function(x) length(which(is.na(REYN_loc$imfl[,x]))) / nrow(REYN_loc$imfl))
+      whr_not <- which(whr_not > 0.1)
+      if(length(whr_not) == 0) whr_flux_loc <-  whr_flux else whr_flux_loc <-  whr_flux[-whr_not]
+
+    #calculate scales    
+      isca_flux <- sapply(whr_flux_loc, function(x) INTsca(
+    	  d_xy_flow=REYN_loc$data$d_xy_flow,
+    	  depe=REYN_loc$imfl[,x]
+    	  )
+      )
+      isca_flux <- as.data.frame( matrix(isca_flux, ncol=length(whr_flux_loc)) )
+      attributes(isca_flux)$names <- whr_flux_loc
+
+  #assign to list
+    REYN_loc$isca <- list(
+                 scal=isca_scal,
+                 vari=isca_vari,
+                 flux=isca_flux
+                 )
+
+  #clean up
+    rm(isca_scal, isca_vari, isca_flux, whr_flux_loc, whr_not)
+
+
+#-----------------------------------------------------------
+#STATISTICAL ERRORS FOR FLUXES
+  REYN_loc$erro <- REYNerro_FD_mole_dry(
+    isca=REYN_loc$isca,		#integral scale lengths
+    mn=REYN_loc$mn,			#mean values
+    rc=REYN_loc$cor,		#flux correlation coefficient
+    Lf=REYN_loc$max$d_xy_flow		#averaging distance (length of air d_xy_flow flown through [m])
+  )
+
+
+#-----------------------------------------------------------
+#DETECTION LIMIT
+
+if(noise_determination == TRUE) {
+
+  REYN_loc$noise <- NOISE_rs(
+    #data set
+      eddy.data_random=eddy.data_loc,
+    #actual (correct) fluxes
+      REYN_loc=REYN_loc,
+    #what to use as basis to determine fluctuations
+      AlgBase=AlgBase,
+    #use potential quantities?
+      FcorPOT=FcorPOT,
+    #pressure level for potential quantities
+      FcorPOTl=FcorPOTl,
+    #which entries are fluxes?
+      whr_flux=whr_flux,
+    #confidence level for detection limit
+      conf_level=conf_level,
+    #criterion to stop iteration (0.01 = 1% change among subsequent realizations)
+      crit_iter=crit_iter
+  )
+
+}
+
+
+#-----------------------------------------------------------
+#RETURN RESULT
+  return(REYN_loc)
+
+
+}
