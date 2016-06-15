@@ -103,8 +103,8 @@ rpt <- rpt[,1:(ncol(rpt)-(2*(length(Col))))]  #discard non-used columns (the car
 
 rpt <- data.frame(rpt,row.names = NULL) 
 
+#return outputs
 return(rpt)
+# end function def.resp()
 
 }
-
-
