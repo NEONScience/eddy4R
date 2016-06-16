@@ -5,7 +5,7 @@
 #' @author Stefan Metzger \email{eddy4R.info@gmail.com}
 
 #' @description 
-#' Function defintion. Calculates the mean, external, internal and total variance, and the squared standard error over all supplied values. Useful e.g. to aggregate from hourly to daily resolution by providing 24 hourly values, or similar.
+#' Function defintion. Calculates the mean, external, internal and total variance, and the squared standard error over all supplied input values. Useful e.g. to aggregate from daily to monthly resolution by using all provided values, or similar.
 
 #' @param \code{data} Dataframe of type numeric containing column vectors \code{mean} and \code{vari} of equal length.
 #' @param \code{mean} Vector of type numeric. Means of the variable of interest at finer resolution, e.g. minutely [user-defined].
