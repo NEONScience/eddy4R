@@ -38,97 +38,97 @@ def.get.site.info <- function(
 ) {
   
   #allocate empty list for site information
-  siteInfo <- list()
+  SiteInfo <- list()
   
   #get site info
   #Xilingol, Inner Mongolia, China
   if(loc == "IM") {
     #UTC to local time difference (China standard time, CST)
-    siteInfo$diffUtcLt <- +8	
-    siteInfo$tz <- "CST"
+    SiteInfo$TimeDiffUtcLt <- +8	
+    SiteInfo$ZoneTime <- "CST"
     #UTM zone for conversion lat / lon to UTM
-    siteInfo$utm <- data.frame(zone=50)
+    SiteInfo$ZoneUtm <- data.frame(zone=50)
   }
   
   #Lindenberg, Brandenburg, Germany
   if(loc == "LOS") {
     #UTC to local time difference (Central European summer time, CEST -> 26.10)
-    siteInfo$diffUtcLt <- +2
-    siteInfo$tz <- "CEST"
+    SiteInfo$TimeDiffUtcLt <- +2
+    SiteInfo$ZoneTime <- "CEST"
     #UTM zone for conversion lat / lon to UTM
-    siteInfo$utm <- data.frame(zone=33)	
+    SiteInfo$ZoneUtm <- data.frame(zone=33)	
   }
   
   #Niwot Ridge, CO, U.S.A.
   if(loc == "NR") {
     #UTC to local time difference (Mountain standard time, MST)
-    siteInfo$diffUtcLt <- -7
-    siteInfo$tz <- "MST"
+    SiteInfo$TimeDiffUtcLt <- -7
+    SiteInfo$ZoneTime <- "MST"
     #UTC to local time difference (Mountain daylight saving time, MDT)
     #      UTC2LT <- -6  
     #coordinates in UTM [m]
-    siteInfo$utm <- data.frame(zone=13, estg=453382, nthg=4431552)
+    SiteInfo$ZoneUtm <- data.frame(zone=13, estg=453382, nthg=4431552)
     #height of tower base above sea level [m]
-    siteInfo$towElevAsl <- 3023
+    SiteInfo$ElevAslTow <- 3023
     #measurement height [m]
-    siteInfo$distZaxsMeasHght <- 21.5
+    SiteInfo$DistZaxsMeas <- 21.5
     #displacement height 7.8+/-1.1[m]
-    site_info$distZaxsDispHght <- 7.8
+    site_info$DistZaxsDisp <- 7.8
     #canopy height 11 - 13[m]
-    siteInfo$distZaxsCnpyHght <- 12 
+    SiteInfo$DistZaxsCnpy <- 12 
     #CSAT3 boom angle [degrees from true North]
-    siteInfo$azSoni <- 204
-    #planar fit coefficients (pfCoef) [degree] [degree] [m s-1] alpha (coefPtchAng), beta (CoefRollAng),
-    #and the regression offset (coefRegOfst)       
-    siteInfo$pfCoef <- data.frame(coefPtchAng = 2.29, coefRollAng = 5.62, coefRegOfst = -0.0185)
+    SiteInfo$AzSoni <- 204
+    #planar fit coefficients (CoefPf [degree] [degree] [m s-1] alpha (CoefAngPtch), beta (CoefAngRoll),
+    #and the regression offset (CoefOfstReg)       
+    SiteInfo$CoefPf <- data.frame(CoefAngPtch = 2.29, CoefAngRoll = 5.62, CoefOfstReg = -0.0185)
   }
   
   #Northslope, AK, U.S.A.
   if(loc == "NS") {  
     #UTC to local time difference (Alaska standard time)
-    siteInfo$diffUtcLt <- -9
-    siteInfo$tz <- "AKST"
+    SiteInfo$TimeDiffUtcLt <- -9
+    SiteInfo$ZoneTime <- "AKST"
     #UTC to local time difference (Alaska daylight time)
     #       site_info$UTC2LT <- -8  
     #		site_info$tz <- "AKDT"
     #UTM zone for conversion lat / lon to UTM
-    siteInfo$utm<- data.frame(zone=4)
+    SiteInfo$ZoneUtm<- data.frame(zone=4)
   }
   
   #Park Falls, Wi, U.S.A.
   if(loc == "PF"){
     #UTC to local time difference (Central standard time)
-    siteInfo$diffUtcLt <- -6
-    siteInfo$tz <- "CST"
+    SiteInfo$TimeDiffUtcLt <- -6
+    SiteInfo$ZoneTime <- "CST"
     #coordinates in UTM zone [m]
-    siteInfo$utm <- data.frame(zone=15, estg=711415, nthg=5091655) 
+    SiteInfo$ZoneUtm <- data.frame(zone=15, estg=711415, nthg=5091655) 
     #height of tower base above sea level [m]
-    siteInfo$towElevAsl <- 470 
+    SiteInfo$ElevAslTow <- 470 
   }
   
   #Smithsonian Environmental Research Center, MD, U.S.A.
   if(location == "SERC") {
     #UTC to local time difference (Eastern standard time, EST)
-    siteInfo$diffUtcLt <- -5
-    siteInfo$tz <- "EST"
+    SiteInfo$TimeDiffUtcLt <- -5
+    SiteInfo$ZoneTime <- "EST"
     #UTC to local time difference (Eastern daylight saving time, EDT)
     #      UTC2LT <- -4  
     #coordinates in UTM [m]
-    siteInfo$utm <- data.frame(zone = 18, estg = 364703.4, nthg = 4305740.9)
+    SiteInfo$ZoneUtm <- data.frame(zone = 18, estg = 364703.4, nthg = 4305740.9)
     #height of tower base above sea level [m]
-    siteInfo$towElevAsl  <- 33.23
+    SiteInfo$ElevAslTow  <- 33.23
     #measurement height [m]
-    siteInfo$distZaxsMeasHght <- 61.94
+    SiteInfo$DistZaxsMeas <- 61.94
     #displacement height 7.8+/-1.1[m]
-    site_info$distZaxsDispHght <- 32
+    SiteInfo$DistZaxsDisp <- 32
     #canopy height 11 - 13[m]
-    siteInfo$distZaxsCnpyHght <- 38
+    SiteInfo$DistZaxsCnpy <- 38
     #CSAT3 boom angle [degrees from true North]
-    siteInfo$azSoni <- 230
+    SiteInfo$AzSoni <- 230
     #planar fit coefficients (April 22 to May 3, 2016) [degree] [degree] [m s-1]
-    siteInfo$pfCoef <- data.frame(coefPtchAng = -0.7056, coefRollAng = -1.8718, coefRegOfst = 0.0549)
+    SiteInfo$CoefPf <- data.frame(CoefAngPtch = -0.7056, CoefAngRoll = -1.8718, CoefOfstReg = 0.0549)
   }
   #return site info
-  return(siteInfo)
+  return(SiteInfo)
   
 }
