@@ -1,20 +1,22 @@
 ##############################################################################################
-#' @title Load pre-defined site location info into global environment
+#' @title  Load pre-defined site specific information into the global environment
 
 #' @author Stefan Metzger \email{eddy4R.info@gmail.com}\n
 #' Dave Durden
 
-#' @description Load pre-defined site location info into global environment.
+#' @description Load pre-defined site specific information into the global environment.
 
-#' @param Currently none
+#' @param \code{loc} Parameter of class character. A parameter to choose the site for which site specific information is pulled.
 
-#' @return Currently none
+#' @return Site specific information provided as a list \code{SiteInfo}
 
-#' @references Currently none
+#' @references 
+#' License: Terms of use of the NEON FIU algorithm repository dated 2015-01-16. 
 
-#' @keywords Currently none
+#' @keywords site, metadata, preprocessing
 
-#' @examples Currently none
+#' @examples 
+#' def.get.site.info("SERC")
 
 #' @seealso Currently none
 
