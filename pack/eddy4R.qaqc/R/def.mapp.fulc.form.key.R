@@ -50,6 +50,8 @@ def.mapp.fulc.form.key <- function(schmForm){
   }
   
   while(flag == 1) {
+    # Debugging break point
+    #if(idxOut == 10) {stop()}
     
     # Get to current level
     elmtCurr <- elmtForm
@@ -59,7 +61,7 @@ def.mapp.fulc.form.key <- function(schmForm){
       }
     } 
     if (is.null(names(elmtCurr))) {
-      if ((idxElmt[levl]+1) <= length(elmtCurr)) {
+      if ((idxElmt[levl]) <= length(elmtCurr)) {
         # Get element
         elmtCurr <- elmtCurr[[idxElmt[levl]]]
       } else {
