@@ -138,28 +138,3 @@ def.rmsd.diff.prcs.rsq <- function(
 
 #' @export
 ##############################################################################################
-
-#old version without deadband
-RBPCdet <- function(ref, test, perc = FALSE) {
-  #RETURNS RESIDUAL STANDARD ERROR AND COEFFICIENT OF DETERMINATION FOR TWO DATA SERIES
-  #sum of squared errors and coefficient of determination
-  #sum of sqared residuals
-  SSres <- sum((test - ref)^2, na.rm=TRUE)
-  #sum of squared deviations from data series mean
-  SSdev<-sum((ref - mean(ref, na.rm=TRUE))^2, na.rm=TRUE)
-  #residual standard error
-  #    Rmsd<-sqrt(SSres / length(ref))
-  if(perc == FALSE) {
-    Rmsd<-sqrt(mean((test - ref)^2, na.rm=TRUE))
-    BIAS<-mean(test - ref, na.rm=TRUE)
-    PREC<-sqrt(Rmsd^2 - BIAS^2)
-  } else {
-    Rmsd<-sqrt(mean(((test - ref) / ref * 100)^2, na.rm=TRUE))
-    BIAS<-mean((test - ref) / ref * 100, na.rm=TRUE)
-    PREC<-sqrt(Rmsd^2 - BIAS^2)
-  }
-  #coefficient of determination
-  Rsqu<-1-(SSres/SSdev)
-  #return result
-  return(c(Rmsd, BIAS, PREC, Rsqu))
-}
