@@ -95,14 +95,14 @@ def.rmsd.diff.prcs.rsq <- function(
     
   }
   
-#prepare output
-  output <- cbind(RMSD, BIAS, PREC, Rsqu, length(na.omit(test - refe)))
-  if(perc == FALSE) dimnames(output)[[2]] <- c("RMSD", "BIAS", "PREC", "RSQ", "N")
-  if(perc == TRUE) dimnames(output)[[2]] <- c("RMSD%", "BIAS%", "PREC%", "RSQ", "N")
-
-#return output
+  #prepare output
+  output <- cbind(rmsd, diffMean, prcs, rsq, length(na.omit(test - refe)))
+  if(perc == FALSE) dimnames(output)[[2]] <- c("rmsd", "diffMean", "prcs", "rsq", "N")
+  if(perc == TRUE) dimnames(output)[[2]] <- c("rmsd%", "diffMean%", "prcs%", "rsq", "N")
+  
+  #return output
   return(output)
-    
+  
 }
 
 
