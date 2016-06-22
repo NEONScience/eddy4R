@@ -23,9 +23,9 @@
 
 #' @examples 
 #' #refe dataset
-#' df1 <- c(runif(200, min=0, max=360))
+#' df1 <- c(runif(200, min=-100, max=400))
 #' #test dataset
-#' df2 <- c(runif(200, min=0, max=360))
+#' df2 <- c(runif(200, min=-100, max=400))
 #' #run function
 #' def.rmsd.diff.prcs.rsq(refe=df1,test=df2,perc = FALSE,deba=NULL, debaRltv=FALSE)
 
