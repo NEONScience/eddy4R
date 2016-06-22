@@ -66,35 +66,35 @@ def.rmsd.diff.prcs.rsq <- function(
     }      
   }  
   
-#sum of squared errors and coefficient of determination
+  #sum of squared errors and coefficient of determination
   
   #sum of sqared residuals
-    SSres <- sum((test - refe)^2, na.rm=TRUE)
-    
+  resdSumSq <- sum((test - refe)^2, na.rm=TRUE)
+  
   #sum of squared deviations from data series mean
-    SSdev <- sum((refe - mean(refe, na.rm=TRUE))^2, na.rm=TRUE)
-
+  diffSumSq <- sum((refe - mean(refe, na.rm=TRUE))^2, na.rm=TRUE)
+  
   #coefficient of determination
-    Rsqu <- 1-(SSres/SSdev)
-      
-#Root mean sququred deviation, bias, precision
+  rsq <- 1-(resdSumSq/diffSumSq)
+  
+  #Root mean sququred deviation, bias, precision
   if(perc == FALSE) {
     
-  #absoute values
+    #absoute values
     #RMSD<-sqrt(SSres / length(refe))
-    RMSD <- sqrt(mean((test - refe)^2, na.rm=TRUE))
-    BIAS <- mean(test - refe, na.rm=TRUE)
-    PREC <- sqrt(RMSD^2 - BIAS^2)
+    rmsd <- sqrt(mean((test - refe)^2, na.rm=TRUE))
+    diffMean <- mean(test - refe, na.rm=TRUE)
+    prcs <- sqrt(rmsd^2 - diffMean^2)
     
   } else {
-  
-  #percentage values  
-    RMSD <- sqrt(mean(((test - refe) / refe * 100)^2, na.rm=TRUE))
-    BIAS <- mean((test - refe) / refe * 100, na.rm=TRUE)
-    PREC <- sqrt(RMSD^2 - BIAS^2)
+    
+    #percentage values  
+    rmsd <- sqrt(mean(((test - refe) / refe * 100)^2, na.rm=TRUE))
+    diffMean <- mean((test - refe) / refe * 100, na.rm=TRUE)
+    prcs <- sqrt(rmsd^2 - diffMean^2)
     
   }
-
+  
 #prepare output
   output <- cbind(RMSD, BIAS, PREC, Rsqu, length(na.omit(test - refe)))
   if(perc == FALSE) dimnames(output)[[2]] <- c("RMSD", "BIAS", "PREC", "RSQ", "N")
