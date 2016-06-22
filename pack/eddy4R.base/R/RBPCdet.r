@@ -43,27 +43,26 @@
 #############################################################################################
 
 #RETURNS RESIDUAL STANDARD ERROR AND COEFFICIENT OF DETERMINATION FOR TWO DATA SERIES
-
-RBPCdet2 <- function(
+def.rmsd.diff.prcs.rsq <- function(
   refe,
   test,
   perc = FALSE,
-  db=NULL, #for percentage returns: deadband around zero denominator
-  db_rel=FALSE #absolute or relative (percentage) deadband around zero
-  ) {
+  deba=NULL, #for percentage returns: deadband around zero denominator
+  debaRltv=FALSE #absolute or relative (percentage) deadband around zero
+) {
   
   
-#omit deadband around zero
-  if(!is.null(db)) {
-    if(db_rel == TRUE) {
-      dbz <- max(abs(refe), na.rm=T) * db / 100
-      whr_n <- which(refe > -dbz & refe < dbz)
+  #omit deadband around zero
+  if(!is.null(deba)) {
+    if(debaRltv == TRUE) {
+      debaMax <- max(abs(refe), na.rm=T) * deba / 100
+      idx <- which(refe > -debaMax & refe < debaMax)
     } else {
-      whr_n <- which(refe > -db & refe < db)
+      idx <- which(refe > -deba & refe < deba)
     }
-    if(length(whr_n) > 0) { 
-      refe <- refe[-whr_n]
-      test <- test[-whr_n]
+    if(length(idx) > 0) { 
+      refe <- refe[-idx]
+      test <- test[-idx]
     }      
   }  
   
