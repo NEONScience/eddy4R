@@ -47,7 +47,7 @@ def.get.site.info <- function(
   if(loc == "IM") {
     #UTC to local time difference (China standard time, CST)
     SiteInfo$TimeDiffUtcLt <- +8	
-    SiteInfo$ZoneTime <- "CST"
+    SiteInfo$Tz <- "CST"
     #UTM zone for conversion lat / lon to UTM
     SiteInfo$ZoneUtm <- data.frame(zone=50)
   }
@@ -56,7 +56,7 @@ def.get.site.info <- function(
   if(loc == "LOS") {
     #UTC to local time difference (Central European summer time, CEST -> 26.10)
     SiteInfo$TimeDiffUtcLt <- +2
-    SiteInfo$ZoneTime <- "CEST"
+    SiteInfo$Tz <- "CEST"
     #UTM zone for conversion lat / lon to UTM
     SiteInfo$ZoneUtm <- data.frame(zone=33)	
   }
@@ -65,7 +65,7 @@ def.get.site.info <- function(
   if(loc == "NR") {
     #UTC to local time difference (Mountain standard time, MST)
     SiteInfo$TimeDiffUtcLt <- -7
-    SiteInfo$ZoneTime <- "MST"
+    SiteInfo$Tz <- "MST"
     #UTC to local time difference (Mountain daylight saving time, MDT)
     #      UTC2LT <- -6  
     #coordinates in UTM [m]
@@ -89,7 +89,7 @@ def.get.site.info <- function(
   if(loc == "NS") {  
     #UTC to local time difference (Alaska standard time)
     SiteInfo$TimeDiffUtcLt <- -9
-    SiteInfo$ZoneTime <- "AKST"
+    SiteInfo$Tz <- "AKST"
     #UTC to local time difference (Alaska daylight time)
     #       site_info$UTC2LT <- -8  
     #		site_info$tz <- "AKDT"
@@ -101,7 +101,7 @@ def.get.site.info <- function(
   if(loc == "PF"){
     #UTC to local time difference (Central standard time)
     SiteInfo$TimeDiffUtcLt <- -6
-    SiteInfo$ZoneTime <- "CST"
+    SiteInfo$Tz <- "CST"
     #coordinates in UTM zone [m]
     SiteInfo$ZoneUtm <- data.frame(zone=15, estg=711415, nthg=5091655) 
     #height of tower base above sea level [m]
@@ -112,7 +112,7 @@ def.get.site.info <- function(
   if(location == "SERC") {
     #UTC to local time difference (Eastern standard time, EST)
     SiteInfo$TimeDiffUtcLt <- -5
-    SiteInfo$ZoneTime <- "EST"
+    SiteInfo$Tz <- "EST"
     #UTC to local time difference (Eastern daylight saving time, EDT)
     #      UTC2LT <- -4  
     #coordinates in UTM [m]
