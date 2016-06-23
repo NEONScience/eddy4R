@@ -8,9 +8,9 @@
 
 #' @param \code{refe}  Variable of class numeric. Reference data.Same unit as test data. 
 #' @param \code{test}  Variable of class numeric. Test data.Same unit as reference data.
-#' @param \code{perc}  Variable of class logical. It describe if the output is in percentage.
-#' @param \code{deba}  Variable of class numeric. Numbers of the deadband around zero denominator
-#' @param \code{debaRltv}  Variable of class logical.Absolute or relative (percentage) deadband around zero. True indicates deba in relative (percentage), False indicates deba in absolute numbers. 
+#' @param \code{Perc}  Variable of class logical. It describe if the output is in percentage.
+#' @param \code{Deba}  Variable of class numeric. Numbers of the deadband around zero denominator
+#' @param \code{DebaRltv}  Variable of class logical.Absolute or relative (percentage) deadband around zero. True indicates Deba in relative (percentage), False indicates Deba in absolute numbers. 
 #' 
 
 #' @return Currently none
@@ -27,7 +27,7 @@
 #' #test dataset
 #' df2 <- c(runif(200, min=-100, max=400))
 #' #run function
-#' def.rmsd.diff.prcs.rsq(refe=df1,test=df2,perc = FALSE,deba=NULL, debaRltv=FALSE)
+#' def.rmsd.diff.prcs.rsq(refe=df1,test=df2,Perc = FALSE,Deba=NULL, DebaRltv=FALSE)
 
 #' @seealso Currently none
 
@@ -46,19 +46,19 @@
 def.rmsd.diff.prcs.rsq <- function(
   refe,
   test,
-  perc = FALSE,
-  deba=NULL, #for percentage returns: deadband around zero denominator
-  debaRltv=FALSE #absolute or relative (percentage) deadband around zero
+  Perc = FALSE,
+  Deba=NULL, #for percentage returns: deadband around zero denominator
+  DebaRltv=FALSE #absolute or relative (percentage) deadband around zero
 ) {
   
   
   #omit deadband around zero
-  if(!is.null(deba)) {
-    if(debaRltv == TRUE) {
-      debaMax <- max(abs(refe), na.rm=T) * deba / 100
+  if(!is.null(Deba)) {
+    if(DebaRltv == TRUE) {
+      debaMax <- max(abs(refe), na.rm=T) * Deba / 100
       idx <- which(refe > -debaMax & refe < debaMax)
     } else {
-      idx <- which(refe > -deba & refe < deba)
+      idx <- which(refe > -Deba & refe < Deba)
     }
     if(length(idx) > 0) { 
       refe <- refe[-idx]
@@ -78,7 +78,7 @@ def.rmsd.diff.prcs.rsq <- function(
   rsq <- 1-(resdSumSq/diffSumSq)
   
   #Root mean sququred deviation, bias, precision
-  if(perc == FALSE) {
+  if(Perc == FALSE) {
     
     #absoute values
     #RMSD<-sqrt(SSres / length(refe))
@@ -96,12 +96,12 @@ def.rmsd.diff.prcs.rsq <- function(
   }
   
   #prepare output
-  output <- cbind(rmsd, diffMean, prcs, rsq, length(na.omit(test - refe)))
-  if(perc == FALSE) dimnames(output)[[2]] <- c("rmsd", "diffMean", "prcs", "rsq", "N")
-  if(perc == TRUE) dimnames(output)[[2]] <- c("rmsd%", "diffMean%", "prcs%", "rsq", "N")
+  rpt <- cbind(rmsd, diffMean, prcs, rsq, length(na.omit(test - refe)))
+  if(Perc == FALSE) dimnames(rpt)[[2]] <- c("rmsd", "diffMean", "prcs", "rsq", "samp")
+  if(Perc == TRUE) dimnames(rpt)[[2]] <- c("rmsd%", "diffMean%", "prcs%", "rsq", "samp")
   
   #return output
-  return(output)
+  return(rpt)
   
 }
 
