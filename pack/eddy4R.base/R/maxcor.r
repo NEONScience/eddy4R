@@ -1,7 +1,7 @@
 ##############################################################################################
 #' @title Lag two datasets, so as to maximise their correlations
 
-#' @author Stefan Metzger \email{eddy4R.info@gmail.com}\n
+#' @author Stefan Metzger \email{eddy4R.info@gmail.com}\cr
 #' Dave Durden 
 
 #' @description Lag two datasets, so as to maximise their correlations.
