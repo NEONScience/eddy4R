@@ -58,7 +58,7 @@ def.get.site.info <- function(
     SiteInfo$TimeDiffUtcLt <- +2
     SiteInfo$Tz <- "CEST"
     #UTM zone for conversion lat / lon to UTM
-    SiteInfo$ZoneUtm <- data.frame(zone=33)	
+    SiteInfo$ZoneUtm <- data.frame(Zone=33)	
   }
   
   #Niwot Ridge, CO, U.S.A.
@@ -69,7 +69,7 @@ def.get.site.info <- function(
     #UTC to local time difference (Mountain daylight saving time, MDT)
     #      UTC2LT <- -6  
     #coordinates in UTM [m]
-    SiteInfo$ZoneUtm <- data.frame(zone=13, estg=453382, nthg=4431552)
+    SiteInfo$ZoneUtm <- data.frame(Zone=13, Estg=453382, Nthg=4431552)
     #height of tower base above sea level [m]
     SiteInfo$ElevAslTow <- 3023
     #measurement height [m]
@@ -94,7 +94,7 @@ def.get.site.info <- function(
     #       site_info$UTC2LT <- -8  
     #		site_info$tz <- "AKDT"
     #UTM zone for conversion lat / lon to UTM
-    SiteInfo$ZoneUtm<- data.frame(zone=4)
+    SiteInfo$ZoneUtm<- data.frame(Zone=4)
   }
   
   #Park Falls, Wi, U.S.A.
@@ -103,7 +103,7 @@ def.get.site.info <- function(
     SiteInfo$TimeDiffUtcLt <- -6
     SiteInfo$Tz <- "CST"
     #coordinates in UTM zone [m]
-    SiteInfo$ZoneUtm <- data.frame(zone=15, estg=711415, nthg=5091655) 
+    SiteInfo$ZoneUtm <- data.frame(Zone=15, Estg=711415, Nthg=5091655) 
     #height of tower base above sea level [m]
     SiteInfo$ElevAslTow <- 470 
   }
@@ -116,7 +116,7 @@ def.get.site.info <- function(
     #UTC to local time difference (Eastern daylight saving time, EDT)
     #      UTC2LT <- -4  
     #coordinates in UTM [m]
-    SiteInfo$ZoneUtm <- data.frame(zone = 18, estg = 364703.4, nthg = 4305740.9)
+    SiteInfo$ZoneUtm <- data.frame(Zone = 18, Estg = 364703.4, Nthg = 4305740.9)
     #height of tower base above sea level [m]
     SiteInfo$ElevAslTow  <- 33.23
     #measurement height [m]
