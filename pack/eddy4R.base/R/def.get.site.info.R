@@ -109,7 +109,7 @@ def.get.site.info <- function(
   }
   
   #Smithsonian Environmental Research Center, MD, U.S.A.
-  if(location == "SERC") {
+  if(loc == "SERC") {
     #UTC to local time difference (Eastern standard time, EST)
     SiteInfo$TimeDiffUtcLt <- -5
     SiteInfo$Tz <- "EST"
