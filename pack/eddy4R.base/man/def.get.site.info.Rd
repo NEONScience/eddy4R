@@ -19,7 +19,7 @@ Load pre-defined site specific information into the global environment.
 def.get.site.info("SERC")
 }
 \author{
-Stefan Metzger \email{eddy4R.info@gmail.com}\n
+Stefan Metzger \email{eddy4R.info@gmail.com}\cr
 Dave Durden
 }
 \references{
