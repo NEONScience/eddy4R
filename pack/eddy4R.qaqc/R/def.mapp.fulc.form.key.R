@@ -6,7 +6,8 @@
 
 #' @description Function definition. Parses Fulcrum form schema to map all data names to internal keys 
 
-#' @param \code{schmForm} Required. The Fulcrum form schema as extracted from the Fulcrum API GET request (using the use httr::content function) 
+#' @param \code{schmForm} Required. The Fulcrum form schema as extracted from the Fulcrum API GET 
+#' request (using the use httr::content function, see examples) 
 #'  
 #' @return A data frame of \code{name}, \code{key}, and \code{path} mappings. \cr
 #' 
