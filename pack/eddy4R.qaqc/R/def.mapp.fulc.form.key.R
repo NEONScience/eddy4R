@@ -8,7 +8,7 @@
 
 #' @param \code{schmForm} Required. The Fulcrum form schema as extracted from the Fulcrum API GET request (using the use httr::content function) 
 #'  
-#' @return A data frame of \code{name} and \code{key} mappings. \cr
+#' @return A data frame of \code{name}, \code{key}, and \code{path} mappings. \cr
 #' 
 #' @references 
 #' license: Terms of use of the NEON FIU algorithm repository dated 2015-01-16
@@ -35,7 +35,8 @@ def.mapp.fulc.form.key <- function(schmForm){
   
   # Initialize output
   key <- character(length=0)
-  name = character(length=0)
+  name <- character(length=0)
+  path <- character(length=0)
   
   # Grab the form "elements", consisting of nested list of characteristics incl. key & data name
   elmtForm <- schmForm$form$elements 
@@ -51,12 +52,14 @@ def.mapp.fulc.form.key <- function(schmForm){
   
   while(flag == 1) {
     # Debugging break point
-    #if(idxOut == 10) {stop()}
+    #if(levl == 2) {stop()}
     
     # Get to current level
     elmtCurr <- elmtForm
+    pathCurr <- ":" # Save the key path to get to current level
     if(levl > 1) {
       for (idxLevl in 1:(levl-1)) {
+        pathCurr <- paste0(pathCurr,elmtCurr[[idxElmt[idxLevl]]]$key,":",collapse = "")
         elmtCurr <- elmtCurr[[idxElmt[idxLevl]]]$elements
       }
     } 
@@ -80,6 +83,7 @@ def.mapp.fulc.form.key <- function(schmForm){
     # Are there name-key pairs here?
     if ("key" %in% names(elmtCurr)) {
       key[idxOut] <- elmtCurr$key
+      path[idxOut] <- pathCurr
       name[idxOut] <- elmtCurr$data_name
       idxOut <- idxOut+1
     }
@@ -94,8 +98,10 @@ def.mapp.fulc.form.key <- function(schmForm){
     } else {
       # Get to current level
       elmtCurr <- elmtForm
+      pathCurr <- ":" # Save the key path to get to current level
       if(levl > 1) {
         for (idxLevl in 1:(levl-1)) {
+          pathCurr <- paste0(pathCurr,elmtCurr[[idxElmt[idxLevl]]]$key,":",collapse = "")
           elmtCurr <- elmtCurr[[idxElmt[idxLevl]]]$elements
         }
       } 
@@ -117,6 +123,6 @@ def.mapp.fulc.form.key <- function(schmForm){
     }
   }
 
-rpt <- data.frame(name=name,key=key)
+rpt <- data.frame(name=name,key=key,path=path)
 
 }
