@@ -893,7 +893,7 @@ for(i in 1:ncol(raw)) {
 	
 	  #optimiality criterion
 		#crit <- sd((spemod_cum - dep_cum_scal)[whr_crit])  
-		crit <- RBPCdet2(refe = spemod_cum[whr_crit], test = dep_cum_scal[whr_crit])[1,1]
+		crit <- def.rmsd.diff.prcs.rsq(refe = spemod_cum[whr_crit], test = dep_cum_scal[whr_crit])[1,1]
 		#crit <- cor(x = spemod_cum[whr_crit], y = dep_cum_scal[whr_crit], use = "pairwise.complete.obs")
 		#crit <- sqrt(def.med.mad((spemod_cum - dep_cum_scal)[whr_crit])[1,1]^2 + def.med.mad((spemod_cum - dep_cum_scal)[whr_crit])[1,2]^2)
 	
@@ -1130,16 +1130,16 @@ find_F0 <- function(
 	  #binning
 		if(!is.null(BINS)) {
 		  
-		  dummy_bin <- binning(
-			IDE=ide,
-			DEP=trans_dat,
-			MM=NULL,
-			bins=BINS,
-			bwd=c("lin", "log10", "exp10", "logE", "expE")[1],
-			mfun=c("mean", "median")[2]
+		  dummy_bin <- def.bin(
+			idep=ide,
+			depe=trans_dat,
+			RngMinMax=NULL,
+			NumBin=BINS,
+			widtBin=c("lin", "log10", "exp10", "logExp", "expLog")[1],
+			meanFunc=c("mean", "median")[2]
 		  )
-		  ide <- dummy_bin$IDE
-		  trans_dat <- dummy_bin$DEP
+		  ide <- dummy_bin$idep
+		  trans_dat <- dummy_bin$depe
 		  rm(dummy_bin)          
 	  
 		}
@@ -1152,7 +1152,7 @@ find_F0 <- function(
 	  
 	  #optimiality criterion
 		#crit <- sd((tfumod - trans_dat)[whr_crit])
-		crit <- RBPCdet2(refe = trans_dat[whr_crit], test = tfumod[whr_crit])[1,1]
+		crit <- def.rmsd.diff.prcs.rsq(refe = trans_dat[whr_crit], test = tfumod[whr_crit])[1,1]
 		#crit <- cor(x = spemod_cum[whr_crit], y = dep_cum_scal[whr_crit], use = "pairwise.complete.obs")
 		#dum_MEDmad <- def.med.mad((tfumod - trans_dat)[whr_crit])
 		  #crit <- sqrt(dum_MEDmad[1,1]^2 + dum_MEDmad[1,2]^2)
