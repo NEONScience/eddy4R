@@ -42,14 +42,14 @@ roughness <- function(
 
   #integral over the universal function after Businger (1971) in the form of Hoegstroem (1988)
   #Foken (2006) Eq. (2.85) - (2.88)
-    dum <- sapply(1:length(d_L_v_0), function(x) univfun(d_z_m=d_z_m[x],
-                                                         d_L_v_0=d_L_v_0[x],
-                                                         sigma_range=sigma_range
+    dum <- sapply(1:length(d_L_v_0), function(x) def.univ.func(distZaxsMeas=d_z_m[x],
+                                                               distObkv=d_L_v_0[x],
+                                                               RngStblObkv=sigma_range
                                                          )
                   )
     dum <- data.frame(t(dum))
-    Psi <- unlist(dum$Psi)
-    sigma_flag <- unlist(dum$sigma_flag)
+    Psi <- unlist(dum$univFunc)
+    sigma_flag <- unlist(dum$flagStblObkv)
     rm(dum)
   
   #calculation of roughness length d_z_0 [m]
