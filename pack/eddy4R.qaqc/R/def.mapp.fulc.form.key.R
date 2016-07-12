@@ -123,7 +123,11 @@ def.mapp.fulc.form.key <- function(schmForm){
       }
     }
   }
+  
+# Put path and key together for absolute address
+addrAbs <- mapply(paste0,path,key,sep="")
 
-rpt <- data.frame(name=name,key=key,path=path)
+# Generate output
+rpt <- data.frame(name=name,path=path,key=key,addrAbs=addrAbs)
 
 }
