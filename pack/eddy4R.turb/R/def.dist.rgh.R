@@ -2,20 +2,29 @@
 #' @title Aerodynamic roughness length
 
 #' @author
-#' Stefan Metzger \email{eddy4R.info@gmail.com}
+#' Stefan Metzger \email{eddy4R.info@gmail.com} \cr
+#' Natchaya Pingintha-Durden
 
 #' @description 
 #' Function defintion. Aerodynamic roughness length.
 
-#' @param Currently none
+#' @param \code{distZaxsMeas} Measurement height and of class "numeric". [m]
+#' @param \code{distObkv} Monin-Obukhov length and of class "numeric". [m]
+#' @param \code{veloXaxsRotMean} Mean rotated horizontal wind speed and of class "numeric". [m s-1]
+#' @param \code{veloFric} Friction velocity and of class "numeric". [m s-1]
+#' @param \code{RngStblObkv} An object of class "numeric" containing the range (minimum and maximum) of the stability parameter. Defaults to  RngStblObkv = c(-2, 1).[-]
 
-#' @return Currently none
+#' @return Estimated aerodynamic roughness length. [m]
 
-#' @references Currently none
+#' @references
+#' Businger, J. A., Wyngaard, J. C., Izumi, Y., and Bradley, E. F.: Flux-proﬁle relationships in the atmospheric surface layer, Journal of the Atmospheric Sciences, 28, 181–189, 1971. \cr
+#' Foken, T.: Micrometeorology, Springer, Berlin, Heidelberg, 2008. \cr
+#' Högström, U.: Non-dimensional wind and temperature proﬁles in the atmospheric surface layer: a re-evaluation, Boundary-Layer Meteorology, 42, 55–78, 1988. \cr
 
-#' @keywords eddy-covariance, turbulent flux
+#' @keywords eddy-covariance, roughness length, turbulent flux
 
-#' @examples Currently none
+#' @examples
+#' def.dist.rgh (distZaxsMeas = 13.5, distObkv = 45, veloXaxsRotMean = 3, veloFric = 0.8, RngStblObkv = c(-2, 1))
 
 #' @seealso Currently none
 
@@ -26,38 +35,36 @@
 #     original creation
 #   Stefan Metzger (2015-11-29)
 #     added Roxygen2 tags
+#   Natchaya P-Durden (2016-06-20)
+#     Initail naming convention for eddy4R
 ##############################################################################################
+#CALCULATION OF AERODYNAMIC ROUGHNESS LENGTH distRgh (NEEDED FOR K04 footprint model)
 
-############################################################
-#CALCULATION OF AERODYNAMIC ROUGHNESS LENGTH d_z_0 (NEEDED FOR K04 footprint model)
-############################################################
-
-roughness <- function(
-  d_z_m,
-  d_L_v_0,
-  u_hor,
-  u_star,
-  sigma_range=c(-2, 1)
+def.dist.rgh <- function(
+  distZaxsMeas,
+  distObkv,
+  veloXaxsRotMean,
+  veloFric,
+  RngStblObkv = c(-2, 1)
 ) {
   
-  #integral over the universal function after Businger (1971) in the form of Hoegstroem (1988)
-  #Foken (2006) Eq. (2.85) - (2.88)
-  dum <- sapply(1:length(d_L_v_0), function(x) def.univ.func(distZaxsMeas=d_z_m[x],
-                                                             distObkv=d_L_v_0[x],
-                                                             RngStblObkv=sigma_range
+  #integral over the universal function after Businger (1971) in the form of Högström (1988)
+  #Foken (2008) Eq. (2.85) - (2.88)
+  tmp <- sapply(1:length(distObkv), function(x) def.univ.func(distZaxsMeas = distZaxsMeas[x],
+                                                             distObkv = distObkv[x],
+                                                             RngStblObkv = RngStblObkv
   )
   )
-  dum <- data.frame(t(dum))
-  Psi <- unlist(dum$univFunc)
-  sigma_flag <- unlist(dum$flagStblObkv)
-  rm(dum)
+  tmp <- data.frame(t(tmp))
+  univFunc <- unlist(tmp$univFunc)
+  flagStblObkv <- unlist(tmp$flagStblObkv)
+  rm(tmp)
   
-  #calculation of roughness length d_z_0 [m]
-  d_z_0 <- d_z_m / exp(eddy4R.base::Natu$VonkFokn * u_hor / u_star + Psi)
-  names(d_z_0) <- "d_z_0"
+  #calculation of roughness length distRgh [m]
+  distRgh <- distZaxsMeas / exp(eddy4R.base::Natu$VonkFokn * veloXaxsRotMean / veloFric + univFunc)
+  names(distRgh) <- "distRgh"
   
   #return result
-  return(d_z_0)
+  return(distRgh)
   
 }
-

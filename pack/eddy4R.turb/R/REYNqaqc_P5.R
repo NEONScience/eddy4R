@@ -715,12 +715,12 @@ REYNcomp_FD_mole_dry <- function(
 
 #-----------------------------------------------------------
 #CALCULATE AERODYNAMIC ROUGHNESS LENGTH
-  REYN_loc$mn$d_z_0 <- roughness(
-    d_z_m=REYN_loc$mn$d_z_m,
-    d_L_v_0=REYN_loc$mn$d_L_v_0,
-    u_hor=REYN_loc$mn$u_hor,
-    u_star=REYN_loc$mn$u_star,
-    sigma_range=c(-2, 1)
+  REYN_loc$mn$d_z_0 <- def.dist.rgh(
+    distZaxsMeas=REYN_loc$mn$d_z_m,
+    distObkv=REYN_loc$mn$d_L_v_0,
+    veloXaxsRotMean=REYN_loc$mn$u_hor,
+    veloFric=REYN_loc$mn$u_star,
+    RngStblObkv=c(-2, 1)
   )
 
 
