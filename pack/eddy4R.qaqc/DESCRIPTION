@@ -4,12 +4,11 @@ Version: 0.0.4
 Authors@R: c( person("Cove", "Sturtevant", email = "csturtevant@neoninc.org", role = c("aut", "cre")),
               person("Stefan", "Metzger", email = "eddy4R.info@gmail.com", role = c("aut")),
               person("Tim", "Meehan", email = "tmeehan@neoninc.org", role = c("aut")))
-Description: Eddy-covariance calculation for R: Quality assurance and quality
+Description: Eddy-covariance calculation for R: Quality assurance and quality. Currently removed from Imports because devtools::install_github() ignores and attempts to re-install previously installed packages, but without passing GITHUB_PAT (starting 2016-06-26, only affets packages hosted on private Github repos with access token, such as NEONInc/NEON-FIU-algorithm): eddy4R.base (>= 0.0.8).
     control
 Depends:
     R (>= 3.2.3)
 Imports:
-    eddy4R.base (>= 0.0.5),
     ggplot2 (>= 2.1.0),
     gridExtra (>= 2.2.1),
     gtable (>= 0.2.0),
