@@ -10,7 +10,7 @@
 
 #' @param \code{distZaxsMeas} Measurement height and of class "numeric". [m]
 #' @param \code{distObkv} Monin-Obukhov length and of class "numeric". [m]
-#' @param \code{veloXaxsRotMean} Mean rotated horizontal wind speed and of class "numeric". [m s-1]
+#' @param \code{veloXaxs} Mean along-axis horizontal wind speed and of class "numeric". For eddy4R uses case, \code{veloXaxs} after pitch and roll rotation and azimuth rotation into the mean wind [m s-1]
 #' @param \code{veloFric} Friction velocity and of class "numeric". [m s-1]
 #' @param \code{RngStblObkv} An object of class "numeric" containing the range (minimum and maximum) of the stability parameter. Defaults to  RngStblObkv = c(-2, 1).[-]
 
@@ -24,7 +24,7 @@
 #' @keywords eddy-covariance, roughness length, turbulent flux
 
 #' @examples
-#' def.dist.rgh (distZaxsMeas = 13.5, distObkv = 45, veloXaxsRotMean = 3, veloFric = 0.8, RngStblObkv = c(-2, 1))
+#' def.dist.rgh (distZaxsMeas = 13.5, distObkv = 45, veloXaxs = 3, veloFric = 0.8, RngStblObkv = c(-2, 1))
 
 #' @seealso Currently none
 
@@ -43,14 +43,14 @@
 def.dist.rgh <- function(
   distZaxsMeas,
   distObkv,
-  veloXaxsRotMean,
+  veloXaxs,
   veloFric,
   RngStblObkv = c(-2, 1)
 ) {
   
   #integral over the universal function after Businger (1971) in the form of Högström (1988)
   #Foken (2008) Eq. (2.85) - (2.88)
-  tmp <- sapply(1:length(distObkv), function(x) def.univ.func(distZaxsMeas = distZaxsMeas[x],
+  tmp <- sapply(1:length(distObkv), function(x) def.func.univ(distZaxsMeas = distZaxsMeas[x],
                                                              distObkv = distObkv[x],
                                                              RngStblObkv = RngStblObkv
   )
@@ -61,7 +61,7 @@ def.dist.rgh <- function(
   rm(tmp)
   
   #calculation of roughness length distRgh [m]
-  distRgh <- distZaxsMeas / exp(eddy4R.base::Natu$VonkFokn * veloXaxsRotMean / veloFric + univFunc)
+  distRgh <- distZaxsMeas / exp(eddy4R.base::Natu$VonkFokn * veloXaxs / veloFric + univFunc)
   names(distRgh) <- "distRgh"
   
   #return result

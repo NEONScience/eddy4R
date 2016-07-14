@@ -718,7 +718,7 @@ REYNcomp_FD_mole_dry <- function(
   REYN_loc$mn$d_z_0 <- def.dist.rgh(
     distZaxsMeas=REYN_loc$mn$d_z_m,
     distObkv=REYN_loc$mn$d_L_v_0,
-    veloXaxsRotMean=REYN_loc$mn$u_hor,
+    veloXaxs=REYN_loc$mn$u_hor,
     veloFric=REYN_loc$mn$u_star,
     RngStblObkv=c(-2, 1)
   )

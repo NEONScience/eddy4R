@@ -16,7 +16,6 @@
 #' univFunc = A list object of class "numeric" containing the integral over the universal function value. \cr
 #' flagStblObkv = A list object of class "numeric" containing the flag which indicate how the universal function being calculated (0 = calculated using the stability parameter within defined in \code{RngStblObkv}, 1 = calculated using the minimum stability parameter defined in \code{RngStblObkv}, and -1 = calculated using the maximum stability parameter defined in \code{RngStblObkv}). \cr
 
-
 #' @references 
 #' Businger, J. A., Wyngaard, J. C., Izumi, Y., and Bradley, E. F.: Flux-proﬁle relationships in the atmospheric surface layer, Journal of the Atmospheric Sciences, 28, 181–189, 1971. \cr
 #' Foken, T.: Micrometeorology, Springer, Berlin, Heidelberg, 2008. \cr
@@ -25,7 +24,7 @@
 #' @keywords eddy-covariance, turbulent flux, universal function
 
 #' @examples 
-#' def.univ.func(distZaxsMeas = 13.5,distObkv = 45 ,RngStblObkv = c(-2,1))
+#' def.func.univ(distZaxsMeas = 13.5,distObkv = 45 ,RngStblObkv = c(-2,1))
 
 #' @seealso Currently none
 
@@ -43,7 +42,7 @@
 #after Businger (1971) in the form of Hogstrom (1988)
 #from Foken (2008) Eq. (2.85) - (2.88)
 
-def.univ.func <- function(
+def.func.univ <- function(
   distZaxsMeas,
   distObkv,
   RngStblObkv = c(-2, 1)
