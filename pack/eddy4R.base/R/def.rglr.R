@@ -57,6 +57,9 @@
 #     Addition of NEON CI default regularization procedure
 #     Added Null defaults for unitMeas, BgnRglr, and EndRglr 
 #     Added checks on inputs specific to "zoo" method
+#   Cove Sturtevant (2016-07-15)
+#     Drastically improved computational time for cybiDflt
+#        by switching to .bincode function for determing 
 ##############################################################################################
 
 # start function for regularization
@@ -165,9 +168,10 @@ def.rglr <- function(
   if(MethRglr == "cybiDflt") {
     
     numVar <- base::length(dataMeas[1,])
-    
+    nameVar <- base::names(dataMeas)
+
     # Check timeMeas
-    timeMeas <- try(base::as.POSIXlt(timeMeas),silent=TRUE)
+    timeMeas <- try(base::as.POSIXct(timeMeas),silent=TRUE)
     numData <- base::length(dataMeas[,1])
     if(base::class(timeMeas)[1] == "try-error"){
       stop("Input variable timeMeas must be of class POSIXlt")
@@ -183,27 +187,32 @@ def.rglr <- function(
     # CI uses the first value as the starting point for the regularization, rounding down to the nearest second
     # Note: the rounding down aspect is a change implemented week of 1 May 2016. Previously the starting point was
     # the exact time (to the decimal second).
-    timeRglr <- base::as.POSIXlt(base::seq.POSIXt(from=base::trunc.POSIXt(timeMeas[1],units="secs"),
-                                                to=timeMeas[length(timeMeas)],by=1/FreqRglr))
+    timeRglr <- base::as.POSIXct(base::seq.POSIXt(from=base::trunc.POSIXt(timeMeas[1],units="secs"),
+                                                to=timeMeas[length(timeMeas)]+1/FreqRglr,by=1/FreqRglr))
+
+    # Which time bin does each measurement time fit into?
+    posRglr <- base::.bincode(timeMeas,timeRglr,right=FALSE) # which bin?
+    dataMeas <- base::subset(dataMeas,!base::is.na(posRglr),select=1:numVar) # Get rid of anomalous times/data not fitting in any bin
+    timeMeas <- base::subset(timeMeas,!base::is.na(posRglr))
+    posRglr <- base::subset(posRglr,!base::is.na(posRglr))
+    dupl <- base::duplicated(posRglr) # which fall into an already occupied bin?
     
     # Pull the first value that falls within each bin
-    dataRglr <- base::vapply(base::seq(from=1,to=length(timeRglr),by=1),FUN=function(x){
-      idx <- base::which((timeMeas >= timeRglr[x]) & (timeMeas < (timeRglr[x]+1/FreqRglr)))
-      if(base::length(idx)>0){
-        return(base::as.double(dataMeas[idx[1],]))
-      } else {
-        return(base::rep(NA,numVar))
-      }
-    },FUN.VALUE=base::numeric(length=numVar))
-    dataRglr <- base::as.data.frame(base::matrix(dataRglr,ncol=numVar,byrow=TRUE)) # Need to transpose
-    base::names(dataRglr) <- base::names(dataMeas) # Assign names same as dataMeas
+    dataRglr <- base::matrix(data=NA*1.5,nrow=length(timeRglr)-1,ncol=numVar) # initialize
+    for(idxVar in 1:numVar){
+      # place the first value falling into each bin
+      dataRglr[posRglr[!dupl],idxVar] <- dataMeas[which(!dupl),idxVar]
+    }
+    dataRglr <- base::as.data.frame(dataRglr) # Make data frame
+    base::names(dataRglr) <- nameVar # Assign names same as dataMeas
     
     # Report output
-    rpt$timeRglr <- timeRglr
+    timeRglr <- timeRglr[-length(timeRglr)]
+    rpt$timeRglr <- base::as.POSIXlt(timeRglr)
     rpt$dataRglr <- dataRglr
     
     # assign unit attributes
-    attributes(rpt$dataRglr)$unit <- unitMeas
+    base::attributes(rpt$dataRglr)$unit <- unitMeas
   }
   
   # return results
