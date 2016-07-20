@@ -12,7 +12,8 @@
 
 #' @return Currently none
 
-#' @references Currently none
+#' @references 
+#' Billesbach, D.P. (2011) Estimating uncertainties in individual eddy covariance flux measurements: A comparison of methods and proposed new method. Agricultural and Forest Meteorology, 151, 394-405.
 
 #' @keywords eddy-covariance, turbulent flux, detection limit
 
