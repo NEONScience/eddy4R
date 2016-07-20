@@ -2,7 +2,8 @@
 #' @title Detection limit for fluxes
 
 #' @author
-#' Stefan Metzger \email{eddy4R.info@gmail.com}
+#' Stefan Metzger \email{eddy4R.info@gmail.com} \ cr
+#' Hongyan Luo \email{eddy4R.info@gmail.com}
 
 #' @description 
 #' Function defintion. Detection limit for fluxes.
@@ -13,7 +14,7 @@
 
 #' @references Currently none
 
-#' @keywords eddy-covariance, turbulent flux
+#' @keywords eddy-covariance, turbulent flux, detection limit
 
 #' @examples Currently none
 
@@ -26,6 +27,8 @@
 #     original creation
 #   Stefan Metzger (2015-11-29)
 #     added Roxygen2 tags
+#   Hongyan Luo (2016-07-20)
+#     adjust to eddy4R coding style
 ##############################################################################################
 
 ############################################################
