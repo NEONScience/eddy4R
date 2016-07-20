@@ -593,13 +593,13 @@ REYNcomp_FD_mole_dry <- function(
 
 #-----------------------------------------------------------
 #STATIONARITY CRITERIA [%]
-  REYN_loc$stat <- REYNstat_FD_mole_dry(
+  REYN_loc$stat <- def.stna(
     data=eddy.data_loc,
-    type=c(1, 2, 3)[stattype],
-    whr_flux=whr_flux,
-    NOsusa=NOsusa,
-    FcorPOT=FcorPOT,
-    FcorPOTl=FcorPOTl
+    MethStna=c(1, 2, 3)[stattype],
+    whrVar=whr_flux,
+    NumSubSamp=NOsusa,
+    corTempPot=FcorPOT,
+    presTempPot=FcorPOTl
   )
 
 
