@@ -37,7 +37,7 @@
 ############################################################
 #determine noise level of fluxes using "random shuffle" of w_met (Billesbach, 2011)
 
-NOISE_rs <- function(
+def.thsh.nois.R <- function(
   #data set
   eddy.data_random=eddy.data_loc,
   #actual (correct) fluxes
