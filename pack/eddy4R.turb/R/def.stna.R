@@ -137,8 +137,8 @@ def.stna <- function(
   
   #aggregate results
   rpt <- list()
-  if(!is.null(rptStna01)) crit$trend=rptStna01
-  if(!is.null(rptStna02)) crit$subsa=rptStna02
+  if(!is.null(rptStna01)) rpt$trend=rptStna01
+  if(!is.null(rptStna02)) rpt$subsa=rptStna02
   
   #return results
   return(rpt)
