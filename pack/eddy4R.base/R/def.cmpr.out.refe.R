@@ -50,7 +50,7 @@ def.cmpr.out.refe <- function(
   dataRefe <- utils::read.csv(fileRefe)
   
   #Compare the first numLine lines of the data between the output and reference
-  if(!base::all.equal(dataOut[1:NumLine,],dataRefe[1:NumLine,])){
+  if(!isTRUE(base::all.equal(dataOut[1:NumLine,],dataRefe[1:NumLine,]))){
       base::stop("Bummer! The current output DOES NOT MATCH the reference output :(")
   } else {
     base::print("Yay! The current output MATCHES the reference output :)")
