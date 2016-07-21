@@ -23,16 +23,7 @@
 
 #' @keywords eddy-covariance, stationarity, turbulent flux
 
-#' @examples
-#' #input data
-#' doy <- c(115.01, 115.03, 115.05, 115.07, 115.09, 115.11, 115.14, 115.16, 115.18,  115.20) # day of year
-#' pres <- c(99422.008, 99464.440, 99509.482, 99533.279, 99572.300, 99606.239, 99610.400, 99630.021, 99657.557, 99670.128) # pressure
-#' veloFric <- c(0.498, 0.695, 0.656, 0.468, 0.446, 0.295, 0.566, 0.567, 0.600, 0.528)# ustar
-#' fluxSenh <- c(-35.254, -71.593, -56.082, -28.539, -36.199, -9.943, -68.417, -44.583, -32.294, -53.629) # Sensible heat flux
-#' fluxLath <- c(10.885, 55.163, 22.086, 32.500, 6.868, -0.247, 4.003, 23.445, 11.954, 30.837) # Latent heat flux
-#' 
-#' data <- data.frame(doy, pres, veloFric, fluxSenh, fluxLath) # generating data frame
-#' out <-def.stna(data=data, MethStna=2,whrVar=c("veloFric", "fluxSenh", "fluxLath"), NumSubSamp=6, corTempPot=TRUE, presTempPot="pres")
+#' @examples Will provide in the future.
 
 #' @seealso Currently none
 
