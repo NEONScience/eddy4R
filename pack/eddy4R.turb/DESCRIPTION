@@ -15,6 +15,9 @@ Imports:
     splus2R (>= 1.2-0)
 Suggests:
     DataCombine (>= 0.2.21)
+    ff (>= 2.2-13)
+    ffbase (>= 0.12.3)
+    rhdf5 (>= 2.16.0)
 License: Terms of use of the NEON FIU algorithm repository dated 2015-01-16
 LazyData: true
 RoxygenNote: 5.0.1
