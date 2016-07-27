@@ -15,7 +15,7 @@
 #' @param \code{corTempPot} A logical indicating whether or not to use potential temperature in flux calculation. Defaults to TRUE. [-]
 #' @param \code{presTempPot} A vector containing the air pressure data that will be used in the calculation when \code{corTempPot}=TRUE. Of class "numeric" or "integer".[Pa]
 
-#' @return Currently none
+#' @return Stationarity test result. [percent]
 
 #' @references
 #' Foken, T. and Wichura, B.: Tools for quality assessment of surface-based flux measurements, Agricultural and Forest Meteorology, 78, 83-105, (1996) \cr
@@ -52,7 +52,7 @@ def.stna <- function(
   #BASIC SETUP
   
   #fluxes including trend
-  tren <- REYNflux_FD_mole_dry(
+  trnd <- REYNflux_FD_mole_dry(
     data=data,
     AlgBase="mean",
     FcorPOT=corTempPot,
@@ -76,7 +76,7 @@ def.stna <- function(
     )
     
     #deviation [%]
-    rptStna01 <- ((detr$mn - tren$mn) / tren$mn * 100)[whrVar]
+    rptStna01 <- ((detr$mn - trnd$mn) / trnd$mn * 100)[whrVar]
     
     #clean up
     rm(detr)
@@ -113,10 +113,10 @@ def.stna <- function(
     dimnames(outSubsamp)[[2]] <- whrVar
     
     #stationarity criteria
-    rptStna02 <- (base::colMeans(outSubsamp) - tren$mn[whrVar]) / tren$mn[whrVar] * 100
+    rptStna02 <- (base::colMeans(outSubsamp) - trnd$mn[whrVar]) / trnd$mn[whrVar] * 100
     
     #clean up
-    rm(tren, NumSubSamp, sampBou, idxSubsamp, outSubsamp)
+    rm(trnd, NumSubSamp, sampBou, idxSubsamp, outSubsamp)
     
     ###
   } else rptStna02 <- NULL
@@ -128,8 +128,8 @@ def.stna <- function(
   
   #aggregate results
   rpt <- list()
-  if(!is.null(rptStna01)) rpt$trend=rptStna01
-  if(!is.null(rptStna02)) rpt$subsa=rptStna02
+  if(!is.null(rptStna01)) rpt$trnd=rptStna01
+  if(!is.null(rptStna02)) rpt$subSamp=rptStna02
   
   #return results
   return(rpt)
