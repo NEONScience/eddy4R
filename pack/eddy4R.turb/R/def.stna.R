@@ -13,7 +13,7 @@
 #' @param \code{whrVar} Specific column in \code{data} containing the variables to be performed stationarity test. Of class "numeric" (column number) or "character" (column name). Defaults to NULL. [-] 
 #' @param \code{NumSubSamp}  An object of class "numeric" or "integer" containing the number of sub sample over averaing period. For example, \code{NumSubSamp} = 6 if a 30 min averaging period is subsetted into 5 minute intervals. Defaults to 6. [-]
 #' @param \code{corTempPot} A logical indicating whether or not to use potential temperature in flux calculation. Defaults to TRUE. [-]
-#' @param \code{presTempPot} A vector containing the air pressure data that will be used in the calculation when \code{corTempPot}=TRUE. Of class "numeric" or "integer".[Pa]
+#' @param \code{presTempPot} A vector containing the air pressure data that will be used in the calculation when \code{corTempPot}=TRUE. Of class "numeric" or "integer" and of the same length as \code{data} or single entry. [Pa]
 
 #' @return Stationarity test result. [percent]
 
@@ -59,11 +59,7 @@ def.stna <- function(
     FcorPOTl=presTempPot
   )
   
-  
-  ###
-  if(MethStna %in% c(1, 3)) {
-    ###
-    
+  if(MethStna %in% c(1, 3)) { 
     #-----------------------------------------------------------
     #TREND EFFECT
     
@@ -81,48 +77,38 @@ def.stna <- function(
     #clean up
     rm(detr)
     
-    
-    ###
   } else rptStna01 <- NULL
-  ###
   
-  
-  ###
   if(MethStna %in% c(2, 3)) {
-    ###
-    
     #-----------------------------------------------------------
     #INTERNAL INSTATIONARITIES
     
     #class boundaries
-    sampBou <- base::round(base::seq(1, nrow(data), length.out=NumSubSamp + 1))
-    sampBou[length(sampBou)] <- sampBou[length(sampBou)] + 1
+    rngSamp <- base::round(base::seq(1, nrow(data), length.out=NumSubSamp + 1))
+    rngSamp[length(rngSamp)] <- rngSamp[length(rngSamp)] + 1
     
     #list with indexes of subsamples
-    idxSubsamp <- base::sapply(1:(length(sampBou) - 1), function(x) base::seq(sampBou[x], sampBou[x + 1] - 1))
+    idxSubSamp <- base::sapply(1:(length(rngSamp) - 1), function(x) base::seq(rngSamp[x], rngSamp[x + 1] - 1))
     
     #results for the subsamples
-    outSubsamp <- base::sapply(1:NumSubSamp, function(x) REYNflux_FD_mole_dry(
-      data=data[idxSubsamp[[x]],],
+    outSubSamp <- base::sapply(1:NumSubSamp, function(x) REYNflux_FD_mole_dry(
+      data=data[idxSubSamp[[x]],],
       AlgBase="mean",
       FcorPOT=corTempPot,
       FcorPOTl=presTempPot
     )$mn[,whrVar]
     )
-    outSubsamp <- data.frame(base::matrix(unlist(outSubsamp), ncol=length(whrVar), byrow=TRUE))
-    dimnames(outSubsamp)[[2]] <- whrVar
+    outSubSamp <- data.frame(base::matrix(unlist(outSubSamp), ncol=length(whrVar), byrow=TRUE))
+    dimnames(outSubSamp)[[2]] <- whrVar
     
     #stationarity criteria
-    rptStna02 <- (base::colMeans(outSubsamp) - trnd$mn[whrVar]) / trnd$mn[whrVar] * 100
+    rptStna02 <- (base::colMeans(outSubSamp) - trnd$mn[whrVar]) / trnd$mn[whrVar] * 100
     
     #clean up
-    rm(trnd, NumSubSamp, sampBou, idxSubsamp, outSubsamp)
+    rm(trnd, NumSubSamp, rngSamp, idxSubSamp, outSubSamp)
     
-    ###
   } else rptStna02 <- NULL
-  ###
-  
-  
+ 
   #-----------------------------------------------------------
   #AGGREGATE AND RETURN RESULTS
   
