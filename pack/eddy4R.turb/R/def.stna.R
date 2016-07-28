@@ -84,11 +84,11 @@ def.stna <- function(
     #INTERNAL INSTATIONARITIES
     
     #class boundaries
-    rngSamp <- base::round(base::seq(1, nrow(data), length.out=NumSubSamp + 1))
-    rngSamp[length(rngSamp)] <- rngSamp[length(rngSamp)] + 1
+    rngClas <- base::round(base::seq(1, nrow(data), length.out=NumSubSamp + 1))
+    rngClas[length(rngClas)] <- rngClas[length(rngClas)] + 1
     
     #list with indexes of subsamples
-    idxSubSamp <- base::sapply(1:(length(rngSamp) - 1), function(x) base::seq(rngSamp[x], rngSamp[x + 1] - 1))
+    idxSubSamp <- base::sapply(1:(length(rngClas) - 1), function(x) base::seq(rngClas[x], rngClas[x + 1] - 1))
     
     #results for the subsamples
     outSubSamp <- base::sapply(1:NumSubSamp, function(x) REYNflux_FD_mole_dry(
@@ -105,7 +105,7 @@ def.stna <- function(
     rptStna02 <- (base::colMeans(outSubSamp) - trnd$mn[whrVar]) / trnd$mn[whrVar] * 100
     
     #clean up
-    rm(trnd, NumSubSamp, rngSamp, idxSubSamp, outSubSamp)
+    rm(trnd, NumSubSamp, rngClas, idxSubSamp, outSubSamp)
     
   } else rptStna02 <- NULL
  
