@@ -10,8 +10,8 @@
 
 #' @param \code{stblObkv} Stability parameter and of class "numeric". [dimensionless]
 #' @param \code{lat} Latitude and of class "numeric". [degrees North]
-#' @param \code{sd} A vector containing standard deviation of the interested variables, i.e., along-axis horizontal wind speed, vertical-axis wind speed, and air temperature. Of class "numeric". [user-defined]
-#' @param \code{varScal} A vector containing the scaling variables of the interested variables, i.e., scaling variables of wind speed and air temperature. Of class "numeric". [user-defined]
+#' @param \code{sd} A data frame containing standard deviation of the interested variables, i.e., along-axis horizontal wind speed, vertical-axis wind speed, and air temperature. Of class "numeric". [user-defined]
+#' @param \code{varScal} A data frame containing the scaling variables of the interested variables, i.e., scaling variables of wind speed and air temperature. Of class "numeric". [user-defined]
 
 #' @return Data frame of integral turbulence characteristics test results for interested variables. For eddy4R use case, it includes test results for individual variable, i.e., along-axis horizontal wind speed, vertical-axis wind speed, and air temperature and for combined variables, i.e., friction velocity and sensible heat flux. [percent]
 
