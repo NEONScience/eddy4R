@@ -31,6 +31,8 @@
 #     original creation
 #   Stefan Metzger (2016-04-11)
 #     adjusted function name and description
+#   Ke Xu (2016-08-03)
+#     add download method for unix OS
 ##############################################################################################
 
 
@@ -58,5 +60,5 @@ def.dld.zip <- function(Inp = list(
   # remove obsolete zip archive
   tmpOut01 <- file.remove(NameFileTmp)
   
-# end function def.dld.zip()  
+  # end function def.dld.zip()  
 }
