@@ -37,5 +37,9 @@ Sys.setlocale('LC_ALL','C')
 
 # define 'times' language in Windows OS
 if(.Platform$OS.type == "windows") windowsFonts(times=windowsFont("TT Times New Roman"))  
+# define 'times' language in unix OS
+if(.Platform$OS.type == "unix") quartzFonts(times = quartzFont(rep("Times-Roman", 4)))
+  #c(“Avenir Book”, “Avenir Black”, “Avenir Book Oblique”, “Avenir Black Oblique”))
+  #quartzFonts(sans = quartzFont(rep("AppleGothic", 4)))
 
 }
