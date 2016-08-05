@@ -517,6 +517,7 @@ REYNcomp_FD_mole_dry <- function(
     REYN_loc$itcs <- def.itc(
       stblObkv=REYN_loc$mn$sigma,  #stability
       lat=latitude,
+      VarInp=c("veloXaxs","veloZaxs","temp","all")[4],
       sd=stdev,
       varScal=scale
     )
