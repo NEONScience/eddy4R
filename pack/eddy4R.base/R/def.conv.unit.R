@@ -468,7 +468,7 @@ def.conv.unit <- function(
     base::attributes(data) <- attr # Re-load the attributes to the output
     
     # Output
-    base::return(rpt)
+    base::return(data)
     
   } else {
       
