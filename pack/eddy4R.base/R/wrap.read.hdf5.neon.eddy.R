@@ -36,15 +36,15 @@
 ##############################################################################################
         
 wrap.read.hdf5.neon.eddy <- function(
-  DirInpLoca = DirInp,
-  SiteLoca = "SERC",
-  DateLoca = date,
-  VarLoca = c("irga", "irgaMfcSamp", "soni")[2],
-  FreqLoca = freq_res,
-  TermLoca = Term,
-  UnitLoca = Unit,
-  RngLoca = Rng,
-  DespLoca = Desp
+  DirInpLoca,
+  SiteLoca,
+  DateLoca,
+  VarLoca,
+  FreqLoca,
+  TermLoca,
+  UnitLoca,
+  RngLoca,
+  DespLoca
 ) {
   
 # create regular time dimension
