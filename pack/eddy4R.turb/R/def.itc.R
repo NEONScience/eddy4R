@@ -153,16 +153,20 @@ rm(coefCorl)
 #-----------------------------------------------------------
 #output dataframe
   if(VarInp == "veloXaxs"){
-    itc <- data.frame(veloXaxs=veloXaxs)
+    #itc <- data.frame(veloXaxs=veloXaxs)
+    itc <- data.frame(u_hor=veloXaxs) #this line will be replaced by above line once we apply name convention to the reference file header 
   }
   if(VarInp == "veloZaxs"){
-    itc <- data.frame(veloZaxs=veloZaxs)
+    #itc <- data.frame(veloZaxs=veloZaxs)
+    itc <- data.frame(w_hor=veloZaxs) #this line will be replaced by above line once we apply name convention to the reference file header
   }
   if(VarInp == "temp"){
-    itc <- data.frame(temp=temp)
+    #itc <- data.frame(temp=temp)
+    itc <- data.frame(T_air=temp)
   }
   if(VarInp == "all"){
-    itc <- data.frame(veloXaxs=veloXaxs, veloZaxs=veloZaxs, temp=temp, veloFric=veloFric, fluxSens=fluxSens)
+    #itc <- data.frame(veloXaxs=veloXaxs, veloZaxs=veloZaxs, temp=temp, veloFric=veloFric, fluxSens=fluxSens)
+    itc <- data.frame(u_hor=veloXaxs, w_hor=veloZaxs, T_air=temp, u_star=veloFric, F_H_kin=fluxSens) #this line will be replaced by above line once we apply name convention to the reference file header
   }
 #
 #clean up
