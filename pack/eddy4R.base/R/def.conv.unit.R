@@ -111,9 +111,10 @@
 #     added vrbs option to control whether output is a list explicitly calling out data,
 #        unitFrom,unitTo, and coefPoly OR as a vector or data frame (matching input data) with 
 #        output units specified as an attribute (attribute name: unit)
-#   Cove Sturtevant (2016-08-04)
-#     assigned names to unit output
+#   Cove Sturtevant (2016-08-11)
+#     assigned names to unit attribute output
 #     reduced memory usage by re-using variables & applying garbage collection
+#     adjusted error checking to allow data & unit throughput if units are not recognized
 ##############################################################################################
 
 def.conv.unit <- function(
@@ -229,11 +230,10 @@ def.conv.unit <- function(
     infoUnitFrom <- eddy4R.base::def.intp.unit(unitFrom[[idxVar]])
     # Check to make sure they were interpreted correctly
     if(base::sum(base::is.na(infoUnitFrom$posBase)) > 0) {
-      base::warning(base::paste("Cannot interpret unitFrom for variable:",idxVar,
-                    "\n Output data for this variable will be NA.",
+      base::warning(base::paste("Cannot interpret unitFrom for variable: \"",idxVar,
+                    "\". No unit coversion will be performed for this variable. ",
                     "Check unit terms or use polynomial scaling coefficients instead."))
-      data[[idxVar]][] <- NA
-      base::gc(verbose=FALSE) # Clean up memory
+      unitTo[[idxVar]] <- unitFrom[[idxVar]]
       next
     }
 
@@ -245,11 +245,10 @@ def.conv.unit <- function(
     infoUnitTo <- eddy4R.base::def.intp.unit(unitTo[[idxVar]])
     # Check to make sure they were interpreted correctly
     if(base::sum(base::is.na(infoUnitTo$posBase)) > 0) {
-      base::warning(base::paste("Cannot interpret unitTo for variable:",idxVar,
-                    "\n Output data for this variable will be NA.",
-                    "Check unit terms or use polynomial scaling coefficients instead."))
-      data[[idxVar]][] <- NA
-      base::gc(verbose=FALSE) # Clean up memory
+      base::warning(base::paste("Cannot interpret unitTo for variable: \"",idxVar,
+                                "\". No unit coversion will be performed for this variable. ",
+                                "Check unit terms or use polynomial scaling coefficients instead."))
+      unitTo[[idxVar]] <- unitFrom[[idxVar]]
       next
     }
     
@@ -257,22 +256,19 @@ def.conv.unit <- function(
     
     # Check to make sure the "From" and "To" units have the same number of base unit terms
     if (base::length(infoUnitTo$posBase) != base::length(infoUnitFrom$posBase)) {
-      base::warning(base::paste("Number of terms in unitTo and unitFrom must be the same. Unit conversion", 
-                    "for variable",idxVar, "not possible. Output data for this variable will be NA.",
+      base::warning(base::paste("Number of terms in unitTo and unitFrom must be the same. Unit conversion ", 
+                    "for variable \"",idxVar, "\" not possible. Input units will be retained. ",
                      "Check unit terms or use polynomial scaling coefficients instead."))
-      data[[idxVar]][] <- NA
-      base::gc(verbose=FALSE) # Clean up memory
+      unitTo[[idxVar]] <- unitFrom[[idxVar]]
       next
     }
     
     # Check suffixes are the same between corresponding input & output units
     if(base::sum(infoUnitFrom$sufx != infoUnitTo$sufx) > 0 || base::is.na(infoUnitFrom$sufx != infoUnitTo$sufx)) {
-      base::warning(base::paste("Unit suffixes for corresponding terms in unitTo and unitFrom must be the same.", 
-                    "Unit conversion for variable:",idxVar, "not possible. Output data for this",
-                    "variable will be NA.",
+      base::warning(base::paste("Unit suffixes for corresponding terms in unitTo and unitFrom must be the same. ", 
+                    "Unit conversion for variable: \"",idxVar, "\" not possible. Input units will be retained. ",
                     "Check unit terms or use polynomial scaling coefficients instead."))
-      data[[idxVar]][] <- NA
-      base::gc(verbose=FALSE) # Clean up memory
+      unitTo[[idxVar]] <- unitFrom[[idxVar]]
       next
       
     }
@@ -324,8 +320,8 @@ def.conv.unit <- function(
             (infoUnitFrom$type[idxBase] == "Num" && infoUnitTo$type[idxBase] == "Mass")) {
             
             if(base::is.na(infoUnitFrom$posSpcs[idxBase]) || base::is.na(infoUnitTo$posSpcs[idxBase])) {
-              base::warning(base::paste("Cannot interpret chemical species needed for conversion between mass and", 
-                      "molar units for variable",idxVar,". Output data for this variable will be NA.",
+              base::warning(base::paste("Cannot interpret chemical species needed for conversion between mass and ", 
+                      "molar units for variable \"",idxVar,"\". Output data for this variable will be NA. ",
                       "Check unit terms or use polynomial scaling coefficients instead."))
               data[[idxVar]][] <- NA
               base::gc(verbose=FALSE) # Clean up memory
@@ -377,8 +373,8 @@ def.conv.unit <- function(
             
             # Otherwise, can't do conversion
             base::warning(base::paste("Input-output units must be mapped 1-to-1 position-wise, within the",
-                    "unit strings. Corresponding input-output units for variable ",idxVar,
-                    "are not of the same unit type. Output data for this variable will be NA.",
+                    "unit strings. Corresponding input-output units for variable \"",idxVar,
+                    "\" are not of the same unit type. Output data for this variable will be NA.",
                     "Check unit terms or use polynomial scaling coefficients instead."))
             data[[idxVar]][] <- NA
             base::gc(verbose=FALSE) # Clean up memory
@@ -397,8 +393,8 @@ def.conv.unit <- function(
           if(is.null(coefPolyBase)){
             # Can't find conversion
             base::warning(base::paste("Conversion between input-output units",
-                                      base::paste0("eddy4R.base::Conv$",nameBaseFrom,nameBaseTo),"not found for variable ",idxVar,
-                          ". Check unit terms or use polynomial scaling coefficients instead."))
+                          base::paste0("eddy4R.base::Conv$",nameBaseFrom,nameBaseTo),"not found for variable \"",idxVar,
+                          "\". Check unit terms or use polynomial scaling coefficients instead."))
             data[[idxVar]][] <- NA
             base::gc(verbose=FALSE) # Clean up memory
             break
@@ -410,7 +406,7 @@ def.conv.unit <- function(
             base::warning(base::paste("For conversions which have polynomial coefficients other than a1 (",
                           "in this case", base::paste0("eddy4R.base::Conv$",nameBaseFrom,nameBaseTo),")",
                           "the input/output units must have only 1 base term and no unit suffixes.",
-                          "Cannot perform unit conversion for variable ",idxVar,". Output data",
+                          "Cannot perform unit conversion for variable \"",idxVar,"\". Output data",
                           "for this variable will be NA.",
                           "Check unit terms or use polynomial scaling coefficients instead."))
             base::gc(verbose=FALSE) # Clean up memory
