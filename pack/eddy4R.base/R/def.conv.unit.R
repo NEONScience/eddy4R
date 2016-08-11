@@ -200,12 +200,12 @@ def.conv.unit <- function(
       next
     }
     data[[idxVar]] <- eddy4R.base::def.aply.conv.poly(data=data[[idxVar]],coefPoly=coefPoly[[idxVar]])
+    base::gc(verbose=FALSE) # Clean up memory
   }
 
   # If we aren't using unit character strings, we are done
   if((base::length(unitFrom) == 1) && (unitFrom == "arb")) {
-    rpt <- base::list(data=data,coefPoly=coefPoly,unitFrom=unitFrom,unitTo=unitTo)
-    base::return(rpt)
+    base::return(base::list(data=data,coefPoly=coefPoly,unitFrom=unitFrom,unitTo=unitTo))
   }
   
   # Apply unit conversion using character strings
@@ -233,6 +233,7 @@ def.conv.unit <- function(
                     "\n Output data for this variable will be NA.",
                     "Check unit terms or use polynomial scaling coefficients instead."))
       data[[idxVar]][] <- NA
+      base::gc(verbose=FALSE) # Clean up memory
       next
     }
 
@@ -248,6 +249,7 @@ def.conv.unit <- function(
                     "\n Output data for this variable will be NA.",
                     "Check unit terms or use polynomial scaling coefficients instead."))
       data[[idxVar]][] <- NA
+      base::gc(verbose=FALSE) # Clean up memory
       next
     }
     
@@ -259,6 +261,7 @@ def.conv.unit <- function(
                     "for variable",idxVar, "not possible. Output data for this variable will be NA.",
                      "Check unit terms or use polynomial scaling coefficients instead."))
       data[[idxVar]][] <- NA
+      base::gc(verbose=FALSE) # Clean up memory
       next
     }
     
@@ -269,6 +272,7 @@ def.conv.unit <- function(
                     "variable will be NA.",
                     "Check unit terms or use polynomial scaling coefficients instead."))
       data[[idxVar]][] <- NA
+      base::gc(verbose=FALSE) # Clean up memory
       next
       
     }
@@ -280,6 +284,7 @@ def.conv.unit <- function(
       if(!base::is.na(infoUnitFrom$posPrfx[idxBase])) {
         coefPolyPrfxFrom <- eddy4R.base::Conv[[paste0(names(eddy4R.base::Unit$Prfx[infoUnitFrom$posPrfx[idxBase]]),"None")]]
         data[[idxVar]] <- eddy4R.base::def.aply.conv.poly(data=data[[idxVar]],coefPoly=coefPolyPrfxFrom) # Convert data using polynomial function
+        base::gc(verbose=FALSE) # Clean up memory
       }
       
       # Do we have a chemical species? If so, we will likely need the molar mass, so do it here
@@ -323,6 +328,7 @@ def.conv.unit <- function(
                       "molar units for variable",idxVar,". Output data for this variable will be NA.",
                       "Check unit terms or use polynomial scaling coefficients instead."))
               data[[idxVar]][] <- NA
+              base::gc(verbose=FALSE) # Clean up memory
               break
             } else {
               
@@ -337,11 +343,13 @@ def.conv.unit <- function(
                   nameBaseFrom <- base::names(eddy4R.base::Unit$Base$Symb[infoUnitFrom$posBase[idxBase]])
                   coefPolyBase <- eddy4R.base::Conv[[base::paste0(nameBaseFrom,"Gram")]]
                   data[[idxVar]] <- eddy4R.base::def.aply.conv.poly(data=data[[idxVar]],coefPoly=coefPolyBase) # Convert data using polynomial function
+                  base::gc(verbose=FALSE) # Clean up memory
                   
                 }
                 
                 # Now do g to mol conversion
                 data[[idxVar]] <- eddy4R.base::def.aply.conv.poly(data=data[[idxVar]],coefPoly=c(0,molmSpcsFrom^(-infoUnitTo$sufx[idxBase]))) # Convert data using polynomial function
+                base::gc(verbose=FALSE) # Clean up memory
                 
               } 
               else {
@@ -349,6 +357,7 @@ def.conv.unit <- function(
                 
                 # Convert to g
                 data[[idxVar]] <- eddy4R.base::def.aply.conv.poly(data=data[[idxVar]],coefPoly=c(0,molmSpcsTo^(infoUnitTo$sufx[idxBase]))) # Convert data using polynomial function
+                base::gc(verbose=FALSE) # Clean up memory
                 
                 # If we are outputting to a base unit other than g, convert that here
                 if(eddy4R.base::Unit$Base$Symb[[infoUnitTo$posBase[idxBase]]] != "g"){
@@ -356,6 +365,7 @@ def.conv.unit <- function(
                   nameBaseTo <- base::names(eddy4R.base::Unit$Base$Symb[infoUnitTo$posBase[idxBase]])
                   coefPolyBase <- eddy4R.base::Conv[[paste0("Gram",nameBaseTo)]]
                   data[[idxVar]] <- eddy4R.base::def.aply.conv.poly(data=data[[idxVar]],coefPoly=c(0,coefPolyBase[2]^(infoUnitTo$sufx[idxBase]))) # Convert data using polynomial function
+                  base::gc(verbose=FALSE) # Clean up memory
                   
                 }
                 
@@ -371,6 +381,7 @@ def.conv.unit <- function(
                     "are not of the same unit type. Output data for this variable will be NA.",
                     "Check unit terms or use polynomial scaling coefficients instead."))
             data[[idxVar]][] <- NA
+            base::gc(verbose=FALSE) # Clean up memory
             break
           }         
                        
@@ -389,6 +400,7 @@ def.conv.unit <- function(
                                       base::paste0("eddy4R.base::Conv$",nameBaseFrom,nameBaseTo),"not found for variable ",idxVar,
                           ". Check unit terms or use polynomial scaling coefficients instead."))
             data[[idxVar]][] <- NA
+            base::gc(verbose=FALSE) # Clean up memory
             break
           } 
           else if (((coefPolyBase[1] != 0) || 
@@ -401,6 +413,7 @@ def.conv.unit <- function(
                           "Cannot perform unit conversion for variable ",idxVar,". Output data",
                           "for this variable will be NA.",
                           "Check unit terms or use polynomial scaling coefficients instead."))
+            base::gc(verbose=FALSE) # Clean up memory
             data[[idxVar]][] <- NA
             break
             
@@ -409,9 +422,11 @@ def.conv.unit <- function(
           # Great, we have good conversion polynomial. Apply.
           if(infoUnitTo$sufx[idxBase] == 1) {
             data[[idxVar]] <- eddy4R.base::def.aply.conv.poly(data=data[[idxVar]],coefPoly=coefPolyBase^infoUnitTo$sufx[idxBase]) # Convert data using polynomial function
+            base::gc(verbose=FALSE) # Clean up memory
           } 
           else {
             data[[idxVar]] <- eddy4R.base::def.aply.conv.poly(data=data[[idxVar]],coefPoly=c(0,coefPolyBase[2]^infoUnitTo$sufx[idxBase])) # Convert data using polynomial function
+            base::gc(verbose=FALSE) # Clean up memory
           }
 
           # If we are converting between different mass units of different chemical species
@@ -422,6 +437,7 @@ def.conv.unit <- function(
             # Convert different mass units between different chemical species
             # (no need to account for base unit other than gram, since did it already)
             data[[idxVar]] <- eddy4R.base::def.aply.conv.poly(data=data[[idxVar]],coefPoly=c(0,(molmSpcsTo/molmSpcsFrom)^infoUnitTo$sufx[idxBase])) # Convert data using polynomial function
+            base::gc(verbose=FALSE) # Clean up memory
             
           }
           
@@ -434,6 +450,7 @@ def.conv.unit <- function(
         # Convert same mass units between different chemical species
         # (no need to account for base unit other than gram, since it will cancel)
         data[[idxVar]] <- eddy4R.base::def.aply.conv.poly(data=data[[idxVar]],coefPoly=c(0,(molmSpcsTo/molmSpcsFrom)^infoUnitTo$sufx[idxBase])) # Convert data using polynomial function
+        base::gc(verbose=FALSE) # Clean up memory
         
       }# End base-unit conversion
       
@@ -442,6 +459,7 @@ def.conv.unit <- function(
       if(!base::is.na(infoUnitTo$posPrfx[idxBase])) {
         coefPolyPrfxTo <- eddy4R.base::Conv[[base::paste0("None",base::names(eddy4R.base::Unit$Prfx[infoUnitTo$posPrfx[idxBase]]))]]
         data[[idxVar]] <- eddy4R.base::def.aply.conv.poly(data=data[[idxVar]],coefPoly=c(0,coefPolyPrfxTo[2]^infoUnitTo$sufx[idxBase])) # Convert data using polynomial function
+        base::gc(verbose=FALSE) # Clean up memory
       }
           
       
