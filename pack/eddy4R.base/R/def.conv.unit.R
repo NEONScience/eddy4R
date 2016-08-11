@@ -113,7 +113,7 @@
 #        output units specified as an attribute (attribute name: unit)
 #   Cove Sturtevant (2016-08-04)
 #     assigned names to unit output
-#     reduced memory usage by writing over "data" variable during conversion
+#     reduced memory usage by re-using variables & applying garbage collection
 ##############################################################################################
 
 def.conv.unit <- function(
@@ -473,6 +473,7 @@ def.conv.unit <- function(
     unitFrom <- unitFrom[[1]]
     unitTo <- unitTo[[1]]
     coefPoly <- coefPoly[[1]]
+    base::gc(verbose=FALSE) # Clean up memory
   }
   
   # As default, assign units as attribute attached to output data frame. 
