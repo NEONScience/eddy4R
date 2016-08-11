@@ -3,7 +3,7 @@
 
 #' @author
 #' Stefan Metzger \email{eddy4R.info@gmail.com} \cr
-#' Natchaya Pingintha-Durden
+#' Natchaya Pingintha-Durden \cr
 
 #' @description 
 #' Function defintion. Integral turbulence characteristics.
