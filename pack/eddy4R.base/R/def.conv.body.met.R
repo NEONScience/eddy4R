@@ -37,7 +37,7 @@
 
 def.conv.body.met <- function(
     AzSoniInst,
-    AzSoniOfst =  eddy4R.base::def.conv.unit(data=90,unitFrom="deg",unitTo="rad")$dataConv[[1]],
+    AzSoniOfst =  eddy4R.base::def.conv.unit(data=90,unitFrom="deg",unitTo="rad")$data[[1]],
      veloBody 
   ) {
 
