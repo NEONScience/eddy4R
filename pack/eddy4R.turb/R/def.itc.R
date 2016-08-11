@@ -16,14 +16,15 @@
 
 #' @return Data frame of integral turbulence characteristics test results of \code{VarInp}. If \code{VarInp} = "all", it includes test results for individual variable, i.e., along-axis horizontal wind speed, vertical-axis wind speed, and air temperature and also combined variables, i.e., friction velocity and sensible heat flux. [percent]
 
-#' @references Thomas, C. and Foken, T: Re-evaluation of integral turbulence characteristics and their parameterisations, 15th Conference on Turbulence and Boundary Layers, Wageningen, NL, American Meteorological Society, pp. 129-132, 2002.
+#' @references 
+#' Thomas, C. and Foken, T: Re-evaluation of integral turbulence characteristics and their parameterisations, 15th Conference on Turbulence and Boundary Layers, Wageningen, NL, American Meteorological Society, pp. 129-132, 2002.
 
 #' @keywords eddy-covariance, integral turbulence characteristics, turbulent flux
 
 #' @examples 
 #' #input
-#'sd <- data.frame(0.5254, 0.2570, 0.1405)
-#'varScal <- data.frame(0.1918, 0.0268)
+#'sd <- data.frame(veloXaxs=0.5254, veloZaxs=0.2570, temp=0.1405)
+#'varScal <- data.frame(veloFric=0.1918, tempScal=0.0268)
 #'#call function
 #'def.itc(stblObkv=0.0255, lat=70.4214, VarInp=c("all"), sd=sd, varScal=varScal)
 #'#single entry
