@@ -8,7 +8,18 @@
 #' @description 
 #' Function defintion. Detection limit for fluxes.
 
-#' @param Currently none
+#' @param \code{data} A vector containing the input data of class "numeric" or "integer". [user-defined]
+#' @param \code{data} A vector containing the input data of actual fluxes. Class "numeric" or "integer". [user-defined]
+#' @param \code{AlgBase} c("mean", "trnd", "ord03") algorithm used to determine base state, where \cr
+#' "mean" is the simple algorithmic mean, \cr
+#' "trnd" is the least squares linear (1st order) trend, and \cr
+#' "ord03" is the least squares 3rd order polynomial fit
+#' @param \code{whrVar} Specific column in \code{data} containing the variables (fluxes) to be performed detection limit calculation. Of class "numeric" (column number) or "character" (column name). Defaults to NULL. [-] 
+#' @param \code{corTempPot} A logical indicating whether or not to use potential temperature in flux calculation. Defaults to TRUE. [-]
+#' @param \code{presTempPot} A vector containing the air pressure data that will be used in the calculation when \code{corTempPot}=TRUE. Of class "numeric" or "integer" and of the same length as \code{data} or single entry. [Pa]
+#'  @param \code{ConfRng} A parameter of confidence level for detection limit. Class "numeric". [-]
+#'  @param \code{ConfEnd} A parameter of criterion to stop iteration (0.01 indicates 1% change among subsequent runs). Class "numeric". [-]
+
 
 #' @return Currently none
 
@@ -39,21 +50,21 @@
 
 def.thsh.nois.R <- function(
   #data set
-  eddy.data_random=eddy.data_loc,
+  data,
   #actual (correct) fluxes
-  REYN_loc=REYN_loc,
+  dataFlux,
   #what to use as basis to determine fluctuations
-  AlgBase=AlgBase,
+  AlgBase,
   #use potential quantities?
-  FcorPOT=FcorPOT,
+  corTempPot=TRUE,
   #pressure level for potential quantities
-  FcorPOTl=FcorPOTl,
+  presTempPot=NULL,
   #which entries are fluxes?
-  whr_flux=whr_flux,
+  whrVar,
   #confidence level for detection limit
-  conf_level=0.95,
+  ConfRng=0.95,
   #criterion to stop iteration (0.01 = 1% change among subsequent realizations)
-  crit_iter=0.01
+  CoefEnd=0.01
 ) {
   
   
@@ -69,8 +80,8 @@ def.thsh.nois.R <- function(
     r <- r + 1
     
     #randomize w_met
-    whr_random <- sample(x=1:nrow(eddy.data_random), size=nrow(eddy.data_random), replace=FALSE)
-    eddy.data_random$w_met <- eddy.data_random$w_met[whr_random]
+    whr_random <- sample(x=1:nrow(data), size=nrow(data), replace=FALSE)
+    data$w_met <- data$w_met[whr_random]
     
     #calculate fluxes
     REYN_noise <- REYNflux_FD_mole_dry(
@@ -81,31 +92,31 @@ def.thsh.nois.R <- function(
     )
     
     #store output
-    if(r == 1) NOISE <- REYN_noise$mn[, whr_flux]
-    if(r > 1)  NOISE <- rbind(NOISE, REYN_noise$mn[, whr_flux])
+    if(r == 1) NOISE <- REYN_noise$mn[, whrVar]
+    if(r > 1)  NOISE <- rbind(NOISE, REYN_noise$mn[, whrVar])
     
     #distributions stats
     MEma <- sapply(1:ncol(NOISE), function(x) def.med.mad(NOISE[,x]))
     #average offset/level/location of noise
     noise_loca <- MEma[1,]
-    names(noise_loca) <- whr_flux
+    names(noise_loca) <- whrVar
     #actual dispersion of noise
     noise_disp <- MEma[2,]
-    names(noise_disp) <- whr_flux
+    names(noise_disp) <- whrVar
     #detection limit (recast of signal-to-noise criterion after Park et al., 2013), at provided confidence level
-    conf_fac <- qnorm((1 - conf_level)/2, lower.tail = FALSE)
+    conf_fac <- qnorm((1 - ConfRng)/2, lower.tail = FALSE)
     noise_dete <- abs(noise_loca) + conf_fac * noise_disp
-    names(noise_dete) <- whr_flux
+    names(noise_dete) <- whrVar
     #signal to noise ratio
-    noise_s2n <- ( abs(REYN_loc$mn[, whr_flux]) - abs(noise_loca) ) / noise_disp
-    names(noise_s2n) <- whr_flux
+    noise_s2n <- ( abs(dataFlux$mn[, whrVar]) - abs(noise_loca) ) / noise_disp
+    names(noise_s2n) <- whrVar
     
     #stop criterion: change in signal to noise ratio < 10%
     CRIT <- abs( (noise_dete - noise_dete_prior) / noise_dete_prior )
     #condition1: CRIT has to consist of finite values
     if(length(which(is.infinite(unlist(CRIT)))) == 0) {
       #condition 2: change in signal to noise ratio < 1% between steps
-      if(length(which(abs(CRIT) < crit_iter)) == length(CRIT)) crit <- TRUE else crit <- FALSE
+      if(length(which(abs(CRIT) < CoefEnd)) == length(CRIT)) crit <- TRUE else crit <- FALSE
     } else {
       crit <- FALSE
     }
@@ -134,7 +145,7 @@ def.thsh.nois.R <- function(
   noise$sn <- noise_s2n
   
   #clean up
-  rm(crit, CRIT, eddy.data_random, MEma, NOISE, r, REYN_noise, whr_random)
+  rm(crit, CRIT, data, MEma, NOISE, r, REYN_noise, whr_random)
   
   #return results
   return(noise)
