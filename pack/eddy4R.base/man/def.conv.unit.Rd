@@ -88,7 +88,7 @@ If \code{vrbs} is set to \code{FALSE} (default), the function returns a vector o
 applied. Attribute \code{unit} (queried by base::attributes()) specifies the output units. All 
 attributes attached to input \code{data} are retained. \cr
 If \code{vrbs} is set to \code{TRUE}, the function returns a named list containing the following:\cr
-dataConv = a named data frame (matching the input variables of \code{data}) with unit conversion applied \cr
+data = a named data frame (matching the input variables of \code{data}) with unit conversion applied \cr
 coefPoly = a named list containing the numerical scaling coefficients applied for each variable \cr
 unitFrom = a named list containing the unit character strings of each input variable \cr
 unitTo = a named list containing the unit character strings of each output variable

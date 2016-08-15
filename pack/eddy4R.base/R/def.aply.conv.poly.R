@@ -32,6 +32,8 @@
 #     original creation 
 #   Cove Sturtevant (2016-04-29)
 #     update all function calls to use double-colon operator
+#   Cove Sturtevant (2016-08-11)
+#     optimize memory usage
 ##############################################################################################
 def.aply.conv.poly <- function(data,coefPoly=c(0,1)) {
   
@@ -40,8 +42,9 @@ def.aply.conv.poly <- function(data,coefPoly=c(0,1)) {
   }
   
   func <- polynom::polynomial(coef=coefPoly) # Create polynomial function from coefficients
-  rpt <- stats::predict(object=func,newdata = data) # Convert data using polynomial function
+  data <- stats::predict(object=func,newdata = data) # Convert data using polynomial function
+  base::gc(verbose=FALSE)
   
-  return(rpt)
+  return(data)
   
 }
