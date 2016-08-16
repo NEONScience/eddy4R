@@ -71,9 +71,9 @@ def.thsh.nois.R <- function(
   ###
   #start loop around sample size of manipulations
   noisBgn <- 1e5 #initial noise
-  crit <- FALSE #initial criterion
+  critLoop <- FALSE #initial criterion. When FALSE, continue iteration; when true, stop iteration
   reps <- 0
-  while(reps < 3 | crit == FALSE) {
+  while(reps < 3 | critLoop == FALSE) {
     ###
     
     #keep counting
@@ -112,13 +112,13 @@ def.thsh.nois.R <- function(
     names(rtoMeasNois) <- whrVar
     
     #stop criterion: change in signal to noise ratio < 10%
-    CRIT <- abs( (nois - noisBgn) / noisBgn )
-    #condition1: CRIT has to consist of finite values
-    if(length(which(is.infinite(unlist(CRIT)))) == 0) {
+    crit <- abs( (nois - noisBgn) / noisBgn )
+    #condition1: crit has to consist of finite values
+    if(length(which(is.infinite(unlist(crit)))) == 0) {
       #condition 2: change in signal to noise ratio < 1% between steps
-      if(length(which(abs(CRIT) < CritEnd)) == length(CRIT)) crit <- TRUE else crit <- FALSE
+      if(length(which(abs(crit) < CritEnd)) == length(crit)) critLoop <- TRUE else critLoop <- FALSE
     } else {
-      crit <- FALSE
+      critLoop <- FALSE
     }
     
     #save posterior as prior for next loop
@@ -134,20 +134,20 @@ def.thsh.nois.R <- function(
   
   
   #save to list
-  noise <- list()
+  noisData <- list()
   #noise location
-  noise$mn <- noisOfst
+  noisData$mn <- noisOfst
   #noise location
-  noise$sd <- noisSd
+  noisData$sd <- noisSd
   #detection limit
-  noise$dl <- nois
+  noisData$dl <- nois
   #signal-to-noise ratio
-  noise$sn <- rtoMeasNois
+  noisData$sn <- rtoMeasNois
   
   #clean up
-  rm(crit, CRIT, data, med, noisVar, reps, flux, veloZxas)
+  rm(critLoop, crit, data, med, noisVar, reps, flux, veloZxas)
   
   #return results
-  return(noise)
+  return(noisData)
   
 }
