@@ -79,12 +79,12 @@ def.thsh.nois.R <- function(
     #keep counting
     reps <- reps + 1
     
-    #randomize w_met
-    whr_random <- sample(x=1:nrow(data), size=nrow(data), replace=FALSE)
-    data$w_met <- data$w_met[whr_random]
+    #randomize vertical wind speed
+    veloZaxs <- sample(x=1:nrow(data), size=nrow(data), replace=FALSE)
+    data$w_met <- data$w_met[veloZxas]
     
     #calculate fluxes
-    REYN_noise <- REYNflux_FD_mole_dry(
+    flux <- REYNflux_FD_mole_dry(
       data=eddy.data_random,
       AlgBase=AlgBase,
       FcorPOT=FcorPOT,
@@ -92,27 +92,27 @@ def.thsh.nois.R <- function(
     )
     
     #store output
-    if(reps == 1) NOISE <- REYN_noise$mn[, whrVar]
-    if(reps > 1)  NOISE <- rbind(NOISE, REYN_noise$mn[, whrVar])
+    if(reps == 1) noisVar <- flux$mn[, whrVar]
+    if(reps > 1)  noisVar <- rbind(noisVar, flux$mn[, whrVar])
     
     #distributions stats
-    MEma <- sapply(1:ncol(NOISE), function(x) def.med.mad(NOISE[,x]))
+    med <- sapply(1:ncol(noisVar), function(x) def.med.mad(noisVar[,x]))
     #average offset/level/location of noise
-    noise_loca <- MEma[1,]
-    names(noise_loca) <- whrVar
+    noisOfst <- med[1,]
+    names(noisOfst) <- whrVar
     #actual dispersion of noise
-    noise_disp <- MEma[2,]
-    names(noise_disp) <- whrVar
+    noisSd <- med[2,]
+    names(noisSd) <- whrVar
     #detection limit (recast of signal-to-noise criterion after Park et al., 2013), at provided confidence level
-    conf_fac <- qnorm((1 - CoefRng)/2, lower.tail = FALSE)
-    noise_dete <- abs(noise_loca) + conf_fac * noise_disp
-    names(noise_dete) <- whrVar
+    coefOut <- qnorm((1 - CoefRng)/2, lower.tail = FALSE)
+    nois <- abs(noisOfst) + coefOut * noisSd
+    names(nois) <- whrVar
     #signal to noise ratio
-    noise_s2n <- ( abs(dataFlux$mn[, whrVar]) - abs(noise_loca) ) / noise_disp
-    names(noise_s2n) <- whrVar
+    rtoMeasNois <- ( abs(dataFlux$mn[, whrVar]) - abs(noisOfst) ) / noisSd
+    names(rtoMeasNois) <- whrVar
     
     #stop criterion: change in signal to noise ratio < 10%
-    CRIT <- abs( (noise_dete - noisBgn) / noisBgn )
+    CRIT <- abs( (nois - noisBgn) / noisBgn )
     #condition1: CRIT has to consist of finite values
     if(length(which(is.infinite(unlist(CRIT)))) == 0) {
       #condition 2: change in signal to noise ratio < 1% between steps
@@ -122,7 +122,7 @@ def.thsh.nois.R <- function(
     }
     
     #save posterior as prior for next loop
-    noisBgn <- noise_dete
+    noisBgn <- nois
     
     ###
     if(reps%%10 == 0) print(paste("Iteration ", reps, " of flux noise determination finished.", sep=""))
@@ -136,16 +136,16 @@ def.thsh.nois.R <- function(
   #save to list
   noise <- list()
   #noise location
-  noise$mn <- noise_loca
+  noise$mn <- noisOfst
   #noise location
-  noise$sd <- noise_disp
+  noise$sd <- noisSd
   #detection limit
-  noise$dl <- noise_dete
+  noise$dl <- nois
   #signal-to-noise ratio
-  noise$sn <- noise_s2n
+  noise$sn <- rtoMeasNois
   
   #clean up
-  rm(crit, CRIT, data, MEma, NOISE, reps, REYN_noise, whr_random)
+  rm(crit, CRIT, data, med, noisVar, reps, flux, veloZxas)
   
   #return results
   return(noise)
