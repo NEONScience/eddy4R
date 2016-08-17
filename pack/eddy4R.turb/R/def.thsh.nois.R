@@ -137,12 +137,16 @@ def.thsh.nois.R <- function(
   noisData <- list()
   #noise location
   noisData$mn <- noisOfst
+  #noisData$noisOfst <- noisOfst # This should be the format in the future
   #noise location
   noisData$sd <- noisSd
+  # noisData$noisSd <- noisSd # This should be the format in the future
   #detection limit
   noisData$dl <- nois
-  #signal-to-noise ratio
+  # noisData$nois <- nois # This should be the format in the future
+  #signal-to-noise ratio 
   noisData$sn <- rtoMeasNois
+  # noisData$rtoMeasNois <- rtoMeasNois # This should be the format in the future
   
   #clean up
   rm(critLoop, crit, data, med, noisVar, reps, flux, veloZxas)
