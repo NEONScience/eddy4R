@@ -482,21 +482,21 @@ if(noise_determination == TRUE) {
 
   REYN_loc$noise <- def.thsh.nois (
     #data set
-    data,
+    data=eddy.data_loc,
     #actual (correct) fluxes
-    dataFlux,
+    dataFlux=REYN_loc,
     #what to use as basis to determine fluctuations
-    AlgBase,
+    AlgBase=AlgBase,
     #use potential quantities?
-    corTempPot=TRUE,
+    corTempPot=FcorPOT,
     #pressure level for potential quantities
-    presTempPot=NULL,
+    presTempPot=FcorPOTl,
     #which entries are fluxes?
-    whrVar,
+    whrVar=whr_flux,
     #confidence level for detection limit
-    CoefRng=0.95,
+    CoefRng=conf_level,
     #criterion to stop iteration (0.01 = 1% change among subsequent realizations)
-    CritEnd=0.01
+    CritEnd=crit_iter
   )
 
 }
