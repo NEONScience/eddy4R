@@ -2,7 +2,7 @@
 % Please edit documentation in R/def.env.glob.R
 \name{def.env.glob}
 \alias{def.env.glob}
-\title{Global R-environment settings for use with the the eddy4R family of R-packages}
+\title{Global R-environment settings for use with the eddy4R family of R-packages}
 \usage{
 def.env.glob()
 }
@@ -12,9 +12,10 @@ def.env.glob()
 \value{
 Sys.setlocale('LC_ALL','C') \cr
 if(.Platform$OS.type == "windows") windowsFonts(times=windowsFont("TT Times New Roman"))
+if(.Platform$OS.type == "unix") quartzFonts(times = quartzFont(rep("Times-Roman", 4)))
 }
 \description{
-Function defintion. To avoid user-location-specific dependencies, the system locale is set to the C language standard. For R in Windows the 'times' font is defined.
+Function defintion. To avoid user-location-specific dependencies, the system locale is set to the C language standard. For R in Windows and Unix the 'times' font is defined.
 }
 \examples{
 Currently none
