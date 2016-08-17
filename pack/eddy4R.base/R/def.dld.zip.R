@@ -32,7 +32,7 @@
 #   Stefan Metzger (2016-04-11)
 #     adjusted function name and description
 #   Ke Xu (2016-08-03)
-#     add download method for unix OS
+#     add download method for both mac and unix
 ##############################################################################################
 
 
