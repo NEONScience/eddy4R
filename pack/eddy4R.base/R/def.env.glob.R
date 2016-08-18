@@ -42,5 +42,4 @@ def.env.glob <- function() {
   if(.Platform$OS.type == "windows") windowsFonts(times=windowsFont("TT Times New Roman"))  
   # define 'times' language in Mac OS
   if(Sys.info()["sysname"] == "Darwin") quartzFonts(times = quartzFont(rep("Times-Roman", 4)))
-  
 }
