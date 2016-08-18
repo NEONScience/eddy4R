@@ -12,7 +12,6 @@ def.env.glob()
 \value{
 Sys.setlocale('LC_ALL','C') \cr
 if(.Platform$OS.type == "windows") windowsFonts(times=windowsFont("TT Times New Roman"))
-if(.Platform$OS.type == "unix") quartzFonts(times = quartzFont(rep("Times-Roman", 4)))
 }
 \description{
 Function defintion. To avoid user-location-specific dependencies, the system locale is set to the C language standard. For R in Windows the 'times' font is defined.
