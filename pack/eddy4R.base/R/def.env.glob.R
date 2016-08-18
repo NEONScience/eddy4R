@@ -3,14 +3,14 @@
 
 #' @author Stefan Metzger \email{eddy4R.info@gmail.com}
 
-#' @description Function defintion. To avoid user-location-specific dependencies, the system locale is set to the C language standard. For R in Windows and Unix the 'times' font is defined. 
+#' @description Function defintion. To avoid user-location-specific dependencies, the system locale is set to the C language standard. For R in Windows and Mac the 'times' font is defined. Under Unix OS, it is not neccesary to assign font "times". 
 
 #' @param Currently none
 
 #' @return
 #' Sys.setlocale('LC_ALL','C') \cr
 #' if(.Platform$OS.type == "windows") windowsFonts(times=windowsFont("TT Times New Roman"))
-#' if(.Platform$OS.type == "unix") quartzFonts(times = quartzFont(rep("Times-Roman", 4)))
+#' if(Sys.info()["sysname"] == "Darwin") quartzFonts(times = quartzFont(rep("Times-Roman", 4)))
 
 #' @references
 #' License: Terms of use of the NEON FIU algorithm repository dated 2015-01-16. \cr
@@ -30,7 +30,7 @@
 #   Stefan Metzger (2015-11-29)
 #     re-formualtion as function() to allow packaging
 #   Ke Xu (2016-08-03)
-#     define font "times" for unix OS
+#     define font "times" for Mac
 ##############################################################################################
 
 def.env.glob <- function() {
@@ -40,7 +40,7 @@ def.env.glob <- function() {
   
   # define 'times' language in Windows OS
   if(.Platform$OS.type == "windows") windowsFonts(times=windowsFont("TT Times New Roman"))  
-  # define 'times' language in unix OS
-  if(.Platform$OS.type == "unix") quartzFonts(times = quartzFont(rep("Times-Roman", 4)))
+  # define 'times' language in Mac OS
+  if(Sys.info()["sysname"] == "Darwin") quartzFonts(times = quartzFont(rep("Times-Roman", 4)))
   
 }
