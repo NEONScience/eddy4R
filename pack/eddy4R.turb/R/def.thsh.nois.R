@@ -8,8 +8,8 @@
 #' @description 
 #' Function defintion. Detection limit for fluxes.
 
-#' @param \code{data} A vector containing the input data of class "numeric" or "integer". [user-defined]
-#' @param \code{data} A vector containing the input data of actual fluxes. Class "numeric" or "integer". [user-defined]
+#' @param \code{data} A vector containing the input data (such as w_met) of class "numeric" or "integer". [user-defined]
+#' @param \code{dataFlux} A vector containing the input data of actual fluxes. Class "numeric" or "integer". [user-defined]
 #' @param \code{AlgBase} c("mean", "trnd", "ord03") algorithm used to determine base state, where \cr
 #' "mean" is the simple algorithmic mean, \cr
 #' "trnd" is the least squares linear (1st order) trend, and \cr
@@ -71,70 +71,70 @@ def.thsh.nois.R <- function(
   ###
   #start loop around sample size of manipulations
   noisBgn <- 1e5 #initial noise
-  critLoop <- FALSE #initial criterion. When FALSE, continue iteration; when true, stop iteration
+  critReps <- FALSE #initial criterion. When FALSE, continue iteration; when true, stop iteration
   reps <- 0
-  while(reps < 3 | critLoop == FALSE) {
+  while(reps < 3 | critReps == FALSE) {
     ###
     
     #keep counting
     reps <- reps + 1
     
     #randomize vertical wind speed
-    veloZaxs <- sample(x=1:nrow(data), size=nrow(data), replace=FALSE)
+    veloZaxs <- base::sample(x=1:base::nrow(data), size=base::nrow(data), replace=FALSE)
     data$w_met <- data$w_met[veloZxas]
     
     #calculate fluxes
-    flux <- REYNflux_FD_mole_dry(
-      data=eddy.data_random,
+    flux <- eddy4R.turb::REYNflux_FD_mole_dry(
+      data=data,
       AlgBase=AlgBase,
-      FcorPOT=FcorPOT,
-      FcorPOTl=FcorPOTl
+      FcorPOT=corTempPot,
+      FcorPOTl=presTempPot
     )
     
     #store output
     if(reps == 1) noisVar <- flux$mn[, whrVar]
-    if(reps > 1)  noisVar <- rbind(noisVar, flux$mn[, whrVar])
+    if(reps > 1)  noisVar <- base::rbind(noisVar, flux$mn[, whrVar])
     
     #distributions stats
-    med <- sapply(1:ncol(noisVar), function(x) def.med.mad(noisVar[,x]))
+    med <- base::sapply(1:ncol(noisVar), function(x) eddy4R.base::def.med.mad(noisVar[,x]))
     #average offset/level/location of noise
     noisOfst <- med[1,]
-    names(noisOfst) <- whrVar
+    base::names(noisOfst) <- whrVar
     #actual dispersion of noise
     noisSd <- med[2,]
-    names(noisSd) <- whrVar
+    base::names(noisSd) <- whrVar
     #detection limit (recast of signal-to-noise criterion after Park et al., 2013), at provided confidence level
-    coefOut <- qnorm((1 - CoefRng)/2, lower.tail = FALSE)
-    nois <- abs(noisOfst) + coefOut * noisSd
-    names(nois) <- whrVar
+    coefOut <- stats::qnorm((1 - CoefRng)/2, lower.tail = FALSE)
+    nois <- base::abs(noisOfst) + coefOut * noisSd
+    base::names(nois) <- whrVar
     #signal to noise ratio
-    rtoMeasNois <- ( abs(dataFlux$mn[, whrVar]) - abs(noisOfst) ) / noisSd
-    names(rtoMeasNois) <- whrVar
+    rtioMeasNois <- (base::abs(dataFlux$mn[, whrVar]) - base::abs(noisOfst) ) / noisSd
+    base::names(rtioMeasNois) <- whrVar
     
     #stop criterion: change in signal to noise ratio < 10%
-    crit <- abs( (nois - noisBgn) / noisBgn )
+    crit <- base::abs( (nois - noisBgn) / noisBgn )
     #condition1: crit has to consist of finite values
-    if(length(which(is.infinite(unlist(crit)))) == 0) {
+    if(based::length(base::which(base::is.infinite(base::unlist(crit)))) == 0) {
       #condition 2: change in signal to noise ratio < 1% between steps
-      if(length(which(abs(crit) < CritEnd)) == length(crit)) critLoop <- TRUE else critLoop <- FALSE
+      if(base::length(base::which(base::abs(crit) < CritEnd)) == base::length(crit)) critReps <- TRUE else critReps <- FALSE
     } else {
-      critLoop <- FALSE
+      critReps <- FALSE
     }
     
     #save posterior as prior for next loop
     noisBgn <- nois
     
     ###
-    if(reps%%10 == 0) print(paste("Iteration ", reps, " of flux noise determination finished.", sep=""))
+    if(reps%%10 == 0) base::print(base::paste("Iteration ", reps, " of flux noise determination finished.", sep=""))
   }
-  print(paste("Flux noise determination completed after ", reps, " iterations.", sep=""))
+  base::print(base::paste("Flux noise determination completed after ", reps, " iterations.", sep=""))
   #end loop around sample size of manipulations
   ###
   
   
   
   #save to list
-  noisData <- list()
+  noisData <- base::list()
   #noise location
   noisData$mn <- noisOfst
   #noisData$noisOfst <- noisOfst # This should be the format in the future
@@ -145,11 +145,11 @@ def.thsh.nois.R <- function(
   noisData$dl <- nois
   # noisData$nois <- nois # This should be the format in the future
   #signal-to-noise ratio 
-  noisData$sn <- rtoMeasNois
-  # noisData$rtoMeasNois <- rtoMeasNois # This should be the format in the future
+  noisData$sn <- rtioMeasNois
+  # noisData$rtioMeasNois <- rtioMeasNois # This should be the format in the future
   
   #clean up
-  rm(critLoop, crit, data, med, noisVar, reps, flux, veloZxas)
+  rm(critReps, crit, data, med, noisVar, reps, flux, veloZxas)
   
   #return results
   return(noisData)
