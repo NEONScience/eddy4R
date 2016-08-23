@@ -179,14 +179,9 @@ if(!(DateLoca %in% file)) {
   # unit conversion
     
     # perform unit conversion
-    data <- eddy4R.base::def.conv.unit(data = data,
-                                       unitFrom = attributes(data)$unit,
-                                       unitTo = unlist(UnitLoca$Refe)[names(attributes(data)$unit)])
-    
-    # conversion to "intl" units can be used once unknown units propagate frm unitFrom to unitTo
-    # data <- base::suppressWarnings(eddy4R.base::def.conv.unit(data = data,
-    #                                                           unitFrom = attributes(data)$unit,
-    #                                                           unitTo = "intl"))
+    data <- base::suppressWarnings(eddy4R.base::def.conv.unit(data = data,
+                                                              unitFrom = attributes(data)$unit,
+                                                              unitTo = "intl"))
 
     # store target unit names for future use
     names(attributes(data)$unit) <- names(data)
