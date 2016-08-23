@@ -33,6 +33,8 @@
 # changelog and author contributions / copyrights
 #   Stefan Metzger (2016-08-07)
 #     original creation
+#   Stefan Metzger (2016-08-23)
+#     use unit conversion with "internal" units
 ##############################################################################################
         
 wrap.read.hdf5.neon.eddy <- function(
