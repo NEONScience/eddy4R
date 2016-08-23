@@ -1,6 +1,6 @@
 Package: eddy4R.base
 Title: Eddy-covariance calculation for R: Base package
-Version: 0.0.11
+Version: 0.0.12
 Authors@R: c( person("Stefan", "Metzger", email = "eddy4R.info@gmail.com", role = c("aut", "cre")),
               person("Cove", "Sturtevant", email = "csturtevant@neoninc.org", role = c("aut")),
               person("Natchaya", "Pingintha-Durden", email = "ndurden@neoninc.org", role = c("aut"))
@@ -13,7 +13,8 @@ Imports:
     robfilter (>= 4.1),
     signal (>= 0.7-6),
     zoo (>= 1.7-13),
-    polynom (>= 1.3-8)
+    polynom (>= 1.3-8),
+    downloader (>= 0.4)
 Suggests:
     rhdf5 (>= 2.16.0)
 License: Terms of use of the NEON FIU algorithm repository dated 2015-01-16
