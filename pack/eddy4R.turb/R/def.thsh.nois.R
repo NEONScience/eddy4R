@@ -48,7 +48,7 @@
 ############################################################
 #determine noise level of fluxes using "random shuffle" of w_met (Billesbach, 2011)
 
-def.thsh.nois.R <- function(
+def.thsh.nois <- function(
   #data set
   data,
   #actual (correct) fluxes
@@ -81,7 +81,7 @@ def.thsh.nois.R <- function(
     
     #randomize vertical wind speed
     veloZaxs <- base::sample(x=1:base::nrow(data), size=base::nrow(data), replace=FALSE)
-    data$w_met <- data$w_met[veloZxas]
+    data$w_met <- data$w_met[veloZaxs]
     
     #calculate fluxes
     flux <- eddy4R.turb::REYNflux_FD_mole_dry(
@@ -114,7 +114,7 @@ def.thsh.nois.R <- function(
     #stop criterion: change in signal to noise ratio < 10%
     crit <- base::abs( (nois - noisBgn) / noisBgn )
     #condition1: crit has to consist of finite values
-    if(based::length(base::which(base::is.infinite(base::unlist(crit)))) == 0) {
+    if(base::length(base::which(base::is.infinite(base::unlist(crit)))) == 0) {
       #condition 2: change in signal to noise ratio < 1% between steps
       if(base::length(base::which(base::abs(crit) < CritEnd)) == base::length(crit)) critReps <- TRUE else critReps <- FALSE
     } else {
@@ -149,7 +149,7 @@ def.thsh.nois.R <- function(
   # noisData$rtioMeasNois <- rtioMeasNois # This should be the format in the future
   
   #clean up
-  rm(critReps, crit, data, med, noisVar, reps, flux, veloZxas)
+  rm(critReps, crit, data, med, noisVar, reps, flux, veloZaxs)
   
   #return results
   return(noisData)
