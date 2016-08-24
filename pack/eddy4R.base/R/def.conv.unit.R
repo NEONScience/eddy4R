@@ -115,6 +115,8 @@
 #     assigned names to unit attribute output
 #     reduced memory usage by re-using variables & applying garbage collection
 #     adjusted error checking to allow data & unit throughput if units are not recognized
+#   Cove Sturtevant (2016-08-23)
+#     fixed bug causing incorrect application of unit suffix to unit prefix conversion
 ##############################################################################################
 
 def.conv.unit <- function(
@@ -279,7 +281,7 @@ def.conv.unit <- function(
       # Convert "from" unit prefix to no-prefix 
       if(!base::is.na(infoUnitFrom$posPrfx[idxBase])) {
         coefPolyPrfxFrom <- eddy4R.base::Conv[[paste0(names(eddy4R.base::Unit$Prfx[infoUnitFrom$posPrfx[idxBase]]),"None")]]
-        data[[idxVar]] <- eddy4R.base::def.aply.conv.poly(data=data[[idxVar]],coefPoly=coefPolyPrfxFrom) # Convert data using polynomial function
+        data[[idxVar]] <- eddy4R.base::def.aply.conv.poly(data=data[[idxVar]],coefPoly=c(0,coefPolyPrfxFrom[2]^infoUnitFrom$sufx[idxBase])) # Convert data using polynomial function
         base::gc(verbose=FALSE) # Clean up memory
       }
       

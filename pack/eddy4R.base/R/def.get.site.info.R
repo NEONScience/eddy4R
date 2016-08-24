@@ -106,6 +106,8 @@ def.get.site.info <- function(
     SiteInfo$ZoneUtm <- data.frame(Zone=15, Estg=711415, Nthg=5091655) 
     #height of tower base above sea level [m]
     SiteInfo$ElevAslTow <- 470 
+    SiteInfo$ElevAglSens <- 122
+    SiteInfo$ElevAglDisp <- 13
   }
   
   #Smithsonian Environmental Research Center, MD, U.S.A.
