@@ -1,110 +1,4 @@
 ##############################################################################################
-#' @title Integral turbulence characteristics
-
-#' @author
-#' Stefan Metzger \email{eddy4R.info@gmail.com}
-
-#' @description 
-#' Function defintion. Integral turbulence characteristics.
-
-#' @param Currently none
-
-#' @return Currently none
-
-#' @references Currently none
-
-#' @keywords eddy-covariance, turbulent flux
-
-#' @examples Currently none
-
-#' @seealso Currently none
-
-#' @export
-
-# changelog and author contributions / copyrights
-#   Stefan Metzger (2015-03-18)
-#     original creation
-#   Stefan Metzger (2015-11-29)
-#     added Roxygen2 tags
-##############################################################################################
-
-############################################################
-#INTEGRAL TURBULENCE CHARACTERISTICS
-############################################################
-
-
-REYNitcs <- function(
-  sigma,
-  latitude,
-  stdev,
-  scale
-) {
-
-
-#-----------------------------------------------------------
-#MODELLED ITCS
-
-  #STANDARD MODEL
-    #assign model coefficients
-      #stdevU / u_star
-      	ITCuC <- if(sigma < -0.032) c(4.15, 1/8) else c(2.7, 0)
-      #stdevW / u_star
-	      ITCwC <- if(sigma < -0.032) c(2.0, 1/8) else c(1.3, 0)
-      #stdevT / T_star_SL
-  	    ITCtC <-  if(sigma < -1) c(1, -1/3) else 
-  		  if(sigma >= -1 & sigma < -0.062) c(1, -1/4) else
-  		  if(sigma >= -0.062 & sigma < 0.02) c(0.5, -1/2) else
-  		  if(sigma >= 0.02) c(1.4,  -1/4)
-      #calculate models; the absolute value of stability is used, since negative values often result in NAs of the potency
-        ITCuM <- ITCuC[1] * abs(sigma)^ITCuC[2]
-        ITCwM <- ITCwC[1] * abs(sigma)^ITCwC[2]
-        ITCtM <- ITCtC[1] * abs(sigma)^ITCtC[2]
-
-  #UPDATED MODEL (THOMAS AND FOKEN, 2002)
-    #coriolis parameter
-      f <- def.coef.corl(latitude)
-    #update models
-      if(sigma > -0.2 & sigma < 0.4) {
-      	ITCuM <- 0.44 * log(f / scale$u_star) + 6.3
-      	ITCwM <- 0.21 * log(f / scale$u_star) + 3.1
-      }
-    #clean up
-      rm(ITCuC, ITCwC, ITCtC, f)
-
-
-#-----------------------------------------------------------
-#COMPARE TO MEASURED ITCS
-
-  #calculate observed ITCs
-    ITCuO <- stdev$u_hor / scale$u_star
-    ITCwO <- stdev$w_hor / scale$u_star
-    ITCtO <- stdev$T_air / scale$T_star_SL
-
-  #final criteria [%]
-    #individual
-      ITC <- data.frame(
-      	u_hor=(abs(ITCuO - ITCuM) / ITCuM) * 100,
-      	w_hor=(abs(ITCwO - ITCwM) / ITCwM) * 100,
-      	T_air=(abs(ITCtO - ITCtM) / ITCtM) * 100
-      )
-
-    #combined
-      ITC$u_star=sqrt(ITC$u_hor^2 + ITC$w_hor^2)
-      ITC$F_H_kin=sqrt(ITC$w_hor^2 + ITC$T_air^2)
-
-  #clean up
-    rm(ITCuO, ITCuM, ITCwO, ITCwM, ITCtO, ITCtM)
-
-#-----------------------------------------------------------
-#EXPORT RESULTS
-
-  return(ITC)
-
-}
-
-
-
-##############################################################################################
 #' @title Integral length scales
 
 #' @author
@@ -620,11 +514,12 @@ REYNcomp_FD_mole_dry <- function(
     )
 
   #calculation
-    REYN_loc$itcs <- REYNitcs(
-      sigma=REYN_loc$mn$sigma,  #stability
-      latitude=latitude,
-      stdev=stdev,
-      scale=scale
+    REYN_loc$itcs <- def.itc(
+      stblObkv=REYN_loc$mn$sigma,  #stability
+      lat=latitude,
+      VarInp=c("veloXaxs","veloZaxs","temp","all")[4],
+      sd=stdev,
+      varScal=scale
     )
 
   #clean up
