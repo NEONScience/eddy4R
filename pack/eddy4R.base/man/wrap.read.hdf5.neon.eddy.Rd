@@ -5,7 +5,7 @@
 \title{Reading NEON HDF5 files}
 \usage{
 wrap.read.hdf5.neon.eddy(DirInpLoca, SiteLoca, DateLoca, VarLoca, FreqLoca,
-  TermLoca, UnitLoca, RngLoca, DespLoca)
+  RngLoca, DespLoca)
 }
 \arguments{
 \item{\code{DirInpLoca}}{Character: Input directory.}
@@ -17,10 +17,6 @@ wrap.read.hdf5.neon.eddy(DirInpLoca, SiteLoca, DateLoca, VarLoca, FreqLoca,
 \item{\code{VarLoca}}{Character: Which instrument to read data from.}
 
 \item{\code{FreqLoca}}{Integer: Measurement frequency.}
-
-\item{\code{TermLoca}}{Named character: Lookup table for variable term substitution.}
-
-\item{\code{UnitLoca}}{List of named characters: For unit term substitution and definition of eddy4R-internally used units.}
 
 \item{\code{RngLoca}}{List of named ingegers: Thresholds for range test.}
 
