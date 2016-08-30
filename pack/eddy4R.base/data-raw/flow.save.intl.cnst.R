@@ -76,7 +76,7 @@
 library(devtools)
 
 # Package directory
-dirPack <- "C:/Users/csturtevant/Documents/R/NEON-FIU-algorithm-covesturtevant/pack"
+dirPack <- "C:/Users/csturtevant/OneDrive - Neon, Inc/R/NEON-FIU-algorithm-covesturtevant/pack"
 namePack <- "eddy4R.base"
 
 # WARNING: Do not change/delete constants here without updating the package functions that depend on them
@@ -92,7 +92,7 @@ Natu <- list() # Natural constants
     Unit$Base$Symb = list(
       Metr = "m",
       Feet = "ft",
-      Inch = "in",
+      Inch = "inch",
       Mile = "mi", # international mile
       MileNaut = "NM", # nautical mile
       Gram = "g",
@@ -281,20 +281,20 @@ Natu <- list() # Natural constants
     
 # Distance
 
-    Conv$MetrInch = c(0,39.3701) # [a0 a1] convert meters to inches [in m-1]
-    Conv$InchMetr = c(0,1/39.3701) # [a0 a1] convert inches to meters [m in-1]
+    Conv$MetrInch = c(0,39.3701) # [a0 a1] convert meters to inches [inch m-1]
+    Conv$InchMetr = c(0,1/39.3701) # [a0 a1] convert inches to meters [m inch-1]
     Conv$MetrFeet = c(0,3.28084) # [a0 a1] convert meters to feet [ft m-1]
     Conv$FeetMetr = c(0,0.3048) # [a0 a1] convert feet to meters [m ft-1]
     Conv$MetrMile = c(0,1/1609.34) # [a0 a1] convert meters to statute miles [mi m-1]
     Conv$MileMetr = c(0,1609.34) # [a0 a1] convert statute miles to meters [m mi-1]
     Conv$MetrMileNaut = c(0,1/1852) # [a0 a1] convert meters to nautical miles [NM m-1]
     Conv$MileNautMetr = c(0,1852) # [a0 a1] convert nautical miles to meters [m NM-1]
-    Conv$InchFeet = c(0,1/12) # [a0 a1] convert inches to feet [ft in-1]
-    Conv$FeetInch = c(0,12) # [a0 a1] convert feet to inches [in ft-1]
-    Conv$InchMile = c(0,1/12/5280) # [a0 a1] convert inches to statute miles [mi in-1]
-    Conv$MileInch = c(0,12*5280) # [a0 a1] convert statute miles to inches [in mi-1]
-    Conv$InchMileNaut = c(0,1/12/6076.11549) # [a0 a1] convert inches to nautical miles [NM in-1]
-    Conv$MileNautInch = c(0,12*6076.11549) # [a0 a1] convert nautical miles to inches [in NM-1]
+    Conv$InchFeet = c(0,1/12) # [a0 a1] convert inches to feet [ft inch-1]
+    Conv$FeetInch = c(0,12) # [a0 a1] convert feet to inches [inch ft-1]
+    Conv$InchMile = c(0,1/12/5280) # [a0 a1] convert inches to statute miles [mi inch-1]
+    Conv$MileInch = c(0,12*5280) # [a0 a1] convert statute miles to inches [inch mi-1]
+    Conv$InchMileNaut = c(0,1/12/6076.11549) # [a0 a1] convert inches to nautical miles [NM inch-1]
+    Conv$MileNautInch = c(0,12*6076.11549) # [a0 a1] convert nautical miles to inches [inch NM-1]
     Conv$FeetMile = c(0,1/5280) # [a0 a1] convert feet to statute miles [mi ft-1]
     Conv$MileFeet = c(0,5280) # [a0 a1] convert statute miles to feet [ft mi-1]
     Conv$FeetMileNaut = c(0,1/6076.11549) # [a0 a1] convert feet to nautical miles [NM ft-1]
