@@ -39,7 +39,7 @@
 ##############################################################################################
 
 
-def.vari.seSq.agr <- function(data =
+def.agr.vari.seSq <- function(data =
                                 data.frame(
                                   mean,
                                   vari
