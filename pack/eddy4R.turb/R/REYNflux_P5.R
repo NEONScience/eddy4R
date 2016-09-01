@@ -43,7 +43,8 @@ REYNflux_FD_mole_dry <- function(
   AlgBase=c("mean", "trnd", "ord03")[1],
   FcorPOT=TRUE,
   FcorPOTl=NULL,
-  PltfEc="towr"
+  PltfEc="airc",
+  flagCh4 = TRUE
 ) {
 
 
@@ -313,16 +314,18 @@ REYNflux_FD_mole_dry <- function(
 ############################################################
 #CH4 FLUX
 ############################################################
-
+if(flagCh4 == TRUE){
   #CH4 flux in kinematic units [mol m-2 s-1]
-    imfl$F_CH4_kin <- base$rho_dry * imfl$w_hor * imfl$FD_mole_CH4
-    mn$F_CH4_kin <- mean(imfl$F_CH4_kin, na.rm=TRUE)
+  imfl$F_CH4_kin <- base$rho_dry * imfl$w_hor * imfl$FD_mole_CH4
+  mn$F_CH4_kin <- mean(imfl$F_CH4_kin, na.rm=TRUE)
   #CH4 flux in mass units [mg m-2 h-1]
-    imfl$F_CH4_mass <- imfl$F_CH4_kin * eddy4R.base::Natu$MolmCh4 * 1e6 * 3600
-    mn$F_CH4_mass <- mean(imfl$F_CH4_mass, na.rm=TRUE)
+  imfl$F_CH4_mass <- imfl$F_CH4_kin * eddy4R.base::Natu$MolmCh4 * 1e6 * 3600
+  mn$F_CH4_mass <- mean(imfl$F_CH4_mass, na.rm=TRUE)
   #correlation
-    cor$F_CH4_kin <- stats::cor(imfl$w_hor, imfl$FD_mole_CH4, use="pairwise.complete.obs")
-    cor$F_CH4_mass <- cor$F_CH4_kin
+  cor$F_CH4_kin <- stats::cor(imfl$w_hor, imfl$FD_mole_CH4, use="pairwise.complete.obs")
+  cor$F_CH4_mass <- cor$F_CH4_kin
+}
+ 
 
 
 
