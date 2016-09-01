@@ -460,7 +460,8 @@ REYNcomp_FD_mole_dry <- function(
   #confidence level for detection limit
   conf_level=0.95,
   #criterion to stop iteration (0.01 = 1% change among subsequent realizations)
-  crit_iter=0.01
+  crit_iter=0.01,
+  PltfEc="towr"
 ) {
 
 
