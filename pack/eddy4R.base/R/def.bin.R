@@ -60,16 +60,16 @@ def.bin <- function(
   
   #define boundary
   if(is.null(RngMinMax)) minMax <- base::range(idep)
-  if(widtBin == "lin") bou <- base::seq(minMax[1], minMax[2], length.out=(NumBin + 1))
-  if(widtBin == "log10") bou <- base::log10(base::seq(10^(minMax[1]), 10^(minMax[2]), length.out=(NumBin + 1)))
-  if(widtBin == "exp10") bou <- 10^(base::seq(base::log10(minMax[1]), base::log10(minMax[2]), length.out=(NumBin + 1)))
-  if(widtBin == "logExp") bou <- base::log(base::seq(base::exp(minMax[1]), base::exp(minMax[2]), length.out=(NumBin + 1)))
-  if(widtBin == "expLog") bou <- base::exp(base::seq(base::log(minMax[1]), base::log(minMax[2]), length.out=(NumBin + 1)))
-  if(is.null(RngMinMax)) bou[c(1,length(bou))] <- c(0,Inf)
+  if(widtBin == "lin") rng <- base::seq(minMax[1], minMax[2], length.out=(NumBin + 1))
+  if(widtBin == "log10") rng <- base::log10(base::seq(10^(minMax[1]), 10^(minMax[2]), length.out=(NumBin + 1)))
+  if(widtBin == "exp10") rng <- 10^(base::seq(base::log10(minMax[1]), base::log10(minMax[2]), length.out=(NumBin + 1)))
+  if(widtBin == "logExp") rng <- base::log(base::seq(base::exp(minMax[1]), base::exp(minMax[2]), length.out=(NumBin + 1)))
+  if(widtBin == "expLog") rng <- base::exp(base::seq(base::log(minMax[1]), base::log(minMax[2]), length.out=(NumBin + 1)))
+  if(is.null(RngMinMax)) rng[c(1,length(rng))] <- c(0,Inf)
   
   #actual binning
-  for(i in 1:(length(bou)-1)) {
-    whrBin <- which(idep > bou[i] & idep <= bou[i+1])
+  for(i in 1:(length(rng)-1)) {
+    whrBin <- which(idep > rng[i] & idep <= rng[i+1])
     if(meanFunc == "median") {
       idepDum <- stats::median(idep[whrBin], na.rm=T)
       depeDum <- sapply(1:ncol(depe), function(x) stats::median(depe[whrBin,x], na.rm=T))
@@ -85,7 +85,7 @@ def.bin <- function(
       depeBin <- rbind(depeBin, depeDum)
     }
   }
-  if(!is.null(RngMinMax)) idepBin <- sapply(1:(length(bou)-1), function(x) base::mean(bou[x:(x+1)]))
+  if(!is.null(RngMinMax)) idepBin <- sapply(1:(length(rng)-1), function(x) base::mean(rng[x:(x+1)]))
   
   #generate output
   rpt <- list(idepBin, depeBin)
