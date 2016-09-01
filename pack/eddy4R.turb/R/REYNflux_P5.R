@@ -42,7 +42,8 @@ REYNflux_FD_mole_dry <- function(
   data=eddy.data,
   AlgBase=c("mean", "trnd", "ord03")[1],
   FcorPOT=TRUE,
-  FcorPOTl=NULL
+  FcorPOTl=NULL,
+  PltfEc="towr"
 ) {
 
 
@@ -175,7 +176,8 @@ REYNflux_FD_mole_dry <- function(
 
   #base state
     #AlgBase <- c("mean", "trnd", "ord03")[2]
-    base <- sapply(1:ncol(data), function(x) def.ec.sta.base(data$d_xy_travel, data[,x], AlgBase))
+    if(PltfEc == "airc") base <- sapply(1:ncol(data), function(x) def.ec.sta.base(data$d_xy_travel, data[,x], AlgBase))
+    if(PltfEc == "towr") base <- sapply(1:ncol(data), function(x) def.ec.sta.base(data$t_utc, data[,x], AlgBase))
     base <- as.data.frame(matrix(base, ncol=ncol(data)))
     attributes(base)$names <- attributes(data)$names
     #vector averages for azimuth angles if AlgBase == "mean"
