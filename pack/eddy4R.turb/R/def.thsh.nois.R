@@ -1,27 +1,26 @@
 ##############################################################################################
-#' @title Detection limit for fluxes
+#' @title Determination of noise and detection limit for eddy-covariance turbulent fluxes
 
 #' @author
 #' Stefan Metzger \email{eddy4R.info@gmail.com} \ cr
 #' Hongyan Luo \email{eddy4R.info@gmail.com}
 
 #' @description 
-#' Function defintion. Detection limit for fluxes.
+#' Function defintion. Determine the noise location, noise dispersion, detection limit and signal-to-noise ratio for turbulent fluxes using the "random shuffle" technique (Billesbach, 2011).
 
-#' @param \code{data} A vector containing the input data (such as w_met) of class "numeric" or "integer". [user-defined]
-#' @param \code{dataFlux} A vector containing the input data of actual fluxes. Class "numeric" or "integer". [user-defined]
+#' @param \code{dataTest} A dataframe containing the input data, of class "numeric". [user-defined]
+#' @param \code{dataRefe} A vector containing the reference fluxes, of class "numeric". [user-defined]
+#' @param \code{idxFlux} Names of columnns in \code{dataRefe} that contain the fluxes for which the detection limit calculation is performed, of class "character" (column name). [-]
 #' @param \code{AlgBase} c("mean", "trnd", "ord03") algorithm used to determine base state, where \cr
 #' "mean" is the simple algorithmic mean, \cr
 #' "trnd" is the least squares linear (1st order) trend, and \cr
-#' "ord03" is the least squares 3rd order polynomial fit
-#' @param \code{whrVar} Specific column in \code{data} containing the variables (fluxes) to be performed detection limit calculation. Of class "numeric" (column number) or "character" (column name). Defaults to NULL. [-] 
-#' @param \code{corTempPot} A logical indicating whether or not to use potential temperature in flux calculation. Defaults to TRUE. [-]
-#' @param \code{presTempPot} A vector containing the air pressure data that will be used in the calculation when \code{corTempPot}=TRUE. Of class "numeric" or "integer" and of the same length as \code{data} or single entry. [Pa]
-#'  @param \code{CoefRng} A parameter of confidence level for detection limit. Class "numeric". [-]
-#'  @param \code{ConfEnd} A parameter of criterion to stop iteration (0.01 indicates 1% change among subsequent runs). Class "numeric". [-]
+#' "ord03" is the least squares 3rd order polynomial fit.
+#' @param \code{corTempPot} Logical value indicating whether or not to use potential temperature in the flux calculation. Defaults to TRUE. [-]
+#' @param \code{presTempPot} A vector containing the air pressure data that will be used in the calculation when \code{corTempPot} = TRUE. Of class "numeric" or "integer" and of the same length as \code{dataTest} or single entry. [Pa]
+#'  @param \code{ConfLevl} The confidence level at which the detection limit is calculated. Of class "numeric", defaults to 0.95. [-]
+#'  @param \code{CritMax} The stop criterion for the iteration. Of class "numeric", defaults to 0.01 (i.e., 1% change among subsequent runs). [-]
 
-
-#' @return Currently none
+#' @return A list containing the noise location, noise dispersion, detection limit and signal-to-noise ratio.
 
 #' @references 
 #' Billesbach, D.P. (2011) Estimating uncertainties in individual eddy covariance flux measurements: A comparison of methods and proposed new method. Agricultural and Forest Meteorology, 151, 394-405.
@@ -41,117 +40,132 @@
 #     added Roxygen2 tags
 #   Hongyan Luo (2016-07-20)
 #     adjust to eddy4R coding style
+#   Stefan Metzger (2016-08-31)
+#     eddy4R coding style suggestions
 ##############################################################################################
 
 ############################################################
-#DETECTION LIMIT FOR FLUXES
+# DETECTION LIMIT FOR FLUXES
 ############################################################
-#determine noise level of fluxes using "random shuffle" of w_met (Billesbach, 2011)
+# determine noise level of fluxes using "random shuffle" of the vertical wind (Billesbach, 2011)
 
-def.thsh.nois <- function(
-  #data set
-  data,
-  #actual (correct) fluxes
-  dataFlux,
-  #what to use as basis to determine fluctuations
+def.nois <- function(
+  # data set
+  dataTest,
+  # actual (correct) fluxes
+  dataRefe,
+  # which entries are fluxes?
+  idxFlux,
+  # what to use as basis to determine fluctuations
   AlgBase,
-  #use potential quantities?
-  corTempPot=TRUE,
-  #pressure level for potential quantities
-  presTempPot=NULL,
-  #which entries are fluxes?
-  whrVar,
-  #confidence level for detection limit
-  CoefRng=0.95,
-  #criterion to stop iteration (0.01 = 1% change among subsequent realizations)
-  CritEnd=0.01
+  # use potential quantities?
+  corTempPot = TRUE,
+  # pressure level for potential quantities
+  presTempPot = NULL,
+  # confidence level for detection limit
+  ConfLevl = 0.95,
+  # criterion to stop iteration (0.01 = 1% change among subsequent realizations)
+  CritMax = 0.01
 ) {
   
   
   ###
-  #start loop around sample size of manipulations
-  noisBgn <- 1e5 #initial noise
-  critReps <- FALSE #initial criterion. When FALSE, continue iteration; when true, stop iteration
-  reps <- 0
-  while(reps < 3 | critReps == FALSE) {
-    ###
+  # start loop around sample size of manipulations
+  noisBgn <- 1e5         # prior for cut-off criterion of iteration
+  repsCrit <- FALSE      # initial criterion. When FALSE, continue iteration; when TRUE, stop iteration
+  reps <- 0              # count number of iterations
+  while(reps < 3 | repsCrit == FALSE) {
+  ###
     
-    #keep counting
+    # keep counting
     reps <- reps + 1
     
-    #randomize vertical wind speed
-    veloZaxs <- base::sample(x=1:base::nrow(data), size=base::nrow(data), replace=FALSE)
-    data$w_met <- data$w_met[veloZaxs]
+    # randomize vertical wind speed
+    idx <- base::sample(x = 1:base::nrow(dataTest), size = base::nrow(dataTest), replace = FALSE)
+    dataTest$w_met <- dataTest$w_met[idx]
     
-    #calculate fluxes
+    # calculate fluxes
     flux <- eddy4R.turb::REYNflux_FD_mole_dry(
-      data=data,
-      AlgBase=AlgBase,
-      FcorPOT=corTempPot,
-      FcorPOTl=presTempPot
+      data = dataTest,
+      AlgBase = AlgBase,
+      FcorPOT = corTempPot,
+      FcorPOTl = presTempPot
     )
     
-    #store output
-    if(reps == 1) noisVar <- flux$mn[, whrVar]
-    if(reps > 1)  noisVar <- base::rbind(noisVar, flux$mn[, whrVar])
+    # store output
+    if(reps == 1) noisTmp <- flux$mn[,idxFlux]
+    if(reps > 1)  noisTmp <- base::rbind(noisTmp, flux$mn[, idxFlux])
     
-    #distributions stats
-    med <- base::sapply(1:ncol(noisVar), function(x) eddy4R.base::def.med.mad(noisVar[,x]))
-    #average offset/level/location of noise
-    noisOfst <- med[1,]
-    base::names(noisOfst) <- whrVar
-    #actual dispersion of noise
+    # distributions stats
+    med <- base::sapply(1:ncol(noisTmp), function(x) eddy4R.base::def.med.mad(noisTmp[,x]))
+    
+    # average offset/level/location of noise
+    noisLoc <- med[1,]
+    base::names(noisLoc) <- idxFlux
+    
+    # actual dispersion of noise
     noisSd <- med[2,]
-    base::names(noisSd) <- whrVar
-    #detection limit (recast of signal-to-noise criterion after Park et al., 2013), at provided confidence level
-    coefOut <- stats::qnorm((1 - CoefRng)/2, lower.tail = FALSE)
-    nois <- base::abs(noisOfst) + coefOut * noisSd
-    base::names(nois) <- whrVar
-    #signal to noise ratio
-    rtioMeasNois <- (base::abs(dataFlux$mn[, whrVar]) - base::abs(noisOfst) ) / noisSd
-    base::names(rtioMeasNois) <- whrVar
+    base::names(noisSd) <- idxFlux
     
-    #stop criterion: change in signal to noise ratio < 10%
-    crit <- base::abs( (nois - noisBgn) / noisBgn )
-    #condition1: crit has to consist of finite values
+    # detection limit (recast of signal-to-noise criterion after Park et al., 2013), at provided confidence level
+    confVar <- stats::qnorm((1 - ConfLevl)/2, lower.tail = FALSE)
+    noisMax <- base::abs(noisLoc) + confVar * noisSd
+    base::names(noisMax) <- idxFlux
+    
+    # signal to noise ratio
+    rtioMeasNois <- (base::abs(dataRefe$mn[,idxFlux]) - base::abs(noisLoc) ) / noisSd
+    base::names(rtioMeasNois) <- idxFlux
+    
+    # stop criterion: change in detection limit between subsequent iterations
+    crit <- base::abs( (noisMax - noisBgn) / noisBgn )
+    
+    # condition 1: crit has to consist of finite values
     if(base::length(base::which(base::is.infinite(base::unlist(crit)))) == 0) {
-      #condition 2: change in signal to noise ratio < 1% between steps
-      if(base::length(base::which(base::abs(crit) < CritEnd)) == base::length(crit)) critReps <- TRUE else critReps <- FALSE
+      
+      # condition 2: change in detection limit < CritMax between subsequent iterations
+      if(base::length(base::which(base::abs(crit) < CritMax)) == base::length(crit)) repsCrit <- TRUE else repsCrit <- FALSE
+      
     } else {
-      critReps <- FALSE
+      
+      repsCrit <- FALSE
+      
     }
     
-    #save posterior as prior for next loop
-    noisBgn <- nois
+    # save posterior as prior for next loop
+    noisBgn <- noisMax
     
-    ###
-    if(reps%%10 == 0) base::print(base::paste("Iteration ", reps, " of flux noise determination finished.", sep=""))
+  ###
+  if(reps%%10 == 0) base::print(base::paste("Iteration ", reps, " of flux noise determination finished.", sep = ""))
   }
-  base::print(base::paste("Flux noise determination completed after ", reps, " iterations.", sep=""))
-  #end loop around sample size of manipulations
+  base::print(base::paste("Flux noise determination completed after ", reps, " iterations.", sep = ""))
+  # end loop around sample size of manipulations
   ###
   
   
   
-  #save to list
-  noisData <- base::list()
-  #noise location
-  noisData$mn <- noisOfst
-  #noisData$noisOfst <- noisOfst # This should be the format in the future
-  #noise location
-  noisData$sd <- noisSd
-  # noisData$noisSd <- noisSd # This should be the format in the future
-  #detection limit
-  noisData$dl <- nois
-  # noisData$nois <- nois # This should be the format in the future
-  #signal-to-noise ratio 
-  noisData$sn <- rtioMeasNois
-  # noisData$rtioMeasNois <- rtioMeasNois # This should be the format in the future
+  # save to list
+  noisRpt <- base::list()
   
-  #clean up
-  rm(critReps, crit, data, med, noisVar, reps, flux, veloZaxs)
+    # noise location
+    noisRpt$mn <- noisLoc
+    # noisRpt$loc <- noisLoc # This should be the format in the future
+    
+    # noise dispersion
+    noisRpt$sd <- noisSd
+    # noisRpt$sd <- noisSd # This should be the format in the future
+    
+    # detection limit
+    noisRpt$dl <- noisMax
+    # noisRpt$max <- noisMax # This should be the format in the future
+    
+    # signal-to-noise ratio 
+    noisRpt$sn <- rtioMeasNois
+    # noisRpt$rtio <- rtioMeasNois # This should be the format in the future
   
-  #return results
-  return(noisData)
+  # clean up
+  rm(repsCrit, crit, dataTest, med, noisTmp, reps, flux, idx)
+  
+  # return results
+  return(noisRpt)
   
 }
