@@ -1,13 +1,13 @@
 Package: eddy4R.base
 Title: Eddy-covariance calculation for R: Base package
-Version: 0.0.12
+Version: 0.0.14
 Authors@R: c( person("Stefan", "Metzger", email = "eddy4R.info@gmail.com", role = c("aut", "cre")),
               person("Cove", "Sturtevant", email = "csturtevant@neoninc.org", role = c("aut")),
               person("Natchaya", "Pingintha-Durden", email = "ndurden@neoninc.org", role = c("aut"))
             )
 Description: Contains basic commonalities for the eddy4R family of R-packages
 Depends:
-    R (>= 3.2.3)
+    R (>= 3.3.1)
 Imports:
     EMD (>= 1.5.7),
     robfilter (>= 4.1),
