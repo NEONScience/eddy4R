@@ -480,11 +480,11 @@ REYNcomp_FD_mole_dry <- function(
 
 if(noise_determination == TRUE) {
 
-  REYN_loc$noise <- def.thsh.nois (
+  REYN_loc$noise <- def.nois (
     #data set
-    data=eddy.data_loc,
+    dataTest=eddy.data_loc,
     #actual (correct) fluxes
-    dataFlux=REYN_loc,
+    dataRefe=REYN_loc,
     #what to use as basis to determine fluctuations
     AlgBase=AlgBase,
     #use potential quantities?
@@ -492,11 +492,11 @@ if(noise_determination == TRUE) {
     #pressure level for potential quantities
     presTempPot=FcorPOTl,
     #which entries are fluxes?
-    whrVar=whr_flux,
+    idxFlux=whr_flux,
     #confidence level for detection limit
-    CoefRng=conf_level,
+    ConfLevl=conf_level,
     #criterion to stop iteration (0.01 = 1% change among subsequent realizations)
-    CritEnd=crit_iter
+    CritMax=crit_iter
   )
 
 }
