@@ -72,9 +72,9 @@ def.nois <- function(
   ###
   # start loop around sample size of manipulations
   noisBgn <- 1e5         # prior for cut-off criterion of iteration
-  repsCrit <- FALSE      # initial criterion. When FALSE, continue iteration; when TRUE, stop iteration
+  critReps <- FALSE      # initial criterion. When FALSE, continue iteration; when TRUE, stop iteration
   reps <- 0              # count number of iterations
-  while(reps < 3 | repsCrit == FALSE) {
+  while(reps < 3 | critReps == FALSE) {
   ###
     
     # keep counting
@@ -123,11 +123,11 @@ def.nois <- function(
     if(base::length(base::which(base::is.infinite(base::unlist(crit)))) == 0) {
       
       # condition 2: change in detection limit < CritMax between subsequent iterations
-      if(base::length(base::which(base::abs(crit) < CritMax)) == base::length(crit)) repsCrit <- TRUE else repsCrit <- FALSE
+      if(base::length(base::which(base::abs(crit) < CritMax)) == base::length(crit)) critReps <- TRUE else critReps <- FALSE
       
     } else {
       
-      repsCrit <- FALSE
+      critReps <- FALSE
       
     }
     
@@ -163,7 +163,7 @@ def.nois <- function(
     # noisRpt$rtio <- rtioMeasNois # This should be the format in the future
   
   # clean up
-  rm(repsCrit, crit, dataTest, med, noisTmp, reps, flux, idx)
+  rm(critReps, crit, dataTest, med, noisTmp, reps, flux, idx)
   
   # return results
   return(noisRpt)
