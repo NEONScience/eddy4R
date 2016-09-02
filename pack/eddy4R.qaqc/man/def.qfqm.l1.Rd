@@ -22,7 +22,7 @@ def.qfqm.l1(data, ts = as.POSIXlt(seq.POSIXt(from = Sys.time(), by = "sec",
 }
 \value{
 A list of: \cr
-tsAggrStrt - the starting time stamp of aggregated L1 data and quality metrics \cr
+tsAggrBgn - the starting time stamp of aggregated L1 data and quality metrics \cr
 qfqm - a list of variables, each containing a data frame of the time-aggregated mean, minimum, maximum, variance, standard deviation of the mean, number of points going into the average, and quality metrics (pass, fail, NA) pertaining to that variable for each flag in flgs, as well as the alpha & beta quality metrics and final quality flag.
 }
 \description{
