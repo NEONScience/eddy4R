@@ -344,7 +344,9 @@ NOISE_rs <- function(
         data=eddy.data_random,
         AlgBase=AlgBase,
         FcorPOT=FcorPOT,
-        FcorPOTl=FcorPOTl
+        FcorPOTl=FcorPOTl,
+        PltfEc = PltfEc,
+        flagCh4 = flagCh4
       )
     
     #store output
@@ -473,8 +475,8 @@ REYNcomp_FD_mole_dry <- function(
     AlgBase=AlgBase,
     FcorPOT=FcorPOT,
     FcorPOTl=FcorPOTl,
-    PltfEc="airc",
-    flagCh4 = TRUE
+    PltfEc=PltfEc,
+    flagCh4 = flagCh4
   )
 
 
@@ -497,7 +499,9 @@ REYNcomp_FD_mole_dry <- function(
     whrVar=whr_flux,
     NumSubSamp=NOsusa,
     corTempPot=FcorPOT,
-    presTempPot=FcorPOTl
+    presTempPot=FcorPOTl,
+    PltfEc = PltfEc,
+    flagCh4 = flagCh4
   )
 
 
