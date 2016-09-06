@@ -160,7 +160,7 @@ def.dspk.wndw <- function (
           if(Trt$NumPtsSlid > 1) {
             
             posUntr <- which(!is.na(cntrRoll))
-            posUntrStrt <- sapply(posUntr, function(val) val - (Trt$NumPtsWndw/2 - 1))
+            posUntrBgn <- sapply(posUntr, function(val) val - (Trt$NumPtsWndw/2 - 1))
             posUntrEnd <- sapply(posUntr, function(val) val + (Trt$NumPtsWndw/2))
             
             #assign local variables
@@ -173,9 +173,9 @@ def.dspk.wndw <- function (
                 for(idxUntr in 1:length(posUntr)){
                 #idxUntr <- 1
                 
-                  cntrRollLocl[posUntrStrt[idxUntr]:posUntrEnd[idxUntr]] <- cntrRoll[posUntr[idxUntr]]
-                  sprdRollLocl[posUntrStrt[idxUntr]:posUntrEnd[idxUntr]] <- sprdRoll[posUntr[idxUntr]]
-                  naPropRollLocl[posUntrStrt[idxUntr]:posUntrEnd[idxUntr]] <- naPropRoll[posUntr[idxUntr]]
+                  cntrRollLocl[posUntrBgn[idxUntr]:posUntrEnd[idxUntr]] <- cntrRoll[posUntr[idxUntr]]
+                  sprdRollLocl[posUntrBgn[idxUntr]:posUntrEnd[idxUntr]] <- sprdRoll[posUntr[idxUntr]]
+                  naPropRollLocl[posUntrBgn[idxUntr]:posUntrEnd[idxUntr]] <- naPropRoll[posUntr[idxUntr]]
                   
                 }; rm(idxUntr)
               
@@ -192,9 +192,9 @@ def.dspk.wndw <- function (
                 for(idxUntr in length(posUntr):1){
                 #idxUntr <- 1
                 
-                  cntrRollLocl[posUntrStrt[idxUntr]:posUntrEnd[idxUntr]] <- cntrRoll[posUntr[idxUntr]]
-                  sprdRollLocl[posUntrStrt[idxUntr]:posUntrEnd[idxUntr]] <- sprdRoll[posUntr[idxUntr]]
-                  naPropRollLocl[posUntrStrt[idxUntr]:posUntrEnd[idxUntr]] <- naPropRoll[posUntr[idxUntr]]
+                  cntrRollLocl[posUntrBgn[idxUntr]:posUntrEnd[idxUntr]] <- cntrRoll[posUntr[idxUntr]]
+                  sprdRollLocl[posUntrBgn[idxUntr]:posUntrEnd[idxUntr]] <- sprdRoll[posUntr[idxUntr]]
+                  naPropRollLocl[posUntrBgn[idxUntr]:posUntrEnd[idxUntr]] <- naPropRoll[posUntr[idxUntr]]
                   
                 }; rm(idxUntr)
               
@@ -213,7 +213,7 @@ def.dspk.wndw <- function (
               numSpkNew <- length(posSpkNew)
        
           #clean up
-            rm(posUntrEnd, cntrRollLocl, posUntr, sprdRollLocl, posUntrStrt, posSpkNewFwd, posSpkNewBwd)
+            rm(posUntrEnd, cntrRollLocl, posUntr, sprdRollLocl, posUntrBgn, posSpkNewFwd, posSpkNewBwd)
           
           }
       
