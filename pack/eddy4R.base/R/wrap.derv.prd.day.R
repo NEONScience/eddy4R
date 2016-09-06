@@ -1,25 +1,23 @@
 ##############################################################################################
-#' @title Reading NEON HDF5 files
+#' @title Calculation of derived quantities (daily extent, native resolution)
 
 #' @author Stefan Metzger \email{eddy4R.info@gmail.com}
 
-#' @description Wrapper function. Reads an HDF5 input file in NEON standard format from \code{DirInpLoca}. Subsequently, (i) name and unit attributes are converted to eddy4R standard terms, (ii) variable units are converted accordingly, (iii) the data is regularized, (iv) sensor diagnostic tests are performed, (v) a range test is performed, and (vi) the data is de-spiked.
+#' @description Wrapper function. Reads the list \code{data} in the format provided by function \code{eddy4R.base::wrap.read.hdf5.neon.eddy()}. For the list entries in \code{data} the following derived quantities are calculated, each through the call to a separate definition function: \cr
+#' \code{data$time}: fractional UTC time, fractional day of year, local standard time;  \cr
+#' \code{data$irga}: average signal strength, delta signal strength, total pressure, average temperature, water vapor partial pressure, water vapor saturation pressure, relative humidity, molar density of air (dry air and water vapor), molar density of dry air, wet mass fraction (specific humidity);  \cr
+#' \code{data$soni}: sonic temperature.
 
-#' @param \code{DirInpLoca} Character: Input directory.
-#' @param \code{SiteLoca} Character: Site location.
-#' @param \code{DateLoca} Character: Date in ISO format "(2016-05-26").
-#' @param \code{VarLoca} Character: Which instrument to read data from.
-#' @param \code{FreqLoca} Integer: Measurement frequency.
-#' @param \code{RngLoca} List of named ingegers: Thresholds for range test.
-#' @param \code{DespLoca} List of integers: De-spiking parameters
+#' @param \code{data} List consisting of \code{ff::ffdf} file-backed objects, in the format provided by function \code{eddy4R.base::wrap.read.hdf5.neon.eddy()}. Of types numeric and integer.
+#' @param \code{SiteLoca} List consisting of site-specific parameters. Of types numeric, integer and character.
 
 #' @return 
-#' Named list containing pre-processed time-series $time and $data.
+#' The returned object consistes of \code{data}, with the derived variables added to the respective list entry, and all list levels sorted alphabetically.
 
 #' @references
 #' License: Terms of use of the NEON FIU algorithm repository dated 2015-01-16. \cr
 
-#' @keywords file, read, pre-processing, unit conversion, regularization, diagnostic, range, spike
+#' @keywords derived, high-frequency, irga, post-processing, pre-processing, sonic, time
 
 #' @examples
 #' Currently none.
@@ -29,10 +27,8 @@
 #' @export
 
 # changelog and author contributions / copyrights
-#   Stefan Metzger (2016-08-07)
+#   Stefan Metzger (2016-09-06)
 #     original creation
-#   Stefan Metzger (2016-08-23)
-#     use unit conversion with "internal" units
 ##############################################################################################
     
     
@@ -46,15 +42,15 @@ wrap.derv.prd.day <- function(
 # time
 
   # create temporary variable holding POSIXlt object
-  tmp <- as.POSIXlt(data$time[])
+  tmp <- as.POSIXlt(data$time$UTC[])
 
-  # fractional UTC time        
+  # fractional UTC time
   data$time$UTC_frac <- ff::as.ff(tmp$hour + tmp$min / 60 + tmp$sec / 3600)
   
-  #fractional day of year [DOY]
+  # fractional day of year [DOY]
   data$time$DOY_frac <- ff::as.ff(tmp$yday + 1 + data$time$UTC_frac[] / 24)
   
-  #calculate local standard time
+  # calculate local standard time
   tmp <- data$time$UTC[]
   attributes(tmp)$tzone <- SiteInfoLoca$Tz
   data$time$Loca <- ff::as.ff(tmp)
@@ -147,8 +143,8 @@ wrap.derv.prd.day <- function(
   rm(tmp, whr)
 
 # print message to screen
-print(paste0(format(Sys.time(), "%F %T"), ": dataset ", date, ": derived high-frequency quantities calculated"))
-  
+print(paste0(format(Sys.time(), "%F %T"), ": dataset ", date, ": derived quantities calculated (daily extent, native resolution)"))
+
 # return results
 return(data)
     
