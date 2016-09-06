@@ -146,6 +146,9 @@ wrap.derv.neon.eddy.day <- function(
   attributes(data$soni)$unit <- tmp
   rm(tmp, whr)
 
+# print message to screen
+print(paste0(format(Sys.time(), "%F %T"), ": dataset ", date, ": derived high-frequency quantities calculated"))
+  
 # return results
 return(data)
     
