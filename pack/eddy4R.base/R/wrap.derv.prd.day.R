@@ -38,7 +38,7 @@
     
 # derived quantities: daily basis upon import
 
-wrap.derv.neon.eddy.day <- function(
+wrap.derv.prd.day <- function(
   data = inp,
   SiteInfoLoca = SiteInfo
 ) {
