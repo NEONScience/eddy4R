@@ -128,8 +128,9 @@ REYNflux_FD_mole_dry <- function(
     mn <- as.data.frame( matrix(colMeans(data, na.rm=TRUE), ncol=ncol(data)) )
     attributes(mn)$names <- attributes(data)$names
 
+    
   #aircraft heading as vector average
-    mn$PSI_aircraft <- eddy4R.base::def.aply.conv.poly(data=def.conv.cart.az(matrix(colMeans(def.conv.az.cart(eddy4R.base::def.aply.conv.poly(data=data$PSI_aircraft,coefPoly=eddy4R.base::Conv$DegRad)), na.rm=TRUE), ncol=2)),coefPoly=eddy4R.base::Conv$RadDeg)
+    if(PltfEc == "airc") mn$PSI_aircraft <- eddy4R.base::def.aply.conv.poly(data=def.conv.cart.az(matrix(colMeans(def.conv.az.cart(eddy4R.base::def.aply.conv.poly(data=data$PSI_aircraft,coefPoly=eddy4R.base::Conv$DegRad)), na.rm=TRUE), ncol=2)),coefPoly=eddy4R.base::Conv$RadDeg)
 
   #wind direction as vector average
     data$PSI_uv <- def.conv.cart.az(matrix(c(data$v_met, data$u_met), ncol=2))
@@ -186,7 +187,7 @@ REYNflux_FD_mole_dry <- function(
     attributes(base)$names <- attributes(data)$names
     #vector averages for azimuth angles if AlgBase == "mean"
       if(AlgBase == "mean") {  
-        base$PSI_aircraft <- mn$PSI_aircraft
+        if(PltfEc == "airc") base$PSI_aircraft <- mn$PSI_aircraft
         base$PSI_uv <- mn$PSI_uv
       }
     #str(base)
