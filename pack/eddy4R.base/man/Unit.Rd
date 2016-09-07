@@ -11,7 +11,7 @@
      \item{Symb}{A named list of base unit (case-sensitive) character designations:\cr\cr
        \code{Metr = "m"}  (meter)\cr
        \code{Feet = "ft"}  (foot)\cr
-       \code{Inch = "in"}  (inch)\cr
+       \code{Inch = "inch"}  (inch)\cr
        \code{Mile = "mi"}  (statute mile)\cr
        \code{MileNaut = "NM"} (nautical mile)\cr
        \code{Gram = "g"}  (gram)\cr

@@ -5,7 +5,7 @@
 \title{Coordinate transformation from CSAT3 body coordinate system to meteorological coordinate system}
 \usage{
 def.conv.body.met(AzSoniInst, AzSoniOfst = eddy4R.base::def.conv.unit(data =
-  90, unitFrom = "deg", unitTo = "rad")$dataConv[[1]], veloBody)
+  90, unitFrom = "deg", unitTo = "rad")$data[[1]], veloBody)
 }
 \arguments{
 \item{\code{AzSoniInst}}{Parameter of class numeric. Azimuth direction against true north in which sonic anemometer installation (transducer array) is pointing [rad]}

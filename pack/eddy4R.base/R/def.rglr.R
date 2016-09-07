@@ -34,7 +34,7 @@
 #'   to = base::as.POSIXlt("2016-01-01 00:00:01.002", format="%Y-%m-%d %H:%M:%OS", tz="UTC"),
 #'   by = 1/10), tz = "UTC")[-c(5,6,8)]
 #' # assign fake observations
-#' dataMeas <- base::data.frame("wind01" = rnorm(base::length(timeMeas)), "wind02" = rnorm(base::length(timeMeas))),
+#' dataMeas <- base::data.frame("wind01" = rnorm(base::length(timeMeas)), "wind02" = rnorm(base::length(timeMeas)))
 #' # regularize
 #' def.rglr(
 #'   timeMeas = timeMeas,
