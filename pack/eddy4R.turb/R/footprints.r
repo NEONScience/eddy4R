@@ -172,14 +172,14 @@ footKM01 <- function(
 #CELL ALLOCATION AND INTEGRATION
 
   #place aircraft in center cell of first row
-    Xbou <- c(0, 1:whrx - 0.5)* Csize	#alongwind integration boundaries with aicraft centered in 0
-    Ybou <- c(0, 1:whry - 0.5)* Csize	#crosswind integration boundaries with aicraft centered in 0
-    Xcen <- sapply(1:(length(Xbou)-1), function(x) mean(Xbou[x:(x+1)]))	#alongwind cell center coordinates
-  #  Ycen <- sapply(1:(length(Ybou)-1), function(y) mean(Xbou[y:(y+1)]))	#crosswind cell center coordinates
+    XRng <- c(0, 1:whrx - 0.5)* Csize	#alongwind integration boundaries with aicraft centered in 0
+    YRng <- c(0, 1:whry - 0.5)* Csize	#crosswind integration boundaries with aicraft centered in 0
+    Xcen <- sapply(1:(length(XRng)-1), function(x) mean(XRng[x:(x+1)]))	#alongwind cell center coordinates
+  #  Ycen <- sapply(1:(length(YRng)-1), function(y) mean(XRng[y:(y+1)]))	#crosswind cell center coordinates
 
 
   #integration of alongwind footprint
-    PHIalong <- sapply(1:(length(Xbou)-1), function(xwhr) integrate(FFPalong, Xbou[xwhr], Xbou[xwhr+1], mue=(1+m)/r, xi=(U*zmeas^r)/((r^2)*kapa))$value)
+    PHIalong <- sapply(1:(length(XRng)-1), function(xwhr) integrate(FFPalong, XRng[xwhr], XRng[xwhr+1], mue=(1+m)/r, xi=(U*zmeas^r)/((r^2)*kapa))$value)
     sumPHIalong <- sum(PHIalong)
     PHIalong <- PHIalong / sumPHIalong	#normalisation to 1
 
@@ -201,7 +201,7 @@ footKM01 <- function(
       }
 
     #integration
-      PHIcross <- t(sapply(1:length(Xcen), function(xwhr) FFPcrossXY(Xcen[xwhr], Ybou, sigmav=sigV, u=hor)))
+      PHIcross <- t(sapply(1:length(Xcen), function(xwhr) FFPcrossXY(Xcen[xwhr], YRng, sigmav=sigV, u=hor)))
 
 
 #-----------------------------------------------------------
@@ -448,19 +448,19 @@ footK04 <- function(
 
     #alongwind integration boundaries with aicraft centered in 0
       if(whrxn < 0) {
-	Xbou <- c((whrxn:(-1) + 0.5), 1:whrxp - 0.5) * Csize
+	XRng <- c((whrxn:(-1) + 0.5), 1:whrxp - 0.5) * Csize
       } else {
-	Xbou <- c(0, 1:whrxp - 0.5)* Csize
+	XRng <- c(0, 1:whrxp - 0.5)* Csize
       }
 
     #crosswind integration boundaries with aicraft centered in 0
-      Ybou <- c(0, 1:whry - 0.5) * Csize
+      YRng <- c(0, 1:whry - 0.5) * Csize
 
     #alongwind cell center coordinates
-      Xcen <- sapply(1:(length(Xbou)-1), function(x) mean(Xbou[x:(x+1)]))
+      Xcen <- sapply(1:(length(XRng)-1), function(x) mean(XRng[x:(x+1)]))
 
     #crosswind cell center coordinates
-      Ycen <- c(0, sapply(2:(length(Ybou)-1), function(y) mean(Ybou[y:(y+1)])))
+      Ycen <- c(0, sapply(2:(length(YRng)-1), function(y) mean(YRng[y:(y+1)])))
 
   #integration of alongwind footprint
 
@@ -468,7 +468,7 @@ footK04 <- function(
       gam <- function(t) t^b * exp(-t)
 
     #auxilary dimensionless distance
-      Lhat <- (Xbou / scal + d) / c
+      Lhat <- (XRng / scal + d) / c
 
     #integrate
       Gam <- sapply(1:(length(Lhat)-1), function(xwhr) integrate(gam, b*Lhat[xwhr], b*Lhat[xwhr+1])$value)
@@ -525,7 +525,7 @@ footK04 <- function(
     #integration, output: top -> bottom == upwind -> downwind, left -> right == alongwind axis -> outside
       PHIcross <- t(sapply(1:length(Xcen), function(xwhr) FFPcrossXY(
 	x=Xcen[xwhr],
-	y=Ybou,
+	y=YRng,
 	sigV=sigV,
 	sigW=sigW,
 	ustar=ustar,

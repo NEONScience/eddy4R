@@ -299,6 +299,7 @@ REYNerro_FD_mole_dry <- function(
 #     added Roxygen2 tags
 ##############################################################################################
 
+<<<<<<< HEAD
 ############################################################
 #DETECTION LIMIT FOR FLUXES
 ############################################################
@@ -412,6 +413,8 @@ NOISE_rs <- function(
 
 
 
+=======
+>>>>>>> master
 ##############################################################################################
 #' @title Flux computation sequence
 
@@ -599,23 +602,23 @@ REYNcomp_FD_mole_dry <- function(
 
 if(noise_determination == TRUE) {
 
-  REYN_loc$noise <- NOISE_rs(
+  REYN_loc$noise <- def.nois (
     #data set
-      eddy.data_random=eddy.data_loc,
+    dataTest=eddy.data_loc,
     #actual (correct) fluxes
-      REYN_loc=REYN_loc,
+    dataRefe=REYN_loc,
     #what to use as basis to determine fluctuations
-      AlgBase=AlgBase,
+    AlgBase=AlgBase,
     #use potential quantities?
-      FcorPOT=FcorPOT,
+    corTempPot=FcorPOT,
     #pressure level for potential quantities
-      FcorPOTl=FcorPOTl,
+    presTempPot=FcorPOTl,
     #which entries are fluxes?
-      whr_flux=whr_flux,
+    idxFlux=whr_flux,
     #confidence level for detection limit
-      conf_level=conf_level,
+    ConfLevl=conf_level,
     #criterion to stop iteration (0.01 = 1% change among subsequent realizations)
-      crit_iter=crit_iter
+    CritMax=crit_iter
   )
 
 }
