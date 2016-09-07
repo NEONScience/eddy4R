@@ -1,110 +1,4 @@
 ##############################################################################################
-#' @title Integral turbulence characteristics
-
-#' @author
-#' Stefan Metzger \email{eddy4R.info@gmail.com}
-
-#' @description 
-#' Function defintion. Integral turbulence characteristics.
-
-#' @param Currently none
-
-#' @return Currently none
-
-#' @references Currently none
-
-#' @keywords eddy-covariance, turbulent flux
-
-#' @examples Currently none
-
-#' @seealso Currently none
-
-#' @export
-
-# changelog and author contributions / copyrights
-#   Stefan Metzger (2015-03-18)
-#     original creation
-#   Stefan Metzger (2015-11-29)
-#     added Roxygen2 tags
-##############################################################################################
-
-############################################################
-#INTEGRAL TURBULENCE CHARACTERISTICS
-############################################################
-
-
-REYNitcs <- function(
-  sigma,
-  latitude,
-  stdev,
-  scale
-) {
-
-
-#-----------------------------------------------------------
-#MODELLED ITCS
-
-  #STANDARD MODEL
-    #assign model coefficients
-      #stdevU / u_star
-      	ITCuC <- if(sigma < -0.032) c(4.15, 1/8) else c(2.7, 0)
-      #stdevW / u_star
-	      ITCwC <- if(sigma < -0.032) c(2.0, 1/8) else c(1.3, 0)
-      #stdevT / T_star_SL
-  	    ITCtC <-  if(sigma < -1) c(1, -1/3) else 
-  		  if(sigma >= -1 & sigma < -0.062) c(1, -1/4) else
-  		  if(sigma >= -0.062 & sigma < 0.02) c(0.5, -1/2) else
-  		  if(sigma >= 0.02) c(1.4,  -1/4)
-      #calculate models; the absolute value of stability is used, since negative values often result in NAs of the potency
-        ITCuM <- ITCuC[1] * abs(sigma)^ITCuC[2]
-        ITCwM <- ITCwC[1] * abs(sigma)^ITCwC[2]
-        ITCtM <- ITCtC[1] * abs(sigma)^ITCtC[2]
-
-  #UPDATED MODEL (THOMAS AND FOKEN, 2002)
-    #coriolis parameter
-      f <- def.coef.corl(latitude)
-    #update models
-      if(sigma > -0.2 & sigma < 0.4) {
-      	ITCuM <- 0.44 * log(f / scale$u_star) + 6.3
-      	ITCwM <- 0.21 * log(f / scale$u_star) + 3.1
-      }
-    #clean up
-      rm(ITCuC, ITCwC, ITCtC, f)
-
-
-#-----------------------------------------------------------
-#COMPARE TO MEASURED ITCS
-
-  #calculate observed ITCs
-    ITCuO <- stdev$u_hor / scale$u_star
-    ITCwO <- stdev$w_hor / scale$u_star
-    ITCtO <- stdev$T_air / scale$T_star_SL
-
-  #final criteria [%]
-    #individual
-      ITC <- data.frame(
-      	u_hor=(abs(ITCuO - ITCuM) / ITCuM) * 100,
-      	w_hor=(abs(ITCwO - ITCwM) / ITCwM) * 100,
-      	T_air=(abs(ITCtO - ITCtM) / ITCtM) * 100
-      )
-
-    #combined
-      ITC$u_star=sqrt(ITC$u_hor^2 + ITC$w_hor^2)
-      ITC$F_H_kin=sqrt(ITC$w_hor^2 + ITC$T_air^2)
-
-  #clean up
-    rm(ITCuO, ITCuM, ITCwO, ITCwM, ITCtO, ITCtM)
-
-#-----------------------------------------------------------
-#EXPORT RESULTS
-
-  return(ITC)
-
-}
-
-
-
-##############################################################################################
 #' @title Integral length scales
 
 #' @author
@@ -405,117 +299,6 @@ REYNerro_FD_mole_dry <- function(
 #     added Roxygen2 tags
 ##############################################################################################
 
-############################################################
-#DETECTION LIMIT FOR FLUXES
-############################################################
-#determine noise level of fluxes using "random shuffle" of w_met (Billesbach, 2011)
-
-NOISE_rs <- function(
-  #data set
-    eddy.data_random=eddy.data_loc,
-  #actual (correct) fluxes
-    REYN_loc=REYN_loc,
-  #what to use as basis to determine fluctuations
-    AlgBase=AlgBase,
-  #use potential quantities?
-    FcorPOT=FcorPOT,
-  #pressure level for potential quantities
-    FcorPOTl=FcorPOTl,
-  #which entries are fluxes?
-    whr_flux=whr_flux,
-  #confidence level for detection limit
-    conf_level=0.95,
-  #criterion to stop iteration (0.01 = 1% change among subsequent realizations)
-    crit_iter=0.01
-) {
-  
-  
-  ###
-  #start loop around sample size of manipulations
-  noise_dete_prior <- 1e5
-  crit <- FALSE
-  r <- 0
-  while(r < 3 | crit == FALSE) {
-  ###
-    
-    #keep counting
-      r <- r + 1
-    
-    #randomize w_met
-      whr_random <- sample(x=1:nrow(eddy.data_random), size=nrow(eddy.data_random), replace=FALSE)
-      eddy.data_random$w_met <- eddy.data_random$w_met[whr_random]
-    
-    #calculate fluxes
-      REYN_noise <- REYNflux_FD_mole_dry(
-        data=eddy.data_random,
-        AlgBase=AlgBase,
-        FcorPOT=FcorPOT,
-        FcorPOTl=FcorPOTl
-      )
-    
-    #store output
-      if(r == 1) NOISE <- REYN_noise$mn[, whr_flux]
-      if(r > 1)  NOISE <- rbind(NOISE, REYN_noise$mn[, whr_flux])
-    
-    #distributions stats
-      MEma <- sapply(1:ncol(NOISE), function(x) def.med.mad(NOISE[,x]))
-      #average offset/level/location of noise
-        noise_loca <- MEma[1,]
-        names(noise_loca) <- whr_flux
-      #actual dispersion of noise
-        noise_disp <- MEma[2,]
-        names(noise_disp) <- whr_flux
-      #detection limit (recast of signal-to-noise criterion after Park et al., 2013), at provided confidence level
-        conf_fac <- qnorm((1 - conf_level)/2, lower.tail = FALSE)
-        noise_dete <- abs(noise_loca) + conf_fac * noise_disp
-        names(noise_dete) <- whr_flux
-      #signal to noise ratio
-        noise_s2n <- ( abs(REYN_loc$mn[, whr_flux]) - abs(noise_loca) ) / noise_disp
-        names(noise_s2n) <- whr_flux
-    
-    #stop criterion: change in signal to noise ratio < 10%
-      CRIT <- abs( (noise_dete - noise_dete_prior) / noise_dete_prior )
-      #condition1: CRIT has to consist of finite values
-      if(length(which(is.infinite(unlist(CRIT)))) == 0) {
-        #condition 2: change in signal to noise ratio < 1% between steps
-        if(length(which(abs(CRIT) < crit_iter)) == length(CRIT)) crit <- TRUE else crit <- FALSE
-      } else {
-        crit <- FALSE
-      }
-    
-    #save posterior as prior for next loop
-      noise_dete_prior <- noise_dete
-    
-  ###
-  if(r%%10 == 0) print(paste("Iteration ", r, " of flux noise determination finished.", sep=""))
-  }
-  print(paste("Flux noise determination completed after ", r, " iterations.", sep=""))
-  #end loop around sample size of manipulations
-  ###
-  
-  
-  
-  #save to list
-    noise <- list()
-    #noise location
-      noise$mn <- noise_loca
-    #noise location
-      noise$sd <- noise_disp
-    #detection limit
-      noise$dl <- noise_dete
-    #signal-to-noise ratio
-      noise$sn <- noise_s2n
-  
-  #clean up
-    rm(crit, CRIT, eddy.data_random, MEma, NOISE, r, REYN_noise, whr_random)
-  
-  #return results
-    return(noise)
-
-}
-
-
-
 ##############################################################################################
 #' @title Flux computation sequence
 
@@ -620,11 +403,12 @@ REYNcomp_FD_mole_dry <- function(
     )
 
   #calculation
-    REYN_loc$itcs <- REYNitcs(
-      sigma=REYN_loc$mn$sigma,  #stability
-      latitude=latitude,
-      stdev=stdev,
-      scale=scale
+    REYN_loc$itcs <- def.itc(
+      stblObkv=REYN_loc$mn$sigma,  #stability
+      lat=latitude,
+      VarInp=c("veloXaxs","veloZaxs","temp","all")[4],
+      sd=stdev,
+      varScal=scale
     )
 
   #clean up
@@ -696,23 +480,23 @@ REYNcomp_FD_mole_dry <- function(
 
 if(noise_determination == TRUE) {
 
-  REYN_loc$noise <- NOISE_rs(
+  REYN_loc$noise <- def.nois (
     #data set
-      eddy.data_random=eddy.data_loc,
+    dataTest=eddy.data_loc,
     #actual (correct) fluxes
-      REYN_loc=REYN_loc,
+    dataRefe=REYN_loc,
     #what to use as basis to determine fluctuations
-      AlgBase=AlgBase,
+    AlgBase=AlgBase,
     #use potential quantities?
-      FcorPOT=FcorPOT,
+    corTempPot=FcorPOT,
     #pressure level for potential quantities
-      FcorPOTl=FcorPOTl,
+    presTempPot=FcorPOTl,
     #which entries are fluxes?
-      whr_flux=whr_flux,
+    idxFlux=whr_flux,
     #confidence level for detection limit
-      conf_level=conf_level,
+    ConfLevl=conf_level,
     #criterion to stop iteration (0.01 = 1% change among subsequent realizations)
-      crit_iter=crit_iter
+    CritMax=crit_iter
   )
 
 }
