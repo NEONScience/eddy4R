@@ -28,6 +28,8 @@
 #     added Roxygen2 tags
 #   Cove Sturtevant (2016-02-16)
 #     updated reference to base.state.r --> def.ec.state.base.R and associated input arguments
+#   Ke Xu (2016-09-07)
+#     change sapply parameter "simplify" to FALSE, and transfer the resulted list to dataframe data type
 ##############################################################################################
 
 
@@ -179,14 +181,8 @@ REYNflux_FD_mole_dry <- function(
     #AlgBase <- c("mean", "trnd", "ord03")[2]
     if(PltfEc == "airc") base <- sapply(1:ncol(data), function(x) def.ec.sta.base(data$d_xy_travel, data[,x], AlgBase), simplify = FALSE)
     if(PltfEc == "towr") base <- sapply(1:ncol(data), function(x) def.ec.sta.base(data$t_utc, data[,x], AlgBase), simplify = FALSE)
-    
-    rpt <- data.frame(
-      mean = base::unlist(base[1]),
-      vari = base::unlist(tmp[2]),
-      seSq = base::unlist(tmp["seSq",])
-    )
-    
-    base <- as.data.frame(matrix(base, ncol=ncol(data)))
+       
+    base <- as.data.frame(matrix(unlist(base), ncol=ncol(data)))
     attributes(base)$names <- attributes(data)$names
     #vector averages for azimuth angles if AlgBase == "mean"
       if(AlgBase == "mean") {  
