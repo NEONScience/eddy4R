@@ -4,13 +4,13 @@
 \alias{def.plot.qfqm.l1}
 \title{Plot quality flags and quality metrics (basic L1 data products)}
 \usage{
-def.plot.qfqm.l1(dataL1, DateRng = c(min(dataL1$tsAggrStrt),
-  max(dataL1$tsAggrStrt)), NameQmPlot = sub("Pass", "",
+def.plot.qfqm.l1(dataL1, DateRng = c(min(dataL1$tsAggrBgn),
+  max(dataL1$tsAggrBgn)), NameQmPlot = sub("Pass", "",
   names(dataL1$qfqm[[1]][grep("Pass", names(dataL1$qfqm[[1]]))])))
 }
 \arguments{
 \item{dataL1}{Required input. A list output from def.qfqm.l1.R of: \cr
-tsAggrStrt - the starting time stamp of aggregated L1 data and quality metrics \cr
+tsAggrBgn - the starting time stamp of aggregated L1 data and quality metrics \cr
 qfqm - a list of named variables, each containing a data frame of the time-aggregated mean, minimum, maximum, variance, standard deviation of the mean, number of points going into the average, and quality metrics (pass, fail, NA) pertaining to that variable for each flag in flgs, as well as the alpha & beta quality metrics and final quality flag. It is important that the column names of this data frame are indistinguishable from those that would be created from def.qfqm.l1.R}
 
 \item{DateRng}{Optional. A 2-element POSIXlt vector of the minimum and maximum time range to plot. Default is the entire data range.}
