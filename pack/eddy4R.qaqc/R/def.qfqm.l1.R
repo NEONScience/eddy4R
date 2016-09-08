@@ -16,7 +16,7 @@
 #' @param FlagExcl Optional. A list of length equal to number of variables, each itself a vector of strings naming the flags (matching a subset of flgs) for which to exclude the flagged indices of each variable from the L1 average. Eg. FlagExcl <- list(x=c("posFlagRng","posFlagStep"),y=c("posFlagPers","posFlagNull","posFlagGap")). Note that variables in the list must be in the same order as those in data. Defaults to an empty list (flagged points are not excluded from the L1 average).
 
 #' @return A list of: \cr
-#' tsAggrStrt - the starting time stamp of aggregated L1 data and quality metrics \cr
+#' tsAggrBgn - the starting time stamp of aggregated L1 data and quality metrics \cr
 #' qfqm - a list of variables, each containing a data frame of the time-aggregated mean, minimum, maximum, variance, standard deviation of the mean, number of points going into the average, and quality metrics (pass, fail, NA) pertaining to that variable for each flag in flgs, as well as the alpha & beta quality metrics and final quality flag.
 
 #' @references 
@@ -101,15 +101,15 @@ def.qfqm.l1 <- function (
   # ... hours or greater, truncate to nearest day
   # We will go back later and get rid of averaging intervals with no data in them
   if (as.double(TintAggr, units = "mins") <= 1) {
-    dateStrt <- trunc.POSIXt(ts[1],units="mins") #Truncate to nearest minute
+    dateBgn <- trunc.POSIXt(ts[1],units="mins") #Truncate to nearest minute
   } else if (as.double(TintAggr, units="hours") <= 1) {
-    dateStrt <- trunc.POSIXt(ts[1],units="hours") #Truncate to nearest minute
+    dateBgn <- trunc.POSIXt(ts[1],units="hours") #Truncate to nearest minute
   } else {
-    dateStrt <- trunc.POSIXt(ts[1],units="days") #Truncate to nearest minute
+    dateBgn <- trunc.POSIXt(ts[1],units="days") #Truncate to nearest minute
   }
   
   # Time series of aggregation window starting points
-  tsAggrStrt <- as.POSIXlt(seq.POSIXt(from=dateStrt,to=ts[length(ts)],by=format(TintAggr)))
+  tsAggrBgn <- as.POSIXlt(seq.POSIXt(from=dateBgn,to=ts[length(ts)],by=format(TintAggr)))
   
   # Ammend starting point of aggregated time series to make sure start when there is data
   exstData <- FALSE
@@ -117,7 +117,7 @@ def.qfqm.l1 <- function (
   while (!exstData) {
     
     # Do we have data points?
-    posData <- which((ts >= tsAggrStrt[idxAggr]) & (ts < tsAggrStrt[idxAggr]+TintAggr))
+    posData <- which((ts >= tsAggrBgn[idxAggr]) & (ts < tsAggrBgn[idxAggr]+TintAggr))
     
     if (length(posData) == 0) {
       idxAggr <- idxAggr+1
@@ -125,7 +125,7 @@ def.qfqm.l1 <- function (
       exstData <- TRUE
     }
   }
-  tsAggrStrt <- tsAggrStrt[idxAggr:length(tsAggrStrt)] # truncate aggregated time series vector
+  tsAggrBgn <- tsAggrBgn[idxAggr:length(tsAggrBgn)] # truncate aggregated time series vector
   
   # Take inventory of the flags we have and set up output naming
   numFlgs <- length(flgs) # #flags we have
@@ -145,7 +145,7 @@ def.qfqm.l1 <- function (
   
    # Assign variable names to output and initialize
   for (idxVar in 1:length(data)) {
-    qfqm[[idxVar]] <- data.frame(matrix(nrow=length(tsAggrStrt),ncol=6+3*numFlgs+3)) # 6 for mean/min/max/etc. 3*#flags for fail, pass, NA, and 3 for alpha & beta QMs and final QF
+    qfqm[[idxVar]] <- data.frame(matrix(nrow=length(tsAggrBgn),ncol=6+3*numFlgs+3)) # 6 for mean/min/max/etc. 3*#flags for fail, pass, NA, and 3 for alpha & beta QMs and final QF
     colnames(qfqm[[idxVar]]) <- nameVarsOut
   }
   
@@ -208,10 +208,10 @@ def.qfqm.l1 <- function (
   for(idxVarData in 1:length(data)) {
     
     # Loop through each aggregation window
-    for (idxAggr in 1:length(tsAggrStrt)) {
+    for (idxAggr in 1:length(tsAggrBgn)) {
       
       # Find data locations in window
-      posData <- which((ts >= tsAggrStrt[idxAggr]) & (ts < tsAggrStrt[idxAggr]+TintAggr))
+      posData <- which((ts >= tsAggrBgn[idxAggr]) & (ts < tsAggrBgn[idxAggr]+TintAggr))
       numDataAggr <- length(posData)
       
       # If there is no data to process move to next aggregation window
@@ -283,6 +283,6 @@ def.qfqm.l1 <- function (
   
   
   # Return results
-  return(list(tsAggrStrt=tsAggrStrt,qfqm=qfqm))
+  return(list(tsAggrBgn=tsAggrBgn,qfqm=qfqm))
   
 }
