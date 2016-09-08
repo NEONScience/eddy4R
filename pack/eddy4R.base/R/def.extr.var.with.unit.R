@@ -11,6 +11,10 @@
 #' to the data frame.
 #' @param \code{nameVar} Required. A string containing the name of the variable within \code{data} to extract,
 #' along with its units
+#' @param \code{AllwPos} Optional. Logical, defaulting to FALSE. Allow positional determination of the unit within
+#' the unit attribute vector? If FALSE, an error will result if the variable name does not match an entry with 
+#' the named unit vector. If TRUE, the unit attribute vector does not need to be named, and the unit will be 
+#' pulled based on the same position of the variable within the data frame \code{data}.
 #'  
 #' @return The desired variable with units attached as attribute. 
 #' 
@@ -31,7 +35,11 @@
 #     
 ##############################################################################################
 
-def.extr.var.with.unit <- function(data,nameVar) {
+def.extr.var.with.unit <- function(
+  data,
+  nameVar,
+  AllwPos=FALSE
+  ) {
   
   # Grab the variable
   var <- data[[nameVar]]
@@ -44,6 +52,10 @@ def.extr.var.with.unit <- function(data,nameVar) {
     # If unit attribute is named
     attr(var,"unit") <- attr(data,"unit")[[nameVar]]
   } else {
+    # If we don't allow positional determination within the unit attribute vector, stop
+    if(!AllwPos){
+      stop("Cannot find variable in unit attribute list. Make sure unit attribute is a named vector corresponding to the variable names.")
+    }
     # Otherwise use same position as variable within data frame
     attr(var,"unit") <- attr(data,"unit")[posVar]
   }
