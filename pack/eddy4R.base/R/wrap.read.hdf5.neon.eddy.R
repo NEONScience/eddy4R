@@ -10,8 +10,6 @@
 #' @param \code{DateLoca} Character: Date in ISO format "(2016-05-26").
 #' @param \code{VarLoca} Character: Which instrument to read data from.
 #' @param \code{FreqLoca} Integer: Measurement frequency.
-#' @param \code{TermLoca} Named character: Lookup table for variable term substitution.
-#' @param \code{UnitLoca} List of named characters: For unit term substitution and definition of eddy4R-internally used units.
 #' @param \code{RngLoca} List of named ingegers: Thresholds for range test.
 #' @param \code{DespLoca} List of integers: De-spiking parameters
 
@@ -33,6 +31,8 @@
 # changelog and author contributions / copyrights
 #   Stefan Metzger (2016-08-07)
 #     original creation
+#   Stefan Metzger (2016-08-23)
+#     use unit conversion with "internal" units
 ##############################################################################################
         
 wrap.read.hdf5.neon.eddy <- function(
@@ -41,8 +41,6 @@ wrap.read.hdf5.neon.eddy <- function(
   DateLoca,
   VarLoca,
   FreqLoca,
-  TermLoca,
-  UnitLoca,
   RngLoca,
   DespLoca
 ) {
@@ -145,34 +143,14 @@ if(!(DateLoca %in% file)) {
     # read attributes
     attr <- rhdf5::h5readAttributes(file = base::paste0(DirInpLoca, "/ECTE_L0_", SiteLoca, "_", DateLoca, ".h5"),
                                     name = base::paste0("/", SiteLoca, "/DP0_", VarLoca, "_001"))
-    
-    # convert imported variable names to eddy4R variable names
-    base::names(data) <- def.repl.char(
-      data = structure(.Data = base::names(data), names = base::names(data)),
-      ReplFrom = base::names(TermLoca),
-      ReplTo = TermLoca
-    )
 
-    # sort attributes in same order as data.frame
-    attr$units <- base::as.vector(attr$units)
-    base::names(attr$units) <- def.repl.char(
-      data = structure(.Data = attr$names, names = attr$names),
-      ReplFrom = base::names(TermLoca),
-      ReplTo = TermLoca
-      )
-    attr$units <- attr$units[base::names(data)]
+    # assign variable names to units to enable sorting
+    base::names(attr$units) <- attr$names
 
-    # assign unit descriptions (DPS terms)
-    base::attributes(data)$unit <- attr$units
+    # sort and assign unit descriptions in same order as data
+    base::attributes(data)$unit <- attr$units[base::names(data)]
     rm(attr)
 
-    # replace unit descriptions (DPS terms) with unit descriptions (eddy4R terms)
-    attributes(data)$unit <- def.repl.char(
-      data = base::attributes(data)$unit,
-      ReplFrom = base::names(UnitLoca$NameConv),
-      ReplTo = base::unlist(UnitLoca$NameConv)
-    )
-    
     # print message to screen
     print(paste0(format(Sys.time(), "%F %T"), ": dataset ", DateLoca, ": ", VarLoca, " hdf5 attributes complete"))
 
