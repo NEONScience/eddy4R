@@ -85,7 +85,8 @@ def.nois <- function(
     dataTest$w_met <- dataTest$w_met[idx]
     
     # calculate fluxes
-    flux <- eddy4R.turb::REYNflux_FD_mole_dry(
+    flux <- #eddy4R.turb::
+      REYNflux_FD_mole_dry(
       data = dataTest,
       AlgBase = AlgBase,
       FcorPOT = corTempPot,
