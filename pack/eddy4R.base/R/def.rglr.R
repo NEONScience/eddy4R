@@ -187,9 +187,84 @@ def.rglr <- function(
     # CI uses the first value as the starting point for the regularization, rounding down to the nearest second
     # Note: the rounding down aspect is a change implemented week of 1 May 2016. Previously the starting point was
     # the exact time (to the decimal second).
+    
     timeRglr <- base::as.POSIXct(base::seq.POSIXt(from=base::trunc.POSIXt(timeMeas[1],units="secs"),
                                                 to=timeMeas[length(timeMeas)]+1/FreqRglr,by=1/FreqRglr))
 
+    # Which time bin does each measurement time fit into?
+    posRglr <- base::.bincode(timeMeas,timeRglr,right=FALSE) # which bin?
+    dataMeas <- base::subset(dataMeas,!base::is.na(posRglr),select=1:numVar) # Get rid of anomalous times/data not fitting in any bin
+    timeMeas <- base::subset(timeMeas,!base::is.na(posRglr))
+    posRglr <- base::subset(posRglr,!base::is.na(posRglr))
+    dupl <- base::duplicated(posRglr) # which fall into an already occupied bin?
+    
+    # Pull the first value that falls within each bin
+    dataRglr <- base::matrix(data=NA*1.5,nrow=length(timeRglr)-1,ncol=numVar) # initialize
+    for(idxVar in 1:numVar){
+      # place the first value falling into each bin
+      dataRglr[posRglr[!dupl],idxVar] <- dataMeas[which(!dupl),idxVar]
+    }
+    dataRglr <- base::as.data.frame(dataRglr) # Make data frame
+    base::names(dataRglr) <- nameVar # Assign names same as dataMeas
+    
+    # Report output
+    timeRglr <- timeRglr[-length(timeRglr)]
+    rpt$timeRglr <- base::as.POSIXlt(timeRglr)
+    rpt$dataRglr <- dataRglr
+    
+    # assign unit attributes
+    base::attributes(rpt$dataRglr)$unit <- unitMeas
+  }
+  
+  if(MethRglr == "cybiNew") {
+    
+    if(base::is.null(BgnRglr)) {
+      stop("Input 'BgnRglr' is required for the 'zoo' method")
+    }
+    if(base::is.null(TzRglr)) {
+      stop("Input 'TzRglr' is required for the 'zoo' method")
+    }
+    
+    
+    # add a small amount of time to avoid "down-rounding" by R-internal POSIX
+    timeMeas$sec <- timeMeas$sec + 0.0001
+    BgnRglr$sec <- BgnRglr$sec + 0.0001
+    EndRglr$sec <- EndRglr$sec + 0.0002
+    
+    # create equidistant reference time vector
+    rpt$timeRglr <- base::as.POSIXlt(seq.POSIXt(from = BgnRglr, to = EndRglr, by = 1/FreqRglr), tz=TzRglr)
+    
+    # delete rows with times that are duplicates of rows with smaller indices
+    whr01 <- which(base::duplicated(timeMeas))
+    if(base::length(whr01) != 0) {
+      dataMeas <- dataMeas[-whr01,]
+      timeMeas <- timeMeas[-whr01]
+    }; base::rm(whr01)
+    
+    numVar <- base::length(dataMeas[1,])
+    nameVar <- base::names(dataMeas)
+    
+    # Check timeMeas
+    timeMeas <- try(base::as.POSIXct(timeMeas),silent=TRUE)
+    numData <- base::length(dataMeas[,1])
+    if(base::class(timeMeas)[1] == "try-error"){
+      stop("Input variable timeMeas must be of class POSIXlt")
+    } else if (base::length(timeMeas) != numData) {
+      stop("Length of input variable timeMeas must be equal to the sample size of dataMeas.")
+    } 
+    
+    # Check FreqRglr
+    if(!base::is.numeric(FreqRglr) || (base::length(FreqRglr) != 1)) {
+      stop("Input parameter FreqRglr must be single number.")
+    }
+    
+    # CI uses the first value as the starting point for the regularization, rounding down to the nearest second
+    # Note: the rounding down aspect is a change implemented week of 1 May 2016. Previously the starting point was
+    # the exact time (to the decimal second).
+    
+    timeRglr <- base::as.POSIXct(base::seq.POSIXt(from=base::trunc.POSIXt(timeMeas[1],units="secs"),
+                                                  to=timeMeas[length(timeMeas)]+1/FreqRglr,by=1/FreqRglr))
+    
     # Which time bin does each measurement time fit into?
     posRglr <- base::.bincode(timeMeas,timeRglr,right=FALSE) # which bin?
     dataMeas <- base::subset(dataMeas,!base::is.na(posRglr),select=1:numVar) # Get rid of anomalous times/data not fitting in any bin
