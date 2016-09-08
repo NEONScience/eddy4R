@@ -89,7 +89,9 @@ def.nois <- function(
       data = dataTest,
       AlgBase = AlgBase,
       FcorPOT = corTempPot,
-      FcorPOTl = presTempPot
+      FcorPOTl = presTempPot,
+      PltfEc=PltfEc,
+      flagCh4 = flagCh4
     )
     
     # store output
