@@ -27,7 +27,7 @@
 #' test$qf <- data.frame(qfA,qfB,qfC)
 #' test$qm<- def.qm(data=test$qf, nameFlag=colnames(test$qf))
 
-#' @seealso def.qfqm.l1()
+#' @seealso eddy4R.base::def.qfqm.l1()
 
 #' @export
 
