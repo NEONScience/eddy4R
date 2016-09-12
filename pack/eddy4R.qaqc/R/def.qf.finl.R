@@ -2,6 +2,7 @@
 #' @title Final Quality Flag (basic L1 data products)
 
 #' @author
+#' Cove Sturtevant \email{csturtevant@neoninc.org} \cr
 #' Natchaya Pingintha-Durden \email{ndurdent@neoninc.org} \cr
 
 #' @description 
@@ -37,8 +38,10 @@
 #' @export
 
 # changelog and author contributions / copyrights 
+#   Cove Sturtevant (2016-01-05)
+#     original creation of def.qfqm.l1.R 
 #   Natchaya P-Durden (2016-09-19)
-#     original creation of def.qf.finl()
+#     Generated def.qf.finl() from def.qfqm.l1() 
 ##############################################################################################
 def.qf.finl <- function (
   data,
