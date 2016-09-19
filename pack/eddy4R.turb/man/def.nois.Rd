@@ -5,7 +5,8 @@
 \title{Determination of noise and detection limit for eddy-covariance turbulent fluxes}
 \usage{
 def.nois(dataTest, dataRefe, idxFlux, AlgBase, corTempPot = TRUE,
-  presTempPot = NULL, ConfLevl = 0.95, CritMax = 0.01)
+  presTempPot = NULL, ConfLevl = 0.95, CritMax = 0.01, PltfEc = "towr",
+  flagCh4 = TRUE)
 }
 \arguments{
 \item{\code{dataTest}}{A dataframe containing the input data, of class "numeric". [user-defined]}
