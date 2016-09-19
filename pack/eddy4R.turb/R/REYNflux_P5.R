@@ -28,6 +28,8 @@
 #     added Roxygen2 tags
 #   Cove Sturtevant (2016-02-16)
 #     updated reference to base.state.r --> def.ec.state.base.R and associated input arguments
+#   Ke Xu (2016-09-07)
+#     change sapply parameter "simplify" to FALSE, and transfer the resulted list to dataframe data type
 ##############################################################################################
 
 
@@ -42,7 +44,9 @@ REYNflux_FD_mole_dry <- function(
   data=eddy.data,
   AlgBase=c("mean", "trnd", "ord03")[1],
   FcorPOT=TRUE,
-  FcorPOTl=NULL
+  FcorPOTl=NULL,
+  PltfEc="airc",
+  flagCh4 = TRUE
 ) {
 
 
@@ -124,8 +128,9 @@ REYNflux_FD_mole_dry <- function(
     mn <- as.data.frame( matrix(colMeans(data, na.rm=TRUE), ncol=ncol(data)) )
     attributes(mn)$names <- attributes(data)$names
 
+    
   #aircraft heading as vector average
-    mn$PSI_aircraft <- eddy4R.base::def.aply.conv.poly(data=def.conv.cart.az(matrix(colMeans(def.conv.az.cart(eddy4R.base::def.aply.conv.poly(data=data$PSI_aircraft,coefPoly=eddy4R.base::Conv$DegRad)), na.rm=TRUE), ncol=2)),coefPoly=eddy4R.base::Conv$RadDeg)
+    if(PltfEc == "airc") mn$PSI_aircraft <- eddy4R.base::def.aply.conv.poly(data=def.conv.cart.az(matrix(colMeans(def.conv.az.cart(eddy4R.base::def.aply.conv.poly(data=data$PSI_aircraft,coefPoly=eddy4R.base::Conv$DegRad)), na.rm=TRUE), ncol=2)),coefPoly=eddy4R.base::Conv$RadDeg)
 
   #wind direction as vector average
     data$PSI_uv <- def.conv.cart.az(matrix(c(data$v_met, data$u_met), ncol=2))
@@ -175,12 +180,14 @@ REYNflux_FD_mole_dry <- function(
 
   #base state
     #AlgBase <- c("mean", "trnd", "ord03")[2]
-    base <- sapply(1:ncol(data), function(x) def.ec.sta.base(data$d_xy_travel, data[,x], AlgBase))
-    base <- as.data.frame(matrix(base, ncol=ncol(data)))
+    if(PltfEc == "airc") base <- sapply(1:ncol(data), function(x) def.ec.sta.base(data$d_xy_travel, data[,x], AlgBase), simplify = FALSE)
+    if(PltfEc == "towr") base <- sapply(1:ncol(data), function(x) def.ec.sta.base(data$t_utc, data[,x], AlgBase), simplify = FALSE)
+       
+    base <- as.data.frame(matrix(unlist(base), ncol=ncol(data)))
     attributes(base)$names <- attributes(data)$names
     #vector averages for azimuth angles if AlgBase == "mean"
       if(AlgBase == "mean") {  
-        base$PSI_aircraft <- mn$PSI_aircraft
+        if(PltfEc == "airc") base$PSI_aircraft <- mn$PSI_aircraft
         base$PSI_uv <- mn$PSI_uv
       }
     #str(base)
@@ -311,16 +318,18 @@ REYNflux_FD_mole_dry <- function(
 ############################################################
 #CH4 FLUX
 ############################################################
-
+if(flagCh4 == TRUE){
   #CH4 flux in kinematic units [mol m-2 s-1]
-    imfl$F_CH4_kin <- base$rho_dry * imfl$w_hor * imfl$FD_mole_CH4
-    mn$F_CH4_kin <- mean(imfl$F_CH4_kin, na.rm=TRUE)
+  imfl$F_CH4_kin <- base$rho_dry * imfl$w_hor * imfl$FD_mole_CH4
+  mn$F_CH4_kin <- mean(imfl$F_CH4_kin, na.rm=TRUE)
   #CH4 flux in mass units [mg m-2 h-1]
-    imfl$F_CH4_mass <- imfl$F_CH4_kin * eddy4R.base::Natu$MolmCh4 * 1e6 * 3600
-    mn$F_CH4_mass <- mean(imfl$F_CH4_mass, na.rm=TRUE)
+  imfl$F_CH4_mass <- imfl$F_CH4_kin * eddy4R.base::Natu$MolmCh4 * 1e6 * 3600
+  mn$F_CH4_mass <- mean(imfl$F_CH4_mass, na.rm=TRUE)
   #correlation
-    cor$F_CH4_kin <- stats::cor(imfl$w_hor, imfl$FD_mole_CH4, use="pairwise.complete.obs")
-    cor$F_CH4_mass <- cor$F_CH4_kin
+  cor$F_CH4_kin <- stats::cor(imfl$w_hor, imfl$FD_mole_CH4, use="pairwise.complete.obs")
+  cor$F_CH4_mass <- cor$F_CH4_kin
+}
+ 
 
 
 

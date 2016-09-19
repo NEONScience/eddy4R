@@ -299,6 +299,7 @@ REYNerro_FD_mole_dry <- function(
 #     added Roxygen2 tags
 ##############################################################################################
 
+
 ##############################################################################################
 #' @title Flux computation sequence
 
@@ -349,7 +350,9 @@ REYNcomp_FD_mole_dry <- function(
   #confidence level for detection limit
   conf_level=0.95,
   #criterion to stop iteration (0.01 = 1% change among subsequent realizations)
-  crit_iter=0.01
+  crit_iter=0.01,
+  PltfEc="airc",
+  flagCh4 = TRUE
 ) {
 
 
@@ -359,7 +362,9 @@ REYNcomp_FD_mole_dry <- function(
     data=eddy.data_loc,
     AlgBase=AlgBase,
     FcorPOT=FcorPOT,
-    FcorPOTl=FcorPOTl
+    FcorPOTl=FcorPOTl,
+    PltfEc=PltfEc,
+    flagCh4 = flagCh4
   )
 
 
@@ -382,7 +387,9 @@ REYNcomp_FD_mole_dry <- function(
     whrVar=whr_flux,
     NumSubSamp=NOsusa,
     corTempPot=FcorPOT,
-    presTempPot=FcorPOTl
+    presTempPot=FcorPOTl,
+    PltfEc = PltfEc,
+    flagCh4 = flagCh4
   )
 
 
@@ -496,7 +503,9 @@ if(noise_determination == TRUE) {
     #confidence level for detection limit
     ConfLevl=conf_level,
     #criterion to stop iteration (0.01 = 1% change among subsequent realizations)
-    CritMax=crit_iter
+    CritMax=crit_iter,
+    PltfEc = PltfEc,
+    flagCh4 = flagCh4
   )
 
 }

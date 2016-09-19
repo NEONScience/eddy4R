@@ -45,7 +45,9 @@ def.stna <- function(
   whrVar, #for which fluxes to perform stationarity test?
   NumSubSamp=6,		#number of subsamples for trend==FALSE
   corTempPot=TRUE,
-  presTempPot=NULL
+  presTempPot=NULL,
+  PltfEc = "airc",
+  flagCh4 = TRUE
 ) {
   
   #-----------------------------------------------------------
@@ -56,7 +58,9 @@ def.stna <- function(
     data=data,
     AlgBase="mean",
     FcorPOT=corTempPot,
-    FcorPOTl=presTempPot
+    FcorPOTl=presTempPot,
+    PltfEc = PltfEc,
+    flagCh4 = flagCh4
   )
   
   if(MethStna %in% c(1, 3)) { 
@@ -68,7 +72,9 @@ def.stna <- function(
       data=data,
       AlgBase="trnd",
       FcorPOT=corTempPot,
-      FcorPOTl=presTempPot
+      FcorPOTl=presTempPot,
+      PltfEc = PltfEc,
+      flagCh4 = flagCh4
     )
     
     #deviation [%]
@@ -95,7 +101,9 @@ def.stna <- function(
       data=data[idxSubSamp[[x]],],
       AlgBase="mean",
       FcorPOT=corTempPot,
-      FcorPOTl=presTempPot
+      FcorPOTl=presTempPot,
+      PltfEc = PltfEc,
+      flagCh4 = flagCh4
     )$mn[,whrVar]
     )
     outSubSamp <- data.frame(base::matrix(unlist(outSubSamp), ncol=length(whrVar), byrow=TRUE))

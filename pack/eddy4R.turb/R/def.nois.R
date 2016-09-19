@@ -65,7 +65,9 @@ def.nois <- function(
   # confidence level for detection limit
   ConfLevl = 0.95,
   # criterion to stop iteration (0.01 = 1% change among subsequent realizations)
-  CritMax = 0.01
+  CritMax = 0.01,
+  PltfEc = "towr",
+  flagCh4 = TRUE
 ) {
   
   
@@ -89,7 +91,9 @@ def.nois <- function(
       data = dataTest,
       AlgBase = AlgBase,
       FcorPOT = corTempPot,
-      FcorPOTl = presTempPot
+      FcorPOTl = presTempPot,
+      PltfEc=PltfEc,
+      flagCh4 = flagCh4
     )
     
     # store output
