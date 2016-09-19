@@ -19,6 +19,8 @@
 #' @param \code{presTempPot} A vector containing the air pressure data that will be used in the calculation when \code{corTempPot} = TRUE. Of class "numeric" or "integer" and of the same length as \code{dataTest} or single entry. [Pa]
 #' @param \code{ConfLevl} The confidence level at which the detection limit is calculated. Of class "numeric", defaults to 0.95. [-]
 #' @param \code{CritMax} The stop criterion for the iteration. Of class "numeric", defaults to 0.01 (i.e., 1 percent change among subsequent runs). [-]
+#' @param \code{PltfEc} A specifier indicating which eddy covariance platform data are processed. Should be either "airc" or "towr". Defaults to "airc". [-]
+#' @param \code{flagCh4} A logical indicating whether or not methane flux is processed. Defaults to TRUE. [-]
 
 #' @return A list containing the noise bias, noise dispersion, detection limit and signal-to-noise ratio.
 
