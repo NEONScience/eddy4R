@@ -38,6 +38,8 @@
 #     added Roxygen2 tags
 #   Natchaya Pingintha-Durden (2015-07-15)
 #     Initail naming convention for eddy4R
+#   Ke Xu (2016-09-19)
+#     Add two arguments PltfEc and flagCh4 to adjust tower data
 ##############################################################################################
 #STATIONARITY TESTS
 

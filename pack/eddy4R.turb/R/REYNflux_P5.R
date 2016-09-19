@@ -30,6 +30,8 @@
 #     updated reference to base.state.r --> def.ec.state.base.R and associated input arguments
 #   Ke Xu (2016-09-07)
 #     change sapply parameter "simplify" to FALSE, and transfer the resulted list to dataframe data type
+#   Ke Xu (2016-09-19)
+#     Add two arguments PltfEc and flagCh4 to adjust tower data
 ##############################################################################################
 
 

@@ -26,6 +26,8 @@
 #     original creation
 #   Stefan Metzger (2015-11-29)
 #     added Roxygen2 tags
+#   Ke Xu (2016-09-19)
+#     Add two arguments PltfEc and flagCh4 to adjust tower data
 ##############################################################################################
 
 ############################################################

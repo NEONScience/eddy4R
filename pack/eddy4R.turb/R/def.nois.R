@@ -44,6 +44,8 @@
 #     adjust to eddy4R coding style
 #   Stefan Metzger (2016-08-31)
 #     eddy4R coding style suggestions
+#   Ke Xu (2016-09-19)
+#     Add two arguments PltfEc and flagCh4 to adjust tower data
 ##############################################################################################
 
 ############################################################
