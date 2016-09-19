@@ -503,7 +503,9 @@ if(noise_determination == TRUE) {
     #confidence level for detection limit
     ConfLevl=conf_level,
     #criterion to stop iteration (0.01 = 1% change among subsequent realizations)
-    CritMax=crit_iter
+    CritMax=crit_iter,
+    PltfEc = PltfEc,
+    flagCh4 = flagCh4
   )
 
 }
