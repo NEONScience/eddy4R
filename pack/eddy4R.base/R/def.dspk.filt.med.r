@@ -1,25 +1,18 @@
 ##############################################################################################
 #' @title Median filter de-spiking
 
-# type (one of function defintion, function wrapper, workflow, demo): function defintion
+#' @author 
+#' Stefan Metzger \email{eddy4R.info@gmail.com}
+#' Cove Sturtevant \email{eddy4R.info@gmail.com}
 
-# license: Terms of use of the NEON FIU algorithm repository dated 2015-01-16
+#' @description Function definition. Median filter de-spiking 
 
-#' @author Stefan Metzger \email{eddy4R.info@gmail.com}
-
-# changelog and author contributions / copyrights
-#   Stefan Metzger (2014-11-14)
-#     original creation
-#   Stefan Metzger (2015-11-28)
-#     re-formualtion as function() to allow packaging
-
-#' @description Median filter de-spiking.
-
-#' @param Currently none
-
-#' @return Currently none
-
-#' @references Currently none
+#' @param \code{} Required.  
+#'  
+#' @return A data frame of \code{}
+#' 
+#' @references 
+#' license: Terms of use of the NEON FIU algorithm repository dated 2015-01-16
 
 #' @keywords Currently none
 
@@ -28,9 +21,16 @@
 #' @seealso Currently none
 
 #' @export
+#' 
+# changelog and author contributions / copyrights
+#   Stefan Metzger (2014-11-14)
+#     original creation
+#   Stefan Metzger (2015-11-28)
+#     re-formualtion as function() to allow packaging
+#   Cove Sturtevant (2016-09-21)
+#     conform to eddy4R coding style
+#     
 ##############################################################################################
-
-
 
 spike.medfilt <- function(DESP=list(
   #input data, univariate vector of integers or numerics
