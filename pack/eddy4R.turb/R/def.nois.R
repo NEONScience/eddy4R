@@ -69,7 +69,9 @@ def.nois <- function(
   # confidence level for detection limit
   ConfLevl = 0.95,
   # criterion to stop iteration (0.01 = 1% change among subsequent realizations)
-  CritMax = 0.01
+  CritMax = 0.01,
+  PltfEc = "towr",
+  flagCh4 = TRUE
 ) {
   
   
@@ -79,7 +81,7 @@ def.nois <- function(
   critReps <- FALSE      # initial criterion. When FALSE, continue iteration; when TRUE, stop iteration
   reps <- 0              # count number of iterations
   while(reps < 3 | critReps == FALSE) {
-  ###
+    ###
     
     # keep counting
     reps <- reps + 1
@@ -93,7 +95,9 @@ def.nois <- function(
       data = dataTest,
       AlgBase = AlgBase,
       FcorPOT = corTempPot,
-      FcorPOTl = presTempPot
+      FcorPOTl = presTempPot,
+      PltfEc=PltfEc,
+      flagCh4 = flagCh4
     )
     
     # store output
@@ -138,8 +142,8 @@ def.nois <- function(
     # save posterior as prior for next loop
     noisBgn <- noisMax
     
-  ###
-  if(reps%%10 == 0) base::print(base::paste("Iteration ", reps, " of flux noise determination finished.", sep = ""))
+    ###
+    if(reps%%10 == 0) base::print(base::paste("Iteration ", reps, " of flux noise determination finished.", sep = ""))
   }
   base::print(base::paste("Flux noise determination completed after ", reps, " iterations.", sep = ""))
   # end loop around sample size of manipulations
@@ -150,21 +154,21 @@ def.nois <- function(
   # save to list
   noisRpt <- base::list()
   
-    # noise bias
-    noisRpt$mn <- noisBias
-    # noisRpt$Bias <- noisBias # This should be the format in the future
-    
-    # noise dispersion
-    noisRpt$sd <- noisSd
-    # noisRpt$sd <- noisSd # This should be the format in the future
-    
-    # detection limit
-    noisRpt$dl <- noisMax
-    # noisRpt$max <- noisMax # This should be the format in the future
-    
-    # signal-to-noise ratio 
-    noisRpt$sn <- rtioMeasNois
-    # noisRpt$rtio <- rtioMeasNois # This should be the format in the future
+  # noise bias
+  noisRpt$mn <- noisBias
+  # noisRpt$Bias <- noisBias # This should be the format in the future
+  
+  # noise dispersion
+  noisRpt$sd <- noisSd
+  # noisRpt$sd <- noisSd # This should be the format in the future
+  
+  # detection limit
+  noisRpt$dl <- noisMax
+  # noisRpt$max <- noisMax # This should be the format in the future
+  
+  # signal-to-noise ratio 
+  noisRpt$sn <- rtioMeasNois
+  # noisRpt$rtio <- rtioMeasNois # This should be the format in the future
   
   # clean up
   rm(critReps, crit, dataTest, med, noisTmp, reps, flux, idx)
