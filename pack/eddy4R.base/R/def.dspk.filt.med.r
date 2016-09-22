@@ -5,11 +5,53 @@
 #' Stefan Metzger \email{eddy4R.info@gmail.com}
 #' Cove Sturtevant \email{eddy4R.info@gmail.com}
 
-#' @description Function definition. Median filter de-spiking 
+#' @description Function definition. Median filter de-spiking\cr
+#' After Brock (1986), Starkenburg et al. (2014); \cr
+#' Order N = 3 - 4 (i.e., a window of 7 - 9 points); \cr
+#' Such a filter will be sensitive to spikes of up to 3 - 4 consecutive points (Brock, 1986);
+#' this is the maximum number of points typically allowed to be considered spikes (Vickers and Mahrt, 1997; Mauder and Foken, 2011);
+#' Raw signal is normalized so that its mean is zero and standard deviation is 1; \cr
+#' Initial number of bins is 2, and doubles iteratively until minima are found; \cr
+#' Distribution  of the differences (D1) between the filtered signal and the raw signal is assessed;
+#' good data points will be centered within the histogram near zero;
+#' spikes will lie farthest from the center, resulting in subpopulations that make the distribution multi-modal; \cr
+#' Determine the the range of accepted values, DT by searching the histogram for the first minima from the center;
+#' Points where |D1| > DT are considered spikes, provided the difference is >= 10 x the measurement resolution (smallest detected change);
+#' Error escapes:\cr
+#' -1: no non-NAs in dataset \cr
+#' -2: singular or constant value \cr
+#' -3: measurement changes so slow that time-series and filter value are identical \cr
 
-#' @param \code{} Required.  
-#'  
-#' @return A data frame of \code{}
+#' @param \code{dataIn} Required. A univariate vector of integers or numerics of Input data
+#' @param \code{WidtFilt} Optional. A single integer value of filter width. Default = 9
+#' @param \code{NumBin} Optional. A single integer value of the initial number/step size of histogram bins. Default = 2
+#' @param \code{ThshReso} Optional. A single integer value of the resolution threshold. Default = 10
+
+#' @return A list of: \cr
+#' \code{dataIn} Same as input.
+#' \code{WidtFilt} Same as input.
+#' \code{NumBin} Same as input.
+#' \code{ThshReso} Same as input.
+#' \code{numBinFinl} Integer. The final number of histogram bins used.
+#' \code{numSpk} Integer. The number of spikes identified.
+#' \code{dataOut} Numeric vector of input data with spikes removed.
+#' \code{dataNorm} Numeric vector of input data normalized to mean 0 and standard deviation of 1
+#' \code{dataNormDiff} Numeric vector of differences between subsequent values of \code{dataNorm}. Length = 1-length(dataIn)
+#' \code{resoDataNorm} Numeric value. Measurement resolution (assumed to be smallest recorded change in \code{dataNorm})
+#' \code{thshNumData} Numeric value. Minimum number of non-NAs in window to calculate median, otherwise NA is returned.
+#' \code{dataNormFiltMed} Numeric vector. Median-filtered timeseries of \code{dataNorm}. 
+#' \code{histDiff} Numeric vector. Initial histogram of differences of \code{dataNormFiltMed}
+#' \code{crit} Logical. Criteria for ending iteration over histogram bins
+#' \code{locBin} Numeric vector. Bin edges for \code{histDiff}
+#' \code{histDiffFinl} Numeric vector. Final histogram of differences of \code{dataNormFiltMed} using bin edges in \code{locBin}
+#' \code{posBinMin} Integer. Index of histogram bin within \code{histDiffFinl} with minimum number of counts.
+#' \code{posBinMax} Integer. Index of histogram bin within \code{histDiffFinl} with maximum number of counts.
+#' \code{posThshBinMin} Integer. Current iteration of minimum threshold index of histogram bin within \code{histDiffFinl} for spike determination
+#' \code{posThshBinMax}  Integer. Current iteration of maximum threshold index of histogram bin within \code{histDiffFinl} for spike determination
+#' \code{posThshBinMinFinl} Integer. Final minimum threshold index of histogram bin within \code{histDiffFinl} for spike determination
+#' \code{posThshBinMinFinl} Integer. Final maximum threshold index of histogram bin within \code{histDiffFinl} for spike determination
+#' \code{posSpk} Indices of determined spikes within \code{dataIn}
+
 #' 
 #' @references 
 #' license: Terms of use of the NEON FIU algorithm repository dated 2015-01-16
@@ -32,52 +74,31 @@
 #     
 ##############################################################################################
 
-spike.medfilt <- function(DESP=list(
-  #input data, univariate vector of integers or numerics
-    dati,
-  #filter width
-    widt = 9,
-  #initial number/step size of histogram bins
-    nbin = 2,
-  #resolution threshold
-    rest = 10
-  )) {
+def.dspk.filt.med <- function(
+    dataIn, # input data, univariate vector of integers or numerics
+    WidtFilt = 9, # filter width
+    NumBin = 2, # initial number/step size of histogram bins
+    ThshReso = 10 # resolution threshold
+  ) {
   
-  # median filter de-spiking  
-    # after Brock (1986), Starkenburg et al. (2014);
-    # order N = 3 - 4 (i.e., a window of 7 - 9 points);
-    # such a filter will be sensitive to spikes of up to 3 - 4 consecutive points (Brock, 1986);
-    # this is the maximum number of points typically allowed to be considered spikes (Vickers and Mahrt, 1997; Mauder and Foken, 2011);
-      # raw signal is normalized so that its mean is zero and standard deviation is 1; 
-      # initial number of bins is 2, and doubles iteratively until minima are found;
-      # distribution  of the differences (D1) between the filtered signal and the raw signal is assessed;
-      # good data points will be centered within the histogram near zero;
-      # spikes will lie farthest from the center, resulting in subpopulations that make the distribution multi-modal;
-      # determine the the range of accepted values, DT by searching the histogram for the first minima from the center;
-      # points where |D1| > DT are considered spikes, provided the difference is >= 10 x the measurement resolution (smallest detected change);
-      # escapes;
-        # -1: no non-NAs in dataset
-        # -2: singular or constant value
-        # -3: measurement changes so slow that time-series and filter value are identical
-
+  # Initialize output
+  rpt <- base::list(dataIn=dataIn,WidtFilt=WidtFilt,NumBin=NumBin,ThshReso=ThshReso)
   
-  
-  ###
-  #start intercept 1: 
-  #less non-NAs in dataset than required for 0.5 h out of 24 h of data (approx 2.5%)
-  if(length(which(!is.na(DESP$dati)))/length(DESP$dati) < 0.025) {
+  #Error catching 1: 
+  #fewer non-NAs in dataset than required for 0.5 h out of 24 h of data (approx 2.5%)
+  if(base::length(base::which(!base::is.na(rpt$dataIn)))/base::length(rpt$dataIn) < 0.025) {
   ###
 
     
     
-    DESP$nbin_loc <- -1
-    DESP$lens <- -1
-    DESP$dato <- DESP$dati      
+    rpt$numBinFinl <- -1 # Set to error code
+    rpt$numSpk <- -1 # Set to error code
+    rpt$dataOut <- rpt$dataIn      
     
     
     
   ###
-  #mid intercept 1
+  #mid error catching 1
   #no non-NAs in dataset
   } else {
   ###
@@ -85,25 +106,25 @@ spike.medfilt <- function(DESP=list(
     
 
     #normalizing time-series to mean = 0 and sd = 1
-      DESP$datn <- (DESP$dati - mean(DESP$dati, na.rm=TRUE)) / sd(DESP$dati, na.rm=TRUE)  
+      rpt$dataNorm <- (rpt$dataIn - base::mean(rpt$dataIn, na.rm=TRUE)) / stats::sd(rpt$dataIn, na.rm=TRUE)  
     #determine differences
-      DESP$datn_diff <- diff(DESP$datn)
+      rpt$dataNormDiff <- base::diff(rpt$dataNorm)
   
     
       
     ###
-    #start intercept 2: 
+    #Error catching 2: 
     #(i) singular or constant value, or (ii) no consecutive values.
-    #in (i) the first case sd(DESP$dati) will return NA, and so DESP$datn will be all NAs
+    #in (i) the first case sd(rpt$dataIn) will return NA, and so rpt$dataNorm will be all NAs
     #in (ii) all differences are NA
-    if(length(which(!is.na(DESP$datn_diff))) == 0) {
+    if(base::length(base::which(!base::is.na(rpt$dataNormDiff))) == 0) {
     ###
       
       
       
-      DESP$nbin_loc <- -2
-      DESP$lens <- -2
-      DESP$dato <- DESP$dati      
+      rpt$numBinFinl <- -2 # Set to error code
+      rpt$numSpk <- -2 # Set to error code
+      rpt$dataOut <- rpt$dataIn      
       
       
       
@@ -116,45 +137,45 @@ spike.medfilt <- function(DESP=list(
 
         
       #determine measurement resolution (assumed to be smallest recorded change in data series)
-        DESP$datn_reso <- min(abs(DESP$datn_diff[which(DESP$datn_diff != 0)]), na.rm=TRUE)
-      #     plot(DESP$dati[1:100], type="l")
-      #     min(diff(DESP$dati[1:100]), na.rm=TRUE)
+        rpt$resoDataNorm <- base::min(base::abs(rpt$dataNormDiff[base::which(rpt$dataNormDiff != 0)]), na.rm=TRUE)
+      #     plot(rpt$dataIn[1:100], type="l")
+      #     min(diff(rpt$dataIn[1:100]), na.rm=TRUE)
       
       #apply median filter and calculate differences
         #minimum number of non-NAs in window to calculate median, else return NA
-          DESP$noNA <- max(c(5, floor(1/2 * DESP$widt)))
+          rpt$thshNumData <- base::max(c(5, base::floor(1/2 * rpt$WidtFilt)))
         #calculating median-filtered time-series
-          DESP$filt <- robfilter::med.filter(y=DESP$datn, width=DESP$widt, minNonNAs=DESP$noNA, online=FALSE, extrapolate=FALSE)
+          rpt$dataNormFiltMed <- robfilter::med.filter(y=rpt$dataNorm, width=rpt$WidtFilt, minNonNAs=rpt$thshNumData, online=FALSE, extrapolate=FALSE)
       
         #intercept if robfilter returns NA
       
-          if(length(DESP$filt) == 1) {
+          if(base::length(rpt$dataNormFiltMed) == 1) {
             
-            DESP$diff <- rep(0, length(DESP$dati))
+            rpt$histDiff <- base::rep(0, base::length(rpt$dataIn))
             
           } else {
           
             #calculating histogram of differences
-              DESP$diff <- DESP$filt$y - DESP$filt$level[,1]
+              rpt$histDiff <- rpt$dataNormFiltMed$y - rpt$dataNormFiltMed$level[,1]
         
           }
         
       
       ###
-      #start intercept 3: 
+      #Error catching 3: 
       #measurement changes so slow that time-series and filter value are identical
       #Or: less non-NAs in differences than required for 0.5 h out of 24 h of data (approx 2.5%)      
-      if(max(DESP$diff, na.rm=TRUE) == 0 |
-         length(which(!is.na(DESP$diff)))/length(DESP$dati) < 0.025 |
-         length(na.omit(unique(DESP$diff)))/length(DESP$dati) < 0.001
+      if(base::max(rpt$histDiff, na.rm=TRUE) == 0 |
+         base::length(base::which(!base::is.na(rpt$histDiff)))/base::length(rpt$dataIn) < 0.025 |
+         base::length(stats::na.omit(base::unique(rpt$histDiff)))/base::length(rpt$dataIn) < 0.001
          ) {
       ###
         
         
         
-        DESP$nbin_loc <- -3
-        DESP$lens <- -3
-        DESP$dato <- DESP$dati      
+        rpt$numBinFinl <- -3 # Set to error code
+        rpt$numSpk <- -3 # Set to error code
+        rpt$dataOut <- rpt$dataIn      
     
         
         
@@ -168,51 +189,51 @@ spike.medfilt <- function(DESP=list(
         
           ###
           #start while loop around PDF bins
-          DESP$crit <- FALSE
-          #DESP$runner <- 1
-          DESP$nbin_loc <- DESP$nbin
-          while(DESP$crit == FALSE) {
+          rpt$crit <- FALSE
+          #rpt$iter <- 1
+          rpt$numBinFinl <- rpt$NumBin
+          while(rpt$crit == FALSE) {
           ###
             
             
             
             #number of histogram bins
-              #DESP$nbin_loc <- DESP$nbin * DESP$runner + 1
-              DESP$bins <- seq(min(DESP$diff, na.rm=TRUE), max(DESP$diff, na.rm=TRUE), length.out=DESP$nbin_loc)
+              #rpt$numBinFinl <- rpt$NumBin * rpt$iter + 1
+              rpt$locBin <- base::seq(base::min(rpt$histDiff, na.rm=TRUE), base::max(rpt$histDiff, na.rm=TRUE), length.out=rpt$numBinFinl)
             #calculate histogram
-              DESP$hist <- hist(DESP$diff, breaks = DESP$bins, plot=FALSE)
+              rpt$histDiffFinl <- graphics::hist(rpt$histDiff, breaks = rpt$locBin, plot=FALSE)
             
             #determine bin with most values
-              DESP$maxi <- which.max(DESP$hist$counts)
+              rpt$posBinMax <- base::which.max(rpt$histDiffFinl$counts)
             #data needs to have extrema, otherwise it will not identify the zero crossing
             #hence attaching sin(1:10) to the end
-              DESP$mini <- EMD::extrema(y=c(DESP$hist$counts, sin(1:10)))$minindex[,1]
+              rpt$posBinMin <- EMD::extrema(y=c(rpt$histDiffFinl$counts, base::sin(1:10)))$minindex[,1]
             #remove sin(1:10) minima from end
-              DESP$mini <- DESP$mini[-which(DESP$mini > (DESP$nbin_loc - 1))]
+              rpt$posBinMin <- rpt$posBinMin[-base::which(rpt$posBinMin > (rpt$numBinFinl - 1))]
           
             #minimum threshold
-              DESP$trmi <- which(DESP$hist$counts[DESP$mini] == 0 & DESP$mini < DESP$maxi)
+              rpt$posThshBinMin <- base::which(rpt$histDiffFinl$counts[rpt$posBinMin] == 0 & rpt$posBinMin < rpt$posBinMax)
             #maximum threshold
-              DESP$trma <- which(DESP$hist$counts[DESP$mini] == 0 & DESP$mini > DESP$maxi)
+              rpt$posThshBinMax <- base::which(rpt$histDiffFinl$counts[rpt$posBinMin] == 0 & rpt$posBinMin > rpt$posBinMax)
             
       #      #message to screen
-      #        print(paste("PDF with ", DESP$nbin_loc, " bins is completed", sep=""))
+      #        print(paste("PDF with ", rpt$numBinFinl, " bins is completed", sep=""))
           
             #conditional statement for while loop
             #continue iterating if no bins with zero entries are found below AND above distribution maximum, else calculate thresholds
-              if(length(DESP$trmi) == 0 | length(DESP$trma) == 0) {
+              if(base::length(rpt$posThshBinMin) == 0 | length(rpt$posThshBinMax) == 0) {
                 
-                #DESP$runner <- DESP$runner + 1
-                DESP$nbin_loc <- 2 * DESP$nbin_loc
+                #rpt$iter <- rpt$iter + 1
+                rpt$numBinFinl <- 2 * rpt$numBinFinl
                 
               } else {
           
                 #final minimum threshold, i.e. lower break of closest bin with zero observations below distribution maximum
-                  DESP$trmi_out <- DESP$hist$breaks[DESP$mini[DESP$trmi][length(DESP$trmi)]]
+                  rpt$posThshBinMinFinl <- rpt$histDiffFinl$breaks[rpt$posBinMin[rpt$posThshBinMin][base::length(rpt$posThshBinMin)]]
                 #final maximum threshold, i.e. upper break of closest bin with zero observations above distribution maximum
-                  DESP$trma_out <- DESP$hist$breaks[DESP$mini[DESP$trma][1] + 1]
+                  rpt$posThshBinMaxFinl <- rpt$histDiffFinl$breaks[rpt$posBinMin[rpt$posThshBinMax][1] + 1]
                 
-                DESP$crit <- TRUE
+                rpt$crit <- TRUE
                 
               }
             
@@ -226,16 +247,16 @@ spike.medfilt <- function(DESP=list(
           
           
           #determine indices of spikes
-          #considers spikes only if difference larger than measurement resolution x DESP$rest
-            DESP$whrs <- which(
-                              DESP$diff < DESP$trmi_out & abs(DESP$diff) > DESP$datn_reso * DESP$rest |
-                              DESP$diff > DESP$trma_out & abs(DESP$diff) > DESP$datn_reso * DESP$rest
+          #considers spikes only if difference larger than measurement resolution x rpt$ThshReso
+            rpt$posSpk <- base::which(
+                              rpt$histDiff < rpt$posThshBinMinFinl & base::abs(rpt$histDiff) > rpt$resoDataNorm * rpt$ThshReso |
+                              rpt$histDiff > rpt$posThshBinMaxFinl & base::abs(rpt$histDiff) > rpt$resoDataNorm * rpt$ThshReso
                             )
-            DESP$lens <- length(DESP$whrs)
+            rpt$numSpk <- base::length(rpt$posSpk) # Number of spikes found
         
           #remove spikes
-            DESP$dato <- DESP$dati
-            if(DESP$lens > 0) DESP$dato[DESP$whrs] <- NA
+            rpt$dataOut <- rpt$dataIn
+            if(rpt$numSpk > 0) rpt$dataOut[rpt$posSpk] <- NA
 
   
       
@@ -264,9 +285,9 @@ spike.medfilt <- function(DESP=list(
   
   
 #  #print message to screen
-#    print(paste("De-spiking completed, ", DESP$lens, " spikes have been removed", sep=""))
+#    print(paste("De-spiking completed, ", rpt$numSpk, " spikes have been removed", sep=""))
 
   #return des-spiked time-series and all additional info
-    return(DESP)
+    return(rpt)
 
   }
