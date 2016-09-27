@@ -33,6 +33,8 @@
 #     adjusted function name and description
 #   Ke Xu (2016-08-03)
 #     add download method for both mac and unix
+#   Stefan Metzger (2016-09-25)
+#     included packages when calling download commands
 ##############################################################################################
 
 
@@ -51,8 +53,8 @@ def.dld.zip <- function(Inp = list(
   # -set mode = "wb" for archives: http://stackoverflow.com/questions/23899525/using-r-to-download-zipped-data-file-extract-and-import-csv
   # -set method = "wget" for unix systems
   #  https://orajavasolutions.wordpress.com/2014/06/03/unsupported-url-scheme-error-when-getting-data-from-https-sites-in-r/
-  if(.Platform$OS.type == "windows") suppressWarnings(download.file(url = Inp$Url, destfile = NameFileTmp, mode="wb"))
-  if(.Platform$OS.type == "unix") download(url = Inp$Url, destfile = NameFileTmp, mode="wb")
+  if(.Platform$OS.type == "windows") suppressWarnings(utils::download.file(url = Inp$Url, destfile = NameFileTmp, mode="wb"))
+  if(.Platform$OS.type == "unix") downloader::download(url = Inp$Url, destfile = NameFileTmp, mode="wb")
   
   # unzip the archive to the target directory
   unzip(zipfile = NameFileTmp, exdir = Inp$Dir, overwrite = TRUE)
