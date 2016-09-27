@@ -9,6 +9,7 @@ Description: Contains basic commonalities for the eddy4R family of R-packages
 Depends:
     R (>= 3.3.1)
 Imports:
+    BiocInstaller (>= 1.22.3)
     downloader (>= 0.4),
     EMD (>= 1.5.7),
     ff (>= 2.2-13),
