@@ -86,7 +86,7 @@ def.dspk.filt.med <- function(
     dataIn, # input data, univariate vector of integers or numerics
     WndwFilt = 9, # filter width
     NumBin = 2, # initial number/step size of histogram bins
-    ThshReso = 10 # resolution threshold for spike determination
+    ThshReso = 10, # resolution threshold for spike determination
     FracRealMin = 0.025 # minimum fraction of non-NA values
   ) {
   
