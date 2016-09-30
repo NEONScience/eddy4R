@@ -1,6 +1,6 @@
 Package: eddy4R.base
 Title: Eddy-covariance calculation for R: Base package
-Version: 0.0.20
+Version: 0.0.21
 Authors@R: c( person("Stefan", "Metzger", email = "eddy4R.info@gmail.com", role = c("aut", "cre")),
               person("Cove", "Sturtevant", email = "csturtevant@neoninc.org", role = c("aut")),
               person("Natchaya", "Pingintha-Durden", email = "ndurden@neoninc.org", role = c("aut"))
@@ -9,6 +9,7 @@ Description: Contains basic commonalities for the eddy4R family of R-packages
 Depends:
     R (>= 3.3.1)
 Imports:
+    BiocInstaller (>= 1.22.3),
     downloader (>= 0.4),
     EMD (>= 1.5.7),
     ff (>= 2.2-13),
