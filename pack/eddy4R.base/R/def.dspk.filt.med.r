@@ -23,15 +23,17 @@
 #' -3: measurement changes so slow that time-series and filter value are identical \cr
 
 #' @param \code{dataIn} Required. A univariate vector of integers or numerics of Input data
-#' @param \code{WidtFilt} Optional. A single integer value of filter width. Default = 9
+#' @param \code{WndwFilt} Optional. A single integer value of filter width. Default = 9
 #' @param \code{NumBin} Optional. A single integer value of the initial number/step size of histogram bins. Default = 2
-#' @param \code{ThshReso} Optional. A single integer value of the resolution threshold. Default = 10
+#' @param \code{ThshReso} Optional. A single integer value of the resolution threshold for spike determination. Only considered spike only if difference larger than measurement resolution x ThshReso. Default = 10
+#' @param \code{FracRealMin} Optional. A single numeric value of the minimum fraction of non-NA values required to perform median filter despiking. Default = 0.025 (2.5%)
 
 #' @return A list of: \cr
 #' \code{dataIn} Same as input.
-#' \code{WidtFilt} Same as input.
+#' \code{WndwFilt} Same as input.
 #' \code{NumBin} Same as input.
 #' \code{ThshReso} Same as input.
+#' \code{FracRealMin} Same as input.
 #' \code{numBinFinl} Integer. The final number of histogram bins used.
 #' \code{numSpk} Integer. The number of spikes identified.
 #' \code{dataOut} Numeric vector of input data with spikes removed.
@@ -44,17 +46,23 @@
 #' \code{crit} Logical. Criteria for ending iteration over histogram bins
 #' \code{locBin} Numeric vector. Bin edges for \code{histDiff}
 #' \code{histDiffFinl} Numeric vector. Final histogram of differences of \code{dataNormFiltMed} using bin edges in \code{locBin}
+#' \code{histDiffFinl$counts} Integer vector. Counts within each bin of \code{histDiffFinl}
+#' \code{histDiffFinl$breaks} Numeric vector. Bin edges for \code{histDiffFinl}
 #' \code{posBinMin} Integer. Index of histogram bin within \code{histDiffFinl} with minimum number of counts.
 #' \code{posBinMax} Integer. Index of histogram bin within \code{histDiffFinl} with maximum number of counts.
 #' \code{posThshBinMin} Integer. Current iteration of minimum threshold index of histogram bin within \code{histDiffFinl} for spike determination
 #' \code{posThshBinMax}  Integer. Current iteration of maximum threshold index of histogram bin within \code{histDiffFinl} for spike determination
 #' \code{posThshBinMinFinl} Integer. Final minimum threshold index of histogram bin within \code{histDiffFinl} for spike determination
-#' \code{posThshBinMinFinl} Integer. Final maximum threshold index of histogram bin within \code{histDiffFinl} for spike determination
+#' \code{posThshBinMaxFinl} Integer. Final maximum threshold index of histogram bin within \code{histDiffFinl} for spike determination
 #' \code{posSpk} Indices of determined spikes within \code{dataIn}
 
 #' 
 #' @references 
 #' license: Terms of use of the NEON FIU algorithm repository dated 2015-01-16
+#' Brock, F. V. A Nonlinear Filter to Remove Impulse Noise from Meteorological Data. J. Atmos. Oceanic Technol. 3, 51–58 (1986).
+#' Starkenburg, D. et al. Assessment of Despiking Methods for Turbulence Data in Micrometeorology. J. Atmos. Oceanic Technol. 33, 2001–2013 (2016).
+#' Vickers, D. & Mahrt, L. Quality control and flux sampling problems for tower and aircraft data. in 512–526 (Amer Meteorological Soc, 1997).
+#' Mauder, M. and Foken, T. Documentation and instruction manual of the edy covariance software package TK3. Arbeitsergebn. Univ Bayreuth. Abt Mikrometeorol. ISSN 1614-8916, 46:58 pp. (2011)
 
 #' @keywords Currently none
 
@@ -76,17 +84,18 @@
 
 def.dspk.filt.med <- function(
     dataIn, # input data, univariate vector of integers or numerics
-    WidtFilt = 9, # filter width
+    WndwFilt = 9, # filter width
     NumBin = 2, # initial number/step size of histogram bins
-    ThshReso = 10 # resolution threshold
+    ThshReso = 10 # resolution threshold for spike determination
+    FracRealMin = 0.025 # minimum fraction of non-NA values
   ) {
   
   # Initialize output
-  rpt <- base::list(dataIn=dataIn,WidtFilt=WidtFilt,NumBin=NumBin,ThshReso=ThshReso)
+  rpt <- base::list(dataIn=dataIn,WndwFilt=WndwFilt,NumBin=NumBin,ThshReso=ThshReso,FracRealMin=FracRealMin)
   
   #Error catching 1: 
-  #fewer non-NAs in dataset than required for 0.5 h out of 24 h of data (approx 2.5%)
-  if(base::length(base::which(!base::is.na(rpt$dataIn)))/base::length(rpt$dataIn) < 0.025) {
+  #fewer non-NAs in dataset than required for 0.5 h out of 24 h of data (default 2.5%)
+  if(base::length(base::which(!base::is.na(rpt$dataIn)))/base::length(rpt$dataIn) < rpt$FracRealMin) {
   ###
 
     
@@ -143,9 +152,9 @@ def.dspk.filt.med <- function(
       
       #apply median filter and calculate differences
         #minimum number of non-NAs in window to calculate median, else return NA
-          rpt$thshNumData <- base::max(c(5, base::floor(1/2 * rpt$WidtFilt)))
+          rpt$thshNumData <- base::max(c(5, base::floor(1/2 * rpt$WndwFilt)))
         #calculating median-filtered time-series
-          rpt$dataNormFiltMed <- robfilter::med.filter(y=rpt$dataNorm, width=rpt$WidtFilt, minNonNAs=rpt$thshNumData, online=FALSE, extrapolate=FALSE)
+          rpt$dataNormFiltMed <- robfilter::med.filter(y=rpt$dataNorm, width=rpt$WndwFilt, minNonNAs=rpt$thshNumData, online=FALSE, extrapolate=FALSE)
       
         #intercept if robfilter returns NA
       
@@ -166,7 +175,7 @@ def.dspk.filt.med <- function(
       #measurement changes so slow that time-series and filter value are identical
       #Or: less non-NAs in differences than required for 0.5 h out of 24 h of data (approx 2.5%)      
       if(base::max(rpt$histDiff, na.rm=TRUE) == 0 |
-         base::length(base::which(!base::is.na(rpt$histDiff)))/base::length(rpt$dataIn) < 0.025 |
+         base::length(base::which(!base::is.na(rpt$histDiff)))/base::length(rpt$dataIn) < rpt$FracRealMin |
          base::length(stats::na.omit(base::unique(rpt$histDiff)))/base::length(rpt$dataIn) < 0.001
          ) {
       ###
