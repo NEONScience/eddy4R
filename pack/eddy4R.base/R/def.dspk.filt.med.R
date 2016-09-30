@@ -2,7 +2,7 @@
 #' @title Median filter de-spiking
 
 #' @author 
-#' Stefan Metzger \email{eddy4R.info@gmail.com}
+#' Stefan Metzger \email{eddy4R.info@gmail.com} \cr
 #' Cove Sturtevant \email{eddy4R.info@gmail.com}
 
 #' @description Function definition. Median filter de-spiking\cr
@@ -16,7 +16,7 @@
 #' good data points will be centered within the histogram near zero;
 #' spikes will lie farthest from the center, resulting in subpopulations that make the distribution multi-modal; \cr
 #' Determine the the range of accepted values, DT by searching the histogram for the first minima from the center;
-#' Points where |D1| > DT are considered spikes, provided the difference is >= 10 x the measurement resolution (smallest detected change);
+#' Points where |D1| > DT are considered spikes, provided the difference is >= 10 x the measurement resolution (smallest detected change); \cr
 #' Error escapes:\cr
 #' -1: no non-NAs in dataset \cr
 #' -2: singular or constant value \cr
@@ -26,42 +26,42 @@
 #' @param \code{WndwFilt} Optional. A single integer value of filter width. Default = 9
 #' @param \code{NumBin} Optional. A single integer value of the initial number/step size of histogram bins. Default = 2
 #' @param \code{ThshReso} Optional. A single integer value of the resolution threshold for spike determination. Only considered spike only if difference larger than measurement resolution x ThshReso. Default = 10
-#' @param \code{FracRealMin} Optional. A single numeric value of the minimum fraction of non-NA values required to perform median filter despiking. Default = 0.025 (2.5%)
+#' @param \code{FracRealMin} Optional. A single numeric value of the minimum fraction of non-NA values required to perform median filter despiking. Default = 0.025 (2.5\%)
 
-#' @return A list of: \cr
-#' \code{dataIn} Same as input.
-#' \code{WndwFilt} Same as input.
-#' \code{NumBin} Same as input.
-#' \code{ThshReso} Same as input.
-#' \code{FracRealMin} Same as input.
-#' \code{numBinFinl} Integer. The final number of histogram bins used.
-#' \code{numSpk} Integer. The number of spikes identified.
-#' \code{dataOut} Numeric vector of input data with spikes removed.
-#' \code{dataNorm} Numeric vector of input data normalized to mean 0 and standard deviation of 1
-#' \code{dataNormDiff} Numeric vector of differences between subsequent values of \code{dataNorm}. Length = 1-length(dataIn)
-#' \code{resoDataNorm} Numeric value. Measurement resolution (assumed to be smallest recorded change in \code{dataNorm})
-#' \code{thshNumData} Numeric value. Minimum number of non-NAs in window to calculate median, otherwise NA is returned.
-#' \code{dataNormFiltMed} Numeric vector. Median-filtered timeseries of \code{dataNorm}. 
-#' \code{histDiff} Numeric vector. Initial histogram of differences of \code{dataNormFiltMed}
-#' \code{crit} Logical. Criteria for ending iteration over histogram bins
-#' \code{locBin} Numeric vector. Bin edges for \code{histDiff}
-#' \code{histDiffFinl} Numeric vector. Final histogram of differences of \code{dataNormFiltMed} using bin edges in \code{locBin}
-#' \code{histDiffFinl$counts} Integer vector. Counts within each bin of \code{histDiffFinl}
-#' \code{histDiffFinl$breaks} Numeric vector. Bin edges for \code{histDiffFinl}
-#' \code{posBinMin} Integer. Index of histogram bin within \code{histDiffFinl} with minimum number of counts.
-#' \code{posBinMax} Integer. Index of histogram bin within \code{histDiffFinl} with maximum number of counts.
-#' \code{posThshBinMin} Integer. Current iteration of minimum threshold index of histogram bin within \code{histDiffFinl} for spike determination
-#' \code{posThshBinMax}  Integer. Current iteration of maximum threshold index of histogram bin within \code{histDiffFinl} for spike determination
-#' \code{posThshBinMinFinl} Integer. Final minimum threshold index of histogram bin within \code{histDiffFinl} for spike determination
-#' \code{posThshBinMaxFinl} Integer. Final maximum threshold index of histogram bin within \code{histDiffFinl} for spike determination
-#' \code{posSpk} Indices of determined spikes within \code{dataIn}
-
+#' @return A list of:
+#' @return \code{dataIn} Same as input.
+#' @return \code{WndwFilt} Same as input.
+#' @return \code{NumBin} Same as input.
+#' @return \code{ThshReso} Same as input.
+#' @return \code{FracRealMin} Same as input.
+#' @return \code{numBinFinl} Integer. The final number of histogram bins used.
+#' @return \code{numSpk} Integer. The number of spikes identified.
+#' @return \code{dataOut} Numeric vector of input data with spikes removed.
+#' @return \code{dataNorm} Numeric vector of input data normalized to mean 0 and standard deviation of 1 
+#' @return \code{dataNormDiff} Numeric vector of differences between subsequent values of \code{dataNorm}. Length = 1-length(dataIn) 
+#' @return \code{resoDataNorm} Numeric value. Measurement resolution (assumed to be smallest recorded change in \code{dataNorm}) 
+#' @return \code{thshNumData} Numeric value. Minimum number of non-NAs in window to calculate median, otherwise NA is returned. 
+#' @return \code{dataNormFiltMed} Numeric vector. Median-filtered timeseries of \code{dataNorm}.  
+#' @return \code{histDiff} Numeric vector. Initial histogram of differences of \code{dataNormFiltMed} 
+#' @return \code{crit} Logical. Criteria for ending iteration over histogram bins 
+#' @return \code{locBin} Numeric vector. Bin edges for \code{histDiff} 
+#' @return \code{histDiffFinl} Numeric vector. Final histogram of differences of \code{dataNormFiltMed} using bin edges in \code{locBin} 
+#' @return \code{histDiffFinl$counts} Integer vector. Counts within each bin of \code{histDiffFinl} 
+#' @return \code{histDiffFinl$breaks} Numeric vector. Bin edges for \code{histDiffFinl} 
+#' @return \code{posBinMin} Integer. Index of histogram bin within \code{histDiffFinl} with minimum number of counts. 
+#' @return \code{posBinMax} Integer. Index of histogram bin within \code{histDiffFinl} with maximum number of counts. 
+#' @return \code{posThshBinMin} Integer. Current iteration of minimum threshold index of histogram bin within \code{histDiffFinl} for spike determination 
+#' @return \code{posThshBinMax}  Integer. Current iteration of maximum threshold index of histogram bin within \code{histDiffFinl} for spike determination 
+#' @return \code{posThshBinMinFinl} Integer. Final minimum threshold index of histogram bin within \code{histDiffFinl} for spike determination 
+#' @return \code{posThshBinMaxFinl} Integer. Final maximum threshold index of histogram bin within \code{histDiffFinl} for spike determination 
+#' @return \code{posSpk} Indices of determined spikes within \code{dataIn}
 #' 
-#' @references 
-#' license: Terms of use of the NEON FIU algorithm repository dated 2015-01-16
-#' Brock, F. V. A Nonlinear Filter to Remove Impulse Noise from Meteorological Data. J. Atmos. Oceanic Technol. 3, 51–58 (1986).
-#' Starkenburg, D. et al. Assessment of Despiking Methods for Turbulence Data in Micrometeorology. J. Atmos. Oceanic Technol. 33, 2001–2013 (2016).
-#' Vickers, D. & Mahrt, L. Quality control and flux sampling problems for tower and aircraft data. in 512–526 (Amer Meteorological Soc, 1997).
+#' 
+#' @references
+#' license: Terms of use of the NEON FIU algorithm repository dated 2015-01-16 \cr
+#' Brock, F. V. A Nonlinear Filter to Remove Impulse Noise from Meteorological Data. J. Atmos. Oceanic Technol. 3, 51–58 (1986). \cr
+#' Starkenburg, D. et al. Assessment of Despiking Methods for Turbulence Data in Micrometeorology. J. Atmos. Oceanic Technol. 33, 2001–2013 (2016). \cr
+#' Vickers, D. & Mahrt, L. Quality control and flux sampling problems for tower and aircraft data. in 512–526 (Amer Meteorological Soc, 1997). \cr
 #' Mauder, M. and Foken, T. Documentation and instruction manual of the edy covariance software package TK3. Arbeitsergebn. Univ Bayreuth. Abt Mikrometeorol. ISSN 1614-8916, 46:58 pp. (2011)
 
 #' @keywords Currently none
