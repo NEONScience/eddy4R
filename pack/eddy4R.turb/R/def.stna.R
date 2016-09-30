@@ -14,6 +14,8 @@
 #' @param \code{NumSubSamp}  An object of class "numeric" or "integer" containing the number of sub sample over averaing period. For example, \code{NumSubSamp} = 6 if a 30 min averaging period is subsetted into 5 minute intervals. Defaults to 6. [-]
 #' @param \code{corTempPot} A logical indicating whether or not to use potential temperature in flux calculation. Defaults to TRUE. [-]
 #' @param \code{presTempPot} A vector containing the air pressure data that will be used in the calculation when \code{corTempPot}=TRUE. Of class "numeric" or "integer" and of the same length as \code{data} or single entry. [Pa]
+#' @param \code{PltfEc} A specifier indicating which eddy covariance platform data are processed. Should be either "airc" or "towr". Defaults to "airc". [-]
+#' @param \code{flagCh4} A logical indicating whether or not methane flux is processed. Defaults to TRUE. [-]
 
 #' @return Stationarity test result. [percent]
 
@@ -36,6 +38,8 @@
 #     added Roxygen2 tags
 #   Natchaya Pingintha-Durden (2015-07-15)
 #     Initail naming convention for eddy4R
+#   Ke Xu (2016-09-19)
+#     Add two arguments PltfEc and flagCh4 to adjust tower data
 ##############################################################################################
 #STATIONARITY TESTS
 
@@ -45,7 +49,9 @@ def.stna <- function(
   whrVar, #for which fluxes to perform stationarity test?
   NumSubSamp=6,		#number of subsamples for trend==FALSE
   corTempPot=TRUE,
-  presTempPot=NULL
+  presTempPot=NULL,
+  PltfEc = "airc",
+  flagCh4 = TRUE
 ) {
   
   #-----------------------------------------------------------
@@ -56,7 +62,9 @@ def.stna <- function(
     data=data,
     AlgBase="mean",
     FcorPOT=corTempPot,
-    FcorPOTl=presTempPot
+    FcorPOTl=presTempPot,
+    PltfEc = PltfEc,
+    flagCh4 = flagCh4
   )
   
   if(MethStna %in% c(1, 3)) { 
@@ -68,7 +76,9 @@ def.stna <- function(
       data=data,
       AlgBase="trnd",
       FcorPOT=corTempPot,
-      FcorPOTl=presTempPot
+      FcorPOTl=presTempPot,
+      PltfEc = PltfEc,
+      flagCh4 = flagCh4
     )
     
     #deviation [%]
@@ -95,7 +105,9 @@ def.stna <- function(
       data=data[idxSubSamp[[x]],],
       AlgBase="mean",
       FcorPOT=corTempPot,
-      FcorPOTl=presTempPot
+      FcorPOTl=presTempPot,
+      PltfEc = PltfEc,
+      flagCh4 = flagCh4
     )$mn[,whrVar]
     )
     outSubSamp <- data.frame(base::matrix(unlist(outSubSamp), ncol=length(whrVar), byrow=TRUE))
@@ -108,7 +120,7 @@ def.stna <- function(
     rm(trnd, NumSubSamp, rngClas, idxSubSamp, outSubSamp)
     
   } else rptStna02 <- NULL
- 
+  
   #-----------------------------------------------------------
   #AGGREGATE AND RETURN RESULTS
   

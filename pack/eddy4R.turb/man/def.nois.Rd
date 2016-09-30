@@ -5,7 +5,8 @@
 \title{Determination of noise and detection limit for eddy-covariance turbulent fluxes}
 \usage{
 def.nois(dataTest, dataRefe, idxFlux, AlgBase, corTempPot = TRUE,
-  presTempPot = NULL, ConfLevl = 0.95, CritMax = 0.01)
+  presTempPot = NULL, ConfLevl = 0.95, CritMax = 0.01, PltfEc = "towr",
+  flagCh4 = TRUE)
 }
 \arguments{
 \item{\code{dataTest}}{A dataframe containing the input data, of class "numeric". [user-defined]}
@@ -26,6 +27,10 @@ def.nois(dataTest, dataRefe, idxFlux, AlgBase, corTempPot = TRUE,
 \item{\code{ConfLevl}}{The confidence level at which the detection limit is calculated. Of class "numeric", defaults to 0.95. [-]}
 
 \item{\code{CritMax}}{The stop criterion for the iteration. Of class "numeric", defaults to 0.01 (i.e., 1 percent change among subsequent runs). [-]}
+
+\item{\code{PltfEc}}{A specifier indicating which eddy covariance platform data are processed. Should be either "airc" or "towr". Defaults to "airc". [-]}
+
+\item{\code{flagCh4}}{A logical indicating whether or not methane flux is processed. Defaults to TRUE. [-]}
 }
 \value{
 A list containing the noise bias, noise dispersion, detection limit and signal-to-noise ratio.
