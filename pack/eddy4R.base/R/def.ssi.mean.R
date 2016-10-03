@@ -39,7 +39,14 @@ def.ssi.mean <- function(
   ssiH2o
 ) {
   
-
+  # test for correct units of input variables
+  
+  if(attributes(ssiCo2)$unit != "-" || attributes(ssiH2o)$unit != "-") {
+    
+    stop("def.ssi.mean(): input units are not matching internal units, please check.")
+    
+  } else {
+    
     # calculate mean signal strength
     ssiMean <- (ssiCo2 + ssiH2o) / 2
     
@@ -49,8 +56,7 @@ def.ssi.mean <- function(
     # return results
     return(ssiMean) 
     
-
-  
+  }
 }
 
 
