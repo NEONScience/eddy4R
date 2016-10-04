@@ -156,14 +156,17 @@ if(!(DateLoca %in% file)) {
 
   # unit conversion
     
-    # perform unit conversion
-    data <- base::suppressWarnings(eddy4R.base::def.conv.unit(data = data,
-                                                              unitFrom = attributes(data)$unit,
-                                                              unitTo = "intl"))
+    # perform unit conversion: loop around variables in data
+    for(idx in base::names(data)) {
 
-    # store target unit names for future use
-    names(attributes(data)$unit) <- names(data)
+      data[[idx]] <- base::suppressWarnings(
+        eddy4R.base::def.conv.unit(data = base::as.vector(data[[idx]]),
+                                   unitFrom = attributes(data[[idx]])$unit,
+                                   unitTo = "intl")
+        )
       
+    }; rm(idx)
+
     # print message to screen
     print(paste0(format(Sys.time(), "%F %T"), ": dataset ", DateLoca, ": ", VarLoca, " unit conversion complete"))
 
