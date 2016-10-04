@@ -144,12 +144,12 @@ if(!(DateLoca %in% file)) {
     attr <- rhdf5::h5readAttributes(file = base::paste0(DirInpLoca, "/ECTE_L0_", SiteLoca, "_", DateLoca, ".h5"),
                                     name = base::paste0("/", SiteLoca, "/DP0_", VarLoca, "_001"))
 
-    # assign variable names to units to enable sorting
+    # assign variable names to units to enable assignment to variables in data
     base::names(attr$units) <- attr$names
-
-    # sort and assign unit descriptions in same order as data
-    base::attributes(data)$unit <- attr$units[base::names(data)]
-    rm(attr)
+    
+    # assign units to variables in data
+    for(idx in base::names(data)) base::attr(x = data[[idx]], which = "unit") <- attr$units[[idx]]
+    rm(idx)
 
     # print message to screen
     print(paste0(format(Sys.time(), "%F %T"), ": dataset ", DateLoca, ": ", VarLoca, " hdf5 attributes complete"))
