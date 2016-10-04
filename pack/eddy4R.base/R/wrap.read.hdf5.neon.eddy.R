@@ -33,6 +33,9 @@
 #     original creation
 #   Stefan Metzger (2016-08-23)
 #     use unit conversion with "internal" units
+#   Stefan Metzger (2016-10-04)
+#     added replacement statements for unit attributes on individual variables in data.frame
+# 		full implementation requires updating unit-specific behavior of eddy4R.base::def.rglr()
 ##############################################################################################
         
 wrap.read.hdf5.neon.eddy <- function(
