@@ -276,16 +276,16 @@ if(!(DateLoca %in% file)) {
       for(idx in base::names(RngLoca[[VarLoca]])) {
 
         #execute de-spiking algorithm
-        data[,idx] <- spike.medfilt(DESP = list(
+        data[,idx] <- eddy4R.qaqc::def.dspk.filt.med(
           # input data, univariate vector of integers or numerics
-          dati = as.vector(data[,idx]),
+          dataIn = as.vector(data[,idx]),
           # filter width
-          widt = DespLoca$widt * FreqLoca + 1,
+          WndwFilt = DespLoca$widt * FreqLoca + 1,
           # initial number/step size of histogram bins
-          nbin = DespLoca$nbin,
+          NumBin = DespLoca$nbin,
           # resolution threshold
-          rest = DespLoca$rest
-        ))$dato
+          ThshReso = DespLoca$rest
+        )$dataOut
         
       }
       
