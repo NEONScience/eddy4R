@@ -144,29 +144,26 @@ if(!(DateLoca %in% file)) {
     attr <- rhdf5::h5readAttributes(file = base::paste0(DirInpLoca, "/ECTE_L0_", SiteLoca, "_", DateLoca, ".h5"),
                                     name = base::paste0("/", SiteLoca, "/DP0_", VarLoca, "_001"))
 
-    # assign variable names to units to enable assignment to variables in data
+    # assign variable names to units to enable sorting
     base::names(attr$units) <- attr$names
-    
-    # assign units to variables in data
-    for(idx in base::names(data)) base::attr(x = data[[idx]], which = "unit") <- attr$units[[idx]]
-    rm(idx)
+
+    # sort and assign unit descriptions in same order as data
+    base::attributes(data)$unit <- attr$units[base::names(data)]
+    rm(attr)
 
     # print message to screen
     print(paste0(format(Sys.time(), "%F %T"), ": dataset ", DateLoca, ": ", VarLoca, " hdf5 attributes complete"))
 
   # unit conversion
     
-    # perform unit conversion: loop around variables in data
-    for(idx in base::names(data)) {
+    # perform unit conversion
+    data <- base::suppressWarnings(eddy4R.base::def.conv.unit(data = data,
+                                                              unitFrom = attributes(data)$unit,
+                                                              unitTo = "intl"))
 
-      data[[idx]] <- base::suppressWarnings(
-        eddy4R.base::def.conv.unit(data = base::as.vector(data[[idx]]),
-                                   unitFrom = attributes(data[[idx]])$unit,
-                                   unitTo = "intl")
-        )
+    # store target unit names for future use
+    names(attributes(data)$unit) <- names(data)
       
-    }; rm(idx)
-
     # print message to screen
     print(paste0(format(Sys.time(), "%F %T"), ": dataset ", DateLoca, ": ", VarLoca, " unit conversion complete"))
 
