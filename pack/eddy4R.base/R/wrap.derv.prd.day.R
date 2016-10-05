@@ -46,14 +46,17 @@ wrap.derv.prd.day <- function(
 
   # fractional UTC time
   data$time$UTC_frac <- ff::as.ff(tmp$hour + tmp$min / 60 + tmp$sec / 3600)
-  
+  base::attr(x = data$time$UTC_frac, which = "unit") <- "h"
+
   # fractional day of year [DOY]
   data$time$DOY_frac <- ff::as.ff(tmp$yday + 1 + data$time$UTC_frac[] / 24)
+  base::attr(x = data$time$DOY_frac, which = "unit") <- "d"
   
   # calculate local standard time
   tmp <- data$time$UTC[]
   attributes(tmp)$tzone <- SiteInfoLoca$Tz
   data$time$Loca <- ff::as.ff(tmp)
+  base::attr(x = data$time$Loca, which = "unit") <- "YYYY-MM-DD hh:mm:ss.sss"
 
   # clean up
   rm(tmp)
