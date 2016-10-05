@@ -65,25 +65,25 @@ wrap.derv.prd.day <- function(
 
   # average signal strength
   data$irga$RSSI_mean_7200 <- ff::as.ff((data$irga$ssiCO2 + data$irga$ssiH2O) / 2)
-  attributes(data$irga)$unit["RSSI_mean_7200"] <- attributes(data$irga)$unit["ssiCO2"]
-  
+  base::attr(x = data$irga$RSSI_mean_7200, which = "unit") <- base::attr(x = data$irga$ssiCO2, which = "unit")
+
   # delta signal strength
   data$irga$RSSI_delta_7200 <- ff::as.ff(data$irga$ssiCO2 - data$irga$ssiH2O)
-  attributes(data$irga)$unit["RSSI_delta_7200"] <- attributes(data$irga)$unit["ssiCO2"]
+  base::attr(x = data$irga$RSSI_delta_7200, which = "unit") <- base::attr(x = data$irga$ssiCO2, which = "unit")
 
   # total pressure in irga cell
   data$irga$p_cell_7200 <- ff::as.ff(data$irga$presAtmBox + data$irga$presGageCell)
-  attributes(data$irga)$unit["p_cell_7200"] <- attributes(data$irga)$unit["presAtmBox"]
-  
+  base::attr(x = data$irga$p_cell_7200, which = "unit") <- base::attr(x = data$irga$presAtmBox, which = "unit")
+
   # average temperature in irga cell 
   data$irga$T_cell_7200 <- ff::as.ff(0.2 * data$irga$tempCellIn + 0.8 * data$irga$tempCellOut)
-  attributes(data$irga)$unit["T_cell_7200"] <- attributes(data$irga)$unit["tempCellIn"]
+  base::attr(x = data$irga$T_cell_7200, which = "unit") <- base::attr(x = data$irga$tempCellIn, which = "unit")
 
   # RH in cell
 
     # water vapor partial pressure
     data$irga$presH2o <- ff::as.ff(def.pres.h2o.rtio.mole(rtioMoleDryH2o = data$irga$fdMoleH2O, pres = data$irga$p_cell_7200))
-    attributes(data$irga)$unit["presH2o"] <- "Pa"
+    base::attr(x = data$irga$presH2o, which = "unit") <- "Pa"
 
     # water vapor saturation pressure
     if(!is.na(mean(data$irga$T_cell_7200, na.rm=TRUE))) {
@@ -91,24 +91,24 @@ wrap.derv.prd.day <- function(
     } else {
       data$irga$presH2oSat <- ff::as.ff(rep(NaN, length(data$irga$T_cell_7200)))
     }
-    attributes(data$irga)$unit["presH2oSat"] <- "Pa"
+    base::attr(x = data$irga$presH2oSat, which = "unit") <- "Pa"
     
     # calcuate RH
     data$irga$RH_7200 <- ff::as.ff(data$irga$presH2o / data$irga$presH2oSat * 100)
-    attributes(data$irga)$unit["RH_7200"] <- "%"
+    base::attr(x = data$irga$RH_7200, which = "unit") <- "%"
 
   # molar density of dry air and water vapor
   data$irga$rho_mole_air_7200 <- ff::as.ff(data$irga$p_cell_7200 / eddy4R.base::Natu$Rg / data$irga$T_cell_7200)
-  attributes(data$irga)$unit["rho_mole_air_7200"] <- "mol m-3"
-  
+  base::attr(x = data$irga$rho_mole_air_7200, which = "unit") <- "mol m-3"
+
   # molar density of dry air alone
   data$irga$rho_mole_dry_7200 <- ff::as.ff(data$irga$rho_mole_air_7200 - data$irga$rhoMoleH2O)
-  attributes(data$irga)$unit["rho_mole_dry_7200"] <- "mol m-3"
-  
+  base::attr(x = data$irga$rho_mole_dry_7200, which = "unit") <- "mol m-3"
+
   # wet mass fraction (specific humidity)
   data$irga$FW_mass_H2O_7200 <- ff::as.ff(data$irga$rhoMoleH2O * eddy4R.base::Natu$MolmH2o /
     (data$irga$rho_mole_dry_7200 * eddy4R.base::Natu$MolmDry + data$irga$rhoMoleH2O * eddy4R.base::Natu$MolmH2o))
-  attributes(data$irga)$unit["FW_mass_H2O_7200"] <- "kg kg-1"
+  base::attr(x = data$irga$FW_mass_H2O_7200, which = "unit") <- "kg kg-1"
 
 # soni
   
