@@ -115,35 +115,21 @@ wrap.derv.prd.day <- function(
   # sonic temperature [K] from speed of sound [m s-1] (Campbell Scientific, Eq. (9))
   data$soni$T_SONIC <- ff::as.ff(data$soni$veloSoni^2 / eddy4R.base::Natu$GmmaDry / 
                                   (eddy4R.base::Natu$Rg / eddy4R.base::Natu$MolmDry))
-  attributes(data$soni)$unit["T_SONIC"] <- "K"
+  base::attr(x = data$soni$T_SONIC, which = "unit") <- "K"
 
 # sort object levels alphabetically
 
   # data
-  whr <- names(data)[order(tolower(names(data)))]
-  data <- data[whr]
-  rm(whr)
+  data <- data[names(data)[order(tolower(names(data)))]]
 
   # data$irga
-  whr <- names(data$irga)[order(tolower(names(data$irga)))]
-  tmp <- attributes(data$irga)$unit[whr]
-  data$irga <- data$irga[whr]
-  attributes(data$irga)$unit <- tmp
-  rm(tmp, whr)
-
+  data$irga <- data$irga[names(data$irga)[order(tolower(names(data$irga)))]]
+  
   # data$irga MFC
-  whr <- names(data$irgaMfcSamp)[order(tolower(names(data$irgaMfcSamp)))]
-  tmp <- attributes(data$irgaMfcSamp)$unit[whr]
-  data$irgaMfcSamp <- data$irgaMfcSamp[whr]
-  attributes(data$irgaMfcSamp)$unit <- tmp
-  rm(tmp, whr)
+  data$irgaMfcSamp <- data$irgaMfcSamp[names(data$irgaMfcSamp)[order(tolower(names(data$irgaMfcSamp)))]]
   
   # data$soni
-  whr <- names(data$soni)[order(tolower(names(data$soni)))]
-  tmp <- attributes(data$soni)$unit[whr]
-  data$soni <- data$soni[whr]
-  attributes(data$soni)$unit <- tmp
-  rm(tmp, whr)
+  data$soni <- data$soni[names(data$soni)[order(tolower(names(data$soni)))]]
 
 # return results
 return(data)
