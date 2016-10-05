@@ -216,13 +216,13 @@ def.rglr <- function(
     base::attributes(rpt$dataRglr)$unit <- unitMeas
   }
   
-  if(MethRglr == "cybiNew") {
+  if(MethRglr == "cybiRglr") {
     
     if(base::is.null(BgnRglr)) {
-      stop("Input 'BgnRglr' is required for the 'zoo' method")
+      stop("Input 'BgnRglr' is required for the 'cybiRglr' method")
     }
     if(base::is.null(TzRglr)) {
-      stop("Input 'TzRglr' is required for the 'zoo' method")
+      stop("Input 'TzRglr' is required for the 'cybiRglr' method")
     }
     
     
