@@ -47,7 +47,7 @@ def.ssi.diff <- function(
   } else {
     
     # calculate signal strength difference
-    ssiDiff <- data$irga$ssiCO2 - data$irga$ssiH2O
+    ssiDiff <- ssiCo2 - ssiH2o
     
     # assign output unit
     attributes(ssiDiff)$unit <- "-"
