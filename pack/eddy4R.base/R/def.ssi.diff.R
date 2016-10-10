@@ -1,0 +1,1 @@
+data$irga$ssiCO2 - data$irga$ssiH2O
