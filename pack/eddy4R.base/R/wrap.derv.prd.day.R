@@ -68,7 +68,7 @@ wrap.derv.prd.day <- function(
   base::attr(x = data$irga$RSSI_mean_7200, which = "unit") <- base::attr(x = data$irga$ssiCO2, which = "unit")
 
   # delta signal strength
-  data$irga$RSSI_delta_7200 <- ff::as.ff(data$irga$ssiCO2 - data$irga$ssiH2O)
+  data$irga$RSSI_delta_7200 <- ff::as.ff(def.ssi.diff(ssiCo2 = data$irga$ssiCO2, ssiH2o = data$irga$ssiH2O))
   base::attr(x = data$irga$RSSI_delta_7200, which = "unit") <- base::attr(x = data$irga$ssiCO2, which = "unit")
 
   # total pressure in irga cell
