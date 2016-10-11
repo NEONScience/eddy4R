@@ -18,7 +18,8 @@
 #' @keywords signal strength, irga
 
 #' @examples
-#' Currently none.
+# def.ssi.diff(ssiCo2 = 50, ssiH2o =56)
+# def.ssi.diff(ssiCo2 = c(30, 55, 60), ssiH2o = c(40, 50, 60))
 
 #' @seealso Currently none.
 
