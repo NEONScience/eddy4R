@@ -18,8 +18,16 @@
 #' @keywords pressure, irga
 
 #' @examples
+#' Example 1, this will cause an error message due to presAtmBox and presGageCell have no units: 
 #' def.pres.sum(presAtmBox = 993.8, presGageCell = -1.109)
-#' def.pres.sum(presAtmBox = c(993.7, 993.6, 993.9), presGageCell = (-1.089, -1.085, -1.101))
+
+#' Example 2, assign valuea and units to variables first, the function should run ok.
+#' presAtmBox = 993.8
+#' presGageCell = -1.109
+#' attributes(presAtmBox)$unit = "Pa"
+#' attributes(presGageCell)$unit = "Pa"
+#' def.pres.sum(presAtmBox, presGageCell)
+
 
 #' @seealso Currently none.
 
