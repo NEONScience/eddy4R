@@ -18,7 +18,8 @@
 #' @keywords pressure, irga
 
 #' @examples
-#' Currently none.
+#' def.pres.sum(presAtmBox = 993.8, presGageCell = -1.109)
+#' def.pres.sum(presAtmBox = c(993.7, 993.6, 993.9), presGageCell = (-1.089, -1.085, -1.101))
 
 #' @seealso Currently none.
 
