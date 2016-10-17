@@ -6,8 +6,8 @@
 
 #' @description Function definition. Calculation of signal strength difference for LI-7200 IRGA.
 
-#' @param \code{ssiCo2} A vector containing the CO2 signal strength, of class "numeric". [percent]
-#' @param \code{ssiH2o} A vector containing the H2O signal strength, of class "numeric". [percent]
+#' @param \code{ssiCo2} A vector containing the CO2 signal strength, of class "numeric". [unitless]
+#' @param \code{ssiH2o} A vector containing the H2O signal strength, of class "numeric". [unitless]
 
 #' @return 
 #' The returned object is the signal strength difference between the CO2 signal strength and the H2O signal strength.  
@@ -18,8 +18,14 @@
 #' @keywords signal strength, irga
 
 #' @examples
-# def.ssi.diff(ssiCo2 = 50, ssiH2o =56)
-# def.ssi.diff(ssiCo2 = c(30, 55, 60), ssiH2o = c(40, 50, 60))
+# example 1 (This will give error message becuase ssiCo2 and ssiH2o have no units):
+# def.ssi.diff(ssiCo2 = 0.550, ssiH2o =0.561) 
+# example 2 (Assign the units and values to the variable before run function, which shoudl work fine.)
+# ssiCo2 =0.550
+# ssiH2o = 0.561 
+# attributes(ssiCo2)$unit <- "-"
+# attributes(ssiH2o)$unit <- "-"
+# def.ssi.diff(ssiCo2, ssiH2o)
 
 #' @seealso Currently none.
 
