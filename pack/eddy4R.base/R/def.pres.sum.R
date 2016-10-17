@@ -6,11 +6,11 @@
 
 #' @description Function definition. Calculation of total pressure in LI-7200 IRGA cell
 
-#' @param \code{presAtmBox} A vector containing the atmospheric pressure measured at LI-7550 box, of class "numeric". [Pa]
-#' @param \code{presGageCell} A vector containing the cell pressure measured at LI-7200 IRGA cell, of class "numeric". [Pa]
+#' @param \code{presStbl} A vector containing the atmospheric pressure measured at LI-7550 box. This is use as the static base to calculate the differential pressure between IRGA cell and atmospheric pressure. Class of "numeric". [Pa]
+#' @param \code{presDiff} A vector containing the differential pressure between IRGA cell and atmospheric pressure. Class of "numeric". [Pa]
 
 #' @return 
-#' The returned object is the total pressure in LI-7200 IRGA cell calculated from the atmospheric pressure (presAtmBox) and the cell pressure (presGageCell).  
+#' The returned object is the total pressure in LI-7200 IRGA cell calculated by summing the atmospheric pressure (presStbl) and the differential pressure (presDiff).  
 
 #' @references
 #' Currently none.
@@ -18,15 +18,15 @@
 #' @keywords pressure, irga
 
 #' @examples
-#' Example 1, this will cause an error message due to presAtmBox and presGageCell have no units: 
-#' def.pres.sum(presAtmBox = 993.8, presGageCell = -1.109)
+#' Example 1, this will cause an error message due to presStbl and presDiff have no units: 
+#' def.pres.sum(presStbl = 993.8, presDiff = -1.109)
 
 #' Example 2, assign valuea and units to variables first, the function should run ok.
-#' presAtmBox = 993.8
-#' presGageCell = -1.109
-#' attributes(presAtmBox)$unit = "Pa"
-#' attributes(presGageCell)$unit = "Pa"
-#' def.pres.sum(presAtmBox, presGageCell)
+#' presStbl = 993.8
+#' presDiff = -1.109
+#' attributes(presStbl)$unit = "Pa"
+#' attributes(presDiff)$unit = "Pa"
+#' def.pres.sum(presStbl, presDiff)
 
 
 #' @seealso Currently none.
@@ -43,23 +43,23 @@
 def.pres.sum <- function(
   
   # atmospheric pressure measured at LI-7550 box 
-  presAtmBox,
+  presStbl,
   
   # cell pressure measured at LI-7200 IRGA cell
-  presGageCell
+  presDiff
   
 ) {
   
   # test for correct units of input variables
   
-  if(attributes(presAtmBox)$unit != "Pa" || attributes(presGageCell)$unit != "Pa") {
+  if(attributes(presStbl)$unit != "Pa" || attributes(presDiff)$unit != "Pa") {
     
     stop("def.pres.sum(): input units are not matching internal units, please check.")
     
   } else {
     
     # calculate total pressure in LI-7200 IRGA cell
-    presSum <- (presAtmBox + presGageCell)
+    presSum <- (presStbl + presDiff)
     
     # assign output unit
     attributes(presSum)$unit <- "Pa"
