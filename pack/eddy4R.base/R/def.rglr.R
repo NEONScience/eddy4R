@@ -71,9 +71,11 @@ def.rglr <- function(
   EndRglr=NULL,
   TzRglr = attributes(BgnRglr)$tzone,
   FreqRglr,
-  MethRglr="zoo"
+  MethRglr= c("cybiRglr", "cybiDflt", "zoo")[1]
+  WndwRglr = c("centered", "leading", "trailing")[1],
+  RepWndw = c("closest","first","last")[1]
 ){
-
+  
   
   # assign list for storing the results
   rpt <- base::list()
@@ -169,7 +171,7 @@ def.rglr <- function(
     
     numVar <- base::length(dataMeas[1,])
     nameVar <- base::names(dataMeas)
-
+    
     # Check timeMeas
     timeMeas <- try(base::as.POSIXct(timeMeas),silent=TRUE)
     numData <- base::length(dataMeas[,1])
@@ -187,10 +189,9 @@ def.rglr <- function(
     # CI uses the first value as the starting point for the regularization, rounding down to the nearest second
     # Note: the rounding down aspect is a change implemented week of 1 May 2016. Previously the starting point was
     # the exact time (to the decimal second).
-    
     timeRglr <- base::as.POSIXct(base::seq.POSIXt(from=base::trunc.POSIXt(timeMeas[1],units="secs"),
-                                                to=timeMeas[length(timeMeas)]+1/FreqRglr,by=1/FreqRglr))
-
+                                                  to=timeMeas[length(timeMeas)]+1/FreqRglr,by=1/FreqRglr))
+    
     # Which time bin does each measurement time fit into?
     posRglr <- base::.bincode(timeMeas,timeRglr,right=FALSE) # which bin?
     dataMeas <- base::subset(dataMeas,!base::is.na(posRglr),select=1:numVar) # Get rid of anomalous times/data not fitting in any bin
@@ -225,24 +226,15 @@ def.rglr <- function(
       stop("Input 'TzRglr' is required for the 'cybiRglr' method")
     }
     
+    # Check FreqRglr
+    if(!base::is.numeric(FreqRglr) || (base::length(FreqRglr) != 1)) {
+      stop("Input parameter FreqRglr must be single number.")
+    }
     
-    # add a small amount of time to avoid "down-rounding" by R-internal POSIX
-    timeMeas$sec <- timeMeas$sec + 0.0001
-    BgnRglr$sec <- BgnRglr$sec + 0.0001
-    EndRglr$sec <- EndRglr$sec + 0.0002
-    
-    # create equidistant reference time vector
-    rpt$timeRglr <- base::as.POSIXlt(seq.POSIXt(from = BgnRglr, to = EndRglr, by = 1/FreqRglr), tz=TzRglr)
-    
-    # delete rows with times that are duplicates of rows with smaller indices
-    whr01 <- which(base::duplicated(timeMeas))
-    if(base::length(whr01) != 0) {
-      dataMeas <- dataMeas[-whr01,]
-      timeMeas <- timeMeas[-whr01]
-    }; base::rm(whr01)
-    
-    numVar <- base::length(dataMeas[1,])
-    nameVar <- base::names(dataMeas)
+    #Check if RepWndw is set to "closest" the WndwRglr must be set to "centered"
+    if(RepWndw == "closest" & !(WndwRglr == "centered")){
+      stop("If RepWndw is set to closest the WndwRglr must be set to centered")
+    }
     
     # Check timeMeas
     timeMeas <- try(base::as.POSIXct(timeMeas),silent=TRUE)
@@ -253,27 +245,58 @@ def.rglr <- function(
       stop("Length of input variable timeMeas must be equal to the sample size of dataMeas.")
     } 
     
-    # Check FreqRglr
-    if(!base::is.numeric(FreqRglr) || (base::length(FreqRglr) != 1)) {
-      stop("Input parameter FreqRglr must be single number.")
-    }
+    # add a small amount of time to avoid "down-rounding" by R-internal POSIX
+    #timeMeas$sec <- timeMeas$sec + 0.0001
+    BgnRglr$sec <- BgnRglr$sec + 0.0001
+    EndRglr$sec <- EndRglr$sec + 0.0002
     
-    # CI uses the first value as the starting point for the regularization, rounding down to the nearest second
-    # Note: the rounding down aspect is a change implemented week of 1 May 2016. Previously the starting point was
-    # the exact time (to the decimal second).
+    # create equidistant reference time vector
+    rpt$timeRglr <- base::as.POSIXlt(seq.POSIXt(from = BgnRglr, to = EndRglr - 1/FreqRglr, by = 1/FreqRglr), tz=TzRglr)
     
-    timeRglr <- base::as.POSIXct(base::seq.POSIXt(from=base::trunc.POSIXt(timeMeas[1],units="secs"),
-                                                  to=timeMeas[length(timeMeas)]+1/FreqRglr,by=1/FreqRglr))
+    # delete rows with times that are duplicates of rows with smaller indices
+    pos01 <- which(base::duplicated(timeMeas))
+    if(base::length(pos01) != 0) {
+      dataMeas <- dataMeas[-pos01,]
+      timeMeas <- timeMeas[-pos01]
+    }; base::rm(pos01)
+    
+    # Number of variables in dataframe
+    numVar <- base::ncol(dataMeas)
+    # Variable names
+    nameVar <- base::names(dataMeas)
+    
+    if(WndwRglr == "centered"){
+      timeWndw <- as.POSIXct(rpt$timeRglr - (0.5*(1/FreqRglr)))
+    } else if (WndwRglr == "leading"){
+      timeWndw <- as.POSIXct(rpt$timeRglr - (1/FreqRglr))
+    } else if (WndwRglr == "trailing"){timeWndw <- as.POSIXct(rpt$timeRglr)}
+    
+    #Add one extra break to the end  
+    timeWndw <- c(timeWndw,timeWndw[length(timeWndw)] + 1/FreqRglr)
     
     # Which time bin does each measurement time fit into?
-    posRglr <- base::.bincode(timeMeas,timeRglr,right=FALSE) # which bin?
+    posRglr <- base::.bincode(timeMeas,timeWndw,right=FALSE) # which bin?
     dataMeas <- base::subset(dataMeas,!base::is.na(posRglr),select=1:numVar) # Get rid of anomalous times/data not fitting in any bin
     timeMeas <- base::subset(timeMeas,!base::is.na(posRglr))
     posRglr <- base::subset(posRglr,!base::is.na(posRglr))
-    dupl <- base::duplicated(posRglr) # which fall into an already occupied bin?
     
-    # Pull the first value that falls within each bin
-    dataRglr <- base::matrix(data=NA*1.5,nrow=length(timeRglr)-1,ncol=numVar) # initialize
+    
+    if(anyDuplicated(posRglr) > 0){
+      if(RepWndw == "closest"){
+        dupl <- base::duplicated(posRglr)|duplicated(posRglr,fromLast = TRUE)
+        posDupl <- which(duplicated(posRglr)|duplicated(posRglr,fromLast = TRUE))
+        WndwDupl <- posRglr[posDupl]
+        WndwDupl <- unique(WndwDupl)
+        posGood <- sapply(WndwDupl, function(x) posDupl[which.min(abs(difftime(rpt$timeRglr[x], timeMeas[posDupl])))])
+        dupl[posGood] <- FALSE
+      } else if(RepWndw == "first"){
+        dupl <- base::duplicated(posRglr) # which fall into an already occupied bin?
+      } else if(RepWndw == "last"){
+        dupl <- base::duplicated(posRglr, fromLast = TRUE) # which fall into an already occupied bin?
+      }}else{dupl <- rep(FALSE, length(posRglr))}
+    
+    # Pull the first or last value that falls within each bin 
+    dataRglr <- base::matrix(data=NA*1.5,nrow=length(rpt$timeRglr),ncol=numVar) # initialize, mulitply by 1.5 to give numeric
     for(idxVar in 1:numVar){
       # place the first value falling into each bin
       dataRglr[posRglr[!dupl],idxVar] <- dataMeas[which(!dupl),idxVar]
@@ -282,10 +305,7 @@ def.rglr <- function(
     base::names(dataRglr) <- nameVar # Assign names same as dataMeas
     
     # Report output
-    timeRglr <- timeRglr[-length(timeRglr)]
-    rpt$timeRglr <- base::as.POSIXlt(timeRglr)
     rpt$dataRglr <- dataRglr
-    
     # assign unit attributes
     base::attributes(rpt$dataRglr)$unit <- unitMeas
   }
