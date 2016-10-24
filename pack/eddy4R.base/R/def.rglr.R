@@ -1,10 +1,10 @@
 ##############################################################################################
-#' @title Resampling irregular data to strictly regular / equidistant data
+#' @title Regularizing irregular data to strictly regular / equidistant data
 
 #' @author Stefan Metzger \email{eddy4R.info@gmail.com}
 
 #' @description Function defintion. 
-#' Takes a (potentially) irregularly spaced timeseries \code{timeMeas} of data \code{dataMeas} and returns a strictuly regularly spaced timeseries \code{timeRegl} of data \code{dataRegl}. \strong{ATTENTION}: \code{MethRglr = "zoo"} uses the zoo:na.approx() function, which does not currently abide by its \code{maxgap} argument. In result, where gaps exist currently the last known value is repeated instead of NAs being inserted. An Email with a request for bugfixing has been sent to \email{Achim.Zeileis@R-project.org} (2016-05-08).
+#' Takes a (potentially) irregularly spaced timeseries \code{timeMeas} of data \code{dataMeas} and returns a strictuly regularly spaced timeseries \code{timeRglr} of data \code{dataRglr}. \strong{ATTENTION}: \code{MethRglr = "zoo"} uses the zoo:na.approx() function, which does not currently abide by its \code{maxgap} argument. In result, where gaps exist currently the last known value is repeated instead of NAs being inserted. An Email with a request for bugfixing has been sent to \email{Achim.Zeileis@R-project.org} (2016-05-08).
 
 #' @param \code{timeMeas} A vector containing the observation times. Of class "POSIXlt" including timezone attribute, and of the same length as \code{dataMeas}. [-]
 #' @param \code{dataMeas} A named data.frame containing the observations. Columns may be of class "numeric" or "integer", and of the same length as \code{timeMeas}. Columns of classes other than "numeric" or "integer" are removed and not included in the returned \code{dataRegl}. [user-defined]
@@ -14,7 +14,7 @@
 #' @param \code{TzRglr} Desired timezone for the regularized dataset. Of class "character" and \code{length(TzRglr) = 1}, defaults to the same timezone as \code{BgnRglr}. This input is not used in the "cybiDflt" method. [-]
 #' @param \code{FreqRglr} Desired frequency of  the regularized dataset. Of class "numeric" or "integer" and \code{length(FreqRglr) = 1}. [Hz]
 #' @param \code{MethRglr} Switch for different regularization methods. Of class "character", currently defaults to "zoo". [-] \cr
-#' Method "cybiDflt" implements the default regularization performed by NEON CI. Namely, a new time series is created 
+#' Method "CybiDflt" implements the default regularization performed by NEON CI. Namely, a new time series is created 
 #' from the first measurement time, rounded toward zero, using the expected data frequency. The first measurement falling 
 #' in between one time stamp and the next is assigned to the first of these, and all other measurements falling in this range are ignored.
 
@@ -22,8 +22,9 @@
 
 #' @references
 #' License: Terms of use of the NEON FIU algorithm repository dated 2015-01-16. \cr
-
-#' @keywords regularization, equidistant
+#' NEON.DOC.001069 Preprocessing ATBD: The ATBD that describes the CybiRglr and CybiDflt regularization methods. \cr
+#' 
+#' @keywords regularization, equidistant, preprocessing
 
 #' @examples
 #' # make sure that fractional seconds can be seen from the console
