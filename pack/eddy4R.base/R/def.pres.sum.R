@@ -51,7 +51,15 @@ def.pres.sum <- function(
 ) {
   
   # test if units exist for input variables
+   if(!("units" %in% attributes(presAtm)$unit)) {
+    
+    stop("presAtm has no input unit! Please check.")
+  }
   
+  #if(!("units" %in% attributes(presDiff)$unit)) {
+    
+  #  stop("presDiff has no input unit! Please check.")
+  #}
   
     # test for correct units of input variables
   
