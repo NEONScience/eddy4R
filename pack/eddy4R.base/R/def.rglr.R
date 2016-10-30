@@ -14,9 +14,14 @@
 #' @param \code{TzRglr} Desired timezone for the regularized dataset. Of class "character" and \code{length(TzRglr) = 1}, defaults to the same timezone as \code{BgnRglr}. This input is not used in the "cybiDflt" method. [-]
 #' @param \code{FreqRglr} Desired frequency of  the regularized dataset. Of class "numeric" or "integer" and \code{length(FreqRglr) = 1}. [Hz]
 #' @param \code{MethRglr} Switch for different regularization methods. Of class "character", currently defaults to "zoo". [-] \cr
-#' Method "CybiDflt" implements the default regularization performed by NEON CI. Namely, a new time series is created 
+#' Method "CybiDflt" implements the default for metereological variable regularization performed by NEON CI. Namely, a new time series is created 
 #' from the first measurement time, rounded toward zero, using the expected data frequency. The first measurement falling 
-#' in between one time stamp and the next is assigned to the first of these, and all other measurements falling in this range are ignored.
+#' in between one time stamp and the next is assigned to the first of these, and all other measurements falling in this range are ignored.\cr
+#' Method "CybiRglr" implements the default regularization method for eddy-covariance processing utilized CI. The procedure is 
+#' is documented in NEON.DOC.001069.\cr
+#' @param \code{WndwRglr} Position of the window for binning in the "CybiRglr" method. \code{WndwRglr} can be centered, leading, or trailing (defaults to centered).\cr
+#' @param \code{RepWndw} Determines which observation to allocate to a bin if multiple observations fall into a single bin when using the "CybiRglr" method.. \code{RepWndw} can be set to closest, first, or last (defaults to closest).\cr
+
 
 #' @return Returns a list with elements \code{TzRglr}, \code{FreqRglr}, \code{MethRglr}, \code{timeRglr}, and \code{dataRglr}.
 
@@ -60,7 +65,10 @@
 #     Added checks on inputs specific to "zoo" method
 #   Cove Sturtevant (2016-07-15)
 #     Drastically improved computational time for cybiDflt
-#        by switching to .bincode function for determing 
+#        by switching to .bincode function for determining 
+#   Dave Durden (2016-10-21)
+#     Addition of the new NEON CI regulariztion method outlined
+#       in the preprocessing ATBD (NEON.DOC.001069)
 ##############################################################################################
 
 # start function for regularization
