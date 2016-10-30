@@ -51,6 +51,25 @@
 #'   FreqRglr = 10,
 #'   MethRglr = "zoo"
 #' )
+#' 
+#' #"CybiRglr" example with multiple observations in a single bin
+#' timeMeas[3] <- timeMeas[3] - 0.03
+#' timeMeas[2] <- timeMeas[2] - 0.03
+#' timeMeas[1] <- timeMeas[1] + 0.05
+#' timeMeas[7] <- timeMeas[7] - 0.031
+#' timeMeas[8] <- timeMeas[8] - 0.081
+#' 
+#' def.rglr(
+#'   timeMeas = timeMeas,
+#'   dataMeas = dataMeas,
+#'   unitMeas = c("metersPerSecond", "metersPerSecond"),
+#'   BgnRglr = base::as.POSIXlt("2016-01-01 00:00:00.000", format="%Y-%m-%d %H:%M:%OS", tz="UTC"),
+#'   EndRglr = base::as.POSIXlt("2016-01-01 00:00:01.000", format="%Y-%m-%d %H:%M:%OS", tz="UTC"),
+#'   FreqRglr = 10,
+#'   MethRglr = "CybiRglr"
+#'   WndwRglr = "Cntr"
+#'   RepWndw = "Clst"
+#' )  
 
 #' @seealso ?zoo:na.approx, ?stats::approx
 
