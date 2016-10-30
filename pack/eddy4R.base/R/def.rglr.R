@@ -67,8 +67,8 @@
 #'   BgnRglr = base::as.POSIXlt("2016-01-01 00:00:00.000", format="%Y-%m-%d %H:%M:%OS", tz="UTC"),
 #'   EndRglr = base::as.POSIXlt("2016-01-01 00:00:01.000", format="%Y-%m-%d %H:%M:%OS", tz="UTC"),
 #'   FreqRglr = 10,
-#'   MethRglr = "CybiRglr"
-#'   WndwRglr = "Cntr"
+#'   MethRglr = "CybiRglr",
+#'   WndwRglr = "Cntr",
 #'   RepWndw = "Clst"
 #' )  
 
@@ -100,7 +100,7 @@ def.rglr <- function(
   EndRglr=NULL,
   TzRglr = attributes(BgnRglr)$tzone,
   FreqRglr,
-  MethRglr= c("CybiRglr", "cybiDflt", "zoo")[1]
+  MethRglr= c("CybiRglr", "cybiDflt", "zoo")[1],
   WndwRglr = c("Cntr", "Lead", "Trlg")[1],
   RepWndw = c("Clst","Frst","Last")[1]
 ){
