@@ -100,7 +100,7 @@ def.rglr <- function(
   EndRglr=NULL,
   TzRglr = attributes(BgnRglr)$tzone,
   FreqRglr,
-  MethRglr= c("CybiRglr", "CybiDflt", "Zoo")[1]
+  MethRglr= c("CybiRglr", "cybiDflt", "zoo")[1]
   WndwRglr = c("Cntr", "Lead", "Trlg")[1],
   RepWndw = c("Clst","Frst","Last")[1]
 ){
@@ -115,17 +115,17 @@ def.rglr <- function(
   # default: using the zoo::na.approx() function
   # takes 3 s for 1,728,000 observations, i.e. one day of one 20 Hz variable
   # tested to work with types "double" and "integer"; definitly does not work with type "character"
-  if(MethRglr == "Zoo") {
+  if(MethRglr == "zoo") {
     
     # Check inputs specific to zoo method
     if(base::is.null(unitMeas)) {
-      stop("Input 'unitMeas' is required for the 'Zoo' method")
+      stop("Input 'unitMeas' is required for the 'zoo' method")
     }
     if(base::is.null(BgnRglr)) {
-      stop("Input 'BgnRglr' is required for the 'Zoo' method")
+      stop("Input 'BgnRglr' is required for the 'zoo' method")
     }
     if(base::is.null(TzRglr)) {
-      stop("Input 'TzRglr' is required for the 'Zoo' method")
+      stop("Input 'TzRglr' is required for the 'zoo' method")
     }
     
     
@@ -196,7 +196,7 @@ def.rglr <- function(
   # expected data frequency. The first measurement falling in between one time stamp and the next is assigned
   # to the first of these, and all other measurements falling in this range are ignored. 
   # This code replicates this procedure in order to compare expected output to that produced by CI.
-  if(MethRglr == "CybiDflt") {
+  if(MethRglr == "cybiDflt") {
     
     numVar <- base::length(dataMeas[1,])
     nameVar <- base::names(dataMeas)
