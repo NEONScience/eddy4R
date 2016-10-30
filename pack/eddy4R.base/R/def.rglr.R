@@ -19,8 +19,8 @@
 #' in between one time stamp and the next is assigned to the first of these, and all other measurements falling in this range are ignored.\cr
 #' Method "CybiRglr" implements the default regularization method for eddy-covariance processing utilized CI. The procedure 
 #' is documented in NEON.DOC.001069.\cr
-#' @param \code{WndwRglr} Position of the window for binning in the "CybiRglr" method. \code{WndwRglr} can be centered, leading, or trailing (defaults to centered).\cr
-#' @param \code{RepWndw} Determines which observation to allocate to a bin if multiple observations fall into a single bin when using the "CybiRglr" method.. \code{RepWndw} can be set to closest, first, or last (defaults to closest).\cr
+#' @param \code{WndwRglr} Position of the window for binning in the "CybiRglr" method. \code{WndwRglr} can be centered [Cntr], leading [Lead], or trailing [Trlg] (defaults to centered).\cr
+#' @param \code{RepWndw} Determines which observation to allocate to a bin if multiple observations fall into a single bin when using the "CybiRglr" method.. \code{RepWndw} can be set to closest [Clst], first [Frst], or last [Last] (defaults to closest).\cr
 
 
 #' @return Returns a list with elements \code{TzRglr}, \code{FreqRglr}, \code{MethRglr}, \code{timeRglr}, and \code{dataRglr}.
@@ -80,9 +80,9 @@ def.rglr <- function(
   EndRglr=NULL,
   TzRglr = attributes(BgnRglr)$tzone,
   FreqRglr,
-  MethRglr= c("cybiRglr", "cybiDflt", "zoo")[1]
-  WndwRglr = c("centered", "leading", "trailing")[1],
-  RepWndw = c("closest","first","last")[1]
+  MethRglr= c("CybiRglr", "CybiDflt", "Zoo")[1]
+  WndwRglr = c("Cntr", "Lead", "Trlg")[1],
+  RepWndw = c("Clst","Frst","Last")[1]
 ){
   
   
@@ -95,7 +95,7 @@ def.rglr <- function(
   # default: using the zoo::na.approx() function
   # takes 3 s for 1,728,000 observations, i.e. one day of one 20 Hz variable
   # tested to work with types "double" and "integer"; definitly does not work with type "character"
-  if(MethRglr == "zoo") {
+  if(MethRglr == "Zoo") {
     
     # Check inputs specific to zoo method
     if(base::is.null(unitMeas)) {
@@ -176,7 +176,7 @@ def.rglr <- function(
   # expected data frequency. The first measurement falling in between one time stamp and the next is assigned
   # to the first of these, and all other measurements falling in this range are ignored. 
   # This code replicates this procedure in order to compare expected output to that produced by CI.
-  if(MethRglr == "cybiDflt") {
+  if(MethRglr == "CybiDflt") {
     
     numVar <- base::length(dataMeas[1,])
     nameVar <- base::names(dataMeas)
@@ -229,7 +229,7 @@ def.rglr <- function(
   # Method "CybiRglr" implements the default regularization method for eddy-covariance 
   # processing utilized CI. The procedure is documented in NEON.DOC.001069.  
   
-  if(MethRglr == "cybiRglr") {
+  if(MethRglr == "CybiRglr") {
   
     #Check that BgnRglr is initialized; otherwise return error  
     if(base::is.null(BgnRglr)) {
@@ -250,7 +250,7 @@ def.rglr <- function(
     }
     
     #Check if RepWndw is set to "closest" the WndwRglr must be set to "centered"
-    if(RepWndw == "closest" & !(WndwRglr == "centered")){
+    if(RepWndw == "Clst" & !(WndwRglr == "Cntr")){
       stop("If RepWndw is set to closest the WndwRglr must be set to centered")
     }
     
@@ -284,11 +284,11 @@ def.rglr <- function(
     nameVar <- base::names(dataMeas)
     
     # Determine the binning windows based on the choice of WndwRglr
-    if(WndwRglr == "centered"){
+    if(WndwRglr == "Cntr"){
       timeWndw <- as.POSIXct(rpt$timeRglr - (0.5*(1/FreqRglr)))
-    } else if (WndwRglr == "leading"){
+    } else if (WndwRglr == "Lead"){
       timeWndw <- as.POSIXct(rpt$timeRglr - (1/FreqRglr))
-    } else if (WndwRglr == "trailing"){timeWndw <- as.POSIXct(rpt$timeRglr)}
+    } else if (WndwRglr == "Trlg"){timeWndw <- as.POSIXct(rpt$timeRglr)}
     
     #Add one extra break to the end for a final bin  
     timeWndw <- c(timeWndw,timeWndw[length(timeWndw)] + 1/FreqRglr)
@@ -303,7 +303,7 @@ def.rglr <- function(
     
     # Checking for multiple values in a single bin with a logic vector 
     if(anyDuplicated(posRglr) > 0){
-      if(RepWndw == "closest"){
+      if(RepWndw == "Clst"){
         #Determin all duplicates both forward and backward. Otherwise, only duplicates after the first observation of a value are flagged.
         dupl <- base::duplicated(posRglr)|duplicated(posRglr,fromLast = TRUE)
         #Determine vector positions for the duplicate positions
@@ -314,9 +314,9 @@ def.rglr <- function(
         #Determine the closest values to the regularized timestamp by minimum absolute deviation and change the value in the logic vector.
         posGood <- sapply(WndwDupl, function(x) posDupl[which.min(abs(difftime(rpt$timeRglr[x], timeMeas[posDupl])))])
         dupl[posGood] <- FALSE
-      } else if(RepWndw == "first"){
+      } else if(RepWndw == "Frst"){
         dupl <- base::duplicated(posRglr) # which fall into an already occupied bin with higher indices flagged as duplicates.
-      } else if(RepWndw == "last"){
+      } else if(RepWndw == "Last"){
         dupl <- base::duplicated(posRglr, fromLast = TRUE) # which fall into an already occupied bin with lower indices flagged as duplicates.
       }}else{dupl <- rep(FALSE, length(posRglr))} #If no duplicates exist, all equal FALSE
     
