@@ -59,6 +59,7 @@
 #' timeMeas[7] <- timeMeas[7] - 0.031
 #' timeMeas[8] <- timeMeas[8] - 0.081
 #' 
+#' #Regularize with a centered window and chosing the closest value to the regularized timestamp. 
 #' def.rglr(
 #'   timeMeas = timeMeas,
 #'   dataMeas = dataMeas,
@@ -118,13 +119,13 @@ def.rglr <- function(
     
     # Check inputs specific to zoo method
     if(base::is.null(unitMeas)) {
-      stop("Input 'unitMeas' is required for the 'zoo' method")
+      stop("Input 'unitMeas' is required for the 'Zoo' method")
     }
     if(base::is.null(BgnRglr)) {
-      stop("Input 'BgnRglr' is required for the 'zoo' method")
+      stop("Input 'BgnRglr' is required for the 'Zoo' method")
     }
     if(base::is.null(TzRglr)) {
-      stop("Input 'TzRglr' is required for the 'zoo' method")
+      stop("Input 'TzRglr' is required for the 'Zoo' method")
     }
     
     
