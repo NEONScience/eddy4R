@@ -4,7 +4,7 @@
 #' @author Stefan Metzger \email{eddy4R.info@gmail.com}
 
 #' @description Function defintion. 
-#' Takes a (potentially) irregularly spaced timeseries \code{timeMeas} of data \code{dataMeas} and returns a strictuly regularly spaced timeseries \code{timeRglr} of data \code{dataRglr}. \strong{ATTENTION}: \code{MethRglr = "zoo"} uses the zoo:na.approx() function, which does not currently abide by its \code{maxgap} argument. In result, where gaps exist currently the last known value is repeated instead of NAs being inserted. An Email with a request for bugfixing has been sent to \email{Achim.Zeileis@R-project.org} (2016-05-08).
+#' Takes a (potentially) irregularly spaced timeseries \code{timeMeas} of data \code{dataMeas} and returns a strictuly regularly spaced timeseries \code{timeRglr} of data \code{dataRglr}. \strong{ATTENTION}: \code{MethRglr = "zoo"} uses the zoo:na.approx() function, which does not currently abide by its \code{maxgap} argument version 1.7-13. In result, where gaps exist currently the last known value is repeated instead of NAs being inserted. An Email with a request for bugfixing has been sent to \email{Achim.Zeileis@R-project.org} (2016-05-08).  
 
 #' @param \code{timeMeas} A vector containing the observation times. Of class "POSIXlt" including timezone attribute, and of the same length as \code{dataMeas}. [-]
 #' @param \code{dataMeas} A named data.frame containing the observations. Columns may be of class "numeric" or "integer", and of the same length as \code{timeMeas}. Columns of classes other than "numeric" or "integer" are removed and not included in the returned \code{dataRegl}. [user-defined]
@@ -17,7 +17,7 @@
 #' Method "CybiDflt" implements the default for metereological variable regularization performed by NEON CI. Namely, a new time series is created 
 #' from the first measurement time, rounded toward zero, using the expected data frequency. The first measurement falling 
 #' in between one time stamp and the next is assigned to the first of these, and all other measurements falling in this range are ignored.\cr
-#' Method "CybiRglr" implements the default regularization method for eddy-covariance processing utilized CI. The procedure is 
+#' Method "CybiRglr" implements the default regularization method for eddy-covariance processing utilized CI. The procedure 
 #' is documented in NEON.DOC.001069.\cr
 #' @param \code{WndwRglr} Position of the window for binning in the "CybiRglr" method. \code{WndwRglr} can be centered, leading, or trailing (defaults to centered).\cr
 #' @param \code{RepWndw} Determines which observation to allocate to a bin if multiple observations fall into a single bin when using the "CybiRglr" method.. \code{RepWndw} can be set to closest, first, or last (defaults to closest).\cr
@@ -226,16 +226,25 @@ def.rglr <- function(
     base::attributes(rpt$dataRglr)$unit <- unitMeas
   }
   
+  # Method "CybiRglr" implements the default regularization method for eddy-covariance 
+  # processing utilized CI. The procedure is documented in NEON.DOC.001069.  
+  
   if(MethRglr == "cybiRglr") {
-    
+  
+    #Check that BgnRglr is initialized; otherwise return error  
     if(base::is.null(BgnRglr)) {
       stop("Input 'BgnRglr' is required for the 'cybiRglr' method")
     }
+    #Check that EndRglr is initialized; otherwise return error  
+    if(base::is.null(EndRglr)) {
+      stop("Input 'EndRglr' is required for the 'cybiRglr' method")
+    }
+    #Check that TzRglr is initialized; otherwise return error 
     if(base::is.null(TzRglr)) {
       stop("Input 'TzRglr' is required for the 'cybiRglr' method")
     }
     
-    # Check FreqRglr
+    # Check FreqRglr is initialized; otherwise return error 
     if(!base::is.numeric(FreqRglr) || (base::length(FreqRglr) != 1)) {
       stop("Input parameter FreqRglr must be single number.")
     }
@@ -245,7 +254,7 @@ def.rglr <- function(
       stop("If RepWndw is set to closest the WndwRglr must be set to centered")
     }
     
-    # Check timeMeas
+    # Check timeMeas is class POSIXlt and timeMeas and dataMeas are the same length
     timeMeas <- try(base::as.POSIXct(timeMeas),silent=TRUE)
     numData <- base::length(dataMeas[,1])
     if(base::class(timeMeas)[1] == "try-error"){
@@ -274,40 +283,47 @@ def.rglr <- function(
     # Variable names
     nameVar <- base::names(dataMeas)
     
+    # Determine the binning windows based on the choice of WndwRglr
     if(WndwRglr == "centered"){
       timeWndw <- as.POSIXct(rpt$timeRglr - (0.5*(1/FreqRglr)))
     } else if (WndwRglr == "leading"){
       timeWndw <- as.POSIXct(rpt$timeRglr - (1/FreqRglr))
     } else if (WndwRglr == "trailing"){timeWndw <- as.POSIXct(rpt$timeRglr)}
     
-    #Add one extra break to the end  
+    #Add one extra break to the end for a final bin  
     timeWndw <- c(timeWndw,timeWndw[length(timeWndw)] + 1/FreqRglr)
     
-    # Which time bin does each measurement time fit into?
+    # Which time bin does each measurement time fit into? Allocating times to bins.
     posRglr <- base::.bincode(timeMeas,timeWndw,right=FALSE) # which bin?
+    
+    # Get rid of anomalous times/data not fitting in any bin
     dataMeas <- base::subset(dataMeas,!base::is.na(posRglr),select=1:numVar) # Get rid of anomalous times/data not fitting in any bin
-    timeMeas <- base::subset(timeMeas,!base::is.na(posRglr))
+    timeMeas <- base::subset(timeMeas,!base::is.na(posRglr)) 
     posRglr <- base::subset(posRglr,!base::is.na(posRglr))
     
-    
+    # Checking for multiple values in a single bin with a logic vector 
     if(anyDuplicated(posRglr) > 0){
       if(RepWndw == "closest"){
+        #Determin all duplicates both forward and backward. Otherwise, only duplicates after the first observation of a value are flagged.
         dupl <- base::duplicated(posRglr)|duplicated(posRglr,fromLast = TRUE)
+        #Determine vector positions for the duplicate positions
         posDupl <- which(duplicated(posRglr)|duplicated(posRglr,fromLast = TRUE))
+        #Determine unique values of Wndw from posRglr for the duplicate positions
         WndwDupl <- posRglr[posDupl]
         WndwDupl <- unique(WndwDupl)
+        #Determine the closest values to the regularized timestamp by minimum absolute deviation and change the value in the logic vector.
         posGood <- sapply(WndwDupl, function(x) posDupl[which.min(abs(difftime(rpt$timeRglr[x], timeMeas[posDupl])))])
         dupl[posGood] <- FALSE
       } else if(RepWndw == "first"){
-        dupl <- base::duplicated(posRglr) # which fall into an already occupied bin?
+        dupl <- base::duplicated(posRglr) # which fall into an already occupied bin with higher indices flagged as duplicates.
       } else if(RepWndw == "last"){
-        dupl <- base::duplicated(posRglr, fromLast = TRUE) # which fall into an already occupied bin?
-      }}else{dupl <- rep(FALSE, length(posRglr))}
+        dupl <- base::duplicated(posRglr, fromLast = TRUE) # which fall into an already occupied bin with lower indices flagged as duplicates.
+      }}else{dupl <- rep(FALSE, length(posRglr))} #If no duplicates exist, all equal FALSE
     
-    # Pull the first or last value that falls within each bin 
+    # Pull the value that chosen by RepWndw within each bin 
     dataRglr <- base::matrix(data=NA*1.5,nrow=length(rpt$timeRglr),ncol=numVar) # initialize, mulitply by 1.5 to give numeric
     for(idxVar in 1:numVar){
-      # place the first value falling into each bin
+      # place the value falling into each bin
       dataRglr[posRglr[!dupl],idxVar] <- dataMeas[which(!dupl),idxVar]
     }
     dataRglr <- base::as.data.frame(dataRglr) # Make data frame
