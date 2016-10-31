@@ -17,17 +17,17 @@
 #' Method "CybiDflt" implements the default for metereological variable regularization performed by NEON CI. Namely, a new time series is created 
 #' from the first measurement time, rounded toward zero, using the expected data frequency. The first measurement falling 
 #' in between one time stamp and the next is assigned to the first of these, and all other measurements falling in this range are ignored.\cr
-#' Method "CybiRglr" implements the default regularization method for eddy-covariance processing utilized CI. The procedure 
+#' Method "CybiEc" implements the default regularization method for eddy-covariance processing utilized CI. The procedure 
 #' is documented in NEON.DOC.001069.\cr
-#' @param \code{WndwRglr} Position of the window for binning in the "CybiRglr" method. \code{WndwRglr} can be centered [Cntr], leading [Lead], or trailing [Trlg] (defaults to centered).\cr
-#' @param \code{RepWndw} Determines which observation to allocate to a bin if multiple observations fall into a single bin when using the "CybiRglr" method.. \code{RepWndw} can be set to closest [Clst], first [Frst], or last [Last] (defaults to closest).\cr
+#' @param \code{WndwRglr} Position of the window for binning in the "CybiEc" method. \code{WndwRglr} can be centered [Cntr], leading [Lead], or trailing [Trlg] (defaults to centered).\cr
+#' @param \code{PosWndw} Determines which observation to allocate to a bin if multiple observations fall into a single bin when using the "CybiEc" method.. \code{PosWndw} can be set to closest [Clst], first [PosWndwMin], or last [PosWndwMax] (defaults to closest).\cr
 
 
 #' @return Returns a list with elements \code{TzRglr}, \code{FreqRglr}, \code{MethRglr}, \code{timeRglr}, and \code{dataRglr}.
 
 #' @references
 #' License: Terms of use of the NEON FIU algorithm repository dated 2015-01-16. \cr
-#' NEON.DOC.001069 Preprocessing ATBD: The ATBD that describes the CybiRglr and CybiDflt regularization methods. \cr
+#' NEON.DOC.001069 Preprocessing ATBD: The ATBD that describes the CybiEc and CybiDflt regularization methods. \cr
 #' 
 #' @keywords regularization, equidistant, preprocessing
 
@@ -52,7 +52,7 @@
 #'   MethRglr = "zoo"
 #' )
 #' 
-#' #"CybiRglr" example with multiple observations in a single bin
+#' #"CybiEc" example with multiple observations in a single bin
 #' timeMeas[3] <- timeMeas[3] - 0.03
 #' timeMeas[2] <- timeMeas[2] - 0.03
 #' timeMeas[1] <- timeMeas[1] + 0.05
@@ -67,9 +67,9 @@
 #'   BgnRglr = base::as.POSIXlt("2016-01-01 00:00:00.000", format="%Y-%m-%d %H:%M:%OS", tz="UTC"),
 #'   EndRglr = base::as.POSIXlt("2016-01-01 00:00:01.000", format="%Y-%m-%d %H:%M:%OS", tz="UTC"),
 #'   FreqRglr = 10,
-#'   MethRglr = "CybiRglr",
+#'   MethRglr = "CybiEc",
 #'   WndwRglr = "Cntr",
-#'   RepWndw = "Clst"
+#'   PosWndw = "Clst"
 #' )  
 
 #' @seealso ?zoo:na.approx, ?stats::approx
@@ -100,9 +100,9 @@ def.rglr <- function(
   EndRglr=NULL,
   TzRglr = attributes(BgnRglr)$tzone,
   FreqRglr,
-  MethRglr= c("CybiRglr", "cybiDflt", "zoo")[1],
+  MethRglr= c("CybiEc", "cybiDflt", "zoo")[1],
   WndwRglr = c("Cntr", "Lead", "Trlg")[1],
-  RepWndw = c("Clst","Frst","Last")[1]
+  PosWndw = c("Clst","PosWndwMin","PosWndwMax")[1]
 ){
   
   
@@ -246,22 +246,22 @@ def.rglr <- function(
     base::attributes(rpt$dataRglr)$unit <- unitMeas
   }
   
-  # Method "CybiRglr" implements the default regularization method for eddy-covariance 
+  # Method "CybiEc" implements the default regularization method for eddy-covariance 
   # processing utilized CI. The procedure is documented in NEON.DOC.001069.  
   
-  if(MethRglr == "CybiRglr") {
+  if(MethRglr == "CybiEc") {
   
     #Check that BgnRglr is initialized; otherwise return error  
     if(base::is.null(BgnRglr)) {
-      stop("Input 'BgnRglr' is required for the 'cybiRglr' method")
+      stop("Input 'BgnRglr' is required for the 'CybiEc' method")
     }
     #Check that EndRglr is initialized; otherwise return error  
     if(base::is.null(EndRglr)) {
-      stop("Input 'EndRglr' is required for the 'cybiRglr' method")
+      stop("Input 'EndRglr' is required for the 'CybiEc' method")
     }
     #Check that TzRglr is initialized; otherwise return error 
     if(base::is.null(TzRglr)) {
-      stop("Input 'TzRglr' is required for the 'cybiRglr' method")
+      stop("Input 'TzRglr' is required for the 'CybiEc' method")
     }
     
     # Check FreqRglr is initialized; otherwise return error 
@@ -269,9 +269,9 @@ def.rglr <- function(
       stop("Input parameter FreqRglr must be single number.")
     }
     
-    #Check if RepWndw is set to "closest" the WndwRglr must be set to "centered"
-    if(RepWndw == "Clst" & !(WndwRglr == "Cntr")){
-      stop("If RepWndw is set to closest the WndwRglr must be set to centered")
+    #Check if PosWndw is set to "closest" the WndwRglr must be set to "centered"
+    if(PosWndw == "Clst" & !(WndwRglr == "Cntr")){
+      stop("If PosWndw is set to closest the WndwRglr must be set to centered")
     }
     
     # Check timeMeas is class POSIXlt and timeMeas and dataMeas are the same length
@@ -323,7 +323,7 @@ def.rglr <- function(
     
     # Checking for multiple values in a single bin with a logic vector 
     if(anyDuplicated(posRglr) > 0){
-      if(RepWndw == "Clst"){
+      if(PosWndw == "Clst"){
         #Determin all duplicates both forward and backward. Otherwise, only duplicates after the first observation of a value are flagged.
         dupl <- base::duplicated(posRglr)|duplicated(posRglr,fromLast = TRUE)
         #Determine vector positions for the duplicate positions
@@ -334,13 +334,13 @@ def.rglr <- function(
         #Determine the closest values to the regularized timestamp by minimum absolute deviation and change the value in the logic vector.
         posGood <- sapply(WndwDupl, function(x) posDupl[which.min(abs(difftime(rpt$timeRglr[x], timeMeas[posDupl])))])
         dupl[posGood] <- FALSE
-      } else if(RepWndw == "Frst"){
+      } else if(PosWndw == "PosWndwMin"){
         dupl <- base::duplicated(posRglr) # which fall into an already occupied bin with higher indices flagged as duplicates.
-      } else if(RepWndw == "Last"){
+      } else if(PosWndw == "PosWndwMax"){
         dupl <- base::duplicated(posRglr, fromLast = TRUE) # which fall into an already occupied bin with lower indices flagged as duplicates.
       }}else{dupl <- rep(FALSE, length(posRglr))} #If no duplicates exist, all equal FALSE
     
-    # Pull the value that chosen by RepWndw within each bin 
+    # Pull the value that chosen by PosWndw within each bin 
     dataRglr <- base::matrix(data=NA*1.5,nrow=length(rpt$timeRglr),ncol=numVar) # initialize, mulitply by 1.5 to give numeric
     for(idxVar in 1:numVar){
       # place the value falling into each bin
