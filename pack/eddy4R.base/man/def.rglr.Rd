@@ -6,8 +6,8 @@
 \usage{
 def.rglr(timeMeas, dataMeas, unitMeas = NULL, BgnRglr = NULL,
   EndRglr = NULL, TzRglr = attributes(BgnRglr)$tzone, FreqRglr,
-  MethRglr = c("CybiRglr", "cybiDflt", "zoo")[1], WndwRglr = c("Cntr",
-  "Lead", "Trlg")[1], RepWndw = c("Clst", "Frst", "Last")[1])
+  MethRglr = c("CybiEc", "cybiDflt", "zoo")[1], WndwRglr = c("Cntr", "Lead",
+  "Trlg")[1], PosWndw = c("Clst", "PosWndwMin", "PosWndwMax")[1])
 }
 \arguments{
 \item{\code{timeMeas}}{A vector containing the observation times. Of class "POSIXlt" including timezone attribute, and of the same length as \code{dataMeas}. [-]}
@@ -28,12 +28,12 @@ def.rglr(timeMeas, dataMeas, unitMeas = NULL, BgnRglr = NULL,
 Method "CybiDflt" implements the default for metereological variable regularization performed by NEON CI. Namely, a new time series is created 
 from the first measurement time, rounded toward zero, using the expected data frequency. The first measurement falling 
 in between one time stamp and the next is assigned to the first of these, and all other measurements falling in this range are ignored.\cr
-Method "CybiRglr" implements the default regularization method for eddy-covariance processing utilized CI. The procedure 
+Method "CybiEc" implements the default regularization method for eddy-covariance processing utilized CI. The procedure 
 is documented in NEON.DOC.001069.\cr}
 
-\item{\code{WndwRglr}}{Position of the window for binning in the "CybiRglr" method. \code{WndwRglr} can be centered [Cntr], leading [Lead], or trailing [Trlg] (defaults to centered).\cr}
+\item{\code{WndwRglr}}{Position of the window for binning in the "CybiEc" method. \code{WndwRglr} can be centered [Cntr], leading [Lead], or trailing [Trlg] (defaults to centered).\cr}
 
-\item{\code{RepWndw}}{Determines which observation to allocate to a bin if multiple observations fall into a single bin when using the "CybiRglr" method.. \code{RepWndw} can be set to closest [Clst], first [Frst], or last [Last] (defaults to closest).\cr}
+\item{\code{PosWndw}}{Determines which observation to allocate to a bin if multiple observations fall into a single bin when using the "CybiEc" method.. \code{PosWndw} can be set to closest [Clst], first [PosWndwMin], or last [PosWndwMax] (defaults to closest).\cr}
 }
 \value{
 Returns a list with elements \code{TzRglr}, \code{FreqRglr}, \code{MethRglr}, \code{timeRglr}, and \code{dataRglr}.
@@ -63,7 +63,7 @@ def.rglr(
   MethRglr = "zoo"
 )
 
-#"CybiRglr" example with multiple observations in a single bin
+#"CybiEc" example with multiple observations in a single bin
 timeMeas[3] <- timeMeas[3] - 0.03
 timeMeas[2] <- timeMeas[2] - 0.03
 timeMeas[1] <- timeMeas[1] + 0.05
@@ -78,9 +78,9 @@ def.rglr(
   BgnRglr = base::as.POSIXlt("2016-01-01 00:00:00.000", format="\%Y-\%m-\%d \%H:\%M:\%OS", tz="UTC"),
   EndRglr = base::as.POSIXlt("2016-01-01 00:00:01.000", format="\%Y-\%m-\%d \%H:\%M:\%OS", tz="UTC"),
   FreqRglr = 10,
-  MethRglr = "CybiRglr",
+  MethRglr = "CybiEc",
   WndwRglr = "Cntr",
-  RepWndw = "Clst"
+  PosWndw = "Clst"
 )  
 }
 \author{
@@ -88,7 +88,7 @@ Stefan Metzger \email{eddy4R.info@gmail.com}
 }
 \references{
 License: Terms of use of the NEON FIU algorithm repository dated 2015-01-16. \cr
-NEON.DOC.001069 Preprocessing ATBD: The ATBD that describes the CybiRglr and CybiDflt regularization methods. \cr
+NEON.DOC.001069 Preprocessing ATBD: The ATBD that describes the CybiEc and CybiDflt regularization methods. \cr
 }
 \seealso{
 ?zoo:na.approx, ?stats::approx
