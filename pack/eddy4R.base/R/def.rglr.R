@@ -346,9 +346,12 @@ def.rglr <- function(
       # place the value falling into each bin
       dataRglr[posRglr[!dupl],idxVar] <- dataMeas[which(!dupl),idxVar]
     }
-    dataRglr <- base::as.data.frame(dataRglr) # Make data frame
+    dataRglr <- base::as.data.frame(dataRglr, stringsAsFactors = FALSE) # Make data frame
     base::names(dataRglr) <- nameVar # Assign names same as dataMeas
-    
+    idx <- which(names(dataRglr) != "time") # which variables are not time
+    dataRglr[idx] <- lapply(dataRglr[idx], function(x) as.numeric(x)) # convert all none-time variables from character to numeric
+    rm(idx) # clean up
+
     # Report output
     rpt$dataRglr <- dataRglr
     # assign unit attributes
