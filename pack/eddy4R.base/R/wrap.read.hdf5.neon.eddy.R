@@ -195,11 +195,13 @@ if(!(DateLoca %in% file)) {
       dataMeas = data,
       unitMeas = attributes(data)$unit,
       BgnRglr = as.POSIXlt(min(time)),
-      EndRglr = as.POSIXlt(max(time)),
+      EndRglr = as.POSIXlt(as.POSIXlt(max(time)) + 1/FreqLoca),
       FreqRglr = FreqLoca,
-      MethRglr = "zoo"
+      MethRglr = "CybiEc",
+      WndwRglr = "Cntr",
+      PosWndw = "Clst"
     )$dataRglr
-
+    
     # print message to screen
     print(paste0(format(Sys.time(), "%F %T"), ": dataset ", DateLoca, ": ", VarLoca, " regularization complete"))
 
