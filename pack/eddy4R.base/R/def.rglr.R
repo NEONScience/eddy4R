@@ -346,7 +346,7 @@ def.rglr <- function(
       # place the value falling into each bin
       dataRglr[posRglr[!dupl],idxVar] <- dataMeas[which(!dupl),idxVar]
     }
-    dataRglr <- base::as.data.frame(dataRglr) # Make data frame
+
     base::names(dataRglr) <- nameVar # Assign names same as dataMeas
     
     # Report output
