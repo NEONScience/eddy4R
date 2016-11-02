@@ -31,7 +31,7 @@
 #   Ke Xu (2016-04-11)
 #     apply eddy4R code-style convention
 #   Ke Xu (2016-04-20)
-#    re-formualtion into a function() and a wrapper(): wrap.sd.se.moly to allow broader use
+#    re-formualtion into a function() and a wrapper(): wrap.sd.se.Mnth to allow broader use
 #   Stefan Metzger (2016-05-04)
 #    formulate with data.frame input, use variance throughout, fix standard error equation, report list
 #   Ke Xu (2016-06-08)
@@ -39,7 +39,7 @@
 ##############################################################################################
 
 
-def.vari.seSq.agr <- function(data =
+def.agr.vari.seSq <- function(data =
                                 data.frame(
                                   mean,
                                   vari

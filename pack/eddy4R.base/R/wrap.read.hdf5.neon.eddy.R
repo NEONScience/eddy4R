@@ -10,8 +10,6 @@
 #' @param \code{DateLoca} Character: Date in ISO format "(2016-05-26").
 #' @param \code{VarLoca} Character: Which instrument to read data from.
 #' @param \code{FreqLoca} Integer: Measurement frequency.
-#' @param \code{TermLoca} Named character: Lookup table for variable term substitution.
-#' @param \code{UnitLoca} List of named characters: For unit term substitution and definition of eddy4R-internally used units.
 #' @param \code{RngLoca} List of named ingegers: Thresholds for range test.
 #' @param \code{DespLoca} List of integers: De-spiking parameters
 
@@ -33,6 +31,11 @@
 # changelog and author contributions / copyrights
 #   Stefan Metzger (2016-08-07)
 #     original creation
+#   Stefan Metzger (2016-08-23)
+#     use unit conversion with "internal" units
+#   Stefan Metzger (2016-10-04)
+#     added replacement statements for unit attributes on individual variables in data.frame
+# 		full implementation requires updating unit-specific behavior of eddy4R.base::def.rglr()
 ##############################################################################################
         
 wrap.read.hdf5.neon.eddy <- function(
@@ -41,8 +44,6 @@ wrap.read.hdf5.neon.eddy <- function(
   DateLoca,
   VarLoca,
   FreqLoca,
-  TermLoca,
-  UnitLoca,
   RngLoca,
   DespLoca
 ) {
@@ -145,34 +146,19 @@ if(!(DateLoca %in% file)) {
     # read attributes
     attr <- rhdf5::h5readAttributes(file = base::paste0(DirInpLoca, "/ECTE_L0_", SiteLoca, "_", DateLoca, ".h5"),
                                     name = base::paste0("/", SiteLoca, "/DP0_", VarLoca, "_001"))
-    
-    # convert imported variable names to eddy4R variable names
-    base::names(data) <- def.repl.char(
-      data = structure(.Data = base::names(data), names = base::names(data)),
-      ReplFrom = base::names(TermLoca),
-      ReplTo = TermLoca
-    )
 
-    # sort attributes in same order as data.frame
-    attr$units <- base::as.vector(attr$units)
-    base::names(attr$units) <- def.repl.char(
-      data = structure(.Data = attr$names, names = attr$names),
-      ReplFrom = base::names(TermLoca),
-      ReplTo = TermLoca
-      )
-    attr$units <- attr$units[base::names(data)]
+    # assign variable names to units to enable sorting
+    base::names(attr$units) <- attr$names
 
-    # assign unit descriptions (DPS terms)
-    base::attributes(data)$unit <- attr$units
+    # sort and assign unit descriptions in same order as data
+    base::attributes(data)$unit <- attr$units[base::names(data)]
     rm(attr)
-
-    # replace unit descriptions (DPS terms) with unit descriptions (eddy4R terms)
-    attributes(data)$unit <- def.repl.char(
-      data = base::attributes(data)$unit,
-      ReplFrom = base::names(UnitLoca$NameConv),
-      ReplTo = base::unlist(UnitLoca$NameConv)
-    )
     
+      # replacement statement for assigning units to individual variables in data
+      # # assign units to variables in data
+      # for(idx in base::names(data)) base::attr(x = data[[idx]], which = "unit") <- attr$units[[idx]]
+      # rm(idx)
+
     # print message to screen
     print(paste0(format(Sys.time(), "%F %T"), ": dataset ", DateLoca, ": ", VarLoca, " hdf5 attributes complete"))
 
@@ -183,6 +169,18 @@ if(!(DateLoca %in% file)) {
                                                               unitFrom = attributes(data)$unit,
                                                               unitTo = "intl"))
 
+      # replacement statement for performing unit conversion over individual variables in data
+      # # perform unit conversion: loop around variables in data
+      # for(idx in base::names(data)) {
+      #   
+      #   data[[idx]] <- base::suppressWarnings(
+      #     eddy4R.base::def.conv.unit(data = base::as.vector(data[[idx]]),
+      #                                unitFrom = attributes(data[[idx]])$unit,
+      #                                unitTo = "intl")
+      #   )
+      #   
+      # }; rm(idx)
+    
     # store target unit names for future use
     names(attributes(data)$unit) <- names(data)
       
@@ -192,7 +190,7 @@ if(!(DateLoca %in% file)) {
   # regularization
     
     # perform regularization
-    data <- def.rglr(
+    data <- eddy4R.base::def.rglr(
       timeMeas = base::as.POSIXlt(data$time, format="%Y-%m-%dT%H:%M:%OSZ", tz="UTC"),
       dataMeas = data,
       unitMeas = attributes(data)$unit,
@@ -298,16 +296,16 @@ if(!(DateLoca %in% file)) {
       for(idx in base::names(RngLoca[[VarLoca]])) {
 
         #execute de-spiking algorithm
-        data[,idx] <- spike.medfilt(DESP = list(
+        data[,idx] <- eddy4R.qaqc::def.dspk.filt.med(
           # input data, univariate vector of integers or numerics
-          dati = as.vector(data[,idx]),
+          dataIn = as.vector(data[,idx]),
           # filter width
-          widt = DespLoca$widt * FreqLoca + 1,
+          WndwFilt = DespLoca$widt * FreqLoca + 1,
           # initial number/step size of histogram bins
-          nbin = DespLoca$nbin,
+          NumBin = DespLoca$nbin,
           # resolution threshold
-          rest = DespLoca$rest
-        ))$dato
+          ThshReso = DespLoca$rest
+        )$dataOut
         
       }
       

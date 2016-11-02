@@ -8,17 +8,17 @@
 #' Function wrapper. Calculate aggregated variance and squared standard error from a finer to a coarser temporal resolution: from minutely to hourly resolution, from hourly to diurnal cycle, and from diurnal cycle to monthly. The input data can be irregular, because data expansion is included in the current wrapper to generate unbiased mean, variance and squared standard error. 
 
 
-#' @param \code{data} Dataframe of type numeric containing column vectors \code{DOY}, \code{mean}, \code{vari}, and \code{seSq} of equal length.
-#' @param \code{DOY} input DOY time in UTC [float number].
+#' @param \code{data} Dataframe of type numeric containing column vectors \code{timeDoyDecm}, \code{mean}, \code{vari}, and \code{seSq} of equal length.
+#' @param \code{timeDoyDecm} input decimal doy time in UTC [float number].
 #' @param \code{mean} Vector of type numeric. Means of the variable of interest at finer resolution, e.g. minutely [user-defined].
 #' @param \code{vari} Vector of type numeric. Variances of the variable of interest at finer resolution, e.g. minutely [user-defined^2].
 #' @param \code{seSq} squared standard error of the scalar at minutely resolution, e.g. minutely square of standard error of sensible heat. [square of unit of scalar, e.g. (W m-2)^2].
 #' @param \code{zone} The time zone of the location, which is the offset from Coordinated Universal Time (UTC) by a whole number of hours. If local time is ahead (behind) the Greenwich mean time, zone is a positive (negative) number. e.g. CST" [hour]. a time offset in Wisconsin, in the North American Central Time Zone, would be -6.
-#' @param \code{MethAgr} String type. One of three choices: "hrly", "mdc", "moly". "hrly" represents aggregation from minutely to hourly resolution; "mdc" represents aggregation from hourly to diurnal cycle; "moly" represents aggregation from diurnal cycle to monthly resolution.
+#' @param \code{MethAgr} String type. One of three choices: "agrHour", "mdc", "agrMnth". "agrHour" represents aggregation from minutely to hourly resolution; "mdc" represents aggregation from hourly to diurnal cycle; "agrMnth" represents aggregation from diurnal cycle to monthly resolution.
 
-#' @return Returns object of class "dataframe": if MethAgr is "hrly", the dataframe is [n, 1:5] containing date, hour, mean, variance, square of standard error of the scalar at hourly resolution
+#' @return Returns object of class "dataframe": if MethAgr is "agrHour", the dataframe is [n, 1:5] containing timeDoyIntg, hour, mean, variance, square of standard error of the scalar at hourly resolution
 #'                                              if MethAgr is "mdc", the dataframe is [n, 1:4] containing hour, mean, variance, square of standard error of the scalar at diurnal cycle
-#'                                              if MethAgr is "moly", the dataframe is [n, 1:3] containing mean, variance, square of standard error of the scalar at monthly scale
+#'                                              if MethAgr is "agrMnth", the dataframe is [n, 1:3] containing mean, variance, square of standard error of the scalar at monthly scale
 
 #' @references 
 #' license: Terms of use of the NEON FIU algorithm repository dated 2015-01-16
@@ -28,13 +28,13 @@
 #' @examples
 #' wrap.agr.vari.seSq(
 #' data = data.frame(
-#'   DOY = c(25:124)/24, 
-#'   mean = rnorm(100),  
-#'   vari = rnorm(100)^2,   
-#'   seSq = rnorm(100)^2
+#'   timeDoyDecm = c(1441:(5*1440))/24/60, 
+#'   mean = rnorm(4*1440), 
+#'   vari = rnorm(4*1440)^2,      
+#'   seSq = rnorm(4*1440)^2
 #' ), 
 #' zone = -6,
-#' MethAgr = "hrly"
+#' MethAgr = "agrHour"
 #' )
 
 #' @seealso Currently none
@@ -48,17 +48,17 @@
 #   Ke Xu (2016-04-11)
 #     apply eddy4R code-style convention
 #   Ke Xu (2016-04-20)
-#    re-formualtion into a function() and several wrapper(): wrap.vari.seSq.hrly, wrap.vari.seSq.mdc, wrap.vari.seSq.moly to allow broader use
+#    re-formualtion into a function() and several wrapper(): wrap.vari.seSq.hour, wrap.vari.seSq.mdc, wrap.vari.seSq.Mnth to allow broader use
 #   Ke Xu (2016-05-10)
-#    change the name to wrap.vari.seSq.hrly and re-formulation again to code-style convention
+#    change the name to wrap.vari.seSq.hour and re-formulation again to code-style convention
 #   Ke Xu (2016-06-09)
-#    combine wrap.hrly.vari.seSq.R, wrap.mdc.vari.seSq.R, and wrap.moly.vari.seSq.R into wrap.agr.vari.seSq.R
+#    combine wrap.hour.vari.seSq.R, wrap.mdc.vari.seSq.R, and wrap.Mnth.vari.seSq.R into wrap.agr.vari.seSq.R
 ##############################################################################################
 
 wrap.agr.vari.seSq <- function(
   
   data = data.frame(
-    DOY,
+    timeDoyDecm,
     mean, 
     vari,   
     seSq
@@ -71,37 +71,37 @@ wrap.agr.vari.seSq <- function(
   rpt <- list()
   
   ################  Prepare data  #####################
-  if (MethAgr == "hrly" | MethAgr == "mdc"){
+  if (MethAgr == "agrHour" | MethAgr == "mdc"){
     
     #translate from UTC to local time
-    data$DOY <- data$DOY + zone/24   
-    data$date <- floor(data$DOY) 
+    data$timeDoyDecm <- data$timeDoyDecm + zone/24   
+    data$timeDoyIntg <- floor(data$timeDoyDecm) 
     #translate from UTC to local time
-    data$hour <- (data$DOY - floor(data$DOY))*24 
+    data$timeHour <- (data$timeDoyDecm - floor(data$timeDoyDecm))*24 
     
   }
   
   #prepare idx for sapply function
-  if (MethAgr == "hrly"){
-    idx <- base::as.vector(base::sapply(base::unique(data$date), function(x) (x + c(0:23)/24)))
-    hour <- 24 * (idx-floor(idx))
-    date <- floor(idx)
+  if (MethAgr == "agrHour"){
+    idx <- base::as.vector(base::sapply(base::unique(data$timeDoyIntg), function(x) (x + c(0:23)/24)))
+    timeHour <- 24 * (idx-floor(idx))
+    timeDoyIntg <- floor(idx)
   }
   
   if (MethAgr == "mdc") idx <- c(0:23)
   
-  if (MethAgr == "moly") idx <- 1
+  if (MethAgr == "agrMnth") idx <- 1
   
   
   # calculate aggregated mean, variance, squared standard error
   tmp <- list()
   tmp <- sapply(1:length(idx), function(x) {
     
-    if (MethAgr == "hrly") whr <- which(abs(floor(data$hour) - hour[x]) < 0.1 & abs(data$date - date[x]) < 0.1)
+    if (MethAgr == "agrHour") whr <- which(abs(data$timeHour - timeHour[x]) < 0.1 & abs(data$timeDoyIntg - timeDoyIntg[x]) < 0.1)
     
-    if (MethAgr == "mdc") whr <- which(abs(data$hour - (x-1)) < 0.1)
+    if (MethAgr == "mdc") whr <- which(abs(data$timeHour - (x-1)) < 0.1)
     
-    if (MethAgr == "moly") whr <- c(1:length(data$mean))
+    if (MethAgr == "agrMnth") whr <- c(1:length(data$mean))
     
     eddy4R.base::def.agr.vari.seSq(data = data.frame(
       mean = data$mean[whr],
@@ -118,17 +118,17 @@ wrap.agr.vari.seSq <- function(
     seSq = base::unlist(tmp["seSq",])
   )
   
-  if (MethAgr == "hrly"){
+  if (MethAgr == "agrHour"){
     rpt <- data.frame(
-      date = date,
-      hour = hour,
+      timeDoyIntg = timeDoyIntg,
+      timeHour = timeHour,
       rpt
     )
   }
   
   if (MethAgr == "mdc"){
     rpt <- data.frame(
-      hour = idx,
+      timeHour = idx,
       rpt
     )
   }

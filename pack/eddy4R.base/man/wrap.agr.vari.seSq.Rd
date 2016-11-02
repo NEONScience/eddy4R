@@ -4,12 +4,13 @@
 \alias{wrap.agr.vari.seSq}
 \title{Calculate aggregated variance and squared standard error from a small to large temporal scale.}
 \usage{
-wrap.agr.vari.seSq(data = data.frame(DOY, mean, vari, seSq), zone, MethAgr)
+wrap.agr.vari.seSq(data = data.frame(timeDoyDecm, mean, vari, seSq), zone,
+  MethAgr)
 }
 \arguments{
-\item{\code{data}}{Dataframe of type numeric containing column vectors \code{DOY}, \code{mean}, \code{vari}, and \code{seSq} of equal length.}
+\item{\code{data}}{Dataframe of type numeric containing column vectors \code{timeDoyDecm}, \code{mean}, \code{vari}, and \code{seSq} of equal length.}
 
-\item{\code{DOY}}{input DOY time in UTC [float number].}
+\item{\code{timeDoyDecm}}{input decimal doy time in UTC [float number].}
 
 \item{\code{mean}}{Vector of type numeric. Means of the variable of interest at finer resolution, e.g. minutely [user-defined].}
 
@@ -19,12 +20,12 @@ wrap.agr.vari.seSq(data = data.frame(DOY, mean, vari, seSq), zone, MethAgr)
 
 \item{\code{zone}}{The time zone of the location, which is the offset from Coordinated Universal Time (UTC) by a whole number of hours. If local time is ahead (behind) the Greenwich mean time, zone is a positive (negative) number. e.g. CST" [hour]. a time offset in Wisconsin, in the North American Central Time Zone, would be -6.}
 
-\item{\code{MethAgr}}{String type. One of three choices: "hrly", "mdc", "moly". "hrly" represents aggregation from minutely to hourly resolution; "mdc" represents aggregation from hourly to diurnal cycle; "moly" represents aggregation from diurnal cycle to monthly resolution.}
+\item{\code{MethAgr}}{String type. One of three choices: "agrHour", "mdc", "agrMnth". "agrHour" represents aggregation from minutely to hourly resolution; "mdc" represents aggregation from hourly to diurnal cycle; "agrMnth" represents aggregation from diurnal cycle to monthly resolution.}
 }
 \value{
-Returns object of class "dataframe": if MethAgr is "hrly", the dataframe is [n, 1:5] containing date, hour, mean, variance, square of standard error of the scalar at hourly resolution
+Returns object of class "dataframe": if MethAgr is "agrHour", the dataframe is [n, 1:5] containing timeDoyIntg, hour, mean, variance, square of standard error of the scalar at hourly resolution
                                              if MethAgr is "mdc", the dataframe is [n, 1:4] containing hour, mean, variance, square of standard error of the scalar at diurnal cycle
-                                             if MethAgr is "moly", the dataframe is [n, 1:3] containing mean, variance, square of standard error of the scalar at monthly scale
+                                             if MethAgr is "agrMnth", the dataframe is [n, 1:3] containing mean, variance, square of standard error of the scalar at monthly scale
 }
 \description{
 Function wrapper. Calculate aggregated variance and squared standard error from a finer to a coarser temporal resolution: from minutely to hourly resolution, from hourly to diurnal cycle, and from diurnal cycle to monthly. The input data can be irregular, because data expansion is included in the current wrapper to generate unbiased mean, variance and squared standard error.
@@ -32,13 +33,13 @@ Function wrapper. Calculate aggregated variance and squared standard error from 
 \examples{
 wrap.agr.vari.seSq(
 data = data.frame(
-  DOY = c(25:124)/24, 
-  mean = rnorm(100),  
-  vari = rnorm(100)^2,   
-  seSq = rnorm(100)^2
+  timeDoyDecm = c(1441:(5*1440))/24/60, 
+  mean = rnorm(4*1440), 
+  vari = rnorm(4*1440)^2,      
+  seSq = rnorm(4*1440)^2
 ), 
 zone = -6,
-MethAgr = "hrly"
+MethAgr = "agrHour"
 )
 }
 \author{
