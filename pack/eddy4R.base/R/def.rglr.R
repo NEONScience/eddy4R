@@ -87,8 +87,11 @@
 #     Drastically improved computational time for cybiDflt
 #        by switching to .bincode function for determining 
 #   Dave Durden (2016-10-21)
-#     Addition of the new NEON CI regulariztion method outlined
-#       in the preprocessing ATBD (NEON.DOC.001069)
+#     Addition of the new NEON CI regulariztion method "CybiEc" outlined
+#       in the preprocessing ATBD (NEON.DOC.001069); 75% faster compared to method "zoo"
+#   Stefan Metzger (2016-11-02)
+#     method "CybiEc": fixed equidistant time vector, dropped character variables
+# 
 ##############################################################################################
 
 # start function for regularization
@@ -246,6 +249,7 @@ def.rglr <- function(
     base::attributes(rpt$dataRglr)$unit <- unitMeas
   }
   
+  
   # Method "CybiEc" implements the default regularization method for eddy-covariance 
   # processing utilized CI. The procedure is documented in NEON.DOC.001069.  
   
@@ -284,12 +288,12 @@ def.rglr <- function(
     } 
     
     # add a small amount of time to avoid "down-rounding" by R-internal POSIX
-    #timeMeas$sec <- timeMeas$sec + 0.0001
+    # timeMeas$sec <- timeMeas$sec + 0.0001
     BgnRglr$sec <- BgnRglr$sec + 0.0001
     EndRglr$sec <- EndRglr$sec + 0.0002
     
     # create equidistant reference time vector
-    rpt$timeRglr <- base::as.POSIXlt(seq.POSIXt(from = BgnRglr, to = EndRglr - 1/FreqRglr, by = 1/FreqRglr), tz=TzRglr)
+    rpt$timeRglr <- base::as.POSIXlt(seq.POSIXt(from = BgnRglr, to = EndRglr, by = 1/FreqRglr), tz=TzRglr)
     
     # delete rows with times that are duplicates of rows with smaller indices
     pos01 <- which(base::duplicated(timeMeas))
@@ -297,6 +301,13 @@ def.rglr <- function(
       dataMeas <- dataMeas[-pos01,]
       timeMeas <- timeMeas[-pos01]
     }; base::rm(pos01)
+    
+    # reduce dataMeas to variables that are of type double or integer (not character!)
+    pos02 <- base::sapply(1:base::ncol(dataMeas), function(x) base::typeof(dataMeas[[x]]))
+    pos02 <- which((pos02 %in% c("double", "integer")))
+    dataMeas <- base::subset(dataMeas, select = pos02)
+    unitMeas <- unitMeas[pos02]
+    base::rm(pos02)
     
     # Number of variables in dataframe
     numVar <- base::ncol(dataMeas)
@@ -348,9 +359,6 @@ def.rglr <- function(
     }
     dataRglr <- base::as.data.frame(dataRglr, stringsAsFactors = FALSE) # Make data frame
     base::names(dataRglr) <- nameVar # Assign names same as dataMeas
-    idx <- which(names(dataRglr) != "time") # which variables are not time
-    dataRglr[idx] <- lapply(dataRglr[idx], function(x) as.numeric(x)) # convert all none-time variables from character to numeric
-    rm(idx) # clean up
 
     # Report output
     rpt$dataRglr <- dataRglr

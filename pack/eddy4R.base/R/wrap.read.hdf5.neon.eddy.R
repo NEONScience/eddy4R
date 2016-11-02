@@ -188,20 +188,19 @@ if(!(DateLoca %in% file)) {
     print(paste0(format(Sys.time(), "%F %T"), ": dataset ", DateLoca, ": ", VarLoca, " unit conversion complete"))
 
   # regularization
-    
     # perform regularization
     data <- eddy4R.base::def.rglr(
       timeMeas = base::as.POSIXlt(data$time, format="%Y-%m-%dT%H:%M:%OSZ", tz="UTC"),
       dataMeas = data,
       unitMeas = attributes(data)$unit,
       BgnRglr = as.POSIXlt(min(time)),
-      EndRglr = as.POSIXlt(as.POSIXlt(max(time)) + 1/FreqLoca),
+      EndRglr = as.POSIXlt(max(time)),
       FreqRglr = FreqLoca,
       MethRglr = "CybiEc",
       WndwRglr = "Cntr",
       PosWndw = "Clst"
     )$dataRglr
-    
+
     # print message to screen
     print(paste0(format(Sys.time(), "%F %T"), ": dataset ", DateLoca, ": ", VarLoca, " regularization complete"))
 
