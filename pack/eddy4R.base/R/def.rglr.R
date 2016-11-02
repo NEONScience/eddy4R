@@ -341,7 +341,7 @@ def.rglr <- function(
       }}else{dupl <- rep(FALSE, length(posRglr))} #If no duplicates exist, all equal FALSE
     
     # Pull the value that chosen by PosWndw within each bin 
-    dataRglr <- base::matrix(data=NA*1.5,nrow=length(rpt$timeRglr),ncol=numVar) # initialize, mulitply by 1.5 to give numeric
+    dataRglr <- base::data.frame(base::matrix(data=NA*1.5,nrow=length(rpt$timeRglr),ncol=numVar)) # initialize, mulitply by 1.5 to give numeric
     for(idxVar in 1:numVar){
       # place the value falling into each bin
       dataRglr[posRglr[!dupl],idxVar] <- dataMeas[which(!dupl),idxVar]
