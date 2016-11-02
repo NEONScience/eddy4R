@@ -5,7 +5,8 @@
 \title{Stationarity tests}
 \usage{
 def.stna(data, MethStna = c(1, 2, 3)[2], whrVar, NumSubSamp = 6,
-  corTempPot = TRUE, presTempPot = NULL)
+  corTempPot = TRUE, presTempPot = NULL, PltfEc = "airc",
+  flagCh4 = TRUE)
 }
 \arguments{
 \item{\code{data}}{A vector containing the input data. Of class "numeric" or "integer". [user-defined]}
@@ -19,6 +20,10 @@ def.stna(data, MethStna = c(1, 2, 3)[2], whrVar, NumSubSamp = 6,
 \item{\code{corTempPot}}{A logical indicating whether or not to use potential temperature in flux calculation. Defaults to TRUE. [-]}
 
 \item{\code{presTempPot}}{A vector containing the air pressure data that will be used in the calculation when \code{corTempPot}=TRUE. Of class "numeric" or "integer" and of the same length as \code{data} or single entry. [Pa]}
+
+\item{\code{PltfEc}}{A specifier indicating which eddy covariance platform data are processed. Should be either "airc" or "towr". Defaults to "airc". [-]}
+
+\item{\code{flagCh4}}{A logical indicating whether or not methane flux is processed. Defaults to TRUE. [-]}
 }
 \value{
 Stationarity test result. [percent]
