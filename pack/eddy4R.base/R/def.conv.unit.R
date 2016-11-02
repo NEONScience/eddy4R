@@ -117,6 +117,9 @@
 #     adjusted error checking to allow data & unit throughput if units are not recognized
 #   Cove Sturtevant (2016-08-23)
 #     fixed bug causing incorrect application of unit suffix to unit prefix conversion
+#   Cove Sturtevant (2016-08-25)
+#     fixed potential hazard when applying polynomial conversion coefficients AND unit string 
+#        conversion. If unit string wasn't recognized, the polynomial was still applied.
 ##############################################################################################
 
 def.conv.unit <- function(
@@ -232,6 +235,17 @@ def.conv.unit <- function(
     infoUnitFrom <- eddy4R.base::def.intp.unit(unitFrom[[idxVar]])
     # Check to make sure they were interpreted correctly
     if(base::sum(base::is.na(infoUnitFrom$posBase)) > 0) {
+      
+      # Did we already apply a polynomial conversion? If so, we need to NA everything
+      if(!base::isTRUE(base::all.equal(coefPoly[[idxVar]],c(0,1)))){
+        base::warning(base::paste("Cannot interpret unitFrom for variable: \"",idxVar,
+                                  "\". Output for this variable will be NA. ",
+                                  "Check unit terms or only use polynomial scaling coefficients."))
+        data[[idxVar]][] <- NA
+        next
+      }
+      
+      # Otherwise, we can simpy pipe thru the input units
       base::warning(base::paste("Cannot interpret unitFrom for variable: \"",idxVar,
                     "\". No unit coversion will be performed for this variable. ",
                     "Check unit terms or use polynomial scaling coefficients instead."))
@@ -247,6 +261,17 @@ def.conv.unit <- function(
     infoUnitTo <- eddy4R.base::def.intp.unit(unitTo[[idxVar]])
     # Check to make sure they were interpreted correctly
     if(base::sum(base::is.na(infoUnitTo$posBase)) > 0) {
+      
+      # Did we already apply a polynomial conversion? If so, we need to NA everything
+      if(!base::isTRUE(base::all.equal(coefPoly[[idxVar]],c(0,1)))){
+        base::warning(base::paste("Cannot interpret unitTo for variable: \"",idxVar,
+                                  "\". Output for this variable will be NA. ",
+                                  "Check unit terms or only use polynomial scaling coefficients."))
+        data[[idxVar]][] <- NA
+        next
+      }
+      
+      # Otherwise, we can simpy pipe thru the input units
       base::warning(base::paste("Cannot interpret unitTo for variable: \"",idxVar,
                                 "\". No unit coversion will be performed for this variable. ",
                                 "Check unit terms or use polynomial scaling coefficients instead."))
@@ -258,6 +283,17 @@ def.conv.unit <- function(
     
     # Check to make sure the "From" and "To" units have the same number of base unit terms
     if (base::length(infoUnitTo$posBase) != base::length(infoUnitFrom$posBase)) {
+      
+      # Did we already apply a polynomial conversion? If so, we need to NA everything
+      if(!base::isTRUE(base::all.equal(coefPoly[[idxVar]],c(0,1)))){
+        base::warning(base::paste("Number of terms in unitTo and unitFrom must be the same. Unit conversion ", 
+                                  "for variable \"",idxVar, "\" not possible. Output for this variable set to NA. ",
+                                  "Check unit terms or use polynomial scaling coefficients only."))
+        data[[idxVar]][] <- NA
+        next
+      }
+      
+      # Otherwise, just pipe thru input inits
       base::warning(base::paste("Number of terms in unitTo and unitFrom must be the same. Unit conversion ", 
                     "for variable \"",idxVar, "\" not possible. Input units will be retained. ",
                      "Check unit terms or use polynomial scaling coefficients instead."))
@@ -267,6 +303,15 @@ def.conv.unit <- function(
     
     # Check suffixes are the same between corresponding input & output units
     if(base::sum(infoUnitFrom$sufx != infoUnitTo$sufx) > 0 || base::is.na(infoUnitFrom$sufx != infoUnitTo$sufx)) {
+      
+      if(!base::isTRUE(base::all.equal(coefPoly[[idxVar]],c(0,1)))){
+        base::warning(base::paste("Unit suffixes for corresponding terms in unitTo and unitFrom must be the same. ", 
+                                  "Unit conversion for variable: \"",idxVar, "\" not possible. Output for this variable set to NA. ",
+                                  "Check unit terms or use polynomial scaling coefficients only."))
+        data[[idxVar]][] <- NA
+        next
+      }
+      
       base::warning(base::paste("Unit suffixes for corresponding terms in unitTo and unitFrom must be the same. ", 
                     "Unit conversion for variable: \"",idxVar, "\" not possible. Input units will be retained. ",
                     "Check unit terms or use polynomial scaling coefficients instead."))
