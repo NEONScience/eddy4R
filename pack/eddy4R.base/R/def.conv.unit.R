@@ -120,6 +120,8 @@
 #   Cove Sturtevant (2016-08-25)
 #     fixed potential hazard when applying polynomial conversion coefficients AND unit string 
 #        conversion. If unit string wasn't recognized, the polynomial was still applied.
+#   Cove Sturtevant (2016-11-03)
+#     added catch for when input 'data' is NULL
 ##############################################################################################
 
 def.conv.unit <- function(
