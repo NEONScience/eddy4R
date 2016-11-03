@@ -130,6 +130,11 @@ def.conv.unit <- function(
   vrbs=FALSE
   ) {
   
+  # Make sure data is not NULL
+  if(is.null(data)) {
+    base::stop("Required input variable \'data\' cannot be NULL. Check inputs.",call. = FALSE)
+  }
+  
   # Check whether we have a vector input for data. If so, we will 
   # return the converted output in the same format
   flagVect <- FALSE
