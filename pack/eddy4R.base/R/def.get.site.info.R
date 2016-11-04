@@ -108,6 +108,7 @@ def.get.site.info <- function(
     SiteInfo$ElevAslTow <- 470 
     SiteInfo$ElevAglSens <- 122
     SiteInfo$ElevAglDisp <- 13
+    SiteInfo$Lat <- 45.9459
   }
   
   #Smithsonian Environmental Research Center, MD, U.S.A.
