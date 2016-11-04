@@ -2,11 +2,12 @@
 % Please edit documentation in R/def.rglr.R
 \name{def.rglr}
 \alias{def.rglr}
-\title{Resampling irregular data to strictly regular / equidistant data}
+\title{Regularizing irregular data to strictly regular / equidistant data}
 \usage{
 def.rglr(timeMeas, dataMeas, unitMeas = NULL, BgnRglr = NULL,
   EndRglr = NULL, TzRglr = attributes(BgnRglr)$tzone, FreqRglr,
-  MethRglr = "zoo")
+  MethRglr = c("CybiEc", "cybiDflt", "zoo")[1], WndwRglr = c("Cntr", "Lead",
+  "Trlg")[1], PosWndw = c("Clst", "PosWndwMin", "PosWndwMax")[1])
 }
 \arguments{
 \item{\code{timeMeas}}{A vector containing the observation times. Of class "POSIXlt" including timezone attribute, and of the same length as \code{dataMeas}. [-]}
@@ -24,16 +25,22 @@ def.rglr(timeMeas, dataMeas, unitMeas = NULL, BgnRglr = NULL,
 \item{\code{FreqRglr}}{Desired frequency of  the regularized dataset. Of class "numeric" or "integer" and \code{length(FreqRglr) = 1}. [Hz]}
 
 \item{\code{MethRglr}}{Switch for different regularization methods. Of class "character", currently defaults to "zoo". [-] \cr
-Method "cybiDflt" implements the default regularization performed by NEON CI. Namely, a new time series is created 
+Method "CybiDflt" implements the default for metereological variable regularization performed by NEON CI. Namely, a new time series is created 
 from the first measurement time, rounded toward zero, using the expected data frequency. The first measurement falling 
-in between one time stamp and the next is assigned to the first of these, and all other measurements falling in this range are ignored.}
+in between one time stamp and the next is assigned to the first of these, and all other measurements falling in this range are ignored.\cr
+Method "CybiEc" implements the default regularization method for eddy-covariance processing utilized CI. The procedure 
+is documented in NEON.DOC.001069.\cr}
+
+\item{\code{WndwRglr}}{Position of the window for binning in the "CybiEc" method. \code{WndwRglr} can be centered [Cntr], leading [Lead], or trailing [Trlg] (defaults to centered).\cr}
+
+\item{\code{PosWndw}}{Determines which observation to allocate to a bin if multiple observations fall into a single bin when using the "CybiEc" method.. \code{PosWndw} can be set to closest [Clst], first [PosWndwMin], or last [PosWndwMax] (defaults to closest).\cr}
 }
 \value{
 Returns a list with elements \code{TzRglr}, \code{FreqRglr}, \code{MethRglr}, \code{timeRglr}, and \code{dataRglr}.
 }
 \description{
 Function defintion. 
-Takes a (potentially) irregularly spaced timeseries \code{timeMeas} of data \code{dataMeas} and returns a strictuly regularly spaced timeseries \code{timeRegl} of data \code{dataRegl}. \strong{ATTENTION}: \code{MethRglr = "zoo"} uses the zoo:na.approx() function, which does not currently abide by its \code{maxgap} argument. In result, where gaps exist currently the last known value is repeated instead of NAs being inserted. An Email with a request for bugfixing has been sent to \email{Achim.Zeileis@R-project.org} (2016-05-08).
+Takes a (potentially) irregularly spaced timeseries \code{timeMeas} of data \code{dataMeas} and returns a strictuly regularly spaced timeseries \code{timeRglr} of data \code{dataRglr}. \strong{ATTENTION}: \code{MethRglr = "zoo"} uses the zoo:na.approx() function, which does not currently abide by its \code{maxgap} argument version 1.7-13. In result, where gaps exist currently the last known value is repeated instead of NAs being inserted. An Email with a request for bugfixing has been sent to \email{Achim.Zeileis@R-project.org} (2016-05-08).
 }
 \examples{
 # make sure that fractional seconds can be seen from the console
@@ -55,16 +62,38 @@ def.rglr(
   FreqRglr = 10,
   MethRglr = "zoo"
 )
+
+#"CybiEc" example with multiple observations in a single bin
+timeMeas[3] <- timeMeas[3] - 0.03
+timeMeas[2] <- timeMeas[2] - 0.03
+timeMeas[1] <- timeMeas[1] + 0.05
+timeMeas[7] <- timeMeas[7] - 0.031
+timeMeas[8] <- timeMeas[8] - 0.081
+
+#Regularize with a centered window and chosing the closest value to the regularized timestamp. 
+def.rglr(
+  timeMeas = timeMeas,
+  dataMeas = dataMeas,
+  unitMeas = c("metersPerSecond", "metersPerSecond"),
+  BgnRglr = base::as.POSIXlt("2016-01-01 00:00:00.000", format="\%Y-\%m-\%d \%H:\%M:\%OS", tz="UTC"),
+  EndRglr = base::as.POSIXlt("2016-01-01 00:00:01.000", format="\%Y-\%m-\%d \%H:\%M:\%OS", tz="UTC"),
+  FreqRglr = 10,
+  MethRglr = "CybiEc",
+  WndwRglr = "Cntr",
+  PosWndw = "Clst"
+)  
 }
 \author{
 Stefan Metzger \email{eddy4R.info@gmail.com}
 }
 \references{
 License: Terms of use of the NEON FIU algorithm repository dated 2015-01-16. \cr
+NEON.DOC.001069 Preprocessing ATBD: The ATBD that describes the CybiEc and CybiDflt regularization methods. \cr
 }
 \seealso{
 ?zoo:na.approx, ?stats::approx
 }
-\keyword{equidistant}
+\keyword{equidistant,}
+\keyword{preprocessing}
 \keyword{regularization,}
 
