@@ -12,16 +12,16 @@
 #' @param \code{nameVar} Required. A character vector of the same length as nameFile with the variable names of the L0 data streams
 #' @param \code{unitVar} Required. A character vector of the same length as nameFile with the variable units
 #' @param \code{Freq} Required. A numeric value indicating the expected frequency [Hz] of L0 data within the files in nameFile
-#' @param \code{FmtTime} Optional. An character format string to interpret the time values in the first column of each file in nameFile. Default is "%d-%b-%Y %I.%M.%OS %p"
-#' @param \code{Tz} Optional. A character string specifying the time zone in with the time values in the first column of each file in nameFile are represented. Default is "GMT"
+#' @param \code{FmtTime} Optional. An character format string to interpret the time values in the first column of each file in nameFile. Default is \%d-\%b-\%Y \%I.\%M.\%OS \%p
+#' @param \code{Tz} Optional. A character string specifying the time zone in with the time values in the first column of each file in nameFile are represented. Default is GMT
 
 #' @return A list of: \cr
-#' \code{time} a POSIXlt vector of regularized times corresponding to each row in data. Limits are the min and max of times found within nameFile
+#' \code{time} a POSIXlt vector of regularized times corresponding to each row in data. Limits are the min and max of times found within nameFile \cr
 #' \code{data} a named data frame containing the regularized time series of L0 variables found within nameFile
 
-#' @references 
+#' @references Currently none
 
-#' @keywords L0
+#' @keywords NEON, L0
 
 #' @examples Currently none
 
