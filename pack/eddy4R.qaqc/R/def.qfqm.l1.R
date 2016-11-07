@@ -141,7 +141,7 @@ def.qfqm.l1 <- function (
     nameFlag <- sub(pattern="posFlag", replacement="", x=nameFlgs[idxFlag], ignore.case = FALSE, perl = FALSE,
         fixed = FALSE, useBytes = FALSE)
     # Get rid of "qf" if using other output 
-    nameFlag <- sub(pattern="qf", replacement="", x=nameFlgs[idxFlag], ignore.case = FALSE, perl = FALSE,
+    nameFlag <- sub(pattern="qf", replacement="", x=nameFlag, ignore.case = FALSE, perl = FALSE,
                     fixed = FALSE, useBytes = FALSE)
     
     for (idxQm in 1:3) {
