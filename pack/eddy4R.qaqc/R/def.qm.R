@@ -57,7 +57,7 @@ def.qm <- function (
     tmp <- sub(pattern="posFlag", replacement="", x=nameFlag[idxFlag], ignore.case = FALSE, perl = FALSE,
                fixed = FALSE, useBytes = FALSE)
     # Get rid of "qf" if using other output 
-    tmp <- sub(pattern="qf", replacement="", x=nameFlag[idxFlag], ignore.case = FALSE, perl = FALSE,
+    tmp <- sub(pattern="qf", replacement="", x=tmp, ignore.case = FALSE, perl = FALSE,
                fixed = FALSE, useBytes = FALSE)
     
     for (idxQm in 1:3) {
