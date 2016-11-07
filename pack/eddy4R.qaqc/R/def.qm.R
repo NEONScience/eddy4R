@@ -51,10 +51,17 @@ def.qm <- function (
   nameQm <- c("Pass","Fail","Na") # 3 subvariables per quality metric
   
   # Put together output variable names
-  for (idxFlag in numeric(numFlag)+1:numFlag) {
-    tmp <- strsplit(nameFlag[idxFlag],vector(length=0))
+  for (idxFlag in numeric(numFlgs)+1:numFlgs) {
+    
+    # Get rid of "posFlag" if using output from def.plau
+    tmp <- sub(pattern="posFlag", replacement="", x=nameFlag[idxFlag], ignore.case = FALSE, perl = FALSE,
+               fixed = FALSE, useBytes = FALSE)
+    # Get rid of "qf" if using other output 
+    tmp <- sub(pattern="qf", replacement="", x=nameFlag[idxFlag], ignore.case = FALSE, perl = FALSE,
+               fixed = FALSE, useBytes = FALSE)
+    
     for (idxQm in 1:3) {
-      nameVarOut[(idxFlag-1)*3+idxQm] <- paste("qm",toupper(tmp[[1]][1]),paste(tmp[[1]][2:length(tmp[[1]])],collapse=""),nameQm[idxQm],sep="",collapse ="")
+      nameVarOut[6+(idxFlag-1)*3+idxQm] <- paste0("qm",tools::toTitleCase(tmp),nameVarsOutQm[idxQm],collapse ="")
     }
   }
   
