@@ -136,9 +136,16 @@ def.qfqm.l1 <- function (
   
   # Put together output variable names
   for (idxFlag in numeric(numFlgs)+1:numFlgs) {
-    chrs <- strsplit(nameFlgs[idxFlag],vector(length=0))
+    
+    # Get rid of "posFlag" if using output from def.plau
+    nameFlag <- sub(pattern="posFlag", replacement="", x=nameFlgs[idxFlag], ignore.case = FALSE, perl = FALSE,
+        fixed = FALSE, useBytes = FALSE)
+    # Get rid of "qf" if using other output 
+    nameFlag <- sub(pattern="qf", replacement="", x=nameFlgs[idxFlag], ignore.case = FALSE, perl = FALSE,
+                    fixed = FALSE, useBytes = FALSE)
+    
     for (idxQm in 1:3) {
-      nameVarsOut[6+(idxFlag-1)*3+idxQm] <- paste("qm",toupper(chrs[[1]][1]),paste(chrs[[1]][2:length(chrs[[1]])],collapse=""),nameVarsOutQm[idxQm],sep="",collapse ="")
+      nameVarsOut[6+(idxFlag-1)*3+idxQm] <- paste0("qm",tools::toTitleCase(nameFlag),nameVarsOutQm[idxQm],collapse ="")
     }
   }
   nameVarsOut <- c(nameVarsOut,"qmAlpha","qmBeta","qfFinl") # Add alpha QM, beta QM, and final quality flag
