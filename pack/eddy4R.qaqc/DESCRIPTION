@@ -12,7 +12,7 @@ Imports:
     gridExtra (>= 2.2.1),
     gtable (>= 0.2.0),
     reshape2 (>= 1.4.2),
-    Rmisc (>= 1.5)
+    Rmisc (>= 1.5),
     lattice (>= 0.20-34),
     plyr (>= 1.8.4)
 License: Terms of use of the NEON FIU algorithm repository dated 2015-01-16

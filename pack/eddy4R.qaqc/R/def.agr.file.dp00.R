@@ -34,7 +34,7 @@
 #     original creation
 ##############################################################################################
 
-def.agr.file.l0 <- function (
+def.agr.file.dp00 <- function (
   dirFile = '.', # Directory where input files can be found
   nameFile,
   nameVar,

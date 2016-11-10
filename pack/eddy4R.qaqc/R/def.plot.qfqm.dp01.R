@@ -5,11 +5,11 @@
 #' Cove Sturtevant \email{csturtevant@neoninc.org}
 
 #' @description 
-#' Function definition. Plots the aggregated quality flags, quality metrics and final quality flag for basic L1 (time window averaged) data products as output from def.qfqm.l1.R.
+#' Function definition. Plots the aggregated quality flags, quality metrics and final quality flag for basic L1 (time window averaged) data products as output from def.qfqm.dp01.R.
 
-#' @param dataL1 Required input. A list output from def.qfqm.l1.R of: \cr
+#' @param dataL1 Required input. A list output from def.qfqm.dp01.R of: \cr
 #' tsAggrBgn - the starting time stamp of aggregated L1 data and quality metrics \cr
-#' qfqm - a list of named variables, each containing a data frame of the time-aggregated mean, minimum, maximum, variance, standard deviation of the mean, number of points going into the average, and quality metrics (pass, fail, NA) pertaining to that variable for each flag in flgs, as well as the alpha & beta quality metrics and final quality flag. It is important that the column names of this data frame are indistinguishable from those that would be created from def.qfqm.l1.R
+#' qfqm - a list of named variables, each containing a data frame of the time-aggregated mean, minimum, maximum, variance, standard deviation of the mean, number of points going into the average, and quality metrics (pass, fail, NA) pertaining to that variable for each flag in flgs, as well as the alpha & beta quality metrics and final quality flag. It is important that the column names of this data frame are indistinguishable from those that would be created from def.qfqm.dp01.R
 #' @param DateRng Optional. A 2-element POSIXlt vector of the minimum and maximum time range to plot. Default is the entire data range.
 #' @param NameQmPlot Optional. A character vector listing the individual quality metrics to plot. The strings in this vector can be partial names, i.e. a partial match will result in the quality metric being plotted (ex. NameQmIndiv <- c("Step") will result in the quality metrics "qmPosFlagStepPass","qmPosFlagStepFail" and "qmPosFlagStepNa" to be plotted). Default is all QMs. 
 
@@ -32,8 +32,8 @@
 ##############################################################################################
 
 
-def.plot.qfqm.l1 <- function (
-  dataL1,             # the list output from def.qfqm.l1.R. Required input.
+def.plot.qfqm.dp01 <- function (
+  dataL1,             # the list output from def.qfqm.dp01.R. Required input.
   DateRng = c(min(dataL1$tsAggrBgn),max(dataL1$tsAggrBgn)), # a 2-element POSIXlt vector of the minimum and maximum time range to plot. Default is entire range
   NameQmPlot = sub("Pass","",names(dataL1$qfqm[[1]][grep("Pass",names(dataL1$qfqm[[1]]))])) # a character vector listing the individual quality metrics to plot. The strings in this vector can be partial names, i.e. a partial match will result in the quality metric being plotted (ex. NameQmIndiv <- "Step" will result in the quality metrics "qmPosFlagStepPass","qmPosFlagStepFail" and "qmPosFlagStepNa" to be plotted). Default is all QMs. 
   ) {
@@ -61,7 +61,7 @@ def.plot.qfqm.l1 <- function (
 
   # Check data
   if(missing("dataL1") | !is.list(dataL1)) {
-    stop("Required input 'data' must be a list output from def.qfqm.l1.R")
+    stop("Required input 'data' must be a list output from def.qfqm.dp01.R")
   }
   
   # Check DateRng

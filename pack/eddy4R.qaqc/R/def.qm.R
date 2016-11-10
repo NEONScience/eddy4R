@@ -34,9 +34,9 @@
 
 # changelog and author contributions / copyrights 
 #   Cove Sturtevant (2016-01-05)
-#     original creation of def.qfqm.l1.R
+#     original creation of def.qfqm.dp01.R
 #   Natchaya P-Durden (2016-08-15)
-#     modified def.qfqm.l1()
+#     modified def.qfqm.dp01()
 ##############################################################################################
 def.qm <- function (
   data,
@@ -54,11 +54,16 @@ def.qm <- function (
   for (idxFlag in numeric(numFlgs)+1:numFlgs) {
     
     # Get rid of "posFlag" if using output from def.plau
-    tmp <- sub(pattern="posFlag", replacement="", x=nameFlag[idxFlag], ignore.case = FALSE, perl = FALSE,
-               fixed = FALSE, useBytes = FALSE)
+    if (regexpr(pattern="posQf",text=nameFlag[idxFlag],ignore.case=FALSE)[1] == 1) {
+      tmp <- sub(pattern="posQf", replacement="", x=nameFlag[idxFlag], ignore.case = FALSE, perl = FALSE,
+                 fixed = FALSE, useBytes = FALSE)
+    }
     # Get rid of "qf" if using other output 
-    tmp <- sub(pattern="qf", replacement="", x=tmp, ignore.case = FALSE, perl = FALSE,
-               fixed = FALSE, useBytes = FALSE)
+    if (regexpr(pattern="qf",text=tmp,ignore.case=FALSE)[1] == 1) {
+      tmp <- sub(pattern="qf", replacement="", x=tmp, ignore.case = FALSE, perl = FALSE,
+                 fixed = FALSE, useBytes = FALSE)
+    }
+    
     
     for (idxQm in 1:3) {
       nameVarOut[6+(idxFlag-1)*3+idxQm] <- paste0("qm",tools::toTitleCase(tmp),nameVarsOutQm[idxQm],collapse ="")

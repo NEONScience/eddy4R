@@ -1,5 +1,3 @@
-
-
 ##############################################################################################
 #' @title Quality flags and quality metrics (basic L1 data products) 
 
@@ -11,9 +9,9 @@
 
 #' @param data Required input. A data frame containing the L0 data evaluated (do not include the time stamp vector here). 
 #' @param ts Optional. A time vector of class POSIXlt of times corresponding with each row in data. Defaults to an evenly spaced time vector starting from system time of execution by seconds. 
-#' @param flgs Optional. A list of named flags (standard or user-defined or names), each itself a list of flagged indices for each variable in data (ex. flgs$posFlagStep$X and flgs$posFlagStep$Y listing flagged positions for variables X and Y, respectively). Aggregated quality flags and metrics will be computed for all flags in this list, and all will be used to compute the final quality flag. This function directly accepts the output from def.plaus.R and def.dspk.wndw.R. Defaults to an empty flag list.
+#' @param flgs Optional. A list of named flags (standard or user-defined or names), each itself a list of flagged indices for each variable in data (ex. flgs$posQfStep$X and flgs$posQfStep$Y listing flagged positions for variables X and Y, respectively). Aggregated quality flags and metrics will be computed for all flags in this list, and all will be used to compute the final quality flag. This function directly accepts the output from def.plaus.R and def.dspk.wndw.R. Defaults to an empty flag list.
 #' @param TintAggr Optional. A difftime object of length equal to number of variables in data specifying the time interval for aggregating flags of each variable. Defaults to 1800 x median observed time difference. Class difftime can be generated using as.difftime.
-#' @param FlagExcl Optional. A list of length equal to number of variables, each itself a vector of strings naming the flags (matching a subset of flgs) for which to exclude the flagged indices of each variable from the L1 average. Eg. FlagExcl <- list(x=c("posFlagRng","posFlagStep"),y=c("posFlagPers","posFlagNull","posFlagGap")). Note that variables in the list must be in the same order as those in data. Defaults to an empty list (flagged points are not excluded from the L1 average).
+#' @param FlagExcl Optional. A list of length equal to number of variables, each itself a vector of strings naming the flags (matching a subset of flgs) for which to exclude the flagged indices of each variable from the L1 average. Eg. FlagExcl <- list(x=c("posQfRng","posQfStep"),y=c("posQfPers","posQfNull","posQfGap")). Note that variables in the list must be in the same order as those in data. Defaults to an empty list (flagged points are not excluded from the L1 average).
 
 #' @return A list of: \cr
 #' tsAggrBgn - the starting time stamp of aggregated L1 data and quality metrics \cr
@@ -41,10 +39,10 @@
 ##############################################################################################
 
 
-def.qfqm.l1 <- function (
+def.qfqm.dp01 <- function (
   data,             # a data frame containing the data to be evaluated (do not include the time stamp vector here). Required input.
   ts = as.POSIXlt(seq.POSIXt(from=Sys.time(),by="sec",length.out=length(data[,1]))),  # time vector corresponding with the rows in data, in  Class "POSIXlt", which is a named list of vectors representing sec, min, hour,day,mon,year. Defaults to an evenly spaced time vector starting from execution by seconds.
-  flgs = list(),    # A list of named flags (standard or user-defined or names), each itself a list of flagged indices for each variable in data (ex. flgs$posFlagStep$X and flgs$posFlagStep$Y listing flagged indices for variables X and Y, respectively). 
+  flgs = list(),    # A list of named flags (standard or user-defined or names), each itself a list of flagged indices for each variable in data (ex. flgs$posQfStep$X and flgs$posQfStep$Y listing flagged indices for variables X and Y, respectively). 
   TintAggr = 1800*median(abs(diff(ts)),na.rm=TRUE), # A difftime object of length 1 specifying the time interval for aggregating flags of each variable. 
   FlagExcl = as.list(character(length=length(data))) # A list of length equal to number of variables, each itself a list of strings naming the flags (matching a subset of flgs) for which to exclude the flagged indices of each variable from the L1 average. 
 ) {
@@ -137,12 +135,17 @@ def.qfqm.l1 <- function (
   # Put together output variable names
   for (idxFlag in numeric(numFlgs)+1:numFlgs) {
     
-    # Get rid of "posFlag" if using output from def.plau
-    nameFlag <- sub(pattern="posFlag", replacement="", x=nameFlgs[idxFlag], ignore.case = FALSE, perl = FALSE,
-        fixed = FALSE, useBytes = FALSE)
-    # Get rid of "qf" if using other output 
-    nameFlag <- sub(pattern="qf", replacement="", x=nameFlag, ignore.case = FALSE, perl = FALSE,
-                    fixed = FALSE, useBytes = FALSE)
+    # Get rid of leading "posQf" if using output from def.plau
+    if (regexpr(pattern="posQf",text=nameFlag[idxFlag],ignore.case=FALSE)[1] == 1) {
+      tmp <- sub(pattern="posQf", replacement="", x=nameFlag[idxFlag], ignore.case = FALSE, perl = FALSE,
+                 fixed = FALSE, useBytes = FALSE)
+    }
+    # Get rid of leading "qf" if using other output 
+    if (regexpr(pattern="qf",text=tmp,ignore.case=FALSE)[1] == 1) {
+      tmp <- sub(pattern="qf", replacement="", x=tmp, ignore.case = FALSE, perl = FALSE,
+                 fixed = FALSE, useBytes = FALSE)
+    }
+    
     
     for (idxQm in 1:3) {
       nameVarsOut[6+(idxFlag-1)*3+idxQm] <- paste0("qm",tools::toTitleCase(nameFlag),nameVarsOutQm[idxQm],collapse ="")
