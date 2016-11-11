@@ -14,7 +14,8 @@ Imports:
     reshape2 (>= 1.4.2),
     Rmisc (>= 1.5),
     lattice (>= 0.20-34),
-    plyr (>= 1.8.4)
+    plyr (>= 1.8.4),
+    grid(>= 3.3.2)
 License: Terms of use of the NEON FIU algorithm repository dated 2015-01-16
 LazyData: true
 RoxygenNote: 5.0.1
