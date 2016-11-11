@@ -53,9 +53,11 @@ def.qm <- function (
   # Put together output variable names
   for (idxFlag in numeric(numFlgs)+1:numFlgs) {
     
+    tmp <- nameFlag[idxFlag]
+    
     # Get rid of "posFlag" if using output from def.plau
-    if (regexpr(pattern="posQf",text=nameFlag[idxFlag],ignore.case=FALSE)[1] == 1) {
-      tmp <- sub(pattern="posQf", replacement="", x=nameFlag[idxFlag], ignore.case = FALSE, perl = FALSE,
+    if (regexpr(pattern="posQf",text=tmp,ignore.case=FALSE)[1] == 1) {
+      tmp <- sub(pattern="posQf", replacement="", x=tmp, ignore.case = FALSE, perl = FALSE,
                  fixed = FALSE, useBytes = FALSE)
     }
     # Get rid of "qf" if using other output 
