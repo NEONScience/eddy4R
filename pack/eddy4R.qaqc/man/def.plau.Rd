@@ -10,7 +10,8 @@ def.plau(data, ts = as.POSIXlt(seq.POSIXt(from = Sys.time(), by = "sec",
   DiffStepMax = apply(abs(apply(data, 2, diff)), 2, max, na.rm = TRUE),
   DiffPersMin = rep.int(0, length(data)), TintPers = 60 *
   median(abs(diff(ts)), na.rm = TRUE) * rep.int(1, length(data)),
-  TestNull = rep(FALSE, length(data)), NumGap = length(data[, 1]) + 1)
+  TestNull = rep(FALSE, length(data)), NumGap = rep(length(data[, 1]) + 1,
+  length(data)), Vrbs = FALSE)
 }
 \arguments{
 \item{\code{data}}{Required input. A data frame containing the data to be evaluated (do not include the time stamp vector here).}
@@ -30,9 +31,15 @@ def.plau(data, ts = as.POSIXlt(seq.POSIXt(from = Sys.time(), by = "sec",
 \item{\code{TestNull}}{Optional. Apply the null test? A logical vector of [TRUE or FALSE] of length equal to number of variables in data. Defaults to FALSE (no null values are flagged)}
 
 \item{\code{NumGap}}{Optional.  A numeric value >= 1, interpretable as an integer, specifying the numer of consecutive NA values constituting a gap. Default is the one more than the length of the data series (no gaps will be flagged)}
+
+\item{\code{Vrbs}}{Optional. A logical {FALSE/TRUE} value indicating whether to:\cr
+\code{Vrbs = FALSE}: (Default) output the vector positions of the fail and na results for each test (default), or \cr
+\code{Vrbs = TRUE}: output a data frame for each variable in data, with a column for each plausibility test outputting the actual quality flags [-1,0,1] for each data point}
 }
 \value{
-A list of flags giving the failed and NA positions for each the Range, Step, Persistence, Null, and Gap tests. Each flag is itself a nested list of failed and na (unable to eval) flagged indices for each variable in data.
+If:\cr
+\code{Vrbs = FALSE} A list of flags giving the failed and NA positions for each the Range, Step, Persistence, Null, and Gap tests. Each flag is itself a nested list of failed and na (unable to eval) flagged indices for each variable in data. \cr
+\code{Vrbs = TRUE} A list of variables matching those in \code{data}, each containing a data frame with a column for each plausibility test outputting the actual quality flags [-1,0,1] for each data point, where -1 indicates the test could not be evaluated, 0 indicates a pass, and 1 indicates a fail
 }
 \description{
 Function definition. Determines inplausible data indices based on user-specified limits for the data range, step between adjacent values, persistence (similarity of adjacent values), nulls, and gaps.

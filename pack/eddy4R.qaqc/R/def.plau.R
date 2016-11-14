@@ -16,8 +16,14 @@
 #' @param \code{TintPers} Optional. A difftime object of length equal to number of variables in data specifying the time interval for each variable over which to test for the minimum absolute change in value specified in DiffPersMin. Defaults to 60 x median observed time difference. Class difftime can be generated using as.difftime.
 #' @param \code{TestNull} Optional. Apply the null test? A logical vector of [TRUE or FALSE] of length equal to number of variables in data. Defaults to FALSE (no null values are flagged)
 #' @param \code{NumGap} Optional.  A numeric value >= 1, interpretable as an integer, specifying the numer of consecutive NA values constituting a gap. Default is the one more than the length of the data series (no gaps will be flagged)
+#' @param \code{Vrbs} Optional. A logical {FALSE/TRUE} value indicating whether to:\cr
+#' \code{Vrbs = FALSE}: (Default) output the vector positions of the fail and na results for each test (default), or \cr
+#' \code{Vrbs = TRUE}: output a data frame for each variable in data, with a column for each plausibility test outputting the actual quality flags [-1,0,1] for each data point
 
-#' @return A list of flags giving the failed and NA positions for each the Range, Step, Persistence, Null, and Gap tests. Each flag is itself a nested list of failed and na (unable to eval) flagged indices for each variable in data.
+#' @return If:\cr
+#' \code{Vrbs = FALSE} A list of flags giving the failed and NA positions for each the Range, Step, Persistence, Null, and Gap tests. Each flag is itself a nested list of failed and na (unable to eval) flagged indices for each variable in data. \cr
+#' \code{Vrbs = TRUE} A list of variables matching those in \code{data}, each containing a data frame with a column for each plausibility test outputting the actual quality flags [-1,0,1] for each data point, where -1 indicates the test could not be evaluated, 0 indicates a pass, and 1 indicates a fail
+#' 
 
 #' @references 
 #' NEON Algorithm Theoretical Basis Document QA/QC Plausibility Testing (NEON.DOC.011081)
@@ -43,6 +49,9 @@
 #     adjusted gap test to reflect current NEON practice - not based on time difference
 #        between measurements, but rather consecutive number of NA values
 #     adjusted header to conform with eddy4R coding convention
+#   Cove Sturtevant (2016-11-03)
+#     added a Vrbs option to allow output of flag values (-1,0,1) rather than vector positions of failed and NA tests
+#     also fix duplicate NA and fail indices for step and persistence tests
 ##############################################################################################
 
 
@@ -55,7 +64,8 @@ def.plau <- function (
   DiffPersMin = rep.int(0,length(data)), # a vector containing the minimum absolute change in value for each variable in data over the interval specified in TintPers. Defaults to a vector of zeros.
   TintPers = 60*median(abs(diff(ts)),na.rm=TRUE)*rep.int(1,length(data)), # a vector of class difftime specifying the time interval for each variable in data over which to test for the minimum absolute change in value specified in DiffPersMin. Defaults to 60 x median observed time difference. Class difftime can be generated using as.difftime.
   TestNull = rep(FALSE,length(data)), # apply the null test? A logical vector of [TRUE or FALSE] of length equal to number of variables in data. Defaults to FALSE (no null values are flagged)
-  NumGap = length(data[,1])+1 # an integer greater than 0 specifying the number of consecutive NA values that constitute a gap
+  NumGap = rep(length(data[,1])+1,length(data)), # an integer greater than 0 specifying the number of consecutive NA values that constitute a gap
+  Vrbs = FALSE # FALSE = output the vector positions of the fail and na results, TRUE = output flag values for each test
 ) {
   
   
@@ -135,14 +145,35 @@ def.plau <- function (
   
 
 # Perform QAQC tests ------------------------------------------------------
+  numVar <- length(data) # Get number of variables 
   nameData <- names(data) # Get variable names
+  
+  # For verbose option, initialize output
+  if(Vrbs) {
+    # set up a data frame for each variable containing all the plausibility tests
+    qfDum = matrix(data=0,nrow=numData,ncol=5) # Default to pass for each test
+    qfDum <- as.data.frame(qfDum)
+    names(qfDum) <- c("qfRng","qfStep","qfPers","qfNull","qfGap")
+
+    # Dole out the qfs to each variable 
+    qf <- vector("list",length=numVar)
+    names(qf) <- nameData
+    qf <- lapply(qf,FUN = function(x){x=qfDum})
+  }
   
   # Do range test
   posFlagRng <- list(fail=as.list(data),na=as.list(data)) # initialize null test output
   for(idxVar in 1:length(data)) {
     posFlagRng$fail[[idxVar]] <- which((data[,idxVar] < RngMin[idxVar]) | (data[,idxVar] > RngMax[idxVar]))
     posFlagRng$na[[idxVar]] <- which(is.na(data[,idxVar]))
+    
+    # For Verbose option, output actual flag values
+    if(Vrbs) {
+      qf[[idxVar]]$qfRng[posFlagRng$fail[[idxVar]]] <- 1
+      qf[[idxVar]]$qfRng[posFlagRng$na[[idxVar]]] <- -1
+    }
   }
+  
     
   # Do step test
   posFlagStep <- list(fail=as.list(data),na=as.list(data)) # initialize step test output
@@ -150,6 +181,15 @@ def.plau <- function (
     posFlagStep$fail[[idxVar]] <- which((abs(diff(data[,idxVar])) > DiffStepMax[idxVar]))
     posFlagStep$fail[[idxVar]] <- unique(c(posFlagStep$fail[[idxVar]],posFlagStep$fail[[idxVar]]+1))
     posFlagStep$na[[idxVar]] <- which(is.na(diff(data[,idxVar])))+1
+    
+    # If previous point is null, but next value is present, evaluate the step test with next value
+    posFlagStep$na[[idxVar]] <- setdiff(posFlagStep$na[[idxVar]],which(!is.na(diff(data[,idxVar]))))
+  
+    # For Verbose option, output actual flag values
+    if(Vrbs) {
+      qf[[idxVar]]$qfStep[posFlagStep$fail[[idxVar]]] <- 1
+      qf[[idxVar]]$qfStep[posFlagStep$na[[idxVar]]] <- -1
+    }  
   }
 
   # Do persistence test
@@ -219,6 +259,9 @@ def.plau <- function (
             
             # Awe bummer, the sensor was stuck before this point.
             posFlagPers$fail[[idxVar]] <- unique(c(posFlagPers$fail[[idxVar]],idxDataSt:(idxData-1)))
+            
+            # Don't mark the NA values as fail
+            posFlagPers$fail[[idxVar]] <- setdiff(posFlagPers$fail[[idxVar]],posFlagPers$na[[idxVar]])
           }
           
           idxDataSt <- idxData # restart the test from here
@@ -231,6 +274,9 @@ def.plau <- function (
         # time interval for the persistence test, so let's flag the data
         posFlagPers$fail[[idxVar]] <- unique(c(posFlagPers$fail[[idxVar]],idxDataSt:idxData))
 
+        # Don't mark the NA values as fail
+        posFlagPers$fail[[idxVar]] <- setdiff(posFlagPers$fail[[idxVar]],posFlagPers$na[[idxVar]])
+        
         idxData <- idxData+1 # We're done
       
       } else {
@@ -252,12 +298,22 @@ def.plau <- function (
         # We didn't hit the threshold for the final non-NA points and we were beyond the allowable 
         # time interval for the persistence test, so let's flag the end of the data
         posFlagPers$fail[[idxVar]] <- unique(c(posFlagPers$fail[[idxVar]],idxDataSt:idxData))
-      } else
+        
+        # Don't mark the NA values as fail
+        posFlagPers$fail[[idxVar]] <- setdiff(posFlagPers$fail[[idxVar]],posFlagPers$na[[idxVar]])
+        
+      } else {
         # We didn't hit the threshold for the final non-NA points, but we are not yet beyond the 
         # allowable time interval, so let's flag as unable to evaluate
         posFlagPers$na[[idxVar]] <- unique(c(posFlagPers$na[[idxVar]],idxDataSt:idxData))
-      
+      }
     }
+    
+    # For Verbose option, output actual flag values
+    if(Vrbs) {
+      qf[[idxVar]]$qfPers[posFlagPers$fail[[idxVar]]] <- 1
+      qf[[idxVar]]$qfPers[posFlagPers$na[[idxVar]]] <- -1
+    }  
   }
 
   # Do Null test
@@ -268,6 +324,13 @@ def.plau <- function (
     if(TestNull[idxVar]) {
       posFlagNull$fail[[idxVar]] <- which(is.na(data[,idxVar]))
     }
+    
+    # For Verbose option, output actual flag values
+    if(Vrbs) {
+      qf[[idxVar]]$qfNull[posFlagNull$fail[[idxVar]]] <- 1
+      qf[[idxVar]]$qfNull[posFlagNull$na[[idxVar]]] <- -1
+    }
+    
   }
   
 
@@ -312,17 +375,29 @@ def.plau <- function (
     } else {
       posFlagGap$fail[[idxVar]] <- numeric(length=0) # No gaps
     }
-      
+     
+    # For Verbose option, output actual flag values
+    if(Vrbs) {
+      qf[[idxVar]]$qfGap[posFlagGap$fail[[idxVar]]] <- 1
+      qf[[idxVar]]$qfGap[posFlagGap$na[[idxVar]]] <- -1
+    } 
   }
 
   # Return results
-  result <- list(
-    posFlagRng = posFlagRng,
-    posFlagStep = posFlagStep,
-    posFlagPers = posFlagPers,
-    posFlagNull = posFlagNull,
-    posFlagGap = posFlagGap)
+  if(!Vrbs) {
+    rpt <- list(
+      posFlagRng = posFlagRng,
+      posFlagStep = posFlagStep,
+      posFlagPers = posFlagPers,
+      posFlagNull = posFlagNull,
+      posFlagGap = posFlagGap)
+    
+  } else {
+    rpt <- qf
+    
+  }
+  
 
-  return(result)
+  return(rpt)
   
 }
