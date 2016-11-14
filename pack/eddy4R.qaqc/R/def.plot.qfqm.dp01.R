@@ -7,7 +7,7 @@
 #' @description 
 #' Function definition. Plots the aggregated quality flags, quality metrics and final quality flag for basic L1 (time window averaged) data products as output from def.qfqm.dp01.R.
 
-#' @param dataL1 Required input. A list output from def.qfqm.dp01.R of: \cr
+#' @param dataDp01 Required input. A list output from def.qfqm.dp01.R of: \cr
 #' timeAgrBgn - the starting time stamp of aggregated L1 data and quality metrics \cr
 #' dataAgr - a list of named variables, each containing a data frame of the time-aggregated mean, minimum, maximum, variance, standard deviation of the mean, number of points going into the average, and quality metrics (pass, fail, NA) pertaining to that variable for each flag in flgs, as well as the alpha & beta quality metrics and final quality flag. It is important that the column names of this data frame are indistinguishable from those that would be created from def.qfqm.dp01.R
 #' @param WndwTime Optional. A 2-element POSIXlt vector of the minimum and maximum time range to plot. Default is the entire data range.
@@ -29,38 +29,22 @@
 # changelog and author contributions / copyrights
 #   Cove Sturtevant (2016-02-09)
 #     original creation
+#   Cove Sturtevant (2016-11-14)
+#     fix error in multi-plot grobs
+#     update variable naming according to eddy4R coding style
 ##############################################################################################
 
 
 def.plot.qfqm.dp01 <- function (
-  dataL1,             # the list output from def.qfqm.dp01.R. Required input.
-  WndwTime = c(min(dataL1$timeAgrBgn),max(dataL1$timeAgrBgn)), # a 2-element POSIXlt vector of the minimum and maximum time range to plot. Default is entire range
-  NameQmPlot = sub("Pass","",names(dataL1$dataAgr[[1]][grep("Pass",names(dataL1$dataAgr[[1]]))])) # a character vector listing the individual quality metrics to plot. The strings in this vector can be partial names, i.e. a partial match will result in the quality metric being plotted (ex. NameQmIndiv <- "Step" will result in the quality metrics "qmPosFlagStepPass","qmPosFlagStepFail" and "qmPosFlagStepNa" to be plotted). Default is all QMs. 
+  dataDp01,             # the list output from def.qfqm.dp01.R. Required input.
+  WndwTime = c(min(dataDp01$timeAgrBgn),max(dataDp01$timeAgrBgn)), # a 2-element POSIXlt vector of the minimum and maximum time range to plot. Default is entire range
+  NameQmPlot = sub("Pass","",names(dataDp01$dataAgr[[1]][grep("Pass",names(dataDp01$dataAgr[[1]]))])) # a character vector listing the individual quality metrics to plot. The strings in this vector can be partial names, i.e. a partial match will result in the quality metric being plotted (ex. NameQmIndiv <- "Step" will result in the quality metrics "qmPosFlagStepPass","qmPosFlagStepFail" and "qmPosFlagStepNa" to be plotted). Default is all QMs. 
   ) {
   
-
-# Load Libraries ----------------------------------------------------------
-  
-  # if (!require(ggplot2)) {
-  #   stop("Please install package 'ggplot2' before continuing")
-  # }
-  # if (!require(Rmisc)) {
-  #   stop("Please install package 'Rmisc' before continuing")
-  # }
-  # if (!require(reshape2)) {
-  #   stop("Please install package 'reshape2' before continuing")
-  # }
-  # if (!require(gridExtra)) {
-  #   stop("Please install package 'gridExtra' before continuing")
-  # }
-  # if (!require(gtable)) {
-  #   stop("Please install package 'gtable' before continuing")
-  # }
-  # 
 # Error Checking ----------------------------------------------------------
 
   # Check data
-  if(base::missing("dataL1") | !base::is.list(dataL1)) {
+  if(base::missing("dataDp01") | !base::is.list(dataDp01)) {
     stop("Required input 'data' must be a list output from def.qfqm.dp01.R")
   }
   
@@ -70,7 +54,7 @@ def.plot.qfqm.dp01 <- function (
     stop("Input parameter WndwTime must be of class POSIXlt")
   } else if(length(WndwTime) != 2) {
     stop("Input parameter WndwTime must be a POSIXlt vector of length 2")
-  } else if ((min(WndwTime) > max(dataL1$timeAgrBgn)) | (max(WndwTime) < min(dataL1$timeAgrBgn))) {
+  } else if ((min(WndwTime) > max(dataDp01$timeAgrBgn)) | (max(WndwTime) < min(dataDp01$timeAgrBgn))) {
     stop("Check input parameter WndwTime. The selected date range does not cover any portion of the data.")
   }
   
@@ -78,28 +62,28 @@ def.plot.qfqm.dp01 <- function (
 # Do Plotting -------------------------------------------------------------
   
   # Plot the L1 basic stats
-  numVars <- base::length(dataL1$dataAgr)
-  nameVars <- base::names(dataL1$dataAgr)
+  numVar <- base::length(dataDp01$dataAgr)
+  nameVar <- base::names(dataDp01$dataAgr)
     
-  for(idxVar in 1:numVars) {
+  for(idxVar in 1:numVar) {
     
     # Pull out data to plot
-    dataIdx <- dataL1$dataAgr[[idxVar]]
-    dataIdx$ts <- dataL1$timeAgrBgn
-    nameVarsIdx <- nameVars[idxVar]
+    dataIdx <- dataDp01$dataAgr[[idxVar]]
+    dataIdx$time <- dataDp01$timeAgrBgn
+    nameVarIdx <- nameVar[idxVar]
     
     # Set of plots for basic stats: Mean, min, max, var, ste, and numPts
-    dataIdxQf <- base::data.frame(ts=dataIdx$ts,val=dataIdx$mean,valQfFinlFail=dataIdx$mean)
+    dataIdxQf <- base::data.frame(time=dataIdx$time,val=dataIdx$mean,valQfFinlFail=dataIdx$mean)
     dataIdxQf$valQfFinlFail[dataIdx$qfFinl==0] <- NA
-    dataIdxQf <- reshape2::melt(dataIdxQf,id="ts")
+    dataIdxQf <- reshape2::melt(dataIdxQf,id="time")
     if(base::sum(dataIdx$mean,na.rm=TRUE) == 0) {
       # No non-NA data, generate empty plot
-      plotMean <- ggplot2::ggplot(data=dataIdx,ggplot2::aes(x=ts)) + ggplot2::geom_blank()
+      plotMean <- ggplot2::ggplot(data=dataIdx,ggplot2::aes(x=time)) + ggplot2::geom_blank()
     } else {
       # Data to plot!
-      plotMean <- ggplot2::ggplot(data=dataIdx,ggplot2::aes(x=ts,y=mean)) + ggplot2::geom_line() +
+      plotMean <- ggplot2::ggplot(data=dataIdx,ggplot2::aes(x=time,y=mean)) + ggplot2::geom_line() +
         ggplot2::geom_point() + 
-        ggplot2::geom_point(data=dataIdxQf,ggplot2::aes(x=ts,y=value,color=factor(variable))) 
+        ggplot2::geom_point(data=dataIdxQf,ggplot2::aes(x=time,y=value,color=factor(variable))) 
     }
     plotMean <- plotMean +
       ggplot2::theme_bw()+
@@ -110,65 +94,65 @@ def.plot.qfqm.dp01 <- function (
     
     if(base::sum(dataIdx$min,na.rm=TRUE) == 0) {
       # No non-NA data, generate empty plot
-      plotMin <- ggplot2::ggplot(data=dataIdx,ggplot2::aes(x=ts)) + ggplot2::geom_blank() + 
-        ggplot2::labs(title=nameVarsIdx,x="Date/Time",y="Minimum") + ggplot2::theme_bw()
+      plotMin <- ggplot2::ggplot(data=dataIdx,ggplot2::aes(x=time)) + ggplot2::geom_blank() + 
+        ggplot2::labs(title=nameVarIdx,x="Date/Time",y="Minimum") + ggplot2::theme_bw()
     } else {
       # Data to plot!
-      plotMin <- ggplot2::ggplot() + ggplot2::geom_line(data=dataIdx,ggplot2::aes(x=dataIdx$ts,y=dataIdx$min)) +
-        ggplot2::geom_point(data=dataIdx,ggplot2::aes(x=dataIdx$ts,y=dataIdx$min)) +
-        ggplot2::labs(title=nameVarsIdx,x="Date/Time",y="Minimum") + ggplot2::theme_bw() +
-        ggplot2::geom_point(ggplot2::aes(x=dataIdx$ts[dataIdx[,"qfFinl"]==1],y=dataIdx$min[dataIdx[,"qfFinl"]==1]),color="red") 
+      plotMin <- ggplot2::ggplot() + ggplot2::geom_line(data=dataIdx,ggplot2::aes(x=dataIdx$time,y=dataIdx$min)) +
+        ggplot2::geom_point(data=dataIdx,ggplot2::aes(x=dataIdx$time,y=dataIdx$min)) +
+        ggplot2::labs(title=nameVarIdx,x="Date/Time",y="Minimum") + ggplot2::theme_bw() +
+        ggplot2::geom_point(ggplot2::aes(x=dataIdx$time[dataIdx[,"qfFinl"]==1],y=dataIdx$min[dataIdx[,"qfFinl"]==1]),color="red") 
     }
 
     
     if(base::sum(dataIdx$max,na.rm=TRUE) == 0) {
       # No non-NA data, generate empty plot
-      plotMax <- ggplot2::ggplot(data=dataIdx,ggplot2::aes(x=ts)) + ggplot2::geom_blank() + 
+      plotMax <- ggplot2::ggplot(data=dataIdx,ggplot2::aes(x=time)) + ggplot2::geom_blank() + 
         ggplot2::labs(title=" ",x="Date/Time",y="Maximum") + ggplot2::theme_bw()
     } else {
       # Data to plot!
-      plotMax <- ggplot2::ggplot() + ggplot2::geom_line(data=dataIdx,ggplot2::aes(x=dataIdx$ts,y=dataIdx$max)) +
-        ggplot2::geom_point(data=dataIdx,ggplot2::aes(x=dataIdx$ts,y=dataIdx$max)) + 
+      plotMax <- ggplot2::ggplot() + ggplot2::geom_line(data=dataIdx,ggplot2::aes(x=dataIdx$time,y=dataIdx$max)) +
+        ggplot2::geom_point(data=dataIdx,ggplot2::aes(x=dataIdx$time,y=dataIdx$max)) + 
         ggplot2::labs(title=" ",x="Date/Time",y="Maximum") + ggplot2::theme_bw() +
-        ggplot2::geom_point(ggplot2::aes(x=dataIdx$ts[dataIdx[,"qfFinl"]==1],y=dataIdx$max[dataIdx[,"qfFinl"]==1]),color="red") 
+        ggplot2::geom_point(ggplot2::aes(x=dataIdx$time[dataIdx[,"qfFinl"]==1],y=dataIdx$max[dataIdx[,"qfFinl"]==1]),color="red") 
     }
     
     
     if(base::sum(dataIdx$var,na.rm=TRUE) == 0) {
       # No non-NA data, generate empty plot
-      plotVar <- ggplot2::ggplot(data=dataIdx,ggplot2::aes(x=ts)) + ggplot2::geom_blank() + 
+      plotVar <- ggplot2::ggplot(data=dataIdx,ggplot2::aes(x=time)) + ggplot2::geom_blank() + 
         ggplot2::labs(title=" ",x="Date/Time",y="Variance") + ggplot2::theme_bw()
     } else {
       # Data to plot!
-      plotVar <- ggplot2::ggplot() + ggplot2::geom_line(data=dataIdx,ggplot2::aes(x=dataIdx$ts,y=dataIdx$var)) +
-        ggplot2::geom_point(data=dataIdx,ggplot2::aes(x=dataIdx$ts,y=dataIdx$var)) + 
+      plotVar <- ggplot2::ggplot() + ggplot2::geom_line(data=dataIdx,ggplot2::aes(x=dataIdx$time,y=dataIdx$var)) +
+        ggplot2::geom_point(data=dataIdx,ggplot2::aes(x=dataIdx$time,y=dataIdx$var)) + 
         ggplot2::labs(title=" ",x="Date/Time",y="Variance") + ggplot2::theme_bw() +
-        ggplot2::geom_point(ggplot2::aes(x=dataIdx$ts[dataIdx[,"qfFinl"]==1],y=dataIdx$var[dataIdx[,"qfFinl"]==1]),color="red") 
+        ggplot2::geom_point(ggplot2::aes(x=dataIdx$time[dataIdx[,"qfFinl"]==1],y=dataIdx$var[dataIdx[,"qfFinl"]==1]),color="red") 
     }
 
     if(base::sum(dataIdx$ste,na.rm=TRUE) == 0) {
       # No non-NA data, generate empty plot
-      plotSte <- ggplot2::ggplot(data=dataIdx,ggplot2::aes(x=ts)) + ggplot2::geom_blank() + 
+      plotSte <- ggplot2::ggplot(data=dataIdx,ggplot2::aes(x=time)) + ggplot2::geom_blank() + 
         ggplot2::labs(title=" ",x="Date/Time",y="Standard error") + ggplot2::theme_bw()
     } else {
       # Data to plot!
-      plotSte <- ggplot2::ggplot() + ggplot2::geom_line(data=dataIdx,ggplot2::aes(x=dataIdx$ts,y=dataIdx$ste)) +
-        ggplot2::geom_point(data=dataIdx,ggplot2::aes(x=dataIdx$ts,y=dataIdx$ste)) + 
+      plotSte <- ggplot2::ggplot() + ggplot2::geom_line(data=dataIdx,ggplot2::aes(x=dataIdx$time,y=dataIdx$ste)) +
+        ggplot2::geom_point(data=dataIdx,ggplot2::aes(x=dataIdx$time,y=dataIdx$ste)) + 
         ggplot2::labs(title=" ",x="Date/Time",y="Standard error") + ggplot2::theme_bw() +
-        ggplot2::geom_point(ggplot2::aes(x=dataIdx$ts[dataIdx[,"qfFinl"]==1],y=dataIdx$ste[dataIdx[,"qfFinl"]==1]),color="red") 
+        ggplot2::geom_point(ggplot2::aes(x=dataIdx$time[dataIdx[,"qfFinl"]==1],y=dataIdx$ste[dataIdx[,"qfFinl"]==1]),color="red") 
     }
     
 
     if(base::sum(dataIdx$numPts,na.rm=TRUE) == 0) {
       # No non-NA data, generate empty plot
-      plotNumPts <- ggplot2::ggplot(data=dataIdx,ggplot2::aes(x=ts)) + ggplot2::geom_blank() + 
+      plotNumPts <- ggplot2::ggplot(data=dataIdx,ggplot2::aes(x=time)) + ggplot2::geom_blank() + 
         ggplot2::labs(title=" ",x="Date/Time",y="Number of points") + ggplot2::theme_bw()
     } else {
       # Data to plot!
-      plotNumPts <- ggplot2::ggplot() + ggplot2::geom_line(data=dataIdx,ggplot2::aes(x=dataIdx$ts,y=dataIdx$numPts)) +
-        ggplot2::geom_point(data=dataIdx,ggplot2::aes(x=dataIdx$ts,y=dataIdx$numPts)) + 
+      plotNumPts <- ggplot2::ggplot() + ggplot2::geom_line(data=dataIdx,ggplot2::aes(x=dataIdx$time,y=dataIdx$numPts)) +
+        ggplot2::geom_point(data=dataIdx,ggplot2::aes(x=dataIdx$time,y=dataIdx$numPts)) + 
         ggplot2::labs(title=" ",x="Date/Time",y="Number of points") + ggplot2::theme_bw() +
-        ggplot2::geom_point(ggplot2::aes(x=dataIdx$ts[dataIdx[,"qfFinl"]==1],y=dataIdx$numPts[dataIdx[,"qfFinl"]==1]),color="red")
+        ggplot2::geom_point(ggplot2::aes(x=dataIdx$time[dataIdx[,"qfFinl"]==1],y=dataIdx$numPts[dataIdx[,"qfFinl"]==1]),color="red")
     }
     
       
@@ -188,46 +172,46 @@ def.plot.qfqm.dp01 <- function (
     posQmNa <- base::setdiff(posQmNa,base::union(posQmPass,posQmFail)) # Ensure QMs aren't chosen by accident due to "Na" being elsewhere in the name
     
     # Subset out the "pass", "fail", and "NA" quality metrics in long format
-    dataQmPass <- base::data.frame(ts=dataIdx$ts, dataIdx[,nameColsIdx[posQmPass]])
-    names(dataQmPass) <- base::c("ts",nameColsIdx[posQmPass])
-    dataQmPass <- reshape2::melt(dataQmPass,id="ts")
+    dataQmPass <- base::data.frame(time=dataIdx$time, dataIdx[,nameColsIdx[posQmPass]])
+    names(dataQmPass) <- base::c("time",nameColsIdx[posQmPass])
+    dataQmPass <- reshape2::melt(dataQmPass,id="time")
     dataQmPass$variable <- base::sub("Pass","",dataQmPass$variable) # get rid of the "Pass" in the QM name
     dataQmPass$variable <- base::sub("Pos","",dataQmPass$variable) # get rid of the "Pos" in the QM name
     
-    dataQmFail <- base::data.frame(ts=dataIdx$ts, dataIdx[,nameColsIdx[posQmFail]])
-    names(dataQmFail) <- base::c("ts",nameColsIdx[posQmFail])
-    dataQmFail <- reshape2::melt(dataQmFail,id="ts")
+    dataQmFail <- base::data.frame(time=dataIdx$time, dataIdx[,nameColsIdx[posQmFail]])
+    names(dataQmFail) <- base::c("time",nameColsIdx[posQmFail])
+    dataQmFail <- reshape2::melt(dataQmFail,id="time")
     dataQmFail$variable <- base::sub("Fail","",dataQmFail$variable) # get rid of the "Fail" in the QM name
     dataQmFail$variable <- base::sub("Pos","",dataQmFail$variable) # get rid of the "Pos" in the QM name
     
-    dataQmNa <- base::data.frame(ts=dataIdx$ts, dataIdx[,nameColsIdx[posQmNa]])
-    names(dataQmNa) <- base::c("ts",nameColsIdx[posQmNa])
-    dataQmNa <- reshape2::melt(dataQmNa,id="ts")
+    dataQmNa <- base::data.frame(time=dataIdx$time, dataIdx[,nameColsIdx[posQmNa]])
+    names(dataQmNa) <- base::c("time",nameColsIdx[posQmNa])
+    dataQmNa <- reshape2::melt(dataQmNa,id="time")
     dataQmNa$variable <- base::sub("Na","",dataQmNa$variable) # get rid of the "Na" in the QM name
     dataQmNa$variable <- base::sub("Pos","",dataQmNa$variable) # get rid of the "Pos" in the QM name
     
     
     # Plot the passing, failing, and na quality metrics
-    plotPass <- ggplot2::ggplot(dataQmPass,ggplot2::aes(x=ts,y=value,color=factor(variable)))+ggplot2::geom_line() + 
+    plotPass <- ggplot2::ggplot(dataQmPass,ggplot2::aes(x=time,y=value,color=factor(variable)))+ggplot2::geom_line() + 
       ggplot2::geom_point() + ggplot2::scale_color_discrete(name="QM") + ggplot2::theme_bw() + ggplot2::theme(legend.position="none") +
-      ggplot2::labs(title=paste("Indiv. quality metrics:",nameVarsIdx),y="% Pass",x=" ")
+      ggplot2::labs(title=paste("Indiv. quality metrics:",nameVarIdx),y="% Pass",x=" ")
     grobPass <- ggplot2::ggplotGrob(plotPass) # grab the grob for this plot for later manipulation
     
-    plotFail <- ggplot2::ggplot(dataQmFail,ggplot2::aes(x=ts,y=value,color=factor(variable)))+ggplot2::geom_line() +
+    plotFail <- ggplot2::ggplot(dataQmFail,ggplot2::aes(x=time,y=value,color=factor(variable)))+ggplot2::geom_line() +
       ggplot2::geom_point() + ggplot2::scale_color_discrete(name="QM") + ggplot2::theme_bw() + ggplot2::labs(y="% Fail",x=" ") +
       ggplot2::theme(legend.key=ggplot2::element_blank())
     grobFail <- ggplot2::ggplotGrob(plotFail) # grab the grob for this plot for later manipulation
     
-    plotNa <- ggplot2::ggplot(dataQmNa,ggplot2::aes(x=ts,y=value,color=factor(variable)))+ggplot2::geom_line() +
+    plotNa <- ggplot2::ggplot(dataQmNa,ggplot2::aes(x=time,y=value,color=factor(variable)))+ggplot2::geom_line() +
       ggplot2::geom_point() + ggplot2::scale_color_discrete(name="QM") + ggplot2::theme_bw() + ggplot2::labs(x="Date/Time",y="% NA") + 
       ggplot2::theme(legend.position="none")
     grobNa <- ggplot2::ggplotGrob(plotNa) # grab the grob for this plot for later manipulation
     
     # Adjust grobs and combine to align plots (since we want the legend only for the middle plot)
-    colGrobLeg <- 5 # where the legend width is located in grobFail
+    colGrobLeg <- which(!(grobFail$widths %in% grobPass$widths)) # where the legend width is located in grobFail
     distWdthLeg <- grobFail$widths[colGrobLeg] # Get legend width
-    grobPass <- gtable::gtable_add_cols(grobPass, distWdthLeg, colGrobLeg-1) # Add an entry for the legend width matching grobFail
-    grobNa <- gtable::gtable_add_cols(grobNa, distWdthLeg, colGrobLeg-1) # Add an entry for the legend width matching grobFail
+    grobPass <- gtable::gtable_add_cols(grobPass, distWdthLeg, colGrobLeg[1]-1) # Add an entry for the legend width matching grobFail
+    grobNa <- gtable::gtable_add_cols(grobNa, distWdthLeg, colGrobLeg[1]-1) # Add an entry for the legend width matching grobFail
     
     grobComb <- gtable:::rbind_gtable(grobPass,grobFail,"first") # Combine 1st 2 grobs
     grobComb <- gtable:::rbind_gtable(grobComb,grobNa,"first") # Add last grob
@@ -239,23 +223,23 @@ def.plot.qfqm.dp01 <- function (
 
     # Set up the alpha and beta metrics to plot
     # Subset out the alpha and beta quality metrics in long format
-    dataQmAlphBeta <- reshape2::melt(data.frame(ts=dataIdx$ts, dataIdx[,c("qmAlpha","qmBeta")]),id="ts")
+    dataQmAlphBeta <- reshape2::melt(data.frame(time=dataIdx$time, dataIdx[,c("qmAlpha","qmBeta")]),id="time")
 
     # Plot the passing, failing, and na quality metrics
-    plotAlphBeta <- ggplot2::ggplot(dataQmAlphBeta,ggplot2::aes(x=ts,y=value,color=factor(variable)))+ ggplot2::geom_line() +
+    plotAlphBeta <- ggplot2::ggplot(dataQmAlphBeta,ggplot2::aes(x=time,y=value,color=factor(variable)))+ ggplot2::geom_line() +
       ggplot2::geom_point() + ggplot2::scale_color_discrete(name="QM") + ggplot2::theme_bw() + ggplot2::theme(legend.key=ggplot2::element_blank()) +
-      ggplot2::labs(ggplot2::labs(title=paste("Final quality metrics:",nameVarsIdx),y="%",x=" "))
+      ggplot2::labs(ggplot2::labs(title=paste("Final quality metrics:",nameVarIdx),y="%",x=" "))
     grobAlphBeta <- ggplot2::ggplotGrob(plotAlphBeta) # grab the grob for this plot for later manipulation
     
-    plotFinl <- ggplot2::ggplot(dataIdx,ggplot2::aes(x=ts,y=qfFinl)) + ggplot2::geom_line() + ggplot2::geom_point() +
+    plotFinl <- ggplot2::ggplot(dataIdx,ggplot2::aes(x=time,y=qfFinl)) + ggplot2::geom_line() + ggplot2::geom_point() +
       ggplot2::theme_bw() + ggplot2::labs(y="Final QF",x="Date/Time") + ggplot2::theme(legend.key=ggplot2::element_blank()) +
       ggplot2::coord_cartesian(ylim=c(0,1)) + ggplot2::scale_y_continuous(breaks=c(0,1))
     grobFinl <- ggplot2::ggplotGrob(plotFinl) # grab the grob for this plot for later manipulation
     
     # Adjust grobs and combine to align plots (since we want the legend only for the top plot)
-    colGrobLeg <- 5 # where the legend width is located in grobAlphBeta
-    distWdthLeg <- grobFail$widths[colGrobLeg] # Get legend width
-    grobFinl <- gtable::gtable_add_cols(grobFinl, distWdthLeg, colGrobLeg-1) # Add an entry for the legend width matching grobAlphBeta
+    colGrobLeg <- which(!(grobAlphBeta$widths %in% grobFinl$widths)) # where the legend width is located in grobFail
+    distWdthLeg <- grobAlphBeta$widths[colGrobLeg] # Get legend width
+    grobFinl <- gtable::gtable_add_cols(grobFinl, distWdthLeg, colGrobLeg[1]-1) # Add an entry for the legend width matching grobAlphBeta
 
     grobCombFinl <- gtable:::rbind_gtable(grobAlphBeta,grobFinl,"first") # Combine grobs
 
