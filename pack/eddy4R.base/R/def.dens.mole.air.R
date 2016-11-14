@@ -8,7 +8,7 @@
 #' @description Function definition. Calculation of the molar density of the misxture of dry air and water vapor
 
 #' @param \code{presSum} A vector containing the total pressure of the air mixture, of class "numeric". [Pa]
-#' @param \code{tempMean} A vector containing the mean temperatrue of the air mixtureture, of class "numeric". [K]
+#' @param \code{tempMean} A vector containing the mean temperatrue of the air mixture, of class "numeric". [K]
 
 #' @return 
 #' The returned object is the the molar density of the mixture of dry air and water vapor  
@@ -20,14 +20,16 @@
 
 #' @examples
 #' Example 1, this will cause an error message due to tempIn and tempOut have no units: 
-#' def.temp.mean.7200(tempIn = 293, tempOut = 294)
+#' def.dens.mole.air(presSum = 86000, tempMean = 286, Rg = 8.314)
 
 #' Example 2, assign values and units to variables first, the function should run ok.
-#' tempIn = 293
-#' tempOut = 294
-#' attributes(tempIn)$unit = "K"
-#' attributes(tempOut)$unit = "K"
-#' def.temp.mean.7200(tempIn, tempOut)
+#' presSum = 86000
+#' tempMean = 286
+#' Rg = 8.314
+#' attributes(presSum)$unit = "Pa"
+#' attributes(tempMean)$unit = "K"
+#' attributes(Rg)$unit = "kg m2 s−2 K−1 kmole−1"
+#' def.dens.mole.air(presSum, tempMean, Rg)
 
 #' @seealso Currently none.
 
@@ -40,6 +42,53 @@
 #     adjust to eddy4R coding style
 ###############################################################################################
 
-# molar density of dry air and water vapor
-data$irga$rho_mole_air_7200 <- ff::as.ff(data$irga$p_cell_7200 / eddy4R.base::Natu$Rg / data$irga$T_cell_7200)
-base::attr(x = data$irga$rho_mole_air_7200, which = "unit") <- "mol m-3"
+# molar density of the mixture of dry air and water vapor
+def.dens.mole.air <- function(
+  
+  # total pressure of the air mixture 
+  presSum,
+  
+  # mean temperatrue of the air mixture
+  tempMean,
+  
+  # Universal gas constant
+  Rg
+  
+ 
+) {
+  
+  # test for presence of unit attribute
+
+  if(!("unit" %in% names(attributes(presSum)))) {
+    
+    stop("def.dens.mole.air(): presSum is missing unit attribute.")
+    
+  }
+  
+  # cell outlet temperature
+  if(!("unit" %in% names(attributes(tempMean)))) {
+    
+    stop("def.dens.mole.air(): tempMean is missing unit attribute.")
+    
+  }
+  
+  # test for correct units of input variables
+  if(attributes(presSum)$unit != "Pa" || attributes(tempMean)$unit != "K") {
+    
+    stop("def.dens.mole.air(): input units are not matching internal units, please check.")
+    
+  }
+  
+ 
+    # calculate the molar density of the mixture of dry air and water vapor
+    
+    densMoleAir <- presSum/Rg/tempMean
+                   
+  
+  # assign output unit
+  attributes(densMoleAir)$unit <- "mol m-3"
+  
+  # return results
+  return(densMoleAir) 
+  
+}
