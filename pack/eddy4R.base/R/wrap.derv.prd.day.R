@@ -96,8 +96,8 @@ wrap.derv.prd.day <- function(
     base::attr(x = data$irga$presH2oSat, which = "unit") <- "Pa"
     
     # calcuate RH
-    data$irga$RH_7200 <- ff::as.ff(def.rh.pres.h2o.pres.sat.h2o = data$irga$presH2o, presH2oSat = data$irga$presH2oSat))
-    base::attr(x = data$irga$RH_7200, which = "unit") <- "%"
+    data$irga$RH_7200 <- def.rh.pres.h2o.pres.sat.h2o(presH2o = data$irga$presH2o, presH2oSat = data$irga$presH2oSat)
+    
 
   # molar density of dry air and water vapor
   data$irga$rho_mole_air_7200 <- ff::as.ff(data$irga$p_cell_7200 / eddy4R.base::Natu$Rg / data$irga$T_cell_7200)
