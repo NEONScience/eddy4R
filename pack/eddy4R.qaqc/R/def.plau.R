@@ -175,8 +175,8 @@ def.plau <- function (
     
     # For Verbose option, output actual flag values
     if(Vrbs) {
-      qf[[idxVar]]$qfRng[posQfRng$fail[[idxVar]]] <- 1
-      qf[[idxVar]]$qfRng[posQfRng$na[[idxVar]]] <- -1
+      qf[[idxVar]]$qfRng[posQf[[idxVar]]$posQfRng$fail] <- 1
+      qf[[idxVar]]$qfRng[posQf[[idxVar]]$posQfRng$na] <- -1
     }
   }
   
@@ -382,8 +382,8 @@ def.plau <- function (
      
     # For Verbose option, output actual flag values
     if(Vrbs) {
-      qf[[idxVar]]$qfGap[posQfGap$fail[[idxVar]]] <- 1
-      qf[[idxVar]]$qfGap[posQfGap$na[[idxVar]]] <- -1
+      qf[[idxVar]]$qfGap[posQf[[idxVar]]$posQfGap$fail] <- 1
+      qf[[idxVar]]$qfGap[posQf[[idxVar]]$posQfGap$na] <- -1
     } 
   }
 
