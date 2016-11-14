@@ -49,17 +49,16 @@ def.rh.pres.h2o.pres.sat.h2o <- function(
 ) {
   
   # test for presence of unit attribute of input variables
-  # cell inlet temperature
+  
   if(!("unit" %in% names(attributes(presH2o)))) {
     
-    stop("def.rh.pres.h2o.pres.sat.h2o(): tempIn is missing unit attribute.")
+    stop("def.rh.pres.h2o.pres.sat.h2o(): presH2o is missing unit attribute.")
     
   }
   
-  # cell outlet temperature
   if(!("unit" %in% names(attributes(presH2oSat)))) {
     
-    stop("def.rh.pres.h2o.pres.sat.h2o(): tempOut is missing unit attribute.")
+    stop("def.rh.pres.h2o.pres.sat.h2o(): presH2oSat is missing unit attribute.")
     
   }
   
