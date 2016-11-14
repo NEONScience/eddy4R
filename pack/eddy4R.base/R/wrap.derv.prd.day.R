@@ -74,8 +74,8 @@ wrap.derv.prd.day <- function(
   base::attr(x = data$irga$RSSI_delta_7200, which = "unit") <- base::attr(x = data$irga$ssiCO2, which = "unit")
 
   # total pressure in irga cell
-  data$irga$p_cell_7200 <- ff::as.ff(def.pres.sum(presAtm = data$irga$presAtmBox,presDiff = data$irga$presGageCell))
-  base::attr(x = data$irga$p_cell_7200, which = "unit") <- base::attr(x = data$irga$presAtmBox, which = "unit")
+  data$irga$p_cell_7200 <- def.pres.sum(presAtm = data$irga$presAtmBox,presDiff = data$irga$presGageCell)
+  
 
   # average temperature in irga cell 
   data$irga$T_cell_7200 <- ff::as.ff(0.2 * data$irga$tempCellIn + 0.8 * data$irga$tempCellOut)
