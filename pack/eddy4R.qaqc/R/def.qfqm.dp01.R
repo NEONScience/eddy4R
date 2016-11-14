@@ -9,7 +9,8 @@
 
 #' @param data Required input. A data frame containing the L0 data evaluated (do not include the time stamp vector here). 
 #' @param time Optional. A time vector of class POSIXlt of times corresponding with each row in data. Defaults to an evenly spaced time vector starting from system time of execution by seconds. 
-#' @param posQf Optional. A list of named flags (standard or user-defined or names), each itself a list of flagged indices for each variable in data (ex. posQf$posQfStep$X and posQf$posQfStep$Y listing flagged positions for variables X and Y, respectively). Aggregated quality flags and metrics will be computed for all flags in this list, and all will be used to compute the final quality flag. This function directly accepts the output from def.plaus.R and def.dspk.wndw.R. Defaults to an empty flag list.
+#' @param posQf Optional. Only input ONE of either \code{posQf} or \code{qf}. # A named list of variables matching those in data, each itself a named list of flags (standard or user-defined names), with nested lists of $fail and $na vector positions of failed and na quality tests for that variable and flag (eg. posQf$X$posQfStep$fail and posQf$Y$posQfStep$na). Aggregated quality flags and metrics will be computed for all flags in this list, and all will be used to compute the final quality flag. This function directly accepts the output from def.plaus.R and def.dspk.wndw.R. Defaults to an empty flag list.
+#' @param qf Optional. Only input ONE of either \code{posQf} or \code{qf}. A list of variables matching those in data, each containing a data frame of quality flags for that variable. Number of rows must match that of \code{data}
 #' @param WndwAgr Optional. A difftime object of length equal to number of variables in data specifying the time interval for aggregating flags of each variable. Defaults to 1800 x median observed time difference. Class difftime can be generated using as.difftime.
 #' @param NameQfExcl Optional. A list of length equal to number of variables, each itself a vector of strings naming the flags (matching a subset of posQf) for which to exclude the flagged indices of each variable from the L1 average. Eg. NameQfExcl <- list(x=c("posQfRng","posQfStep"),y=c("posQfPers","posQfNull","posQfGap")). Note that variables in the list must be in the same order as those in data. Defaults to an empty list (flagged points are not excluded from the L1 average).
 
@@ -39,12 +40,15 @@
 #   Cove Sturtevant (2016-11-10)
 #     adjusted code to accept new output format from def.plau
 #     adjusted variable naming to conform to eddy4R coding convention
+#     added optional input of quality flags for either/or input instead of vector positions of 
+#         failed and na test results
 ##############################################################################################
 
 def.qfqm.dp01 <- function (
   data,             # a data frame containing the data to be evaluated (do not include the time stamp vector here). Required input.
   time = as.POSIXlt(seq.POSIXt(from=Sys.time(),by="sec",length.out=length(data[,1]))),  # time vector corresponding with the rows in data, in  Class "POSIXlt", which is a named list of vectors representing sec, min, hour,day,mon,year. Defaults to an evenly spaced time vector starting from execution by seconds.
-  posQf = vector("list",length(data)),    # A named list of variables matching those in data, each itself a named list of flags (standard or user-defined names), with nested lists of $fail and $na vector positions of failed and na quality tests for that variable and flag (eg. posQf$X$posQfStep$fail and posQf$Y$posQfStep$na). 
+  posQf = vector("list",length(data)),    # Only input ONE of either posQf or qf. A named list of variables matching those in data, each itself a named list of flags (standard or user-defined names), with nested lists of $fail and $na vector positions of failed and na quality tests for that variable and flag (eg. posQf$X$posQfStep$fail and posQf$Y$posQfStep$na). 
+  qf = vector("list",length(data)), # Only input ONE of either posQf or qf. A list of variables matching those in data, each containing a data frame of quality flags for that variable. Number of rows must match that of \code{data}
   WndwAgr = 1800*median(abs(diff(time)),na.rm=TRUE), # A difftime object of length 1 specifying the time interval for aggregating flags of each variable. 
   NameQfExcl = as.list(character(length=length(data))) # A list of length equal to number of variables, each itself a list of strings naming the flags (matching a subset of posQf) for which to exclude the flagged indices of each variable from the L1 average. 
 ) {
@@ -129,6 +133,27 @@ def.qfqm.dp01 <- function (
   
   # Take inventory of the flags we have and set up output naming
   dataAgr <- as.list(data) # copy variable names to output
+  
+  # If input is quality flags, turn it into positions of failed and na tests
+  if(sum(unlist(lapply(posQf,function(var){is.null(var)}))) == length(data)) {
+    for (idxVar in 1:length(data)) {
+      
+      # Intialize flags for this variable
+      numQf <- length(qf[[idxVar]])
+      posQf[[idxVar]] <- vector("list",numQf)
+      names(posQf[[idxVar]]) <- names(qf[[idxVar]])
+      
+      for (idxQf in 1:numQf) {
+        posQf[[idxVar]][[idxQf]] <- list(fail=numeric(0),na=numeric(0)) # initialize
+        
+        # Get positions of failed & na vector positions
+        posQf[[idxVar]][[idxQf]]$fail <- which(qf[[idxVar]][,idxQf] == 1) # fail
+        posQf[[idxVar]][[idxQf]]$na <- which(qf[[idxVar]][,idxQf] == 1) # na
+        
+      }
+      
+    }
+  }
   
   # Assign variable names to output and initialize
   for (idxVar in 1:length(data)) {
