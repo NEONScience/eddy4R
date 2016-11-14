@@ -42,57 +42,59 @@
 #     adjusted variable naming to conform to eddy4R coding convention
 #     added optional input of quality flags for either/or input instead of vector positions of 
 #         failed and na test results
+#   Cove Sturtevant (2016-11-14)
+#     adjust variable naming to conform to eddy4R coding style
 ##############################################################################################
 
 def.qfqm.dp01 <- function (
   data,             # a data frame containing the data to be evaluated (do not include the time stamp vector here). Required input.
-  time = as.POSIXlt(seq.POSIXt(from=Sys.time(),by="sec",length.out=length(data[,1]))),  # time vector corresponding with the rows in data, in  Class "POSIXlt", which is a named list of vectors representing sec, min, hour,day,mon,year. Defaults to an evenly spaced time vector starting from execution by seconds.
-  posQf = vector("list",length(data)),    # Only input ONE of either posQf or qf. A named list of variables matching those in data, each itself a named list of flags (standard or user-defined names), with nested lists of $fail and $na vector positions of failed and na quality tests for that variable and flag (eg. posQf$X$posQfStep$fail and posQf$Y$posQfStep$na). 
-  qf = vector("list",length(data)), # Only input ONE of either posQf or qf. A list of variables matching those in data, each containing a data frame of quality flags for that variable. Number of rows must match that of \code{data}
-  WndwAgr = 1800*median(abs(diff(time)),na.rm=TRUE), # A difftime object of length 1 specifying the time interval for aggregating flags of each variable. 
-  NameQfExcl = as.list(character(length=length(data))) # A list of length equal to number of variables, each itself a list of strings naming the flags (matching a subset of posQf) for which to exclude the flagged indices of each variable from the L1 average. 
+  time = base::as.POSIXlt(base::seq.POSIXt(from=base::Sys.time(),by="sec",length.out=base::length(data[,1]))),  # time vector corresponding with the rows in data, in  Class "POSIXlt", which is a named list of vectors representing sec, min, hour,day,mon,year. Defaults to an evenly spaced time vector starting from execution by seconds.
+  posQf = base::vector("list",base::length(data)),    # Only input ONE of either posQf or qf. A named list of variables matching those in data, each itself a named list of flags (standard or user-defined names), with nested lists of $fail and $na vector positions of failed and na quality tests for that variable and flag (eg. posQf$X$posQfStep$fail and posQf$Y$posQfStep$na). 
+  qf = base::vector("list",base::length(data)), # Only input ONE of either posQf or qf. A list of variables matching those in data, each containing a data frame of quality flags for that variable. Number of rows must match that of \code{data}
+  WndwAgr = 1800*base::median(base::abs(base::diff(time)),na.rm=TRUE), # A difftime object of length 1 specifying the time interval for aggregating flags of each variable. 
+  NameQfExcl = base::as.list(base::character(length=base::length(data))) # A list of length equal to number of variables, each itself a list of strings naming the flags (matching a subset of posQf) for which to exclude the flagged indices of each variable from the L1 average. 
 ) {
   
   
 # Error Checking ----------------------------------------------------------
 
   # Check data
-  if(missing("data") | !is.data.frame(data)) {
-    stop("Required input 'data' must be a data frame")
+  if(base::missing("data") | !base::is.data.frame(data)) {
+    base::stop("Required input 'data' must be a data frame")
   }
   
   # Check time
-  time <- try(as.POSIXlt(time),silent=TRUE)
-  if(class(time)[1] == "try-error"){
-    stop("Input variable time must be of class POSIXlt")
-  } else if (length(time) != length(data[,1])) {
-    stop("Length of input variable time must be equal to length of data.")
+  time <- base::try(base::as.POSIXlt(time),silent=TRUE)
+  if(base::class(time)[1] == "try-error"){
+    base::stop("Input variable time must be of class POSIXlt")
+  } else if (base::length(time) != base::length(data[,1])) {
+    base::stop("Length of input variable time must be equal to length of data.")
   } 
   
   # Check posQf
-  if(!is.list(posQf)) {
-    stop("Input list posQf must be a list. See documentation.")
-  } else if (length(posQf) != length(data)) {
-    warning("Input list posQf must have length equal to number of variables in data.")
+  if(!base::is.list(posQf)) {
+    base::stop("Input list posQf must be a list. See documentation.")
+  } else if (base::length(posQf) != base::length(data)) {
+    base::warning("Input list posQf must have length equal to number of variables in data.")
   }
   
   # Check WndwAgr
-  WndwAgr <- try(as.difftime(WndwAgr),silent=TRUE)
-  if(class(WndwAgr) == "try-error"){
-    stop("Input parameter WndwAgr must be a difftime object")
-  } else if (length(WndwAgr) != 1) {
-    warning("Length of input parameter WndwAgr is greater than 1. Using first element of WndwAgr for all variables.")
+  WndwAgr <- base::try(base::as.difftime(WndwAgr),silent=TRUE)
+  if(base::class(WndwAgr) == "try-error"){
+    base::stop("Input parameter WndwAgr must be a difftime object")
+  } else if (base::length(WndwAgr) != 1) {
+    base::warning("Length of input parameter WndwAgr is greater than 1. Using first element of WndwAgr for all variables.")
     WndwAgr <- WndwAgr[1]  
   } 
-  if (length(which(WndwAgr < median(abs(diff(time)),na.rm=TRUE)*rep.int(1,length(data)))) > 0) {
-    stop("Input parameter WndwAgr must be greater than the time interval of time")
+  if (base::length(base::which(WndwAgr < base::median(base::abs(base::diff(time)),na.rm=TRUE)*base::rep.int(1,base::length(data)))) > 0) {
+    base::stop("Input parameter WndwAgr must be greater than the time interval of time")
   }
   
   # Check NameQfExcl
-  if(!is.list(NameQfExcl)) {
-    stop("Input list NameQfExcl must be a list of length equal to the number of variables, each a list of strings naming the flags which exclude data from the L1 average.")
-  } else if (length(NameQfExcl) != length(data)) {
-    warning("Input parameter NameQfExcl does not contain entries for some or all variables. L1 averages for some variables may not be computed correctly.")
+  if(!base::is.list(NameQfExcl)) {
+    base::stop("Input list NameQfExcl must be a list of length equal to the number of variables, each a list of strings naming the flags which exclude data from the L1 average.")
+  } else if (base::length(NameQfExcl) != base::length(data)) {
+    base::warning("Input parameter NameQfExcl does not contain entries for some or all variables. L1 averages for some variables may not be computed correctly.")
   }
   
   
@@ -104,51 +106,57 @@ def.qfqm.dp01 <- function (
   # ... minutes, truncate to nearest hour.
   # ... hours or greater, truncate to nearest day
   # We will go back later and get rid of averaging intervals with no data in them
-  if (as.double(WndwAgr, units = "mins") <= 1) {
-    dateBgn <- trunc.POSIXt(time[1],units="mins") #Truncate to nearest minute
-  } else if (as.double(WndwAgr, units="hours") <= 1) {
-    dateBgn <- trunc.POSIXt(time[1],units="hours") #Truncate to nearest minute
+  if (base::as.double(WndwAgr, units = "mins") <= 1) {
+    dateBgn <- base::trunc.POSIXt(time[1],units="mins") #Truncate to nearest minute
+  } else if (base::as.double(WndwAgr, units="hours") <= 1) {
+    dateBgn <- base::trunc.POSIXt(time[1],units="hours") #Truncate to nearest minute
   } else {
-    dateBgn <- trunc.POSIXt(time[1],units="days") #Truncate to nearest minute
+    dateBgn <- base::trunc.POSIXt(time[1],units="days") #Truncate to nearest minute
   }
   
   # Time series of aggregation window starting points
-  timeAgrBgn <- as.POSIXlt(seq.POSIXt(from=dateBgn,to=time[length(time)],by=format(WndwAgr)))
+  timeAgrBgn <- base::as.POSIXlt(base::seq.POSIXt(from=dateBgn,to=time[base::length(time)],by=base::format(WndwAgr)))
   
   # Ammend starting point of aggregated time series to make sure start when there is data
   exstData <- FALSE
-  idxAggr <- 1
+  idxAgr <- 1
   while (!exstData) {
     
     # Do we have data points?
-    posData <- which((time >= timeAgrBgn[idxAggr]) & (time < timeAgrBgn[idxAggr]+WndwAgr))
+    posData <- base::which((base::time >= timeAgrBgn[idxAgr]) & (time < timeAgrBgn[idxAgr]+WndwAgr))
     
-    if (length(posData) == 0) {
-      idxAggr <- idxAggr+1
+    if (base::length(posData) == 0) {
+      idxAgr <- idxAgr+1
     } else {
       exstData <- TRUE
     }
   }
-  timeAgrBgn <- timeAgrBgn[idxAggr:length(timeAgrBgn)] # truncate aggregated time series vector
+  timeAgrBgn <- timeAgrBgn[idxAgr:length(timeAgrBgn)] # truncate aggregated time series vector
   
   # Take inventory of the flags we have and set up output naming
-  dataAgr <- as.list(data) # copy variable names to output
+  dataAgr <- base::as.list(data) # copy variable names to output
+  nameVar <- base::names(data)
+  numVar <- base::length(nameVar)
   
   # If input is quality flags, turn it into positions of failed and na tests
-  if(sum(unlist(lapply(posQf,function(var){is.null(var)}))) == length(data)) {
-    for (idxVar in 1:length(data)) {
+  if(base::sum(base::unlist(base::lapply(posQf,function(var){base::is.null(var)}))) == base::length(data)) {
+    
+    posQf <- base::vector("list",numVar) # Initialize
+    base::names(posQf) <- nameVar
+    
+    for (idxVar in nameVar) {
       
       # Intialize flags for this variable
-      numQf <- length(qf[[idxVar]])
-      posQf[[idxVar]] <- vector("list",numQf)
-      names(posQf[[idxVar]]) <- names(qf[[idxVar]])
+      numQf <- base::length(qf[[idxVar]])
+      posQf[[idxVar]] <- base::vector("list",numQf)
+      base::names(posQf[[idxVar]]) <- base::names(qf[[idxVar]])
       
       for (idxQf in 1:numQf) {
-        posQf[[idxVar]][[idxQf]] <- list(fail=numeric(0),na=numeric(0)) # initialize
+        posQf[[idxVar]][[idxQf]] <- base::list(fail=numeric(0),na=numeric(0)) # initialize
         
         # Get positions of failed & na vector positions
-        posQf[[idxVar]][[idxQf]]$fail <- which(qf[[idxVar]][,idxQf] == 1) # fail
-        posQf[[idxVar]][[idxQf]]$na <- which(qf[[idxVar]][,idxQf] == 1) # na
+        posQf[[idxVar]][[idxQf]]$fail <- base::which(qf[[idxVar]][,idxQf] == 1) # fail
+        posQf[[idxVar]][[idxQf]]$na <- base::which(qf[[idxVar]][,idxQf] == -1) # na
         
       }
       
@@ -156,37 +164,37 @@ def.qfqm.dp01 <- function (
   }
   
   # Assign variable names to output and initialize
-  for (idxVar in 1:length(data)) {
-    numFlgs <- length(posQf[[idxVar]]) # #flags we have
-    nameFlgs <- names(posQf[[1]]) # list of flag names
-    nameVarsOut <- c("mean","min","max","var","ste","numPts") # initialize the 1st 6 variable names in the output data
-    nameVarsOutQm <- c("Pass","Fail","Na") # 3 subvariables per quality metric
+  for (idxVar in 1:base::length(data)) {
+    numQf <- base::length(posQf[[idxVar]]) # #flags we have
+    nameQf <- base::names(posQf[[idxVar]]) # list of flag names
+    nameVarOut <- base::c("mean","min","max","var","ste","numPts") # initialize the 1st 6 variable names in the output data
+    nameVarOutQm <- base::c("Pass","Fail","Na") # 3 subvariables per quality metric
     
     # Put together output variable names
-    for (idxFlag in numeric(numFlgs)+1:numFlgs) {
+    for (idxQf in base::numeric(numQf)+1:numQf) {
     
-      tmp <- nameFlgs[idxFlag]
+      tmp <- base::nameQf[idxQf]
       # Get rid of leading "posQf" if using output from def.plau
-      if (regexpr(pattern="posQf",text=tmp,ignore.case=FALSE)[1] == 1) {
-        tmp <- sub(pattern="posQf", replacement="", x=tmp, ignore.case = FALSE, perl = FALSE,
+      if (base::regexpr(pattern="posQf",text=tmp,ignore.case=FALSE)[1] == 1) {
+        tmp <- base::sub(pattern="posQf", replacement="", x=tmp, ignore.case = FALSE, perl = FALSE,
                    fixed = FALSE, useBytes = FALSE)
       }
       # Get rid of leading "qf" if using other output 
-      if (regexpr(pattern="qf",text=tmp,ignore.case=FALSE)[1] == 1) {
-        tmp <- sub(pattern="qf", replacement="", x=tmp, ignore.case = FALSE, perl = FALSE,
+      if (base::regexpr(pattern="qf",text=tmp,ignore.case=FALSE)[1] == 1) {
+        tmp <- base::sub(pattern="qf", replacement="", x=tmp, ignore.case = FALSE, perl = FALSE,
                    fixed = FALSE, useBytes = FALSE)
       }
       
       
       for (idxQm in 1:3) {
-        nameVarsOut[6+(idxFlag-1)*3+idxQm] <- paste0("qm",tools::toTitleCase(tmp),nameVarsOutQm[idxQm],collapse ="")
+        nameVarOut[6+(idxQf-1)*3+idxQm] <- base::paste0("qm",tools::toTitleCase(tmp),nameVarOutQm[idxQm],collapse ="")
       }
     }
-    nameVarsOut <- c(nameVarsOut,"qmAlpha","qmBeta","qfFinl") # Add alpha QM, beta QM, and final quality flag
+    nameVarOut <- base::c(nameVarOut,"qmAlpha","qmBeta","qfFinl") # Add alpha QM, beta QM, and final quality flag
             
 
-    dataAgr[[idxVar]] <- data.frame(matrix(nrow=length(timeAgrBgn),ncol=6+3*numFlgs+3)) # 6 for mean/min/max/etc. 3*#flags for fail, pass, NA, and 3 for alpha & beta QMs and final QF
-    colnames(dataAgr[[idxVar]]) <- nameVarsOut
+    dataAgr[[idxVar]] <- base::data.frame(base::matrix(nrow=length(timeAgrBgn),ncol=6+3*numQf+3)) # 6 for mean/min/max/etc. 3*#flags for fail, pass, NA, and 3 for alpha & beta QMs and final QF
+    base::colnames(dataAgr[[idxVar]]) <- nameVarOut
   }
   
 
@@ -194,36 +202,34 @@ def.qfqm.dp01 <- function (
 
 
   # Get rid of points marked to exclude from L1 data
-  nameVars <- names(data)
-  for(idxVarData in nameVars) {
+  for(idxVar in nameVar) {
     
     # Check whether list of exclusion flags is named same as variables or whether 
     # we are using col index only
-    idxVarExcl <- which(names(NameQfExcl) == idxVarData)
-    if(length(idxVarExcl) != 1) {
+    idxVarExcl <- base::which(base::names(NameQfExcl) == idxVar)
+    if(base::length(idxVarExcl) != 1) {
       # Bummer, we don't have a variable name match, exit
-        stop("Cannot interpret which variables in input list NameQfExcl match to which data variables. Make sure each variable in data has a matching variable name in NameQfExcl, even if entry in NameQfExcl is an empty vector.")
+      base::stop("Cannot interpret which variables in input list NameQfExcl match to which data variables. Make sure each variable in data has a matching variable name in NameQfExcl, even if entry in NameQfExcl is an empty vector.")
     }
 
     
     # Remove bad data points
-    for (idxFlagExcl in names(NameQfExcl[[idxVarExcl]])) {
+    for (idxQfExcl in NameQfExcl[[idxVarExcl]]) {
       
       # Make sure the flag in NameQfExcl has a matching flag in posQf
-      which(names(posQf[[idxVarData]]) == idxFlagExcl)
-      if(length(which(names(posQf[[idxVarData]]) == idxFlagExcl)) != 1) {
-        stop(paste0("Cannot find flag '",idxFlagExcl,"' (listed in input NameQfExcl for variable '",idxVarData,
+      if(base::length(base::which(base::names(posQf[[idxVar]]) == idxQfExcl)) != 1) {
+        base::stop(base::paste0("Cannot find flag '",idxQfExcl,"' (listed in input NameQfExcl for variable '",idxVar,
                        "') in input posQf"))
       }
       
       # Check whether we have access to failed indices for flag
-      if(length(which(names(posQf[[idxVarData]][[idxFlagExcl]]) == "fail")) == 1) {
+      if(base::length(base::which(base::names(posQf[[idxVar]][[idxQfExcl]]) == "fail")) != 1) {
         # Bummer, we don't have a variable name match, exit
-        stop(paste0("Cannot find list of failed vector positions for flag ",idxFlagExcl))
+        base::stop(base::paste0("Cannot find list of failed vector positions for flag ",idxQfExcl))
       }
       
       # If we made it this far, we found a list of indices to remove in this variable and flag. Let's do it.
-      data[[idxVarData]][posQf[[idxVarData]][[idxFlagExcl]]$fail] <- NA
+      data[[idxVar]][posQf[[idxVar]][[idxQfExcl]]$fail] <- NA
       
     }
   }
@@ -233,75 +239,75 @@ def.qfqm.dp01 <- function (
 # Compute aggregate stats -------------------------------------------------
 
   # Loop through each variable
-  for(idxVarData in nameVars) {
+  for(idxVar in nameVar) {
     
     # Loop through each aggregation window
-    for (idxAggr in 1:length(timeAgrBgn)) {
+    for (idxAgr in 1:base::length(timeAgrBgn)) {
       
       # Find data locations in window
-      posData <- which((time >= timeAgrBgn[idxAggr]) & (time < timeAgrBgn[idxAggr]+WndwAgr))
-      numDataAggr <- length(posData)
+      posData <- base::which((time >= timeAgrBgn[idxAgr]) & (time < timeAgrBgn[idxAgr]+WndwAgr))
+      numDataAgr <- base::length(posData)
       
       # If there is no data to process move to next aggregation window
-      if (numDataAggr == 0) {
+      if (numDataAgr == 0) {
         next
       }
       
       # Summary statistics
-      dataAgr[[idxVarData]]$mean[idxAggr] <- mean(data[[idxVarData]][posData],na.rm=TRUE) # Mean
+      dataAgr[[idxVar]]$mean[idxAgr] <- base::mean(data[[idxVar]][posData],na.rm=TRUE) # Mean
       # When calculating min & max, we want NA if there is no non-NA data
-      if (sum(!is.na(data[posData,idxVarData])) > 0) {
-        dataAgr[[idxVarData]]$min[idxAggr] <- min(data[[idxVarData]][posData],na.rm=TRUE) # Min 
-        dataAgr[[idxVarData]]$max[idxAggr] <- max(data[[idxVarData]][posData],na.rm=TRUE) # Max 
+      if (base::sum(!base::is.na(data[posData,idxVar])) > 0) {
+        dataAgr[[idxVar]]$min[idxAgr] <- base::min(data[[idxVar]][posData],na.rm=TRUE) # Min 
+        dataAgr[[idxVar]]$max[idxAgr] <- base::max(data[[idxVar]][posData],na.rm=TRUE) # Max 
       } else {
-        dataAgr[[idxVarData]]$min[idxAggr] <- NA
-        dataAgr[[idxVarData]]$max[idxAggr] <- NA
+        dataAgr[[idxVar]]$min[idxAgr] <- NA
+        dataAgr[[idxVar]]$max[idxAgr] <- NA
       }
-      dataAgr[[idxVarData]]$var[idxAggr] <- var(data[[idxVarData]][posData],na.rm=TRUE) # Variance      
-      dataAgr[[idxVarData]]$numPts[idxAggr] <- length(which(!is.na(data[[idxVarData]][posData]))) # number of non-na points      
-      dataAgr[[idxVarData]]$ste[idxAggr] <- sqrt(dataAgr[[idxVarData]]$var[idxAggr])/sqrt(dataAgr[[idxVarData]]$numPts[idxAggr]) # Standard error of the mean    
+      dataAgr[[idxVar]]$var[idxAgr] <- stats::var(data[[idxVar]][posData],na.rm=TRUE) # Variance      
+      dataAgr[[idxVar]]$numPts[idxAgr] <- base::length(base::which(!base::is.na(data[[idxVar]][posData]))) # number of non-na points      
+      dataAgr[[idxVar]]$ste[idxAgr] <- base::sqrt(dataAgr[[idxVar]]$var[idxAgr])/base::sqrt(dataAgr[[idxVar]]$numPts[idxAgr]) # Standard error of the mean    
       
       # Quality metrics
-      posAlpha <- numeric(0) # initialize locations for alpha QM
-      posBeta <- numeric(0) # initialize locations for beta QM
-      posBetaNull <- numeric(0) # initialize beta locations attributed to null points
-      for (idxFlag in 1:length(names(posQf[[idxVarData]]))){
-        nameFlag <- names(posQf[[idxVarData]])[idxFlag]
+      posAlpha <- base::numeric(0) # initialize locations for alpha QM
+      posBeta <- base::numeric(0) # initialize locations for beta QM
+      posBetaNull <- base::numeric(0) # initialize beta locations attributed to null points
+      for (idxQf in 1:base::length(base::names(posQf[[idxVar]]))){
+        nameQf <- base::names(posQf[[idxVar]])[idxQf]
 
         # Pass
-        dataAgr[[idxVarData]][[6+(idxFlag-1)*3+1]][idxAggr] <- length(setdiff(posData,
-            union(posQf[[idxVar]][[idxFlag]]$fail,posQf[[idxVar]][[idxFlag]]$na)))/numDataAggr*100
+        dataAgr[[idxVar]][[6+(idxQf-1)*3+1]][idxAgr] <- base::length(base::setdiff(posData,
+            base::union(posQf[[idxVar]][[nameQf]]$fail,posQf[[idxVar]][[nameQf]]$na)))/numDataAgr*100
         # Fail
-        dataAgr[[idxVarData]][[6+(idxFlag-1)*3+2]][idxAggr] <- length(intersect(posData,
-            posQf[[idxVar]][[idxFlag]]$fail))/numDataAggr*100
+        dataAgr[[idxVar]][[6+(idxQf-1)*3+2]][idxAgr] <- base::length(base::intersect(posData,
+            posQf[[idxVar]][[nameQf]]$fail))/numDataAgr*100
         # NA
-        dataAgr[[idxVarData]][[6+(idxFlag-1)*3+3]][idxAggr] <- length(intersect(posData,
-            posQf[[idxVar]][[idxFlag]]$na))/numDataAggr*100
+        dataAgr[[idxVar]][[6+(idxQf-1)*3+3]][idxAgr] <- base::length(base::intersect(posData,
+            posQf[[idxVar]][[nameQf]]$na))/numDataAgr*100
         
         # Keep a running tally of alpha and beta locations
-        posAlpha <- union(posAlpha,intersect(posData,posQf[[idxVar]][[idxFlag]]$fail))
-        posBeta <- union(posBeta,intersect(posData,posQf[[idxVar]][[idxFlag]]$na))
-        if (length(grep("null",nameFlag,ignore.case=TRUE)) != 0)  {
+        posAlpha <- base::union(posAlpha,base::intersect(posData,posQf[[idxVar]][[nameQf]]$fail))
+        posBeta <- base::union(posBeta,base::intersect(posData,posQf[[idxVar]][[nameQf]]$na))
+        if (base::length(base::grep("null",nameQf,ignore.case=TRUE)) != 0)  {
           # We want to exclude beta points attributed to null flag, so save null points for later
-          posBetaNull <- union(posBetaNull,intersect(posData,posQf[[idxVar]][[idxFlag]]$fail))
+          posBetaNull <- base::union(posBetaNull,base::intersect(posData,posQf[[idxVar]][[nameQf]]$fail))
         }
       }
 
       # Tally up the alpha & beta QMs
-      dataAgr[[idxVarData]]$qmAlpha[idxAggr] <- length(posAlpha)/numDataAggr*100
-      posBeta <- setdiff(posBeta,posBetaNull) # exclude beta locations attributed to null test
-      dataAgr[[idxVarData]]$qmBeta[idxAggr] <- length(posBeta)/numDataAggr*100
+      dataAgr[[idxVar]]$qmAlpha[idxAgr] <- base::length(posAlpha)/numDataAgr*100
+      posBeta <- base::setdiff(posBeta,posBetaNull) # exclude beta locations attributed to null test
+      dataAgr[[idxVar]]$qmBeta[idxAgr] <- base::length(posBeta)/numDataAgr*100
       
     }
     
     # Compute final quality flag
-    dataAgr[[idxVarData]]$qfFinl[(2*dataAgr[[idxVarData]]$qmAlpha + dataAgr[[idxVarData]]$qmBeta) >= 20] <- 1
-    dataAgr[[idxVarData]]$qfFinl[(2*dataAgr[[idxVarData]]$qmAlpha + dataAgr[[idxVarData]]$qmBeta) < 20] <- 0
+    dataAgr[[idxVar]]$qfFinl[(2*dataAgr[[idxVar]]$qmAlpha + dataAgr[[idxVar]]$qmBeta) >= 20] <- 1
+    dataAgr[[idxVar]]$qfFinl[(2*dataAgr[[idxVar]]$qmAlpha + dataAgr[[idxVar]]$qmBeta) < 20] <- 0
   }
   
   
   
   # Return results
-  return(list(timeAgrBgn=timeAgrBgn,dataAgr=dataAgr))
+  return(base::list(timeAgrBgn=timeAgrBgn,dataAgr=dataAgr))
   
 }
