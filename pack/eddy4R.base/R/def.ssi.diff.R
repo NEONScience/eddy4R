@@ -20,6 +20,7 @@
 #' @examples
 # example 1 (This will give error message becuase ssiCo2 and ssiH2o have no units):
 # def.ssi.diff(ssiCo2 = 0.550, ssiH2o =0.561) 
+
 # example 2 (Assign the units and values to the variable before run function, which shoudl work fine.)
 # ssiCo2 =0.550
 # ssiH2o = 0.561 
@@ -45,7 +46,22 @@ def.ssi.diff <- function(
   ssiH2o
 ) {
   
-  # test for correct units of input variables
+  # test for presence of unit attribute
+  # CO2 signal strength
+  if(!("unit" %in% names(attributes(ssiCo2)))) {
+    
+    stop("def.ssi.diff(): ssiCo2 is missing unit attribute.")
+    
+  }
+  
+  # H2O signal strength
+  if(!("unit" %in% names(attributes(ssiH2o)))) {
+    
+    stop("def.ssi.diff(): ssiH2o is missing unit attribute.")
+    
+  }
+  
+   # test for correct units of input variables
   
   if(attributes(ssiCo2)$unit != "-" || attributes(ssiH2o)$unit != "-") {
     
