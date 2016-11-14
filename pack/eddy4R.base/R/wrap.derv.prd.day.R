@@ -64,9 +64,11 @@ wrap.derv.prd.day <- function(
 #irga
 
   # average signal strength
-  data$irga$RSSI_mean_7200 <- ff::as.ff((data$irga$ssiCO2 + data$irga$ssiH2O) / 2)
-  base::attr(x = data$irga$RSSI_mean_7200, which = "unit") <- base::attr(x = data$irga$ssiCO2, which = "unit")
 
+  data$irga$RSSI_mean_7200 <- ff::as.ff(def.ssi.mean(ssiCo2 = data$irga$ssiCO2,
+                                                     ssiH2o = data$irga$ssiH2O))
+  base::attr(x = data$irga$RSSI_mean_7200, which = "unit") <- base::attr(x = data$irga$ssiCO2, which = "unit")
+  
   # delta signal strength
   data$irga$RSSI_delta_7200 <- ff::as.ff(def.ssi.diff(ssiCo2 = data$irga$ssiCO2, ssiH2o = data$irga$ssiH2O))
   base::attr(x = data$irga$RSSI_delta_7200, which = "unit") <- base::attr(x = data$irga$ssiCO2, which = "unit")
