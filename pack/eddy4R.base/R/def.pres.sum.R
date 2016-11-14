@@ -51,15 +51,17 @@ def.pres.sum <- function(
 ) {
   
   # test if units exist for input variables
-   if(!("units" %in% attributes(presAtm)$unit)) {
+  if(!("unit" %in% names(attributes(presAtm)))) {
     
-    stop("presAtm has no input unit! Please check.")
+    stop("def.pres.dum(): presAtm is missing unit attribute.")
   }
   
-  #if(!("units" %in% attributes(presDiff)$unit)) {
+  if(!("unit" %in% names(attributes(presDiff)))) {
     
-  #  stop("presDiff has no input unit! Please check.")
-  #}
+    stop("def.pres.dum(): presDiff is missing unit attribute.")
+  }
+  
+  
   
     # test for correct units of input variables
   
@@ -67,7 +69,7 @@ def.pres.sum <- function(
     
     stop("def.pres.sum(): input units are not matching internal units, please check.")
     
-  } else {
+  } 
     
     # calculate total pressure in LI-7200 IRGA cell
     presSum <- (presAtm + presDiff)
@@ -78,5 +80,5 @@ def.pres.sum <- function(
     # return results
     return(presSum) 
     
-  }
+  
 }
