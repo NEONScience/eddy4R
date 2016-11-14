@@ -48,13 +48,28 @@ def.rh.pres.h2o.pres.sat.h2o <- function(
   
 ) {
   
-  # test for correct units of input variables
+  # test for presence of unit attribute of input variables
+  # cell inlet temperature
+  if(!("unit" %in% names(attributes(presH2o)))) {
+    
+    stop("def.rh.pres.h2o.pres.sat.h2o(): tempIn is missing unit attribute.")
+    
+  }
+  
+  # cell outlet temperature
+  if(!("unit" %in% names(attributes(presH2oSat)))) {
+    
+    stop("def.rh.pres.h2o.pres.sat.h2o(): tempOut is missing unit attribute.")
+    
+  }
+  
+   # test for correct units of input variables
   
   if(attributes(presH2o)$unit != "Pa" || attributes(presH2oSat)$unit != "Pa") {
     
     stop("def.rh.pres.h2o.pres.sat.h2o(): input units are not matching internal units, please check.")
     
-  } else {
+  } 
     
     # calculate the RH
     rh <- (presH2o / presH2oSat * 100)
@@ -65,7 +80,6 @@ def.rh.pres.h2o.pres.sat.h2o <- function(
     # return results
     return(rh) 
     
-  }
 }
 
 
