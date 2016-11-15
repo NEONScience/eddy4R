@@ -51,7 +51,7 @@ def.qfqm.dp01 <- function (
   time = base::as.POSIXlt(base::seq.POSIXt(from=base::Sys.time(),by="sec",length.out=base::length(data[,1]))),  # time vector corresponding with the rows in data, in  Class "POSIXlt", which is a named list of vectors representing sec, min, hour,day,mon,year. Defaults to an evenly spaced time vector starting from execution by seconds.
   posQf = base::vector("list",base::length(data)),    # Only input ONE of either posQf or qf. A named list of variables matching those in data, each itself a named list of flags (standard or user-defined names), with nested lists of $fail and $na vector positions of failed and na quality tests for that variable and flag (eg. posQf$X$posQfStep$fail and posQf$Y$posQfStep$na). 
   qf = base::vector("list",base::length(data)), # Only input ONE of either posQf or qf. A list of variables matching those in data, each containing a data frame of quality flags for that variable. Number of rows must match that of \code{data}
-  WndwAgr = 1800*base::median(base::abs(base::diff(time)),na.rm=TRUE), # A difftime object of length 1 specifying the time interval for aggregating flags of each variable. 
+  WndwAgr = 1800*stats::median(base::abs(base::diff(time)),na.rm=TRUE), # A difftime object of length 1 specifying the time interval for aggregating flags of each variable. 
   NameQfExcl = base::as.list(base::character(length=base::length(data))) # A list of length equal to number of variables, each itself a list of strings naming the flags (matching a subset of posQf) for which to exclude the flagged indices of each variable from the L1 average. 
 ) {
   
@@ -86,7 +86,7 @@ def.qfqm.dp01 <- function (
     base::warning("Length of input parameter WndwAgr is greater than 1. Using first element of WndwAgr for all variables.")
     WndwAgr <- WndwAgr[1]  
   } 
-  if (base::length(base::which(WndwAgr < base::median(base::abs(base::diff(time)),na.rm=TRUE)*base::rep.int(1,base::length(data)))) > 0) {
+  if (base::length(base::which(WndwAgr < stats::median(base::abs(base::diff(time)),na.rm=TRUE)*base::rep.int(1,base::length(data)))) > 0) {
     base::stop("Input parameter WndwAgr must be greater than the time interval of time")
   }
   
