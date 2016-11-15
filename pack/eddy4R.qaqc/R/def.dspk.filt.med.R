@@ -55,7 +55,8 @@
 #' @return \code{posThshBinMinFinl} Integer. Final minimum threshold index of histogram bin within \code{histDiffFinl} for spike determination 
 #' @return \code{posThshBinMaxFinl} Integer. Final maximum threshold index of histogram bin within \code{histDiffFinl} for spike determination 
 #' @return \code{posSpk} Indices of determined spikes within \code{dataIn}
-#' 
+#' @return \code{qfSpk} Integer. Quality flag values [-1,0,1] for despike test, matching same size as \code{dataIn}
+#'  
 #' 
 #' @references
 #' license: Terms of use of the NEON FIU algorithm repository dated 2015-01-16 \cr
@@ -63,6 +64,8 @@
 #' Starkenburg, D. et al. Assessment of Despiking Methods for Turbulence Data in Micrometeorology. J. Atmos. Oceanic Technol. 33, 2001–2013 (2016). \cr
 #' Vickers, D. & Mahrt, L. Quality control and flux sampling problems for tower and aircraft data. in 512–526 (Amer Meteorological Soc, 1997). \cr
 #' Mauder, M. and Foken, T. Documentation and instruction manual of the edy covariance software package TK3. Arbeitsergebn. Univ Bayreuth. Abt Mikrometeorol. ISSN 1614-8916, 46:58 pp. (2011)
+#' NEON Algorithm Theoretical Basis Document: Quality Flags and Quality Metrics for TIS Data Products (NEON.DOC.001113) \cr
+
 
 #' @keywords Currently none
 
@@ -79,7 +82,8 @@
 #     re-formualtion as function() to allow packaging
 #   Cove Sturtevant (2016-09-21)
 #     conform to eddy4R coding style
-#     
+#   Cove Sturtevant (2016-11-09)
+#     added output of quality flag values for Despike test
 ##############################################################################################
 
 def.dspk.filt.med <- function(
@@ -291,7 +295,11 @@ def.dspk.filt.med <- function(
   #no non-NAs in dataset
   ###
   
-  
+  # Create vector of quality flag values [-1,0,1]
+  rpt$qfSpk <- dataIn # initialize size of output
+  rpt$qfSpk[] <- 0 # start with all flags not raised
+  rpt$qfSpk[base::is.na(rpt$dataIn)] <- -1 # 'could not evaluate' flag for original NA values
+  rpt$qfSpk[rpt$posSpk] <- 1 # raise flag for determined spikes
   
 #  #print message to screen
 #    print(paste("De-spiking completed, ", rpt$numSpk, " spikes have been removed", sep=""))

@@ -32,7 +32,7 @@
 #' out <- def.qf.finl(data=test$qf, rtioAlphBeta=c(2,1), thsh=20)
 
 #' @seealso 
-#' \code{\link[eddy4R.qaqc]{def.qfqm.l1}} \cr
+#' \code{\link[eddy4R.qaqc]{def.qfqm.dp01}} \cr
 #' \code{\link[eddy4R.qaqc]{def.qm}} \cr
 
 #' @export
