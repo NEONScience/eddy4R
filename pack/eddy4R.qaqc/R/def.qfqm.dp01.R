@@ -123,7 +123,7 @@ def.qfqm.dp01 <- function (
   while (!exstData) {
     
     # Do we have data points?
-    posData <- base::which((base::time >= timeAgrBgn[idxAgr]) & (time < timeAgrBgn[idxAgr]+WndwAgr))
+    posData <- base::which((time >= timeAgrBgn[idxAgr]) & (time < timeAgrBgn[idxAgr]+WndwAgr))
     
     if (base::length(posData) == 0) {
       idxAgr <- idxAgr+1
@@ -173,7 +173,7 @@ def.qfqm.dp01 <- function (
     # Put together output variable names
     for (idxQf in base::numeric(numQf)+1:numQf) {
     
-      tmp <- base::nameQf[idxQf]
+      tmp <- nameQf[idxQf]
       # Get rid of leading "posQf" if using output from def.plau
       if (base::regexpr(pattern="posQf",text=tmp,ignore.case=FALSE)[1] == 1) {
         tmp <- base::sub(pattern="posQf", replacement="", x=tmp, ignore.case = FALSE, perl = FALSE,
