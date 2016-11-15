@@ -120,6 +120,8 @@
 #   Cove Sturtevant (2016-08-25)
 #     fixed potential hazard when applying polynomial conversion coefficients AND unit string 
 #        conversion. If unit string wasn't recognized, the polynomial was still applied.
+#   Cove Sturtevant (2016-11-03)
+#     added catch for when input 'data' is NULL
 ##############################################################################################
 
 def.conv.unit <- function(
@@ -129,6 +131,11 @@ def.conv.unit <- function(
   coefPoly=base::lapply(base::as.data.frame(data),function(x) c(0,1)),
   vrbs=FALSE
   ) {
+  
+  # Make sure data is not NULL
+  if(is.null(data)) {
+    base::stop("Required input variable \'data\' cannot be NULL. Check inputs.",call. = FALSE)
+  }
   
   # Check whether we have a vector input for data. If so, we will 
   # return the converted output in the same format
