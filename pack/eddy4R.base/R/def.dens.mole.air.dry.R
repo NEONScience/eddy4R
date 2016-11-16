@@ -40,6 +40,49 @@
 #     adjust to eddy4R coding style
 ###############################################################################################
 
-# molar density of dry air alone
-data$irga$rho_mole_dry_7200 <- ff::as.ff(data$irga$rho_mole_air_7200 - data$irga$densMoleH2o)
-base::attr(x = data$irga$rho_mole_dry_7200, which = "unit") <- "mol m-3"
+# molar density of the mixture of dry air and water vapor
+def.dens.mole.air.dry <- function(
+  
+  # total pressure of the air mixture 
+  densMoleAir,
+  
+  # mean temperatrue of the air mixture
+  densMoleH2o,
+  
+) {
+  
+  # test for presence of unit attribute
+  
+  if(!("unit" %in% names(attributes(densMoleAir)))) {
+    
+    stop("def.dens.mole.air.dry(): densMoleAir is missing unit attribute.")
+    
+  }
+  
+  # cell outlet temperature
+  if(!("unit" %in% names(attributes(densMoleH2o)))) {
+    
+    stop("def.dens.mole.air.dry(): densMoleH2o is missing unit attribute.")
+    
+  }
+  
+  # test for correct units of input variables
+  if(attributes(densMoleAir)$unit != "mol m-3" || attributes(densMoleH2o)$unit != "mol m-3") {
+    
+    stop("def.dens.mole.air(): input units are not matching internal units, please check.")
+    
+  }
+  
+  
+  # calculate the molar density of the dry air alone
+  
+  densMoleAirDry <- (densMoleAir - densMoleH2o)
+  
+  
+  # assign output unit
+  attributes(densMoleAirDry)$unit <- "mol m-3"
+  
+  # return results
+  return(densMoleAirDry) 
+  
+}
