@@ -65,7 +65,7 @@ def.dens.mole.air <- function(
     
   }
   
-  # cell outlet temperature
+
   if(!("unit" %in% names(attributes(tempMean)))) {
     
     stop("def.dens.mole.air(): tempMean is missing unit attribute.")
