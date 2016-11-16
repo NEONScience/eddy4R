@@ -40,14 +40,14 @@
 #     adjust to eddy4R coding style
 ###############################################################################################
 
-# molar density of the mixture of dry air and water vapor
+# Function to calculate the molar density of the dry air alone
 def.dens.mole.air.dry <- function(
   
-  # total pressure of the air mixture 
+  # mole density of the air mixture (includes dry air and water vapor) 
   densMoleAir,
   
-  # mean temperatrue of the air mixture
-  densMoleH2o,
+  # water vapor mole density of the air mixture
+  densMoleH2o
   
 ) {
   
@@ -59,7 +59,7 @@ def.dens.mole.air.dry <- function(
     
   }
   
-  # cell outlet temperature
+
   if(!("unit" %in% names(attributes(densMoleH2o)))) {
     
     stop("def.dens.mole.air.dry(): densMoleH2o is missing unit attribute.")
@@ -67,11 +67,11 @@ def.dens.mole.air.dry <- function(
   }
   
   # test for correct units of input variables
-  if(attributes(densMoleAir)$unit != "mol m-3" || attributes(densMoleH2o)$unit != "mol m-3") {
+ # if(attributes(densMoleAir)$unit != "mol m-3" || attributes(densMoleH2o)$unit != "mol m-3") {
     
-    stop("def.dens.mole.air(): input units are not matching internal units, please check.")
+  #  stop("def.dens.mole.air.dry(): input units are not matching internal units, please check.")
     
-  }
+  #}
   
   
   # calculate the molar density of the dry air alone
