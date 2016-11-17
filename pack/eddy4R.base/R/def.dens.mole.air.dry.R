@@ -8,7 +8,7 @@
 #' @description Function definition. Calculation of the molar density of the mdry air alone
 
 #' @param \code{densMoleAir} A vector containing the mole density of the air mixture (includes dry air and water vapor), of class "numeric". [mol m-3]
-#' @param \code{densMoleH2o} A vector containing the water vapor mole density of the air mixture, of class "numeric". [mol m-3]
+#' @param \code{densMoleH2o} A vector containing the water vapor mole density of the air mixture, of class "numeric". [molH2o m-3]
 
 #' @return 
 #' The returned object is the the molar density of the dry air alone  
@@ -20,13 +20,13 @@
 
 #' @examples
 #' Example 1, this will cause an error message due to densMoleAir and densMoleH2o have no units: 
-#' def.dens.mole.air.dry(densMoleAir = 41.38, densMoleH2o = 286)
+#' def.dens.mole.air.dry(densMoleAir = 37.9, densMoleH2o = 0.3)
 
 #' Example 2, assign values and units to variables first, the function should run ok.
-#' densMoleAir = 86000
-#' densMoleH2o = 286
+#' densMoleAir = 37.9
+#' densMoleH2o = 0.3
 #' attributes(densMoleAir)$unit = "mol m-3"
-#' attributes(densMoleH2o)$unit = "mol m-3"
+#' attributes(densMoleH2o)$unit = "molH2o m-3"
 #' def.dens.mole.air.dry(densMoleAir, densMoleH2o)
 
 #' @seealso Currently none.
@@ -67,11 +67,11 @@ def.dens.mole.air.dry <- function(
   }
   
   # test for correct units of input variables
- # if(attributes(densMoleAir)$unit != "mol m-3" || attributes(densMoleH2o)$unit != "mol m-3") {
+  if(attributes(densMoleAir)$unit != "mol m-3" || attributes(densMoleH2o)$unit != "molH2o m-3") {
     
-  #  stop("def.dens.mole.air.dry(): input units are not matching internal units, please check.")
+    stop("def.dens.mole.air.dry(): input units are not matching internal units, please check.")
     
-  #}
+  }
   
   
   # calculate the molar density of the dry air alone
