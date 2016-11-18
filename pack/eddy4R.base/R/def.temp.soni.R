@@ -42,56 +42,49 @@
 #     adjust to eddy4R coding style
 ###############################################################################################
 
-# sonic temperature from speed of sound 
-data$soni$T_SONIC <- ff::as.ff(data$soni$veloSoni^2 / eddy4R.base::Natu$GmmaDry / 
-                                 (eddy4R.base::Natu$Rg / eddy4R.base::Natu$MolmDry))
-base::attr(x = data$soni$T_SONIC, which = "unit") <- "K"
-
-
-
-
+# Function to calculate sonic temperature from speed of sound 
 def.temp.soni <- function(
   
   # speed of sound 
   veloSoni,
   
-  # water vapor mole density of the air mixture
-  densMoleH2o
+  # ratio of specific heat of dry air
+  GammaDry,
+  
+  # universal gas constant
+  Rg,
+  
+  # molar mass of air constituent (dry air in this case)
+  Molm
   
 ) {
   
   # test for presence of unit attribute
   
-  if(!("unit" %in% names(attributes(densMoleAir)))) {
+  if(!("unit" %in% names(attributes(veloSoni)))) {
     
-    stop("def.dens.mole.air.dry(): densMoleAir is missing unit attribute.")
-    
-  }
-  
-  
-  if(!("unit" %in% names(attributes(densMoleH2o)))) {
-    
-    stop("def.dens.mole.air.dry(): densMoleH2o is missing unit attribute.")
+    stop("def.temp.soni(): veloSoni is missing unit attribute.")
     
   }
   
+ 
   # test for correct units of input variables
-  # if(attributes(densMoleAir)$unit != "mol m-3" || attributes(densMoleH2o)$unit != "mol m-3") {
+   if(attributes(veloSoni)$unit != "m s-1" ) {
   
-  #  stop("def.dens.mole.air.dry(): input units are not matching internal units, please check.")
+    stop("def.temp.soni(): input units are not matching internal units, please check.")
   
-  #}
+  }
   
   
-  # calculate the molar density of the dry air alone
+  # calculate the sonic tempertaure
   
-  densMoleAirDry <- (densMoleAir - densMoleH2o)
+  tempSoni <- (veloSoni^2/GammaDry/(Rg/Molm))
   
   
   # assign output unit
-  attributes(densMoleAirDry)$unit <- "mol m-3"
+  attributes(tempSoni)$unit <- "K"
   
   # return results
-  return(densMoleAirDry) 
+  return(tempSoni) 
   
 }
