@@ -9,8 +9,8 @@
 
 #' @param \code{veloSoni} A vector containing speed of sound, of class "numeric". [m s-1]
 #' @param \code{GammaDry} A vector containing the ratio of specific heat of dry air at constant pressure to that at constant volume, of class "numeric". [dimensionless]
-#' @param \code{Rg} A vector containing universal gas constant. [kg m2 s-2 K-1 kmol-1]
-#' @param \code{Molm} A vector containing molar mass of dry air. [kg kmol-1]
+#' @param \code{Rg} A vector containing universal gas constant. [kg m2 s-2 K-1 mol-1]
+#' @param \code{Molm} A vector containing molar mass of dry air. [kg mol-1]
 
 #' @return 
 #' The returned object is sonic temperature  
@@ -21,15 +21,19 @@
 #' @keywords temperature, sonic anemometer
 
 #' @examples
-#' Example 1, this will cause an error message due to densMoleAir and densMoleH2o have no units: 
-#' def.dens.mole.air.dry(densMoleAir = 41.38, densMoleH2o = 286)
+#' Example 1, this will cause an error message due to veloSoni has no units: 
+#' def.temp.soni(veloSoni = 344, GammaDry = 1.4, Rg = 8.314, Molm = 0.028964)
 
 #' Example 2, assign values and units to variables first, the function should run ok.
-#' densMoleAir = 86000
-#' densMoleH2o = 286
-#' attributes(densMoleAir)$unit = "mol m-3"
-#' attributes(densMoleH2o)$unit = "mol m-3"
-#' def.dens.mole.air.dry(densMoleAir, densMoleH2o)
+#' veloSoni = 344
+#' GammaDry = 1.4
+#' Rg = 8.314
+#' Molm = 0.028964
+#' attributes(veloSoni)$unit = "m s-1"
+#' attributes(GammaDry)$unit = "-"
+#' attributes(Rg)$unit = "kg m2 s-2 K-1 mol-1"
+#' attributes(Molm)$unit = "kg mol-1"
+#' def.temp.soni(veloSoni, GammaDry, Rg, Molm)
 
 #' @seealso Currently none.
 
