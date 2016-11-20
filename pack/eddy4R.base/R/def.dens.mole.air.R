@@ -20,16 +20,14 @@
 
 #' @examples
 #' Example 1, this will cause an error message due to tempIn and tempOut have no units: 
-#' def.dens.mole.air(presSum = 86000, tempMean = 286, Rg = 8.314)
+#' def.dens.mole.air(presSum = 86000, tempMean = 286)
 
 #' Example 2, assign values and units to variables first, the function should run ok.
 #' presSum = 86000
 #' tempMean = 286
-#' Rg = 8.314
 #' attributes(presSum)$unit = "Pa"
 #' attributes(tempMean)$unit = "K"
-#' attributes(Rg)$unit = "kg m2 s−2 K−1 kmole−1"
-#' def.dens.mole.air(presSum, tempMean, Rg)
+#' def.dens.mole.air(presSum, tempMean)
 
 #' @seealso Currently none.
 
@@ -49,13 +47,9 @@ def.dens.mole.air <- function(
   presSum,
   
   # mean temperatrue of the air mixture
-  tempMean,
+  tempMean
   
-  # Universal gas constant
-  Rg
-  
- 
-) {
+ ) {
   
   # test for presence of unit attribute
 
@@ -82,7 +76,7 @@ def.dens.mole.air <- function(
  
     # calculate the molar density of the mixture of dry air and water vapor
     
-    densMoleAir <- presSum/Rg/tempMean
+    densMoleAir <- presSum/eddy4R.base::Natu$Rg/tempMean
                    
   
   # assign output unit
