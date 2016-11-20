@@ -39,7 +39,52 @@
 #     adjust to eddy4R coding style
 ###############################################################################################
 
-# wet mass fraction (specific humidity)
-data$irga$FW_mass_H2O_7200 <- ff::as.ff(data$irga$rhoMoleH2O * eddy4R.base::Natu$MolmH2o /
-                                          (data$irga$rho_mole_dry_7200 * eddy4R.base::Natu$MolmDry + data$irga$rhoMoleH2O * eddy4R.base::Natu$MolmH2o))
-base::attr(x = data$irga$FW_mass_H2O_7200, which = "unit") <- "kg kg-1"
+# Function to calculate the wet mass fraction (specific humidity) of air misxture from mole density of water vapor and mole density of dry air 
+def.rtio.mass.h2o.dens.mole.h2o.dens.mole.air.dry <- function(
+  
+  # mole density of water vapor  
+  densMoleH2o,
+  
+  # mole density of dry air  
+  densMoleAirDry  
+  
+) {
+  
+  # test for presence of unit attribute
+  
+  # densMoleH2o
+  if(!("unit" %in% names(attributes(densMoleH2o)))) {
+    
+    stop("def.rtio.mass.h2o.dens.mole.h2o.dens.mole.air.dry(): densMoleH2o is missing unit attribute.")
+    
+  }
+  
+  
+  # densMoleAirDry
+  if(!("unit" %in% names(attributes(densMoleAirDry)))) {
+    
+    stop("def.rtio.mass.h2o.dens.mole.h2o.dens.mole.air.dry(): densMoleAirDry is missing unit attribute.")
+    
+  }
+  
+  
+  # test for correct units of input variables
+  if(attributes(densMoleH2o)$unit != "mol m-3" || attributes(densMoleAirDry)$unit != "mol m-3") {
+    
+    stop("def.rtio.mass.h2o.dens.mole.h2o.dens.mole.air.dry(): input units are not matching internal units, please check.")
+    
+  }
+  
+  
+  # calculate the sonic tempertaure
+  
+  rtioMassH2o <- densMoleH2o * eddy4R.base::Natu$MolmH2o /
+    (densMoleAirDry * eddy4R.base::Natu$MolmDry + densMoleH2o * eddy4R.base::Natu$MolmH2o))
+
+# assign output unit
+attributes(rtioMassH2o)$unit <- "kg kg-1"
+
+# return results
+return(rtioMassH2o) 
+
+}
