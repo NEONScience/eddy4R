@@ -6,11 +6,11 @@
 
 #' @description Function definition. Calculate the wet mass fraction (specific humidity) of air misxture from mole density of water vapor and mole density of dry air 
 
-#' @param \code{densMoleH2o} A vector containing mole density of water vapor, of class "numeric". [mol m-3]
+#' @param \code{densMoleH2o} A vector containing mole density of water vapor, of class "numeric". [molH2o m-3]
 #' @param \code{densMoleAirDry} A vector containing the mole density of dry air, of class "numeric". [mol m-3]
 
 #' @return 
-#' The returned object is swet mass fraction (specific humidity)  
+#' The returned object is wet mass fraction (specific humidity)  
 
 #' @references
 #' Currently none.
@@ -19,14 +19,14 @@
 
 #' @examples
 #' Example 1, this will cause an error message due to densMoleH2o and densMoleAirDry have no units: 
-#' def.rtio.mass.h2o.dens.mole.h2o.dens.mole.air.dry(densMoleH2o = , densMoleAirDry = )
+#' def.rtio.mass.h2o.dens.mole.h2o.dens.mole.air.dry(densMoleH2o = 0.3, densMoleAirDry = 41.1)
 
 #' Example 2, assign values and units to variables first, the function should run ok.
-#' densMoleH2o = 
-#' densMoleAirDry =
-#' attributes(densMoleH2o)$unit = "mol m-3"
+#' densMoleH2o = 0.3
+#' densMoleAirDry = 41.1
+#' attributes(densMoleH2o)$unit = "molH2o m-3"
 #' attributes(densMoleAirDry)$unit = "mol m-3"
-#' def.temp.soni(densMoleH2o, densMoleAirDry)
+#' def.rtio.mass.h2o.dens.mole.h2o.dens.mole.air.dry (densMoleH2o, densMoleAirDry)
 
 #' @seealso Currently none.
 
@@ -69,7 +69,7 @@ def.rtio.mass.h2o.dens.mole.h2o.dens.mole.air.dry <- function(
   
   
   # test for correct units of input variables
-  if(attributes(densMoleH2o)$unit != "mol m-3" || attributes(densMoleAirDry)$unit != "mol m-3") {
+  if(attributes(densMoleH2o)$unit != "molH2o m-3" || attributes(densMoleAirDry)$unit != "mol m-3") {
     
     stop("def.rtio.mass.h2o.dens.mole.h2o.dens.mole.air.dry(): input units are not matching internal units, please check.")
     
@@ -79,7 +79,7 @@ def.rtio.mass.h2o.dens.mole.h2o.dens.mole.air.dry <- function(
   # calculate the sonic tempertaure
   
   rtioMassH2o <- densMoleH2o * eddy4R.base::Natu$MolmH2o /
-    (densMoleAirDry * eddy4R.base::Natu$MolmDry + densMoleH2o * eddy4R.base::Natu$MolmH2o))
+    (densMoleAirDry * eddy4R.base::Natu$MolmDry + densMoleH2o * eddy4R.base::Natu$MolmH2o)
 
 # assign output unit
 attributes(rtioMassH2o)$unit <- "kg kg-1"
