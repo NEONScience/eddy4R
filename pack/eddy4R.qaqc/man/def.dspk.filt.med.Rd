@@ -72,6 +72,8 @@ A list of:
 \code{posThshBinMaxFinl} Integer. Final maximum threshold index of histogram bin within \code{histDiffFinl} for spike determination
 
 \code{posSpk} Indices of determined spikes within \code{dataIn}
+
+\code{qfSpk} Integer. Quality flag values [-1,0,1] for despike test, matching same size as \code{dataIn}
 }
 \description{
 Function definition. Median filter de-spiking\cr
@@ -104,6 +106,7 @@ Brock, F. V. A Nonlinear Filter to Remove Impulse Noise from Meteorological Data
 Starkenburg, D. et al. Assessment of Despiking Methods for Turbulence Data in Micrometeorology. J. Atmos. Oceanic Technol. 33, 2001–2013 (2016). \cr
 Vickers, D. & Mahrt, L. Quality control and flux sampling problems for tower and aircraft data. in 512–526 (Amer Meteorological Soc, 1997). \cr
 Mauder, M. and Foken, T. Documentation and instruction manual of the edy covariance software package TK3. Arbeitsergebn. Univ Bayreuth. Abt Mikrometeorol. ISSN 1614-8916, 46:58 pp. (2011)
+NEON Algorithm Theoretical Basis Document: Quality Flags and Quality Metrics for TIS Data Products (NEON.DOC.001113) \cr
 }
 \seealso{
 Currently none

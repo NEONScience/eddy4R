@@ -38,7 +38,7 @@ NEON Algorithm Theoretical Basis Document: Quality Flags and Quality Metrics for
 Smith, D.E., Metzger, S., and Taylor, J.R.: A transparent and transferable framework for tracking quality information in large datasets. PLoS ONE, 9(11), e112249.doi:10.1371/journal.pone.0112249, 2014. \cr
 }
 \seealso{
-\code{\link[eddy4R.qaqc]{def.qfqm.l1}} \cr
+\code{\link[eddy4R.qaqc]{def.qfqm.dp01}} \cr
 \code{\link[eddy4R.qaqc]{def.qm}} \cr
 }
 \keyword{NEON}
