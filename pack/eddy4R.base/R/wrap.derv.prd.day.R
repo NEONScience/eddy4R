@@ -115,10 +115,7 @@ wrap.derv.prd.day <- function(
 # soni
   
   # sonic temperature [K] from speed of sound [m s-1] (Campbell Scientific, Eq. (9))
-  data$soni$T_SONIC <- def.temp.soni(veloSoni = data$soni$veloSoni,
-                                     GammaDry = eddy4R.base::Natu$GmmaDry,
-                                     Rg = eddy4R.base::Natu$Rg,
-                                     Molm = eddy4R.base::Natu$MolmDry)
+  data$soni$T_SONIC <- def.temp.soni(veloSoni = data$soni$veloSoni)
   
 # sort object levels alphabetically
 
