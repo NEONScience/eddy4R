@@ -99,9 +99,9 @@ wrap.derv.prd.day <- function(
     
 
   # molar density of dry air and water vapor
-  data$irga$rho_mole_air_7200 <- ff::as.ff(data$irga$p_cell_7200 / eddy4R.base::Natu$Rg / data$irga$T_cell_7200)
-  base::attr(x = data$irga$rho_mole_air_7200, which = "unit") <- "mol m-3"
-
+  data$irga$rho_mole_air_7200 <- def.dens.mole.air(presSum = data$irga$p_cell_7200,
+                                                   tempMean = data$irga$T_cell_7200)
+  
   # molar density of dry air alone
   data$irga$rho_mole_dry_7200 <- ff::as.ff(data$irga$rho_mole_air_7200 - data$irga$rhoMoleH2O)
   base::attr(x = data$irga$rho_mole_dry_7200, which = "unit") <- "mol m-3"
