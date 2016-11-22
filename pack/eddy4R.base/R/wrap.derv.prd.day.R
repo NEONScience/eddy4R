@@ -103,8 +103,9 @@ wrap.derv.prd.day <- function(
   base::attr(x = data$irga$rho_mole_air_7200, which = "unit") <- "mol m-3"
 
   # molar density of dry air alone
-  data$irga$rho_mole_dry_7200 <- ff::as.ff(data$irga$rho_mole_air_7200 - data$irga$rhoMoleH2O)
-  base::attr(x = data$irga$rho_mole_dry_7200, which = "unit") <- "mol m-3"
+  data$irga$rho_mole_dry_7200 <- def.dens.mole.air.dry(densMoleAir = data$irga$rho_mole_air_7200,
+                                                       densMoleH2o = data$irga$rhoMoleH2O)
+  
 
   # wet mass fraction (specific humidity)
   data$irga$FW_mass_H2O_7200 <- ff::as.ff(data$irga$rhoMoleH2O * eddy4R.base::Natu$MolmH2o /
