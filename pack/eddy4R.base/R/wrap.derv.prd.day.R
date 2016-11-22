@@ -108,7 +108,7 @@ wrap.derv.prd.day <- function(
   
 
   # wet mass fraction (specific humidity)
-  data$irga$FW_mass_H2O_7200 <- def.rtio.mass.h2o.dens.mole.(densMoleH2o = data$irga$rhoMoleH2O,
+  data$irga$FW_mass_H2O_7200 <- def.rtio.mass.h2o.dens.mole(densMoleH2o = data$irga$rhoMoleH2O,
                                                              densMoleAirDry = data$irga$rho_mole_dry_7200)
 
 # soni
