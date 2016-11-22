@@ -18,15 +18,15 @@
 #' @keywords signal strength, irga
 
 #' @examples
-# example 1 (This will give error message becuase ssiCo2 and ssiH2o have no units):
-# def.ssi.diff(ssiCo2 = 0.550, ssiH2o =0.561) 
+#' example 1 (This will give error message becuase ssiCo2 and ssiH2o have no units):
+#' def.ssi.diff(ssiCo2 = 0.550, ssiH2o =0.561) 
 
-# example 2 (Assign the units and values to the variable before run function, which shoudl work fine.)
-# ssiCo2 =0.550
-# ssiH2o = 0.561 
-# attributes(ssiCo2)$unit <- "-"
-# attributes(ssiH2o)$unit <- "-"
-# def.ssi.diff(ssiCo2, ssiH2o)
+#' example 2 (Assign the units and values to the variable before run function, which shoudl work fine.)
+#' ssiCo2 =0.550
+#' ssiH2o = 0.561 
+#' attributes(ssiCo2)$unit <- "-"
+#' attributes(ssiH2o)$unit <- "-"
+#' def.ssi.diff(ssiCo2, ssiH2o)
 
 #' @seealso Currently none.
 
