@@ -38,7 +38,60 @@
 #   Hongyan Luo (2016-10-23)
 #     adjust to eddy4R coding style
 ###############################################################################################
-
-# average temperature in irga cell 
-data$irga$T_cell_7200 <- ff::as.ff(0.2 * data$irga$tempCellIn + 0.8 * data$irga$tempCellOut)
-base::attr(x = data$irga$T_cell_7200, which = "unit") <- base::attr(x = data$irga$tempCellIn, which = "unit")
+# average temperature in LI-7200 irga cell
+def.temp.mean.7200 <- function(
+  
+  # temperatrue at IRGA cell inlet 
+  tempIn,
+  
+  # temperatrue at IRGA cell outlet
+  tempOut,
+  
+  # Sampling (VAL = FALSE) or validation (Val = TRUE) 
+  Val = FALSE
+  
+) {
+  
+  # test for presence of unit attribute
+  # cell inlet temperature
+  if(!("unit" %in% names(attributes(tempIn)))) {
+    
+    stop("def.temp.mean.7200(): tempIn is missing unit attribute.")
+    
+  }
+  
+  # cell outlet temperature
+  if(!("unit" %in% names(attributes(tempOut)))) {
+    
+    stop("def.temp.mean.7200(): tempOut is missing unit attribute.")
+    
+  }
+  
+  # test for correct units of input variables
+  if(attributes(tempIn)$unit != "K" || attributes(tempOut)$unit != "K") {
+    
+    stop("def.temp.mean.7200(): input units are not matching internal units, please check.")
+    
+  }
+  
+  # Sampling or validation?
+  if(Val == FALSE) {
+    
+    # calculate the average temperature in LI-7200 IRGA cell
+    tempMean <- (0.2 * tempIn + 0.8 * tempOut)
+    
+  } else {
+    
+    # calculate the average temperature in LI-7200 IRGA cell.
+    # The air flow through IRGA cell during validation period is in reversed direction compared to sampling period.    
+    tempMean <- (0.8 * tempIn + 0.2 * tempOut)
+    
+  }
+  
+  # assign output unit
+  attributes(tempMean)$unit <- "K"
+  
+  # return results
+  return(tempMean) 
+  
+}
