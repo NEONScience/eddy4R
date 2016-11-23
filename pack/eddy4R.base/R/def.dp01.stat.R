@@ -15,6 +15,7 @@
 #' \code{max} The maximum value of non-NA values in \code{data}
 #' \code{vari} The variance of non-NA values in \code{data}
 #' \code{num} The number of non-NA values in \code{data}
+#' \code{se} The standard error of the mean of non-NA values in \code{data}
 
 #' @references 
 #' NEON.DOC.003311 - NEON DATA PRODUCTS DEVELOPMENT PLAN
@@ -37,23 +38,32 @@ def.dp01.stat <- function (
   data
 ) {
   
-  # Do some error catching
-  if(!is.vector(data)) {
-    stop("Input must be a vector")
-  }
-  
-  if(!is.numeric(data)){
-    stop("Input must be numeric")
-  }
-  
   # Intialize output
-  rpt <- list(mean=NA,min=NA,max=NA,vari=NA,num=NA)
+  rpt <- base::list(mean=NA,min=NA,max=NA,vari=NA,num=NA,se=NA)
+  
+  # Do some error catching
+  if(!base::is.vector(data)) {
+    base::stop("Input must be a vector")
+  }
+  
+  # Check whether all NA values
+  if(sum(is.na(data))==length(data)){
+    return(rpt)
+  }
+    
+  if(!base::is.numeric(data)){
+    base::stop("Input must be numeric")
+  }
+  
+
   
   # Compute descriptive statistics
-  rpt$mean <- mean(data,na.rm=TRUE)
-  rpt$min <- min(data,na.rm=TRUE)
-  rpt$max <- max(data,na.rm=TRUE)
-  rpt$vari <- var(data,na.rm=TRUE)
-  rpt$num <- sum(!is.na(data))
-  
+  rpt$mean <- base::mean(data,na.rm=TRUE)
+  rpt$min <- base::min(data,na.rm=TRUE)
+  rpt$max <- base::max(data,na.rm=TRUE)
+  rpt$vari <- stats::var(data,na.rm=TRUE)
+  rpt$num <- base::sum(!is.na(data))
+  rpt$se <- base::sqrt(rpt$vari)/base::sqrt(rpt$num)
+   
+  return(rpt) 
 }
