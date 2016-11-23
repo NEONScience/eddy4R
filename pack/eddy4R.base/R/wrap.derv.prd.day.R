@@ -70,17 +70,16 @@ wrap.derv.prd.day <- function(
   base::attr(x = data$irga$RSSI_mean_7200, which = "unit") <- base::attr(x = data$irga$ssiCO2, which = "unit")
   
   # delta signal strength
-  data$irga$RSSI_delta_7200 <- ff::as.ff(data$irga$ssiCO2 - data$irga$ssiH2O)
-  base::attr(x = data$irga$RSSI_delta_7200, which = "unit") <- base::attr(x = data$irga$ssiCO2, which = "unit")
-
+  data$irga$RSSI_delta_7200 <- def.ssi.diff(ssiCo2 = data$irga$ssiCO2, ssiH2o = data$irga$ssiH2O)
+ 
   # total pressure in irga cell
-  data$irga$p_cell_7200 <- ff::as.ff(data$irga$presAtmBox + data$irga$presGageCell)
-  base::attr(x = data$irga$p_cell_7200, which = "unit") <- base::attr(x = data$irga$presAtmBox, which = "unit")
+  data$irga$p_cell_7200 <- def.pres.sum(presAtm = data$irga$presAtmBox,presDiff = data$irga$presGageCell)
+  
 
   # average temperature in irga cell 
-  data$irga$T_cell_7200 <- ff::as.ff(0.2 * data$irga$tempCellIn + 0.8 * data$irga$tempCellOut)
-  base::attr(x = data$irga$T_cell_7200, which = "unit") <- base::attr(x = data$irga$tempCellIn, which = "unit")
-
+  data$irga$T_cell_7200 <- def.temp.mean.7200(tempIn = data$irga$tempCellIn,
+                                              tempOut = data$irga$tempCellOut)
+ 
   # RH in cell
 
     # water vapor partial pressure
@@ -96,29 +95,27 @@ wrap.derv.prd.day <- function(
     base::attr(x = data$irga$presH2oSat, which = "unit") <- "Pa"
     
     # calcuate RH
-    data$irga$RH_7200 <- ff::as.ff(data$irga$presH2o / data$irga$presH2oSat * 100)
-    base::attr(x = data$irga$RH_7200, which = "unit") <- "%"
+    data$irga$RH_7200 <- def.rh.pres.h2o.pres.sat.h2o(presH2o = data$irga$presH2o, presH2oSat = data$irga$presH2oSat)
+    
 
   # molar density of dry air and water vapor
-  data$irga$rho_mole_air_7200 <- ff::as.ff(data$irga$p_cell_7200 / eddy4R.base::Natu$Rg / data$irga$T_cell_7200)
-  base::attr(x = data$irga$rho_mole_air_7200, which = "unit") <- "mol m-3"
-
+  data$irga$rho_mole_air_7200 <- def.dens.mole.air(presSum = data$irga$p_cell_7200,
+                                                   tempMean = data$irga$T_cell_7200)
+  
   # molar density of dry air alone
-  data$irga$rho_mole_dry_7200 <- ff::as.ff(data$irga$rho_mole_air_7200 - data$irga$rhoMoleH2O)
-  base::attr(x = data$irga$rho_mole_dry_7200, which = "unit") <- "mol m-3"
+  data$irga$rho_mole_dry_7200 <- def.dens.mole.air.dry(densMoleAir = data$irga$rho_mole_air_7200,
+                                                       densMoleH2o = data$irga$rhoMoleH2O)
+  
 
   # wet mass fraction (specific humidity)
-  data$irga$FW_mass_H2O_7200 <- ff::as.ff(data$irga$rhoMoleH2O * eddy4R.base::Natu$MolmH2o /
-    (data$irga$rho_mole_dry_7200 * eddy4R.base::Natu$MolmDry + data$irga$rhoMoleH2O * eddy4R.base::Natu$MolmH2o))
-  base::attr(x = data$irga$FW_mass_H2O_7200, which = "unit") <- "kg kg-1"
+  data$irga$FW_mass_H2O_7200 <- def.rtio.mass.h2o.dens.mole(densMoleH2o = data$irga$rhoMoleH2O,
+                                                             densMoleAirDry = data$irga$rho_mole_dry_7200)
 
 # soni
   
   # sonic temperature [K] from speed of sound [m s-1] (Campbell Scientific, Eq. (9))
-  data$soni$T_SONIC <- ff::as.ff(data$soni$veloSoni^2 / eddy4R.base::Natu$GmmaDry / 
-                                  (eddy4R.base::Natu$Rg / eddy4R.base::Natu$MolmDry))
-  base::attr(x = data$soni$T_SONIC, which = "unit") <- "K"
-
+  data$soni$T_SONIC <- def.temp.soni(veloSoni = data$soni$veloSoni)
+  
 # sort object levels alphabetically
 
   # data
