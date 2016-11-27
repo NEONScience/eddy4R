@@ -132,7 +132,7 @@ REYNflux_FD_mole_dry <- function(
   
   
   #aircraft heading as vector average
-  if(PltfEc == "airc") mn$PSI_aircraft <- eddy4R.base::def.aply.conv.poly(data=def.conv.cart.az(matrix(colMeans(def.conv.az.cart(eddy4R.base::def.aply.conv.poly(data=data$PSI_aircraft,coefPoly=eddy4R.base::Conv$DegRad)), na.rm=TRUE), ncol=2)),coefPoly=eddy4R.base::Conv$RadDeg)
+  if(PltfEc == "airc") mn$PSI_aircraft <- eddy4R.base::def.conv.poly(data=def.conv.cart.az(matrix(colMeans(def.conv.az.cart(eddy4R.base::def.conv.poly(data=data$PSI_aircraft,coefPoly=eddy4R.base::Conv$DegRad)), na.rm=TRUE), ncol=2)),coefPoly=eddy4R.base::Conv$RadDeg)
   
   #wind direction as vector average
   data$PSI_uv <- def.conv.cart.az(matrix(c(data$v_met, data$u_met), ncol=2))
