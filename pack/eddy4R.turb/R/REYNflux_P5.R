@@ -182,8 +182,8 @@ REYNflux_FD_mole_dry <- function(
   
   #base state
   #AlgBase <- c("mean", "trnd", "ord03")[2]
-  if(PltfEc == "airc") base <- sapply(1:ncol(data), function(x) def.ec.sta.base(data$d_xy_travel, data[,x], AlgBase), simplify = FALSE)
-  if(PltfEc == "towr") base <- sapply(1:ncol(data), function(x) def.ec.sta.base(data$t_utc, data[,x], AlgBase), simplify = FALSE)
+  if(PltfEc == "airc") base <- sapply(1:ncol(data), function(x) def.base.ec(data$d_xy_travel, data[,x], AlgBase), simplify = FALSE)
+  if(PltfEc == "towr") base <- sapply(1:ncol(data), function(x) def.base.ec(data$t_utc, data[,x], AlgBase), simplify = FALSE)
   
   base <- as.data.frame(matrix(unlist(base), ncol=ncol(data)))
   attributes(base)$names <- attributes(data)$names
