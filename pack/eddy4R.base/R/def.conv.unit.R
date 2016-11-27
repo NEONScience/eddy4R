@@ -94,7 +94,7 @@
 
 #' @examples Currently none
 
-#' @seealso \code{\link{Unit}}, \code{\link{def.intp.unit}}, \code{\link{def.unit.intl}}
+#' @seealso \code{\link{Unit}}, \code{\link{def.unit.info}}, \code{\link{def.unit.intl}}
 
 #' @export
 #' 
@@ -239,7 +239,7 @@ def.conv.unit <- function(
       # Using the internal unit base. Find internal units corresponding to "To" units
       unitFrom[[idxVar]] <- eddy4R.base::def.unit.intl(unitTo[[idxVar]])
     }
-    infoUnitFrom <- eddy4R.base::def.intp.unit(unitFrom[[idxVar]])
+    infoUnitFrom <- eddy4R.base::def.unit.info(unitFrom[[idxVar]])
     # Check to make sure they were interpreted correctly
     if(base::sum(base::is.na(infoUnitFrom$posBase)) > 0) {
       
@@ -265,7 +265,7 @@ def.conv.unit <- function(
       # Using the internal unit base. Find internal units corresponding to "From" units
       unitTo[[idxVar]] <- eddy4R.base::def.unit.intl(unitFrom[[idxVar]])
     }
-    infoUnitTo <- eddy4R.base::def.intp.unit(unitTo[[idxVar]])
+    infoUnitTo <- eddy4R.base::def.unit.info(unitTo[[idxVar]])
     # Check to make sure they were interpreted correctly
     if(base::sum(base::is.na(infoUnitTo$posBase)) > 0) {
       

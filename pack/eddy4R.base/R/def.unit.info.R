@@ -58,9 +58,11 @@
 #     first full working & documented version
 #   Cove Sturtevant (2016-04-29)
 #     update all function calls to use double-colon operator
+#   Natchaya P-Durden (2016-11-27)
+#     rename function to def.unit.info()
 ##############################################################################################
 
-def.intp.unit <- function(unit) {
+def.unit.info <- function(unit) {
 
   # Check input
   if(!base::is.character(unit)) {

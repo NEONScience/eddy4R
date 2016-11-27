@@ -16,7 +16,7 @@
 #' @keywords site, metadata, preprocessing
 
 #' @examples 
-#' def.get.site.info("SERC")
+#' def.site.info("SERC")
 
 #' @seealso Currently none
 
@@ -31,10 +31,12 @@
 #     Applying standard style following Wiki
 #   Dave Durden (2016-05-04)
 #     Adding site information for SERC
+#   Natchaya P-Durden (2016-11-27)
+#     rename function to def.site.info()
 ##############################################################################################
 
 
-def.get.site.info <- function(
+def.site.info <- function(
   #location
   loc=c("IM", "LOS", "NR", "NS", "PF" , "SERC")[6]
 ) {

@@ -8,7 +8,7 @@ def.unit.intl(unit)
 }
 \arguments{
 \item{\code{unit}}{Required. A single character string providing the compount unit, constructed
-with the rules specified in eddy4R.base::def.intp.unit.R. \cr
+with the rules specified in eddy4R.base::def.unit.info.R. \cr
 #'}
 }
 \value{
@@ -26,10 +26,10 @@ Cove Sturtevant \email{eddy4R.info@gmail.com}
 }
 \references{
 license: Terms of use of the NEON FIU algorithm repository dated 2015-01-16
-eddy4R.base::def.intp.unit.R
+eddy4R.base::def.unit.info.R
 }
 \seealso{
-\code{\link{def.intp.unit}}, \code{\link{Unit$Intl}}, \code{\link{def.conv.unit}}
+\code{\link{def.unit.info}}, \code{\link{Unit$Intl}}, \code{\link{def.conv.unit}}
 }
 \keyword{base,}
 \keyword{conversion,}

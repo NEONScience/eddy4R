@@ -8,20 +8,20 @@
 #' internal unit (string) used within the eddy4R family of functions. 
 
 #' @param \code{unit} Required. A single character string providing the compount unit, constructed
-#' with the rules specified in eddy4R.base::def.intp.unit.R. \cr
+#' with the rules specified in eddy4R.base::def.unit.info.R. \cr
 #' #' 
 #' @return A single character string specifying the corresponding eddy4R internal unit.
 
 #' @references 
 #' license: Terms of use of the NEON FIU algorithm repository dated 2015-01-16
-#' eddy4R.base::def.intp.unit.R
+#' eddy4R.base::def.unit.info.R
 #' 
 
 #' @keywords unit conversion, internal unit base, input units, output units
 
 #' @examples Currently none
 
-#' @seealso \code{\link{def.intp.unit}}, \code{\link{Unit$Intl}}, \code{\link{def.conv.unit}}
+#' @seealso \code{\link{def.unit.info}}, \code{\link{Unit$Intl}}, \code{\link{def.conv.unit}}
 
 #' @export
 #' 
@@ -37,7 +37,7 @@
 def.unit.intl <- function(unit) {
     
   # Parse input unit string
-  infoUnit <- eddy4R.base::def.intp.unit(unit)
+  infoUnit <- eddy4R.base::def.unit.info(unit)
   if(base::sum(base::is.na(infoUnit$posBase)) > 0) {
     base::warning(paste("Cannot interpret input unit string. Check unit terms"))
     rpt <- NA
@@ -69,7 +69,7 @@ def.unit.intl <- function(unit) {
     unitNum <- base::paste0(eddy4R.base::Unit$Intl[["Num"]],infoUnit$spcs[base::which(chkType == 1)],sep="") # mol portion
     unitDist <- base::paste0(eddy4R.base::Unit$Intl[["Dist"]],"-3",sep="") # dist portion
     unitIntl <- base::paste(base::c(unitNum,unitDist)[chkType],collapse=" ") # full output unit string
-    infoUnitIntl <- eddy4R.base::def.intp.unit(unitIntl) # Interpret unit
+    infoUnitIntl <- eddy4R.base::def.unit.info(unitIntl) # Interpret unit
     flagIntl <- 1
     
   } # End check on mass density
@@ -96,7 +96,7 @@ def.unit.intl <- function(unit) {
     unitDist <- base::paste0(eddy4R.base::Unit$Intl[["Dist"]],"-2",sep="") # dist portion
     unitTime <- base::paste0(eddy4R.base::Unit$Intl[["Time"]],"-1",sep="") # time portion
     unitIntl <- base::paste(base::c(unitNum,unitDist,unitTime)[chkType],collapse=" ") # full output unit string
-    infoUnitIntl <- eddy4R.base::def.intp.unit(unitIntl) # Interpret unit
+    infoUnitIntl <- eddy4R.base::def.unit.info(unitIntl) # Interpret unit
     flagIntl <- 1
     
   } # End check on mass flux density
@@ -122,7 +122,7 @@ def.unit.intl <- function(unit) {
     unitNum01 <- base::paste0(eddy4R.base::Unit$Intl[["Num"]],infoUnit$sufx[1],infoUnit$spcs[1],sep="") # mol portion 1
     unitNum02 <- base::paste0(eddy4R.base::Unit$Intl[["Num"]],infoUnit$sufx[2],infoUnit$spcs[2],sep="") # mol portion 2
     unitIntl <- base::paste(base::c(unitNum01,unitNum02),collapse=" ") # full output unit string
-    infoUnitIntl <- eddy4R.base::def.intp.unit(unitIntl) # Interpret unit
+    infoUnitIntl <- eddy4R.base::def.unit.info(unitIntl) # Interpret unit
     flagIntl <- 1
     
   } # End check on mass ratio
@@ -132,7 +132,7 @@ def.unit.intl <- function(unit) {
     infoUnitIntl <- infoUnit # Intialize internal unit info
     unitIntlTmp <- base::character(length=length(infoUnit$posBase))
     for (idxBase in 1:base::length(infoUnit$posBase)) {
-      infoUnitIntlIdx <- eddy4R.base::def.intp.unit(eddy4R.base::Unit$Intl[[infoUnit$type[idxBase]]])
+      infoUnitIntlIdx <- eddy4R.base::def.unit.info(eddy4R.base::Unit$Intl[[infoUnit$type[idxBase]]])
       
       # Replace the unit base and prefix with the internal unit
       infoUnitIntl$base[idxBase] <- infoUnitIntlIdx$base
