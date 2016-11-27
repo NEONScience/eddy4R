@@ -47,7 +47,7 @@
 
 #' @examples Currently none
 
-#' @seealso \code{\link{def.conv.unit}}, \code{\link{def.find.unit.intl}}, \code{\link{Unit$Intl}}
+#' @seealso \code{\link{def.conv.unit}}, \code{\link{def.unit.intl}}, \code{\link{Unit$Intl}}
 
 #' @export
 #' 

@@ -61,6 +61,6 @@ def.ssi.mean <- function(
 
 
 # example call
-# tst <- def.ssi.mean(ssiCo2 = def.extr.var.with.unit(data =  data$irga, nameVar = "ssiCO2"),
-#                     ssiH2o = def.extr.var.with.unit(data =  data$irga, nameVar = "ssiH2O")
+# tst <- def.ssi.mean(ssiCo2 = def.unit.extr(data =  data$irga, nameVar = "ssiCO2"),
+#                     ssiH2o = def.unit.extr(data =  data$irga, nameVar = "ssiH2O")
 #                     )

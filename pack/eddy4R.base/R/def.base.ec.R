@@ -34,11 +34,13 @@
 #     re-formualtion as function() to allow packaging
 #   Cove Sturtevant (2016-02-09 & 2016-02-16)
 #     conformed code to EC TES coding convention (prev func name: base.state.r)
+#   Natchaya P-Durden (2016-11-27)
+#     rename function to def.base.ec()
 ##############################################################################################
 
 
 
-def.ec.sta.base<-function(pos,var,AlgBase){
+def.base.ec <- function(pos,var,AlgBase){
 #average:
 if(AlgBase == "mean") {
   varBase<-mean(var,na.rm=TRUE)

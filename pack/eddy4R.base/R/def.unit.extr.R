@@ -32,10 +32,11 @@
 # changelog and author contributions / copyrights
 #   Cove Sturtevant (2016-09-08)
 #     original creation 
-#     
+#   Natchaya P-Durden (2016-11-27) 
+#     rename function to def.unit.extr()
 ##############################################################################################
 
-def.extr.var.with.unit <- function(
+def.unit.extr <- function(
   data,
   nameVar,
   AllwPos=FALSE

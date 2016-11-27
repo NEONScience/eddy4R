@@ -30,9 +30,11 @@
 #     original creation 
 #   Cove Sturtevant (2016-04-29)
 #     update all function calls to use double-colon operator
+#   Natchaya P-Durden
+#     rename function to def.unit.intl()
 ##############################################################################################
 
-def.find.unit.intl <- function(unit) {
+def.unit.intl <- function(unit) {
     
   # Parse input unit string
   infoUnit <- eddy4R.base::def.intp.unit(unit)

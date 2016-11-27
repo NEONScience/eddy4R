@@ -18,8 +18,8 @@
 #' @keywords humidity conversion
 
 #' @examples 
-#' def.dens.mass.h2o(presH2o = 2054.04, temp = 298.15)
-#' def.dens.mass.h2o(presH2o = c(42.22, 348.70, 2054.04), temp = c(265.15, 278.15, 298.15))
+#' def.dens.mass.h2o.press.h2o.temp(presH2o = 2054.04, temp = 298.15)
+#' def.dens.mass.h2o.press.h2o.temp(presH2o = c(42.22, 348.70, 2054.04), temp = c(265.15, 278.15, 298.15))
 
 #' @seealso Currently none
 
@@ -30,14 +30,16 @@
 #     original creation
 #   Stefan Metzger (2015-11-28)
 #     re-formualtion as function() to allow packaging
+#   Natchaya P-Durden (2016-11-27)
+#   rename function to def.dens.mass.h2o.press.h2o.temp()
 ##############################################################################################
 
-def.dens.mass.h2o <- function(presH2o, temp)  {
+def.dens.mass.h2o.press.h2o.temp <- function(presH2o, temp)  {
   #calculation
   densMassH2o <- (presH2o * eddy4R.base::Natu$MolmH2o) / (eddy4R.base::Natu$Rg * 1e3 * ( temp))
   
   #return reported object
   return(densMassH2o)
   
-  # end function def.dens.mass.h2o()
+  # end function def.dens.mass.h2o.press.h2o.temp()
 }
