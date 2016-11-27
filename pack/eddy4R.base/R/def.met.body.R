@@ -20,7 +20,7 @@
 
 #' @examples 
 #' veloIn01 <- data.frame(xaxs=rnorm(20), yaxs=rnorm(20), zaxs=rnorm(20)) 
-#' def.conv.body.met(AzSoniInst=60, veloBody=veloIn01)
+#' def.met.body(AzSoniInst=60, veloBody=veloIn01)
 
 #' @seealso Currently none
 
@@ -33,9 +33,11 @@
 #     re-formualtion as function() to allow packaging
 #   Hongyan Luo (2016-05-02)
 #     adjust to eddy4R terms
+#   Natchaya P-Durden (2016-11-26)
+#     rename function to def.met.body()
 ##############################################################################################
 
-def.conv.body.met <- function(
+def.met.body <- function(
     AzSoniInst,
     AzSoniOfst =  eddy4R.base::def.conv.unit(data=90,unitFrom="deg",unitTo="rad")$data[[1]],
      veloBody 
@@ -89,7 +91,7 @@ def.conv.body.met <- function(
 #dimnames(veloIn02)[[2]] <- c("u", "v", "w")
 
 ##test new function
-#def.conv.body.met(AzSoniInst=60, veloBody=veloIn01)
+#def.met.body(AzSoniInst=60, veloBody=veloIn01)
 
 ##test old function
 #rot_B2M(Psi_boom = 60, BCS_uvw = veloIn02)

@@ -27,13 +27,15 @@
 #   Stefan Metzger (2015-11-28)
 #     re-formualtion as function() to allow packaging
 #   Natchaya P-Durden (2016-02-12)
-#     Initail naming convention for eddy4R
+#     initail naming convention for eddy4R
+#   Natchaya P-Durden (2016-11-26)
+#     rename function to def.az.cart()
 ##############################################################################################
 
 #convert cartesian vector data to angular degree; convetion:
 #cart[,1], X, S(+), N(-) -> positiv TO N
 #cart[,2], Y, W(+), E(-) -> positiv TO E
-def.conv.cart.az<-function(cart){
+def.az.cart <- function(cart){
 #  sector.o=vector(length=nrow(cart))
 #  sector.o[which(cart[,2]>= 0)] <-0	#E wind vector component
 #  sector.o[which(cart[,2]< 0)] <-360	#W wind vector component

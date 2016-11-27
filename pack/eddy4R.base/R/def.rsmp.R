@@ -49,7 +49,7 @@ if (!is.null(ColDisc)){
   #converting the discontinuity variables e.g. wind direction data from azimuth angles to cartesian vector angles
   for (i in 1:length(ColDisc)){
     
-    tmp01[[i]]<- def.conv.az.cart(colData[,i]) 
+    tmp01[[i]]<- eddy4R.base::def.cart.az(colData[,i]) 
     
   }
   data <- cbind(data,tmp01)
@@ -94,7 +94,7 @@ if (!is.null(ColDisc)){
   col01 <- (m+n) #indicated 1st column of cartesian vector variable that willbe used to calculate the azimuth angle
   col02 <- (m+n+1) #indicated 2nd column of cartesian vector variable that willbe used to calculate the azimuth angle
   
-  rpt[,ColDisc[i]] <- def.conv.cart.az(rpt[,col01:col02])  
+  rpt[,ColDisc[i]] <- eddy4R.base::def.az.cart(rpt[,col01:col02])  
 }
 
 rpt <- rpt[,1:(ncol(rpt)-(2*(length(ColDisc))))]  #discard non-used columns (the cartesian vector data)

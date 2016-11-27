@@ -15,7 +15,7 @@
 
 #' @keywords unit vector
 
-#' @examples def.conv.az.cart(20)
+#' @examples def.cart.az(20)
 
 #' @seealso Currently none
 
@@ -27,12 +27,14 @@
 #   Stefan Metzger (2015-11-28)
 #     re-formualtion as function() to allow packaging
 #   Natchaya P-Durden (2016-02-04)
-#     Initail naming convention for eddy4R
+#     initail naming convention for eddy4R
+#   Natchaya P-Durden (2016-11-26)
+#     rename to def.cart.az()
 ##############################################################################################
 
 #decompose heading from polar to cartesian for angular averaging
 #input in decimal degrees
-def.conv.az.cart<-function(az){
+def.cart.az <- function(az){
 cart<-matrix(nrow=length(az),ncol=2)
 cart[,1]<- -cos(az/180*pi)	#U, S(+), N(-) -> positive TO N
 cart[,2]<- -sin(az/180*pi)	#V, W(+), E(-) -> positive TO E
