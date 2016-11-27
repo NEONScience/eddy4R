@@ -110,11 +110,11 @@ REYNflux_FD_mole_dry <- function(
     data$T_air <- def.pois.temp.pres(temp01=data$T_air, pres01=data$p_air, pres02=plevel, Kppa=mn$Kah)      
     #potential densities at mean pressure level      
     #dry air
-    data$rho_dry <- def.pois.dens.pres(dens01=data$rho_dry, pres01=data$p_air, pres02=plevel, Kppa=mn$Kah)
+    data$rho_dry <- def.dens.pres.pois(dens01=data$rho_dry, pres01=data$p_air, pres02=plevel, Kppa=mn$Kah)
     #H2O
-    data$rho_H2O <- def.pois.dens.pres(dens01=data$rho_H2O, pres01=data$p_air, pres02=plevel, Kppa=mn$Kah)
+    data$rho_H2O <- def.dens.pres.pois(dens01=data$rho_H2O, pres01=data$p_air, pres02=plevel, Kppa=mn$Kah)
     #wet air
-    data$rho_air <- def.pois.dens.pres(dens01=data$rho_air, pres01=data$p_air, pres02=plevel, Kppa=mn$Kah)
+    data$rho_air <- def.dens.pres.pois(dens01=data$rho_air, pres01=data$p_air, pres02=plevel, Kppa=mn$Kah)
     #clean up
     rm(plevel)
     
