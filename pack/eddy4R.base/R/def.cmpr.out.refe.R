@@ -35,9 +35,11 @@
 #     original creation
 #   Cove Sturtevant (2016-07-14)
 #     turned original workflow into a general function to be called at the end of each test script
+#   Natchaya P-Durden (2016-11-26)
+#     rename to def.mtch.out.refe()
 ##############################################################################################
 
-def.cmpr.out.refe <- function(
+def.mtch.out.refe <- function(
   fileOut,
   fileRefe,
   Head = FALSE,

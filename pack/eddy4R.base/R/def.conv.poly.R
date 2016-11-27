@@ -34,8 +34,10 @@
 #     update all function calls to use double-colon operator
 #   Cove Sturtevant (2016-08-11)
 #     optimize memory usage
+#   Natchaya P-Durden (2016-11-26)
+#     rename to def.conv.poly()
 ##############################################################################################
-def.aply.conv.poly <- function(data,coefPoly=c(0,1)) {
+def.conv.poly <- function(data,coefPoly=c(0,1)) {
   
   if(is.null(coefPoly)){
     stop("Input coefPoly cannot be NULL",call. = FALSE)
