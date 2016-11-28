@@ -1,20 +1,20 @@
 ##############################################################################################
-#' @title Final Quality Flag (basic L1 data products)
+#' @title Final Quality Flag
 
 #' @author
 #' Cove Sturtevant \email{csturtevant@neoninc.org} \cr
 #' Natchaya Pingintha-Durden \email{ndurdent@neoninc.org} \cr
 
 #' @description 
-#' Function definition. Determine the final quality flag for individual level 1 data product following the method described in Smith et.al. (2014). The alpha and beta quality flags and metrics were also computed in this function.
+#' Function definition. Determine the final quality flag for individual level 1 data product following the method described in Smith et.al. (2014). The alpha and beta quality flags and metrics are also computed in this function. Performed for the entire set of input data.
 
 
-#' @param \code{data} A dataframe containing the input flag data that going to use to determine alpha and beta quality flags, quality metrics, and final quality flag. Of class integer". [-] 
-#' @param \code{rtioAlphBeta} Ratio of alpha quailty metric to beta quailty metric for determing the final quality flag. Default to rtioAlphBeta=c(2,1). [-] 
-#' @param \code{thsh} Threshold for determine the condition (pass = 0 or failed = 1) of final quality flag. Default to 20 percent. [percent]
+#' @param \code{qf} A data frame of quality flags, class integer, from which to compute the final quality flag. Each column contains the quality flag values [-1,0,1] for that flag. Note: This is the Vrbs output from def.plau, def.dspk.wndw, and def.dspk.filt.med. See def.conv.qf.vrbs for converting from non-verbose to verbose output.
+#' @param \code{WghtAlphBeta} A 2-element integer vector of weights to apply to the alpha and beta quality metrics, which will then be summed and evaluated against the threshold (\code{Thsh}) for determing the final quality flag. Default to WghtAlphBeta=c(2,1). [-] 
+#' @param \code{Thsh} Threshold for determine the condition (pass = 0 or failed = 1) of final quality flag. Default to 0.2 (0.2 percent). [fraction]
 
 #' @return A list of: \cr
-#' \code{qaqcRpt} A dataframe containing alpha and beta quality flags at the same frequency as input data. [-] \cr
+#' \code{qaqcRpt} A dataframe containing alpha and beta quality flags at the same frequency as input \code{qf}. [-] \cr
 #' \code{qfqm} A dataframe containing alpha and beta quality metric and final qualiy flag. [-] \cr
 
 #' @references 
@@ -29,10 +29,10 @@
 #' qfC <- c(0,1,1,0,0,0,0,0,0,0,0,0,-1,-1,-1)
 #' test<-list()
 #' test$qf <- data.frame(qfA,qfB,qfC)
-#' out <- def.qf.finl(data=test$qf, rtioAlphBeta=c(2,1), thsh=20)
+#' out <- def.qf.finl(qf=test$qf, WghtAlphBeta=c(2,1), Thsh=0.2)
 
 #' @seealso 
-#' \code{\link[eddy4R.qaqc]{def.qfqm.dp01}} \cr
+#' \code{\link[eddy4R.qaqc]{wrap.dp01.qfqm}} \cr
 #' \code{\link[eddy4R.qaqc]{def.qm}} \cr
 
 #' @export
@@ -42,26 +42,57 @@
 #     original creation of def.qfqm.l1.R 
 #   Natchaya P-Durden (2016-09-19)
 #     Generated def.qf.finl() from def.qfqm.l1() 
+#   Cove Sturtevant (2016-11-28)
+#     Added some error checking on inputs
+#     Changed units of qms from percent to fraction 
+#     Added exclusion of Null test failures from qmBeta (to avoid double-counting)
 ##############################################################################################
 def.qf.finl <- function (
-  data,
-  rtioAlphBeta=c(2,1),
-  thsh=20
+  qf,
+  WghtAlphBeta=c(2,1),
+  Thsh=0.2
 ) {
  
+# Error Checking --------------------------------------------------
+  
+  # Check qf
+  if(!base::is.data.frame(qf)) {
+    base::stop("Input qf must be a data frame. See documentation.")
+  }
+  
+  if(base::sum(!(base::as.matrix(qf) %in% c(-1,0,1))) != 0){
+    stop("Values of qf must be equal to -1, 0, or 1")
+  }
+  
+  if((base::length(WghtAlphBeta) != 2) || !(base::is.numeric(WghtAlphBeta))) {
+    stop("Input parameter WghtAlphBeta must be a numeric vector of length 2")
+  }
+  
+  if((base::length(Thsh) != 1) || !(base::is.numeric(Thsh))) {
+    stop("Input parameter Thsh must be a numeric vector of length 1")
+  }
+  
 # Compute Quality metric ---------------------------------------------------
   #compute qfAlpha and qfBeta
-  data[,"qfAlph"] <- apply(data, 1, function(x) ifelse(any(x==1),1,0))
+  qf[,"qfAlph"] <- apply(qf, 1, function(x) ifelse(any(x==1),1,0))
   #calculate qfBeta
-  data[,"qfBeta"] <- apply(data, 1, function(x) ifelse(any(x==-1),1,0))
+  qf[,"qfBeta"] <- apply(qf, 1, function(x) ifelse(any(x==-1),1,0))
+  
+  # Remove failures of the Null test from qfBeta
+  nameQf <- names(qf)
+  idxQfNull <- base::grep("null",nameQf,ignore.case=TRUE)
+  if (base::length(idxQfNull) != 0)  {
+    # We want to exclude beta points attributed to null flag
+    qf[qf[,idxQfNull] == 1,"qfBeta"] <- 0
+  }
   
   #calculate QMAlpha
-  qmAlph <- sum(data[,"qfAlph"]== 1, na.rm = TRUE)/nrow(data)*100
+  qmAlph <- sum(qf[,"qfAlph"]== 1, na.rm = TRUE)/nrow(qf)
   #calculate QMBeta
-  qmBeta <- sum(data[,"qfBeta"]== 1, na.rm = TRUE)/nrow(data)*100 
+  qmBeta <- sum(qf[,"qfBeta"]== 1, na.rm = TRUE)/nrow(qf) 
   
   #calculate QF Final
-  if ((rtioAlphBeta[1]*qmAlph) + (rtioAlphBeta[2]*qmBeta) >= thsh) {
+  if ((WghtAlphBeta[1]*qmAlph) + (WghtAlphBeta[2]*qmBeta) >= Thsh) {
     qfFinl <- 1
   } else {qfFinl <- 0}
 
@@ -69,7 +100,7 @@ def.qf.finl <- function (
   
   #aggregate results
   rpt<-list()
-  rpt$qaqcRpt <- data.frame(qfAlph=data[,"qfAlph"], qfBeta=data[,"qfBeta"])
+  rpt$qaqcRpt <- data.frame(qfAlph=qf[,"qfAlph"], qfBeta=qf[,"qfBeta"])
   rpt$qfqm <- data.frame(qmAlph=qmAlph, qmBeta=qmBeta, qfFinl=qfFinl)
   
   #return results
