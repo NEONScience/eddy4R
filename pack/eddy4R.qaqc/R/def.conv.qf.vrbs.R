@@ -1,5 +1,5 @@
 ##############################################################################################
-#' @title Convert from verbose to non-verbose output of quality tests
+#' @title Convert from non-verbose to verbose output of quality tests
 
 #' @author
 #' Cove Sturtevant \email{csturtevant@neoninc.org} \cr
