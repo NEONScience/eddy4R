@@ -8,11 +8,10 @@
 #' Function wrapper. Calculate aggregated variance and squared standard error from a finer to a coarser temporal resolution: from minutely to hourly resolution, from hourly to diurnal cycle, and from diurnal cycle to monthly. The input data can be irregular, because data expansion is included in the current wrapper to generate unbiased mean, variance and squared standard error. 
 
 
-#' @param \code{data} Dataframe of type numeric containing column vectors \code{timeDoyDecm}, \code{mean}, \code{vari}, and \code{seSq} of equal length.
+#' @param \code{data} Dataframe of type numeric containing column vectors \code{timeDoyDecm}, \code{mean}, and \code{vari} of equal length.
 #' @param \code{timeDoyDecm} input decimal doy time in UTC [float number].
 #' @param \code{mean} Vector of type numeric. Means of the variable of interest at finer resolution, e.g. minutely [user-defined].
 #' @param \code{vari} Vector of type numeric. Variances of the variable of interest at finer resolution, e.g. minutely [user-defined^2].
-#' @param \code{seSq} squared standard error of the scalar at minutely resolution, e.g. minutely square of standard error of sensible heat. [square of unit of scalar, e.g. (W m-2)^2].
 #' @param \code{zone} The time zone of the location, which is the offset from Coordinated Universal Time (UTC) by a whole number of hours. If local time is ahead (behind) the Greenwich mean time, zone is a positive (negative) number. e.g. CST" [hour]. a time offset in Wisconsin, in the North American Central Time Zone, would be -6.
 #' @param \code{MethAgr} String type. One of three choices: "agrHour", "mdc", "agrMnth". "agrHour" represents aggregation from minutely to hourly resolution; "mdc" represents aggregation from hourly to diurnal cycle; "agrMnth" represents aggregation from diurnal cycle to monthly resolution.
 
@@ -30,8 +29,7 @@
 #' data = data.frame(
 #'   timeDoyDecm = c(1441:(5*1440))/24/60, 
 #'   mean = rnorm(4*1440), 
-#'   vari = rnorm(4*1440)^2,      
-#'   seSq = rnorm(4*1440)^2
+#'   vari = rnorm(4*1440)^2
 #' ), 
 #' zone = -6,
 #' MethAgr = "agrHour"
@@ -53,6 +51,8 @@
 #    change the name to wrap.vari.seSq.hour and re-formulation again to code-style convention
 #   Ke Xu (2016-06-09)
 #    combine wrap.hour.vari.seSq.R, wrap.mdc.vari.seSq.R, and wrap.Mnth.vari.seSq.R into wrap.agr.vari.seSq.R
+#   Ke Xu (2016-11-28)
+#    minor change to remove the unnecessary sdSq in the input
 ##############################################################################################
 
 wrap.agr.vari.seSq <- function(
@@ -60,8 +60,7 @@ wrap.agr.vari.seSq <- function(
   data = data.frame(
     timeDoyDecm,
     mean, 
-    vari,   
-    seSq
+    vari
   ), 
   zone, 
   MethAgr
@@ -105,8 +104,7 @@ wrap.agr.vari.seSq <- function(
     
     eddy4R.base::def.agr.vari.seSq(data = data.frame(
       mean = data$mean[whr],
-      vari = data$vari[whr],
-      seSq = data$seSq[whr]
+      vari = data$vari[whr]
     ))
     
   })
