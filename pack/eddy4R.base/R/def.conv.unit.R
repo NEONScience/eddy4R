@@ -94,7 +94,7 @@
 
 #' @examples Currently none
 
-#' @seealso \code{\link{Unit}}, \code{\link{def.intp.unit}}, \code{\link{def.find.unit.intl}}
+#' @seealso \code{\link{Unit}}, \code{\link{def.unit.info}}, \code{\link{def.unit.intl}}
 
 #' @export
 #' 
@@ -212,7 +212,7 @@ def.conv.unit <- function(
     if((length(coefPoly[[idxVar]]) == 2) && (coefPoly[[idxVar]][1] == 0) && (coefPoly[[idxVar]][2] == 1)) {
       next
     }
-    data[[idxVar]] <- eddy4R.base::def.aply.conv.poly(data=data[[idxVar]],coefPoly=coefPoly[[idxVar]])
+    data[[idxVar]] <- eddy4R.base::def.conv.poly(data=data[[idxVar]],coefPoly=coefPoly[[idxVar]])
     base::gc(verbose=FALSE) # Clean up memory
   }
 
@@ -237,9 +237,9 @@ def.conv.unit <- function(
     # Intpret "From" units
     if(unitFrom[[idxVar]] == "intl"){
       # Using the internal unit base. Find internal units corresponding to "To" units
-      unitFrom[[idxVar]] <- eddy4R.base::def.find.unit.intl(unitTo[[idxVar]])
+      unitFrom[[idxVar]] <- eddy4R.base::def.unit.intl(unitTo[[idxVar]])
     }
-    infoUnitFrom <- eddy4R.base::def.intp.unit(unitFrom[[idxVar]])
+    infoUnitFrom <- eddy4R.base::def.unit.info(unitFrom[[idxVar]])
     # Check to make sure they were interpreted correctly
     if(base::sum(base::is.na(infoUnitFrom$posBase)) > 0) {
       
@@ -263,9 +263,9 @@ def.conv.unit <- function(
     # Intpret To" units
     if(unitTo[[idxVar]] == "intl"){
       # Using the internal unit base. Find internal units corresponding to "From" units
-      unitTo[[idxVar]] <- eddy4R.base::def.find.unit.intl(unitFrom[[idxVar]])
+      unitTo[[idxVar]] <- eddy4R.base::def.unit.intl(unitFrom[[idxVar]])
     }
-    infoUnitTo <- eddy4R.base::def.intp.unit(unitTo[[idxVar]])
+    infoUnitTo <- eddy4R.base::def.unit.info(unitTo[[idxVar]])
     # Check to make sure they were interpreted correctly
     if(base::sum(base::is.na(infoUnitTo$posBase)) > 0) {
       
@@ -333,7 +333,7 @@ def.conv.unit <- function(
       # Convert "from" unit prefix to no-prefix 
       if(!base::is.na(infoUnitFrom$posPrfx[idxBase])) {
         coefPolyPrfxFrom <- eddy4R.base::Conv[[paste0(names(eddy4R.base::Unit$Prfx[infoUnitFrom$posPrfx[idxBase]]),"None")]]
-        data[[idxVar]] <- eddy4R.base::def.aply.conv.poly(data=data[[idxVar]],coefPoly=c(0,coefPolyPrfxFrom[2]^infoUnitFrom$sufx[idxBase])) # Convert data using polynomial function
+        data[[idxVar]] <- eddy4R.base::def.conv.poly(data=data[[idxVar]],coefPoly=c(0,coefPolyPrfxFrom[2]^infoUnitFrom$sufx[idxBase])) # Convert data using polynomial function
         base::gc(verbose=FALSE) # Clean up memory
       }
       
@@ -392,13 +392,13 @@ def.conv.unit <- function(
                   
                   nameBaseFrom <- base::names(eddy4R.base::Unit$Base$Symb[infoUnitFrom$posBase[idxBase]])
                   coefPolyBase <- eddy4R.base::Conv[[base::paste0(nameBaseFrom,"Gram")]]
-                  data[[idxVar]] <- eddy4R.base::def.aply.conv.poly(data=data[[idxVar]],coefPoly=coefPolyBase) # Convert data using polynomial function
+                  data[[idxVar]] <- eddy4R.base::def.conv.poly(data=data[[idxVar]],coefPoly=coefPolyBase) # Convert data using polynomial function
                   base::gc(verbose=FALSE) # Clean up memory
                   
                 }
                 
                 # Now do g to mol conversion
-                data[[idxVar]] <- eddy4R.base::def.aply.conv.poly(data=data[[idxVar]],coefPoly=c(0,molmSpcsFrom^(-infoUnitTo$sufx[idxBase]))) # Convert data using polynomial function
+                data[[idxVar]] <- eddy4R.base::def.conv.poly(data=data[[idxVar]],coefPoly=c(0,molmSpcsFrom^(-infoUnitTo$sufx[idxBase]))) # Convert data using polynomial function
                 base::gc(verbose=FALSE) # Clean up memory
                 
               } 
@@ -406,7 +406,7 @@ def.conv.unit <- function(
                 # We are going from mol to mass
                 
                 # Convert to g
-                data[[idxVar]] <- eddy4R.base::def.aply.conv.poly(data=data[[idxVar]],coefPoly=c(0,molmSpcsTo^(infoUnitTo$sufx[idxBase]))) # Convert data using polynomial function
+                data[[idxVar]] <- eddy4R.base::def.conv.poly(data=data[[idxVar]],coefPoly=c(0,molmSpcsTo^(infoUnitTo$sufx[idxBase]))) # Convert data using polynomial function
                 base::gc(verbose=FALSE) # Clean up memory
                 
                 # If we are outputting to a base unit other than g, convert that here
@@ -414,7 +414,7 @@ def.conv.unit <- function(
                   
                   nameBaseTo <- base::names(eddy4R.base::Unit$Base$Symb[infoUnitTo$posBase[idxBase]])
                   coefPolyBase <- eddy4R.base::Conv[[paste0("Gram",nameBaseTo)]]
-                  data[[idxVar]] <- eddy4R.base::def.aply.conv.poly(data=data[[idxVar]],coefPoly=c(0,coefPolyBase[2]^(infoUnitTo$sufx[idxBase]))) # Convert data using polynomial function
+                  data[[idxVar]] <- eddy4R.base::def.conv.poly(data=data[[idxVar]],coefPoly=c(0,coefPolyBase[2]^(infoUnitTo$sufx[idxBase]))) # Convert data using polynomial function
                   base::gc(verbose=FALSE) # Clean up memory
                   
                 }
@@ -471,11 +471,11 @@ def.conv.unit <- function(
           
           # Great, we have good conversion polynomial. Apply.
           if(infoUnitTo$sufx[idxBase] == 1) {
-            data[[idxVar]] <- eddy4R.base::def.aply.conv.poly(data=data[[idxVar]],coefPoly=coefPolyBase^infoUnitTo$sufx[idxBase]) # Convert data using polynomial function
+            data[[idxVar]] <- eddy4R.base::def.conv.poly(data=data[[idxVar]],coefPoly=coefPolyBase^infoUnitTo$sufx[idxBase]) # Convert data using polynomial function
             base::gc(verbose=FALSE) # Clean up memory
           } 
           else {
-            data[[idxVar]] <- eddy4R.base::def.aply.conv.poly(data=data[[idxVar]],coefPoly=c(0,coefPolyBase[2]^infoUnitTo$sufx[idxBase])) # Convert data using polynomial function
+            data[[idxVar]] <- eddy4R.base::def.conv.poly(data=data[[idxVar]],coefPoly=c(0,coefPolyBase[2]^infoUnitTo$sufx[idxBase])) # Convert data using polynomial function
             base::gc(verbose=FALSE) # Clean up memory
           }
 
@@ -486,7 +486,7 @@ def.conv.unit <- function(
             
             # Convert different mass units between different chemical species
             # (no need to account for base unit other than gram, since did it already)
-            data[[idxVar]] <- eddy4R.base::def.aply.conv.poly(data=data[[idxVar]],coefPoly=c(0,(molmSpcsTo/molmSpcsFrom)^infoUnitTo$sufx[idxBase])) # Convert data using polynomial function
+            data[[idxVar]] <- eddy4R.base::def.conv.poly(data=data[[idxVar]],coefPoly=c(0,(molmSpcsTo/molmSpcsFrom)^infoUnitTo$sufx[idxBase])) # Convert data using polynomial function
             base::gc(verbose=FALSE) # Clean up memory
             
           }
@@ -499,7 +499,7 @@ def.conv.unit <- function(
                  (infoUnitFrom$posSpcs[idxBase] != infoUnitTo$posSpcs[idxBase])) {
         # Convert same mass units between different chemical species
         # (no need to account for base unit other than gram, since it will cancel)
-        data[[idxVar]] <- eddy4R.base::def.aply.conv.poly(data=data[[idxVar]],coefPoly=c(0,(molmSpcsTo/molmSpcsFrom)^infoUnitTo$sufx[idxBase])) # Convert data using polynomial function
+        data[[idxVar]] <- eddy4R.base::def.conv.poly(data=data[[idxVar]],coefPoly=c(0,(molmSpcsTo/molmSpcsFrom)^infoUnitTo$sufx[idxBase])) # Convert data using polynomial function
         base::gc(verbose=FALSE) # Clean up memory
         
       }# End base-unit conversion
@@ -508,7 +508,7 @@ def.conv.unit <- function(
       # Convert to output unit prefix 
       if(!base::is.na(infoUnitTo$posPrfx[idxBase])) {
         coefPolyPrfxTo <- eddy4R.base::Conv[[base::paste0("None",base::names(eddy4R.base::Unit$Prfx[infoUnitTo$posPrfx[idxBase]]))]]
-        data[[idxVar]] <- eddy4R.base::def.aply.conv.poly(data=data[[idxVar]],coefPoly=c(0,coefPolyPrfxTo[2]^infoUnitTo$sufx[idxBase])) # Convert data using polynomial function
+        data[[idxVar]] <- eddy4R.base::def.conv.poly(data=data[[idxVar]],coefPoly=c(0,coefPolyPrfxTo[2]^infoUnitTo$sufx[idxBase])) # Convert data using polynomial function
         base::gc(verbose=FALSE) # Clean up memory
       }
           
