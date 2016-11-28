@@ -97,9 +97,9 @@ REYNflux_FD_mole_dry <- function(
   #POTENTIAL TEMPERATURE AND DENSITIES
   
   #potential temperature at NIST standard pressure (1013.15 hPa) [K]
-  data$T_air_0 <- def.pois.temp.pres(temp01=data$T_air, pres01=data$p_air, pres02=eddy4R.base::Natu$Pres00, Kppa=mn$Kah)
+  data$T_air_0 <- def.temp.pres.pois(temp01=data$T_air, pres01=data$p_air, pres02=eddy4R.base::Natu$Pres00, Kppa=mn$Kah)
   #virtual potential temperature at NIST standard pressure (1013.15 hPa) [K]
-  data$T_v_0 <- def.pois.temp.pres(temp01=data$T_v, pres01=data$p_air, pres02=eddy4R.base::Natu$Pres00, Kppa=mn$Kah)
+  data$T_v_0 <- def.temp.pres.pois(temp01=data$T_v, pres01=data$p_air, pres02=eddy4R.base::Natu$Pres00, Kppa=mn$Kah)
   
   #use potential temperature and densities?
   if(FcorPOT == TRUE) {
@@ -107,7 +107,7 @@ REYNflux_FD_mole_dry <- function(
     #define pressure level
     plevel <- ifelse(!is.null(FcorPOTl), FcorPOTl, mean(data$p_air, na.rm=TRUE) )
     #potential temperature at mean pressure level
-    data$T_air <- def.pois.temp.pres(temp01=data$T_air, pres01=data$p_air, pres02=plevel, Kppa=mn$Kah)      
+    data$T_air <- def.temp.pres.pois(temp01=data$T_air, pres01=data$p_air, pres02=plevel, Kppa=mn$Kah)      
     #potential densities at mean pressure level      
     #dry air
     data$rho_dry <- def.dens.pres.pois(dens01=data$rho_dry, pres01=data$p_air, pres02=plevel, Kppa=mn$Kah)
