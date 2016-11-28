@@ -6,7 +6,7 @@
 #' Natchaya Pingintha-Durden \email{ndurdent@neoninc.org} \cr
 
 #' @description 
-#' Function definition. Determine the quality metrics of failed, pass, and NA for each of the individual quality flag following the method described in Smith et.al. (2014).
+#' Function definition. Determine the quality metrics of failed, pass, and NA for each of the individual quality flag following the method described in Smith et.al. (2014). Performed for the entire set of input data.
 
 #' @param qf A data frame of quality flags, class integer. Each column contains the quality flag values [-1,0,1] for that flag. Note: This is the Vrbs output from def.plau, def.dspk.wndw, and def.dspk.filt.med. See def.conv.qf.vrbs for converting from non-verbose to verbose output.
 #' @param nameQmOut Optional. A vector of class "character" containing the base name of the output quality metrics for each flag in \code{qf}. These names will be ammended with "Pass", "Fail", or "Na" at the end when outputting their respective quality metrics. Default behavoir is to autoassign names based on the column names of \code{qf} [-] 
@@ -40,7 +40,7 @@
 #   Cove Sturtevant (2016-01-05)
 #     original creation
 #   Natchaya P-Durden (2016-08-15)
-#     modified def.qfqm.dp01()
+#     modified wrap.dp01.qfqm()
 #   Cove Sturtevant (2016-11-22)
 #     added default functionality for naming of output quality metrics
 #     adjusted output of quality metrics to fractions (previously percentage)
@@ -71,45 +71,45 @@ def.qm <- function (
     flagNameOut <- TRUE # Do default naming
     nameQmOut <- nameQf
   }
-  nameQm <- c("Pass","Fail","Na") # 3 subvariables per quality metric
-  nameOut <- c()
+  nameQm <- base::c("Pass","Fail","Na") # 3 subvariables per quality metric
+  nameOut <- base::c()
   
   # Put together output variable names
-  for (idxQf in numeric(numQf)+1:numQf) {
+  for (idxQf in base::numeric(numQf)+1:numQf) {
     
     tmp <- nameQmOut[idxQf]
     
     # Get rid of "qf" or "posQf" (if using default naming)
-    if (flagNameOut && (regexpr(pattern="qf",text=tmp,ignore.case=FALSE)[1] == 1 || 
-                        regexpr(pattern="posQf",text=tmp,ignore.case=FALSE)[1] == 1)) {
-      tmp <- sub(pattern="qf", replacement="", x=tmp, ignore.case = FALSE, perl = FALSE,
+    if (flagNameOut && (base::regexpr(pattern="qf",text=tmp,ignore.case=FALSE)[1] == 1 || 
+                        base::regexpr(pattern="posQf",text=tmp,ignore.case=FALSE)[1] == 1)) {
+      tmp <- base::sub(pattern="qf", replacement="", x=tmp, ignore.case = FALSE, perl = FALSE,
                  fixed = FALSE, useBytes = FALSE)
       
-      tmp <- sub(pattern="posQf", replacement="", x=tmp, ignore.case = FALSE, perl = FALSE,
+      tmp <- base::sub(pattern="posQf", replacement="", x=tmp, ignore.case = FALSE, perl = FALSE,
                  fixed = FALSE, useBytes = FALSE)
       
-      tmp <- paste0("qm",tools::toTitleCase(tmp),collapse="")
+      tmp <- base::paste0("qm",tools::toTitleCase(tmp),collapse="")
     } 
     
     for (idxQm in 1:3) {
-      nameOut[(idxQf-1)*3+idxQm] <- paste0(tmp,nameQm[idxQm],collapse ="")
+      nameOut[(idxQf-1)*3+idxQm] <- base::paste0(tmp,nameQm[idxQm],collapse ="")
     }
   }
   
-  qm <- data.frame(matrix(,ncol=3*numQf))#initial output
-  colnames(qm) <- nameOut
+  qm <- base::data.frame(base::matrix(,ncol=3*numQf))#initial output
+  base::colnames(qm) <- nameOut
   
   # Compute Quality metric -------------------------------------------------
   # Loop through each flag
-  for(idxQf in numeric(numQf)+1:numQf) {
+  for(idxQf in base::numeric(numQf)+1:numQf) {
 
     # Quality metrics for pass, failed, and NA flags
     # Pass
-    qm[,(idxQf-1)*3+1]  <- sum(qf[,idxQf]== 0, na.rm = TRUE)/nrow(qf)
+    qm[,(idxQf-1)*3+1]  <- base::sum(qf[,idxQf]== 0, na.rm = TRUE)/base::nrow(qf)
     # Fail
-    qm[,(idxQf-1)*3+2] <- sum(qf[,idxQf]== 1, na.rm = TRUE)/nrow(qf)
+    qm[,(idxQf-1)*3+2] <- base::sum(qf[,idxQf]== 1, na.rm = TRUE)/base::nrow(qf)
     # NA
-    qm[,(idxQf-1)*3+3] <- sum(qf[,idxQf]== -1, na.rm = TRUE)/nrow(qf) 
+    qm[,(idxQf-1)*3+3] <- base::sum(qf[,idxQf]== -1, na.rm = TRUE)/base::nrow(qf) 
     
   }
   
