@@ -168,12 +168,15 @@ wrap.dp01.qfqm <- function (
     }
   }
   timeAgrBgn <- timeAgrBgn[idxAgr:length(timeAgrBgn)] # truncate aggregated time series vector
+  timeAgrEnd <- timeAgrBgn+WndwAgr # truncate aggregated time series vector
   
   # Take inventory of the flags we have and set up output naming
-  dataAgr <- base::as.list(data) # copy variable names to output
   nameVar <- base::names(data)
   numVar <- base::length(nameVar)
   numData <- base::nrow(data)
+  dataAgr <- base::vector("list",length=numVar)
+  base::names(dataAgr) <- nameVar
+  numDataAgr <- base::length(timeAgrBgn)
   
   # If input is vector positions of failed and na tests, switch to quality flag values
   if(base::sum(base::unlist(base::lapply(qf,function(var){base::is.null(var)}))) == base::length(data)) {
@@ -181,44 +184,7 @@ wrap.dp01.qfqm <- function (
     qf <- eddy4R.qaqc::def.conv.qf.vrbs(posQf=posQf,numRow=numData)
   }
   
-  ####################### DELETE ME
-  # Assign variable names to output and initialize
-  for (idxVar in 1:base::length(data)) {
-    numQf <- base::length(posQf[[idxVar]]) # #flags we have
-    nameQf <- base::names(posQf[[idxVar]]) # list of flag names
-    nameVarOut <- base::c("mean","min","max","var","ste","numPts") # initialize the 1st 6 variable names in the output data
-    nameVarOutQm <- base::c("Pass","Fail","Na") # 3 subvariables per quality metric
-    
-    # Put together output variable names
-    for (idxQf in base::numeric(numQf)+1:numQf) {
-    
-      tmp <- nameQf[idxQf]
-      # Get rid of leading "posQf" if using output from def.plau
-      if (base::regexpr(pattern="posQf",text=tmp,ignore.case=FALSE)[1] == 1) {
-        tmp <- base::sub(pattern="posQf", replacement="", x=tmp, ignore.case = FALSE, perl = FALSE,
-                   fixed = FALSE, useBytes = FALSE)
-      }
-      # Get rid of leading "qf" if using other output 
-      if (base::regexpr(pattern="qf",text=tmp,ignore.case=FALSE)[1] == 1) {
-        tmp <- base::sub(pattern="qf", replacement="", x=tmp, ignore.case = FALSE, perl = FALSE,
-                   fixed = FALSE, useBytes = FALSE)
-      }
-      
-      
-      for (idxQm in 1:3) {
-        nameVarOut[6+(idxQf-1)*3+idxQm] <- base::paste0("qm",tools::toTitleCase(tmp),nameVarOutQm[idxQm],collapse ="")
-      }
-    }
-    nameVarOut <- base::c(nameVarOut,"qmAlpha","qmBeta","qfFinl") # Add alpha QM, beta QM, and final quality flag
-            
-
-    dataAgr[[idxVar]] <- base::data.frame(base::matrix(nrow=length(timeAgrBgn),ncol=6+3*numQf+3)) # 6 for mean/min/max/etc. 3*#flags for fail, pass, NA, and 3 for alpha & beta QMs and final QF
-    base::colnames(dataAgr[[idxVar]]) <- nameVarOut
-  }
-  ####################### END DELETE
-
 # Remove data points marked for exclusion -----------------------------------------
-
 
   # Get rid of points marked to exclude from L1 data
   for(idxVar in nameVar) {
@@ -255,8 +221,13 @@ wrap.dp01.qfqm <- function (
   # Loop through each variable
   for(idxVar in nameVar) {
     
+    # Initialize output
+    numQf <- base::length(qf[[idxVar]]) # #flags we have
+    dum <- base::data.frame(base::matrix(nrow=numDataAgr,ncol=6+3*numQf+3))
+    dataAgr[[idxVar]] <- dum
+    
     # Loop through each aggregation window
-    for (idxAgr in 1:base::length(timeAgrBgn)) {
+    for (idxAgr in 1:numDataAgr) {
       
       # Find data locations in window
       posData <- base::which((time >= timeAgrBgn[idxAgr]) & (time < timeAgrBgn[idxAgr]+WndwAgr))
@@ -274,65 +245,21 @@ wrap.dp01.qfqm <- function (
       qm <- eddy4R.qaqc::def.qm(qf=qf[[idxVar]][posData,])
       
       # Alpha, beta qms and final quality flag
-      ############### START HERE ################
+      qfFinl <- eddy4R.qaqc::def.qf.finl(qf=qf[[idxVar]][posData,], WghtAlphBeta=c(2,1), Thsh=0.2)[["qfqm"]]
       
-      
-      ### DELETE ME
-      dataAgr[[idxVar]]$mean[idxAgr] <- base::mean(data[[idxVar]][posData],na.rm=TRUE) # Mean
-      # When calculating min & max, we want NA if there is no non-NA data
-      if (base::sum(!base::is.na(data[posData,idxVar])) > 0) {
-        dataAgr[[idxVar]]$min[idxAgr] <- base::min(data[[idxVar]][posData],na.rm=TRUE) # Min 
-        dataAgr[[idxVar]]$max[idxAgr] <- base::max(data[[idxVar]][posData],na.rm=TRUE) # Max 
-      } else {
-        dataAgr[[idxVar]]$min[idxAgr] <- NA
-        dataAgr[[idxVar]]$max[idxAgr] <- NA
-      }
-      dataAgr[[idxVar]]$var[idxAgr] <- stats::var(data[[idxVar]][posData],na.rm=TRUE) # Variance      
-      dataAgr[[idxVar]]$numPts[idxAgr] <- base::length(base::which(!base::is.na(data[[idxVar]][posData]))) # number of non-na points      
-      dataAgr[[idxVar]]$ste[idxAgr] <- base::sqrt(dataAgr[[idxVar]]$var[idxAgr])/base::sqrt(dataAgr[[idxVar]]$numPts[idxAgr]) # Standard error of the mean    
-      #### END DELETE
-      
-      # Quality metrics
-      posAlpha <- base::numeric(0) # initialize locations for alpha QM
-      posBeta <- base::numeric(0) # initialize locations for beta QM
-      posBetaNull <- base::numeric(0) # initialize beta locations attributed to null points
-      for (idxQf in 1:base::length(base::names(posQf[[idxVar]]))){
-        nameQf <- base::names(posQf[[idxVar]])[idxQf]
-
-        # Pass
-        dataAgr[[idxVar]][[6+(idxQf-1)*3+1]][idxAgr] <- base::length(base::setdiff(posData,
-            base::union(posQf[[idxVar]][[nameQf]]$fail,posQf[[idxVar]][[nameQf]]$na)))/numDataAgr*100
-        # Fail
-        dataAgr[[idxVar]][[6+(idxQf-1)*3+2]][idxAgr] <- base::length(base::intersect(posData,
-            posQf[[idxVar]][[nameQf]]$fail))/numDataAgr*100
-        # NA
-        dataAgr[[idxVar]][[6+(idxQf-1)*3+3]][idxAgr] <- base::length(base::intersect(posData,
-            posQf[[idxVar]][[nameQf]]$na))/numDataAgr*100
-        
-        # Keep a running tally of alpha and beta locations
-        posAlpha <- base::union(posAlpha,base::intersect(posData,posQf[[idxVar]][[nameQf]]$fail))
-        posBeta <- base::union(posBeta,base::intersect(posData,posQf[[idxVar]][[nameQf]]$na))
-        if (base::length(base::grep("null",nameQf,ignore.case=TRUE)) != 0)  {
-          # We want to exclude beta points attributed to null flag, so save null points for later
-          posBetaNull <- base::union(posBetaNull,base::intersect(posData,posQf[[idxVar]][[nameQf]]$fail))
-        }
-      }
-
-      # Tally up the alpha & beta QMs
-      dataAgr[[idxVar]]$qmAlpha[idxAgr] <- base::length(posAlpha)/numDataAgr*100
-      posBeta <- base::setdiff(posBeta,posBetaNull) # exclude beta locations attributed to null test
-      dataAgr[[idxVar]]$qmBeta[idxAgr] <- base::length(posBeta)/numDataAgr*100
+      # Combine all outputs
+      dataAgr[[idxVar]][idxAgr,] <- cbind(statSmmy,qm,qfFinl)
       
     }
     
-    # Compute final quality flag
-    dataAgr[[idxVar]]$qfFinl[(2*dataAgr[[idxVar]]$qmAlpha + dataAgr[[idxVar]]$qmBeta) >= 20] <- 1
-    dataAgr[[idxVar]]$qfFinl[(2*dataAgr[[idxVar]]$qmAlpha + dataAgr[[idxVar]]$qmBeta) < 20] <- 0
+    # Assign names to output columns
+    base::colnames(dataAgr[[idxVar]]) <- base::colnames(cbind(statSmmy,qm,qfFinl))
+    
   }
   
   
   
   # Return results
-  return(base::list(timeAgrBgn=timeAgrBgn,dataAgr=dataAgr))
+  return(base::list(timeAgrBgn=timeAgrBgn,timeAgrEnd=timeAgrEnd,dataAgr=dataAgr))
   
 }
