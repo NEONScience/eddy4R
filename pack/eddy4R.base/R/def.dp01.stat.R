@@ -9,7 +9,7 @@
 
 #' @param \code{data} A numeric vector containing the L0' (calibrated) input data at native resolution. Of class numeric". [-] 
 
-#' @return A list of descriptive statistics:\cr
+#' @return A data frame of descriptive statistics:\cr
 #' \code{mean} The mean of non-NA values in \code{data}
 #' \code{min} The minimum value of non-NA values in \code{data}
 #' \code{max} The maximum value of non-NA values in \code{data}
@@ -39,7 +39,7 @@ def.dp01.stat <- function (
 ) {
   
   # Intialize output
-  rpt <- base::list(mean=NA,min=NA,max=NA,vari=NA,num=NA,se=NA)
+  rpt <- base::data.frame(mean=NA,min=NA,max=NA,vari=NA,num=NA,se=NA)
   
   # Do some error catching
   if(!base::is.vector(data)) {
