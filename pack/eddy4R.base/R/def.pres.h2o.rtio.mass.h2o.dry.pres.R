@@ -18,8 +18,8 @@
 #' @keywords humidity conversion
 
 #' @examples
-#' def.pres.h2o.rtio.mass(rtioMassDryH2o = 2.144*1e-2, pres = 65000) 
-#' def.pres.h2o.rtio.mass(rtioMassDryH2o = c(2.144*1e-2, 2.617*1e-3, 4.931*1e-4), pres = c(65000, 83000, 110000)) 
+#' def.pres.h2o.rtio.mass.h2o.dry.pres(rtioMassDryH2o = 2.144*1e-2, pres = 65000) 
+#' def.pres.h2o.rtio.mass.h2o.dry.pres(rtioMassDryH2o = c(2.144*1e-2, 2.617*1e-3, 4.931*1e-4), pres = c(65000, 83000, 110000)) 
 
 #' @seealso Currently none
 
@@ -31,15 +31,17 @@
 #   Stefan Metzger (2015-11-28)
 #     re-formualtion as function() to allow packaging
 #   Natchaya P-Durden (2016-04-08)
-#     Initail naming convention for eddy4R
+#     initail naming convention for eddy4R
+#   Natchaya P-Durden (2016-11-27)
+#     rename function to def.pres.h2o.rtio.mass.h2o.dry.pres()
 ##############################################################################################
 
-def.pres.h2o.rtio.mass <- function(rtioMassDryH2o, pres)  {
+def.pres.h2o.rtio.mass.h2o.dry.pres <- function(rtioMassDryH2o, pres)  {
   #calculation
   presH2o <- pres * rtioMassDryH2o / (eddy4R.base::Natu$RtioMolmH2oDry + rtioMassDryH2o)
   
   #return reported object
   return(presH2o)
   
-  # end function def.pres.h2o.rtio.mass()
+  # end function def.pres.h2o.rtio.mass.h2o.dry.pres()
 }

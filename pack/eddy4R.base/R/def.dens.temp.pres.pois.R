@@ -19,7 +19,7 @@
 
 #' @keywords Currently none
 
-#' @examples dens02 <- def.pois.dens.temp.pres(dens01 = 1.056, temp01 = 298.15,temp02 = 288.15, pres01 = 845, pres02 = 1000)
+#' @examples dens02 <- def.dens.temp.pres.pois(dens01 = 1.056, temp01 = 298.15,temp02 = 288.15, pres01 = 845, pres02 = 1000)
 
 #' @seealso Currently none
 
@@ -31,7 +31,9 @@
 #   Stefan Metzger (2015-11-28)
 #     re-formualtion as function() to allow packaging
 #   Natchaya P-Durden (2016-02-26)
-#     Initail naming convention for eddy4R
+#     initail naming convention for eddy4R
+#   Natchaya P-Durden (2016-11-27)
+#     rename function to def.dens.temp.pres.pois()
 ##############################################################################################
 
-def.pois.dens.temp.pres <- function(dens01, temp01, temp02, pres01, pres02)  dens02 <- dens01 * (temp01/temp02) * (pres02/pres01)
+def.dens.temp.pres.pois <- function(dens01, temp01, temp02, pres01, pres02)  dens02 <- dens01 * (temp01/temp02) * (pres02/pres01)

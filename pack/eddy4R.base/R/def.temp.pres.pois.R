@@ -18,7 +18,7 @@
 
 #' @keywords Currently none
 
-#' @examples temp02 <- def.pois.temp.pres(temp01 = 298.15, pres01 = 845, pres02 = 1000, Kppa = eddy4R.base::Natu$KppaDry)
+#' @examples temp02 <- def.temp.pres.pois(temp01 = 298.15, pres01 = 845, pres02 = 1000, Kppa = eddy4R.base::Natu$KppaDry)
 
 #' @seealso Currently none
 
@@ -30,8 +30,11 @@
 #   Stefan Metzger (2015-11-28)
 #     re-formualtion as function() to allow packaging
 #   Natchaya P-Durden (2016-02-26)
-#     Initail naming convention for eddy4R
+#     initail naming convention for eddy4R
+#   Natchaya P-Durden (2016-11-27)
+#     rename function to def.temp.pres.pois()
 ##############################################################################################
 
-def.pois.temp.pres <- function(temp01, pres01, pres02, Kppa = eddy4R.base::Natu$KppaDry)   temp02 = temp01 * (pres02/pres01)^Kppa
+def.temp.pres.pois <- function(temp01, pres01, pres02, Kppa = eddy4R.base::Natu$KppaDry)   temp02 = temp01 * (pres02/pres01)^Kppa
+
   

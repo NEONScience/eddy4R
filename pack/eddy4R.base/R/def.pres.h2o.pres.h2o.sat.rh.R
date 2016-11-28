@@ -18,8 +18,8 @@
 #' @keywords humidity conversion
 
 #' @examples 
-#' def.pres.h2o.rh(presH2oSat = 3160.057, rh = 0.65)
-#' def.pres.h2o.rh(presH2oSat = c(422.19, 1701.67, 6265.31), rh = c(0.10, 0.45, 0.80))
+#' def.pres.h2o.pres.h2o.sat.rh(presH2oSat = 3160.057, rh = 0.65)
+#' def.pres.h2o.pres.h2o.sat.rh(presH2oSat = c(422.19, 1701.67, 6265.31), rh = c(0.10, 0.45, 0.80))
 
 #' @seealso Currently none
 
@@ -31,16 +31,18 @@
 #   Stefan Metzger (2015-11-28)
 #     re-formualtion as function() to allow packaging
 #   Natchaya P-Durden (2016-04-08)
-#     Initail naming convention for eddy4R
+#     initail naming convention for eddy4R
+#   Natchaya P-Durden (2016-11-27)
+#     rename function to def.pres.h2o.pres.h2o.sat.rh()
 ##############################################################################################
 
-def.pres.h2o.rh <- function(presH2oSat, rh) {
+def.pres.h2o.pres.h2o.sat.rh <- function(presH2oSat, rh) {
   #calculation
   presH2o <- presH2oSat * rh
   
   #return reported object
   return(presH2o)
   
-  # end function def.pres.h2o.rh()
+  # end function def.pres.h2o.pres.h2o.sat.rh()
 }
 
