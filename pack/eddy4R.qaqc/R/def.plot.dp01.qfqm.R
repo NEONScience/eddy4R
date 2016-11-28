@@ -5,13 +5,14 @@
 #' Cove Sturtevant \email{csturtevant@neoninc.org}
 
 #' @description 
-#' Function definition. Plots the aggregated quality flags, quality metrics and final quality flag for basic L1 (time window averaged) data products as output from def.qfqm.dp01.R.
+#' Function definition. Plots the aggregated quality flags, quality metrics and final quality flag for basic L1 (time window averaged) data products as output from wrap.dp01.qfqm.R.
 
-#' @param dataDp01 Required input. A list output from def.qfqm.dp01.R of: \cr
+#' @param dataDp01 Required input. A list output from wrap.dp01.qfqm.R of: \cr
 #' timeAgrBgn - the starting time stamp of aggregated L1 data and quality metrics \cr
-#' dataAgr - a list of named variables, each containing a data frame of the time-aggregated mean, minimum, maximum, variance, standard deviation of the mean, number of points going into the average, and quality metrics (pass, fail, NA) pertaining to that variable for each flag in flgs, as well as the alpha & beta quality metrics and final quality flag. It is important that the column names of this data frame are indistinguishable from those that would be created from def.qfqm.dp01.R
+#' timeAgrEnd - the ending time stamp (non-inclusive) of aggregated L1 data and quality metrics \cr
+#' dataAgr - a list of named variables, each containing a data frame of the time-aggregated mean, minimum, maximum, variance, number of points going into the average, standard error of the mean, and quality metrics (pass, fail, NA) pertaining to that variable for each flag in flgs, as well as the alpha & beta quality metrics and final quality flag. It is important that the column names of this data frame are indistinguishable from those that would be created from wrap.dp01.qfqm.R
 #' @param WndwTime Optional. A 2-element POSIXlt vector of the minimum and maximum time range to plot. Default is the entire data range.
-#' @param NameQmPlot Optional. A character vector listing the individual quality metrics to plot. The strings in this vector can be partial names, i.e. a partial match will result in the quality metric being plotted (ex. NameQmIndiv <- c("Step") will result in the quality metrics "qmPosFlagStepPass","qmPosFlagStepFail" and "qmPosFlagStepNa" to be plotted). Default is all QMs. 
+#' @param NameQmPlot Optional. A character vector listing the individual quality metrics to plot. The strings in this vector can be partial names, i.e. a partial match will result in the quality metric being plotted (ex. NameQmIndiv <- c("Step") will result in the quality metrics "qmStepPass","qmStepFail" and "qmStepNa" to be plotted). Default is all QMs. 
 
 #' @return Running this function will output 3 plots per data variable: 1) basic L1 statistics (mean, min, max, etc). 2) Pass, Fail, and NA quality metrics for ever flag, 3) the final Alpha and Beta quality metrics and the final quality flag.
 
@@ -32,20 +33,23 @@
 #   Cove Sturtevant (2016-11-14)
 #     fix error in multi-plot grobs
 #     update variable naming according to eddy4R coding style
+#   Cove Sturtevant (2016-11-28)
+#     adjusted for changes to upstream dependencies
+#     changed function name from def.plot.qfqm.dp01 to def.plot.dp01.qfqm
 ##############################################################################################
 
 
-def.plot.qfqm.dp01 <- function (
-  dataDp01,             # the list output from def.qfqm.dp01.R. Required input.
+def.plot.dp01.qfqm <- function (
+  dataDp01,             # the list output from wrap.dp01.qfqm.R. Required input.
   WndwTime = c(min(dataDp01$timeAgrBgn),max(dataDp01$timeAgrBgn)), # a 2-element POSIXlt vector of the minimum and maximum time range to plot. Default is entire range
-  NameQmPlot = sub("Pass","",names(dataDp01$dataAgr[[1]][grep("Pass",names(dataDp01$dataAgr[[1]]))])) # a character vector listing the individual quality metrics to plot. The strings in this vector can be partial names, i.e. a partial match will result in the quality metric being plotted (ex. NameQmIndiv <- "Step" will result in the quality metrics "qmPosFlagStepPass","qmPosFlagStepFail" and "qmPosFlagStepNa" to be plotted). Default is all QMs. 
+  NameQmPlot = sub("Pass","",names(dataDp01$dataAgr[[1]][grep("Pass",names(dataDp01$dataAgr[[1]]))])) # a character vector listing the individual quality metrics to plot. The strings in this vector can be partial names, i.e. a partial match will result in the quality metric being plotted (ex. NameQmIndiv <- "Step" will result in the quality metrics "qmStepPass","qmStepFail" and "qmStepNa" to be plotted). Default is all QMs. 
   ) {
   
 # Error Checking ----------------------------------------------------------
 
   # Check data
   if(base::missing("dataDp01") | !base::is.list(dataDp01)) {
-    stop("Required input 'data' must be a list output from def.qfqm.dp01.R")
+    stop("Required input 'data' must be a list output from wrap.dp01.qfqm.R")
   }
   
   # Check WndwTime
@@ -65,14 +69,13 @@ def.plot.qfqm.dp01 <- function (
   numVar <- base::length(dataDp01$dataAgr)
   nameVar <- base::names(dataDp01$dataAgr)
     
-  for(idxVar in 1:numVar) {
+  for(idxVar in nameVar) {
     
     # Pull out data to plot
     dataIdx <- dataDp01$dataAgr[[idxVar]]
     dataIdx$time <- dataDp01$timeAgrBgn
-    nameVarIdx <- nameVar[idxVar]
-    
-    # Set of plots for basic stats: Mean, min, max, var, ste, and numPts
+
+    # Set of plots for basic stats: Mean, min, max, var, num,se 
     dataIdxQf <- base::data.frame(time=dataIdx$time,val=dataIdx$mean,valQfFinlFail=dataIdx$mean)
     dataIdxQf$valQfFinlFail[dataIdx$qfFinl==0] <- NA
     dataIdxQf <- reshape2::melt(dataIdxQf,id="time")
@@ -95,12 +98,12 @@ def.plot.qfqm.dp01 <- function (
     if(base::sum(dataIdx$min,na.rm=TRUE) == 0) {
       # No non-NA data, generate empty plot
       plotMin <- ggplot2::ggplot(data=dataIdx,ggplot2::aes(x=time)) + ggplot2::geom_blank() + 
-        ggplot2::labs(title=nameVarIdx,x="Date/Time",y="Minimum") + ggplot2::theme_bw()
+        ggplot2::labs(title=idxVar,x="Date/Time",y="Minimum") + ggplot2::theme_bw()
     } else {
       # Data to plot!
       plotMin <- ggplot2::ggplot() + ggplot2::geom_line(data=dataIdx,ggplot2::aes(x=dataIdx$time,y=dataIdx$min)) +
         ggplot2::geom_point(data=dataIdx,ggplot2::aes(x=dataIdx$time,y=dataIdx$min)) +
-        ggplot2::labs(title=nameVarIdx,x="Date/Time",y="Minimum") + ggplot2::theme_bw() +
+        ggplot2::labs(title=idxVar,x="Date/Time",y="Minimum") + ggplot2::theme_bw() +
         ggplot2::geom_point(ggplot2::aes(x=dataIdx$time[dataIdx[,"qfFinl"]==1],y=dataIdx$min[dataIdx[,"qfFinl"]==1]),color="red") 
     }
 
@@ -130,34 +133,34 @@ def.plot.qfqm.dp01 <- function (
         ggplot2::geom_point(ggplot2::aes(x=dataIdx$time[dataIdx[,"qfFinl"]==1],y=dataIdx$var[dataIdx[,"qfFinl"]==1]),color="red") 
     }
 
-    if(base::sum(dataIdx$ste,na.rm=TRUE) == 0) {
+    if(base::sum(dataIdx$se,na.rm=TRUE) == 0) {
       # No non-NA data, generate empty plot
-      plotSte <- ggplot2::ggplot(data=dataIdx,ggplot2::aes(x=time)) + ggplot2::geom_blank() + 
+      plotSe <- ggplot2::ggplot(data=dataIdx,ggplot2::aes(x=time)) + ggplot2::geom_blank() + 
         ggplot2::labs(title=" ",x="Date/Time",y="Standard error") + ggplot2::theme_bw()
     } else {
       # Data to plot!
-      plotSte <- ggplot2::ggplot() + ggplot2::geom_line(data=dataIdx,ggplot2::aes(x=dataIdx$time,y=dataIdx$ste)) +
-        ggplot2::geom_point(data=dataIdx,ggplot2::aes(x=dataIdx$time,y=dataIdx$ste)) + 
+      plotSe <- ggplot2::ggplot() + ggplot2::geom_line(data=dataIdx,ggplot2::aes(x=dataIdx$time,y=dataIdx$se)) +
+        ggplot2::geom_point(data=dataIdx,ggplot2::aes(x=dataIdx$time,y=dataIdx$se)) + 
         ggplot2::labs(title=" ",x="Date/Time",y="Standard error") + ggplot2::theme_bw() +
-        ggplot2::geom_point(ggplot2::aes(x=dataIdx$time[dataIdx[,"qfFinl"]==1],y=dataIdx$ste[dataIdx[,"qfFinl"]==1]),color="red") 
+        ggplot2::geom_point(ggplot2::aes(x=dataIdx$time[dataIdx[,"qfFinl"]==1],y=dataIdx$se[dataIdx[,"qfFinl"]==1]),color="red") 
     }
     
 
-    if(base::sum(dataIdx$numPts,na.rm=TRUE) == 0) {
+    if(base::sum(dataIdx$num,na.rm=TRUE) == 0) {
       # No non-NA data, generate empty plot
       plotNumPts <- ggplot2::ggplot(data=dataIdx,ggplot2::aes(x=time)) + ggplot2::geom_blank() + 
         ggplot2::labs(title=" ",x="Date/Time",y="Number of points") + ggplot2::theme_bw()
     } else {
       # Data to plot!
-      plotNumPts <- ggplot2::ggplot() + ggplot2::geom_line(data=dataIdx,ggplot2::aes(x=dataIdx$time,y=dataIdx$numPts)) +
-        ggplot2::geom_point(data=dataIdx,ggplot2::aes(x=dataIdx$time,y=dataIdx$numPts)) + 
+      plotNumPts <- ggplot2::ggplot() + ggplot2::geom_line(data=dataIdx,ggplot2::aes(x=dataIdx$time,y=dataIdx$num)) +
+        ggplot2::geom_point(data=dataIdx,ggplot2::aes(x=dataIdx$time,y=dataIdx$num)) + 
         ggplot2::labs(title=" ",x="Date/Time",y="Number of points") + ggplot2::theme_bw() +
-        ggplot2::geom_point(ggplot2::aes(x=dataIdx$time[dataIdx[,"qfFinl"]==1],y=dataIdx$numPts[dataIdx[,"qfFinl"]==1]),color="red")
+        ggplot2::geom_point(ggplot2::aes(x=dataIdx$time[dataIdx[,"qfFinl"]==1],y=dataIdx$num[dataIdx[,"qfFinl"]==1]),color="red")
     }
     
       
     
-    Rmisc::multiplot(plotMean,plotVar,plotMin,plotSte,plotMax,plotNumPts,cols=3)
+    Rmisc::multiplot(plotMean,plotVar,plotMin,plotSe,plotMax,plotNumPts,cols=3)
     
     
     # Set up the quality metrics to plot
@@ -194,7 +197,7 @@ def.plot.qfqm.dp01 <- function (
     # Plot the passing, failing, and na quality metrics
     plotPass <- ggplot2::ggplot(dataQmPass,ggplot2::aes(x=time,y=value,color=factor(variable)))+ggplot2::geom_line() + 
       ggplot2::geom_point() + ggplot2::scale_color_discrete(name="QM") + ggplot2::theme_bw() + ggplot2::theme(legend.position="none") +
-      ggplot2::labs(title=paste("Indiv. quality metrics:",nameVarIdx),y="% Pass",x=" ")
+      ggplot2::labs(title=paste("Indiv. quality metrics:",idxVar),y="% Pass",x=" ")
     grobPass <- ggplot2::ggplotGrob(plotPass) # grab the grob for this plot for later manipulation
     
     plotFail <- ggplot2::ggplot(dataQmFail,ggplot2::aes(x=time,y=value,color=factor(variable)))+ggplot2::geom_line() +
@@ -223,12 +226,12 @@ def.plot.qfqm.dp01 <- function (
 
     # Set up the alpha and beta metrics to plot
     # Subset out the alpha and beta quality metrics in long format
-    dataQmAlphBeta <- reshape2::melt(data.frame(time=dataIdx$time, dataIdx[,c("qmAlpha","qmBeta")]),id="time")
+    dataQmAlphBeta <- reshape2::melt(data.frame(time=dataIdx$time, dataIdx[,c("qmAlph","qmBeta")]),id="time")
 
     # Plot the passing, failing, and na quality metrics
     plotAlphBeta <- ggplot2::ggplot(dataQmAlphBeta,ggplot2::aes(x=time,y=value,color=factor(variable)))+ ggplot2::geom_line() +
       ggplot2::geom_point() + ggplot2::scale_color_discrete(name="QM") + ggplot2::theme_bw() + ggplot2::theme(legend.key=ggplot2::element_blank()) +
-      ggplot2::labs(ggplot2::labs(title=paste("Final quality metrics:",nameVarIdx),y="%",x=" "))
+      ggplot2::labs(ggplot2::labs(title=paste("Final quality metrics:",idxVar),y="%",x=" "))
     grobAlphBeta <- ggplot2::ggplotGrob(plotAlphBeta) # grab the grob for this plot for later manipulation
     
     plotFinl <- ggplot2::ggplot(dataIdx,ggplot2::aes(x=time,y=qfFinl)) + ggplot2::geom_line() + ggplot2::geom_point() +
