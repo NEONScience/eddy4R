@@ -71,6 +71,8 @@
 #     Added NIST standard temperature 293.15 [K]
 #   Cove Sturtevant (2016-05-12)
 #     Added percent to dimensionless unit conversion
+#   Cove Sturtevant (2016-11-28)
+#     Added units to natural constants
 ##############################################################################################
 
 library(devtools)
@@ -362,38 +364,62 @@ Natu <- list() # Natural constants
 # NATURAL CONSTANTS
 #EARTH BODY
     Natu$Grav <-	9.81				#gravitational acceleration [m s-2]
+      attr(Natu$Grav,"unit") <- "m s-2"
     Natu$PrdErth <- 86164.1	        #rotation period of the Earth (one sidereal day) [s]
+      attr(Natu$PrdErth,"unit") <- "s"
     Natu$AvelErth <- 2 * pi / Natu$PrdErth   #angular speed of earth [rad s-1]
-
+      attr(Natu$AvelErth,"unit") <- "rad s-1"
+    
 #THERMODYNAMICS
   #standard atmosphere
     Natu$Pres00 <- 101325			# NIST standard pressure [Pa == kg m-1 s-2]
+      attr(Natu$Pres00,"unit") <- "Pa"
     Natu$Temp00 <- 293.15     # NIST standard temperature [K] 
-	  Natu$Rg <- 8.314462175	# ideal gas constant [J mol-1 K-1 == kg m2 s-2 mol-1 K-1]
-	  Natu$VonkFokn <- 0.40				#von-Karman constant accordig to Foken (2008) [-]
-
+      attr(Natu$Temp00,"unit") <- "K"
+    Natu$Rg <- 8.314462175	# ideal gas constant [J mol-1 K-1 == kg m2 s-2 mol-1 K-1]
+      attr(Natu$Rg,"unit") <- "J mol-1 K-1"
+    Natu$VonkFokn <- 0.40				#von-Karman constant accordig to Foken (2008) [-]
+      attr(Natu$VonkFokn,"unit") <- "-"
+    
   #molar masses
     Natu$MolmDry <- 28.97e-3			#dry air [kg mol-1]
+      attr(Natu$MolmDry,"unit") <- "kgDry mol-1"
     Natu$MolmH2o <- 18.02e-3			#water vapor [kg mol-1]
+      attr(Natu$MolmH2o,"unit") <- "kgH2o mol-1"
     Natu$MolmCo2 <- 44.01e-3			#co2 [kg mol-1]
+      attr(Natu$MolmCo2,"unit") <- "kgCo2 mol-1"
     Natu$MolmCh4 <- 16.04e-3		#CH4 [kg mol-1]
+      attr(Natu$MolmCh4,"unit") <- "kgCh4 mol-1"
     Natu$MolmC <- 12e-3          # C [kg mol-1]
+      attr(Natu$MolmC,"unit") <- "kgC mol-1"
     Natu$RtioMolmH2oDry <- Natu$MolmH2o / Natu$MolmDry		#molar mass ratio water vapour / dry air
+      attr(Natu$RtioMolmH2oDry,"unit") <- "kgH2o kgDry-1"
     Natu$RtioMolmDryH2o <- Natu$MolmDry / Natu$MolmH2o		#molar mass ratio dry air / water vapour
-
+      attr(Natu$RtioMolmDryH2o,"unit") <- "kgDry kgH2o-1"
+    
   #dry air (Dry)
     Natu$CpDry <- 1004.64		#dry air specific heat at constant pressure 	[J kg-1 K-1]
+      attr(Natu$CpDry,"unit") <- "J kg-1 K-1"
     Natu$CvDry <- 717.6		#dry air specific heat at constant volume	[J kg-1 K-1]
+      attr(Natu$CvDry,"unit") <- "J kg-1 K-1"
     Natu$RsDry <- Natu$CpDry - Natu$CvDry		#specific gas constant for dry air		[J kg-1 K-1]
+      attr(Natu$RsDry,"unit") <- "J kg-1 K-1"
     Natu$GmmaDry <- Natu$CpDry / Natu$CvDry	# Ratio of specific heat of dry air at contant pressure to specific heat of dry air at contant volume [-]
+      attr(Natu$GmmaDry,"unit") <- "-"
     Natu$KppaDry <- Natu$RsDry / Natu$CpDry		#Kappa exponent for ideal gas law (Poisson)	[-]
-
+      attr(Natu$KppaDry,"unit") <- "-"
+    
   #water vapor (H2o)
     Natu$CpH2o <- 1846			#water vapor specific heat at constant pressure [m2 K-1 s-2]
+      attr(Natu$CpH2o,"unit") <- "m2 K-1 s-2"
     Natu$CvH2o <- 1384.04		#water vapor specific heat at constant volume	[m2 K-1 s-2]
+      attr(Natu$CvH2o,"unit") <- "m2 K-1 s-2"
     Natu$RsH2o <- Natu$CpH2o - Natu$CvH2o		#specific gas constant for water vapor		[m2 K-1 s-2]
+      attr(Natu$RsH2o,"unit") <- "m2 K-1 s-2"
     Natu$GmmaH2o <- Natu$CpH2o / Natu$CvH2o # Ratio of specific heat of water vapour at contant pressure to specific heat of water vapour at contant volume [-]
+      attr(Natu$GmmaH2o,"unit") <- "-"
     Natu$KppaH2o <- Natu$RsH2o / Natu$CpH2o		#Kappa exponent for ideal gas law (Poisson)	[-]
-
+      attr(Natu$KppaH2o,"unit") <- "-"
+    
 # Save internal constants and conversion factors as .rda files within /data
 devtools::use_data(Unit,Natu,Conv,pkg=paste0(dirPack,"/",namePack),overwrite=TRUE) 
