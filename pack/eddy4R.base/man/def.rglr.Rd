@@ -85,6 +85,8 @@ def.rglr(
 }
 \author{
 Stefan Metzger \email{eddy4R.info@gmail.com}
+Cove Sturtevant \email{eddy4R.info@gmail.com}
+Dave Durden \email{eddy4R.info@gmail.com}
 }
 \references{
 License: Terms of use of the NEON FIU algorithm repository dated 2015-01-16. \cr
