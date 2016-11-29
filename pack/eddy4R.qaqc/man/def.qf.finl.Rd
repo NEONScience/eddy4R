@@ -2,24 +2,24 @@
 % Please edit documentation in R/def.qf.finl.R
 \name{def.qf.finl}
 \alias{def.qf.finl}
-\title{Final Quality Flag (basic L1 data products)}
+\title{Final Quality Flag}
 \usage{
-def.qf.finl(data, rtioAlphBeta = c(2, 1), thsh = 20)
+def.qf.finl(qf, WghtAlphBeta = c(2, 1), Thsh = 0.2)
 }
 \arguments{
-\item{\code{data}}{A dataframe containing the input flag data that going to use to determine alpha and beta quality flags, quality metrics, and final quality flag. Of class integer". [-]}
+\item{\code{qf}}{A data frame of quality flags, class integer, from which to compute the final quality flag. Each column contains the quality flag values [-1,0,1] for that flag. Note: This is the Vrbs output from def.plau, def.dspk.wndw, and def.dspk.filt.med. See def.conv.qf.vrbs for converting from non-verbose to verbose output.}
 
-\item{\code{rtioAlphBeta}}{Ratio of alpha quailty metric to beta quailty metric for determing the final quality flag. Default to rtioAlphBeta=c(2,1). [-]}
+\item{\code{WghtAlphBeta}}{A 2-element integer vector of weights to apply to the alpha and beta quality metrics, which will then be summed and evaluated against the threshold (\code{Thsh}) for determing the final quality flag. Default to WghtAlphBeta=c(2,1). [-]}
 
-\item{\code{thsh}}{Threshold for determine the condition (pass = 0 or failed = 1) of final quality flag. Default to 20 percent. [percent]}
+\item{\code{Thsh}}{Threshold for determine the condition (pass = 0 or failed = 1) of final quality flag. Default to 0.2 (0.2 percent). [fraction]}
 }
 \value{
 A list of: \cr
-\code{qaqcRpt} A dataframe containing alpha and beta quality flags at the same frequency as input data. [-] \cr
+\code{qaqcRpt} A dataframe containing alpha and beta quality flags at the same frequency as input \code{qf}. [-] \cr
 \code{qfqm} A dataframe containing alpha and beta quality metric and final qualiy flag. [-] \cr
 }
 \description{
-Function definition. Determine the final quality flag for individual level 1 data product following the method described in Smith et.al. (2014). The alpha and beta quality flags and metrics were also computed in this function.
+Function definition. Determine the final quality flag for individual level 1 data product following the method described in Smith et.al. (2014). The alpha and beta quality flags and metrics are also computed in this function. Performed for the entire set of input data.
 }
 \examples{
 qfA <- c(0,0,0,0,0,1,1,1,1,1,0,0,0,0,1) 
@@ -27,7 +27,7 @@ qfB <- c(0,0,-1,-1,-1,1,1,0,0,0,0,0,0,0,0)
 qfC <- c(0,1,1,0,0,0,0,0,0,0,0,0,-1,-1,-1)
 test<-list()
 test$qf <- data.frame(qfA,qfB,qfC)
-out <- def.qf.finl(data=test$qf, rtioAlphBeta=c(2,1), thsh=20)
+out <- def.qf.finl(qf=test$qf, WghtAlphBeta=c(2,1), Thsh=0.2)
 }
 \author{
 Cove Sturtevant \email{csturtevant@neoninc.org} \cr
@@ -38,7 +38,7 @@ NEON Algorithm Theoretical Basis Document: Quality Flags and Quality Metrics for
 Smith, D.E., Metzger, S., and Taylor, J.R.: A transparent and transferable framework for tracking quality information in large datasets. PLoS ONE, 9(11), e112249.doi:10.1371/journal.pone.0112249, 2014. \cr
 }
 \seealso{
-\code{\link[eddy4R.qaqc]{def.qfqm.dp01}} \cr
+\code{\link[eddy4R.qaqc]{wrap.dp01.qfqm}} \cr
 \code{\link[eddy4R.qaqc]{def.qm}} \cr
 }
 \keyword{NEON}

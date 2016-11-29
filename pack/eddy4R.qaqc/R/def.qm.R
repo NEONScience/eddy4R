@@ -30,7 +30,7 @@
 #' @seealso 
 #' \code{\link[eddy4R.qaqc]{wrap.qfqm.dp01}}
 #' \code{\link[eddy4R.qaqc]{def.plau}}
-#' \code{\link[eddy4R.qaqc]{def.dspk.wndw}
+#' \code{\link[eddy4R.qaqc]{def.dspk.wndw}}
 #' \code{\link[eddy4R.qaqc]{def.dspk.filt.med}}
 #' \code{\link[eddy4R.qaqc]{def.conv.qf.vrbs}}
 
