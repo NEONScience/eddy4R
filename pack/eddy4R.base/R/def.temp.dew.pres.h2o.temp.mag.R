@@ -20,8 +20,8 @@
 #' @keywords dew point, humidity conversion, Magnus equation
 
 #' @examples 
-#' def.temp.dew(presH2o = 2212.04, temp = 298.15)
-#' def.temp.dew(presH2o = c(42.22, 87.22, 699.78), temp = c(265.15, 278.15, 293.15))
+#' def.temp.dew.pres.h2o.temp.mag(presH2o = 2212.04, temp = 298.15)
+#' def.temp.dew.pres.h2o.temp.mag(presH2o = c(42.22, 87.22, 699.78), temp = c(265.15, 278.15, 293.15))
 
 #' @seealso Currently none
 
@@ -32,9 +32,11 @@
 #     original creation
 #   Stefan Metzger (2015-11-28)
 #     re-formualtion as function() to allow packaging
+#   Natchaya P-Durden (2016-11-30)
+#     rename function to def.temp.dew.pres.h2o.temp.mag()
 ##############################################################################################
 
-def.temp.dew <- function(presH2o, temp) {
+def.temp.dew.pres.h2o.temp.mag <- function(presH2o, temp) {
   
   #defined local constants for Magnus formula
   CnstLoc <- list(Cnst01 = 6.11, Cnst02 = 17.08, Cnst03 = 234.18, Cnst04 = 22.44, Cnst05 = 272.44)
@@ -55,5 +57,5 @@ def.temp.dew <- function(presH2o, temp) {
   #return reported object
   return(tempDew)
   
-  # end function def.temp.dew()
+  # end function def.temp.dew.pres.h2o.temp.mag()
 }
