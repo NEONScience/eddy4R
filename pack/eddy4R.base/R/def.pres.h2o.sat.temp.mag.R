@@ -18,8 +18,8 @@
 #' @keywords humidity conversion, Magnus equation
 
 #' @examples
-#' def.pres.h2o.sat(temp = 265.15)
-#' def.pres.h2o.sat(temp = c(265.15, 285.0, 290.2))
+#' def.pres.h2o.sat.temp.mag(temp = 265.15)
+#' def.pres.h2o.sat.temp.mag(temp = c(265.15, 285.0, 290.2))
 
 #' @seealso Currently none
 
@@ -32,9 +32,11 @@
 #     re-formualtion as function() to allow packaging
 #   Natchaya P-Durden (2016-04-08)
 #     Initail naming convention for eddy4R
+#   Natchaya P-Durden (2015-11-30)
+#     rename function to def.pres.h2o.sat.temp.mag()
 ##############################################################################################
 
-def.pres.h2o.sat <- function(temp) {
+def.pres.h2o.sat.temp.mag <- function(temp) {
 
   #defined local constants for Magnus formula
   CnstLoc <- list(Cnst01 = 6.11, Cnst02 = 17.08, Cnst03 = 234.18, Cnst04 = 22.44, Cnst05 = 272.44)
@@ -64,5 +66,5 @@ def.pres.h2o.sat <- function(temp) {
   #return reported object
     return(presH2oSat) 
   
-  # end function def.pres.h2o.sat()
+  # end function def.pres.h2o.sat.temp.mag()
 }
