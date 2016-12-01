@@ -22,19 +22,18 @@
 #' Freq <- 20
 #' Sens <- "soni"
 #' PcntQf <- 0.05
-#' qfSens <- def.qf.crte(TimeBgn = TimeBgn, TimeEnd = TimeEnd, Freq = Freq, Sens = Sens, PcntQf = PcntQf)
+#' qfSens <- def.qf.ecte(TimeBgn = TimeBgn, TimeEnd = TimeEnd, Freq = Freq, Sens = Sens, PcntQf = PcntQf)
 
 #' @seealso Currently none
+ 
+#' @export
 
 # changelog and author contributions / copyrights
 #   Dave Durden (2016-11-15)
 #     original creation
 ##############################################################################################
 
-
-
-
-def.qf.crte <- function(
+def.qf.ecte <- function(
   TimeBgn,
   TimeEnd,
   Freq = 20,
