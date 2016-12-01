@@ -86,16 +86,21 @@ def.qf.crte <- function(
     qfNameSens <- c("qfAmrsVal", "qfAmrsFilt", "qfAmrsVelo", "qfAmrsRng")}
 ################################################################################################################################
   
+  # Name of prefixes for qaqc plausibility tests
   qfNamePlau <- c("qfRngMin","qfStep", "qfPers", "qfCal" )
   
   #varNameUp <- paste(toupper(substr(varName, 1, 1)), substr(varName, 2, nchar(varName)), sep="")
   
+  # Combining the plausibility prefixes with the sensor data stream names
   qfNameSensPlau <- as.vector(outer(qfNamePlau, paste(toupper(substr(varName, 1, 1)), substr(varName, 2, nchar(varName)), sep=""), paste, sep = ""))
   
+  # Combining sensor specific quality flag names with plausibilty flags for sensor streams
   qfName <- c(qfNameSens,qfNameSensPlau)
   
+  # Creating randomized flags for all the streams at the percentage specified in PcntQf
   qfSensDf <- data.frame(replicate(length(qfName), rbinom(n = length(timeRglr), size = 1, prob = PcntQf)))
   
+  #Add names to the dataframe
   names(qfSensDf) <- qfName
   
   return(qfSensDf)
