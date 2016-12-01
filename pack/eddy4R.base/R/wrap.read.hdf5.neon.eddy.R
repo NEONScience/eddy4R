@@ -85,7 +85,7 @@ if(!(DateLoca %in% file)) {
     
     data <- data.frame(matrix(data = NaN, ncol = 20, nrow = length(time)))
     names(data) <- c("asrpCO2", "asrpH2O", "diag", "diag02", "fdMoleCO2", "fdMoleH2O", "poteCool", "presAtm",
-                     "presGageCell", "pwrCO2Ref", "pwrCO2Samp", "pwrH2ORef", "pwrH2OSamp", "rhoMoleCO2", "rhoMoleH2O",
+                     "presDiff", "pwrCO2Ref", "pwrCO2Samp", "pwrH2ORef", "pwrH2OSamp", "rhoMoleCO2", "rhoMoleH2O",
                      "ssiCO2", "ssiH2O", "tempBloc", "tempCellIn", "tempCellOut")
     attributes(data)$unit <- c("-", "-", "NA", "NA", "mol mol-1", "mol mol-1", "V", "Pa", "Pa", "W", "W", "W", "W",
                                "mol m-3", "mol m-3", "%", "%", "K", "K", "K")
