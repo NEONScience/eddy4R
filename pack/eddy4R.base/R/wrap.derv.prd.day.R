@@ -88,7 +88,7 @@ wrap.derv.prd.day <- function(
 
     # water vapor saturation pressure
     if(!is.na(mean(data$irga$T_cell_7200, na.rm=TRUE))) {
-      data$irga$presH2oSat <- ff::as.ff(as.vector(def.pres.h2o.sat(temp = data$irga$T_cell_7200[])))
+      data$irga$presH2oSat <- ff::as.ff(as.vector(def.pres.h2o.sat.temp.mag(temp = data$irga$T_cell_7200[])))
     } else {
       data$irga$presH2oSat <- ff::as.ff(rep(NaN, length(data$irga$T_cell_7200)))
     }
