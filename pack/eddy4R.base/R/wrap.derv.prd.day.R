@@ -83,7 +83,7 @@ wrap.derv.prd.day <- function(
   # RH in cell
 
     # water vapor partial pressure
-    data$irga$presH2o <- ff::as.ff(def.pres.h2o.rtio.mole.h2o.dry.pres(rtioMoleDryH2o = data$irga$fdMoleH2O, pres = data$irga$presSum))
+    data$irga$presH2o <- ff::as.ff(def.pres.h2o.rtio.mole.h2o.dry.pres(rtioMoleDryH2o = data$irga$rtioMoleDryH2o, pres = data$irga$presSum))
     base::attr(x = data$irga$presH2o, which = "unit") <- "Pa"
 
     # water vapor saturation pressure
