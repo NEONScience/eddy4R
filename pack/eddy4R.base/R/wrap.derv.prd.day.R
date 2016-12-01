@@ -73,7 +73,7 @@ wrap.derv.prd.day <- function(
   data$irga$RSSI_delta_7200 <- def.ssi.diff(ssiCo2 = data$irga$ssiCO2, ssiH2o = data$irga$ssiH2O)
  
   # total pressure in irga cell
-  data$irga$p_cell_7200 <- def.pres.sum(presAtm = data$irga$presAtmBox,presDiff = data$irga$presGageCell)
+  data$irga$presSum <- def.pres.sum(presAtm = data$irga$presAtmBox,presDiff = data$irga$presGageCell)
   
 
   # average temperature in irga cell 
@@ -83,7 +83,7 @@ wrap.derv.prd.day <- function(
   # RH in cell
 
     # water vapor partial pressure
-    data$irga$presH2o <- ff::as.ff(def.pres.h2o.rtio.mole.h2o.dry.pres(rtioMoleDryH2o = data$irga$fdMoleH2O, pres = data$irga$p_cell_7200))
+    data$irga$presH2o <- ff::as.ff(def.pres.h2o.rtio.mole.h2o.dry.pres(rtioMoleDryH2o = data$irga$fdMoleH2O, pres = data$irga$presSum))
     base::attr(x = data$irga$presH2o, which = "unit") <- "Pa"
 
     # water vapor saturation pressure
@@ -99,7 +99,7 @@ wrap.derv.prd.day <- function(
     
 
   # molar density of dry air and water vapor
-  data$irga$rho_mole_air_7200 <- def.dens.mole.air(presSum = data$irga$p_cell_7200,
+  data$irga$rho_mole_air_7200 <- def.dens.mole.air(presSum = data$irga$presSum,
                                                    tempMean = data$irga$T_cell_7200)
   
   # molar density of dry air alone
