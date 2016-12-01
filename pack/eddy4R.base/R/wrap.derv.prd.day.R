@@ -77,8 +77,8 @@ wrap.derv.prd.day <- function(
   
 
   # average temperature in irga cell 
-  data$irga$T_cell_7200 <- def.temp.mean.7200(tempIn = data$irga$tempCellIn,
-                                              tempOut = data$irga$tempCellOut)
+  data$irga$T_cell_7200 <- def.temp.mean.7200(tempIn = data$irga$tempIn,
+                                              tempOut = data$irga$tempOut)
  
   # RH in cell
 
