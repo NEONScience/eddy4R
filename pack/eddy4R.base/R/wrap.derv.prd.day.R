@@ -65,12 +65,12 @@ wrap.derv.prd.day <- function(
 
   # average signal strength
 
-  data$irga$ssiMean <- ff::as.ff(def.ssi.mean(ssiCo2 = data$irga$ssiCO2,
-                                                     ssiH2o = data$irga$ssiH2O))
-  base::attr(x = data$irga$ssiMean, which = "unit") <- base::attr(x = data$irga$ssiCO2, which = "unit")
+  data$irga$ssiMean <- ff::as.ff(def.ssi.mean(ssiCo2 = data$irga$ssiCo2,
+                                                     ssiH2o = data$irga$ssiH2o))
+  base::attr(x = data$irga$ssiMean, which = "unit") <- base::attr(x = data$irga$ssiCo2, which = "unit")
   
   # delta signal strength
-  data$irga$RSSI_delta_7200 <- def.ssi.diff(ssiCo2 = data$irga$ssiCO2, ssiH2o = data$irga$ssiH2O)
+  data$irga$RSSI_delta_7200 <- def.ssi.diff(ssiCo2 = data$irga$ssiCo2, ssiH2o = data$irga$ssiH2o)
  
   # total pressure in irga cell
   data$irga$presSum <- def.pres.sum(presAtm = data$irga$presAtm,presDiff = data$irga$presDiff)
