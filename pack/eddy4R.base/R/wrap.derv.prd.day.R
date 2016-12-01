@@ -77,7 +77,7 @@ wrap.derv.prd.day <- function(
   
 
   # average temperature in irga cell 
-  data$irga$T_cell_7200 <- def.temp.mean.7200(tempIn = data$irga$tempIn,
+  data$irga$tempMean <- def.temp.mean.7200(tempIn = data$irga$tempIn,
                                               tempOut = data$irga$tempOut)
  
   # RH in cell
@@ -87,10 +87,10 @@ wrap.derv.prd.day <- function(
     base::attr(x = data$irga$presH2o, which = "unit") <- "Pa"
 
     # water vapor saturation pressure
-    if(!is.na(mean(data$irga$T_cell_7200, na.rm=TRUE))) {
-      data$irga$presH2oSat <- ff::as.ff(as.vector(def.pres.h2o.sat.temp.mag(temp = data$irga$T_cell_7200[])))
+    if(!is.na(mean(data$irga$tempMean, na.rm=TRUE))) {
+      data$irga$presH2oSat <- ff::as.ff(as.vector(def.pres.h2o.sat.temp.mag(temp = data$irga$tempMean[])))
     } else {
-      data$irga$presH2oSat <- ff::as.ff(rep(NaN, length(data$irga$T_cell_7200)))
+      data$irga$presH2oSat <- ff::as.ff(rep(NaN, length(data$irga$tempMean)))
     }
     base::attr(x = data$irga$presH2oSat, which = "unit") <- "Pa"
     
@@ -100,7 +100,7 @@ wrap.derv.prd.day <- function(
 
   # molar density of dry air and water vapor
   data$irga$rho_mole_air_7200 <- def.dens.mole.air(presSum = data$irga$presSum,
-                                                   tempMean = data$irga$T_cell_7200)
+                                                   tempMean = data$irga$tempMean)
   
   # molar density of dry air alone
   data$irga$rho_mole_dry_7200 <- def.dens.mole.air.dry(densMoleAir = data$irga$rho_mole_air_7200,
