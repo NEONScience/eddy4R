@@ -7,7 +7,7 @@
 def.qm(qf, nameQmOut = NULL)
 }
 \arguments{
-\item{qf}{A data frame of quality flags, class integer. Each column contains the quality flag values [-1,0,1] for that flag. Note: This is the Vrbs output from def.plau, def.dspk.wndw, and def.dspk.filt.med. See def.conv.qf.vrbs for converting from non-verbose to verbose output.}
+\item{qf}{A data frame of quality flags, class integer. Each column contains the quality flag values [-1,0,1] for that flag. Note: This is the Vrbs output from def.plau, def.dspk.wndw, and def.dspk.br86. See def.conv.qf.vrbs for converting from non-verbose to verbose output.}
 
 \item{nameQmOut}{Optional. A vector of class "character" containing the base name of the output quality metrics for each flag in \code{qf}. These names will be ammended with "Pass", "Fail", or "Na" at the end when outputting their respective quality metrics. Default behavoir is to autoassign names based on the column names of \code{qf} [-]}
 }
@@ -37,7 +37,7 @@ Smith, D.E., Metzger, S., and Taylor, J.R.: A transparent and transferable frame
 \code{\link[eddy4R.qaqc]{wrap.qfqm.dp01}}
 \code{\link[eddy4R.qaqc]{def.plau}}
 \code{\link[eddy4R.qaqc]{def.dspk.wndw}}
-\code{\link[eddy4R.qaqc]{def.dspk.filt.med}}
+\code{\link[eddy4R.qaqc]{def.dspk.br86}}
 \code{\link[eddy4R.qaqc]{def.conv.qf.vrbs}}
 }
 \keyword{NEON}
