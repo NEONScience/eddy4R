@@ -70,7 +70,7 @@ wrap.derv.prd.day <- function(
   base::attr(x = data$irga$ssiMean, which = "unit") <- base::attr(x = data$irga$ssiCo2, which = "unit")
   
   # delta signal strength
-  data$irga$RSSI_delta_7200 <- def.ssi.diff(ssiCo2 = data$irga$ssiCo2, ssiH2o = data$irga$ssiH2o)
+  data$irga$ssiDiff <- def.ssi.diff(ssiCo2 = data$irga$ssiCo2, ssiH2o = data$irga$ssiH2o)
  
   # total pressure in irga cell
   data$irga$presSum <- def.pres.sum(presAtm = data$irga$presAtm,presDiff = data$irga$presDiff)
@@ -114,7 +114,7 @@ wrap.derv.prd.day <- function(
 # soni
   
   # sonic temperature [K] from speed of sound [m s-1] (Campbell Scientific, Eq. (9))
-  data$soni$T_SONIC <- def.temp.soni(veloSoni = data$soni$veloSoni)
+  data$soni$tempSoni <- def.temp.soni(veloSoni = data$soni$veloSoni)
   
 # sort object levels alphabetically
 
