@@ -85,7 +85,7 @@ if(!(DateLoca %in% file)) {
     
     data <- data.frame(matrix(data = NaN, ncol = 20, nrow = length(time)))
     names(data) <- c("asrpCO2", "asrpH2O", "diag", "diag02", "fdMoleCO2", "rtioMoleDryH2o", "poteCool", "presAtm",
-                     "presDiff", "pwrCO2Ref", "pwrCO2Samp", "pwrH2ORef", "pwrH2OSamp", "rhoMoleCO2", "rhoMoleH2O",
+                     "presDiff", "pwrCO2Ref", "pwrCO2Samp", "pwrH2ORef", "pwrH2OSamp", "rhoMoleCO2", "densMoleH2o",
                      "ssiCo2", "ssiH2o", "tempBloc", "tempIn", "tempOut")
     attributes(data)$unit <- c("-", "-", "NA", "NA", "mol mol-1", "mol mol-1", "V", "Pa", "Pa", "W", "W", "W", "W",
                                "mol m-3", "mol m-3", "%", "%", "K", "K", "K")
@@ -214,7 +214,7 @@ if(!(DateLoca %in% file)) {
 
         # simple implementation based on decimal representation
         whr <- which(data$dataRglr$diag != 8191)
-        if(length(whr) > 0) data$dataRglr[whr, c("asrpCO2", "asrpH2O", "rhoMoleCO2", "rhoMoleH2O", "fdMoleCO2", "rtioMoleDryH2o")] <- NaN
+        if(length(whr) > 0) data$dataRglr[whr, c("asrpCO2", "asrpH2O", "rhoMoleCO2", "densMoleH2o", "fdMoleCO2", "rtioMoleDryH2o")] <- NaN
         rm(whr)
         
         # #determine binary representations for integers up to 2^32-1
