@@ -38,7 +38,7 @@
 def.coef.corl <- function(lat) {
   
   # Compute coriolis coefficient
-  coefCorl <- 2 * eddy4R.base::Natu$AvelErth * base::sin(eddy4R.base::def.conv.unit(data=lat,unitFrom="deg",unitTo="rad")) # [rad s-1]
+  coefCorl <- 2 * eddy4R.base::Natu$AvelErth * base::sin(eddy4R.base::def.unit.conv(data=lat,unitFrom="deg",unitTo="rad")) # [rad s-1]
   
   return(coefCorl)
   

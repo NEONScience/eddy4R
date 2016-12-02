@@ -165,7 +165,7 @@ if(!(DateLoca %in% file)) {
   # unit conversion
     
     # perform unit conversion
-    data <- base::suppressWarnings(eddy4R.base::def.conv.unit(data = data,
+    data <- base::suppressWarnings(eddy4R.base::def.unit.conv(data = data,
                                                               unitFrom = attributes(data)$unit,
                                                               unitTo = "intl"))
 
@@ -174,7 +174,7 @@ if(!(DateLoca %in% file)) {
       # for(idx in base::names(data)) {
       #   
       #   data[[idx]] <- base::suppressWarnings(
-      #     eddy4R.base::def.conv.unit(data = base::as.vector(data[[idx]]),
+      #     eddy4R.base::def.unit.conv(data = base::as.vector(data[[idx]]),
       #                                unitFrom = attributes(data[[idx]])$unit,
       #                                unitTo = "intl")
       #   )

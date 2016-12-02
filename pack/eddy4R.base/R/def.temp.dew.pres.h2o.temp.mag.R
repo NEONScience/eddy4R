@@ -45,12 +45,12 @@ def.temp.dew.pres.h2o.temp.mag <- function(presH2o, temp) {
   if (mean(temp, na.rm=TRUE) >= eddy4R.base::Conv$CelsKelv[1]) {
     #dew point:
     tempDew <- (CnstLoc$Cnst03 * log(presH2o*1e-2 / CnstLoc$Cnst01) / (CnstLoc$Cnst02 - log(presH2o*1e-2 / CnstLoc$Cnst01)))
-	tempDew <- eddy4R.base::def.conv.unit(data=tempDew,unitFrom="C",unitTo="K") # Convert to Kelvin
+	tempDew <- eddy4R.base::def.unit.conv(data=tempDew,unitFrom="C",unitTo="K") # Convert to Kelvin
     
   } else {
     #temp < 273.15 K (0 degC):
     tempDew <- (CnstLoc$Cnst05 * log(presH2o*1e-2 / CnstLoc$Cnst01) / (CnstLoc$Cnst04 - log(presH2o*1e-2 / CnstLoc$Cnst01)))
-	tempDew <- eddy4R.base::def.conv.unit(data=tempDew,unitFrom="C",unitTo="K") # Convert to Kelvin
+	tempDew <- eddy4R.base::def.unit.conv(data=tempDew,unitFrom="C",unitTo="K") # Convert to Kelvin
     
   }
   

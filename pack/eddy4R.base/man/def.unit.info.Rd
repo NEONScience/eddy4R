@@ -55,7 +55,7 @@ Cove Sturtevant \email{eddy4R.info@gmail.com}
 license: Terms of use of the NEON FIU algorithm repository dated 2015-01-16
 }
 \seealso{
-\code{\link{def.conv.unit}}, \code{\link{def.unit.intl}}, \code{\link{Unit$Intl}}
+\code{\link{def.unit.conv}}, \code{\link{def.unit.intl}}, \code{\link{Unit$Intl}}
 }
 \keyword{conversion,}
 \keyword{input}
