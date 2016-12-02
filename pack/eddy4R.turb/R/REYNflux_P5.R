@@ -132,11 +132,11 @@ REYNflux_FD_mole_dry <- function(
   
   
   #aircraft heading as vector average
-  if(PltfEc == "airc") mn$PSI_aircraft <- eddy4R.base::def.conv.poly(data=eddy4R.base::def.az.cart(matrix(colMeans(eddy4R.base::def.cart.az(eddy4R.base::def.conv.poly(data=data$PSI_aircraft,coefPoly=eddy4R.base::Conv$DegRad)), na.rm=TRUE), ncol=2)),coefPoly=eddy4R.base::Conv$RadDeg)
+  if(PltfEc == "airc") mn$PSI_aircraft <- eddy4R.base::def.conv.poly(data=eddy4R.base::def.pol.cart(matrix(colMeans(eddy4R.base::def.cart.pol(eddy4R.base::def.conv.poly(data=data$PSI_aircraft,coefPoly=eddy4R.base::Conv$DegRad)), na.rm=TRUE), ncol=2)),coefPoly=eddy4R.base::Conv$RadDeg)
   
   #wind direction as vector average
-  data$PSI_uv <- eddy4R.base::def.az.cart(matrix(c(data$v_met, data$u_met), ncol=2))
-  mn$PSI_uv <- eddy4R.base::def.az.cart(matrix(c(mn$v_met, mn$u_met), ncol=2))
+  data$PSI_uv <- eddy4R.base::def.pol.cart(matrix(c(data$v_met, data$u_met), ncol=2))
+  mn$PSI_uv <- eddy4R.base::def.pol.cart(matrix(c(mn$v_met, mn$u_met), ncol=2))
   
   
   
@@ -200,7 +200,7 @@ REYNflux_FD_mole_dry <- function(
   attributes(imfl)$names <- attributes(data)$names
   
   #correct wind direction from (detrended) wind components
-  PSI_uv_dum <- eddy4R.base::def.az.cart(matrix(c(imfl$v_met + mn$v_met, imfl$u_met + mn$u_met), ncol=2))
+  PSI_uv_dum <- eddy4R.base::def.pol.cart(matrix(c(imfl$v_met + mn$v_met, imfl$u_met + mn$u_met), ncol=2))
   imfl$PSI_uv <- (PSI_uv_dum - mn$PSI_uv)
   rm(PSI_uv_dum)
   #same should be done for PSI_aircraft
