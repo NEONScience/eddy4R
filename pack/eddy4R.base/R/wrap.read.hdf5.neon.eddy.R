@@ -297,7 +297,7 @@ if(!(DateLoca %in% file)) {
       for(idx in base::names(RngLoca[[VarLoca]])) {
 
         #execute de-spiking algorithm
-        data[,idx] <- eddy4R.qaqc::def.dspk.filt.med(
+        data[,idx] <- eddy4R.qaqc::def.dspk.br86(
           # input data, univariate vector of integers or numerics
           dataIn = as.vector(data[,idx]),
           # filter width
