@@ -84,9 +84,11 @@
 #     conform to eddy4R coding style
 #   Cove Sturtevant (2016-11-09)
 #     added output of quality flag values for Despike test
+#   Natchaya P-Durden (2016-12-02)
+#     rename function to def.dspk.br86()
 ##############################################################################################
 
-def.dspk.filt.med <- function(
+def.dspk.br86 <- function(
     dataIn, # input data, univariate vector of integers or numerics
     WndwFilt = 9, # filter width
     NumBin = 2, # initial number/step size of histogram bins
