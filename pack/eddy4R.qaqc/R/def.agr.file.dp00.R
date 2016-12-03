@@ -97,7 +97,7 @@ for(idxFile in 1:base::length(nameFile)){
 }
 data <- as.data.frame(data) # Make a data frame. 
 names(data) <- nameVar # Assign variable names
-data <- eddy4R.base::def.conv.unit(data = data,unitFrom = unitVar,unitTo=unitVar) # Assign units
+data <- eddy4R.base::def.unit.conv(data = data,unitFrom = unitVar,unitTo=unitVar) # Assign units
 
 # Return
 return(list(time=time,data=data))

@@ -8,7 +8,7 @@
 #' @description 
 #' Function definition. Determine the quality metrics of failed, pass, and NA for each of the individual quality flag following the method described in Smith et.al. (2014). Performed for the entire set of input data.
 
-#' @param qf A data frame of quality flags, class integer. Each column contains the quality flag values [-1,0,1] for that flag. Note: This is the Vrbs output from def.plau, def.dspk.wndw, and def.dspk.filt.med. See def.conv.qf.vrbs for converting from non-verbose to verbose output.
+#' @param qf A data frame of quality flags, class integer. Each column contains the quality flag values [-1,0,1] for that flag. Note: This is the Vrbs output from def.plau, def.dspk.wndw, and def.dspk.br86. See def.conv.qf.vrbs for converting from non-verbose to verbose output.
 #' @param nameQmOut Optional. A vector of class "character" containing the base name of the output quality metrics for each flag in \code{qf}. These names will be ammended with "Pass", "Fail", or "Na" at the end when outputting their respective quality metrics. Default behavoir is to autoassign names based on the column names of \code{qf} [-] 
 
 #' @return A dataframe containing quality metrics (fractions) of failed, pass, and NA for each of the individual flag defined in \code{qf}.
@@ -31,7 +31,7 @@
 #' \code{\link[eddy4R.qaqc]{wrap.qfqm.dp01}}
 #' \code{\link[eddy4R.qaqc]{def.plau}}
 #' \code{\link[eddy4R.qaqc]{def.dspk.wndw}}
-#' \code{\link[eddy4R.qaqc]{def.dspk.filt.med}}
+#' \code{\link[eddy4R.qaqc]{def.dspk.br86}}
 #' \code{\link[eddy4R.qaqc]{def.conv.qf.vrbs}}
 
 #' @export
@@ -46,7 +46,7 @@
 #     adjusted output of quality metrics to fractions (previously percentage)
 ##############################################################################################
 def.qm <- function (
-  qf, # A data frame of quality flags, class integer. Each column contains the quality flag values [-1,0,1] for that flag. Note: This is the Vrbs output from def.plau, def.dspk.wndw, and def.dspk.filt.med
+  qf, # A data frame of quality flags, class integer. Each column contains the quality flag values [-1,0,1] for that flag. Note: This is the Vrbs output from def.plau, def.dspk.wndw, and def.dspk.br86
   nameQmOut=NULL
   ) {
   
