@@ -35,13 +35,13 @@
 #'   )
 #' 
 #'   # assign unit attribute
-#'   attributes(refe$velo)$unit <- "ms-1"
+#'   attributes(refe$velo)$unit <- "m s-1"
 #'   attributes(refe$temp)$unit <- "K"
 #'   attributes(refe$dist)$unit <- "m"
 #' 
 #'   samp <- def.unit.var(samp = samp, refe = refe)
 #'   attributes(samp$velo)$unit
-#'   [1] "ms-1"
+#'   [1] "m s-1"
 
 #' @seealso Currently none.
 
