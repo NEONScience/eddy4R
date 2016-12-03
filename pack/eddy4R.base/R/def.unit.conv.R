@@ -122,9 +122,11 @@
 #        conversion. If unit string wasn't recognized, the polynomial was still applied.
 #   Cove Sturtevant (2016-11-03)
 #     added catch for when input 'data' is NULL
+#   Natchaya P-Durden (2016-12-02)
+#     rename function to def.unit.conv()
 ##############################################################################################
 
-def.conv.unit <- function(
+def.unit.conv <- function(
   data,
   unitFrom="arb",
   unitTo="arb",

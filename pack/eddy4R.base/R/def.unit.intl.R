@@ -21,7 +21,7 @@
 
 #' @examples Currently none
 
-#' @seealso \code{\link{def.unit.info}}, \code{\link{Unit$Intl}}, \code{\link{def.conv.unit}}
+#' @seealso \code{\link{def.unit.info}}, \code{\link{Unit$Intl}}, \code{\link{def.unit.conv}}
 
 #' @export
 #' 
