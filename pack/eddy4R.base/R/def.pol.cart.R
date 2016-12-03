@@ -30,16 +30,18 @@
 #     initail naming convention for eddy4R
 #   Natchaya P-Durden (2016-11-26)
 #     rename function to def.az.cart()
+#   Natchaya P-Durden (2016-12-02)
+#     rename function to def.pol.cart()
 ##############################################################################################
 
 #convert cartesian vector data to angular degree; convetion:
 #cart[,1], X, S(+), N(-) -> positiv TO N
 #cart[,2], Y, W(+), E(-) -> positiv TO E
-def.az.cart <- function(cart){
+def.pol.cart <- function(cart){
 #  sector.o=vector(length=nrow(cart))
 #  sector.o[which(cart[,2]>= 0)] <-0	#E wind vector component
 #  sector.o[which(cart[,2]< 0)] <-360	#W wind vector component
-  az<-(atan2(cart[,2],cart[,1])*180/pi)+180
+  az <- (atan2(cart[,2],cart[,1])*180/pi)+180
 return(az)
 }
 

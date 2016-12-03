@@ -4,7 +4,7 @@
 \alias{def.met.body}
 \title{Coordinate transformation from CSAT3 body coordinate system to meteorological coordinate system}
 \usage{
-def.met.body(AzSoniInst, AzSoniOfst = eddy4R.base::def.conv.unit(data = 90,
+def.met.body(AzSoniInst, AzSoniOfst = eddy4R.base::def.unit.conv(data = 90,
   unitFrom = "deg", unitTo = "rad")$data[[1]], veloBody)
 }
 \arguments{
