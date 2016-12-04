@@ -1,18 +1,18 @@
 Package: eddy4R.turb
 Title: Eddy-covariance calculation for R: Turbulent flux
-Version: 0.0.12
+Version: 0.0.13
 Authors@R: c( person("Stefan", "Metzger", email = "eddy4R.info@gmail.com", role = c("aut", "cre")),
               person("Ke", "Xu", email = "xuke2012abroad@gmail.com", role = c("aut")))
-Description: Eddy-covariance calculation for R: Turbulent flux. Currently removed from Imports because devtools::install_github() ignores and attempts to re-install previously installed packages, but without passing GITHUB_PAT (starting 2016-06-26, only affets packages hosted on private Github repos with access token, such as NEONInc/NEON-FIU-algorithm): eddy4R.base (>= 0.0.24).
+Description: Eddy-covariance calculation for R: Turbulent flux. Currently removed from Imports because devtools::install_github() ignores and attempts to re-install previously installed packages, but without passing GITHUB_PAT (starting 2016-06-26, only affets packages hosted on private Github repos with access token, such as NEONInc/NEON-FIU-algorithm): eddy4R.base (>= 0.0.34).
 Depends:
-    R (>= 3.3.1)
+    R (>= 3.3.2)
 Imports:
-    EBImage (>= 4.14.2),
+    EBImage (>= 4.16.0),
     GenKern (>= 1.2-60),
     matlab (>= 1.0.2),
     robustbase (>= 0.92-6),
     sfsmisc (>= 1.1-0),
-    splus2R (>= 1.2-1)
+    splus2R (>= 1.2-2)
 Suggests:
     DataCombine (>= 0.2.21),
 License: Terms of use of the NEON FIU algorithm repository dated 2015-01-16
