@@ -165,7 +165,7 @@ if(!(DateLoca %in% file)) {
   # unit conversion
     
     # perform unit conversion
-    data <- base::suppressWarnings(eddy4R.base::def.conv.unit(data = data,
+    data <- base::suppressWarnings(eddy4R.base::def.unit.conv(data = data,
                                                               unitFrom = attributes(data)$unit,
                                                               unitTo = "intl"))
 
@@ -174,7 +174,7 @@ if(!(DateLoca %in% file)) {
       # for(idx in base::names(data)) {
       #   
       #   data[[idx]] <- base::suppressWarnings(
-      #     eddy4R.base::def.conv.unit(data = base::as.vector(data[[idx]]),
+      #     eddy4R.base::def.unit.conv(data = base::as.vector(data[[idx]]),
       #                                unitFrom = attributes(data[[idx]])$unit,
       #                                unitTo = "intl")
       #   )
@@ -188,7 +188,6 @@ if(!(DateLoca %in% file)) {
     print(paste0(format(Sys.time(), "%F %T"), ": dataset ", DateLoca, ": ", VarLoca, " unit conversion complete"))
 
   # regularization
-    
     # perform regularization
     data <- eddy4R.base::def.rglr(
       timeMeas = base::as.POSIXlt(data$time, format="%Y-%m-%dT%H:%M:%OSZ", tz="UTC"),
@@ -197,7 +196,9 @@ if(!(DateLoca %in% file)) {
       BgnRglr = as.POSIXlt(min(time)),
       EndRglr = as.POSIXlt(max(time)),
       FreqRglr = FreqLoca,
-      MethRglr = "zoo"
+      MethRglr = "CybiEc",
+      WndwRglr = "Cntr",
+      PosWndw = "Clst"
     )$dataRglr
 
     # print message to screen
@@ -296,7 +297,7 @@ if(!(DateLoca %in% file)) {
       for(idx in base::names(RngLoca[[VarLoca]])) {
 
         #execute de-spiking algorithm
-        data[,idx] <- eddy4R.qaqc::def.dspk.filt.med(
+        data[,idx] <- eddy4R.qaqc::def.dspk.br86(
           # input data, univariate vector of integers or numerics
           dataIn = as.vector(data[,idx]),
           # filter width

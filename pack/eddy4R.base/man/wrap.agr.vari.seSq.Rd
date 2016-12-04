@@ -4,19 +4,16 @@
 \alias{wrap.agr.vari.seSq}
 \title{Calculate aggregated variance and squared standard error from a small to large temporal scale.}
 \usage{
-wrap.agr.vari.seSq(data = data.frame(timeDoyDecm, mean, vari, seSq), zone,
-  MethAgr)
+wrap.agr.vari.seSq(data = data.frame(timeDoyDecm, mean, vari), zone, MethAgr)
 }
 \arguments{
-\item{\code{data}}{Dataframe of type numeric containing column vectors \code{timeDoyDecm}, \code{mean}, \code{vari}, and \code{seSq} of equal length.}
+\item{\code{data}}{Dataframe of type numeric containing column vectors \code{timeDoyDecm}, \code{mean}, and \code{vari} of equal length.}
 
 \item{\code{timeDoyDecm}}{input decimal doy time in UTC [float number].}
 
 \item{\code{mean}}{Vector of type numeric. Means of the variable of interest at finer resolution, e.g. minutely [user-defined].}
 
 \item{\code{vari}}{Vector of type numeric. Variances of the variable of interest at finer resolution, e.g. minutely [user-defined^2].}
-
-\item{\code{seSq}}{squared standard error of the scalar at minutely resolution, e.g. minutely square of standard error of sensible heat. [square of unit of scalar, e.g. (W m-2)^2].}
 
 \item{\code{zone}}{The time zone of the location, which is the offset from Coordinated Universal Time (UTC) by a whole number of hours. If local time is ahead (behind) the Greenwich mean time, zone is a positive (negative) number. e.g. CST" [hour]. a time offset in Wisconsin, in the North American Central Time Zone, would be -6.}
 
@@ -35,8 +32,7 @@ wrap.agr.vari.seSq(
 data = data.frame(
   timeDoyDecm = c(1441:(5*1440))/24/60, 
   mean = rnorm(4*1440), 
-  vari = rnorm(4*1440)^2,      
-  seSq = rnorm(4*1440)^2
+  vari = rnorm(4*1440)^2
 ), 
 zone = -6,
 MethAgr = "agrHour"
