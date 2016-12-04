@@ -6,12 +6,12 @@
 #' Natchaya Pingintha-Durden \email{ndurdent@neoninc.org} \cr
 
 #' @description 
-#' Function definition. Determine the quality metrics of failed, pass, and NA for each of the individual quality flag following the method described in Smith et.al. (2014).
+#' Function definition. Determine the quality metrics of failed, pass, and NA for each of the individual quality flag following the method described in Smith et.al. (2014). Performed for the entire set of input data.
 
-#' @param \code{data} A dataframe containing the input flag data. Of class integer". [-] 
-#' @param \code{nameFlag} A vector of class "character" containing the name of flag data which will be used to calculate quality metrics of failed, pass, NA, alpha, and beta and final quality flag. [-] 
+#' @param qf A data frame of quality flags, class integer. Each column contains the quality flag values [-1,0,1] for that flag. Note: This is the Vrbs output from def.plau, def.dspk.wndw, and def.dspk.br86. See def.conv.qf.vrbs for converting from non-verbose to verbose output.
+#' @param nameQmOut Optional. A vector of class "character" containing the base name of the output quality metrics for each flag in \code{qf}. These names will be ammended with "Pass", "Fail", or "Na" at the end when outputting their respective quality metrics. Default behavoir is to autoassign names based on the column names of \code{qf} [-] 
 
-#' @return A dataframe containing quality metrics of failed, pass, and NA for each of the individual flag defined in \code{nameFlag}.
+#' @return A dataframe containing quality metrics (fractions) of failed, pass, and NA for each of the individual flag defined in \code{qf}.
 
 #' @references 
 #' NEON Algorithm Theoretical Basis Document: Quality Flags and Quality Metrics for TIS Data Products (NEON.DOC.001113) \cr
@@ -25,53 +25,91 @@
 #' qfC <- c(0,1,1,0,0,0,0,0,0,0,0,0,-1,-1,-1)
 #' test<-list()
 #' test$qf <- data.frame(qfA,qfB,qfC)
-#' test$qm<- def.qm(data=test$qf, nameFlag=colnames(test$qf))
+#' test$qm<- def.qm(qf=test$qf, nameQmOut=c("qmA","qmB","qmC"))
 
 #' @seealso 
-#' \code{\link[eddy4R.qaqc]{def.qfqm.l1}}
+#' \code{\link[eddy4R.qaqc]{wrap.qfqm.dp01}}
+#' \code{\link[eddy4R.qaqc]{def.plau}}
+#' \code{\link[eddy4R.qaqc]{def.dspk.wndw}}
+#' \code{\link[eddy4R.qaqc]{def.dspk.br86}}
+#' \code{\link[eddy4R.qaqc]{def.conv.qf.vrbs}}
 
 #' @export
 
 # changelog and author contributions / copyrights 
 #   Cove Sturtevant (2016-01-05)
-#     original creation of def.qfqm.l1.R
+#     original creation
 #   Natchaya P-Durden (2016-08-15)
-#     modified def.qfqm.l1()
+#     modified wrap.dp01.qfqm()
+#   Cove Sturtevant (2016-11-22)
+#     added default functionality for naming of output quality metrics
+#     adjusted output of quality metrics to fractions (previously percentage)
 ##############################################################################################
 def.qm <- function (
-  data,
-  nameFlag
+  qf, # A data frame of quality flags, class integer. Each column contains the quality flag values [-1,0,1] for that flag. Note: This is the Vrbs output from def.plau, def.dspk.wndw, and def.dspk.br86
+  nameQmOut=NULL
   ) {
   
+  # Error Checking --------------------------------------------------
+  
+  # Check qf
+  if(!base::is.data.frame(qf)) {
+    base::stop("Input qf must be a data frame. See documentation.")
+  }
+  
+  if(base::sum(!(base::as.matrix(qf) %in% c(-1,0,1))) != 0){
+    stop("Values of qf must be equal to -1, 0, or 1")
+  }
+  
+  # Initialize Outputs --------------------------------------------------
+  
   # Take inventory of the flags we have and set up output naming
-  #nameFlag <- colnames(data) # name of flags
-  qm <- as.list(data) # copy variable names to output
-  numFlag <- length(nameFlag) #number of flags 
-  nameVarOut <- c() #output variable names
-  nameQm <- c("Pass","Fail","Na") # 3 subvariables per quality metric
+  numQf <- base::length(qf)
+  nameQf <- base::names(qf)  
+  flagNameOut <- FALSE # Initialize use of default naming
+  if(base::is.null(nameQmOut)){
+    flagNameOut <- TRUE # Do default naming
+    nameQmOut <- nameQf
+  }
+  nameQm <- base::c("Pass","Fail","Na") # 3 subvariables per quality metric
+  nameOut <- base::c()
   
   # Put together output variable names
-  for (idxFlag in numeric(numFlag)+1:numFlag) {
-    tmp <- strsplit(nameFlag[idxFlag],vector(length=0))
+  for (idxQf in base::numeric(numQf)+1:numQf) {
+    
+    tmp <- nameQmOut[idxQf]
+    
+    # Get rid of "qf" or "posQf" (if using default naming)
+    if (flagNameOut && (base::regexpr(pattern="qf",text=tmp,ignore.case=FALSE)[1] == 1 || 
+                        base::regexpr(pattern="posQf",text=tmp,ignore.case=FALSE)[1] == 1)) {
+      tmp <- base::sub(pattern="qf", replacement="", x=tmp, ignore.case = FALSE, perl = FALSE,
+                 fixed = FALSE, useBytes = FALSE)
+      
+      tmp <- base::sub(pattern="posQf", replacement="", x=tmp, ignore.case = FALSE, perl = FALSE,
+                 fixed = FALSE, useBytes = FALSE)
+      
+      tmp <- base::paste0("qm",tools::toTitleCase(tmp),collapse="")
+    } 
+    
     for (idxQm in 1:3) {
-      nameVarOut[(idxFlag-1)*3+idxQm] <- paste("qm",toupper(tmp[[1]][1]),paste(tmp[[1]][2:length(tmp[[1]])],collapse=""),nameQm[idxQm],sep="",collapse ="")
+      nameOut[(idxQf-1)*3+idxQm] <- base::paste0(tmp,nameQm[idxQm],collapse ="")
     }
   }
   
-  qm<- data.frame(matrix(,ncol=3*numFlag))#initial output
-  colnames(qm) <- nameVarOut
+  qm <- base::data.frame(base::matrix(,ncol=3*numQf))#initial output
+  base::colnames(qm) <- nameOut
   
   # Compute Quality metric -------------------------------------------------
   # Loop through each flag
-  for(idxFlag in 1:numFlag) {
-    
+  for(idxQf in base::numeric(numQf)+1:numQf) {
+
     # Quality metrics for pass, failed, and NA flags
     # Pass
-    qm[,(idxFlag-1)*3+1]  <- sum(data[,idxFlag]== 0, na.rm = TRUE)/nrow(data)*100
+    qm[,(idxQf-1)*3+1]  <- base::sum(qf[,idxQf]== 0, na.rm = TRUE)/base::nrow(qf)
     # Fail
-    qm[,(idxFlag-1)*3+2] <- sum(data[,idxFlag]== 1, na.rm = TRUE)/nrow(data)*100
+    qm[,(idxQf-1)*3+2] <- base::sum(qf[,idxQf]== 1, na.rm = TRUE)/base::nrow(qf)
     # NA
-    qm[,(idxFlag-1)*3+3] <- sum(data[,idxFlag]== -1, na.rm = TRUE)/nrow(data)*100 
+    qm[,(idxQf-1)*3+3] <- base::sum(qf[,idxQf]== -1, na.rm = TRUE)/base::nrow(qf) 
     
   }
   

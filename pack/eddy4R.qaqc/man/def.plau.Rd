@@ -4,18 +4,19 @@
 \alias{def.plau}
 \title{Plausibility tests (Range, Step, Persistence, Null, Gap)}
 \usage{
-def.plau(data, ts = as.POSIXlt(seq.POSIXt(from = Sys.time(), by = "sec",
+def.plau(data, time = as.POSIXlt(seq.POSIXt(from = Sys.time(), by = "sec",
   length.out = length(data[, 1]))), RngMin = apply(data, 2, min, na.rm =
   TRUE), RngMax = apply(data, 2, max, na.rm = TRUE),
   DiffStepMax = apply(abs(apply(data, 2, diff)), 2, max, na.rm = TRUE),
-  DiffPersMin = rep.int(0, length(data)), TintPers = 60 *
-  median(abs(diff(ts)), na.rm = TRUE) * rep.int(1, length(data)),
-  TestNull = rep(FALSE, length(data)), NumGap = length(data[, 1]) + 1)
+  DiffPersMin = rep.int(0, length(data)), WndwPers = 60 *
+  median(abs(diff(time)), na.rm = TRUE) * rep.int(1, length(data)),
+  TestNull = rep(FALSE, length(data)), NumGap = rep(length(data[, 1]) + 1,
+  length(data)), Vrbs = FALSE)
 }
 \arguments{
 \item{\code{data}}{Required input. A data frame containing the data to be evaluated (do not include the time stamp vector here).}
 
-\item{\code{ts}}{Optional. A time vector of class POSIXlt of times corresponding with each row in data. Defaults to an evenly spaced time vector starting from system time of execution by seconds.}
+\item{\code{time}}{Optional. A time vector of class POSIXlt of times corresponding with each row in data. Defaults to an evenly spaced time vector starting from system time of execution by seconds.}
 
 \item{\code{RngMin}}{Optional. A numeric vector of length equal to number of variables in data containing the minimum acceptable value for each variable. Defaults to observed minimums (no flags will result)}
 
@@ -23,16 +24,23 @@ def.plau(data, ts = as.POSIXlt(seq.POSIXt(from = Sys.time(), by = "sec",
 
 \item{\code{DiffStepMax}}{Optional. A numeric vector of length equal to number of variables in data containing the maximum acceptable absolute difference between sequential data points for each variable. Defaults to observed maximum (no flags will result)}
 
-\item{\code{DiffPersMin}}{Optional. A numeric vector of length equal to number of variables in data containing the minimum absolute change in value over the interval specified in TintPers to indicate the sensor is not "stuck". Defaults to a vector of zeros (no flags will result).}
+\item{\code{DiffPersMin}}{Optional. A numeric vector of length equal to number of variables in data containing the minimum absolute change in value over the interval specified in WndwPers to indicate the sensor is not "stuck". Defaults to a vector of zeros (no flags will result).}
 
-\item{\code{TintPers}}{Optional. A difftime object of length equal to number of variables in data specifying the time interval for each variable over which to test for the minimum absolute change in value specified in DiffPersMin. Defaults to 60 x median observed time difference. Class difftime can be generated using as.difftime.}
+\item{\code{WndwPers}}{Optional. A difftime object of length equal to number of variables in data specifying the time interval for each variable over which to test for the minimum absolute change in value specified in DiffPersMin. Defaults to 60 x median observed time difference. Class difftime can be generated using as.difftime.}
 
 \item{\code{TestNull}}{Optional. Apply the null test? A logical vector of [TRUE or FALSE] of length equal to number of variables in data. Defaults to FALSE (no null values are flagged)}
 
 \item{\code{NumGap}}{Optional.  A numeric value >= 1, interpretable as an integer, specifying the numer of consecutive NA values constituting a gap. Default is the one more than the length of the data series (no gaps will be flagged)}
+
+\item{\code{Vrbs}}{Optional. A logical {FALSE/TRUE} value indicating whether to:\cr
+\code{Vrbs = FALSE}: (Default) output the vector positions of the fail and na results for each test (default), or \cr
+\code{Vrbs = TRUE}: output a data frame for each variable in data, with a column for each plausibility test outputting the actual quality flags [-1,0,1] for each data point}
 }
 \value{
-A list of flags giving the failed and NA positions for each the Range, Step, Persistence, Null, and Gap tests. Each flag is itself a nested list of failed and na (unable to eval) flagged indices for each variable in data.
+If:\cr
+\code{Vrbs = FALSE} A list of variables in \code{data}, nested within each a list of qf test names: (\code{posQfRng}), Step (\code{posQfStep}), Persistence  (\code{posQfPers}), Null (\code{posQfNull}), and Gap(\code{posQfGap}) tests.
+Each flag is itself a nested list of failed and na (unable to eval) flagged vector positions (e.g. \code{$X$posQfRng$fail} and \code{$X$posQfRng$na} \cr
+\code{Vrbs = TRUE} A list of variables matching those in \code{data}, each containing a data frame with a column for each plausibility test outputting the actual quality flags [-1,0,1] for each data point, where -1 indicates the test could not be evaluated, 0 indicates a pass, and 1 indicates a fail
 }
 \description{
 Function definition. Determines inplausible data indices based on user-specified limits for the data range, step between adjacent values, persistence (similarity of adjacent values), nulls, and gaps.

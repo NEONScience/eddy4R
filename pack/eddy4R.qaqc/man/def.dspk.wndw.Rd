@@ -5,35 +5,39 @@
 \title{Determine spike locations using window-based statistics}
 \usage{
 def.dspk.wndw(data, Trt = list(AlgClss = c("mean", "median")[2], NumPtsWndw =
-  c(10, 101)[2], NumPtsSlid = 1, ThshStd = c(3.5, 20)[2], NaPropMax = 0.1, Infl
-  = 0, IterMax = Inf, NumPtsGrp = c(4, 10)[2], NaTrt = c("approx", "omit")[2]),
-  Cntl = list(NaOmit = c(TRUE, FALSE)[2], Prnt = c(TRUE, FALSE)[1], Plot =
-  c(TRUE, FALSE)[1]))
+  c(11, 101)[2], NumPtsSlid = 1, ThshStd = c(3.5, 20)[2], NaFracMax = 1e-01,
+  Infl = 0, IterMax = Inf, NumPtsGrp = c(4, 10)[2], NaTrt = c("approx",
+  "omit")[2]), Cntl = list(NaOmit = c(TRUE, FALSE)[2], Prnt = c(TRUE,
+  FALSE)[1], Plot = c(TRUE, FALSE)[1]), Vrbs = FALSE)
 }
 \arguments{
-\item{data}{Required input. A data frame or matrix containing the data to be evaluated.}
+\item{\code{data}}{Required input. A data frame or matrix containing the data to be evaluated.}
 
-\item{Trt}{Optional. A list of the following parameters specifying the details of the despike algorithm. \cr
-AlgClss: string. de-spiking algorithm class ["mean" or "median"] \cr
-NumPtsWndw: integer. window size [data points] (must be odd for median / mad) \cr
-NumPtsSlid: integer. window sliding increment [data points] \cr
-ThshStd: number. threshold for detecting data point as spike [sigma / MAD_sigma] \cr
-NaPropMax: The maximum allowable proportion of NA values per window in which spikes can be reliably determined \cr
-Infl: number. inflation per iteration [fraction of sigma / MAD_sigma] \cr
-IterMax: number or Inf. maximum number of iterations \cr
-NumPtsGrp. integer. minimum group size that is not considered as consecutive spikes [data points] \cr
-NaTrt. string. spike handling among iterations ["approx" or "omit"]}
+\item{\code{Trt}}{Optional. A list of the following parameters specifying the details of the despike algorithm. \cr
+\code{AlgClss}: string. de-spiking algorithm class ["mean" or "median"] \cr
+\code{NumPtsWndw}: integer. window size [data points] (must be odd for median / mad) \cr
+\code{NumPtsSlid}: integer. window sliding increment [data points] \cr
+\code{ThshStd}: number. threshold for detecting data point as spike [sigma / MAD_sigma] \cr
+\code{NaFracMax}: The maximum allowable proportion of NA values per window in which spikes can be reliably determined \cr
+\code{Infl}: number. inflation per iteration [fraction of sigma / MAD_sigma] \cr
+\code{IterMax}: number or Inf. maximum number of iterations \cr
+\code{NumPtsGrp}. integer. minimum group size that is not considered as consecutive spikes [data points] \cr
+\code{NaTrt}. string. spike handling among iterations ["approx" or "omit"]}
 
-\item{Cntl}{Optional. A list of the following parameters specifying other implementation details \cr
-NaOmit: Logical. delete leading / trailing NAs from dataset? \cr
-Prnt: Logical. print results? \cr
-Plot: Logical. plot results?}
+\item{\code{Cntl}}{Optional. A list of the following parameters specifying other implementation details \cr
+\code{NaOmit}: Logical. delete leading / trailing NAs from dataset? \cr
+\code{Prnt}: Logical. print results? \cr
+\code{Plot}: Logical. plot results?}
+
+\item{\code{Vrbs}}{Optional. Option to output the quality flags (same size as \code{data}) rather than vector positions of failed and na values. Default = FALSE}
 }
 \value{
 A list of the following: \cr
-data: the despiked data matrix \cr
-smmy: a summary of the despike algorithm results, including iterations (iter), determined spikes (news), and total resultant NAs (alls) \cr
-posSpk: a list consisting of $fail and $na, each of length equal to the number of data variables giving the failed positions of determined spikes and unable-to-evaluate positions, respectively
+\code{data}: the despiked data matrix \cr
+\code{smmy}: a summary of the despike algorithm results, including iterations (\code{iter}), determined spikes (\code{news}), and total resultant NAs (\code{alls}) \cr
+And one of the following:
+\code{posSpk}: output if \code{Vrbs} is FALSE. A list of each input variable, with nested lists of $posQfSpk$fail and $posQfSpk$na vector positions of determined spikes and 'cannot evaluate' positions, respectively. This output format is identical to def.plau
+\code{qfSpk}: output if \code{Vrbs} is TRUE. A data frame the same size as data with the quality flag values [-1,0,1] for each input variable
 }
 \description{
 Function definition. Determines spike locations based on window-based Gaussian statistics (arithmetic mean and standard deviation) and distribution statistics (median, median absolute deviation).
