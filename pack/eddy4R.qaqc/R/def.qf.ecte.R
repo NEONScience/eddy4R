@@ -12,6 +12,8 @@
 #' @param \code{Sens} is ECTE sensor assembly name for which the flags are being generated.
 #' @param \code{PcntQf} is percentage of observations that should be flagged.
 
+#' @return Currently none.
+
 #' @references Currently none.
 
 #' @keywords NEON, QAQC, SOM
@@ -31,6 +33,8 @@
 # changelog and author contributions / copyrights
 #   Dave Durden (2016-11-15)
 #     original creation
+#   Natchaya P-Durden (2016-12-05)
+#     edited term name
 ##############################################################################################
 
 def.qf.ecte <- function(
@@ -73,7 +77,7 @@ def.qf.ecte <- function(
     qfNameSens <- c("qfSoniUnrs", "qfSoniData", "qfSoniTrig", "qfSoniComm", "qfSoniCode", "qfSoniTemp", "qfSoniSgnlPoor", "qfSoniSgnlHigh","qfSoniSgnlLow" )}
   
   if(Sens == "irga"){
-    varName <- c("asrpCo2", "asrpH2o", "densMoleCo2", "densMoleH2o", "tempRefe",  "presAtm","presDiff", "potCool", "rtioMoleDryMoleCo2", "rtioMoleDryH2o", "tempIn","tempOut", "powrH2oSamp", "powrH2ORefe", "powrCo2Samp", "powrCo2Refe","ssiCo2", "ssiH2o","tempMean", "presSum")
+    varName <- c("asrpCo2", "asrpH2o", "densMoleCo2", "densMoleH2o", "tempRefe",  "presAtm","presDiff", "potCool", "rtioMoleDryCo2", "rtioMoleDryH2o", "tempIn","tempOut", "powrH2oSamp", "powrH2ORefe", "powrCo2Samp", "powrCo2Refe","ssiCo2", "ssiH2o","tempMean", "presSum")
     qfNameSens <- c("qfIrgaHead", "qfIrgaTemp", "qfIrgaTempIn", "qfIrgaAux", "qfIrgaPres", "qfIrgaChop", "qfIrgaDetc", "qfIrgaPll","qfIrgaSync", "qfIrgaAgc" )}
   
   if(Sens == "irgaMfcSamp"){
