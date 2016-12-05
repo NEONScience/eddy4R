@@ -65,56 +65,56 @@ wrap.derv.prd.day <- function(
 
   # average signal strength
 
-  data$irga$RSSI_mean_7200 <- ff::as.ff(def.ssi.mean(ssiCo2 = data$irga$ssiCO2,
-                                                     ssiH2o = data$irga$ssiH2O))
-  base::attr(x = data$irga$RSSI_mean_7200, which = "unit") <- base::attr(x = data$irga$ssiCO2, which = "unit")
+  data$irga$ssiMean <- ff::as.ff(def.ssi.mean(ssiCo2 = data$irga$ssiCo2,
+                                                     ssiH2o = data$irga$ssiH2o))
+  base::attr(x = data$irga$ssiMean, which = "unit") <- base::attr(x = data$irga$ssiCo2, which = "unit")
   
   # delta signal strength
-  data$irga$RSSI_delta_7200 <- def.ssi.diff(ssiCo2 = data$irga$ssiCO2, ssiH2o = data$irga$ssiH2O)
+  data$irga$ssiDiff <- def.ssi.diff(ssiCo2 = data$irga$ssiCo2, ssiH2o = data$irga$ssiH2o)
  
   # total pressure in irga cell
-  data$irga$p_cell_7200 <- def.pres.sum(presAtm = data$irga$presAtmBox,presDiff = data$irga$presGageCell)
+  data$irga$presSum <- def.pres.sum(presAtm = data$irga$presAtm,presDiff = data$irga$presDiff)
   
 
   # average temperature in irga cell 
-  data$irga$T_cell_7200 <- def.temp.mean.7200(tempIn = data$irga$tempCellIn,
-                                              tempOut = data$irga$tempCellOut)
+  data$irga$tempMean <- def.temp.mean.7200(tempIn = data$irga$tempIn,
+                                              tempOut = data$irga$tempOut)
  
   # RH in cell
 
     # water vapor partial pressure
-    data$irga$presH2o <- ff::as.ff(def.pres.h2o.rtio.mole.h2o.dry.pres(rtioMoleDryH2o = data$irga$fdMoleH2O, pres = data$irga$p_cell_7200))
+    data$irga$presH2o <- ff::as.ff(def.pres.h2o.rtio.mole.h2o.dry.pres(rtioMoleDryH2o = data$irga$rtioMoleDryH2o, pres = data$irga$presSum))
     base::attr(x = data$irga$presH2o, which = "unit") <- "Pa"
 
     # water vapor saturation pressure
-    if(!is.na(mean(data$irga$T_cell_7200, na.rm=TRUE))) {
-      data$irga$presH2oSat <- ff::as.ff(as.vector(def.pres.h2o.sat.temp.mag(temp = data$irga$T_cell_7200[])))
+    if(!is.na(mean(data$irga$tempMean, na.rm=TRUE))) {
+      data$irga$presH2oSat <- ff::as.ff(as.vector(def.pres.h2o.sat.temp.mag(temp = data$irga$tempMean[])))
     } else {
-      data$irga$presH2oSat <- ff::as.ff(rep(NaN, length(data$irga$T_cell_7200)))
+      data$irga$presH2oSat <- ff::as.ff(rep(NaN, length(data$irga$tempMean)))
     }
     base::attr(x = data$irga$presH2oSat, which = "unit") <- "Pa"
     
     # calcuate RH
-    data$irga$RH_7200 <- def.rh.pres.h2o.pres.sat.h2o(presH2o = data$irga$presH2o, presH2oSat = data$irga$presH2oSat)
+    data$irga$rh <- def.rh.pres.h2o.pres.sat.h2o(presH2o = data$irga$presH2o, presH2oSat = data$irga$presH2oSat)
     
 
   # molar density of dry air and water vapor
-  data$irga$rho_mole_air_7200 <- def.dens.mole.air(presSum = data$irga$p_cell_7200,
-                                                   tempMean = data$irga$T_cell_7200)
+  data$irga$densMoleAir <- def.dens.mole.air(presSum = data$irga$presSum,
+                                                   tempMean = data$irga$tempMean)
   
   # molar density of dry air alone
-  data$irga$rho_mole_dry_7200 <- def.dens.mole.air.dry(densMoleAir = data$irga$rho_mole_air_7200,
-                                                       densMoleH2o = data$irga$rhoMoleH2O)
+  data$irga$densMoleAirDry <- def.dens.mole.air.dry(densMoleAir = data$irga$densMoleAir,
+                                                       densMoleH2o = data$irga$densMoleH2o)
   
 
   # wet mass fraction (specific humidity)
-  data$irga$FW_mass_H2O_7200 <- def.rtio.mass.h2o.dens.mole(densMoleH2o = data$irga$rhoMoleH2O,
-                                                             densMoleAirDry = data$irga$rho_mole_dry_7200)
+  data$irga$rtioMassH2o <- def.rtio.mass.h2o.dens.mole(densMoleH2o = data$irga$densMoleH2o,
+                                                             densMoleAirDry = data$irga$densMoleAirDry)
 
 # soni
   
   # sonic temperature [K] from speed of sound [m s-1] (Campbell Scientific, Eq. (9))
-  data$soni$T_SONIC <- def.temp.soni(veloSoni = data$soni$veloSoni)
+  data$soni$tempSoni <- def.temp.soni(veloSoni = data$soni$veloSoni)
   
 # sort object levels alphabetically
 
