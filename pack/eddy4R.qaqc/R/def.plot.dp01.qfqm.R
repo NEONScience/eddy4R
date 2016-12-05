@@ -146,16 +146,16 @@ def.plot.dp01.qfqm <- function (
     }
     
 
-    if(base::sum(dataIdx$num,na.rm=TRUE) == 0) {
+    if(base::sum(dataIdx$numSamp,na.rm=TRUE) == 0) {
       # No non-NA data, generate empty plot
       plotNumPts <- ggplot2::ggplot(data=dataIdx,ggplot2::aes(x=time)) + ggplot2::geom_blank() + 
         ggplot2::labs(title=" ",x="Date/Time",y="Number of points") + ggplot2::theme_bw()
     } else {
       # Data to plot!
-      plotNumPts <- ggplot2::ggplot() + ggplot2::geom_line(data=dataIdx,ggplot2::aes(x=dataIdx$time,y=dataIdx$num)) +
-        ggplot2::geom_point(data=dataIdx,ggplot2::aes(x=dataIdx$time,y=dataIdx$num)) + 
+      plotNumPts <- ggplot2::ggplot() + ggplot2::geom_line(data=dataIdx,ggplot2::aes(x=dataIdx$time,y=dataIdx$numSamp)) +
+        ggplot2::geom_point(data=dataIdx,ggplot2::aes(x=dataIdx$time,y=dataIdx$numSamp)) + 
         ggplot2::labs(title=" ",x="Date/Time",y="Number of points") + ggplot2::theme_bw() +
-        ggplot2::geom_point(ggplot2::aes(x=dataIdx$time[dataIdx[,"qfFinl"]==1],y=dataIdx$num[dataIdx[,"qfFinl"]==1]),color="red")
+        ggplot2::geom_point(ggplot2::aes(x=dataIdx$time[dataIdx[,"qfFinl"]==1],y=dataIdx$numSamp[dataIdx[,"qfFinl"]==1]),color="red")
     }
     
       

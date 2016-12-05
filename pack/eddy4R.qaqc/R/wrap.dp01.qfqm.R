@@ -239,7 +239,7 @@ wrap.dp01.qfqm <- function (
       }
       
       # Summary statistics
-      statSmmy <- eddy4R.base::def.dp01.stat(data=data[[idxVar]][posData])
+      statSmmy <- eddy4R.base::def.neon.dp01(data=data[[idxVar]][posData])
       
       # Quality metrics
       qm <- eddy4R.qaqc::def.qm(qf=qf[[idxVar]][posData,])
