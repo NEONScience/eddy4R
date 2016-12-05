@@ -74,7 +74,7 @@ REYNflux_FD_mole_dry <- function(
   #    data$T_v <- data$Temp * (1 + 0.61 * data$q)
   data$T_v <- data$T_air / (1 - ((data$p_H2O / data$p_air) * (1 - eddy4R.base::Natu$RtioMolmH2oDry)) )
   #latent heat of vaporization (Eq 2.55 Foken 2008) [J kg-1] == [m2 s-2]
-  data$Lv <- 2500827 - 2360 * eddy4R.base::def.conv.unit(data=data$T_air,unitFrom="K",unitTo="C")
+  data$Lv <- 2500827 - 2360 * eddy4R.base::def.unit.conv(data=data$T_air,unitFrom="K",unitTo="C")
   
   #-----------------------------------------------------------
   #CONSIDER HUMIDITY IN DRY ADIABATIC CONSTANT
@@ -132,11 +132,11 @@ REYNflux_FD_mole_dry <- function(
   
   
   #aircraft heading as vector average
-  if(PltfEc == "airc") mn$PSI_aircraft <- eddy4R.base::def.conv.poly(data=eddy4R.base::def.az.cart(matrix(colMeans(eddy4R.base::def.cart.az(eddy4R.base::def.conv.poly(data=data$PSI_aircraft,coefPoly=eddy4R.base::Conv$DegRad)), na.rm=TRUE), ncol=2)),coefPoly=eddy4R.base::Conv$RadDeg)
+  if(PltfEc == "airc") mn$PSI_aircraft <- eddy4R.base::def.conv.poly(data=eddy4R.base::def.pol.cart(matrix(colMeans(eddy4R.base::def.cart.pol(eddy4R.base::def.conv.poly(data=data$PSI_aircraft,coefPoly=eddy4R.base::Conv$DegRad)), na.rm=TRUE), ncol=2)),coefPoly=eddy4R.base::Conv$RadDeg)
   
   #wind direction as vector average
-  data$PSI_uv <- eddy4R.base::def.az.cart(matrix(c(data$v_met, data$u_met), ncol=2))
-  mn$PSI_uv <- eddy4R.base::def.az.cart(matrix(c(mn$v_met, mn$u_met), ncol=2))
+  data$PSI_uv <- eddy4R.base::def.pol.cart(matrix(c(data$v_met, data$u_met), ncol=2))
+  mn$PSI_uv <- eddy4R.base::def.pol.cart(matrix(c(mn$v_met, mn$u_met), ncol=2))
   
   
   
@@ -145,7 +145,7 @@ REYNflux_FD_mole_dry <- function(
   ############################################################
   
   #rotation angle
-  rotang <- (eddy4R.base::def.conv.unit(data=(mn$PSI_uv+180),unitFrom="deg",unitTo="rad")) %% (2*pi)
+  rotang <- (eddy4R.base::def.unit.conv(data=(mn$PSI_uv+180),unitFrom="deg",unitTo="rad")) %% (2*pi)
   
   #transformation matrix
   B <- matrix(nrow=3, ncol=3)
@@ -200,7 +200,7 @@ REYNflux_FD_mole_dry <- function(
   attributes(imfl)$names <- attributes(data)$names
   
   #correct wind direction from (detrended) wind components
-  PSI_uv_dum <- eddy4R.base::def.az.cart(matrix(c(imfl$v_met + mn$v_met, imfl$u_met + mn$u_met), ncol=2))
+  PSI_uv_dum <- eddy4R.base::def.pol.cart(matrix(c(imfl$v_met + mn$v_met, imfl$u_met + mn$u_met), ncol=2))
   imfl$PSI_uv <- (PSI_uv_dum - mn$PSI_uv)
   rm(PSI_uv_dum)
   #same should be done for PSI_aircraft
