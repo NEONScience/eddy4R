@@ -70,7 +70,7 @@ wrap.derv.prd.day <- function(
   data$irga$ssiDiff <- def.ssi.diff(ssiCo2 = data$irga$ssiCO2, ssiH2o = data$irga$ssiH2O)
  
   # total pressure in irga cell
-  data$irga$presSum <- def.pres.sum(presAtm = data$irga$presAtm,presDiff = data$irga$presDiff)
+  data$irga$presSum <- def.pres.sum(presAtm = data$irga$presAtmBox, presDiff = data$irga$presGageCell)
   
 
   # average temperature in irga cell 
