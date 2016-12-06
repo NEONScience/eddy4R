@@ -1,19 +1,19 @@
 Package: eddy4R.qaqc
 Title: Eddy-covariance calculation for R: Quality assurance and quality control
-Version: 0.0.16
+Version: 0.0.17
 Authors@R: c( person("Cove", "Sturtevant", email = "csturtevant@neoninc.org", role = c("aut", "cre")),
               person("Stefan", "Metzger", email = "eddy4R.info@gmail.com", role = c("aut")),
               person("Tim", "Meehan", email = "tmeehan@neoninc.org", role = c("aut")))
-Description: Eddy-covariance calculation for R: Quality assurance and quality. Currently removed from Imports because devtools::install_github() ignores and attempts to re-install previously installed packages, but without passing GITHUB_PAT (starting 2016-06-26, only affets packages hosted on private Github repos with access token, such as NEONInc/NEON-FIU-algorithm): eddy4R.base (>= 0.0.34).
+Description: Eddy-covariance calculation for R: Quality assurance and quality. Currently removed from Imports because devtools::install_github() ignores and attempts to re-install previously installed packages, but without passing GITHUB_PAT (starting 2016-06-26, only affets packages hosted on private Github repos with access token, such as NEONInc/NEON-FIU-algorithm): eddy4R.base (>= 0.0.35).
 Depends:
     R (>= 3.3.2)
 Imports:
-    ggplot2 (>= 2.1.0),
+    ggplot2 (>= 2.2.0),
     gridExtra (>= 2.2.1),
     gtable (>= 0.2.0),
     reshape2 (>= 1.4.2),
     Rmisc (>= 1.5),
-    lattice (>= 0.20-34),
+    lattice (>= 0.20-35),
     plyr (>= 1.8.4),
     grid(>= 3.3.2)
 License: Terms of use of the NEON FIU algorithm repository dated 2015-01-16
