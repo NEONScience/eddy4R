@@ -6,7 +6,8 @@
 #' @description Wrapper function. Calculate quality metrics, alpha and beta quality metrics, and final quality flag for the NEON eddy-covariance turbulent exchange data products.
 
 #' @param \code{qfSens00} A data frame of quality flags, class integer, which related to NEON eddy-covariance turbulent exchange L1 data products that the quality metrics and final quality flags are being calculated. Each column contains the quality flag values [-1,0,1] for that flag. [-] 
-#' @param \code{qfSens01} Optional. A data frame of quality flags, class integer, which related to NEON eddy-covariance turbulent exchange L1 data products that the quality metrics and final quality flags are being calculated. Each column contains the quality flag values [-1,0,1] for that flag. [-] #' @param \code{qfSens01} Optional. A data frame of quality flags, class integer, which related to NEON eddy-covariance turbulent exchange L1 data products that the quality metrics and final quality flags are being calculated. Each column contains the quality flag values [-1,0,1] for that flag. [-]
+#' @param \code{qfSens01} Optional. A data frame of quality flags, class integer, which related to NEON eddy-covariance turbulent exchange L1 data products that the quality metrics and final quality flags are being calculated. Each column contains the quality flag values [-1,0,1] for that flag. [-] 
+#' @param \code{qfSens02} Optional. A data frame of quality flags, class integer, which related to NEON eddy-covariance turbulent exchange L1 data products that the quality metrics and final quality flags are being calculated. Each column contains the quality flag values [-1,0,1] for that flag. [-] 
 #' @param \code{dp01} A vector of class "character" containing the name of NEON eddy-covariance turbulent exchange L1 data products which the quality metrics and final quality flags are being calculated, c("irgaCo2","irgaH2o","soni","soniAmrs"). Defaults to "irgaCo2". [-]
 
 #' @return A list of: \cr
@@ -58,51 +59,22 @@ wrap.neon.ecte.dp01.qfqm <- function(
   #assign list
   rpt <- list()
   tmp <- list()
-  
-#irgaCo2##########################################################################################
-  
-  if (dp01 == "irgaCo2"){
-    inp <- def.neon.ecte.dp01.qf.grup(qfSens00 = qfSens00, qfSens01 = qfSens01, dp01=dp01)
-    #Define sub-data product under irgaCo2
-    subDp01 <- c("rtioMoleDryCo2", "densMoleCo2", "presAtm", "presSum", "frt00Samp", "tempAve")
-  }
-  
-#irgaH2o##########################################################################################
-  
-  if (dp01 == "irgaH2o"){
-    inp <- def.neon.ecte.dp01.qf.grup(qfSens00 = qfSens00, qfSens01 = qfSens01, dp01=dp01)
-    subDp01 <- c("rtioMoleDryH2o", "densMoleH2o", "tempDew", "presAtm", "presSum", "frt00Samp", "tempAve")
-    
-  }
-  
-#soni############################################################################################
-  
-  if (dp01 == "soni"){
-    inp <- def.neon.ecte.dp01.qf.grup(qfSens00 = qfSens00, qfSens01 = qfSens01, dp01=dp01)
-    subDp01 <- c("veloXaxsErth", "veloYaxsErth", "veloZaxsErth", "veloXaxsYaxsErth", "angZaxsErth", "tempSoni", "tempAir")
-  }
-  
-#soniAmrs##########################################################################################  
-  if (dp01 == "soniAmrs"){
-    inp <- def.neon.ecte.dp01.qf.grup(qfSens00 = qfSens00, dp01=dp01)
-    subDp01 <- c("angNedXaxs", "angNedYaxs", "angNedZaxs")
-  }
-  
-##################################################################################################
+  #grouping qf
+  inp <- def.neon.ecte.dp01.qf.grup(qfSens00 = qfSens00, qfSens01 = qfSens01, qfSens02 = qfSens02, dp01=dp01)
   
   #calculate qmAlpha, qmBeta, qfFinl
   tmp <- lapply(inp, FUN = eddy4R.qaqc::def.qf.finl)
   
   #assign default qfSciRevw
-  lapply(subDp01, function(x) tmp[[x]]$qfqm$qfSciRevw <<- 0)
+  lapply(names(tmp), function(x) tmp[[x]]$qfqm$qfSciRevw <<- 0)
   #calculate qmAlph, qmBeta, qfFinl, qfSciRevw
-  lapply(subDp01, function(x) tmp[[x]]$qm <<- eddy4R.qaqc::def.qm(qf=inp[[x]], nameQmOut=NULL))
+  lapply(names(tmp), function(x) tmp[[x]]$qm <<- eddy4R.qaqc::def.qm(qf=inp[[x]], nameQmOut=NULL))
   #assign return results
-  lapply(subDp01, function(x) rpt$qm[[x]] <<- tmp[[x]]$qm)
-  lapply(subDp01, function(x) rpt$qmAlph[[x]] <<- tmp[[x]]$qfqm$qmAlph)
-  lapply(subDp01, function(x) rpt$qmBeta[[x]] <<- tmp[[x]]$qfqm$qmBeta)
-  lapply(subDp01, function(x) rpt$qfFinl[[x]] <<- tmp[[x]]$qfqm$qfFinl)
-  lapply(subDp01, function(x) rpt$qfSciRevw[[x]] <<- tmp[[x]]$qfqm$qfSciRevw)
+  lapply(names(tmp), function(x) rpt$qm[[x]] <<- tmp[[x]]$qm)
+  lapply(names(tmp), function(x) rpt$qmAlph[[x]] <<- tmp[[x]]$qfqm$qmAlph)
+  lapply(names(tmp), function(x) rpt$qmBeta[[x]] <<- tmp[[x]]$qfqm$qmBeta)
+  lapply(names(tmp), function(x) rpt$qfFinl[[x]] <<- tmp[[x]]$qfqm$qfFinl)
+  lapply(names(tmp), function(x) rpt$qfSciRevw[[x]] <<- tmp[[x]]$qfqm$qfSciRevw)
   
   #return results
   return(rpt)
