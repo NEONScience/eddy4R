@@ -39,6 +39,8 @@
 # changelog and author contributions / copyrights
 #   Natchaya P-Durden (2016-12-01)
 #     original creation
+#   Natchaya P-Durden (2016-12-09)
+#     added flexibility if some sensor is missing
 ##############################################################################################
 
 def.neon.ecte.dp01.qf.grup <- function(
@@ -53,9 +55,6 @@ def.neon.ecte.dp01.qf.grup <- function(
   
   #irgaCo2####################################################################################
   if (dp01 == "irgaCo2") {
-    if(base::is.null(qfSens01)) {
-      stop("Missing the set of quality flags from sampling mass flow controller!")
-    }
     #organized all quality flags from irga into the set of flags (for frequency use)
     #irga sensor flags
     setQf$sens <- data.frame("qfIrgaHead" = qfSens00$qfIrgaHead, 
@@ -103,13 +102,21 @@ def.neon.ecte.dp01.qf.grup <- function(
                                  "qfStepTempMean" = qfSens00$qfStepTempMean,
                                  "qfPersTempMean" = qfSens00$qfPersTempMean, 
                                  "qfCalTempMean" = qfSens00$qfCalTempMean)
-    #irgaMfcSamp
-    setQf$frt00 <- data.frame("qfRngMinFrt00" = qfSens01$qfRngMinFrt00, 
-                              "qfStepFrt00" = qfSens01$qfStepFrt00, 
-                              "qfPersFrt00" = qfSens01$qfPersFrt00, 
-                              "qfCalFrt00" = qfSens01$qfCalFrt00)
     
-    
+    if (!is.null(qfSens01)){
+      #irgaMfcSamp
+      setQf$frt00 <- data.frame("qfRngMinFrt00" = qfSens01$qfRngMinFrt00, 
+                                "qfStepFrt00" = qfSens01$qfStepFrt00, 
+                                "qfPersFrt00" = qfSens01$qfPersFrt00, 
+                                "qfCalFrt00" = qfSens01$qfCalFrt00)
+    } else {
+      #assign qf for irgaMfcSamp to -1 when qf irgaMfcSamp are missing
+      setQf$frt00 <- data.frame("qfRngMinFrt00" = -1, 
+                                "qfStepFrt00" = -1, 
+                                "qfPersFrt00" = -1, 
+                                "qfCalFrt00" = -1)
+    }
+
     #gruping qulity flags that related to L1 sub-data product
     rpt$rtioMoleDryCo2 <- data.frame(setQf$sens, setQf$asrpCo2, 
                                      setQf$ssiCo2, setQf$rtioMoleDryCo2)
@@ -119,15 +126,13 @@ def.neon.ecte.dp01.qf.grup <- function(
     rpt$presSum <- data.frame(setQf$sens, setQf$presSum)
     rpt$frt00Samp <- data.frame (setQf$frt00)
     rpt$tempAve <- data.frame (setQf$sens, setQf$tempAve)
+  
     #remove setQf
     setQf <- NULL
   }
   
   #irgaH2o#################################################################################
   if (dp01 == "irgaH2o") {
-    if(base::is.null(qfSens01)) {
-      stop("Missing the set of quality flags from sampling mass flow controller!")
-    }
     #organized all quality flags from irga into the set of flags (for frequency use)
     #irga sensor flags
     setQf$sens <- data.frame("qfIrgaHead" = qfSens00$qfIrgaHead, 
@@ -175,12 +180,19 @@ def.neon.ecte.dp01.qf.grup <- function(
                                  "qfStepTempMean" = qfSens00$qfStepTempMean,
                                  "qfPersTempMean" = qfSens00$qfPersTempMean, 
                                  "qfCalTempMean" = qfSens00$qfCalTempMean)
-    #irgaMfcSamp
-    setQf$frt00 <- data.frame("qfRngMinFrt00" = qfSens01$qfRngMinFrt00, 
-                              "qfStepFrt00" = qfSens01$qfStepFrt00, 
-                              "qfPersFrt00" = qfSens01$qfPersFrt00, 
-                              "qfCalFrt00" = qfSens01$qfCalFrt00)
-    
+    if (!is.null(qfSens01)){
+      #irgaMfcSamp
+      setQf$frt00 <- data.frame("qfRngMinFrt00" = qfSens01$qfRngMinFrt00, 
+                                "qfStepFrt00" = qfSens01$qfStepFrt00, 
+                                "qfPersFrt00" = qfSens01$qfPersFrt00, 
+                                "qfCalFrt00" = qfSens01$qfCalFrt00)
+    } else {
+      #assign qf for irgaMfcSamp to -1 when qf irgaMfcSamp are missing
+      setQf$frt00 <- data.frame("qfRngMinFrt00" = -1, 
+                                "qfStepFrt00" = -1, 
+                                "qfPersFrt00" = -1, 
+                                "qfCalFrt00" = -1)
+    }
     
     #gruping qulity flags that related to L1 sub-data product
     rpt$rtioMoleDryH2o <- data.frame(setQf$sens, setQf$asrpH2o, 
@@ -200,9 +212,6 @@ def.neon.ecte.dp01.qf.grup <- function(
   
   #soni#################################################################################  
   if (dp01 == "soni") {
-    if(base::is.null(qfSens01)) {
-      stop("Missing the set of quality flags from irga!")
-    }
     #organized all quality flags from soni into the set of flags (for frequency use)
     #soni sensor flags
     setQf$sensSoni <- data.frame("qfSoniUnrs" = qfSens00$qfSoniUnrs, 
