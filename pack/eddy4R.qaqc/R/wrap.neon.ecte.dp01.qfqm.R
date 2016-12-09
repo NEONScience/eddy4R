@@ -44,6 +44,8 @@
 # changelog and author contributions / copyrights
 #   Natchaya P-Durden (2016-12-02)
 #     original creation
+#   Natchaya P-Durden (2016-12-09)
+#     replaced for loop by lapply
 ##############################################################################################
 
 wrap.neon.ecte.dp01.qfqm <- function(
@@ -52,70 +54,55 @@ wrap.neon.ecte.dp01.qfqm <- function(
   qfSens02 = NULL,
   dp01 = c("irgaCo2","irgaH2o","soni","soniAmrs")[1]
 ) {
-  
-  
+
   #assign list
   rpt <- list()
   tmp <- list()
   
-  #irgaCo2##########################################################################################
+#irgaCo2##########################################################################################
   
   if (dp01 == "irgaCo2"){
-    if(base::is.null(qfSens01)) {
-      stop("Input 'qfSen01':Missing the set of quality flags from sampling mass flow controller!")
-    }
     inp <- def.neon.ecte.dp01.qf.grup(qfSens00 = qfSens00, qfSens01 = qfSens01, dp01=dp01)
     #Define sub-data product under irgaCo2
     subDp01 <- c("rtioMoleDryCo2", "densMoleCo2", "presAtm", "presSum", "frt00Samp", "tempAve")
   }
   
-  #irgaH2o##########################################################################################
+#irgaH2o##########################################################################################
   
   if (dp01 == "irgaH2o"){
-    if(base::is.null(qfSens01)) {
-      stop("Input 'qfSen01':Missing the set of quality flags from sampling mass flow controller!")
-    }
     inp <- def.neon.ecte.dp01.qf.grup(qfSens00 = qfSens00, qfSens01 = qfSens01, dp01=dp01)
     subDp01 <- c("rtioMoleDryH2o", "densMoleH2o", "tempDew", "presAtm", "presSum", "frt00Samp", "tempAve")
     
   }
   
-  #soni############################################################################################
+#soni############################################################################################
   
   if (dp01 == "soni"){
-    if(base::is.null(qfSens01)) {
-      stop("Input 'qfSen01':Missing the set of quality flags from irga!")
-    }
     inp <- def.neon.ecte.dp01.qf.grup(qfSens00 = qfSens00, qfSens01 = qfSens01, dp01=dp01)
     subDp01 <- c("veloXaxsErth", "veloYaxsErth", "veloZaxsErth", "veloXaxsYaxsErth", "angZaxsErth", "tempSoni", "tempAir")
   }
   
-  #soniAmrs##########################################################################################  
+#soniAmrs##########################################################################################  
   if (dp01 == "soniAmrs"){
     inp <- def.neon.ecte.dp01.qf.grup(qfSens00 = qfSens00, dp01=dp01)
     subDp01 <- c("angNedXaxs", "angNedYaxs", "angNedZaxs")
   }
   
-  ##################################################################################################
+##################################################################################################
   
   #calculate qmAlpha, qmBeta, qfFinl
   tmp <- lapply(inp, FUN = eddy4R.qaqc::def.qf.finl)
   
+  #assign default qfSciRevw
+  lapply(subDp01, function(x) tmp[[x]]$qfqm$qfSciRevw <<- 0)
   #calculate qmAlph, qmBeta, qfFinl, qfSciRevw
-  for (idx in subDp01) {
-    tmp[[idx]]$qfqm$qfSciRevw<- 0
-    #calculate quality metric for each flag under each dp01
-    tmp[[idx]]$qm <- eddy4R.qaqc::def.qm(qf=inp[[idx]], nameQmOut=NULL)
-    
-    
-    #report quality metric qmAlph, qmBeta, qfFinl, qfSciRevw value
-    rpt$qm[[idx]] <- tmp[[idx]]$qm
-    rpt$qmAlph[[idx]] <- tmp[[idx]]$qfqm$qmAlph
-    rpt$qmBeta[[idx]] <- tmp[[idx]]$qfqm$qmBeta
-    rpt$qfFinl[[idx]] <- tmp[[idx]]$qfqm$qfFinl
-    rpt$qfSciRevw[[idx]] <- tmp[[idx]]$qfqm$qfSciRevw
-    
-  }
+  lapply(subDp01, function(x) tmp[[x]]$qm <<- eddy4R.qaqc::def.qm(qf=inp[[x]], nameQmOut=NULL))
+  #assign return results
+  lapply(subDp01, function(x) rpt$qm[[x]] <<- tmp[[x]]$qm)
+  lapply(subDp01, function(x) rpt$qmAlph[[x]] <<- tmp[[x]]$qfqm$qmAlph)
+  lapply(subDp01, function(x) rpt$qmBeta[[x]] <<- tmp[[x]]$qfqm$qmBeta)
+  lapply(subDp01, function(x) rpt$qfFinl[[x]] <<- tmp[[x]]$qfqm$qfFinl)
+  lapply(subDp01, function(x) rpt$qfSciRevw[[x]] <<- tmp[[x]]$qfqm$qfSciRevw)
   
   #return results
   return(rpt)
