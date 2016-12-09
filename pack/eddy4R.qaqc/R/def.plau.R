@@ -157,14 +157,14 @@ def.plau <- function (
   # For verbose option, initialize output
   if(Vrbs) {
     # set up a data frame for each variable containing all the plausibility tests
-    qfDum = matrix(data=0,nrow=numData,ncol=5) # Default to pass for each test
-    qfDum <- as.data.frame(qfDum)
-    names(qfDum) <- c("qfRng","qfStep","qfPers","qfNull","qfGap")
+    qfTmp = matrix(data=0,nrow=numData,ncol=5) # Default to pass for each test
+    qfTmp <- as.data.frame(qfTmp)
+    names(qfTmp) <- c("qfRng","qfStep","qfPers","qfNull","qfGap")
 
     # Dole out the qfs to each variable 
     qf <- vector("list",length=numVar)
     names(qf) <- nameData
-    qf <- lapply(qf,FUN = function(x){x=qfDum})
+    qf <- lapply(qf,FUN = function(x){x=qfTmp})
   }
   
   # Do range test

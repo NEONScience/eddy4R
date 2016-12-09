@@ -53,12 +53,12 @@ def.pres.sum <- function(
   # test if units exist for input variables
   if(!("unit" %in% names(attributes(presAtm)))) {
     
-    stop("def.pres.dum(): presAtm is missing unit attribute.")
+    stop("def.pres.sum(): presAtm is missing unit attribute.")
   }
   
   if(!("unit" %in% names(attributes(presDiff)))) {
     
-    stop("def.pres.dum(): presDiff is missing unit attribute.")
+    stop("def.pres.sum(): presDiff is missing unit attribute.")
   }
   
   
