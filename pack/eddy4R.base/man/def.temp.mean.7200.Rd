@@ -4,7 +4,7 @@
 \alias{def.temp.mean.7200}
 \title{Calculation of the average temperature in LI-7200 irga cell}
 \usage{
-def.temp.mean.7200(tempIn, tempOut, Val = FALSE)
+def.temp.mean.7200(tempIn, tempOut, Vali = FALSE)
 }
 \arguments{
 \item{\code{tempIn}}{A vector containing the tempertaure measured at IRGA cell inlet, of class "numeric". [K]}

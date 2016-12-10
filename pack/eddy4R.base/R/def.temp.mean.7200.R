@@ -47,8 +47,8 @@ def.temp.mean.7200 <- function(
   # temperatrue at IRGA cell outlet
   tempOut,
   
-  # Sampling (VAL = FALSE) or validation (Val = TRUE) 
-  Val = FALSE
+  # Sampling (Vali = FALSE) or validation (Vali = TRUE) 
+  Vali = FALSE
   
 ) {
   
@@ -75,7 +75,7 @@ def.temp.mean.7200 <- function(
   }
   
   # Sampling or validation?
-  if(Val == FALSE) {
+  if(Vali == FALSE) {
     
     # calculate the average temperature in LI-7200 IRGA cell
     tempMean <- (0.2 * tempIn + 0.8 * tempOut)
