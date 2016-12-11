@@ -71,18 +71,18 @@ def.bin <- function(
   for(i in 1:(length(rng)-1)) {
     whrBin <- which(idep > rng[i] & idep <= rng[i+1])
     if(meanFunc == "median") {
-      idepDum <- stats::median(idep[whrBin], na.rm=T)
-      depeDum <- sapply(1:ncol(depe), function(x) stats::median(depe[whrBin,x], na.rm=T))
+      idepTmp <- stats::median(idep[whrBin], na.rm=T)
+      depeTmp <- sapply(1:ncol(depe), function(x) stats::median(depe[whrBin,x], na.rm=T))
     } else {
-      idepDum <- base::mean(idep[whrBin], na.rm=T)
-      depeDum <- sapply(1:ncol(depe), function(x) base::mean(depe[whrBin,x], na.rm=T))
+      idepTmp <- base::mean(idep[whrBin], na.rm=T)
+      depeTmp <- sapply(1:ncol(depe), function(x) base::mean(depe[whrBin,x], na.rm=T))
     }
     if(i == 1) {
-      idepBin <- idepDum
-      depeBin <- depeDum
+      idepBin <- idepTmp
+      depeBin <- depeTmp
     } else {
-      idepBin <- c(idepBin, idepDum)
-      depeBin <- rbind(depeBin, depeDum)
+      idepBin <- c(idepBin, idepTmp)
+      depeBin <- rbind(depeBin, depeTmp)
     }
   }
   if(!is.null(RngMinMax)) idepBin <- sapply(1:(length(rng)-1), function(x) base::mean(rng[x:(x+1)]))
