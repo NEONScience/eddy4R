@@ -223,8 +223,8 @@ wrap.dp01.qfqm <- function (
     
     # Initialize output
     numQf <- base::length(qf[[idxVar]]) # #flags we have
-    dum <- base::data.frame(base::matrix(nrow=numDataAgr,ncol=6+3*numQf+3))
-    dataAgr[[idxVar]] <- dum
+    tmp <- base::data.frame(base::matrix(nrow=numDataAgr,ncol=6+3*numQf+3))
+    dataAgr[[idxVar]] <- tmp
     
     # Loop through each aggregation window
     for (idxAgr in 1:numDataAgr) {

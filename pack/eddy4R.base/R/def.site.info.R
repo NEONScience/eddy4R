@@ -82,9 +82,9 @@ def.site.info <- function(
     SiteInfo$DistZaxsCnpy <- 12 
     #CSAT3 boom angle [degrees from true North]
     SiteInfo$AzSoni <- 204
-    #planar fit coefficients (CoefPf [degree] [degree] [m s-1] alpha (CoefAngPtch), beta (CoefAngRoll),
+    #planar fit coefficients (CoefPf [degree] [degree] [m s-1] alpha (CoefAngYaxs), beta (CoefAngXaxs),
     #and the regression offset (CoefOfstReg)       
-    SiteInfo$CoefPf <- data.frame(CoefAngPtch = 2.29, CoefAngRoll = 5.62, CoefOfstReg = -0.0185)
+    SiteInfo$CoefPf <- data.frame(CoefAngYaxs = 2.29, CoefAngXaxs = 5.62, CoefOfstReg = -0.0185)
   }
   
   #Northslope, AK, U.S.A.
@@ -133,7 +133,7 @@ def.site.info <- function(
     #CSAT3 boom angle [degrees from true North]
     SiteInfo$AzSoni <- 230
     #planar fit coefficients (April 22 to May 3, 2016) [degree] [degree] [m s-1]
-    SiteInfo$CoefPf <- data.frame(CoefAngPtch = -0.7056, CoefAngRoll = -1.8718, CoefOfstReg = 0.0549)
+    SiteInfo$CoefPf <- data.frame(CoefAngYaxs = -0.7056, CoefAngXaxs = -1.8718, CoefOfstReg = 0.0549)
   }
   #return site info
   return(SiteInfo)
