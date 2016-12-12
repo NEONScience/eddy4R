@@ -504,7 +504,7 @@ REYNcomp_FD_mole_dry <- function(
       #which entries are fluxes?
       idxFlux=whr_flux,
       #confidence level for detection limit
-      ConfLevl=conf_level,
+      ConfLvl=conf_level,
       #criterion to stop iteration (0.01 = 1% change among subsequent realizations)
       CritMax=crit_iter,
       PltfEc = PltfEc,
