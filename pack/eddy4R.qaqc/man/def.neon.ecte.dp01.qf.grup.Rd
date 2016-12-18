@@ -12,7 +12,7 @@ def.neon.ecte.dp01.qf.grup(qfSens00, qfSens01 = NULL, qfSens02 = NULL,
 
 \item{\code{qfSens01}}{Optional. A dataframe containing the input flag data that related to L1 data products are being grouped. Of class integer". [-]}
 
-\item{\code{qfSens01}}{Optional. A dataframe containing the input flag data that related to L1 data products are being grouped. Of class integer". [-]}
+\item{\code{qfSens02}}{Optional. A dataframe containing the input flag data that related to L1 data products are being grouped. Of class integer". [-]}
 
 \item{\code{dp01}}{A vector of class "character" containing the name of NEON eddy-covariance turbulent exchange L1 data products which the flags are being grouped, c("irgaCo2","irgaH2o","soni","soniAmrs"). Defaults to "irgaCo2". [-]}
 }
