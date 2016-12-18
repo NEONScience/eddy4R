@@ -10,7 +10,9 @@ wrap.neon.ecte.dp01.qfqm(qfSens00, qfSens01 = NULL, qfSens02 = NULL,
 \arguments{
 \item{\code{qfSens00}}{A data frame of quality flags, class integer, which related to NEON eddy-covariance turbulent exchange L1 data products that the quality metrics and final quality flags are being calculated. Each column contains the quality flag values [-1,0,1] for that flag. [-]}
 
-\item{\code{qfSens01}}{Optional. A data frame of quality flags, class integer, which related to NEON eddy-covariance turbulent exchange L1 data products that the quality metrics and final quality flags are being calculated. Each column contains the quality flag values [-1,0,1] for that flag. [-] #' @param \code{qfSens01} Optional. A data frame of quality flags, class integer, which related to NEON eddy-covariance turbulent exchange L1 data products that the quality metrics and final quality flags are being calculated. Each column contains the quality flag values [-1,0,1] for that flag. [-]}
+\item{\code{qfSens01}}{Optional. A data frame of quality flags, class integer, which related to NEON eddy-covariance turbulent exchange L1 data products that the quality metrics and final quality flags are being calculated. Each column contains the quality flag values [-1,0,1] for that flag. [-]}
+
+\item{\code{qfSens02}}{Optional. A data frame of quality flags, class integer, which related to NEON eddy-covariance turbulent exchange L1 data products that the quality metrics and final quality flags are being calculated. Each column contains the quality flag values [-1,0,1] for that flag. [-]}
 
 \item{\code{dp01}}{A vector of class "character" containing the name of NEON eddy-covariance turbulent exchange L1 data products which the quality metrics and final quality flags are being calculated, c("irgaCo2","irgaH2o","soni","soniAmrs"). Defaults to "irgaCo2". [-]}
 }
