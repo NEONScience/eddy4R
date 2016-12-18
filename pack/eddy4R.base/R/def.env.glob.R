@@ -31,6 +31,8 @@
 #     re-formualtion as function() to allow packaging
 #   Ke Xu (2016-08-03)
 #     define font "times" for Mac
+#   Stefan Metzger (2016-12-18)
+#     print POSIX date/timestamps with fractional seconds
 ##############################################################################################
 
 def.env.glob <- function() {
@@ -42,4 +44,8 @@ def.env.glob <- function() {
   if(.Platform$OS.type == "windows") windowsFonts(times=windowsFont("TT Times New Roman"))  
   # define 'times' language in Mac OS
   if(Sys.info()["sysname"] == "Darwin") quartzFonts(times = quartzFont(rep("Times-Roman", 4)))
+  
+  # print POSIX date/timestamps with fractional seconds
+  options(digits.secs=3)
+  
 }
