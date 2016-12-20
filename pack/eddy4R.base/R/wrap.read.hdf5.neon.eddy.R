@@ -127,9 +127,9 @@ if(!(DateLoca %in% file)) {
     # read-in hdf5 data from the specified sensor
     # options via open connection: fid <- H5Fopen(paste0(DirInpLoca, "/ECTE_L0_", SiteLoca, "_", DateLoca, ".h5")); h5ls(fid)
     data <- rhdf5::h5read(file = base::paste0(DirInpLoca, "/ECTE_L0_", SiteLoca, "_", DateLoca, ".h5"),
-                          name = base::paste0("/", SiteLoca, "/DP0_", VarLoca, "_001/000_000"),
+                          name = base::paste0("/", SiteLoca, "/dp0p/data/", VarLoca, "_001/000_060"),
                           read.attributes = TRUE)
-    
+
     # convert 1-d array list-elements to vector list-elements
     # can be omitted once Dave figures out to store h5 data tables as vector list-elements
     for(idx in base::names(data)) data[[idx]] <- base::as.vector(data[[idx]]); base::rm(idx)
