@@ -87,9 +87,9 @@ if(!(DateLoca %in% file)) {
     names(data) <- c("asrpCO2", "asrpH2O", "diag", "diag02", "fdMoleCO2", "rtioMoleDryH2o", "poteCool", "presAtm",
                      "presDiff", "pwrCO2Ref", "pwrCO2Samp", "pwrH2ORef", "pwrH2OSamp", "rhoMoleCO2", "densMoleH2o",
                      "ssiCo2", "ssiH2o", "tempBloc", "tempIn", "tempOut")
-    attributes(data)$Unit <- c("-", "-", "NA", "NA", "mol mol-1", "mol mol-1", "V", "Pa", "Pa", "W", "W", "W", "W",
+    attributes(data)$unit <- c("-", "-", "NA", "NA", "mol mol-1", "mol mol-1", "V", "Pa", "Pa", "W", "W", "W", "W",
                                "mol m-3", "mol m-3", "%", "%", "K", "K", "K")
-    names(attributes(data)$Unit) <- names(data)
+    names(attributes(data)$unit) <- names(data)
   
   }
 
@@ -98,8 +98,8 @@ if(!(DateLoca %in% file)) {
     
     data <- data.frame(matrix(data = NaN, ncol = 5, nrow = length(time)))
     names(data) <- c("frt", "frt00", "frtSet00", "presAtm", "temp")
-    attributes(data)$Unit <- c("litersPerMinute", "litersPerMinute", "litersPerMinute", "Pa", "K")
-    names(attributes(data)$Unit) <- names(data)
+    attributes(data)$unit <- c("litersPerMinute", "litersPerMinute", "litersPerMinute", "Pa", "K")
+    names(attributes(data)$unit) <- names(data)
     
   }
 
@@ -108,8 +108,8 @@ if(!(DateLoca %in% file)) {
     
     data <- data.frame(matrix(data = NaN, ncol = 6, nrow = length(time)))
     names(data) <- c("diag", "idx", "veloSoni", "veloXaxs", "veloYaxs", "veloZaxs")
-    attributes(data)$Unit <- c("NA", "NA", "m s-1", "m s-1", "m s-1", "m s-1")
-    names(attributes(data)$Unit) <- names(data)
+    attributes(data)$unit <- c("NA", "NA", "m s-1", "m s-1", "m s-1", "m s-1")
+    names(attributes(data)$unit) <- names(data)
     
   }
 
@@ -157,7 +157,7 @@ if(!(DateLoca %in% file)) {
     base::names(attr$Unit) <- attr$Name
 
     # sort and assign unit descriptions in same order as data
-    base::attributes(data)$Unit <- attr$Unit[base::names(data)]
+    base::attributes(data)$unit <- attr$Unit[base::names(data)]
     rm(attr, Pos01)
     
       # replacement statement for assigning units to individual variables in data
@@ -172,7 +172,7 @@ if(!(DateLoca %in% file)) {
     
     # perform unit conversion
     data <- base::suppressWarnings(eddy4R.base::def.unit.conv(data = data,
-                                                              unitFrom = attributes(data)$Unit,
+                                                              unitFrom = attributes(data)$unit,
                                                               unitTo = "intl"))
 
       # replacement statement for performing unit conversion over individual variables in data
@@ -181,15 +181,12 @@ if(!(DateLoca %in% file)) {
       #   
       #   data[[idx]] <- base::suppressWarnings(
       #     eddy4R.base::def.unit.conv(data = base::as.vector(data[[idx]]),
-      #                                unitFrom = attributes(data[[idx]])$Unit,
+      #                                unitFrom = attributes(data[[idx]])$unit,
       #                                unitTo = "intl")
       #   )
       #   
       # }; rm(idx)
-    
-    # store target unit names for future use
-    names(attributes(data)$Unit) <- names(data)
-      
+
     # print message to screen
     print(paste0(format(Sys.time(), "%F %T"), ": dataset ", DateLoca, ": ", VarLoca, " unit conversion complete"))
 
@@ -198,7 +195,7 @@ if(!(DateLoca %in% file)) {
     data <- eddy4R.base::def.rglr(
       timeMeas = base::as.POSIXlt(data$time, format="%Y-%m-%dT%H:%M:%OSZ", tz="UTC"),
       dataMeas = data,
-      unitMeas = attributes(data)$Unit,
+      unitMeas = attributes(data)$unit,
       BgnRglr = as.POSIXlt(min(time)),
       EndRglr = as.POSIXlt(max(time)),
       FreqRglr = FreqLoca,
