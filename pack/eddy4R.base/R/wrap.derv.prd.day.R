@@ -36,7 +36,7 @@
 
 wrap.derv.prd.day <- function(
   data,
-  SiteInfoLoca
+  ZoneTime
 ) {
 
 # time
@@ -54,7 +54,7 @@ wrap.derv.prd.day <- function(
   
   # calculate local standard time
   tmp <- data$time$UTC[]
-  attributes(tmp)$tzone <- SiteInfoLoca$Tz
+  attributes(tmp)$tzone <- ZoneTime
   data$time$Loca <- ff::as.ff(tmp)
   base::attr(x = data$time$Loca, which = "unit") <- "YYYY-MM-DD hh:mm:ss.sss"
 
