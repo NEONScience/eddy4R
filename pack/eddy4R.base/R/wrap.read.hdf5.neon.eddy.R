@@ -55,7 +55,7 @@ wrap.read.hdf5.neon.eddy <- function(
 # POSIX is rounding down, add time increment after last significant digit
 time <- seq.POSIXt(
   from = base::as.POSIXlt(paste(DateLoca, " ", "00:00:00.0001", sep=""), format="%Y-%m-%d %H:%M:%OS", tz="UTC"),
-  to = base::as.POSIXlt(paste(DateLoca, " ", "23:59:59.9502", sep=""), format="%Y-%m-%d %H:%M:%OS", tz="UTC"),
+  to = base::as.POSIXlt(paste(DateLoca, " ", "00:00:00.0002", sep=""), format="%Y-%m-%d %H:%M:%OS", tz="UTC") + 86400 - 1/FreqLoca,
   by = 1/FreqLoca
 )
 
@@ -115,6 +115,19 @@ if(!(DateLoca %in% file)) {
     names(data) <- c("idx", "time", "veloSoni", "veloXaxs", "veloYaxs", "veloZaxs")
     data$time <- time
     attributes(data)$unit <- c("NA", "YYYY-MM-DD hh:mm:ss.sss", "m s-1", "m s-1", "m s-1", "m s-1")
+    names(attributes(data)$unit) <- names(data)
+    
+  }
+
+  # soniAmrs
+  if(VarLoca == "soniAmrs") {
+    
+    data <- data.frame(matrix(data = NaN, ncol = 14, nrow = length(time)))
+    names(data) <- c("accXaxs", "accXaxsDiff", "accYaxs", "accYaxsDiff", "accZaxs", "accZaxsDiff", "angXaxs", "angYaxs", "angZaxs", 
+                     "avelXaxs", "avelYaxs", "avelZaxs", "idx", "time" )
+    data$time <- time
+    attributes(data)$unit <- c("m s-2", "m s-2", "m s-2", "m s-2", "m s-2", "m s-2", "rad", "rad", "rad", "rad s-1", "rad s-1", 
+                               "rad s-1", "NA", "YYYY-MM-DD hh:mm:ss.sss")
     names(attributes(data)$unit) <- names(data)
     
   }
@@ -326,7 +339,7 @@ if(!(DateLoca %in% file)) {
   }
   
   # de-spiking
-    
+
     # perform range test
     if(VarLoca %in% base::names(RngLoca)) {
   
