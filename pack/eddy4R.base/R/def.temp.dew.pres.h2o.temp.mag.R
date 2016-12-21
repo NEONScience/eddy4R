@@ -34,6 +34,8 @@
 #     re-formualtion as function() to allow packaging
 #   Natchaya P-Durden (2016-11-30)
 #     rename function to def.temp.dew.pres.h2o.temp.mag()
+#   Stefan Metzger (2015-12-21)
+#     fixing unit assignment
 ##############################################################################################
 
 def.temp.dew.pres.h2o.temp.mag <- function(presH2o, temp) {
@@ -42,15 +44,17 @@ def.temp.dew.pres.h2o.temp.mag <- function(presH2o, temp) {
   CnstLoc <- list(Cnst01 = 6.11, Cnst02 = 17.08, Cnst03 = 234.18, Cnst04 = 22.44, Cnst05 = 272.44)
   
   #temp >= 273.15 K (0 degC):
-  if (mean(temp, na.rm=TRUE) >= eddy4R.base::Conv$CelsKelv[1]) {
+  if(mean(temp, na.rm=TRUE) >= eddy4R.base::Conv$CelsKelv[1]) {
     #dew point:
     tempDew <- (CnstLoc$Cnst03 * log(presH2o*1e-2 / CnstLoc$Cnst01) / (CnstLoc$Cnst02 - log(presH2o*1e-2 / CnstLoc$Cnst01)))
-	tempDew <- eddy4R.base::def.unit.conv(data=tempDew,unitFrom="C",unitTo="K") # Convert to Kelvin
+    attributes(tempDew)$unit <- NULL
+    tempDew <- eddy4R.base::def.unit.conv(data=tempDew, unitFrom="C", unitTo="K") # Convert to Kelvin
     
   } else {
     #temp < 273.15 K (0 degC):
     tempDew <- (CnstLoc$Cnst05 * log(presH2o*1e-2 / CnstLoc$Cnst01) / (CnstLoc$Cnst04 - log(presH2o*1e-2 / CnstLoc$Cnst01)))
-	tempDew <- eddy4R.base::def.unit.conv(data=tempDew,unitFrom="C",unitTo="K") # Convert to Kelvin
+    attributes(tempDew)$unit <- NULL
+    tempDew <- eddy4R.base::def.unit.conv(data=tempDew, unitFrom="C", unitTo="K") # Convert to Kelvin
     
   }
   
