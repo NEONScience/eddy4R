@@ -218,7 +218,7 @@ if(!(DateLoca %in% file)) {
   } else {
     
     # print message to screen
-    print(paste0(format(Sys.time(), "%F %T"), ": dataset ", DateLoca, ": ", VarLoca, " regularization not performed"))
+    print(paste0(format(Sys.time(), "%F %T"), ": dataset ", DateLoca, ": ", VarLoca, " regularization not selected"))
     
   }
     
@@ -286,7 +286,7 @@ if(!(DateLoca %in% file)) {
   } else {
     
     # print message to screen
-    print(paste0(format(Sys.time(), "%F %T"), ": dataset ", DateLoca, ": ", VarLoca, " sensor diagnostics not performed"))
+    print(paste0(format(Sys.time(), "%F %T"), ": dataset ", DateLoca, ": ", VarLoca, " sensor diagnostics not selected"))
     
   }
 
@@ -318,7 +318,7 @@ if(!(DateLoca %in% file)) {
   } else {
     
     # print message to screen
-    print(paste0(format(Sys.time(), "%F %T"), ": dataset ", DateLoca, ": ", VarLoca, " range test not performed"))
+    print(paste0(format(Sys.time(), "%F %T"), ": dataset ", DateLoca, ": ", VarLoca, " range test not selected"))
     
   }
   
