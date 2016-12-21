@@ -99,9 +99,9 @@ if(!(DateLoca %in% file)) {
   # irga MFC
   if(VarLoca == "irgaMfcSamp") {
     
-    data <- data.frame(matrix(data = NaN, ncol = 5, nrow = length(time)))
-    names(data) <- c("frt", "frt00", "frtSet00", "presAtm", "temp")
-    attributes(data)$unit <- c("litersPerMinute", "litersPerMinute", "litersPerMinute", "Pa", "K")
+    data <- data.frame(matrix(data = NaN, ncol = 6, nrow = length(time)))
+    names(data) <- c("frt", "frt00", "frtSet00", "presAtm", "temp", "time")
+    attributes(data)$unit <- c("litersPerMinute", "litersPerMinute", "litersPerMinute", "Pa", "K", "YYYY-MM-DD hh:mm:ss.sss")
     names(attributes(data)$unit) <- names(data)
     
   }
@@ -109,7 +109,7 @@ if(!(DateLoca %in% file)) {
   # soni
   if(VarLoca == "soni") {
     
-    data <- data.frame(matrix(data = NaN, ncol = 5, nrow = length(time)))
+    data <- data.frame(matrix(data = NaN, ncol = 6, nrow = length(time)))
     names(data) <- c("idx", "time", "veloSoni", "veloXaxs", "veloYaxs", "veloZaxs")
     attributes(data)$unit <- c("NA", "YYYY-MM-DD hh:mm:ss.sss", "m s-1", "m s-1", "m s-1", "m s-1")
     names(attributes(data)$unit) <- names(data)
