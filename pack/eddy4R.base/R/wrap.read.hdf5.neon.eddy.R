@@ -87,6 +87,7 @@ if(!(DateLoca %in% file)) {
   if(VarLoca == "irga") {
     
     data <- data.frame(matrix(data = NaN, ncol = 19, nrow = length(time)))
+    data$time <- time
     names(data) <- c("asrpCo2", "asrpH2o", "densMoleCo2", "densMoleH2o", "potCool", "powrCo2Refe", "powrCo2Samp", "powrH2oRefe",
                      "powrH2oSamp", "presAtm", "presDiff", "rtioMoleDryCo2", "rtioMoleDryH2o", "ssiCo2", "ssiH2o", "tempIn",
                      "tempOut", "tempRefe", "time")
@@ -100,6 +101,7 @@ if(!(DateLoca %in% file)) {
   if(VarLoca == "irgaMfcSamp") {
     
     data <- data.frame(matrix(data = NaN, ncol = 6, nrow = length(time)))
+    data$time <- time
     names(data) <- c("frt", "frt00", "frtSet00", "presAtm", "temp", "time")
     attributes(data)$unit <- c("litersPerMinute", "litersPerMinute", "litersPerMinute", "Pa", "K", "YYYY-MM-DD hh:mm:ss.sss")
     names(attributes(data)$unit) <- names(data)
@@ -110,6 +112,7 @@ if(!(DateLoca %in% file)) {
   if(VarLoca == "soni") {
     
     data <- data.frame(matrix(data = NaN, ncol = 6, nrow = length(time)))
+    data$time <- time
     names(data) <- c("idx", "time", "veloSoni", "veloXaxs", "veloYaxs", "veloZaxs")
     attributes(data)$unit <- c("NA", "YYYY-MM-DD hh:mm:ss.sss", "m s-1", "m s-1", "m s-1", "m s-1")
     names(attributes(data)$unit) <- names(data)
