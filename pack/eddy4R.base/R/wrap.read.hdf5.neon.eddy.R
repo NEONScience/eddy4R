@@ -335,7 +335,7 @@ if(!(DateLoca %in% file)) {
           # input data, univariate vector of integers or numerics
           dataIn = as.vector(data[,idx]),
           # filter width
-          WndwFilt = DespLoca$widt * FreqLoca + 1,
+          WndwFilt = DespLoca$widt,
           # initial number/step size of histogram bins
           NumBin = DespLoca$nbin,
           # resolution threshold
