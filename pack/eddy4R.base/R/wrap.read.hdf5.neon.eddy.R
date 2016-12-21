@@ -45,6 +45,7 @@ wrap.read.hdf5.neon.eddy <- function(
   VarLoca,
   FreqLoca,
   Rglr = FALSE,
+  Diag = FALSE,
   RngLoca,
   DespLoca
 ) {
@@ -210,9 +211,15 @@ if(!(DateLoca %in% file)) {
     # print message to screen
     print(paste0(format(Sys.time(), "%F %T"), ": dataset ", DateLoca, ": ", VarLoca, " regularization complete"))
 
+  } else {
+    
+    # print message to screen
+    print(paste0(format(Sys.time(), "%F %T"), ": dataset ", DateLoca, ": ", VarLoca, " regularization not performed"))
+    
   }
     
   # discard data with bad sensor diagnostic flag
+  if(Diag) {
     
     # for selected sensors
     if(VarLoca %in% base::names(RngLoca)) {
@@ -271,6 +278,13 @@ if(!(DateLoca %in% file)) {
       print(paste0(format(Sys.time(), "%F %T"), ": dataset ", DateLoca, ": ", VarLoca, " sensor diagnostics not performed"))
       
     }
+    
+  } else {
+    
+    # print message to screen
+    print(paste0(format(Sys.time(), "%F %T"), ": dataset ", DateLoca, ": ", VarLoca, " sensor diagnostics not performed"))
+    
+  }
 
   # range test
     
