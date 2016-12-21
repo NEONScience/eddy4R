@@ -64,7 +64,7 @@ wrap.derv.prd.day <- function(
 #irga
 
   # average signal strength
-  data$irga$ssiMean <- ff::as.ff(def.ssi.mean(ssiCo2 = data$irga$ssiCO2, ssiH2o = data$irga$ssiH2O))
+  data$irga$ssiMean <- ff::as.ff(def.ssi.mean(ssiCo2 = data$irga$ssiCo2, ssiH2o = data$irga$ssiH2o))
 
   # delta signal strength
   data$irga$ssiDiff <- def.ssi.diff(ssiCo2 = data$irga$ssiCO2, ssiH2o = data$irga$ssiH2O)
