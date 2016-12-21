@@ -73,7 +73,7 @@ wrap.derv.prd.day <- function(
   data$irga$presSum <- def.pres.sum(presAtm = data$irga$presAtm, presDiff = data$irga$presDiff)
 
   # average temperature in irga cell 
-  data$irga$tempMean <- def.temp.mean.7200(tempIn = data$irga$tempCellIn, tempOut = data$irga$tempCellOut)
+  data$irga$tempMean <- def.temp.mean.7200(tempIn = data$irga$tempIn, tempOut = data$irga$tempOut)
  
   # RH in cell
 
