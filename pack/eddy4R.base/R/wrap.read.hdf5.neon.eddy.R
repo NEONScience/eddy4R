@@ -86,12 +86,12 @@ if(!(DateLoca %in% file)) {
   # irga
   if(VarLoca == "irga") {
     
-    data <- data.frame(matrix(data = NaN, ncol = 20, nrow = length(time)))
-    names(data) <- c("asrpCO2", "asrpH2O", "diag", "diag02", "fdMoleCO2", "rtioMoleDryH2o", "poteCool", "presAtm",
-                     "presDiff", "pwrCO2Ref", "pwrCO2Samp", "pwrH2ORef", "pwrH2OSamp", "rhoMoleCO2", "densMoleH2o",
-                     "ssiCo2", "ssiH2o", "tempBloc", "tempIn", "tempOut")
-    attributes(data)$unit <- c("-", "-", "NA", "NA", "mol mol-1", "mol mol-1", "V", "Pa", "Pa", "W", "W", "W", "W",
-                               "mol m-3", "mol m-3", "%", "%", "K", "K", "K")
+    data <- data.frame(matrix(data = NaN, ncol = 19, nrow = length(time)))
+    names(data) <- c("asrpCo2", "asrpH2o", "densMoleCo2", "densMoleH2o", "potCool", "powrCo2Refe", "powrCo2Samp", "powrH2oRefe",
+                     "powrH2oSamp", "presAtm", "presDiff", "rtioMoleDryCo2", "rtioMoleDryH2o", "ssiCo2", "ssiH2o", "tempIn",
+                     "tempOut", "tempRefe", "time")
+    attributes(data)$unit <- c("-", "-", "molCo2 m-3", "molH2o m-3", "V", "W", "W", "W", "W", "Pa", "Pa", "molCo2 mol-1Dry",
+                               "molH2o mol-1Dry", "-", "-", "K", "K", "K", "NA")
     names(attributes(data)$unit) <- names(data)
   
   }
