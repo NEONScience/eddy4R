@@ -44,6 +44,7 @@ wrap.read.hdf5.neon.eddy <- function(
   DateLoca,
   VarLoca,
   FreqLoca,
+  Rglr = FALSE,
   RngLoca,
   DespLoca
 ) {
@@ -191,6 +192,8 @@ if(!(DateLoca %in% file)) {
     print(paste0(format(Sys.time(), "%F %T"), ": dataset ", DateLoca, ": ", VarLoca, " unit conversion complete"))
 
   # regularization
+  if(Rglr) {
+    
     # perform regularization
     data <- eddy4R.base::def.rglr(
       timeMeas = base::as.POSIXlt(data$time, format="%Y-%m-%dT%H:%M:%OSZ", tz="UTC"),
@@ -207,6 +210,8 @@ if(!(DateLoca %in% file)) {
     # print message to screen
     print(paste0(format(Sys.time(), "%F %T"), ": dataset ", DateLoca, ": ", VarLoca, " regularization complete"))
 
+  }
+    
   # discard data with bad sensor diagnostic flag
     
     # for selected sensors
