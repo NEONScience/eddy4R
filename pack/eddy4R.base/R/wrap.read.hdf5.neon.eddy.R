@@ -46,6 +46,7 @@ wrap.read.hdf5.neon.eddy <- function(
   FreqLoca,
   Rglr = FALSE,
   Diag = FALSE,
+  Rng = FALSE,
   RngLoca,
   DespLoca
 ) {
@@ -287,6 +288,7 @@ if(!(DateLoca %in% file)) {
   }
 
   # range test
+  if(Rng) {
     
     # perform range test
     if(VarLoca %in% base::names(RngLoca)) {
@@ -309,6 +311,13 @@ if(!(DateLoca %in% file)) {
       print(paste0(format(Sys.time(), "%F %T"), ": dataset ", DateLoca, ": ", VarLoca, " range test not performed"))
       
     }
+    
+  } else {
+    
+    # print message to screen
+    print(paste0(format(Sys.time(), "%F %T"), ": dataset ", DateLoca, ": ", VarLoca, " range test not performed"))
+    
+  }
   
   # de-spiking
     
