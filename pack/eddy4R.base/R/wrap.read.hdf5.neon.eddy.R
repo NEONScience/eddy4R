@@ -115,7 +115,7 @@ if(!(DateLoca %in% file)) {
     names(attributes(data)$unit) <- names(data)
     
   }
-str(data)
+
   # print message to screen
   print(paste0(format(Sys.time(), "%F %T"), ": dataset ", DateLoca, ": ", VarLoca, " hdf5 file not available, NaNs substituted"))
   

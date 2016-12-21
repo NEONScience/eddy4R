@@ -5,7 +5,7 @@
 \title{Reading NEON HDF5 files}
 \usage{
 wrap.read.hdf5.neon.eddy(DirInpLoca, SiteLoca, DateLoca, VarLoca, FreqLoca,
-  RngLoca, DespLoca)
+  Rglr = FALSE, Diag = FALSE, Rng = FALSE, RngLoca, DespLoca)
 }
 \arguments{
 \item{\code{DirInpLoca}}{Character: Input directory.}
