@@ -58,7 +58,6 @@ time <- seq.POSIXt(
   to = base::as.POSIXlt(paste(DateLoca, " ", "23:59:59.9502", sep=""), format="%Y-%m-%d %H:%M:%OS", tz="UTC"),
   by = 1/FreqLoca
 )
-base::attr(x = time, which = "unit") <- "YYYY-MM-DD hh:mm:ss.sss"
 
 # get available dates from directory structure
 
@@ -111,12 +110,12 @@ if(!(DateLoca %in% file)) {
   if(VarLoca == "soni") {
     
     data <- data.frame(matrix(data = NaN, ncol = 5, nrow = length(time)))
-    names(data) <- c("idx", "veloSoni", "veloXaxs", "veloYaxs", "veloZaxs")
-    attributes(data)$unit <- c("NA", "m s-1", "m s-1", "m s-1", "m s-1")
+    names(data) <- c("idx", "time", "veloSoni", "veloXaxs", "veloYaxs", "veloZaxs")
+    attributes(data)$unit <- c("NA", "YYYY-MM-DD hh:mm:ss.sss", "m s-1", "m s-1", "m s-1", "m s-1")
     names(attributes(data)$unit) <- names(data)
     
   }
-
+str(data)
   # print message to screen
   print(paste0(format(Sys.time(), "%F %T"), ": dataset ", DateLoca, ": ", VarLoca, " hdf5 file not available, NaNs substituted"))
   
@@ -144,6 +143,9 @@ if(!(DateLoca %in% file)) {
     
     # print message to screen
     print(paste0(format(Sys.time(), "%F %T"), ": dataset ", DateLoca, ": ", VarLoca, " hdf5 read-in complete"))
+
+  # convert type of variable time
+  data$time <- base::as.POSIXct(data$time, format="%Y-%m-%dT%H:%M:%OSZ", tz="UTC") + 0.0001
 
   # assign hdf5 attributes
     
