@@ -120,6 +120,9 @@ wrap.derv.prd.day <- function(
   
   # data$soni
   data$soni <- data$soni[names(data$soni)[order(tolower(names(data$soni)))]]
+  
+  # data$soniAmrs
+  data$soniAmrs <- data$soniAmrs[names(data$soniAmrs)[order(tolower(names(data$soniAmrs)))]]
 
 # return results
 return(data)
