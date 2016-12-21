@@ -58,6 +58,7 @@ time <- seq.POSIXt(
   to = base::as.POSIXlt(paste(DateLoca, " ", "23:59:59.9502", sep=""), format="%Y-%m-%d %H:%M:%OS", tz="UTC"),
   by = 1/FreqLoca
 )
+base::attr(x = time, which = "unit") <- "YYYY-MM-DD hh:mm:ss.sss"
 
 # get available dates from directory structure
 
@@ -109,9 +110,9 @@ if(!(DateLoca %in% file)) {
   # soni
   if(VarLoca == "soni") {
     
-    data <- data.frame(matrix(data = NaN, ncol = 6, nrow = length(time)))
-    names(data) <- c("diag", "idx", "veloSoni", "veloXaxs", "veloYaxs", "veloZaxs")
-    attributes(data)$unit <- c("NA", "NA", "m s-1", "m s-1", "m s-1", "m s-1")
+    data <- data.frame(matrix(data = NaN, ncol = 5, nrow = length(time)))
+    names(data) <- c("idx", "veloSoni", "veloXaxs", "veloYaxs", "veloZaxs")
+    attributes(data)$unit <- c("NA", "m s-1", "m s-1", "m s-1", "m s-1")
     names(attributes(data)$unit) <- names(data)
     
   }
