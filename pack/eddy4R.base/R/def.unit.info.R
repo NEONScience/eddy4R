@@ -5,17 +5,17 @@
 #' Cove Sturtevant \email{eddy4R.info@gmail.com}
 
 #' @description Function definition. Interpret a compound unit string, identifying the matching entries
-#' within eddy4R internal data \code{eddy4R.base::Unit} for the base unit symbol, unit prefix, chemical   
+#' within eddy4R internal data \code{eddy4R.base::Intl.Unit} for the base unit symbol, unit prefix, chemical   
 #' species, and unit suffix (raise to the power of)
 
 #' @param \code{unit} Required. A single character string providing the compount unit, constructed
 #' with the following rules. \cr
 #' \cr
 #' Unit character strings must be constructed from the base unit symbols (case-sensitive) listed 
-#' in eddy4R.base internal data Unit$Base$Symb (e.g. the symbol for meter is "m"). \cr
+#' in eddy4R.base internal data Intl.Unit$Base$Symb (e.g. the symbol for meter is "m"). \cr
 #' \cr
 #' Unit base symbols can be directly preceded (no space) by the case-sensitive unit prefixes listed in 
-#' eddy4R.base internal data Unit$Prfx (e.g. kilometers = "km") . \cr
+#' eddy4R.base internal data Intl.Unit$Prfx (e.g. kilometers = "km") . \cr
 #'  \cr
 #' Unit base symbols can be directly followed (no spaces) by the suffix \code{n}, where \code{n} is 
 #' an integer (...-2,-1,0,1,2...), indicating the unit is raised to the power of 
@@ -23,7 +23,7 @@
 #' \cr
 #' In the case of chemical species (i.e. converting between mass and molar units), specify
 #' the full unit (including prefix and suffix) followed immediately (no spaces inbetween) by one of 
-#' the chemical species characters listed in eddy4R.base internal data Unit$Spcs 
+#' the chemical species characters listed in eddy4R.base internal data Intl.Unit$Spcs 
 #' (eg. per gram of carbon dioxide = "g-1CO2"): \cr
 #' \cr
 #' Compound units can be formed by inserting spaces between the individual unit components 
@@ -32,13 +32,13 @@
 #' @return A named list of vectors, each of length N, where N is the number of base units 
 #' making up the compound unit. For example, umolCO2 m-2 s-1 has 3 base units (mol, m, s): \cr
 #' type: the abbreviated character string denoting unit type (e.g. "dist" for distance)
-#' base: the base unit character symbol as listed in eddy4R.base::Unit$Base$Symb
-#' posBase: the integer list position in eddy4R.base::Unit$Base$Symb corresponding to the base unit
-#' prfx: the unit prefix character(s) as listed in eddy4R.base::Unit$Prfx
-#' posPrfx: the integer list position in eddy4R.base::Unit$Prfx corresponding to the unit prefix
+#' base: the base unit character symbol as listed in eddy4R.base::Intl.Unit$Base$Symb
+#' posBase: the integer list position in eddy4R.base::Intl.Unit$Base$Symb corresponding to the base unit
+#' prfx: the unit prefix character(s) as listed in eddy4R.base::Intl.Unit$Prfx
+#' posPrfx: the integer list position in eddy4R.base::Intl.Unit$Prfx corresponding to the unit prefix
 #' sufx: the numerical unit suffix (i.e. the power to which the unit is raised)
 #' spcs: a character string of the chemical species as listed in eddy4R.base::Unit$Spcs
-#' posSpcs: the integer list position in eddy4R.base::Unit$Spcs corresponding to the chemical species
+#' posSpcs: the integer list position in eddy4R.base::Intl.Unit$Spcs corresponding to the chemical species
 
 #' @references 
 #' license: Terms of use of the NEON FIU algorithm repository dated 2015-01-16
@@ -47,7 +47,7 @@
 
 #' @examples Currently none
 
-#' @seealso \code{\link{def.unit.conv}}, \code{\link{def.unit.intl}}, \code{\link{Unit$Intl}}
+#' @seealso \code{\link{def.unit.conv}}, \code{\link{def.unit.intl}}, \code{\link{Intl.Unit$Intl}}
 
 #' @export
 #' 
@@ -95,11 +95,11 @@ def.unit.info <- function(unit) {
     numCharSplt <- base::nchar(unitSplt[idxSplt])
     
     # See which base unit symbols have a match
-    posUnitMtch <- base::which(base::as.data.frame(base::lapply(eddy4R.base::Unit$Base$Symb,grepl,x=unitSplt[idxSplt],
+    posUnitMtch <- base::which(base::as.data.frame(base::lapply(eddy4R.base::Intl.Unit$Base$Symb,grepl,x=unitSplt[idxSplt],
                                               ignore.case=FALSE)) == TRUE)
     
     # For each base unit, which positions within the split character string match?
-    posChar <- base::lapply(eddy4R.base::Unit$Base$Symb,function(val) {base::gregexpr(pattern=val,text=unitSplt[idxSplt],
+    posChar <- base::lapply(eddy4R.base::Intl.Unit$Base$Symb,function(val) {base::gregexpr(pattern=val,text=unitSplt[idxSplt],
                                                         ignore.case=FALSE,fixed=TRUE)[[1]]})
     
     # Check to see if any possibilities exist. If not, move on
@@ -112,25 +112,25 @@ def.unit.info <- function(unit) {
       # (Re)initialize the chosen components
       type <- NA # Initialize unit type string
       base <- NA # Initialize base unit string
-      posBase <- NA # Initialize base unit (position within eddy4R.base::Unit$Base$Symb list)
+      posBase <- NA # Initialize base unit (position within eddy4R.base::Intl.Unit$Base$Symb list)
       prfx <- NA  # Initialize unit prefix string
-      posPrfx <- NA # Initialize unit prefix (position within eddy4R.base::Unit$Prfx list)
+      posPrfx <- NA # Initialize unit prefix (position within eddy4R.base::Intl.Unit$Prfx list)
       sufx <- 1 # Initialize unit suffix 
       spcs <- NA # Initialize chemical species string
-      posSpcs <- NA # Initialize chemical species (position within eddy4R.base::Unit$Spcs list)        
+      posSpcs <- NA # Initialize chemical species (position within eddy4R.base::Intl.Unit$Spcs list)        
       
       # Run through each potential starting position of a base unit match in the unit character string
       for(idxPosChar in 1:base::length(posChar[[idxMtch]])) {
         
         # Positions of the base unit symbol within the unit character string
         posCharBase <- posChar[[idxMtch]][idxPosChar]:
-          (posChar[[idxMtch]][idxPosChar]+base::nchar(eddy4R.base::Unit$Base$Symb[[idxMtch]])-1) 
+          (posChar[[idxMtch]][idxPosChar]+base::nchar(eddy4R.base::Intl.Unit$Base$Symb[[idxMtch]])-1) 
         
         # If the base unit is the entire character string, we're done
         if (base::length(posCharBase) == numCharSplt) {
           posBase <- idxMtch
-          base <- eddy4R.base::Unit$Base$Symb[[idxMtch]]
-          type <- eddy4R.base::Unit$Base$Type[[base::names(eddy4R.base::Unit$Base$Symb[posBase])]]
+          base <- eddy4R.base::Intl.Unit$Base$Symb[[idxMtch]]
+          type <- eddy4R.base::Intl.Unit$Base$Type[[base::names(eddy4R.base::Intl.Unit$Base$Symb[posBase])]]
           break
         }
         
@@ -140,13 +140,13 @@ def.unit.info <- function(unit) {
           posCharPrfx <- 1:(posCharBase[1]-1)
           
           # Do we have a match for the prefix?
-          posPrfx <- base::which(base::as.data.frame(base::lapply(eddy4R.base::Unit$Prfx,function(val){
+          posPrfx <- base::which(base::as.data.frame(base::lapply(eddy4R.base::Intl.Unit$Prfx,function(val){
             val==base::paste0(base::strsplit(unitSplt[idxSplt],"")[[1]][posCharPrfx],collapse="")})) == TRUE)
           if(base::length(posPrfx) == 0) {
             posPrfx <- NA
             next
           } else {
-            prfx <- eddy4R.base::Unit$Prfx[[posPrfx]]
+            prfx <- eddy4R.base::Intl.Unit$Prfx[[posPrfx]]
           }
         }
         
@@ -188,15 +188,15 @@ def.unit.info <- function(unit) {
           # Positions of the the chemical species within the unit character string
           posCharSpcs <- idxCharSufx:numCharSplt
           
-          # Find the chemical species within eddy4R.base::Unit$Spcs
+          # Find the chemical species within eddy4R.base::Intl.Unit$Spcs
           posSpcs <- base::pmatch(base::tolower(base::paste0(base::strsplit(unitSplt[idxSplt],"")[[1]][posCharSpcs],
-                                  collapse="")),base::tolower(eddy4R.base::Unit$Spcs))
+                                  collapse="")),base::tolower(eddy4R.base::Intl.Unit$Spcs))
           
           # If we have no match or more than one match, move on
           if (base::is.na(posSpcs)) {
             next
           } else {
-            spcs <- eddy4R.base::Unit$Spcs[[posSpcs]]
+            spcs <- eddy4R.base::Intl.Unit$Spcs[[posSpcs]]
           }
           
         }
@@ -204,8 +204,8 @@ def.unit.info <- function(unit) {
         
         # If we got this far, we have a fully parsed and recognizable unit string
         posBase <- idxMtch
-        base <- eddy4R.base::Unit$Base$Symb[[idxMtch]]
-        type <- eddy4R.base::Unit$Base$Type[[base::names(eddy4R.base::Unit$Base$Symb[posBase])]]
+        base <- eddy4R.base::Intl.Unit$Base$Symb[[idxMtch]]
+        type <- eddy4R.base::Intl.Unit$Base$Type[[base::names(eddy4R.base::Intl.Unit$Base$Symb[posBase])]]
         break
         
         
