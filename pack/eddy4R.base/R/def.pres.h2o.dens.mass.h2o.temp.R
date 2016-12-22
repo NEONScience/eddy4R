@@ -38,7 +38,7 @@
 
 def.pres.h2o.dens.mass.h2o.temp <- function(densMassH2o, temp)  {
   #calculation
-  presH2o <- (densMassH2o * eddy4R.base::Intl.Natu$Rg * 1e3 * temp) / eddy4R.base::Intl.Natu$MolmH2o
+  presH2o <- (densMassH2o * eddy4R.base::IntlNatu$Rg * 1e3 * temp) / eddy4R.base::IntlNatu$MolmH2o
   
   #return reported object
   return(presH2o)
