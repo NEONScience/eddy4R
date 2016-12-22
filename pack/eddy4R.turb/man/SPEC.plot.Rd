@@ -6,7 +6,7 @@
 \usage{
 SPEC.plot(name, IDE, DEP, legtext, labx = NA, laby = NA, colvec = NULL,
   limx = NULL, limy = NULL, setoff = NULL, powerc = NULL,
-  inisub = c(0.05, Inf))
+  inisub = c(5e-02, Inf))
 }
 \arguments{
 \item{Currently}{none}
