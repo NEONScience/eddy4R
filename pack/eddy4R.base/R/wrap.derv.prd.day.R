@@ -103,6 +103,10 @@ wrap.derv.prd.day <- function(
   data$irga$rtioMassH2o <- def.rtio.mass.h2o.dens.mole(densMoleH2o = data$irga$densMoleH2o, densMoleAirDry = data$irga$densMoleAirDry)
 
 # soni
+# this is also where the correction with AMRS streams needs to go
+
+  # horizontal wind speed  
+  data$soni$veloXaxsYaxsErth <- sqrt(data$soni$veloXaxs^2 + data$soni$veloYaxs^2)
   
   # sonic temperature [K] from speed of sound [m s-1] (Campbell Scientific, Eq. (9))
   data$soni$tempSoni <- def.temp.soni(veloSoni = data$soni$veloSoni)
