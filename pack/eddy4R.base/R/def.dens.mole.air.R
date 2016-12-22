@@ -76,7 +76,7 @@ def.dens.mole.air <- function(
  
     # calculate the molar density of the mixture of dry air and water vapor
     
-    densMoleAir <- presSum/eddy4R.base::Natu$Rg/tempMean
+    densMoleAir <- presSum/eddy4R.base::Intl.Natu$Rg/tempMean
                    
   
   # assign output unit

@@ -21,7 +21,7 @@
 
 #' @examples Currently none
 
-#' @seealso \code{\link{def.unit.info}}, \code{\link{Unit$Intl}}, \code{\link{def.unit.conv}}
+#' @seealso \code{\link{def.unit.info}}, \code{\link{Intl.Unit$Intl}}, \code{\link{def.unit.conv}}
 
 #' @export
 #' 
@@ -66,8 +66,8 @@ def.unit.intl <- function(unit) {
     
     # We have the info we need to convert mass density to number density, 
     # let's create the output unit string
-    unitNum <- base::paste0(eddy4R.base::Unit$Intl[["Num"]],infoUnit$spcs[base::which(chkType == 1)],sep="") # mol portion
-    unitDist <- base::paste0(eddy4R.base::Unit$Intl[["Dist"]],"-3",sep="") # dist portion
+    unitNum <- base::paste0(eddy4R.base::Intl.Unit$Intl[["Num"]],infoUnit$spcs[base::which(chkType == 1)],sep="") # mol portion
+    unitDist <- base::paste0(eddy4R.base::Intl.Unit$Intl[["Dist"]],"-3",sep="") # dist portion
     unitIntl <- base::paste(base::c(unitNum,unitDist)[chkType],collapse=" ") # full output unit string
     infoUnitIntl <- eddy4R.base::def.unit.info(unitIntl) # Interpret unit
     flagIntl <- 1
@@ -92,9 +92,9 @@ def.unit.intl <- function(unit) {
     
     # We have the info we need to convert mass flux density to mole flux density, 
     # let's create the output unit string
-    unitNum <- base::paste0(eddy4R.base::Unit$Intl[["Num"]],infoUnit$spcs[base::which(chkType == 1)],sep="") # mol portion
-    unitDist <- base::paste0(eddy4R.base::Unit$Intl[["Dist"]],"-2",sep="") # dist portion
-    unitTime <- base::paste0(eddy4R.base::Unit$Intl[["Time"]],"-1",sep="") # time portion
+    unitNum <- base::paste0(eddy4R.base::Intl.Unit$Intl[["Num"]],infoUnit$spcs[base::which(chkType == 1)],sep="") # mol portion
+    unitDist <- base::paste0(eddy4R.base::Intl.Unit$Intl[["Dist"]],"-2",sep="") # dist portion
+    unitTime <- base::paste0(eddy4R.base::Intl.Unit$Intl[["Time"]],"-1",sep="") # time portion
     unitIntl <- base::paste(base::c(unitNum,unitDist,unitTime)[chkType],collapse=" ") # full output unit string
     infoUnitIntl <- eddy4R.base::def.unit.info(unitIntl) # Interpret unit
     flagIntl <- 1
@@ -119,8 +119,8 @@ def.unit.intl <- function(unit) {
     
     # We have the info we need to convert mass ratio to mole ratio, 
     # let's create the output unit string
-    unitNum01 <- base::paste0(eddy4R.base::Unit$Intl[["Num"]],infoUnit$sufx[1],infoUnit$spcs[1],sep="") # mol portion 1
-    unitNum02 <- base::paste0(eddy4R.base::Unit$Intl[["Num"]],infoUnit$sufx[2],infoUnit$spcs[2],sep="") # mol portion 2
+    unitNum01 <- base::paste0(eddy4R.base::Intl.Unit$Intl[["Num"]],infoUnit$sufx[1],infoUnit$spcs[1],sep="") # mol portion 1
+    unitNum02 <- base::paste0(eddy4R.base::Intl.Unit$Intl[["Num"]],infoUnit$sufx[2],infoUnit$spcs[2],sep="") # mol portion 2
     unitIntl <- base::paste(base::c(unitNum01,unitNum02),collapse=" ") # full output unit string
     infoUnitIntl <- eddy4R.base::def.unit.info(unitIntl) # Interpret unit
     flagIntl <- 1
@@ -132,7 +132,7 @@ def.unit.intl <- function(unit) {
     infoUnitIntl <- infoUnit # Intialize internal unit info
     unitIntlTmp <- base::character(length=length(infoUnit$posBase))
     for (idxBase in 1:base::length(infoUnit$posBase)) {
-      infoUnitIntlIdx <- eddy4R.base::def.unit.info(eddy4R.base::Unit$Intl[[infoUnit$type[idxBase]]])
+      infoUnitIntlIdx <- eddy4R.base::def.unit.info(eddy4R.base::Intl.Unit$Intl[[infoUnit$type[idxBase]]])
       
       # Replace the unit base and prefix with the internal unit
       infoUnitIntl$base[idxBase] <- infoUnitIntlIdx$base

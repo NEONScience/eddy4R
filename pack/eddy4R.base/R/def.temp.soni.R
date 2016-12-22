@@ -64,7 +64,7 @@ def.temp.soni <- function(
   
   # calculate the sonic tempertaure
   
-  tempSoni <- (veloSoni^2/eddy4R.base::Natu$GmmaDry/(eddy4R.base::Natu$Rg/eddy4R.base::Natu$MolmDry))
+  tempSoni <- (veloSoni^2/eddy4R.base::Intl.Natu$GmmaDry/(eddy4R.base::Intl.Natu$Rg/eddy4R.base::Intl.Natu$MolmDry))
   
   
   # assign output unit
