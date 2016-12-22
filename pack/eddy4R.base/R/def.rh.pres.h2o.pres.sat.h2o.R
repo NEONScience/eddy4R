@@ -74,7 +74,7 @@ def.rh.pres.h2o.pres.sat.h2o <- function(
     rh <- (presH2o / presH2oSat * 100)
     
     # assign output unit
-    attributes(rh)$unit <- "percent"
+    attributes(rh)$unit <- "%"
     
     # return results
     return(rh) 
