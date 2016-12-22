@@ -38,7 +38,7 @@
 
 def.pres.h2o.rtio.mass.h2o.dry.pres <- function(rtioMassDryH2o, pres)  {
   #calculation
-  presH2o <- pres * rtioMassDryH2o / (eddy4R.base::Natu$RtioMolmH2oDry + rtioMassDryH2o)
+  presH2o <- pres * rtioMassDryH2o / (eddy4R.base::Intl.Natu$RtioMolmH2oDry + rtioMassDryH2o)
   
   #return reported object
   return(presH2o)
