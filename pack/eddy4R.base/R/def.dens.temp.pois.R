@@ -18,7 +18,7 @@
 
 #' @keywords Currently none
 
-#' @examples dens02 <- def.dens.temp.pois(dens01 = 1.056, temp01 = 298.15, temp02 = 288.15, Kppa = eddy4R.base::Intl.Natu$KppaDry)
+#' @examples dens02 <- def.dens.temp.pois(dens01 = 1.056, temp01 = 298.15, temp02 = 288.15, Kppa = eddy4R.base::IntlNatu$KppaDry)
 
 #' @seealso Currently none
 
@@ -35,4 +35,4 @@
 #     rename function to def.dens.temp.pois()
 ##############################################################################################
 
-def.dens.temp.pois <- function(dens01, temp01, temp02, Kppa = eddy4R.base::Intl.Natu$KppaDry)  dens02 <- dens01 * (temp02/temp01)^((1-Kppa)/Kppa)
+def.dens.temp.pois <- function(dens01, temp01, temp02, Kppa = eddy4R.base::IntlNatu$KppaDry)  dens02 <- dens01 * (temp02/temp01)^((1-Kppa)/Kppa)

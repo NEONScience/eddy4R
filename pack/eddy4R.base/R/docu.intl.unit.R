@@ -7,10 +7,10 @@
 #' Unit character strings are constructed following these rules: \cr
 #' \cr
 #' The (case-sensitive) unit base symbol is selected from those listed 
-#' in Intl.Unit$Base$Symb (e.g. the base symbol for meter is "m"). \cr
+#' in IntlUnit$Base$Symb (e.g. the base symbol for meter is "m"). \cr
 #' \cr
 #' Unit base symbols can be directly preceded (no space) by the (case-sensitive) unit prefixes listed in 
-#' Intl.Unit$Prfx (e.g. kilometers = "km") . \cr
+#' IntlUnit$Prfx (e.g. kilometers = "km") . \cr
 #'  \cr
 #' Unit base symbols can be directly followed (no spaces) by the suffix \code{n}, where \code{n} is 
 #' an integer (...-2,-1,0,1,2...), indicating the unit is raised to the power of 
@@ -18,7 +18,7 @@
 #' \cr
 #' In the case of chemical species attached to a unit, specify
 #' the full unit (including prefix and suffix) followed immediately (no spaces) by one of 
-#' the chemical species character strings in Intl.Unit$Spcs 
+#' the chemical species character strings in IntlUnit$Spcs 
 #' (eg. per gram of carbon dioxide = "g-1Co2"): \cr
 #' \cr
 #' Compound units can be formed by inserting spaces between the individual unit components 
@@ -65,10 +65,10 @@
 #'        \code{Pndf = "lbf"}  (pound-force)\cr
 #'        \code{Hrtz = "Hz"}  (hertz)\cr
 #'        }
-#'      \item{Type}{A named list of the unit type corresponding to entries in Intl.Unit$Base$Symb.
+#'      \item{Type}{A named list of the unit type corresponding to entries in IntlUnit$Base$Symb.
 #'      Unit types are used to constrain conversions between variables (except for mol to/from 
 #'      mass units, conversion is only allowed within the same unit type). Unit types are also 
-#'      used to find the eddy4R internal units (listed in Intl.Unit$Intl):\cr\cr
+#'      used to find the eddy4R internal units (listed in IntlUnit$Intl):\cr\cr
 #'        \code{Metr = "Dist"}  (distance)\cr
 #'        \code{Feet = "Dist"}  (distance)\cr
 #'        \code{Inch = "Dist"}  (distance)\cr
@@ -131,9 +131,9 @@
 #'    \code{"Dry" (dry air)}\cr
 #'    }
 #'   \item{Intl}{A named list of the units (including prefixes) used internally in the 
-#'   eddy4R family of functions. List names are unit types selected from Intl.Unit$Base$Type.
+#'   eddy4R family of functions. List names are unit types selected from IntlUnit$Base$Type.
 #'   List values are unit base symbol and prefix character strings selected from 
-#'   Intl.Unit$Base$Symb and Intl.Unit$Prfx, respectively. Only one unit per type is used internally:\cr\cr
+#'   IntlUnit$Base$Symb and IntlUnit$Prfx, respectively. Only one unit per type is used internally:\cr\cr
 #'    \code{Dist = "m"}\cr
 #'    \code{Mass = "kg"}\cr
 #'    \code{Time = "s"}\cr
@@ -152,4 +152,4 @@
 #' }
 #' @source Units are defined within flow.save.intl.cnst.R,
 #'  available in the data-raw/ folder of the source version of the package
-"Intl.Unit"
+"IntlUnit"
