@@ -61,7 +61,7 @@ def.dist.rgh <- function(
   rm(tmp)
   
   #calculation of roughness length distRgh [m]
-  distRgh <- distZaxsMeas / exp(eddy4R.base::Intl.Natu$VonkFokn * veloXaxs / veloFric + univFunc)
+  distRgh <- distZaxsMeas / exp(eddy4R.base::IntlNatu$VonkFokn * veloXaxs / veloFric + univFunc)
   names(distRgh) <- "distRgh"
   
   #return result
