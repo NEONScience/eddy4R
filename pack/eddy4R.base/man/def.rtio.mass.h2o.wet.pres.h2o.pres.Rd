@@ -2,7 +2,7 @@
 % Please edit documentation in R/def.rtio.mass.h2o.wet.pres.h2o.pres.R
 \name{def.rtio.mass.h2o.wet.pres.h2o.pres}
 \alias{def.rtio.mass.h2o.wet.pres.h2o.pres}
-\title{Calculate water vapor wet mass fraction (specific humidity) from water vapor pressure and static pressure}
+\title{Definition function: Calculate water vapor wet mass fraction (specific humidity) from water vapor pressure and static pressure}
 \usage{
 def.rtio.mass.h2o.wet.pres.h2o.pres(presH2o, pres)
 }

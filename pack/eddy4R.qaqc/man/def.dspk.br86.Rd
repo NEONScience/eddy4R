@@ -2,7 +2,7 @@
 % Please edit documentation in R/def.dspk.br86.R
 \name{def.dspk.br86}
 \alias{def.dspk.br86}
-\title{Median filter de-spiking}
+\title{Definition function: Median filter de-spiking}
 \usage{
 def.dspk.br86(dataIn, WndwFilt = 9, NumBin = 2, ThshReso = 10,
   FracRealMin = 0.025)

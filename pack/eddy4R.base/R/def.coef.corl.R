@@ -1,5 +1,5 @@
 ##############################################################################################
-#' @title Coriolis coefficient
+#' @title Definition function: Coriolis coefficient
 
 # type (one of function defintion, function wrapper, workflow, demo): function defintion
 
@@ -38,7 +38,7 @@
 def.coef.corl <- function(lat) {
   
   # Compute coriolis coefficient
-  coefCorl <- 2 * eddy4R.base::Intl.Natu$AvelErth * base::sin(eddy4R.base::def.unit.conv(data=lat,unitFrom="deg",unitTo="rad")) # [rad s-1]
+  coefCorl <- 2 * eddy4R.base::IntlNatu$AvelErth * base::sin(eddy4R.base::def.unit.conv(data=lat,unitFrom="deg",unitTo="rad")) # [rad s-1]
   
   return(coefCorl)
   

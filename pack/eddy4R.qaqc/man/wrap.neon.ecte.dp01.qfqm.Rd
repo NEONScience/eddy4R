@@ -2,7 +2,7 @@
 % Please edit documentation in R/wrap.neon.ecte.dp01.qfqm.R
 \name{wrap.neon.ecte.dp01.qfqm}
 \alias{wrap.neon.ecte.dp01.qfqm}
-\title{Calculate quality metrics, alpha and beta quality metrics, and final quality flag for the NEON eddy-covariance turbulent exchange data products}
+\title{Wrapper function: Calculate quality metrics, alpha and beta quality metrics, and final quality flag for the NEON eddy-covariance turbulent exchange data products}
 \usage{
 wrap.neon.ecte.dp01.qfqm(qfSens00, qfSens01 = NULL, qfSens02 = NULL,
   dp01 = c("irgaCo2", "irgaH2o", "soni", "soniAmrs")[1])

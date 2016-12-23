@@ -2,7 +2,7 @@
 % Please edit documentation in R/def.conv.poly.R
 \name{def.conv.poly}
 \alias{def.conv.poly}
-\title{Apply polynomial conversion}
+\title{Definition function: Apply polynomial conversion}
 \usage{
 def.conv.poly(data, coefPoly = c(0, 1))
 }

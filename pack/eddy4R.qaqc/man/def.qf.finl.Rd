@@ -2,7 +2,7 @@
 % Please edit documentation in R/def.qf.finl.R
 \name{def.qf.finl}
 \alias{def.qf.finl}
-\title{Final Quality Flag}
+\title{Definition function: Final Quality Flag}
 \usage{
 def.qf.finl(qf, WghtAlphBeta = c(2, 1), Thsh = 0.2)
 }

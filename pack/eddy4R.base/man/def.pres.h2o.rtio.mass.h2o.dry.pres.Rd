@@ -2,7 +2,7 @@
 % Please edit documentation in R/def.pres.h2o.rtio.mass.h2o.dry.pres.R
 \name{def.pres.h2o.rtio.mass.h2o.dry.pres}
 \alias{def.pres.h2o.rtio.mass.h2o.dry.pres}
-\title{Calculate water vapor pressure from dry mass fraction and static pressure}
+\title{Definition function: Calculate water vapor pressure from dry mass fraction and static pressure}
 \usage{
 def.pres.h2o.rtio.mass.h2o.dry.pres(rtioMassDryH2o, pres)
 }

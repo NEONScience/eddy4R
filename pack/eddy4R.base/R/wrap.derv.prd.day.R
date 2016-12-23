@@ -1,5 +1,5 @@
 ##############################################################################################
-#' @title Calculation of derived quantities (daily extent, native resolution)
+#' @title Wrapper function: Calculation of derived quantities (daily extent, native resolution)
 
 #' @author Stefan Metzger \email{eddy4R.info@gmail.com}
 
@@ -103,6 +103,17 @@ wrap.derv.prd.day <- function(
   data$irga$rtioMassH2o <- def.rtio.mass.h2o.dens.mole(densMoleH2o = data$irga$densMoleH2o, densMoleAirDry = data$irga$densMoleAirDry)
 
 # soni
+  
+  # correction for attitude and motion via AMRS
+
+  # rotate wind vector into meteorological coordinate system (positive from west, south and below)
+  
+  # magnitude of horizontal wind speed
+  data$soni$veloXaxsYaxsErth <- sqrt(data$soni$veloXaxs^2 + data$soni$veloYaxs^2)
+
+  # wind direction
+  # need to redo for vector averaging, see REYNflux_P5.R line 139
+  # data$angZaxsErth <- eddy4R.base::def.pol.cart(matrix(c(data$v_met, data$u_met), ncol=2))
   
   # sonic temperature [K] from speed of sound [m s-1] (Campbell Scientific, Eq. (9))
   data$soni$tempSoni <- def.temp.soni(veloSoni = data$soni$veloSoni)

@@ -2,7 +2,7 @@
 % Please edit documentation in R/def.smth.R
 \name{def.smth}
 \alias{def.smth}
-\title{Data smoothing}
+\title{Definition function: Data smoothing}
 \usage{
 def.smth(data, span, smthFunc = c("smthKern"))
 }

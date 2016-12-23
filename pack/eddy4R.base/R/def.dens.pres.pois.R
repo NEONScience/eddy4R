@@ -1,5 +1,5 @@
 ##############################################################################################
-#' @title Poisson's equation (adiabatic change) - density as function of pressure change
+#' @title Definition function: Poisson's equation (adiabatic change) - density as function of pressure change
 
 #' @author 
 #' Stefan Metzger \email{eddy4R.info@gmail.com} \cr
@@ -18,7 +18,7 @@
 
 #' @keywords Currently none
 
-#' @examples dens02 <- def.dens.pres.pois(dens01 = 1.056, pres01 = 845, pres02 = 1000, Kppa = eddy4R.base::Intl.Natu$KppaDry)
+#' @examples dens02 <- def.dens.pres.pois(dens01 = 1.056, pres01 = 845, pres02 = 1000, Kppa = eddy4R.base::IntlNatu$KppaDry)
 
 #' @seealso Currently none
 
@@ -35,4 +35,4 @@
 #     rename function to def.dens.pres.pois()
 ##############################################################################################
 
-def.dens.pres.pois <- function(dens01, pres01, pres02, Kppa = eddy4R.base::Intl.Natu$KppaDry)   dens02 = dens01 * (pres02/pres01)^(1-Kppa)
+def.dens.pres.pois <- function(dens01, pres01, pres02, Kppa = eddy4R.base::IntlNatu$KppaDry)   dens02 = dens01 * (pres02/pres01)^(1-Kppa)

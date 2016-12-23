@@ -1,5 +1,5 @@
 ##############################################################################################
-#' @title Calculate water vapor pressure from dry mass fraction and static pressure
+#' @title Definition function: Calculate water vapor pressure from dry mass fraction and static pressure
 
 #' @author 
 #' Stefan Metzger \email{eddy4R.info@gmail.com} \cr
@@ -38,7 +38,7 @@
 
 def.pres.h2o.rtio.mass.h2o.dry.pres <- function(rtioMassDryH2o, pres)  {
   #calculation
-  presH2o <- pres * rtioMassDryH2o / (eddy4R.base::Intl.Natu$RtioMolmH2oDry + rtioMassDryH2o)
+  presH2o <- pres * rtioMassDryH2o / (eddy4R.base::IntlNatu$RtioMolmH2oDry + rtioMassDryH2o)
   
   #return reported object
   return(presH2o)

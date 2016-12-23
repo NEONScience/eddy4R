@@ -2,7 +2,7 @@
 % Please edit documentation in R/def.rsmp.R
 \name{def.rsmp}
 \alias{def.rsmp}
-\title{Resampling function}
+\title{Definition function: Resampling function}
 \usage{
 def.rsmp(data, FreqInp, FreqOut, MethRsmp, ColDisc = NULL)
 }

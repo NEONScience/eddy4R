@@ -1,5 +1,5 @@
 ##############################################################################################
-#' @title Data smoothing
+#' @title Definition function: Data smoothing
 
 #' @author 
 #' Stefan Metzger \email{eddy4R.info@gmail.com} \cr

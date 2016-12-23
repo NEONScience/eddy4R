@@ -2,7 +2,7 @@
 % Please edit documentation in R/def.rh.pres.h2o.pres.sat.h2o.R
 \name{def.rh.pres.h2o.pres.sat.h2o}
 \alias{def.rh.pres.h2o.pres.sat.h2o}
-\title{Calculation of RH from water vapor partial pressure and saturation pressure}
+\title{Definition function: Calculation of RH from water vapor partial pressure and saturation pressure}
 \usage{
 def.rh.pres.h2o.pres.sat.h2o(presH2o, presH2oSat)
 }

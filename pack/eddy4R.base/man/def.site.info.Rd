@@ -2,7 +2,7 @@
 % Please edit documentation in R/def.site.info.R
 \name{def.site.info}
 \alias{def.site.info}
-\title{Load pre-defined site specific information into the global environment}
+\title{Definition function: Load pre-defined site specific information into the global environment}
 \usage{
 def.site.info(loc = c("IM", "LOS", "NR", "NS", "PF", "SERC")[6])
 }
