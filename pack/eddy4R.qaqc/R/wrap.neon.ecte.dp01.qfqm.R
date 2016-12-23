@@ -1,5 +1,5 @@
 ##############################################################################################
-#' @title Calculate quality metrics, alpha and beta quality metrics, and final quality flag for the NEON eddy-covariance turbulent exchange data products
+#' @title Wrapper function: Calculate quality metrics, alpha and beta quality metrics, and final quality flag for the NEON eddy-covariance turbulent exchange data products
 
 #' @author Natchaya Pingintha-Durden \email{ndurden@neoninc.org} \cr
 

@@ -2,7 +2,7 @@
 % Please edit documentation in R/def.base.ec.R
 \name{def.base.ec}
 \alias{def.base.ec}
-\title{Base state for eddy-covariance calculation}
+\title{Definition function: Base state for eddy-covariance calculation}
 \usage{
 def.base.ec(pos, var, AlgBase)
 }

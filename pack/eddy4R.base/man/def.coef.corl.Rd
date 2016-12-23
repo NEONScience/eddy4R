@@ -2,7 +2,7 @@
 % Please edit documentation in R/def.coef.corl.R
 \name{def.coef.corl}
 \alias{def.coef.corl}
-\title{Coriolis coefficient}
+\title{Definition function: Coriolis coefficient}
 \usage{
 def.coef.corl(lat)
 }

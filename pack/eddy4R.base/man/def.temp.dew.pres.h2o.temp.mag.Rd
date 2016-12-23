@@ -2,7 +2,7 @@
 % Please edit documentation in R/def.temp.dew.pres.h2o.temp.mag.R
 \name{def.temp.dew.pres.h2o.temp.mag}
 \alias{def.temp.dew.pres.h2o.temp.mag}
-\title{Calculate dew point temperature from water vapor pressure and ambient temperature using Magnus equation}
+\title{Definition function: Calculate dew point temperature from water vapor pressure and ambient temperature using Magnus equation}
 \usage{
 def.temp.dew.pres.h2o.temp.mag(presH2o, temp)
 }

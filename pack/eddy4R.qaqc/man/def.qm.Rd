@@ -2,7 +2,7 @@
 % Please edit documentation in R/def.qm.R
 \name{def.qm}
 \alias{def.qm}
-\title{Quality Metrics}
+\title{Definition function: Quality Metrics}
 \usage{
 def.qm(qf, nameQmOut = NULL)
 }

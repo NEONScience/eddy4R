@@ -1,5 +1,5 @@
 ##############################################################################################
-#' @title Extract variable with unit attribute from data frame
+#' @title Definition function: Extract variable with unit attribute from data frame
 
 #' @author 
 #' Cove Sturtevant \email{csturtevant@neoninc.org}

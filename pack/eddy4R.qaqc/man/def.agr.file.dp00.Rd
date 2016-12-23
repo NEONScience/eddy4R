@@ -2,7 +2,7 @@
 % Please edit documentation in R/def.agr.file.dp00.R
 \name{def.agr.file.dp00}
 \alias{def.agr.file.dp00}
-\title{Combine individual L0 data streams from file}
+\title{Definition function: Combine individual L0 data streams from file}
 \usage{
 def.agr.file.dp00(dirFile = ".", nameFile, nameVar, unitVar, Freq,
   FmtTime = "\%d-\%b-\%Y \%I.\%M.\%OS \%p", Tz = "GMT")

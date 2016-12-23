@@ -1,5 +1,5 @@
 ##############################################################################################
-#' @title Calculate mode based on a continuous distribution
+#' @title Definition function: Calculate mode based on a continuous distribution
 
 #' @author 
 #' Stefan Metzger \email{eddy4R.info@gmail.com} \cr

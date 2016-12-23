@@ -2,9 +2,9 @@
 % Please edit documentation in R/wrap.derv.prd.day.R
 \name{wrap.derv.prd.day}
 \alias{wrap.derv.prd.day}
-\title{Calculation of derived quantities (daily extent, native resolution)}
+\title{Wrapper function: Calculation of derived quantities (daily extent, native resolution)}
 \usage{
-wrap.derv.prd.day(data, SiteInfoLoca)
+wrap.derv.prd.day(data, ZoneTime)
 }
 \arguments{
 \item{\code{data}}{List consisting of \code{ff::ffdf} file-backed objects, in the format provided by function \code{eddy4R.base::wrap.read.hdf5.neon.eddy()}. Of types numeric and integer.}

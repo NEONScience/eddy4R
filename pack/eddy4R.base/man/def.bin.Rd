@@ -2,7 +2,7 @@
 % Please edit documentation in R/def.bin.R
 \name{def.bin}
 \alias{def.bin}
-\title{Binning data}
+\title{Definition function: Binning data}
 \usage{
 def.bin(idep, depe, RngMinMax = NULL, NumBin, widtBin = c("lin", "log10",
   "exp10", "logExp", "expLog"), meanFunc = c("mean", "median"))
