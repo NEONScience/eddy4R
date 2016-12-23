@@ -1,5 +1,5 @@
 ##############################################################################################
-#' @title Unit conversion 
+#' @title Definition function: Unit conversion 
 
 #' @author 
 #' Cove Sturtevant \email{eddy4R.info@gmail.com}

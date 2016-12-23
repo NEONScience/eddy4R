@@ -1,5 +1,5 @@
 ##############################################################################################
-#' @title Calculate water vapor pressure from dry mass fraction and static pressure
+#' @title Definition function: Calculate water vapor pressure from dry mass fraction and static pressure
 
 #' @author 
 #' Stefan Metzger \email{eddy4R.info@gmail.com} \cr

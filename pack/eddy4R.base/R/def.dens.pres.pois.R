@@ -1,5 +1,5 @@
 ##############################################################################################
-#' @title Poisson's equation (adiabatic change) - density as function of pressure change
+#' @title Definition function: Poisson's equation (adiabatic change) - density as function of pressure change
 
 #' @author 
 #' Stefan Metzger \email{eddy4R.info@gmail.com} \cr
