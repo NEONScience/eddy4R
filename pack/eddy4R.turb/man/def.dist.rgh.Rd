@@ -32,9 +32,9 @@ Stefan Metzger \email{eddy4R.info@gmail.com} \cr
 Natchaya Pingintha-Durden
 }
 \references{
-Businger, J. A., Wyngaard, J. C., Izumi, Y., and Bradley, E. F.: Flux-pro<U+FB01>le relationships in the atmospheric surface layer, Journal of the Atmospheric Sciences, 28, 181<U+2013>189, 1971. \cr
+Businger, J. A., Wyngaard, J. C., Izumi, Y., and Bradley, E. F.: Flux-proﬁle relationships in the atmospheric surface layer, Journal of the Atmospheric Sciences, 28, 181–189, 1971. \cr
 Foken, T.: Micrometeorology, Springer, Berlin, Heidelberg, 2008. \cr
-H<U+00F6>gstr<U+00F6>m, U.: Non-dimensional wind and temperature pro<U+FB01>les in the atmospheric surface layer: a re-evaluation, Boundary-Layer Meteorology, 42, 55<U+2013>78, 1988. \cr
+Högström, U.: Non-dimensional wind and temperature proﬁles in the atmospheric surface layer: a re-evaluation, Boundary-Layer Meteorology, 42, 55–78, 1988. \cr
 }
 \seealso{
 Currently none
