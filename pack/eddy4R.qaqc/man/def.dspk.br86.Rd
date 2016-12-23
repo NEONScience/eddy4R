@@ -5,7 +5,7 @@
 \title{Definition function: Median filter de-spiking}
 \usage{
 def.dspk.br86(dataIn, WndwFilt = 9, NumBin = 2, ThshReso = 10,
-  FracRealMin = 0.025)
+  FracRealMin = 2.5e-02)
 }
 \arguments{
 \item{\code{dataIn}}{Required. A univariate vector of integers or numerics of Input data}
@@ -102,9 +102,9 @@ Cove Sturtevant \email{eddy4R.info@gmail.com}
 }
 \references{
 license: Terms of use of the NEON FIU algorithm repository dated 2015-01-16 \cr
-Brock, F. V. A Nonlinear Filter to Remove Impulse Noise from Meteorological Data. J. Atmos. Oceanic Technol. 3, 51–58 (1986). \cr
-Starkenburg, D. et al. Assessment of Despiking Methods for Turbulence Data in Micrometeorology. J. Atmos. Oceanic Technol. 33, 2001–2013 (2016). \cr
-Vickers, D. & Mahrt, L. Quality control and flux sampling problems for tower and aircraft data. in 512–526 (Amer Meteorological Soc, 1997). \cr
+Brock, F. V. A Nonlinear Filter to Remove Impulse Noise from Meteorological Data. J. Atmos. Oceanic Technol. 3, 51<U+2013>58 (1986). \cr
+Starkenburg, D. et al. Assessment of Despiking Methods for Turbulence Data in Micrometeorology. J. Atmos. Oceanic Technol. 33, 2001<U+2013>2013 (2016). \cr
+Vickers, D. & Mahrt, L. Quality control and flux sampling problems for tower and aircraft data. in 512<U+2013>526 (Amer Meteorological Soc, 1997). \cr
 Mauder, M. and Foken, T. Documentation and instruction manual of the edy covariance software package TK3. Arbeitsergebn. Univ Bayreuth. Abt Mikrometeorol. ISSN 1614-8916, 46:58 pp. (2011)
 NEON Algorithm Theoretical Basis Document: Quality Flags and Quality Metrics for TIS Data Products (NEON.DOC.001113) \cr
 }
