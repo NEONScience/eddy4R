@@ -78,8 +78,8 @@ def.rtio.mass.h2o.dens.mole <- function(
   
   # calculate the sonic tempertaure
   
-  rtioMassH2o <- densMoleH2o * eddy4R.base::Intl.Natu$MolmH2o /
-    (densMoleAirDry * eddy4R.base::Intl.Natu$MolmDry + densMoleH2o * eddy4R.base::Intl.Natu$MolmH2o)
+  rtioMassH2o <- densMoleH2o * eddy4R.base::IntlNatu$MolmH2o /
+    (densMoleAirDry * eddy4R.base::IntlNatu$MolmDry + densMoleH2o * eddy4R.base::IntlNatu$MolmH2o)
 
 # assign output unit
 attributes(rtioMassH2o)$unit <- "kg kg-1"
