@@ -2,7 +2,7 @@
 % Please edit documentation in R/wrap.derv.prd.day.R
 \name{wrap.derv.prd.day}
 \alias{wrap.derv.prd.day}
-\title{Calculation of derived quantities (daily extent, native resolution)}
+\title{Wrapper function: Calculation of derived quantities (daily extent, native resolution)}
 \usage{
 wrap.derv.prd.day(data, ZoneTime)
 }

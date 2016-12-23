@@ -2,7 +2,7 @@
 % Please edit documentation in R/def.repl.char.R
 \name{def.repl.char}
 \alias{def.repl.char}
-\title{Replace character vector elements with entries from a lookup table}
+\title{Definition function: Replace character vector elements with entries from a lookup table}
 \usage{
 def.repl.char(data, ReplFrom, ReplTo)
 }

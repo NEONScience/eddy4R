@@ -2,7 +2,7 @@
 % Please edit documentation in R/def.unit.extr.R
 \name{def.unit.extr}
 \alias{def.unit.extr}
-\title{Extract variable with unit attribute from data frame}
+\title{Definition function: Extract variable with unit attribute from data frame}
 \usage{
 def.unit.extr(data, nameVar, AllwPos = FALSE)
 }

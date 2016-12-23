@@ -2,7 +2,7 @@
 % Please edit documentation in R/def.ssi.mean.R
 \name{def.ssi.mean}
 \alias{def.ssi.mean}
-\title{Calculation of average signal strength for LI-7200 IRGA}
+\title{Definition function: Calculation of average signal strength for LI-7200 IRGA}
 \usage{
 def.ssi.mean(ssiCo2, ssiH2o)
 }

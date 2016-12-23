@@ -2,7 +2,7 @@
 % Please edit documentation in R/def.dens.temp.pres.pois.R
 \name{def.dens.temp.pres.pois}
 \alias{def.dens.temp.pres.pois}
-\title{Poisson's equation (adiabatic change) - density as function of pressure and temperature change}
+\title{Definition function: Poisson's equation (adiabatic change) - density as function of pressure and temperature change}
 \usage{
 def.dens.temp.pres.pois(dens01, temp01, temp02, pres01, pres02)
 }

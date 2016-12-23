@@ -2,7 +2,7 @@
 % Please edit documentation in R/def.rmsd.diff.prcs.rsq.R
 \name{def.rmsd.diff.prcs.rsq}
 \alias{def.rmsd.diff.prcs.rsq}
-\title{RMSD, bias, precision and coefficient of determination - incl. deadband}
+\title{Definition function: RMSD, bias, precision and coefficient of determination - incl. deadband}
 \usage{
 def.rmsd.diff.prcs.rsq(refe, test, Perc = FALSE, Deba = NULL,
   DebaRltv = FALSE)

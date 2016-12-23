@@ -2,7 +2,7 @@
 % Please edit documentation in R/def.conv.qf.not.vrbs.R
 \name{def.conv.qf.not.vrbs}
 \alias{def.conv.qf.not.vrbs}
-\title{Convert from verbose to non-verbose output of quality tests}
+\title{Definition function: Convert from verbose to non-verbose output of quality tests}
 \usage{
 def.conv.qf.not.vrbs(qf)
 }
