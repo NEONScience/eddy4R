@@ -10,7 +10,7 @@ REYNcomp_FD_mole_dry(eddy.data_loc = eddy.data, whr_scal = c("u_hor",
   "F_H_en", "F_LE_en", "F_CH4_mass"), latitude, AlgBase = c("mean", "trnd",
   "ord03")[1], stattype = c(1, 2, 3)[3], NOsusa = 6, FcorPOT = TRUE,
   FcorPOTl = NULL, noise_determination = FALSE, conf_level = 0.95,
-  crit_iter = 0.01, PltfEc = "airc", flagCh4 = TRUE)
+  crit_iter = 1e-02, PltfEc = "airc", flagCh4 = TRUE)
 }
 \arguments{
 \item{Currently}{none}
