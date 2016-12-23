@@ -2,7 +2,7 @@
 % Please edit documentation in R/def.plau.R
 \name{def.plau}
 \alias{def.plau}
-\title{Plausibility tests (Range, Step, Persistence, Null, Gap)}
+\title{Definition function: Plausibility tests (Range, Step, Persistence, Null, Gap)}
 \usage{
 def.plau(data, time = as.POSIXlt(seq.POSIXt(from = Sys.time(), by = "sec",
   length.out = length(data[, 1]))), RngMin = apply(data, 2, min, na.rm =

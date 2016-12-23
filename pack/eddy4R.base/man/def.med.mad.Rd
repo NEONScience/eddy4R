@@ -2,7 +2,7 @@
 % Please edit documentation in R/def.med.mad.R
 \name{def.med.mad}
 \alias{def.med.mad}
-\title{Median and median absolute deviation as robust measures of scale and dispersion}
+\title{Definition function: Median and median absolute deviation as robust measures of scale and dispersion}
 \usage{
 def.med.mad(test, refe = 0, Perc = FALSE)
 }

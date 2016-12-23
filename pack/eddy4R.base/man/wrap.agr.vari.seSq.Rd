@@ -2,7 +2,7 @@
 % Please edit documentation in R/wrap.agr.vari.seSq.R
 \name{wrap.agr.vari.seSq}
 \alias{wrap.agr.vari.seSq}
-\title{Calculate aggregated variance and squared standard error from a small to large temporal scale.}
+\title{Wrapper function: Calculate aggregated variance and squared standard error from a small to large temporal scale.}
 \usage{
 wrap.agr.vari.seSq(data = data.frame(timeDoyDecm, mean, vari), zone, MethAgr)
 }

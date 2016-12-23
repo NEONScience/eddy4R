@@ -2,9 +2,9 @@
 % Please edit documentation in R/def.qf.finl.R
 \name{def.qf.finl}
 \alias{def.qf.finl}
-\title{Final Quality Flag}
+\title{Definition function: Final Quality Flag}
 \usage{
-def.qf.finl(qf, WghtAlphBeta = c(2, 1), Thsh = 0.2)
+def.qf.finl(qf, WghtAlphBeta = c(2, 1), Thsh = 2e-01)
 }
 \arguments{
 \item{\code{qf}}{A data frame of quality flags, class integer, from which to compute the final quality flag. Each column contains the quality flag values [-1,0,1] for that flag. Note: This is the Vrbs output from def.plau, def.dspk.wndw, and def.dspk.br86. See def.conv.qf.vrbs for converting from non-verbose to verbose output.}
