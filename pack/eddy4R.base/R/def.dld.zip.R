@@ -1,5 +1,5 @@
 ##############################################################################################
-#' @title Download and extract .zip archives from a web address
+#' @title Definition function: Download and extract .zip archives from a web address
 
 #' @author Stefan Metzger \email{eddy4R.info@gmail.com}
 

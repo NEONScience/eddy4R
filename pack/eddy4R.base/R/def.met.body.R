@@ -1,5 +1,5 @@
 ##############################################################################################
-#' @title Coordinate transformation from CSAT3 body coordinate system to meteorological coordinate system
+#' @title Definition function: Coordinate transformation from CSAT3 body coordinate system to meteorological coordinate system
 
 #' @author Stefan Metzger \email{eddy4R.info@gmail.com} \cr
 #' @author Hongyan Luo \email{eddy4R.info@gmail.com}

@@ -1,5 +1,5 @@
 ##############################################################################################
-#' @title Regularizing irregular data to strictly regular / equidistant data
+#' @title Definition function: Regularizing irregular data to strictly regular / equidistant data
 
 #' @author Stefan Metzger \email{eddy4R.info@gmail.com}
 #' Cove Sturtevant \email{eddy4R.info@gmail.com}
