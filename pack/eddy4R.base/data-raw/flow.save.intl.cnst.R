@@ -80,7 +80,7 @@
 library(devtools)
 
 # Package directory
-dirPack <- "C:/Users/csturtevant/OneDrive - Neon, Inc/R/NEON-FIU-algorithm-covesturtevant/ext/eddy4R/pack"
+dirPack <- "~/eddy/Github/Docker/NEON-FIU-algorithm/NEON-FIU-algorithm/ext/eddy4R/pack"
 namePack <- "eddy4R.base"
 
 # WARNING: Do not change/delete constants here without updating the package functions that depend on them

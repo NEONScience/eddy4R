@@ -11,10 +11,10 @@ def.unit.info(unit)
 with the following rules. \cr
 \cr
 Unit character strings must be constructed from the base unit symbols (case-sensitive) listed 
-in eddy4R.base internal data Intl.Unit$Base$Symb (e.g. the symbol for meter is "m"). \cr
+in eddy4R.base internal data IntlUnit$Base$Symb (e.g. the symbol for meter is "m"). \cr
 \cr
 Unit base symbols can be directly preceded (no space) by the case-sensitive unit prefixes listed in 
-eddy4R.base internal data Intl.Unit$Prfx (e.g. kilometers = "km") . \cr
+eddy4R.base internal data IntlUnit$Prfx (e.g. kilometers = "km") . \cr
  \cr
 Unit base symbols can be directly followed (no spaces) by the suffix \code{n}, where \code{n} is 
 an integer (...-2,-1,0,1,2...), indicating the unit is raised to the power of 
@@ -22,7 +22,7 @@ an integer (...-2,-1,0,1,2...), indicating the unit is raised to the power of
 \cr
 In the case of chemical species (i.e. converting between mass and molar units), specify
 the full unit (including prefix and suffix) followed immediately (no spaces inbetween) by one of 
-the chemical species characters listed in eddy4R.base internal data Intl.Unit$Spcs 
+the chemical species characters listed in eddy4R.base internal data IntlUnit$Spcs 
 (eg. per gram of carbon dioxide = "g-1CO2"): \cr
 \cr
 Compound units can be formed by inserting spaces between the individual unit components 
@@ -32,17 +32,17 @@ Compound units can be formed by inserting spaces between the individual unit com
 A named list of vectors, each of length N, where N is the number of base units 
 making up the compound unit. For example, umolCO2 m-2 s-1 has 3 base units (mol, m, s): \cr
 type: the abbreviated character string denoting unit type (e.g. "dist" for distance)
-base: the base unit character symbol as listed in eddy4R.base::Intl.Unit$Base$Symb
-posBase: the integer list position in eddy4R.base::Intl.Unit$Base$Symb corresponding to the base unit
-prfx: the unit prefix character(s) as listed in eddy4R.base::Intl.Unit$Prfx
-posPrfx: the integer list position in eddy4R.base::Intl.Unit$Prfx corresponding to the unit prefix
+base: the base unit character symbol as listed in eddy4R.base::IntlUnit$Base$Symb
+posBase: the integer list position in eddy4R.base::IntlUnit$Base$Symb corresponding to the base unit
+prfx: the unit prefix character(s) as listed in eddy4R.base::IntlUnit$Prfx
+posPrfx: the integer list position in eddy4R.base::IntlUnit$Prfx corresponding to the unit prefix
 sufx: the numerical unit suffix (i.e. the power to which the unit is raised)
 spcs: a character string of the chemical species as listed in eddy4R.base::Unit$Spcs
-posSpcs: the integer list position in eddy4R.base::Intl.Unit$Spcs corresponding to the chemical species
+posSpcs: the integer list position in eddy4R.base::IntlUnit$Spcs corresponding to the chemical species
 }
 \description{
 Function definition. Interpret a compound unit string, identifying the matching entries
-within eddy4R internal data \code{eddy4R.base::Intl.Unit} for the base unit symbol, unit prefix, chemical   
+within eddy4R internal data \code{eddy4R.base::IntlUnit} for the base unit symbol, unit prefix, chemical   
 species, and unit suffix (raise to the power of)
 }
 \examples{
@@ -55,7 +55,7 @@ Cove Sturtevant \email{eddy4R.info@gmail.com}
 license: Terms of use of the NEON FIU algorithm repository dated 2015-01-16
 }
 \seealso{
-\code{\link{def.unit.conv}}, \code{\link{def.unit.intl}}, \code{\link{Intl.Unit$Intl}}
+\code{\link{def.unit.conv}}, \code{\link{def.unit.intl}}, \code{\link{IntlUnit$Intl}}
 }
 \keyword{conversion,}
 \keyword{input}
