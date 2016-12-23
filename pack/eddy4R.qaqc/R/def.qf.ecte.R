@@ -1,5 +1,5 @@
 ##############################################################################################
-#' @title Definition: Create fake flags for ECTE sensors
+#' @title Definition function: Create fake flags for ECTE sensors
 
 #' @author 
 #' Dave Durden \email{ddurden@battelleecology.org}
