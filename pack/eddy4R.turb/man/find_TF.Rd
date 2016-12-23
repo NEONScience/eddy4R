@@ -2,7 +2,7 @@
 % Please edit documentation in R/spectral.r
 \name{find_TF}
 \alias{find_TF}
-\title{Determine half-power / cut-off frequency}
+\title{Definition function: Determine half-power / cut-off frequency}
 \usage{
 find_TF(F0 = 0.5, FX = fx_out$par * mean(SPEout$fr_obs/SPEout$fr_nor, na.rm
   = TRUE),

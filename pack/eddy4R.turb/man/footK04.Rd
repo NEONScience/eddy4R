@@ -2,7 +2,7 @@
 % Please edit documentation in R/footprints.r
 \name{footK04}
 \alias{footK04}
-\title{Flux footprint after Kljun et a. (2004), Metzger et al. (2012)}
+\title{Definition function: Flux footprint after Kljun et a. (2004), Metzger et al. (2012)}
 \usage{
 footK04(angle, Csize, sigV, sigW, ustar, zmeas, z0, h = 1000, Psi = 0)
 }

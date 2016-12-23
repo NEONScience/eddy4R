@@ -2,7 +2,7 @@
 % Please edit documentation in R/def.stna.R
 \name{def.stna}
 \alias{def.stna}
-\title{Stationarity tests}
+\title{Definition function: Stationarity tests}
 \usage{
 def.stna(data, MethStna = c(1, 2, 3)[2], whrVar, NumSubSamp = 6,
   corTempPot = TRUE, presTempPot = NULL, PltfEc = "airc",

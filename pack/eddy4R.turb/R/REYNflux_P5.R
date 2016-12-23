@@ -1,5 +1,5 @@
 ##############################################################################################
-#' @title Calculate turbulent vertical flux and auxiliary variables
+#' @title Definition function: Calculate turbulent vertical flux and auxiliary variables
 
 #' @author
 #' Stefan Metzger \email{eddy4R.info@gmail.com}
@@ -63,16 +63,16 @@ REYNflux_FD_mole_dry <- function(
   #partial pressure of water vapor
   data$p_H2O <- data$p_air * data$FD_mole_H2O / (1 + data$FD_mole_H2O)
   #partial density of H2O
-  data$rho_H2O <- data$p_H2O / eddy4R.base::Natu$Rg / data$T_air
+  data$rho_H2O <- data$p_H2O / eddy4R.base::IntlNatu$Rg / data$T_air
   #total (wet) air density [mol m-3]
-  data$rho_air <- data$p_air / eddy4R.base::Natu$Rg / data$T_air
+  data$rho_air <- data$p_air / eddy4R.base::IntlNatu$Rg / data$T_air
   #dry air density [mol m-3]
   data$rho_dry <- data$rho_air - data$rho_H2O
   #virtual temperature -> the temperature of a moist air parcel at which a theoretical 
   #dry air parcel would have a total pressure and density equal to the moist parcel of air [K]
   #http://en.wikipedia.org/wiki/Virtual_temperature
   #    data$T_v <- data$Temp * (1 + 0.61 * data$q)
-  data$T_v <- data$T_air / (1 - ((data$p_H2O / data$p_air) * (1 - eddy4R.base::Natu$RtioMolmH2oDry)) )
+  data$T_v <- data$T_air / (1 - ((data$p_H2O / data$p_air) * (1 - eddy4R.base::IntlNatu$RtioMolmH2oDry)) )
   #latent heat of vaporization (Eq 2.55 Foken 2008) [J kg-1] == [m2 s-2]
   data$Lv <- 2500827 - 2360 * eddy4R.base::def.unit.conv(data=data$T_air,unitFrom="K",unitTo="C")
   
@@ -81,11 +81,11 @@ REYNflux_FD_mole_dry <- function(
   
   #cp as function of humidity (Webb 1980 Eq 40) [J kg-1 K-1] == [m2 s-2 K-1]
   #dry mole fraction fomulation identical to within 1e-13
-  #data$cph <- (eddy4R.base::Natu$CpDry * data$rho_dry + eddy4R.base::Natu$CpH2o * data$rho_H2O) / data$rho_air
-  data$cph <- (eddy4R.base::Natu$CpDry * 1 + eddy4R.base::Natu$CpH2o * data$FD_mole_H2O) / (1 + data$FD_mole_H2O)
+  #data$cph <- (eddy4R.base::IntlNatu$CpDry * data$rho_dry + eddy4R.base::IntlNatu$CpH2o * data$rho_H2O) / data$rho_air
+  data$cph <- (eddy4R.base::IntlNatu$CpDry * 1 + eddy4R.base::IntlNatu$CpH2o * data$FD_mole_H2O) / (1 + data$FD_mole_H2O)
   #cv as function of humidity  [J kg-1 K-1] == [m2 s-2 K-1]
-  #data$cvh <- (eddy4R.base::Natu$CvDry * data$rho_dry + eddy4R.base::Natu$CvH2o * data$rho_H2O) / data$rho_air
-  data$cvh <- (eddy4R.base::Natu$CvDry * 1 + eddy4R.base::Natu$CvH2o * data$FD_mole_H2O) / (1 + data$FD_mole_H2O)
+  #data$cvh <- (eddy4R.base::IntlNatu$CvDry * data$rho_dry + eddy4R.base::IntlNatu$CvH2o * data$rho_H2O) / data$rho_air
+  data$cvh <- (eddy4R.base::IntlNatu$CvDry * 1 + eddy4R.base::IntlNatu$CvH2o * data$FD_mole_H2O) / (1 + data$FD_mole_H2O)
   #specific gas constant for humid air  [J kg-1 K-1] == [m2 s-2 K-1]
   data$Rh <- data$cph - data$cvh
   #Kappa exponent for ideal gas law (Poisson) [-]
@@ -97,9 +97,9 @@ REYNflux_FD_mole_dry <- function(
   #POTENTIAL TEMPERATURE AND DENSITIES
   
   #potential temperature at NIST standard pressure (1013.15 hPa) [K]
-  data$T_air_0 <- def.temp.pres.pois(temp01=data$T_air, pres01=data$p_air, pres02=eddy4R.base::Natu$Pres00, Kppa=mn$Kah)
+  data$T_air_0 <- def.temp.pres.pois(temp01=data$T_air, pres01=data$p_air, pres02=eddy4R.base::IntlNatu$Pres00, Kppa=mn$Kah)
   #virtual potential temperature at NIST standard pressure (1013.15 hPa) [K]
-  data$T_v_0 <- def.temp.pres.pois(temp01=data$T_v, pres01=data$p_air, pres02=eddy4R.base::Natu$Pres00, Kppa=mn$Kah)
+  data$T_v_0 <- def.temp.pres.pois(temp01=data$T_v, pres01=data$p_air, pres02=eddy4R.base::IntlNatu$Pres00, Kppa=mn$Kah)
   
   #use potential temperature and densities?
   if(FcorPOT == TRUE) {
@@ -132,7 +132,7 @@ REYNflux_FD_mole_dry <- function(
   
   
   #aircraft heading as vector average
-  if(PltfEc == "airc") mn$PSI_aircraft <- eddy4R.base::def.conv.poly(data=eddy4R.base::def.pol.cart(matrix(colMeans(eddy4R.base::def.cart.pol(eddy4R.base::def.conv.poly(data=data$PSI_aircraft,coefPoly=eddy4R.base::Conv$DegRad)), na.rm=TRUE), ncol=2)),coefPoly=eddy4R.base::Conv$RadDeg)
+  if(PltfEc == "airc") mn$PSI_aircraft <- eddy4R.base::def.conv.poly(data=eddy4R.base::def.pol.cart(matrix(colMeans(eddy4R.base::def.cart.pol(eddy4R.base::def.conv.poly(data=data$PSI_aircraft,coefPoly=eddy4R.base::IntlConv$DegRad)), na.rm=TRUE), ncol=2)),coefPoly=eddy4R.base::IntlConv$RadDeg)
   
   #wind direction as vector average
   data$PSI_uv <- eddy4R.base::def.pol.cart(matrix(c(data$v_met, data$u_met), ncol=2))
@@ -286,7 +286,7 @@ REYNflux_FD_mole_dry <- function(
   mn$F_H_kin <- mean(imfl$F_H_kin, na.rm=TRUE)
   
   #conversion to units of energy [W m-2] == [kg s-3]
-  imfl$F_H_en <- (eddy4R.base::Natu$CpDry * base$rho_dry * eddy4R.base::Natu$MolmDry + eddy4R.base::Natu$CpH2o * base$rho_H2O * eddy4R.base::Natu$MolmH2o) * imfl$F_H_kin
+  imfl$F_H_en <- (eddy4R.base::IntlNatu$CpDry * base$rho_dry * eddy4R.base::IntlNatu$MolmDry + eddy4R.base::IntlNatu$CpH2o * base$rho_H2O * eddy4R.base::IntlNatu$MolmH2o) * imfl$F_H_kin
   mn$F_H_en <- mean(imfl$F_H_en, na.rm=TRUE)
   
   #BUOYANCY FLUX considering water vapor buoyancy and NIST standard pressure (1013.15 hPa) reference (virt. pot. temp.) -> z/L
@@ -309,7 +309,7 @@ REYNflux_FD_mole_dry <- function(
   imfl$F_LE_kin <- base$rho_dry * imfl$w_hor * imfl$FD_mole_H2O
   mn$F_LE_kin <- mean(imfl$F_LE_kin, na.rm=TRUE)
   #latent heat flux in units of energy  [W m-2] == [kg s-3]
-  imfl$F_LE_en <- base$Lv * eddy4R.base::Natu$MolmH2o * imfl$F_LE_kin
+  imfl$F_LE_en <- base$Lv * eddy4R.base::IntlNatu$MolmH2o * imfl$F_LE_kin
   mn$F_LE_en <- mean(imfl$F_LE_en, na.rm=TRUE)
   #correlation
   cor$F_LE_kin <- stats::cor(imfl$w_hor, imfl$FD_mole_H2O, use="pairwise.complete.obs")
@@ -325,7 +325,7 @@ REYNflux_FD_mole_dry <- function(
     imfl$F_CH4_kin <- base$rho_dry * imfl$w_hor * imfl$FD_mole_CH4
     mn$F_CH4_kin <- mean(imfl$F_CH4_kin, na.rm=TRUE)
     #CH4 flux in mass units [mg m-2 h-1]
-    imfl$F_CH4_mass <- imfl$F_CH4_kin * eddy4R.base::Natu$MolmCh4 * 1e6 * 3600
+    imfl$F_CH4_mass <- imfl$F_CH4_kin * eddy4R.base::IntlNatu$MolmCh4 * 1e6 * 3600
     mn$F_CH4_mass <- mean(imfl$F_CH4_mass, na.rm=TRUE)
     #correlation
     cor$F_CH4_kin <- stats::cor(imfl$w_hor, imfl$FD_mole_CH4, use="pairwise.complete.obs")
@@ -348,7 +348,7 @@ REYNflux_FD_mole_dry <- function(
   #Obukhov length (used positive g!)
   mn$d_L_v_0 <- (-(
     ( (mn$u_star)^3 / 
-        ( eddy4R.base::Natu$VonkFokn * eddy4R.base::Natu$Grav / mn$T_v_0 * mn$F_H_kin_v_0 )
+        ( eddy4R.base::IntlNatu$VonkFokn * eddy4R.base::IntlNatu$Grav / mn$T_v_0 * mn$F_H_kin_v_0 )
     )
   ))
   
@@ -357,7 +357,7 @@ REYNflux_FD_mole_dry <- function(
   
   #convective (Deardorff) velocity [m s-1]
   #missing values in Deardorff velocity and resulting variables when buoyancy flux is negative!
-  mn$w_star <- ( eddy4R.base::Natu$Grav * mn$d_z_ABL / mn$T_v_0 * mn$F_H_kin_v_0 )^(1/3)
+  mn$w_star <- ( eddy4R.base::IntlNatu$Grav * mn$d_z_ABL / mn$T_v_0 * mn$F_H_kin_v_0 )^(1/3)
   
   #(free) convective time scale [s], often in the order of 5-15 min
   mn$t_star <- mn$d_z_ABL / mn$w_star

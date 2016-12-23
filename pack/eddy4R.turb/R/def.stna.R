@@ -1,5 +1,5 @@
 ##############################################################################################
-#' @title Stationarity tests
+#' @title Definition function: Stationarity tests
 
 #' @author
 #' Stefan Metzger \email{eddy4R.info@gmail.com} \cr
