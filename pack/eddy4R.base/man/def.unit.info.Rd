@@ -2,7 +2,7 @@
 % Please edit documentation in R/def.unit.info.R
 \name{def.unit.info}
 \alias{def.unit.info}
-\title{Interpret unit string}
+\title{Definition function: Interpret unit string}
 \usage{
 def.unit.info(unit)
 }

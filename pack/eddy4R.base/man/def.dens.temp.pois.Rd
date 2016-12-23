@@ -2,7 +2,7 @@
 % Please edit documentation in R/def.dens.temp.pois.R
 \name{def.dens.temp.pois}
 \alias{def.dens.temp.pois}
-\title{Poisson's equation (adiabatic change) - density as function of temperature change}
+\title{Definition function: Poisson's equation (adiabatic change) - density as function of temperature change}
 \usage{
 def.dens.temp.pois(dens01, temp01, temp02,
   Kppa = eddy4R.base::IntlNatu$KppaDry)
