@@ -5,7 +5,7 @@
 \title{Definition function: Create fake flags for ECTE sensors}
 \usage{
 def.qf.ecte(TimeBgn, TimeEnd, Freq = 20, Sens = c("soni", "irga",
-  "irgaMfcSamp", "soniAmrs")[1], PcntQf = 5e-02)
+  "irgaMfcSamp", "soniAmrs")[1], PcntQf = 0.05)
 }
 \arguments{
 \item{\code{TimeBgn}}{is the beginning time of the period to generate flags.}
