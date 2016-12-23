@@ -2,7 +2,7 @@
 % Please edit documentation in R/def.temp.mean.7200.R
 \name{def.temp.mean.7200}
 \alias{def.temp.mean.7200}
-\title{Calculation of the average temperature in LI-7200 irga cell}
+\title{Definition function: Calculation of the average temperature in LI-7200 irga cell}
 \usage{
 def.temp.mean.7200(tempIn, tempOut, Vali = FALSE)
 }

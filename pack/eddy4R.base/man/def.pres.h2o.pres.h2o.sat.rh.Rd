@@ -2,7 +2,7 @@
 % Please edit documentation in R/def.pres.h2o.pres.h2o.sat.rh.R
 \name{def.pres.h2o.pres.h2o.sat.rh}
 \alias{def.pres.h2o.pres.h2o.sat.rh}
-\title{Calculate water vapor pressure from saturated water vapor pressure and relative humidity}
+\title{Definition function: Calculate water vapor pressure from saturated water vapor pressure and relative humidity}
 \usage{
 def.pres.h2o.pres.h2o.sat.rh(presH2oSat, rh)
 }

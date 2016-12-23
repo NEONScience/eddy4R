@@ -2,7 +2,7 @@
 % Please edit documentation in R/def.env.glob.R
 \name{def.env.glob}
 \alias{def.env.glob}
-\title{Global R-environment settings for use with the eddy4R family of R-packages}
+\title{Definition function: Global R-environment settings for use with the eddy4R family of R-packages}
 \usage{
 def.env.glob()
 }

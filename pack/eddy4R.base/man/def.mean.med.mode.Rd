@@ -2,7 +2,7 @@
 % Please edit documentation in R/def.mean.med.mode.R
 \name{def.mean.med.mode}
 \alias{def.mean.med.mode}
-\title{Calculate descriptive statistics based on arithmetic mean, median and mode}
+\title{Definition function: Calculate descriptive statistics based on arithmetic mean, median and mode}
 \usage{
 def.mean.med.mode(test, refe = 0, Perc = FALSE)
 }

@@ -2,7 +2,7 @@
 % Please edit documentation in R/def.pres.sum.R
 \name{def.pres.sum}
 \alias{def.pres.sum}
-\title{Calculation of total pressure in LI-7200 IRGA cell}
+\title{Definition function: Calculation of total pressure in LI-7200 IRGA cell}
 \usage{
 def.pres.sum(presAtm, presDiff)
 }

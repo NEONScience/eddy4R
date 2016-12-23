@@ -2,7 +2,7 @@
 % Please edit documentation in R/def.pol.cart.R
 \name{def.pol.cart}
 \alias{def.pol.cart}
-\title{Composing azimuth angle from cartesian vector data}
+\title{Definition function: Composing azimuth angle from cartesian vector data}
 \usage{
 def.pol.cart(cart)
 }
