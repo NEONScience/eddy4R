@@ -1,4 +1,4 @@
-#' Conversion Factors
+#' Internal data: Parameter set: Conversion Factors
 #'
 #' Conversion factors, such as between units of radians and degrees, for use across eddy4R package suite.
 #' Conversion factors are always specified as n-element vectors of polynomial coefficients 
@@ -171,4 +171,4 @@
 #' }
 #' @source Conversion factors are defined within flow.save.intl.cnst.R,
 #'  available in the data-raw/ folder of the source version of the package
-"Intl.Conv"
+"IntlConv"
