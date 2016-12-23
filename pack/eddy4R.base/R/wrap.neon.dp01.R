@@ -1,5 +1,5 @@
 ##############################################################################################
-#' @title Create NEON Level 1 data product descriptive statistics across list elements
+#' @title Wrapper function: Create NEON Level 1 data product descriptive statistics across list elements
 
 #' @author
 #' Stefan Metzger \email{eddy4R.info@gmail.com} \cr

@@ -2,7 +2,7 @@
 % Please edit documentation in R/def.dspk.wndw.R
 \name{def.dspk.wndw}
 \alias{def.dspk.wndw}
-\title{Determine spike locations using window-based statistics}
+\title{Definition function: Determine spike locations using window-based statistics}
 \usage{
 def.dspk.wndw(data, Trt = list(AlgClss = c("mean", "median")[2], NumPtsWndw =
   c(11, 101)[2], NumPtsSlid = 1, ThshStd = c(3.5, 20)[2], NaFracMax = 0.1, Infl

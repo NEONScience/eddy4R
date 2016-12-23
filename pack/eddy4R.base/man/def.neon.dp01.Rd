@@ -2,7 +2,7 @@
 % Please edit documentation in R/def.neon.dp01.R
 \name{def.neon.dp01}
 \alias{def.neon.dp01}
-\title{Create NEON Level 1 data product descriptive statistics}
+\title{Definition function: Create NEON Level 1 data product descriptive statistics}
 \usage{
 def.neon.dp01(data, vrbs = FALSE)
 }

@@ -2,7 +2,7 @@
 % Please edit documentation in R/def.unit.conv.R
 \name{def.unit.conv}
 \alias{def.unit.conv}
-\title{Unit conversion}
+\title{Definition function: Unit conversion}
 \usage{
 def.unit.conv(data, unitFrom = "arb", unitTo = "arb",
   coefPoly = base::lapply(base::as.data.frame(data), function(x) c(0, 1)),
@@ -14,7 +14,7 @@ A numeric vector input is also allowed if only 1 variable is to be converted.}
 
 \item{\code{unitFrom}}{Optional. The current units of \code{data}. Either: \cr 
 (1) the case-sensitive character string "intl", signifying the current units are in the internal 
-unit base (see documentation for eddy4R.base internal data Intl.Unit$Intl). \cr
+unit base (see documentation for eddy4R.base internal data IntlUnit$Intl). \cr
 (2) a named list or vector of type character containing the existing units of the corresponding variable 
 in \code{data} (see rules below for formatting unit character strings). Note, if a character vector 
 containing only one unit string is specified, it will be used for all variables in \code{data}.\cr
@@ -33,10 +33,10 @@ scale factors for conversion are given within input parameter \code{coefPoly}.
 \cr
 Use the following rules to construct unit character strings: \cr
 Unit character strings must be constructed from the base unit symbols (case-sensitive) listed 
-in eddy4R.base internal data Intl.Unit$Base$Symb (e.g. the symbol for meter is "m"). \cr
+in eddy4R.base internal data IntlUnit$Base$Symb (e.g. the symbol for meter is "m"). \cr
 \cr
 Unit base symbols can be directly preceded (no space) by the case-sensitive unit prefixes listed in 
-eddy4R.base internal data Intl.Unit$Prfx (e.g. kilometers = "km") . \cr
+eddy4R.base internal data IntlUnit$Prfx (e.g. kilometers = "km") . \cr
  \cr
 Unit base symbols can be directly followed (no spaces) by the suffix \code{n}, where \code{n} is 
 an integer (...-2,-1,0,1,2...), indicating the unit is raised to the power of 
@@ -44,7 +44,7 @@ an integer (...-2,-1,0,1,2...), indicating the unit is raised to the power of
 \cr
 In the case of chemical species (i.e. converting between mass and molar units), specify
 the full unit (including prefix and suffix) followed immediately (no spaces inbetween) by one of 
-the chemical species characters listed in eddy4R.base internal data Intl.Unit$Spcs 
+the chemical species characters listed in eddy4R.base internal data IntlUnit$Spcs 
 (eg. per gram of carbon dioxide = "g-1CO2"): \cr
 \cr
 Compound units can be formed by inserting spaces between the individual unit components 
@@ -59,7 +59,7 @@ convert pressure units from pounds per square inch to Pascals, use "psi" and "Pa
 than "lbf in2" and "Pa". The latter will result in an error. \cr
 (3) Except for mass to mole conversions, you can only convert within the same unit type  
 (i.e. you can't go from pressure to force/area, even tho these are technically compatible.  
-Check documentation for eddy4R.base::Intl.Unit to see unit types) \cr
+Check documentation for eddy4R.base::IntlUnit to see unit types) \cr
 (4) Suffixes (powers) between corresponding input & output terms must be the same.
 (5) If a conversion polynomial has more than the a1 term (a0,a2,... i.e more than a 
 linear multiplier), there must be only one base term in each the input and output (i.e. a 
@@ -107,7 +107,7 @@ Cove Sturtevant \email{eddy4R.info@gmail.com}
 license: Terms of use of the NEON FIU algorithm repository dated 2015-01-16
 }
 \seealso{
-\code{\link{Intl.Unit}}, \code{\link{def.unit.info}}, \code{\link{def.unit.intl}}
+\code{\link{IntlUnit}}, \code{\link{def.unit.info}}, \code{\link{def.unit.intl}}
 }
 \keyword{conversion,}
 \keyword{input}

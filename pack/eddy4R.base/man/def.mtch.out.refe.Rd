@@ -2,7 +2,7 @@
 % Please edit documentation in R/def.mtch.out.refe.R
 \name{def.mtch.out.refe}
 \alias{def.mtch.out.refe}
-\title{Compare output against reference}
+\title{Definition function: Compare output against reference}
 \usage{
 def.mtch.out.refe(fileOut, fileRefe, Head = FALSE, NumLine = 10)
 }

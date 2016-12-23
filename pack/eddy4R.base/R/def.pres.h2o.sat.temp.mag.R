@@ -1,5 +1,5 @@
 ##############################################################################################
-#' @title Calculate saturated water vapor pressure from temperature using Magnus equation
+#' @title Definition function: Calculate saturated water vapor pressure from temperature using Magnus equation
 
 #' @author
 #' Stefan Metzger \email{eddy4R.info@gmail.com} \cr
@@ -46,7 +46,7 @@ def.pres.h2o.sat.temp.mag <- function(temp) {
 
     if(!is.na(tempMean)) {
     
-        if (tempMean >= eddy4R.base::Intl.Conv$CelsKelv[1]) {
+        if (tempMean >= eddy4R.base::IntlConv$CelsKelv[1]) {
           #temp >= 273.15 K (0 degC):
           #Saturation water vapor pressure:
           presH2oSat <- (CnstLoc$Cnst01 * exp((CnstLoc$Cnst02 * eddy4R.base::def.unit.conv(data=temp,unitFrom="K",unitTo="C")) / (CnstLoc$Cnst03 + eddy4R.base::def.unit.conv(data=temp,unitFrom="K",unitTo="C"))))*100

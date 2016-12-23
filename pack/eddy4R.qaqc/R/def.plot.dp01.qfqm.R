@@ -1,5 +1,5 @@
 ##############################################################################################
-#' @title Plot quality flags and quality metrics (basic L1 data products) 
+#' @title Definition function: Plot quality flags and quality metrics (basic L1 data products) 
 
 #' @author
 #' Cove Sturtevant \email{csturtevant@neoninc.org}

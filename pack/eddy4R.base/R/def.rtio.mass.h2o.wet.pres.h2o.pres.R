@@ -1,5 +1,5 @@
 ##############################################################################################
-#' @title Calculate water vapor wet mass fraction (specific humidity) from water vapor pressure and static pressure
+#' @title Definition function: Calculate water vapor wet mass fraction (specific humidity) from water vapor pressure and static pressure
 
 #' @author 
 #' Stefan Metzger \email{eddy4R.info@gmail.com} \cr
@@ -38,7 +38,7 @@
 
 def.rtio.mass.h2o.wet.pres.h2o.pres <- function(presH2o, pres)  {
   #calculation
-  rtioMassH2oWet <- (eddy4R.base::Intl.Natu$RtioMolmH2oDry * presH2o)/(pres - ((1-eddy4R.base::Intl.Natu$RtioMolmH2oDry) * presH2o))
+  rtioMassH2oWet <- (eddy4R.base::IntlNatu$RtioMolmH2oDry * presH2o)/(pres - ((1-eddy4R.base::IntlNatu$RtioMolmH2oDry) * presH2o))
   
   #return reported object
   return(rtioMassH2oWet)

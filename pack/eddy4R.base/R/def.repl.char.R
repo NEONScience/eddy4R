@@ -1,5 +1,5 @@
 ##############################################################################################
-#' @title Replace character vector elements with entries from a lookup table
+#' @title Definition function: Replace character vector elements with entries from a lookup table
 
 #' @author Stefan Metzger \email{eddy4R.info@gmail.com}
 

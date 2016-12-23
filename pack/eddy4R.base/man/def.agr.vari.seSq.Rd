@@ -2,7 +2,7 @@
 % Please edit documentation in R/def.agr.vari.seSq.R
 \name{def.agr.vari.seSq}
 \alias{def.agr.vari.seSq}
-\title{Determining mean, external, internal and total variance, and squared standard error}
+\title{Definition function: Determining mean, external, internal and total variance, and squared standard error}
 \usage{
 def.agr.vari.seSq(data = data.frame(mean, vari))
 }

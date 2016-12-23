@@ -1,5 +1,5 @@
 ##############################################################################################
-#' @title Lag two datasets, so as to maximise their correlations
+#' @title Definition function: Lag two datasets, so as to maximise their correlations
 
 # type (one of function defintion, function wrapper, workflow, demo): function defintion
 
