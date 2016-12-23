@@ -29,7 +29,7 @@ license: Terms of use of the NEON FIU algorithm repository dated 2015-01-16
 eddy4R.base::def.unit.info.R
 }
 \seealso{
-\code{\link{def.unit.info}}, \code{\link{Intl.Unit$Intl}}, \code{\link{def.unit.conv}}
+\code{\link{def.unit.info}}, \code{\link{IntlUnit$Intl}}, \code{\link{def.unit.conv}}
 }
 \keyword{base,}
 \keyword{conversion,}
