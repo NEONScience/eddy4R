@@ -1,5 +1,5 @@
 ##############################################################################################
-#' @title Combine individual L0 data streams from file
+#' @title Definition function: Combine individual L0 data streams from file
 
 #' @author
 #' Cove Sturtevant \email{csturtevant@neoninc.org}

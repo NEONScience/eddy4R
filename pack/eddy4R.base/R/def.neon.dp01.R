@@ -1,5 +1,5 @@
 ##############################################################################################
-#' @title Create NEON Level 1 data product descriptive statistics
+#' @title Definition function: Create NEON Level 1 data product descriptive statistics
 
 #' @author
 #' Stefan Metzger \email{eddy4R.info@gmail.com} \cr

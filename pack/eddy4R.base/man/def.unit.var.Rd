@@ -2,7 +2,7 @@
 % Please edit documentation in R/def.unit.var.R
 \name{def.unit.var}
 \alias{def.unit.var}
-\title{Assign unit attribute to each variable in a new object from an existing object}
+\title{Definition function: Assign unit attribute to each variable in a new object from an existing object}
 \usage{
 def.unit.var(samp, refe)
 }

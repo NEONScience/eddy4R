@@ -1,5 +1,5 @@
 ##############################################################################################
-#' @title Median and median absolute deviation as robust measures of scale and dispersion
+#' @title Definition function: Median and median absolute deviation as robust measures of scale and dispersion
 
 #' @author Stefan Metzger \email{eddy4R.info@gmail.com}
 

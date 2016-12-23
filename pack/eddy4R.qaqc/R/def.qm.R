@@ -1,5 +1,5 @@
 ##############################################################################################
-#' @title Quality Metrics 
+#' @title Definition function: Quality Metrics 
 
 #' @author
 #' Cove Sturtevant \email{csturtevant@neoninc.org} \cr

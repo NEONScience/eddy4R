@@ -1,5 +1,5 @@
 ##############################################################################################
-#' @title Poisson's equation (adiabatic change) - temperature as function of pressure change
+#' @title Definition function: Poisson's equation (adiabatic change) - temperature as function of pressure change
 
 #' @author 
 #' Stefan Metzger \email{eddy4R.info@gmail.com} \cr
@@ -18,7 +18,7 @@
 
 #' @keywords Currently none
 
-#' @examples temp02 <- def.temp.pres.pois(temp01 = 298.15, pres01 = 845, pres02 = 1000, Kppa = eddy4R.base::Natu$KppaDry)
+#' @examples temp02 <- def.temp.pres.pois(temp01 = 298.15, pres01 = 845, pres02 = 1000, Kppa = eddy4R.base::IntlNatu$KppaDry)
 
 #' @seealso Currently none
 
@@ -35,6 +35,6 @@
 #     rename function to def.temp.pres.pois()
 ##############################################################################################
 
-def.temp.pres.pois <- function(temp01, pres01, pres02, Kppa = eddy4R.base::Natu$KppaDry)   temp02 = temp01 * (pres02/pres01)^Kppa
+def.temp.pres.pois <- function(temp01, pres01, pres02, Kppa = eddy4R.base::IntlNatu$KppaDry)   temp02 = temp01 * (pres02/pres01)^Kppa
 
   

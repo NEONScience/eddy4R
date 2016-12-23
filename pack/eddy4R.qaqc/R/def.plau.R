@@ -1,5 +1,5 @@
 ##############################################################################################
-#' @title Plausibility tests (Range, Step, Persistence, Null, Gap) 
+#' @title Definition function: Plausibility tests (Range, Step, Persistence, Null, Gap) 
 
 #' @author
 #' Cove Sturtevant \email{csturtevant@neoninc.org}

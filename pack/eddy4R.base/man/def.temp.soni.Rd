@@ -2,7 +2,7 @@
 % Please edit documentation in R/def.temp.soni.R
 \name{def.temp.soni}
 \alias{def.temp.soni}
-\title{Calculation of sonic temperature from speed of sound}
+\title{Definition function: Calculation of sonic temperature from speed of sound}
 \usage{
 def.temp.soni(veloSoni)
 }

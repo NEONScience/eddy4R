@@ -1,5 +1,5 @@
 ##############################################################################################
-#' @title Calculate water vapor pressure from saturated water vapor pressure and relative humidity
+#' @title Definition function: Calculate water vapor pressure from saturated water vapor pressure and relative humidity
 
 #' @author 
 #' Stefan Metzger \email{eddy4R.info@gmail.com} \cr

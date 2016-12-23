@@ -1,5 +1,5 @@
 ##############################################################################################
-#' @title Calculate delta(or difference) of signal strength for LI-7200 IRGA
+#' @title Definition function: Calculate delta(or difference) of signal strength for LI-7200 IRGA
 
 #' @author Stefan Metzger \email{eddy4R.info@gmail.com}
 #' Hongyan Luo \email{eddy4R.info@gmail.com}

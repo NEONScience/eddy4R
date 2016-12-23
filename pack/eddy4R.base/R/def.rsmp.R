@@ -1,5 +1,5 @@
 ##############################################################################################
-#' @title Resampling function
+#' @title Definition function: Resampling function
 
 #' @author Stefan Metzger \email{eddy4R.info@gmail.com}
 #' Natchaya Pingintha-Durden

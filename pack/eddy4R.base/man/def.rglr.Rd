@@ -2,7 +2,7 @@
 % Please edit documentation in R/def.rglr.R
 \name{def.rglr}
 \alias{def.rglr}
-\title{Regularizing irregular data to strictly regular / equidistant data}
+\title{Definition function: Regularizing irregular data to strictly regular / equidistant data}
 \usage{
 def.rglr(timeMeas, dataMeas, unitMeas = NULL, BgnRglr = NULL,
   EndRglr = NULL, TzRglr = attributes(BgnRglr)$tzone, FreqRglr,

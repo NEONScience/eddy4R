@@ -2,7 +2,7 @@
 % Please edit documentation in R/def.ssi.diff.R
 \name{def.ssi.diff}
 \alias{def.ssi.diff}
-\title{Calculate delta(or difference) of signal strength for LI-7200 IRGA}
+\title{Definition function: Calculate delta(or difference) of signal strength for LI-7200 IRGA}
 \usage{
 def.ssi.diff(ssiCo2, ssiH2o)
 }

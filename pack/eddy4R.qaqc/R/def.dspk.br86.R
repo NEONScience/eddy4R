@@ -1,5 +1,5 @@
 ##############################################################################################
-#' @title Median filter de-spiking
+#' @title Definition function: Median filter de-spiking
 
 #' @author 
 #' Stefan Metzger \email{eddy4R.info@gmail.com} \cr

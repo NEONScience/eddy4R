@@ -2,7 +2,7 @@
 % Please edit documentation in R/def.dens.mole.air.dry.R
 \name{def.dens.mole.air.dry}
 \alias{def.dens.mole.air.dry}
-\title{Calculation of the molar density of the dry air alone}
+\title{Definition function: Calculation of the molar density of the dry air alone}
 \usage{
 def.dens.mole.air.dry(densMoleAir, densMoleH2o)
 }

@@ -1,5 +1,5 @@
 ##############################################################################################
-#' @title Calculate aggregated variance and squared standard error from a small to large temporal scale.
+#' @title Wrapper function: Calculate aggregated variance and squared standard error from a small to large temporal scale.
 
 #' @author
 #' Ke Xu \email{xuke2012abroad@gmail.com} \cr

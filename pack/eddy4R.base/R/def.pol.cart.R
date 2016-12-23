@@ -1,5 +1,5 @@
 ##############################################################################################
-#' @title Composing azimuth angle from cartesian vector data
+#' @title Definition function: Composing azimuth angle from cartesian vector data
 
 #' @author 
 #' Stefan Metzger \email{eddy4R.info@gmail.com} \cr

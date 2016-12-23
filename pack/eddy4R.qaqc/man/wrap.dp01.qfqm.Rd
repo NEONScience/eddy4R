@@ -2,7 +2,7 @@
 % Please edit documentation in R/wrap.dp01.qfqm.R
 \name{wrap.dp01.qfqm}
 \alias{wrap.dp01.qfqm}
-\title{Generate basic L1 data product, including descriptive statics, quality metrics, and final quality flag}
+\title{Wrapper function: Generate basic L1 data product, including descriptive statics, quality metrics, and final quality flag}
 \usage{
 wrap.dp01.qfqm(data, time = base::as.POSIXlt(base::seq.POSIXt(from =
   base::Sys.time(), by = "sec", length.out = base::length(data[, 1]))),

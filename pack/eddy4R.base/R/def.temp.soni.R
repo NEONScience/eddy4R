@@ -1,6 +1,6 @@
 
 ##############################################################################################
-#' @title Calculation of sonic temperature from speed of sound
+#' @title Definition function: Calculation of sonic temperature from speed of sound
 
 #' @author Stefan Metzger \email{eddy4R.info@gmail.com}
 #' Hongyan Luo \email{eddy4R.info@gmail.com}
@@ -64,7 +64,7 @@ def.temp.soni <- function(
   
   # calculate the sonic tempertaure
   
-  tempSoni <- (veloSoni^2/eddy4R.base::Natu$GmmaDry/(eddy4R.base::Natu$Rg/eddy4R.base::Natu$MolmDry))
+  tempSoni <- (veloSoni^2/eddy4R.base::IntlNatu$GmmaDry/(eddy4R.base::IntlNatu$Rg/eddy4R.base::IntlNatu$MolmDry))
   
   
   # assign output unit

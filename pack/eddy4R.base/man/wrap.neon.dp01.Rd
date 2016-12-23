@@ -2,7 +2,7 @@
 % Please edit documentation in R/wrap.neon.dp01.R
 \name{wrap.neon.dp01}
 \alias{wrap.neon.dp01}
-\title{Create NEON Level 1 data product descriptive statistics across list elements}
+\title{Wrapper function: Create NEON Level 1 data product descriptive statistics across list elements}
 \usage{
 wrap.neon.dp01(data, idx = NULL)
 }
