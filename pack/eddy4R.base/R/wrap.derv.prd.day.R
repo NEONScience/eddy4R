@@ -1,5 +1,5 @@
 ##############################################################################################
-#' @title Calculation of derived quantities (daily extent, native resolution)
+#' @title Wrapper function: Calculation of derived quantities (daily extent, native resolution)
 
 #' @author Stefan Metzger \email{eddy4R.info@gmail.com}
 
