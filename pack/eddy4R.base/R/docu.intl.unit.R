@@ -1,4 +1,4 @@
-#' Unit Representations
+#' Internal data: Parameter set: Unit representations
 #'
 #' Unit base symbols, types, prefixes, associated chemical species, and definition of the 
 #' internal units used in the eddy4R family of packages. \cr

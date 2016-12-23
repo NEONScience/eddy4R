@@ -1,4 +1,4 @@
-#' Natural Constants
+#' Internal data: Parameter set: Natural constants
 #'
 #' Natural constants, such as the ideal gas constant, for use across eddy4R package suite. 
 #' 
