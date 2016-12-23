@@ -6,7 +6,7 @@
 \usage{
 SPEC.fwd(tstamp = POST$UT, data, relmot = POST$veloTAmagn,
   height = POST$lengMCzLS, fre = freq, demean = F, detrend = T,
-  taper = 0.05)
+  taper = 5e-02)
 }
 \arguments{
 \item{Currently}{none}
