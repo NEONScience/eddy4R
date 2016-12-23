@@ -1,5 +1,5 @@
 ##############################################################################################
-#' @title Final Quality Flag
+#' @title Definition function: Final Quality Flag
 
 #' @author
 #' Cove Sturtevant \email{csturtevant@neoninc.org} \cr

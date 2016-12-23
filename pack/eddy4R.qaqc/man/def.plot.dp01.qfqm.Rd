@@ -2,7 +2,7 @@
 % Please edit documentation in R/def.plot.dp01.qfqm.R
 \name{def.plot.dp01.qfqm}
 \alias{def.plot.dp01.qfqm}
-\title{Plot quality flags and quality metrics (basic L1 data products)}
+\title{Definition function: Plot quality flags and quality metrics (basic L1 data products)}
 \usage{
 def.plot.dp01.qfqm(dataDp01, WndwTime = c(min(dataDp01$timeAgrBgn),
   max(dataDp01$timeAgrBgn)), NameQmPlot = sub("Pass", "",

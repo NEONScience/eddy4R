@@ -2,7 +2,7 @@
 % Please edit documentation in R/def.mode.R
 \name{def.mode}
 \alias{def.mode}
-\title{Calculate mode based on a continuous distribution}
+\title{Definition function: Calculate mode based on a continuous distribution}
 \usage{
 def.mode(x)
 }

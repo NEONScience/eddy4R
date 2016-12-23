@@ -1,5 +1,5 @@
 ##############################################################################################
-#' @title Assign unit attribute to each variable in a new object from an existing object
+#' @title Definition function: Assign unit attribute to each variable in a new object from an existing object
 
 #' @author Stefan Metzger \email{eddy4R.info@gmail.com}
 

@@ -2,7 +2,7 @@
 % Please edit documentation in R/def.dens.mass.h2o.press.h2o.temp.R
 \name{def.dens.mass.h2o.press.h2o.temp}
 \alias{def.dens.mass.h2o.press.h2o.temp}
-\title{Calculate absolute humidity from water vapor pressure and ambient temperature}
+\title{Definition function: Calculate absolute humidity from water vapor pressure and ambient temperature}
 \usage{
 def.dens.mass.h2o.press.h2o.temp(presH2o, temp)
 }

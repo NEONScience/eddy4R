@@ -1,5 +1,5 @@
 ##############################################################################################
-#' @title Binning data
+#' @title Definition function: Binning data
 
 #' @author Stefan Metzger \email{eddy4R.info@gmail.com} \cr
 #' Natchaya Pingintha-Durden

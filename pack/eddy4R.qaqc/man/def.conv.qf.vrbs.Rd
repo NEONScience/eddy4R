@@ -2,7 +2,7 @@
 % Please edit documentation in R/def.conv.qf.vrbs.R
 \name{def.conv.qf.vrbs}
 \alias{def.conv.qf.vrbs}
-\title{Convert from non-verbose to verbose output of quality tests}
+\title{Definition function: Convert from non-verbose to verbose output of quality tests}
 \usage{
 def.conv.qf.vrbs(posQf, numRow)
 }

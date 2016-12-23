@@ -1,5 +1,5 @@
 ##############################################################################################
-#' @title Apply polynomial conversion  
+#' @title Definition function: Apply polynomial conversion  
 
 #' @author 
 #' Cove Sturtevant \email{eddy4R.info@gmail.com}

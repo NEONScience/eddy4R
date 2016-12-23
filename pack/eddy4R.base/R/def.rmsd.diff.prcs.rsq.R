@@ -1,5 +1,5 @@
 ##############################################################################################
-#' @title RMSD, bias, precision and coefficient of determination - incl. deadband
+#' @title Definition function: RMSD, bias, precision and coefficient of determination - incl. deadband
 
 #' @author Stefan Metzger \email{eddy4R.info@gmail.com} \cr
 #' @author Hongyan Luo \email{eddy4R.info@gmail.com}

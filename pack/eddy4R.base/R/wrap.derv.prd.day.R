@@ -1,5 +1,5 @@
 ##############################################################################################
-#' @title Calculation of derived quantities (daily extent, native resolution)
+#' @title Wrapper function: Calculation of derived quantities (daily extent, native resolution)
 
 #' @author Stefan Metzger \email{eddy4R.info@gmail.com}
 
@@ -36,7 +36,7 @@
 
 wrap.derv.prd.day <- function(
   data,
-  SiteInfoLoca
+  ZoneTime
 ) {
 
 # time
@@ -54,7 +54,7 @@ wrap.derv.prd.day <- function(
   
   # calculate local standard time
   tmp <- data$time$UTC[]
-  attributes(tmp)$tzone <- SiteInfoLoca$Tz
+  attributes(tmp)$tzone <- ZoneTime
   data$time$Loca <- ff::as.ff(tmp)
   base::attr(x = data$time$Loca, which = "unit") <- "YYYY-MM-DD hh:mm:ss.sss"
 
@@ -64,21 +64,21 @@ wrap.derv.prd.day <- function(
 #irga
 
   # average signal strength
-  data$irga$ssiMean <- ff::as.ff(def.ssi.mean(ssiCo2 = data$irga$ssiCO2, ssiH2o = data$irga$ssiH2O))
+  data$irga$ssiMean <- ff::as.ff(def.ssi.mean(ssiCo2 = data$irga$ssiCo2, ssiH2o = data$irga$ssiH2o))
 
   # delta signal strength
-  data$irga$ssiDiff <- def.ssi.diff(ssiCo2 = data$irga$ssiCO2, ssiH2o = data$irga$ssiH2O)
+  data$irga$ssiDiff <- def.ssi.diff(ssiCo2 = data$irga$ssiCo2, ssiH2o = data$irga$ssiH2o)
  
   # total pressure in irga cell
-  data$irga$presSum <- def.pres.sum(presAtm = data$irga$presAtmBox, presDiff = data$irga$presGageCell)
+  data$irga$presSum <- def.pres.sum(presAtm = data$irga$presAtm, presDiff = data$irga$presDiff)
 
   # average temperature in irga cell 
-  data$irga$tempMean <- def.temp.mean.7200(tempIn = data$irga$tempCellIn, tempOut = data$irga$tempCellOut)
+  data$irga$tempMean <- def.temp.mean.7200(tempIn = data$irga$tempIn, tempOut = data$irga$tempOut)
  
   # RH in cell
 
     # water vapor partial pressure
-    data$irga$presH2o <- ff::as.ff(def.pres.h2o.rtio.mole.h2o.dry.pres(rtioMoleDryH2o = data$irga$fdMoleH2O, pres = data$irga$presSum))
+    data$irga$presH2o <- ff::as.ff(def.pres.h2o.rtio.mole.h2o.dry.pres(rtioMoleDryH2o = data$irga$rtioMoleDryH2o, pres = data$irga$presSum))
     base::attr(x = data$irga$presH2o, which = "unit") <- "Pa"
 
     # water vapor saturation pressure
@@ -97,12 +97,23 @@ wrap.derv.prd.day <- function(
   data$irga$densMoleAir <- def.dens.mole.air(presSum = data$irga$presSum, tempMean = data$irga$tempMean)
   
   # molar density of dry air alone
-  data$irga$densMoleAirDry <- def.dens.mole.air.dry(densMoleAir = data$irga$densMoleAir, densMoleH2o = data$irga$rhoMoleH2O)
+  data$irga$densMoleAirDry <- def.dens.mole.air.dry(densMoleAir = data$irga$densMoleAir, densMoleH2o = data$irga$densMoleH2o)
 
   # wet mass fraction (specific humidity)
-  data$irga$rtioMassH2o <- def.rtio.mass.h2o.dens.mole(densMoleH2o = data$irga$rhoMoleH2O, densMoleAirDry = data$irga$densMoleAirDry)
+  data$irga$rtioMassH2o <- def.rtio.mass.h2o.dens.mole(densMoleH2o = data$irga$densMoleH2o, densMoleAirDry = data$irga$densMoleAirDry)
 
 # soni
+  
+  # correction for attitude and motion via AMRS
+
+  # rotate wind vector into meteorological coordinate system (positive from west, south and below)
+  
+  # magnitude of horizontal wind speed
+  data$soni$veloXaxsYaxsErth <- sqrt(data$soni$veloXaxs^2 + data$soni$veloYaxs^2)
+
+  # wind direction
+  # need to redo for vector averaging, see REYNflux_P5.R line 139
+  # data$angZaxsErth <- eddy4R.base::def.pol.cart(matrix(c(data$v_met, data$u_met), ncol=2))
   
   # sonic temperature [K] from speed of sound [m s-1] (Campbell Scientific, Eq. (9))
   data$soni$tempSoni <- def.temp.soni(veloSoni = data$soni$veloSoni)
@@ -120,6 +131,9 @@ wrap.derv.prd.day <- function(
   
   # data$soni
   data$soni <- data$soni[names(data$soni)[order(tolower(names(data$soni)))]]
+  
+  # data$soniAmrs
+  data$soniAmrs <- data$soniAmrs[names(data$soniAmrs)[order(tolower(names(data$soniAmrs)))]]
 
 # return results
 return(data)

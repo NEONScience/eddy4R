@@ -2,7 +2,7 @@
 % Please edit documentation in R/def.neon.ecte.dp01.qf.grup.R
 \name{def.neon.ecte.dp01.qf.grup}
 \alias{def.neon.ecte.dp01.qf.grup}
-\title{Grouping the quality flags for each of NEON eddy-covariance turbulent exchange L1 data product}
+\title{Definition function: Grouping the quality flags for each of NEON eddy-covariance turbulent exchange L1 data product}
 \usage{
 def.neon.ecte.dp01.qf.grup(qfSens00, qfSens01 = NULL, qfSens02 = NULL,
   dp01 = c("irgaCo2", "irgaH2o", "soni", "soniAmrs")[1])

@@ -1,4 +1,4 @@
-#' Natural Constants
+#' Internal data: Parameter set: Natural constants
 #'
 #' Natural constants, such as the ideal gas constant, for use across eddy4R package suite. 
 #' 
@@ -32,4 +32,4 @@
 #' }
 #' @source Natural constants are defined within flow.save.intl.cnst.R,
 #'  available in the data-raw/ folder of the source version of the package
-"Natu"
+"IntlNatu"

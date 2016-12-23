@@ -1,5 +1,5 @@
 ##############################################################################################
-#' @title Decomposing azimuth angles to cartesian vectors
+#' @title Definition function: Decomposing azimuth angles to cartesian vectors
 
 #' @author 
 #' Stefan Metzger \email{eddy4R.info@gmail.com} \cr

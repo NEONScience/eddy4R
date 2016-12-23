@@ -1,5 +1,5 @@
 ##############################################################################################
-#' @title Grouping the quality flags for each of NEON eddy-covariance turbulent exchange L1 data product
+#' @title Definition function: Grouping the quality flags for each of NEON eddy-covariance turbulent exchange L1 data product
 
 #' @author Natchaya Pingintha-Durden \email{ndurden@neoninc.org} \cr
 #' 

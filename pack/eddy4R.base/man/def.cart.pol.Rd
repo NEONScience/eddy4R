@@ -2,7 +2,7 @@
 % Please edit documentation in R/def.cart.pol.R
 \name{def.cart.pol}
 \alias{def.cart.pol}
-\title{Decomposing azimuth angles to cartesian vectors}
+\title{Definition function: Decomposing azimuth angles to cartesian vectors}
 \usage{
 def.cart.pol(az)
 }

@@ -1,5 +1,5 @@
 ##############################################################################################
-#' @title Calculation of RH from water vapor partial pressure and saturation pressure 
+#' @title Definition function: Calculation of RH from water vapor partial pressure and saturation pressure 
 #' @author Stefan Metzger \email{eddy4R.info@gmail.com}
 #' Hongyan Luo \email{eddy4R.info@gmail.com}
 
@@ -74,7 +74,7 @@ def.rh.pres.h2o.pres.sat.h2o <- function(
     rh <- (presH2o / presH2oSat * 100)
     
     # assign output unit
-    attributes(rh)$unit <- "percent"
+    attributes(rh)$unit <- "%"
     
     # return results
     return(rh) 

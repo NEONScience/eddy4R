@@ -2,7 +2,7 @@
 % Please edit documentation in R/def.dld.zip.R
 \name{def.dld.zip}
 \alias{def.dld.zip}
-\title{Download and extract .zip archives from a web address}
+\title{Definition function: Download and extract .zip archives from a web address}
 \usage{
 def.dld.zip(Inp = list(Url, Dir = tempdir()))
 }
