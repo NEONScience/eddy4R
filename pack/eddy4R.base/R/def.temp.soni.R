@@ -1,6 +1,6 @@
 
 ##############################################################################################
-#' @title Calculation of sonic temperature from speed of sound
+#' @title Definition function: Calculation of sonic temperature from speed of sound
 
 #' @author Stefan Metzger \email{eddy4R.info@gmail.com}
 #' Hongyan Luo \email{eddy4R.info@gmail.com}
