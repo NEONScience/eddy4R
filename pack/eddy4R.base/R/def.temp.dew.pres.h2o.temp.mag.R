@@ -1,5 +1,5 @@
 ##############################################################################################
-#' @title Calculate dew point temperature from water vapor pressure and ambient temperature using Magnus equation
+#' @title Definition function: Calculate dew point temperature from water vapor pressure and ambient temperature using Magnus equation
 
 #' @author 
 #' Stefan Metzger \email{eddy4R.info@gmail.com} \cr

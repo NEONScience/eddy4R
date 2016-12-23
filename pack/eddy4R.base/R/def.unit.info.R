@@ -1,5 +1,5 @@
 ##############################################################################################
-#' @title Interpret unit string
+#' @title Definition function: Interpret unit string
 
 #' @author 
 #' Cove Sturtevant \email{eddy4R.info@gmail.com}
