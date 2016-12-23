@@ -5,7 +5,7 @@
 \title{Poisson's equation (adiabatic change) - density as function of pressure change}
 \usage{
 def.dens.pres.pois(dens01, pres01, pres02,
-  Kppa = eddy4R.base::Intl.Natu$KppaDry)
+  Kppa = eddy4R.base::IntlNatu$KppaDry)
 }
 \arguments{
 \item{\code{dens01}}{Measured density, Amount per volume [same unit as returned density, e.g. kg/m3 or kmol/m3].}
@@ -23,7 +23,7 @@ Densities at reference pressure [same unit as measured density]
 Poisson's equation (adiabatic change) - density as function of pressure change.
 }
 \examples{
-dens02 <- def.dens.pres.pois(dens01 = 1.056, pres01 = 845, pres02 = 1000, Kppa = eddy4R.base::Intl.Natu$KppaDry)
+dens02 <- def.dens.pres.pois(dens01 = 1.056, pres01 = 845, pres02 = 1000, Kppa = eddy4R.base::IntlNatu$KppaDry)
 }
 \author{
 Stefan Metzger \email{eddy4R.info@gmail.com} \cr
