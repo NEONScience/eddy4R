@@ -2,7 +2,7 @@
 % Please edit documentation in R/maxcor.r
 \name{maxcor}
 \alias{maxcor}
-\title{Lag two datasets, so as to maximise their correlations}
+\title{Definition function: Lag two datasets, so as to maximise their correlations}
 \usage{
 maxcor(ref, obs, refDATA = ref, obsDATA = obs, obsVARS = NULL,
   maxlag = 2 * freq_loc, hardlag = FALSE, nplag = c("n", "p", "np")[3],
