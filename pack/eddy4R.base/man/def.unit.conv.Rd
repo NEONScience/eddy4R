@@ -2,7 +2,7 @@
 % Please edit documentation in R/def.unit.conv.R
 \name{def.unit.conv}
 \alias{def.unit.conv}
-\title{Unit conversion}
+\title{Definition function: Unit conversion}
 \usage{
 def.unit.conv(data, unitFrom = "arb", unitTo = "arb",
   coefPoly = base::lapply(base::as.data.frame(data), function(x) c(0, 1)),

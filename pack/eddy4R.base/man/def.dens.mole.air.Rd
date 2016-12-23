@@ -2,7 +2,7 @@
 % Please edit documentation in R/def.dens.mole.air.R
 \name{def.dens.mole.air}
 \alias{def.dens.mole.air}
-\title{Calculation of the molar density of the mixture of dry air and water vapor}
+\title{Definition function: Calculation of the molar density of the mixture of dry air and water vapor}
 \usage{
 def.dens.mole.air(presSum, tempMean)
 }

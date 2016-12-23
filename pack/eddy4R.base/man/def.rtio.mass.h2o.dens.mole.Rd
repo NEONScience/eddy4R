@@ -2,7 +2,7 @@
 % Please edit documentation in R/def.rtio.mass.h2o.dens.mole.R
 \name{def.rtio.mass.h2o.dens.mole}
 \alias{def.rtio.mass.h2o.dens.mole}
-\title{Calculation of the wet mass fraction (specifc humidity) from mole density of water vapor and mole density of dry air}
+\title{Definition function: Calculation of the wet mass fraction (specifc humidity) from mole density of water vapor and mole density of dry air}
 \usage{
 def.rtio.mass.h2o.dens.mole(densMoleH2o, densMoleAirDry)
 }

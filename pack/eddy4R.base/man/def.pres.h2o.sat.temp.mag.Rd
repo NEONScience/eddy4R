@@ -2,7 +2,7 @@
 % Please edit documentation in R/def.pres.h2o.sat.temp.mag.R
 \name{def.pres.h2o.sat.temp.mag}
 \alias{def.pres.h2o.sat.temp.mag}
-\title{Calculate saturated water vapor pressure from temperature using Magnus equation}
+\title{Definition function: Calculate saturated water vapor pressure from temperature using Magnus equation}
 \usage{
 def.pres.h2o.sat.temp.mag(temp)
 }

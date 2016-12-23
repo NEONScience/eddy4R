@@ -2,7 +2,7 @@
 % Please edit documentation in R/def.temp.pres.pois.R
 \name{def.temp.pres.pois}
 \alias{def.temp.pres.pois}
-\title{Poisson's equation (adiabatic change) - temperature as function of pressure change}
+\title{Definition function: Poisson's equation (adiabatic change) - temperature as function of pressure change}
 \usage{
 def.temp.pres.pois(temp01, pres01, pres02,
   Kppa = eddy4R.base::IntlNatu$KppaDry)
