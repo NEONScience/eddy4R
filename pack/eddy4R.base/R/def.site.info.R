@@ -1,5 +1,5 @@
 ##############################################################################################
-#' @title  Load pre-defined site specific information into the global environment
+#' @title  Definition function: Load pre-defined site specific information into the global environment
 
 #' @author Stefan Metzger \email{eddy4R.info@gmail.com}\cr
 #' Dave Durden

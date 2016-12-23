@@ -1,5 +1,5 @@
 ##############################################################################################
-#' @title Determining mean, external, internal and total variance, and squared standard error
+#' @title Definition function: Determining mean, external, internal and total variance, and squared standard error
 
 #' @author Ke Xu \email{xuke2012abroad@gmail.com} \cr
 #' @author Stefan Metzger \email{eddy4R.info@gmail.com}

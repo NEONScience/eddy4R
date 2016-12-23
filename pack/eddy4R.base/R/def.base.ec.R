@@ -1,5 +1,5 @@
 ##############################################################################################
-#' @title Base state for eddy-covariance calculation
+#' @title Definition function: Base state for eddy-covariance calculation
 
 #' @author 
 #' Stefan Metzger \email{eddy4R.info@gmail.com} \cr

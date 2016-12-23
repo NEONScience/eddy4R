@@ -1,6 +1,6 @@
 
 ##############################################################################################
-#' @title Calculation of the molar density of the dry air alone
+#' @title Definition function: Calculation of the molar density of the dry air alone
 
 #' @author Stefan Metzger \email{eddy4R.info@gmail.com}
 #' Hongyan Luo \email{eddy4R.info@gmail.com}
