@@ -2,11 +2,11 @@
 % Please edit documentation in R/spectral.r
 \name{SPEC.plot}
 \alias{SPEC.plot}
-\title{Plot power spectra of up to three variables}
+\title{Definition function: Plot power spectra of up to three variables}
 \usage{
 SPEC.plot(name, IDE, DEP, legtext, labx = NA, laby = NA, colvec = NULL,
   limx = NULL, limy = NULL, setoff = NULL, powerc = NULL,
-  inisub = c(5e-02, Inf))
+  inisub = c(0.05, Inf))
 }
 \arguments{
 \item{Currently}{none}

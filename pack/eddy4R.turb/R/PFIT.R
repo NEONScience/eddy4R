@@ -1,5 +1,5 @@
 ##############################################################################################
-#' @title Determine planar fit coefficients
+#' @title Definition function: Determine planar fit coefficients
 
 #' @author
 #' Ke Xu \email{xuke2012abroad@gmail.com},
@@ -69,7 +69,7 @@ PFIT_det <- function(
 
 
 ##############################################################################################
-#' @title Perform planar fit transformation
+#' @title Definition function: Perform planar fit transformation
 
 #' @author
 #' Ke Xu \email{xuke2012abroad@gmail.com},

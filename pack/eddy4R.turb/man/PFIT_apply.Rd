@@ -2,7 +2,7 @@
 % Please edit documentation in R/PFIT.R
 \name{PFIT_apply}
 \alias{PFIT_apply}
-\title{Perform planar fit transformation}
+\title{Definition function: Perform planar fit transformation}
 \usage{
 PFIT_apply(u_m = data.frame(xaxs, yaxs, zaxs), al = 0, be = 0, b0 = 0)
 }

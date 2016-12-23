@@ -2,7 +2,7 @@
 % Please edit documentation in R/spectral.r
 \name{COSP.fwd}
 \alias{COSP.fwd}
-\title{Generate cospectra}
+\title{Definition function: Generate cospectra}
 \usage{
 COSP.fwd(FS, TS, cparho = 1)
 }

@@ -2,7 +2,7 @@
 % Please edit documentation in R/spectral.r
 \name{const_f}
 \alias{const_f}
-\title{63\% frequency constant after Aubinet (2012) Eq. 4.22}
+\title{Definition function: 63\% frequency constant after Aubinet (2012) Eq. 4.22}
 \usage{
 const_f(t0)
 }

@@ -2,7 +2,7 @@
 % Please edit documentation in R/PFIT.R
 \name{PFIT_det}
 \alias{PFIT_det}
-\title{Determine planar fit coefficients}
+\title{Definition function: Determine planar fit coefficients}
 \usage{
 PFIT_det(u, v, w)
 }

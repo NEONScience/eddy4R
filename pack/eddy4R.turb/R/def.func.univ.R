@@ -1,5 +1,5 @@
 ##############################################################################################
-#' @title Integral over the universal function
+#' @title Definition function: Integral over the universal function
 
 #' @author
 #' Stefan Metzger \email{eddy4R.info@gmail.com} \cr

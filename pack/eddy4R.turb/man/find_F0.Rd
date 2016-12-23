@@ -2,12 +2,12 @@
 % Please edit documentation in R/spectral.r
 \name{find_F0}
 \alias{find_F0}
-\title{Determine cutoff frequency empirically}
+\title{Definition function: Determine cutoff frequency empirically}
 \usage{
 find_F0(f0,
   ide = SPEout$fr_obs[SPEout$fr_whr][which(SPEout$fr_obs[SPEout$fr_whr] >=
-  1e-02)], dep = SPEout$FSunfold[SPEout$fr_whr,
-  fpo][which(SPEout$fr_obs[SPEout$fr_whr] >= 1e-02)], corfac_ref = corfac_out)
+  0.01)], dep = SPEout$FSunfold[SPEout$fr_whr,
+  fpo][which(SPEout$fr_obs[SPEout$fr_whr] >= 0.01)], corfac_ref = corfac_out)
 }
 \arguments{
 \item{Currently}{none}

@@ -2,9 +2,9 @@
 % Please edit documentation in R/footprints.r
 \name{footKM01}
 \alias{footKM01}
-\title{Flux footprint after Kormann & Meixner (2001)}
+\title{Definition function: Flux footprint after Kormann & Meixner (2001)}
 \usage{
-footKM01(angle, Csize, hor, sigV, ustar, zmeas, Lvirt, cutoff = 1e-02)
+footKM01(angle, Csize, hor, sigV, ustar, zmeas, Lvirt, cutoff = 0.01)
 }
 \arguments{
 \item{\code{angle}}{wind direction to rotate the inertial footprint matrix [Deg]}

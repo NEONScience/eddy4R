@@ -2,10 +2,10 @@
 % Please edit documentation in R/spectral.r
 \name{SPEmod}
 \alias{SPEmod}
-\title{Model (co)spectrum after Massman, 2005 (in Lee, 2005)}
+\title{Definition function: Model (co)spectrum after Massman, 2005 (in Lee, 2005)}
 \usage{
 SPEmod(ide = SPEout$fr_obs[SPEout$fr_whr], sc = c("spe", "cos")[2],
-  si = OUT$REYN$mn$sigma[FILE], fx = 1e-01, weight = TRUE)
+  si = OUT$REYN$mn$sigma[FILE], fx = 0.1, weight = TRUE)
 }
 \arguments{
 \item{Currently}{none}

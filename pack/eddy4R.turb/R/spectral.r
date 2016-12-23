@@ -1,5 +1,5 @@
 ##############################################################################################
-#' @title Fast Fourier transform
+#' @title Definition function: Fast Fourier transform
 
 # type (one of function defintion, function wrapper, workflow, demo): function defintion
 
@@ -159,7 +159,7 @@ if(is.numeric(taper)) {
 
 
 ##############################################################################################
-#' @title Plot power spectra of up to three variables
+#' @title Definition function: Plot power spectra of up to three variables
 
 # type (one of function defintion, function wrapper, workflow, demo): function defintion
 
@@ -271,7 +271,7 @@ SPEC.plot <- function(name, IDE, DEP, legtext, labx=NA, laby=NA, colvec=NULL, li
 
 
 ##############################################################################################
-#' @title Generate cospectra
+#' @title Definition function: Generate cospectra
 
 # type (one of function defintion, function wrapper, workflow, demo): function defintion
 
@@ -346,7 +346,7 @@ COSP.fwd <- function(FS, TS, cparho=1) {
 
 
 ##############################################################################################
-#' @title Plot cospectra
+#' @title Definition function: Plot cospectra
 
 # type (one of function defintion, function wrapper, workflow, demo): function defintion
 
@@ -549,7 +549,7 @@ for(i in 1:ncol(fs)) {
 
 
 ##############################################################################################
-#' @title Plot ogives
+#' @title Definition function: Plot ogives
 
 # type (one of function defintion, function wrapper, workflow, demo): function defintion
 
@@ -716,7 +716,7 @@ for(i in 1:ncol(raw)) {
 
 
 ##############################################################################################
-#' @title Model (co)spectrum after Massman, 2005 (in Lee, 2005)
+#' @title Definition function: Model (co)spectrum after Massman, 2005 (in Lee, 2005)
 
 # type (one of function defintion, function wrapper, workflow, demo): function defintion
 
@@ -794,7 +794,7 @@ for(i in 1:ncol(raw)) {
 
   
 ##############################################################################################
-#' @title Determine spectral peak using an Ogive method
+#' @title Definition function: Determine spectral peak using an Ogive method
 
 # type (one of function defintion, function wrapper, workflow, demo): function defintion
 
@@ -934,7 +934,7 @@ for(i in 1:ncol(raw)) {
 
 
 ##############################################################################################
-#' @title Sigmoidal transfer function (Lorentzian)
+#' @title Definition function: Sigmoidal transfer function (Lorentzian)
 
 # type (one of function defintion, function wrapper, workflow, demo): function defintion
 
@@ -973,7 +973,7 @@ fun_TSIG <- function(freq_0, freq) 1 / (1 + (freq / freq_0)^2)
 
 
 ##############################################################################################
-#' @title Determine cutoff frequency empirically 
+#' @title Definition function: Determine cutoff frequency empirically 
 
 # type (one of function defintion, function wrapper, workflow, demo): function defintion
 
@@ -1040,7 +1040,7 @@ find_F0 <- function(
 
 
 ##############################################################################################
-#' @title Determine half-power / cut-off frequency
+#' @title Definition function: Determine half-power / cut-off frequency
 
 # type (one of function defintion, function wrapper, workflow, demo): function defintion
 
@@ -1189,7 +1189,7 @@ find_F0 <- function(
 
 
 ##############################################################################################
-#' @title 63\% frequency constant after Aubinet (2012) Eq. 4.22
+#' @title Definition function: 63\% frequency constant after Aubinet (2012) Eq. 4.22
 
 # type (one of function defintion, function wrapper, workflow, demo): function defintion
 
@@ -1225,7 +1225,7 @@ find_F0 <- function(
 
 
 ##############################################################################################
-#' @title 63\% time constant after Aubinet (2012) Eq. 4.22
+#' @title Definition function: 63\% time constant after Aubinet (2012) Eq. 4.22
 
 # type (one of function defintion, function wrapper, workflow, demo): function defintion
 
