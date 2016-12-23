@@ -1,5 +1,5 @@
 ##############################################################################################
-#' @title Reading NEON HDF5 files
+#' @title Wrapper function: Reading NEON HDF5 files
 
 #' @author Stefan Metzger \email{eddy4R.info@gmail.com}
 
