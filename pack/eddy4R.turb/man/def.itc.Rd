@@ -2,7 +2,7 @@
 % Please edit documentation in R/def.itc.R
 \name{def.itc}
 \alias{def.itc}
-\title{Integral turbulence characteristics}
+\title{Definition function: Integral turbulence characteristics}
 \usage{
 def.itc(stblObkv, lat, VarInp = c("veloXaxs", "veloZaxs", "temp", "all")[4],
   sd, varScal)

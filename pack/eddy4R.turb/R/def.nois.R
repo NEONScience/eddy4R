@@ -1,5 +1,5 @@
 ##############################################################################################
-#' @title Determination of noise and detection limit for eddy-covariance turbulent fluxes
+#' @title Definition function: Determination of noise and detection limit for eddy-covariance turbulent fluxes
 
 #' @author
 #' Stefan Metzger \email{eddy4R.info@gmail.com} \ cr

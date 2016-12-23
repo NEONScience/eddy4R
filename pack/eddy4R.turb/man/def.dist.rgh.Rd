@@ -2,7 +2,7 @@
 % Please edit documentation in R/def.dist.rgh.R
 \name{def.dist.rgh}
 \alias{def.dist.rgh}
-\title{Aerodynamic roughness length}
+\title{Definition function: Aerodynamic roughness length}
 \usage{
 def.dist.rgh(distZaxsMeas, distObkv, veloXaxs, veloFric, RngStblObkv = c(-2,
   1))
