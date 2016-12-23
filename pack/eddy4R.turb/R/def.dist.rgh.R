@@ -1,5 +1,5 @@
 ##############################################################################################
-#' @title Aerodynamic roughness length
+#' @title Definition function: Aerodynamic roughness length
 
 #' @author
 #' Stefan Metzger \email{eddy4R.info@gmail.com} \cr

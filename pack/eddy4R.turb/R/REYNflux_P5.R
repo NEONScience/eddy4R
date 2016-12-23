@@ -1,5 +1,5 @@
 ##############################################################################################
-#' @title Calculate turbulent vertical flux and auxiliary variables
+#' @title Definition function: Calculate turbulent vertical flux and auxiliary variables
 
 #' @author
 #' Stefan Metzger \email{eddy4R.info@gmail.com}
