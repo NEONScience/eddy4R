@@ -5,7 +5,7 @@
 \title{Poisson's equation (adiabatic change) - temperature as function of pressure change}
 \usage{
 def.temp.pres.pois(temp01, pres01, pres02,
-  Kppa = eddy4R.base::Intl.Natu$KppaDry)
+  Kppa = eddy4R.base::IntlNatu$KppaDry)
 }
 \arguments{
 \item{\code{pres01}}{Measured air pressure [same unit as reference pressure]}
@@ -23,7 +23,7 @@ Temperature at refernce pressure [K]
 Poisson's equation (adiabatic change) - temperature as function of pressure change.
 }
 \examples{
-temp02 <- def.temp.pres.pois(temp01 = 298.15, pres01 = 845, pres02 = 1000, Kppa = eddy4R.base::Intl.Natu$KppaDry)
+temp02 <- def.temp.pres.pois(temp01 = 298.15, pres01 = 845, pres02 = 1000, Kppa = eddy4R.base::IntlNatu$KppaDry)
 }
 \author{
 Stefan Metzger \email{eddy4R.info@gmail.com} \cr
