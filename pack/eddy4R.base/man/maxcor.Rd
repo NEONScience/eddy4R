@@ -6,7 +6,7 @@
 \usage{
 maxcor(ref, obs, refDATA = ref, obsDATA = obs, obsVARS = NULL,
   maxlag = 2 * freq_loc, hardlag = FALSE, nplag = c("n", "p", "np")[3],
-  absolute = FALSE, freq_loc = freq_res, hpf = TRUE, FRACmin = 1e-01)
+  absolute = FALSE, freq_loc = freq_res, hpf = TRUE, FRACmin = 0.1)
 }
 \arguments{
 \item{Currently}{none}
