@@ -2,7 +2,7 @@
 % Please edit documentation in R/REYNqaqc_P5.R
 \name{INTsca}
 \alias{INTsca}
-\title{Integral length scales}
+\title{Definition function: Integral length scales}
 \usage{
 INTsca(d_xy_flow, depe)
 }

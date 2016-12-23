@@ -2,10 +2,10 @@
 % Please edit documentation in R/def.nois.R
 \name{def.nois}
 \alias{def.nois}
-\title{Determination of noise and detection limit for eddy-covariance turbulent fluxes}
+\title{Definition function: Determination of noise and detection limit for eddy-covariance turbulent fluxes}
 \usage{
 def.nois(dataTest, dataRefe, idxFlux, AlgBase, corTempPot = TRUE,
-  presTempPot = NULL, ConfLvl = 0.95, CritMax = 0.01, PltfEc = "towr",
+  presTempPot = NULL, ConfLvl = 0.95, CritMax = 1e-02, PltfEc = "towr",
   flagCh4 = TRUE)
 }
 \arguments{

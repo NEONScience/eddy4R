@@ -2,12 +2,12 @@
 % Please edit documentation in R/spectral.r
 \name{find_FX_og}
 \alias{find_FX_og}
-\title{Determine spectral peak using an Ogive method}
+\title{Definition function: Determine spectral peak using an Ogive method}
 \usage{
 find_FX_og(FX, IDE = SPEout$fr_obs[SPEout$fr_whr],
   DEP = SPEout$FScosp[SPEout$fr_whr, 4], SC = c("spe", "cos")[2],
-  SI = OUT$REYN$mn$sigma[FILE], WEIGHT = TRUE, WHR_CRIT = c(0.01, 1),
-  crit_cum = 0.6, plot_path = NULL, meth = c("peak", "corfac")[1])
+  SI = OUT$REYN$mn$sigma[FILE], WEIGHT = TRUE, WHR_CRIT = c(1e-02, 1),
+  crit_cum = 6e-01, plot_path = NULL, meth = c("peak", "corfac")[1])
 }
 \arguments{
 \item{Currently}{none}
