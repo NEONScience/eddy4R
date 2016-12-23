@@ -2,7 +2,7 @@
 % Please edit documentation in R/def.dens.pres.pois.R
 \name{def.dens.pres.pois}
 \alias{def.dens.pres.pois}
-\title{Poisson's equation (adiabatic change) - density as function of pressure change}
+\title{Definition function: Poisson's equation (adiabatic change) - density as function of pressure change}
 \usage{
 def.dens.pres.pois(dens01, pres01, pres02,
   Kppa = eddy4R.base::IntlNatu$KppaDry)
