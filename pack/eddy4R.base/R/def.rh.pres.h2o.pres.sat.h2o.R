@@ -1,5 +1,5 @@
 ##############################################################################################
-#' @title Calculation of RH from water vapor partial pressure and saturation pressure 
+#' @title Definition function: Calculation of RH from water vapor partial pressure and saturation pressure 
 #' @author Stefan Metzger \email{eddy4R.info@gmail.com}
 #' Hongyan Luo \email{eddy4R.info@gmail.com}
 

@@ -1,5 +1,5 @@
 ##############################################################################################
-#' @title Global R-environment settings for use with the eddy4R family of R-packages
+#' @title Definition function: Global R-environment settings for use with the eddy4R family of R-packages
 
 #' @author Stefan Metzger \email{eddy4R.info@gmail.com}
 

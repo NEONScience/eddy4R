@@ -1,5 +1,5 @@
 ##############################################################################################
-#' @title Calculation of total pressure in LI-7200 IRGA cell
+#' @title Definition function: Calculation of total pressure in LI-7200 IRGA cell
 
 #' @author Stefan Metzger \email{eddy4R.info@gmail.com}
 #' Hongyan Luo \email{eddy4R.info@gmail.com}

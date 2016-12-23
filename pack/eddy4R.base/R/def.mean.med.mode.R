@@ -1,5 +1,5 @@
 ##############################################################################################
-#' @title Calculate descriptive statistics based on arithmetic mean, median and mode
+#' @title Definition function: Calculate descriptive statistics based on arithmetic mean, median and mode
 
 #' @author 
 #' Stefan Metzger \email{eddy4R.info@gmail.com} \cr

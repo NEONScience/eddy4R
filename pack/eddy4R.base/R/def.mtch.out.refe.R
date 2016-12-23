@@ -1,5 +1,5 @@
 ##############################################################################################
-#' @title Compare output against reference
+#' @title Definition function: Compare output against reference
 
 #' @author
 #' Dave Durden \email{eddy4R.info@gmail.com} 

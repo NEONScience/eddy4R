@@ -1,5 +1,5 @@
 ##############################################################################################
-#' @title Calculation of the average temperature in LI-7200 irga cell
+#' @title Definition function: Calculation of the average temperature in LI-7200 irga cell
 
 #' @author Stefan Metzger \email{eddy4R.info@gmail.com}
 #' Hongyan Luo \email{eddy4R.info@gmail.com}
