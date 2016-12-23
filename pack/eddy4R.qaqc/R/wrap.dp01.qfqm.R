@@ -1,5 +1,5 @@
 ##############################################################################################
-#' @title Generate basic L1 data product, including descriptive statics, quality metrics, and final quality flag 
+#' @title Wrapper function: Generate basic L1 data product, including descriptive statics, quality metrics, and final quality flag 
 
 #' @author
 #' Cove Sturtevant \email{csturtevant@neoninc.org}

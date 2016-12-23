@@ -1,5 +1,5 @@
 ##############################################################################################
-#' @title Convert from non-verbose to verbose output of quality tests
+#' @title Definition function: Convert from non-verbose to verbose output of quality tests
 
 #' @author
 #' Cove Sturtevant \email{csturtevant@neoninc.org} \cr
