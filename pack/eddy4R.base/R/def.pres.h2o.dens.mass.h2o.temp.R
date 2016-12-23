@@ -1,5 +1,5 @@
 ##############################################################################################
-#' @title Calculate water vapor pressure from absolute humidity and ambient temperature
+#' @title Definition function: Calculate water vapor pressure from absolute humidity and ambient temperature
 
 #' @author 
 #' Stefan Metzger \email{eddy4R.info@gmail.com} \cr

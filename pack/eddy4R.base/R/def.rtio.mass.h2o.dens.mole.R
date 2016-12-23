@@ -1,5 +1,5 @@
 #############################################################################################
-#' @title Calculation of the wet mass fraction (specifc humidity) from mole density of water vapor and mole density of dry air
+#' @title Definition function: Calculation of the wet mass fraction (specifc humidity) from mole density of water vapor and mole density of dry air
 
 #' @author Stefan Metzger \email{eddy4R.info@gmail.com}
 #' Hongyan Luo \email{eddy4R.info@gmail.com}

@@ -1,6 +1,6 @@
 
 ##############################################################################################
-#' @title Calculation of the molar density of the mixture of dry air and water vapor
+#' @title Definition function: Calculation of the molar density of the mixture of dry air and water vapor
 
 #' @author Stefan Metzger \email{eddy4R.info@gmail.com}
 #' Hongyan Luo \email{eddy4R.info@gmail.com}

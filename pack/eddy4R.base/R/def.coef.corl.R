@@ -1,5 +1,5 @@
 ##############################################################################################
-#' @title Coriolis coefficient
+#' @title Definition function: Coriolis coefficient
 
 # type (one of function defintion, function wrapper, workflow, demo): function defintion
 
