@@ -1,33 +1,59 @@
-######################################################################################################################################################################################
-#create an HDF5 file with NEON group structure
+##############################################################################################
+#' @title Definition function: Create the ECTE HDF5 file structure
 
-library("rhdf5")
-library(eddy4R.base)
-library(XLConnect)
+#' @author 
+#' Dave Durden \email{ddurden@battelleecology.org}
 
-######################################################################################################################
-#Examples
-######################################################################################################################
-#Example run to create L0 gold files for 4/24/2016 at SERC
-#Setting Site
-#Site <- "SERC"
+#' @description 
+#' Definition function. Function creates the standard NEON HDF5 file structure for the ECTE data products.
+#' @param \code{Date} is the date for the output file being generated.
+#' @param \code{Site} is the site for which the output file is being generated.
+#' @param \code{LevlTowr} is the measurement level of the tower top to determine the VER number of the NEON DP naming convention.
+#' @param \code{DirOut} is the output directory where the file being generated is stored.
+#' @param \code{LevlDp} is output file DP level for the file naming.
 
-#LevlTowr <- "000_060"
+#' @return A NEON formatted HDF5 file that is output to /code{DirOut} 
 
-#LevlDp <- "dp01"
+#' @references Currently none.
 
-#Setting Date to be processed
-#Date <- "2016-04-24"
+#' @keywords NEON, HDF5, eddy-covariance, ECTE
 
-#Set directory for example output to working directory
-#DirOut <- getwd()
+#' @examples 
 
-#Running example
-#def.hdf5.crte(Date = Date, Site = Site, LevlTowr = LevlTowr, DirOut = DirOut, LevlDp)
+#'#Example run to create L0 gold files for 4/24/2016 at SERC
+#'#Setting Site
+#'Site <- "SERC"
+#'LevlTowr <- "000_060"
+#'LevlDp <- "dp01"
+
+#'#Setting Date to be processed
+#'Date <- "2016-04-24"
+
+#'#Set directory for example output to working directory
+#'DirOut <- getwd()
+
+#'#Running example
+#'def.hdf5.crte(Date = Date, Site = Site, LevlTowr = LevlTowr, DirOut = DirOut, LevlDp)
+
+#' @seealso Currently none
+
+#' @export
+
+# changelog and author contributions / copyrights
+#   Dave Durden (2016-12-22)
+#     original creation
+
 ##############################################################################################################
 #Start of function call to generate NEON HDF5 files
 ##############################################################################################################
-def.hdf5.crte <- function(Date, Site = "SERC", LevlTowr, DirOut, LevlDp = "dp01"){
+
+def.hdf5.crte <- function(
+  Date, 
+  Site = "SERC", 
+  LevlTowr, 
+  DirOut, 
+  LevlDp = "dp01"
+  ) {
   
   
   #fomatting Date for file names
@@ -65,22 +91,22 @@ def.hdf5.crte <- function(Date, Site = "SERC", LevlTowr, DirOut, LevlDp = "dp01"
   
   #Create the file, create a class
   #Create the file, create a class
-  fid <- H5Fcreate(paste0(DirOut,"/","ECTE_",LevlDp,"_", Site, "_", Date, "_new_format.h5"))
+  fid <- rhdf5::H5Fcreate(paste0(DirOut,"/","ECTE_",LevlDp,"_", Site, "_", Date, "_new_format.h5"))
   #If the file is already created use:
   #fid <- H5Fopen("HDF5TIS_L0_prototype.h5")
   
   #Create a group level for SERC
-  gid <- H5Gcreate(fid, Site) 
+  gid <- rhdf5::H5Gcreate(fid, Site) 
   #If the group is already created use:
   #gid <- H5Gopen(fid,"SERC")
-  dp0pId <- H5Gcreate(gid,"dp0p")
-  dp01Id <- H5Gcreate(gid,"dp01")
+  dp0pId <- rhdf5::H5Gcreate(gid,"dp0p")
+  dp01Id <- rhdf5::H5Gcreate(gid,"dp01")
   
-  dlid <- H5Gcreate(dp0pId,"data")
-  dl1id <- H5Gcreate(dp01Id,"data")
+  dlid <- rhdf5::H5Gcreate(dp0pId,"data")
+  dl1id <- rhdf5::H5Gcreate(dp01Id,"data")
   
-  qflid <- H5Gcreate(dp0pId,"qfqm")
-  qf1id <- H5Gcreate(dp01Id,"qfqm")
+  qflid <- rhdf5::H5Gcreate(dp0pId,"qfqm")
+  qf1id <- rhdf5::H5Gcreate(dp01Id,"qfqm")
   
   #Create a function to create group levels for each L0 DP
   #grpCrte <- function(x) H5Gcreate(gid, x)
@@ -90,65 +116,65 @@ def.hdf5.crte <- function(Date, Site = "SERC", LevlTowr, DirOut, LevlDp = "dp01"
   #lapply(grpList, grpCrte)
   
   #Creating level 0p file structures
-  lapply(grpList, function(x) H5Gcreate(dlid, x))
-  lapply(grpList, function(x) H5Gcreate(qflid, x))
+  lapply(grpList, function(x) rhdf5::H5Gcreate(dlid, x))
+  lapply(grpList, function(x) rhdf5::H5Gcreate(qflid, x))
   
   #Creating level 1 file structures
   
-  grpListDp01 <- c("amrs", "irgaCo2", "irgaH2o", "soni")
-  lapply(grpListDp01, function(x) H5Gcreate(dl1id, x))
-  lapply(grpListDp01, function(x) H5Gcreate(qf1id, x))
-  lapply(grpListDp01, function(x) H5Gcreate(dl1id, paste0(x,"/",LevlTowr)))
-  lapply(grpListDp01, function(x) H5Gcreate(qf1id, paste0(x,"/",LevlTowr)))
+  grpListDp01 <- c("soniAmrs", "irgaCo2", "irgaH2o", "soni")
+  lapply(grpListDp01, function(x) rhdf5::H5Gcreate(dl1id, x))
+  lapply(grpListDp01, function(x) rhdf5::H5Gcreate(qf1id, x))
+  lapply(grpListDp01, function(x) rhdf5::H5Gcreate(dl1id, paste0(x,"/",LevlTowr)))
+  lapply(grpListDp01, function(x) rhdf5::H5Gcreate(qf1id, paste0(x,"/",LevlTowr)))
   
   #lapply(seq_len(nrow(attrSiteList)), function(x) h5writeAttribute(attrSiteList[x,"Field Description"], h5obj = gid, name = attrSiteList[x,"fieldName"]))
   
   #Used to write the datasets into the groups with attributes attached.
-  dgid <- H5Oopen(dlid,"soni_001")
-  qfid <- H5Oopen(qflid,"soni_001")
+  dgid <- rhdf5::H5Oopen(dlid,"soni_001")
+  qfid <- rhdf5::H5Oopen(qflid,"soni_001")
   #h5writeAttribute(attributes(dataList$soni)$unit, h5obj = dgid, name = "unit")
   #h5writeAttribute(attributes(dataList$soni)$names, h5obj = dgid, name = "names")
   #lapply(seq_along(nrow(attrDpNameList)), function(x) h5writeAttribute(attrDpNameList[x,"Field Description"], h5obj = dgid, name = attrDpNameList[x,"fieldName"]))
-  d02gid <- H5Gcreate(dgid,LevlTowr)
-  qf02gid <- H5Gcreate(qfid,LevlTowr)
+  d02gid <- rhdf5::H5Gcreate(dgid,LevlTowr)
+  qf02gid <- rhdf5::H5Gcreate(qfid,LevlTowr)
   #lapply(seq_len(nrow(attrDataList)), function(x) h5writeAttribute(attrDataList[x,"Field Description"], h5obj = d02gid, name = attrDataList[x,"fieldName"]))
   #H5Gclose(dgid)
   
   #Writing Data for SoniAmrs############################################################
-  dgid <- H5Oopen(dlid,"soniAmrs_001")
-  qfid <- H5Oopen(qflid,"soniAmrs_001")
+  dgid <- rhdf5::H5Oopen(dlid,"soniAmrs_001")
+  qfid <- rhdf5::H5Oopen(qflid,"soniAmrs_001")
   #h5writeAttribute(attributes(dataList$soniAmrs)$unit, h5obj = dgid, name = "unit")
   #h5writeAttribute(attributes(dataList$soniAmrs)$names, h5obj = dgid, name = "names")
   #lapply(seq_along(nrow(attrDpNameList)), function(x) h5writeAttribute(attrDpNameList[x,"Field Description"], h5obj = dgid, name = attrDpNameList[x,"fieldName"]))
-  d02gid <- H5Gcreate(dgid,LevlTowr)
-  qf02gid <- H5Gcreate(qfid,LevlTowr)
+  d02gid <- rhdf5::H5Gcreate(dgid,LevlTowr)
+  qf02gid <- rhdf5::H5Gcreate(qfid,LevlTowr)
   #lapply(seq_len(nrow(attrDataList)), function(x) h5writeAttribute(attrDataList[x,"Field Description"], h5obj = d02gid, name = attrDataList[x,"fieldName"]))
   
   #Writing IRGA data####################################################################
-  dgid <- H5Oopen(dlid,"irga_001") #Open H5 connection
-  qfid <- H5Oopen(qflid,"irga_001")
+  dgid <- rhdf5::H5Oopen(dlid,"irga_001") #Open H5 connection
+  qfid <- rhdf5::H5Oopen(qflid,"irga_001")
   #h5writeAttribute(attributes(dataList$irga)$unit, h5obj = dgid, name = "unit")
   #h5writeAttribute(attributes(dataList$irga)$names, h5obj = dgid, name = "names")
   #lapply(seq_along(nrow(attrDpNameList)), function(x) h5writeAttribute(attrDpNameList[x,"Field Description"], h5obj = dgid, name = attrDpNameList[x,"fieldName"]))
-  d02gid <- H5Gcreate(dgid,LevlTowr)
-  qf02gid <- H5Gcreate(qfid,LevlTowr)
+  d02gid <- rhdf5::H5Gcreate(dgid,LevlTowr)
+  qf02gid <- rhdf5::H5Gcreate(qfid,LevlTowr)
   #lapply(seq_len(nrow(attrDataList)), function(x) h5writeAttribute(attrDataList[x,"Field Description"], h5obj = d02gid, name = attrDataList[x,"fieldName"]))
   
   #Used to write the datasets into the groups with attributes attached.
-  dgid <- H5Oopen(dlid,"irgaMfcSamp_001")
-  qfid <- H5Oopen(qflid,"irgaMfcSamp_001")
+  dgid <- rhdf5::H5Oopen(dlid,"irgaMfcSamp_001")
+  qfid <- rhdf5::H5Oopen(qflid,"irgaMfcSamp_001")
   #h5writeDataset.data.frame(obj = qfIrgaMfcSampOut, h5loc = qfid, name = LevlTowr, DataFrameAsCompound = FALSE)
   #h5writeAttribute(attributes(dataList$irgaMfcSamp)$unit, h5obj = dgid, name = "unit")
   #h5writeAttribute(attributes(dataList$irgaMfcSamp)$names, h5obj = dgid, name = "names")
   #lapply(seq_along(nrow(attrDpNameList)), function(x) h5writeAttribute(attrDpNameList[x,"Field Description"], h5obj = dgid, name = attrDpNameList[x,"fieldName"]))
-  d02gid <- H5Gcreate(dgid,LevlTowr)
-  qf02gid <- H5Gcreate(qfid,LevlTowr)
+  d02gid <- rhdf5::H5Gcreate(dgid,LevlTowr)
+  qf02gid <- rhdf5::H5Gcreate(qfid,LevlTowr)
   #lapply(seq_len(nrow(attrDataList)), function(x) h5writeAttribute(attrDataList[x,"Field Description"], h5obj = d02gid, name = attrDataList[x,"fieldName"]))
   
   
   #Close all the connections to the file before exiting
-  H5Gclose(dgid)
-  H5Gclose(gid)
-  H5Fclose(fid)
-  H5close()
+  rhdf5::H5Gclose(dgid)
+  rhdf5::H5Gclose(gid)
+  rhdf5::H5Fclose(fid)
+  rhdf5::H5close()
 }
