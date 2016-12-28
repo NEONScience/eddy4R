@@ -124,9 +124,10 @@ def.hdf5.crte <- function(
   grpListDp01 <- c("soniAmrs", "irgaCo2", "irgaH2o", "soni")
   lapply(grpListDp01, function(x) rhdf5::H5Gcreate(dl1id, x))
   lapply(grpListDp01, function(x) rhdf5::H5Gcreate(qf1id, x))
-  lapply(grpListDp01, function(x) rhdf5::H5Gcreate(dl1id, paste0(x,"/",LevlTowr)))
-  lapply(grpListDp01, function(x) rhdf5::H5Gcreate(qf1id, paste0(x,"/",LevlTowr)))
-  
+  lapply(grpListDp01, function(x) rhdf5::H5Gcreate(dl1id, paste0(x,"/",LevlTowr,"_30m")))
+  lapply(grpListDp01, function(x) rhdf5::H5Gcreate(dl1id, paste0(x,"/",LevlTowr,"_01m")))
+  lapply(grpListDp01, function(x) rhdf5::H5Gcreate(qf1id, paste0(x,"/",LevlTowr,"_30m")))
+  lapply(grpListDp01, function(x) rhdf5::H5Gcreate(qf1id, paste0(x,"/",LevlTowr,"_01m")))
   #lapply(seq_len(nrow(attrSiteList)), function(x) h5writeAttribute(attrSiteList[x,"Field Description"], h5obj = gid, name = attrSiteList[x,"fieldName"]))
   
   #Used to write the datasets into the groups with attributes attached.
