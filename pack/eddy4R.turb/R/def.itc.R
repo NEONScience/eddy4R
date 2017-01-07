@@ -1,5 +1,5 @@
 ##############################################################################################
-#' @title Integral turbulence characteristics
+#' @title Definition function: Integral turbulence characteristics
 
 #' @author
 #' Stefan Metzger \email{eddy4R.info@gmail.com} \cr

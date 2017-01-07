@@ -2,7 +2,7 @@
 % Please edit documentation in R/spectral.r
 \name{SPEC.fwd}
 \alias{SPEC.fwd}
-\title{Fast Fourier transform}
+\title{Definition function: Fast Fourier transform}
 \usage{
 SPEC.fwd(tstamp = POST$UT, data, relmot = POST$veloTAmagn,
   height = POST$lengMCzLS, fre = freq, demean = F, detrend = T,

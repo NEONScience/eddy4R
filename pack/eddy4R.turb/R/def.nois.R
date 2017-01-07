@@ -1,5 +1,5 @@
 ##############################################################################################
-#' @title Determination of noise and detection limit for eddy-covariance turbulent fluxes
+#' @title Definition function: Determination of noise and detection limit for eddy-covariance turbulent fluxes
 
 #' @author
 #' Stefan Metzger \email{eddy4R.info@gmail.com} \ cr
@@ -17,7 +17,7 @@
 #' "ord03" is the least squares 3rd order polynomial fit.
 #' @param \code{corTempPot} Logical value indicating whether or not to use potential temperature in the flux calculation. Defaults to TRUE. [-]
 #' @param \code{presTempPot} A vector containing the air pressure data that will be used in the calculation when \code{corTempPot} = TRUE. Of class "numeric" or "integer" and of the same length as \code{dataTest} or single entry. [Pa]
-#' @param \code{ConfLevl} The confidence level at which the detection limit is calculated. Of class "numeric", defaults to 0.95. [-]
+#' @param \code{ConfLvl} The confidence level at which the detection limit is calculated. Of class "numeric", defaults to 0.95. [-]
 #' @param \code{CritMax} The stop criterion for the iteration. Of class "numeric", defaults to 0.01 (i.e., 1 percent change among subsequent runs). [-]
 #' @param \code{PltfEc} A specifier indicating which eddy covariance platform data are processed. Should be either "airc" or "towr". Defaults to "airc". [-]
 #' @param \code{flagCh4} A logical indicating whether or not methane flux is processed. Defaults to TRUE. [-]
@@ -67,7 +67,7 @@ def.nois <- function(
   # pressure level for potential quantities
   presTempPot = NULL,
   # confidence level for detection limit
-  ConfLevl = 0.95,
+  ConfLvl = 0.95,
   # criterion to stop iteration (0.01 = 1% change among subsequent realizations)
   CritMax = 0.01,
   PltfEc = "towr",
@@ -116,7 +116,7 @@ def.nois <- function(
     base::names(noisSd) <- idxFlux
     
     # detection limit (recast of signal-to-noise criterion after Park et al., 2013), at provided confidence level
-    confVar <- stats::qnorm((1 - ConfLevl)/2, lower.tail = FALSE)
+    confVar <- stats::qnorm((1 - ConfLvl)/2, lower.tail = FALSE)
     noisMax <- base::abs(noisBias) + confVar * noisSd
     base::names(noisMax) <- idxFlux
     

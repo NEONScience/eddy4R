@@ -2,7 +2,7 @@
 % Please edit documentation in R/def.func.univ.R
 \name{def.func.univ}
 \alias{def.func.univ}
-\title{Integral over the universal function}
+\title{Definition function: Integral over the universal function}
 \usage{
 def.func.univ(distZaxsMeas, distObkv, RngStblObkv = c(-2, 1))
 }

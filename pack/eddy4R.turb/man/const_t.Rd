@@ -2,7 +2,7 @@
 % Please edit documentation in R/spectral.r
 \name{const_t}
 \alias{const_t}
-\title{63\% time constant after Aubinet (2012) Eq. 4.22}
+\title{Definition function: 63\% time constant after Aubinet (2012) Eq. 4.22}
 \usage{
 const_t(f0)
 }

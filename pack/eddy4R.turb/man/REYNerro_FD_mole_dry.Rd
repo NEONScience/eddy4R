@@ -2,7 +2,7 @@
 % Please edit documentation in R/REYNqaqc_P5.R
 \name{REYNerro_FD_mole_dry}
 \alias{REYNerro_FD_mole_dry}
-\title{Statistical errors for fluxes}
+\title{Definition function: Statistical errors for fluxes}
 \usage{
 REYNerro_FD_mole_dry(isca, mn, rc, Lf, COI = 0)
 }

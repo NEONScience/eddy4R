@@ -1,6 +1,6 @@
 
 ##############################################################################################
-#' @title Integral length scales
+#' @title Definition function: Integral length scales
 
 #' @author
 #' Stefan Metzger \email{eddy4R.info@gmail.com}
@@ -88,7 +88,7 @@ INTsca <- function(
 
 
 ##############################################################################################
-#' @title Statistical errors for fluxes
+#' @title Definition function: Statistical errors for fluxes
 
 #' @author
 #' Stefan Metzger \email{eddy4R.info@gmail.com}
@@ -273,7 +273,7 @@ REYNerro_FD_mole_dry <- function(
 
 
 ##############################################################################################
-#' @title Detection limit for fluxes
+#' @title Definition function: Detection limit for fluxes
 
 #' @author
 #' Stefan Metzger \email{eddy4R.info@gmail.com}
@@ -304,7 +304,7 @@ REYNerro_FD_mole_dry <- function(
 
 
 ##############################################################################################
-#' @title Flux computation sequence
+#' @title Wrapper function: Flux computation sequence
 
 #' @author
 #' Stefan Metzger \email{eddy4R.info@gmail.com}
@@ -504,7 +504,7 @@ REYNcomp_FD_mole_dry <- function(
       #which entries are fluxes?
       idxFlux=whr_flux,
       #confidence level for detection limit
-      ConfLevl=conf_level,
+      ConfLvl=conf_level,
       #criterion to stop iteration (0.01 = 1% change among subsequent realizations)
       CritMax=crit_iter,
       PltfEc = PltfEc,

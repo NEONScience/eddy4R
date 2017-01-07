@@ -2,7 +2,7 @@
 % Please edit documentation in R/spectral.r
 \name{fun_TSIG}
 \alias{fun_TSIG}
-\title{Sigmoidal transfer function (Lorentzian)}
+\title{Definition function: Sigmoidal transfer function (Lorentzian)}
 \usage{
 fun_TSIG(freq_0, freq)
 }

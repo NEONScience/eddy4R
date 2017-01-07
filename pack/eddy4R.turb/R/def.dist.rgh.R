@@ -1,5 +1,5 @@
 ##############################################################################################
-#' @title Aerodynamic roughness length
+#' @title Definition function: Aerodynamic roughness length
 
 #' @author
 #' Stefan Metzger \email{eddy4R.info@gmail.com} \cr
@@ -61,7 +61,7 @@ def.dist.rgh <- function(
   rm(tmp)
   
   #calculation of roughness length distRgh [m]
-  distRgh <- distZaxsMeas / exp(eddy4R.base::Natu$VonkFokn * veloXaxs / veloFric + univFunc)
+  distRgh <- distZaxsMeas / exp(eddy4R.base::IntlNatu$VonkFokn * veloXaxs / veloFric + univFunc)
   names(distRgh) <- "distRgh"
   
   #return result
