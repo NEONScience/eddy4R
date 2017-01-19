@@ -7,7 +7,8 @@
 #' @description 
 #' Definition function to interpret the irga sensor flags from \code{diag01}.
 #' @param \code{diag01} The 32-bit diagnostic stream that is output from the LI7200. 
-
+#' @param \code{MethQf} Switch for quality flag determination for the LI7200, diag01 provides ones for passing quality by default the equals "lico". The "qfqm" method changes the ones to zeros to match the NEON QFQM logic.
+#' 
 #' @return A dataframe (\code{qfIrga}) of sensor specific irga quality flags as described in NEON.DOC.000807.
 
 #' @references NEON.DOC.000807, Licor LI7200 reference manual
@@ -28,7 +29,7 @@
 ##############################################################################################
 
 
-def.qf.irga <- function(diag01){
+def.qf.irga <- function(diag01, MethQf = c("qfqm","lico")[1]){
 
   if(base::is.null(diag01)) {
     stop("Input 'diag01' is required")
@@ -47,7 +48,7 @@ bitsToInt<-function(x) {
 }
 
 #Calculate the IRGA AGC value based on the first 4 bits (0-3) of the binary
-qfIrgaAgc <- sapply(seq_len(nrow(qfIrga)), function(x) (bitsToInt(qfIrga[x,1:4])*6.67)/100)
+qfIrgaAgc <- sapply(seq_len(nrow(qfIrga)), function(x) ((bitsToInt(qfIrga[x,1:4])*6.25)+ 6.25)/100)
 
 #Create outpu dataframe
 qfIrga <- data.frame(qfIrgaAgc, qfIrga[,5:13])
@@ -57,13 +58,14 @@ qfIrga <- data.frame(qfIrgaAgc, qfIrga[,5:13])
 names(qfIrga) <- c("qfIrgaAgc", "qfIrgaSync", "qfIrgaPll", "qfIrgaChop","qfIrgaDetc", "qfIrgaPres", "qfIrgaAux", "qfIrgaTempIn", "qfIrgaTempOut", "qfIrgaHead")
 
 
+if (MethQf == "qfqm"){
 #Change all the 1 values to 0 and 0 to 1 to fit the NEON qfqm framework
 lapply(names(qfIrga[!names(qfIrga) == "qfIrgaAgc"]), function(x) {
   pos <- which(qfIrga[,x] == 1)
   qfIrga[pos,x] <<- as.integer(0)
   qfIrga[-pos,x] <<- as.integer(1)
   qfIrga[,x] <<- as.integer(qfIrga[,x])
-  })
+  })}
 
 #return dataframe
 return(qfIrga)
