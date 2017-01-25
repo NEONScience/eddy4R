@@ -91,91 +91,94 @@ def.hdf5.crte <- function(
   
   #Create the file, create a class
   #Create the file, create a class
-  fid <- rhdf5::H5Fcreate(paste0(DirOut,"/","ECTE_",LevlDp,"_", Site, "_", Date, "_new_format.h5"))
+  fileGrpId <- rhdf5::H5Fcreate(paste0(DirOut,"/","ECTE_",LevlDp,"_", Site, "_", Date, "_new_format.h5"))
   #If the file is already created use:
-  #fid <- H5Fopen("HDF5TIS_L0_prototype.h5")
+  #fileGrpId <- H5Fopen("HDF5TIS_L0_prototype.h5")
   
   #Create a group level for SERC
-  gid <- rhdf5::H5Gcreate(fid, Site) 
+  siteGrpId <- rhdf5::H5Gcreate(fileGrpId, Site) 
   #If the group is already created use:
-  #gid <- H5Gopen(fid,"SERC")
-  dp0pId <- rhdf5::H5Gcreate(gid,"dp0p")
-  dp01Id <- rhdf5::H5Gcreate(gid,"dp01")
+  #siteGrpId <- H5Gopen(fileGrpId,"SERC")
+  dp0pId <- rhdf5::H5Gcreate(siteGrpId,"dp0p")
+  dp01Id <- rhdf5::H5Gcreate(siteGrpId,"dp01")
   
-  dlid <- rhdf5::H5Gcreate(dp0pId,"data")
-  dl1id <- rhdf5::H5Gcreate(dp01Id,"data")
+  dataLvlDp0pId <- rhdf5::H5Gcreate(dp0pId,"data")
+  dataLvlDp01Id <- rhdf5::H5Gcreate(dp01Id,"data")
   
-  qflid <- rhdf5::H5Gcreate(dp0pId,"qfqm")
-  qf1id <- rhdf5::H5Gcreate(dp01Id,"qfqm")
+  qfqmLvlDp0pId <- rhdf5::H5Gcreate(dp0pId,"qfqm")
+  qfqmLvlDp01Id <- rhdf5::H5Gcreate(dp01Id,"qfqm")
   
   #Create a function to create group levels for each L0 DP
-  #grpCrte <- function(x) H5Gcreate(gid, x)
+  #grpCrte <- function(x) H5Gcreate(siteGrpId, x)
   #grpCrte <- function(x) H5Gcreate(dplid, x)
   
   #Apply the function to produce the group levels in the data file
   #lapply(grpList, grpCrte)
   
   #Creating level 0p file structures
-  lapply(grpList, function(x) rhdf5::H5Gcreate(dlid, x))
-  lapply(grpList, function(x) rhdf5::H5Gcreate(qflid, x))
+  lapply(grpList, function(x) rhdf5::H5Gcreate(dataLvlDp0pId, x))
+  lapply(grpList, function(x) rhdf5::H5Gcreate(qfqmLvlDp0pId, x))
   
   #Creating level 1 file structures
   
   grpListDp01 <- c("soniAmrs", "irgaCo2", "irgaH2o", "soni")
-  lapply(grpListDp01, function(x) rhdf5::H5Gcreate(dl1id, x))
-  lapply(grpListDp01, function(x) rhdf5::H5Gcreate(qf1id, x))
-  lapply(grpListDp01, function(x) rhdf5::H5Gcreate(dl1id, paste0(x,"/",LevlTowr,"_30m")))
-  lapply(grpListDp01, function(x) rhdf5::H5Gcreate(dl1id, paste0(x,"/",LevlTowr,"_01m")))
-  lapply(grpListDp01, function(x) rhdf5::H5Gcreate(qf1id, paste0(x,"/",LevlTowr,"_30m")))
-  lapply(grpListDp01, function(x) rhdf5::H5Gcreate(qf1id, paste0(x,"/",LevlTowr,"_01m")))
-  #lapply(seq_len(nrow(attrSiteList)), function(x) h5writeAttribute(attrSiteList[x,"Field Description"], h5obj = gid, name = attrSiteList[x,"fieldName"]))
+  lapply(grpListDp01, function(x) rhdf5::H5Gcreate(dataLvlDp01Id, x))
+  lapply(grpListDp01, function(x) rhdf5::H5Gcreate(qfqmLvlDp01Id, x))
+  lapply(grpListDp01, function(x) rhdf5::H5Gcreate(dataLvlDp01Id, paste0(x,"/",LevlTowr,"_30m")))
+  lapply(grpListDp01, function(x) {
+    print(x)
+    if(x == "soni"){rhdf5::H5Gcreate(dataLvlDp01Id, paste0(x,"/",LevlTowr,"_02m"))} else {rhdf5::H5Gcreate(dataLvlDp01Id, paste0(x,"/",LevlTowr,"_01m"))}})
+  lapply(grpListDp01, function(x) rhdf5::H5Gcreate(qfqmLvlDp01Id, paste0(x,"/",LevlTowr,"_30m")))
+  lapply(grpListDp01, function(x) {
+    if(x == "soni") {rhdf5::H5Gcreate(qfqmLvlDp01Id, paste0(x,"/",LevlTowr,"_02m"))} else {rhdf5::H5Gcreate(qfqmLvlDp01Id, paste0(x,"/",LevlTowr,"_01m"))}})
+  #lapply(seq_len(nrow(attrSiteList)), function(x) h5writeAttribute(attrSiteList[x,"Field Description"], h5obj = siteGrpId, name = attrSiteList[x,"fieldName"]))
   
   #Used to write the datasets into the groups with attributes attached.
-  dgid <- rhdf5::H5Oopen(dlid,"soni_001")
-  qfid <- rhdf5::H5Oopen(qflid,"soni_001")
-  #h5writeAttribute(attributes(dataList$soni)$unit, h5obj = dgid, name = "unit")
-  #h5writeAttribute(attributes(dataList$soni)$names, h5obj = dgid, name = "names")
-  #lapply(seq_along(nrow(attrDpNameList)), function(x) h5writeAttribute(attrDpNameList[x,"Field Description"], h5obj = dgid, name = attrDpNameList[x,"fieldName"]))
-  d02gid <- rhdf5::H5Gcreate(dgid,LevlTowr)
-  qf02gid <- rhdf5::H5Gcreate(qfid,LevlTowr)
-  #lapply(seq_len(nrow(attrDataList)), function(x) h5writeAttribute(attrDataList[x,"Field Description"], h5obj = d02gid, name = attrDataList[x,"fieldName"]))
-  #H5Gclose(dgid)
+  dataGrpId <- rhdf5::H5Oopen(dataLvlDp0pId,"soni_001")
+  qfqmGrpId <- rhdf5::H5Oopen(qfqmLvlDp0pId,"soni_001")
+  #h5writeAttribute(attributes(dataList$soni)$unit, h5obj = dataGrpId, name = "unit")
+  #h5writeAttribute(attributes(dataList$soni)$names, h5obj = dataGrpId, name = "names")
+  #lapply(seq_along(nrow(attrDpNameList)), function(x) h5writeAttribute(attrDpNameList[x,"Field Description"], h5obj = dataGrpId, name = attrDpNameList[x,"fieldName"]))
+  dataHorVerGrpId <- rhdf5::H5Gcreate(dataGrpId,LevlTowr)
+  qfqmHorVerGrpId <- rhdf5::H5Gcreate(qfqmGrpId,LevlTowr)
+  #lapply(seq_len(nrow(attrDataList)), function(x) h5writeAttribute(attrDataList[x,"Field Description"], h5obj = dataHorVerGrpId, name = attrDataList[x,"fieldName"]))
+  #H5Gclose(dataGrpId)
   
   #Writing Data for SoniAmrs############################################################
-  dgid <- rhdf5::H5Oopen(dlid,"soniAmrs_001")
-  qfid <- rhdf5::H5Oopen(qflid,"soniAmrs_001")
-  #h5writeAttribute(attributes(dataList$soniAmrs)$unit, h5obj = dgid, name = "unit")
-  #h5writeAttribute(attributes(dataList$soniAmrs)$names, h5obj = dgid, name = "names")
-  #lapply(seq_along(nrow(attrDpNameList)), function(x) h5writeAttribute(attrDpNameList[x,"Field Description"], h5obj = dgid, name = attrDpNameList[x,"fieldName"]))
-  d02gid <- rhdf5::H5Gcreate(dgid,LevlTowr)
-  qf02gid <- rhdf5::H5Gcreate(qfid,LevlTowr)
-  #lapply(seq_len(nrow(attrDataList)), function(x) h5writeAttribute(attrDataList[x,"Field Description"], h5obj = d02gid, name = attrDataList[x,"fieldName"]))
+  dataGrpId <- rhdf5::H5Oopen(dataLvlDp0pId,"soniAmrs_001")
+  qfqmGrpId <- rhdf5::H5Oopen(qfqmLvlDp0pId,"soniAmrs_001")
+  #h5writeAttribute(attributes(dataList$soniAmrs)$unit, h5obj = dataGrpId, name = "unit")
+  #h5writeAttribute(attributes(dataList$soniAmrs)$names, h5obj = dataGrpId, name = "names")
+  #lapply(seq_along(nrow(attrDpNameList)), function(x) h5writeAttribute(attrDpNameList[x,"Field Description"], h5obj = dataGrpId, name = attrDpNameList[x,"fieldName"]))
+  dataHorVerGrpId <- rhdf5::H5Gcreate(dataGrpId,LevlTowr)
+  qfqmHorVerGrpId <- rhdf5::H5Gcreate(qfqmGrpId,LevlTowr)
+  #lapply(seq_len(nrow(attrDataList)), function(x) h5writeAttribute(attrDataList[x,"Field Description"], h5obj = dataHorVerGrpId, name = attrDataList[x,"fieldName"]))
   
   #Writing IRGA data####################################################################
-  dgid <- rhdf5::H5Oopen(dlid,"irga_001") #Open H5 connection
-  qfid <- rhdf5::H5Oopen(qflid,"irga_001")
-  #h5writeAttribute(attributes(dataList$irga)$unit, h5obj = dgid, name = "unit")
-  #h5writeAttribute(attributes(dataList$irga)$names, h5obj = dgid, name = "names")
-  #lapply(seq_along(nrow(attrDpNameList)), function(x) h5writeAttribute(attrDpNameList[x,"Field Description"], h5obj = dgid, name = attrDpNameList[x,"fieldName"]))
-  d02gid <- rhdf5::H5Gcreate(dgid,LevlTowr)
-  qf02gid <- rhdf5::H5Gcreate(qfid,LevlTowr)
-  #lapply(seq_len(nrow(attrDataList)), function(x) h5writeAttribute(attrDataList[x,"Field Description"], h5obj = d02gid, name = attrDataList[x,"fieldName"]))
+  dataGrpId <- rhdf5::H5Oopen(dataLvlDp0pId,"irga_001") #Open H5 connection
+  qfqmGrpId <- rhdf5::H5Oopen(qfqmLvlDp0pId,"irga_001")
+  #h5writeAttribute(attributes(dataList$irga)$unit, h5obj = dataGrpId, name = "unit")
+  #h5writeAttribute(attributes(dataList$irga)$names, h5obj = dataGrpId, name = "names")
+  #lapply(seq_along(nrow(attrDpNameList)), function(x) h5writeAttribute(attrDpNameList[x,"Field Description"], h5obj = dataGrpId, name = attrDpNameList[x,"fieldName"]))
+  dataHorVerGrpId <- rhdf5::H5Gcreate(dataGrpId,LevlTowr)
+  qfqmHorVerGrpId <- rhdf5::H5Gcreate(qfqmGrpId,LevlTowr)
+  #lapply(seq_len(nrow(attrDataList)), function(x) h5writeAttribute(attrDataList[x,"Field Description"], h5obj = dataHorVerGrpId, name = attrDataList[x,"fieldName"]))
   
   #Used to write the datasets into the groups with attributes attached.
-  dgid <- rhdf5::H5Oopen(dlid,"irgaMfcSamp_001")
-  qfid <- rhdf5::H5Oopen(qflid,"irgaMfcSamp_001")
-  #h5writeDataset.data.frame(obj = qfIrgaMfcSampOut, h5loc = qfid, name = LevlTowr, DataFrameAsCompound = FALSE)
-  #h5writeAttribute(attributes(dataList$irgaMfcSamp)$unit, h5obj = dgid, name = "unit")
-  #h5writeAttribute(attributes(dataList$irgaMfcSamp)$names, h5obj = dgid, name = "names")
-  #lapply(seq_along(nrow(attrDpNameList)), function(x) h5writeAttribute(attrDpNameList[x,"Field Description"], h5obj = dgid, name = attrDpNameList[x,"fieldName"]))
-  d02gid <- rhdf5::H5Gcreate(dgid,LevlTowr)
-  qf02gid <- rhdf5::H5Gcreate(qfid,LevlTowr)
-  #lapply(seq_len(nrow(attrDataList)), function(x) h5writeAttribute(attrDataList[x,"Field Description"], h5obj = d02gid, name = attrDataList[x,"fieldName"]))
+  dataGrpId <- rhdf5::H5Oopen(dataLvlDp0pId,"irgaMfcSamp_001")
+  qfqmGrpId <- rhdf5::H5Oopen(qfqmLvlDp0pId,"irgaMfcSamp_001")
+  #h5writeDataset.data.frame(obj = qfIrgaMfcSampOut, h5loc = qfqmGrpId, name = LevlTowr, DataFrameAsCompound = FALSE)
+  #h5writeAttribute(attributes(dataList$irgaMfcSamp)$unit, h5obj = dataGrpId, name = "unit")
+  #h5writeAttribute(attributes(dataList$irgaMfcSamp)$names, h5obj = dataGrpId, name = "names")
+  #lapply(seq_along(nrow(attrDpNameList)), function(x) h5writeAttribute(attrDpNameList[x,"Field Description"], h5obj = dataGrpId, name = attrDpNameList[x,"fieldName"]))
+  dataHorVerGrpId <- rhdf5::H5Gcreate(dataGrpId,LevlTowr)
+  qfqmHorVerGrpId <- rhdf5::H5Gcreate(qfqmGrpId,LevlTowr)
+  #lapply(seq_len(nrow(attrDataList)), function(x) h5writeAttribute(attrDataList[x,"Field Description"], h5obj = dataHorVerGrpId, name = attrDataList[x,"fieldName"]))
   
   
   #Close all the connections to the file before exiting
-  rhdf5::H5Gclose(dgid)
-  rhdf5::H5Gclose(gid)
-  rhdf5::H5Fclose(fid)
+  rhdf5::H5Gclose(dataGrpId)
+  rhdf5::H5Gclose(siteGrpId)
+  rhdf5::H5Fclose(fileGrpId)
   rhdf5::H5close()
 }
