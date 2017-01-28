@@ -48,7 +48,7 @@
 
 
 #lag two datasets, so as to maximise their correlations
-maxcor <- function(
+def.lag <- function(
   ref,
   obs,
   freq_loc,
