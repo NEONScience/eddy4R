@@ -28,10 +28,10 @@ dens02 <- def.dens.temp.pres.pois(dens01 = 1.056, temp01 = 298.15,temp02 = 288.1
 }
 \author{
 Stefan Metzger \email{eddy4R.info@gmail.com} \cr
-Natchaya P-Durden
+Natchaya Pingintha-Durden \email{ndurden@battelleecology.org}
 }
 \references{
-Currently none
+License: GNU AFFERO GENERAL PUBLIC LICENSE Version 3, 19 November 2007
 }
 \seealso{
 Currently none

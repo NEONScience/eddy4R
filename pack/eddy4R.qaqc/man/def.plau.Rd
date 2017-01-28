@@ -49,11 +49,11 @@ Function definition. Determines inplausible data indices based on user-specified
 Currently none
 }
 \author{
-Cove Sturtevant \email{csturtevant@neoninc.org}
+Cove Sturtevant \email{eddy4R.info@gmail.com}
 }
 \references{
 NEON Algorithm Theoretical Basis Document QA/QC Plausibility Testing (NEON.DOC.011081)
-license: Terms of use of the NEON FIU algorithm repository dated 2015-01-16
+License: GNU AFFERO GENERAL PUBLIC LICENSE Version 3, 19 November 2007
 }
 \seealso{
 Currently none

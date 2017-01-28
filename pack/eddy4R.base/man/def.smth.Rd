@@ -25,11 +25,11 @@ def.smth(data = rnorm(100), span = c(3,3))
 }
 \author{
 Stefan Metzger \email{eddy4R.info@gmail.com} \cr
-Natchaya Pingintha-Durden
+Natchaya Pingintha-Durden \email{ndurden@battelleecology.org}
 }
 \references{
-License: Terms of use of the NEON FIU algorithm repository dated 2015-01-16 \cr
-http://www.stat.rutgers.edu/home/rebecka/Stat565/lab42007.pdf \cr
+License: GNU AFFERO GENERAL PUBLIC LICENSE Version 3, 19 November 2007. \cr
+http://www.stat.rutgers.edu/home/rebecka/Stat565/lab42007.pdf
 }
 \seealso{
 \code{\link[stats]{kernel}}, \code{\link[stats]{kernapply}}

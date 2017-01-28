@@ -49,7 +49,7 @@ NULL
 Stefan Metzger \email{eddy4R.info@gmail.com}
 }
 \references{
-License: Terms of use of the NEON FIU algorithm repository dated 2015-01-16. \cr
+License: GNU AFFERO GENERAL PUBLIC LICENSE Version 3, 19 November 2007.
 }
 \seealso{
 Currently none.

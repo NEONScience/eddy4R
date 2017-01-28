@@ -37,10 +37,10 @@ DirOut <- getwd()
 def.hdf5.crte(Date = Date, Site = Site, LevlTowr = LevlTowr, DirOut = DirOut, LevlDp)
 }
 \author{
-Dave Durden \email{ddurden@battelleecology.org}
+David Durden \email{ddurden@battelleecology.org}
 }
 \references{
-Currently none.
+License: GNU AFFERO GENERAL PUBLIC LICENSE Version 3, 19 November 2007.
 }
 \seealso{
 Currently none
