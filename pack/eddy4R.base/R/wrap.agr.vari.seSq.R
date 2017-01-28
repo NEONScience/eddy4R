@@ -2,7 +2,7 @@
 #' @title Wrapper function: Calculate aggregated variance and squared standard error from a small to large temporal scale.
 
 #' @author
-#' Ke Xu \email{xuke2012abroad@gmail.com} \cr
+#' Ke Xu \email{xuke2012abroad@gmail.com}
 
 #' @description 
 #' Function wrapper. Calculate aggregated variance and squared standard error from a finer to a coarser temporal resolution: from minutely to hourly resolution, from hourly to diurnal cycle, and from diurnal cycle to monthly. The input data can be irregular, because data expansion is included in the current wrapper to generate unbiased mean, variance and squared standard error. 
@@ -20,7 +20,7 @@
 #'                                              if MethAgr is "agrMnth", the dataframe is [n, 1:3] containing mean, variance, square of standard error of the scalar at monthly scale
 
 #' @references 
-#' license: Terms of use of the NEON FIU algorithm repository dated 2015-01-16
+#' License: GNU AFFERO GENERAL PUBLIC LICENSE Version 3, 19 November 2007.
 
 #' @keywords variance, standard error,  aggregate, minutely, hourly, diurnal cycle
 
