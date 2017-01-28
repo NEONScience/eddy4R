@@ -3,7 +3,7 @@
 
 #' @author
 #' Stefan Metzger \email{eddy4R.info@gmail.com} \cr
-#' Natchaya P-Durden
+#' Natchaya Pingintha-Durden \email{ndurden@battelleecology.org}
  
 #' @description Calculate saturated water vapor pressure from temperature using Magnus equation.
 
@@ -12,7 +12,7 @@
 #' @return Saturated water vapor pressure and of the same length as \code{temp}. [Pa]
 
 #' @references
-#' License: Terms of use of the NEON FIU algorithm repository dated 2015-01-16 \cr
+#' License: GNU AFFERO GENERAL PUBLIC LICENSE Version 3, 19 November 2007. \cr
 #' Gueymard, C.: Assessment of the accuracy and computing speed of simplified saturation vapor equations using a new reference dataset, J. Appl. Meteorol., 32, 1294-1300, doi:10.1175/1520-0450(1993)0321294:aotaac2.0.co;2, 1993. \cr
 
 #' @keywords humidity conversion, Magnus equation
