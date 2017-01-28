@@ -1,8 +1,9 @@
 ##############################################################################################
 #' @title Definition function: Binning data
 
-#' @author Stefan Metzger \email{eddy4R.info@gmail.com} \cr
-#' Natchaya Pingintha-Durden
+#' @author
+#' Stefan Metzger \email{eddy4R.info@gmail.com} \cr
+#' Natchaya Pingintha-Durden \email{ndurden@battelleecology.org}
 
 #' @description Function definition. Smooth data using Binning method.
 
@@ -16,7 +17,7 @@
 #' @return \code{idep} A list object of class "numeric" containing the resulted binning of independent variable and of the same length as {widtBin} and \code{depe} a matrix containing the the resulted binning of dependent variable and of the same length as {widtBin}. \cr
 
 #' @references
-#' License: Terms of use of the NEON FIU algorithm repository dated 2015-01-16
+#' License: GNU AFFERO GENERAL PUBLIC LICENSE Version 3, 19 November 2007
 
 #' @keywords bin
 
