@@ -3,12 +3,12 @@
 
 #' @author Stefan Metzger \email{eddy4R.info@gmail.com}
 
-#' @description Wrapper function. Reads the list \code{data} in the format provided by function \code{eddy4R.base::wrap.read.hdf5.neon.eddy()}. For the list entries in \code{data} the following derived quantities are calculated, each through the call to a separate definition function: \cr
+#' @description Wrapper function. Reads the list \code{data} in the format provided by function \code{eddy4R.base::wrap.neon.read.hdf5.eddy()}. For the list entries in \code{data} the following derived quantities are calculated, each through the call to a separate definition function: \cr
 #' \code{data$time}: fractional UTC time, fractional day of year, local standard time;  \cr
 #' \code{data$irga}: average signal strength, delta signal strength, total pressure, average temperature, water vapor partial pressure, water vapor saturation pressure, relative humidity, molar density of air (dry air and water vapor), molar density of dry air, wet mass fraction (specific humidity);  \cr
 #' \code{data$soni}: sonic temperature.
 
-#' @param \code{data} List consisting of \code{ff::ffdf} file-backed objects, in the format provided by function \code{eddy4R.base::wrap.read.hdf5.neon.eddy()}. Of types numeric and integer.
+#' @param \code{data} List consisting of \code{ff::ffdf} file-backed objects, in the format provided by function \code{eddy4R.base::wrap.neon.read.hdf5.eddy()}. Of types numeric and integer.
 #' @param \code{SiteLoca} List consisting of site-specific parameters. Of types numeric, integer and character.
 
 #' @return 

@@ -38,7 +38,7 @@
 # 		full implementation requires updating unit-specific behavior of eddy4R.base::def.rglr()
 ##############################################################################################
         
-wrap.read.hdf5.neon.eddy <- function(
+wrap.neon.read.hdf5.eddy <- function(
   DirInpLoca,
   SiteLoca,
   DateLoca,
