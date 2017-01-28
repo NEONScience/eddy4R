@@ -3,7 +3,7 @@
 
 #' @author 
 #' Stefan Metzger \email{eddy4R.info@gmail.com} \cr
-#' Natchaya Pingintha-Durden
+#' Natchaya Pingintha-Durden \email{ndurden@battelleecology.org}
 
 #' @description Calculate water pressure from absolute humidity and ambient temperature.
 
@@ -13,7 +13,7 @@
 #' @return Water vapor pressure and of the same length as \code{densMassH2o} and \code{temp}. [Pa]
 
 #' @references
-#' License: Terms of use of the NEON FIU algorithm repository dated 2015-01-16
+#' License: GNU AFFERO GENERAL PUBLIC LICENSE Version 3, 19 November 2007
 
 #' @keywords humidity conversion
 
