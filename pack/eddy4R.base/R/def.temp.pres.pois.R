@@ -3,7 +3,7 @@
 
 #' @author 
 #' Stefan Metzger \email{eddy4R.info@gmail.com} \cr
-#' Natchaya P-Durden
+#' Natchaya Pingintha-Durden \email{ndurden@battelleecology.org}
 
 #' @description Poisson's equation (adiabatic change) - temperature as function of pressure change.
 
@@ -14,7 +14,8 @@
 #' 
 #' @return Temperature at refernce pressure [K]
 
-#' @references Currently none
+#' @references
+#' License: GNU AFFERO GENERAL PUBLIC LICENSE Version 3, 19 November 2007
 
 #' @keywords Currently none
 
