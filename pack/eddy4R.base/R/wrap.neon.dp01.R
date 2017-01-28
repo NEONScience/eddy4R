@@ -2,7 +2,7 @@
 #' @title Wrapper function: Create NEON Level 1 data product descriptive statistics across list elements
 
 #' @author
-#' Stefan Metzger \email{eddy4R.info@gmail.com} \cr
+#' Stefan Metzger \email{eddy4R.info@gmail.com}
 
 #' @description 
 #' Wrapper function. Compute NEON Level 1 data product descriptive statistics (mean, minimum, maximum, variance, number of non-NA points) across list elements. 
@@ -18,7 +18,8 @@
 #' \code{num} The number of non-NA values in \code{data}
 #' \code{se} The standard error of the mean of non-NA values in \code{data}
 
-#' @references Currently none.
+#' @references
+#' License: GNU AFFERO GENERAL PUBLIC LICENSE Version 3, 19 November 2007.
 
 #' @keywords average, aggregate, descriptive statistics
 
