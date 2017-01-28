@@ -88,7 +88,7 @@
 #' unitTo = a named list containing the unit character strings of each output variable
 #' 
 #' @references 
-#' license: Terms of use of the NEON FIU algorithm repository dated 2015-01-16
+#' License: GNU AFFERO GENERAL PUBLIC LICENSE Version 3, 19 November 2007.
 
 #' @keywords unit conversion, input units, output units
 
