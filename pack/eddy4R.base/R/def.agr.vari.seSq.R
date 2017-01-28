@@ -1,8 +1,9 @@
 ##############################################################################################
 #' @title Definition function: Determining mean, external, internal and total variance, and squared standard error
 
-#' @author Ke Xu \email{xuke2012abroad@gmail.com} \cr
-#' @author Stefan Metzger \email{eddy4R.info@gmail.com}
+#' @author
+#' Ke Xu \email{xuke2012abroad@gmail.com} \cr
+#' Stefan Metzger \email{eddy4R.info@gmail.com}
 
 #' @description 
 #' Function defintion. Calculates the mean, external, internal and total variance, and the squared standard error over all supplied input values. Useful e.g. to aggregate from daily to monthly resolution by using all provided values, or similar.
@@ -14,7 +15,7 @@
 #' @return Returns a list containing mean \code{mean}, external variance \code{variExt}, internal variance \code{variIntl}, total variance \code{variTota}, and squared standard error \code{seSq} at coarser resolution, e.g. hourly when \code{data} contains 60 minutely values.
 
 #' @references
-#' license: Terms of use of the NEON FIU algorithm repository dated 2015-01-16
+#' License: GNU AFFERO GENERAL PUBLIC LICENSE Version 3, 19 November 2007
 
 #' @keywords standard deviation, standard error, aggregate
 
