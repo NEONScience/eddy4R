@@ -2,8 +2,9 @@
 ##############################################################################################
 #' @title Definition function: Calculation of the molar density of the mixture of dry air and water vapor
 
-#' @author Stefan Metzger \email{eddy4R.info@gmail.com}
-#' Hongyan Luo \email{eddy4R.info@gmail.com}
+#' @author
+#' Stefan Metzger \email{eddy4R.info@gmail.com}
+#' Hongyan Luo \email{hluo@battelleecology.org}
 
 #' @description Function definition. Calculation of the molar density of the misxture of dry air and water vapor
 
@@ -14,7 +15,7 @@
 #' The returned object is the the molar density of the mixture of dry air and water vapor  
 
 #' @references
-#' Currently none.
+#' License: GNU AFFERO GENERAL PUBLIC LICENSE Version 3, 19 November 2007
 
 #' @keywords mole density, temperature, pressure
 
