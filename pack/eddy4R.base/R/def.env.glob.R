@@ -1,7 +1,8 @@
 ##############################################################################################
 #' @title Definition function: Global R-environment settings for use with the eddy4R family of R-packages
 
-#' @author Stefan Metzger \email{eddy4R.info@gmail.com}
+#' @author
+#' Stefan Metzger \email{eddy4R.info@gmail.com}
 
 #' @description Function defintion. To avoid user-location-specific dependencies, the system locale is set to the C language standard. For R in Windows and Mac the 'times' font is defined. Under Unix OS, it is not neccesary to assign font "times". 
 
@@ -13,7 +14,7 @@
 #' if(Sys.info()["sysname"] == "Darwin") quartzFonts(times = quartzFont(rep("Times-Roman", 4)))
 
 #' @references
-#' License: Terms of use of the NEON FIU algorithm repository dated 2015-01-16. \cr
+#' License: GNU AFFERO GENERAL PUBLIC LICENSE Version 3, 19 November 2007. \cr
 #' \url{http://www.inside-r.org/r-doc/base/Sys.setlocale}
 
 #' @keywords global environment
