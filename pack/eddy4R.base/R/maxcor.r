@@ -1,33 +1,49 @@
 ##############################################################################################
-#' @title Definition function: Lag two datasets, so as to maximise their correlations
+#' @title Definition function: Lag two datasets, so as to maximise their cross-correlation
 
-# type (one of function defintion, function wrapper, workflow, demo): function defintion
+#' @author
+#' Stefan Metzger \email{eddy4R.info@gmail.com}
 
-# license: Terms of use of the NEON FIU algorithm repository dated 2015-01-16
+#' @description 
+#' Function definition. Lag two datasets, so as to maximise their cross-correlation.
 
-#' @author Stefan Metzger \email{eddy4R.info@gmail.com}
+#' @param \code{ref} A vector with variable in reference time frame. Of class numeric. [-]
+#' @param \code{obs} A vector with variable in time frame to be adjusted. Of class numeric. [-]
+#' @param \code{freq_loc} Acquisition frequency of ref and obs. Of class ingeter. [Hz]
+#' @param \code{refDATA} A matrix or data.frame with all data that carries the time frame of ref. Defaults to ref. Of any class. [-]
+#' @param \code{obsDATA} A matrix or data.frame with all data that carries the time frame of obs. Defaults to obs. Of any class. [-]
+#' @param \code{obsVARS} A vector specifying if only several columns in obsDATA shall be lagged. Defaults to NULL. Of class integer or character. [-]
+#' @param \code{maxlag} Maximum lag, by default 2 x freq_loc. Of class integer. [-]
+#' @param \code{hardlag} TRUE - interpret maxlag as maximum permissible lag; FALSE - start with maxlag as first estimate and increase iteratively. Defaults to TRUE. Of class logical. [-]
+#' @param \code{nplag} "n" - consider negative lag times only, i.e. obs is expected to lag behind ref; "p" - consider positive lag times only, i.e. ref is expected to lag behind obs; "np" - consider negative and positive lag times. Defaults to "np". Of class character. [-]
+#' @param \code{absolute} TRUE - consider positive and negative correlations when finding lag time; FALSE - consider positive correlations only when finding lag time. Defaults to TRUE. Of class logical. [-]
+#' @param \code{hpf} TRUE - apply Butterworth high-pass filter; FALSE - use raw data. Defaults to TRUE. Of class logical. [-]
+#' @param \code{FRACmin} Minimum fraction of data to attempt lag determination. Defaults to 0.1. Of class numeric. [-]
+
+#' @return Lagged input data and calculation results in a list consisting of:\cr
+#' \code{refDATA} The reference data.
+#' \code{obsDATA} The data that was lagged to coincide with the reference data.
+#' \code{lag} The number of data points by which the lag correction was performed.
+#' \code{ccf} The cross-correction coefficient between ref and obs for the determined lag time.
+
+#' @references 
+#' License: Terms of use of the NEON FIU algorithm repository dated 2015-01-16.
+
+#' @keywords average, aggregate, descriptive statistics
+
+#' @examples Currently none.
+
+#' @seealso Currently none.
+
+#' @export
 
 # changelog and author contributions / copyrights
 #   Stefan Metzger (2014-11-29)
 #     original creation
 #   Stefan Metzger (2015-11-28)
 #     re-formualtion as function() to allow packaging
-
-#' @description Lag two datasets, so as to maximise their correlations.
-
-#' @param Currently none
-
-#' @return Currently none
-
-#' @references Currently none
-
-#' @keywords Currently none
-
-#' @examples Currently none
-
-#' @seealso Currently none
-
-#' @export
+#   Stefan Metzger (2017-01-28)
+#     partial update to eddy4R terms
 ##############################################################################################
 
 
@@ -35,40 +51,17 @@
 maxcor <- function(
   ref,
   obs,
-  refDATA=ref,
-  obsDATA=obs,
-  obsVARS=NULL,
-  maxlag=2*freq_loc,
-  hardlag=FALSE,
-  nplag=c("n", "p", "np")[3],
-  absolute=FALSE,
-  freq_loc=freq_res,
-  hpf=TRUE,
-  FRACmin=0.1
+  freq_loc,
+  refDATA = ref,
+  obsDATA = obs,
+  obsVARS = NULL,
+  maxlag = 2 * freq_loc,
+  hardlag = TRUE,
+  nplag = c("n", "p", "np")[3],
+  absolute = TRUE,
+  hpf = TRUE,
+  FRACmin = 0.1
 ) {
-  
-  #ref: vector with variable in reference time frame
-  #obs: vector with variable in time frame to be adjusted
-  #refDATA: all data that carries time frame of ref
-  #obsDATA: all data that carries time frame of obs
-  #obsVARS: specify if only several columns in obsDATA shall be lagged
-  #maxlag: maximum lag, by default 2s
-  #hardlag: 
-  #TRUE - interpret maxlag as maximum permittable lag;
-  #FALSE - start with maxlag as first estimate and increase interatively
-  #nplag: 
-  #"n" - consider negative lag times only, i.e. obs is expected to lag behind ref;
-  #"p" - consider positive lag times only, i.e. ref is expected to lag behind obs;
-  #"np" - consider negative and positive lag times  
-  #absolute:
-  #TRUE - consider positive and negative corrlations when finding lag time;
-  #FALSE - consider positive corrlations only when finding lag time
-  #hpf
-  #TRUE - apply Butterworth high-pass filter
-  #FALSE - use raw data
-  #FRACmin: minimum fraction of data to attempt lag determination
-  
-  
   
   ###
   #start escape if too few non-NAs in period
