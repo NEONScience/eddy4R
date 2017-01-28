@@ -1,7 +1,8 @@
 ##############################################################################################
 #' @title Definition function: Replace character vector elements with entries from a lookup table
 
-#' @author Stefan Metzger \email{eddy4R.info@gmail.com}
+#' @author
+#' Stefan Metzger \email{eddy4R.info@gmail.com}
 
 #' @description Function defintion. If any of the values in \code{ReplFrom} exist in \code{data}, these values are replaced with the corresponding values in \code{ReplTo}. If none of the values in \code{ReplFrom} exist in \code{data}, then \code{data} is returned unchanged.
 
@@ -13,7 +14,7 @@
 #' Named character vector of the same length as \code{data}, with values specified in \code{ReplFrom} replaced by the corresponding values in \code{ReplTo}. If none of the entries in \code{ReplFrom} exist in \code{data}, then \code{data} is returned unchanged.
 
 #' @references
-#' License: Terms of use of the NEON FIU algorithm repository dated 2015-01-16. \cr
+#' License: GNU AFFERO GENERAL PUBLIC LICENSE Version 3, 19 November 2007.
 
 #' @keywords replacement, character, lookup table
 
