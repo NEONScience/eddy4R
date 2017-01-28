@@ -1,7 +1,8 @@
 ##############################################################################################
 #' @title Wrapper function: Calculation of derived quantities (daily extent, native resolution)
 
-#' @author Stefan Metzger \email{eddy4R.info@gmail.com}
+#' @author
+#' Stefan Metzger \email{eddy4R.info@gmail.com}
 
 #' @description Wrapper function. Reads the list \code{data} in the format provided by function \code{eddy4R.base::wrap.neon.read.hdf5.eddy()}. For the list entries in \code{data} the following derived quantities are calculated, each through the call to a separate definition function: \cr
 #' \code{data$time}: fractional UTC time, fractional day of year, local standard time;  \cr
@@ -15,7 +16,7 @@
 #' The returned object consistes of \code{data}, with the derived variables added to the respective list entry, and all list levels sorted alphabetically.
 
 #' @references
-#' License: Terms of use of the NEON FIU algorithm repository dated 2015-01-16. \cr
+#' License: GNU AFFERO GENERAL PUBLIC LICENSE Version 3, 19 November 2007.
 
 #' @keywords derived, high-frequency, irga, post-processing, pre-processing, sonic, time
 
