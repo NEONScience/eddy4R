@@ -1,8 +1,9 @@
 ##############################################################################################
 #' @title Definition function: Calculate delta(or difference) of signal strength for LI-7200 IRGA
 
-#' @author Stefan Metzger \email{eddy4R.info@gmail.com}
-#' Hongyan Luo \email{eddy4R.info@gmail.com}
+#' @author
+#' Stefan Metzger \email{eddy4R.info@gmail.com}
+#' Hongyan Luo \email{hluo@battelleecology.org}
 
 #' @description Function definition. Calculation of signal strength difference for LI-7200 IRGA.
 
@@ -13,7 +14,7 @@
 #' The returned object is the signal strength difference between the CO2 signal strength and the H2O signal strength.  
 
 #' @references
-#' Currently none.
+#' License: GNU AFFERO GENERAL PUBLIC LICENSE Version 3, 19 November 2007.
 
 #' @keywords signal strength, irga
 
