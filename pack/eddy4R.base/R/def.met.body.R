@@ -1,8 +1,9 @@
 ##############################################################################################
 #' @title Definition function: Coordinate transformation from CSAT3 body coordinate system to meteorological coordinate system
 
-#' @author Stefan Metzger \email{eddy4R.info@gmail.com} \cr
-#' @author Hongyan Luo \email{eddy4R.info@gmail.com}
+#' @author
+#' Stefan Metzger \email{eddy4R.info@gmail.com} \cr
+#' Hongyan Luo \email{hluo@battelleecology.org}
 
 #' @description Function defintion. Coordinate transformation from CSAT3 body coordinate system to meteorological coordiante system.
 
@@ -14,7 +15,7 @@
 #' @return Wind speed in meteorological coordinate system [m s-1]
 
 #' @references
-#' License: Terms of use of the NEON FIU algorithm repository dated 2015-01-16. 
+#' License: GNU AFFERO GENERAL PUBLIC LICENSE Version 3, 19 November 2007. 
 
 #' @keywords coordinate, sonic anemometer, transformation
 
