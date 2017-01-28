@@ -3,7 +3,7 @@
 
 #' @author 
 #' Stefan Metzger \email{eddy4R.info@gmail.com} \cr
-#' Natchaya Pingintha-Durden
+#' Natchaya Pingintha-Durden \email{ndurden@battelleecology.org}
 
 #' @description Calculate absolute humidity from water vapor pressure and ambient temperature.
 
@@ -13,7 +13,7 @@
 #' @return Absolute humidity and of the same length as \code{presH2o} and \code{temp}. [kg m-3]
 
 #' @references
-#' License: Terms of use of the NEON FIU algorithm repository dated 2015-01-16
+#' License: GNU AFFERO GENERAL PUBLIC LICENSE Version 3, 19 November 2007
 
 #' @keywords humidity conversion
 
