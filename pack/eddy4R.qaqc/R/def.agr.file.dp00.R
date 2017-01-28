@@ -2,7 +2,7 @@
 #' @title Definition function: Combine individual L0 data streams from file
 
 #' @author
-#' Cove Sturtevant \email{csturtevant@neoninc.org}
+#' Cove Sturtevant \email{eddy4R.info@gmail.com}
 
 #' @description 
 #' Definition function. Combine (and regularize) L0 data streams downloaded in individual files from the L0 sandbox tool. 
@@ -19,7 +19,8 @@
 #' \code{time} a POSIXlt vector of regularized times corresponding to each row in data. Limits are the min and max of times found within nameFile \cr
 #' \code{data} a named data frame containing the regularized time series of L0 variables found within nameFile
 
-#' @references Currently none
+#' @references
+#' License: GNU AFFERO GENERAL PUBLIC LICENSE Version 3, 19 November 2007
 
 #' @keywords NEON, L0
 
