@@ -27,7 +27,7 @@
 #' \code{ccf} The cross-correction coefficient between ref and obs for the determined lag time.
 
 #' @references 
-#' License: Terms of use of the NEON FIU algorithm repository dated 2015-01-16.
+#' License: GNU AFFERO GENERAL PUBLIC LICENSE Version 3, 19 November 2007.
 
 #' @keywords average, aggregate, descriptive statistics
 
