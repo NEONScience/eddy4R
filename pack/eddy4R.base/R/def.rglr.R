@@ -1,9 +1,10 @@
 ##############################################################################################
 #' @title Definition function: Regularizing irregular data to strictly regular / equidistant data
 
-#' @author Stefan Metzger \email{eddy4R.info@gmail.com}
+#' @author
+#' Stefan Metzger \email{eddy4R.info@gmail.com}
 #' Cove Sturtevant \email{eddy4R.info@gmail.com}
-#' Dave Durden \email{eddy4R.info@gmail.com}
+#' David Durden \email{ddurden@battelleecology.org}
 
 #' @description Function defintion. 
 #' Takes a (potentially) irregularly spaced timeseries \code{timeMeas} of data \code{dataMeas} and returns a strictuly regularly spaced timeseries \code{timeRglr} of data \code{dataRglr}. \strong{ATTENTION}: \code{MethRglr = "zoo"} uses the zoo:na.approx() function, which does not currently abide by its \code{maxgap} argument version 1.7-13. In result, where gaps exist currently the last known value is repeated instead of NAs being inserted. An Email with a request for bugfixing has been sent to \email{Achim.Zeileis@R-project.org} (2016-05-08).  
@@ -28,7 +29,7 @@
 #' @return Returns a list with elements \code{TzRglr}, \code{FreqRglr}, \code{MethRglr}, \code{timeRglr}, and \code{dataRglr}.
 
 #' @references
-#' License: Terms of use of the NEON FIU algorithm repository dated 2015-01-16. \cr
+#' License: GNU AFFERO GENERAL PUBLIC LICENSE Version 3, 19 November 2007. \cr
 #' NEON.DOC.001069 Preprocessing ATBD: The ATBD that describes the CybiEc and CybiDflt regularization methods. \cr
 #' 
 #' @keywords regularization, equidistant, preprocessing
