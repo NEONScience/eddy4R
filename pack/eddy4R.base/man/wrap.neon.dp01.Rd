@@ -54,10 +54,10 @@ Wrapper function. Compute NEON Level 1 data product descriptive statistics (mean
   # [1] "m s-1"
 }
 \author{
-Stefan Metzger \email{eddy4R.info@gmail.com} \cr
+Stefan Metzger \email{eddy4R.info@gmail.com}
 }
 \references{
-Currently none.
+License: GNU AFFERO GENERAL PUBLIC LICENSE Version 3, 19 November 2007.
 }
 \seealso{
 Currently none.

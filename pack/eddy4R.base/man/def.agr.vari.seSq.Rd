@@ -24,11 +24,10 @@ def.vari.seSq.agr(data = data.frame(mean = rnorm(10), vari = rnorm(10)^2))
 }
 \author{
 Ke Xu \email{xuke2012abroad@gmail.com} \cr
-
 Stefan Metzger \email{eddy4R.info@gmail.com}
 }
 \references{
-license: Terms of use of the NEON FIU algorithm repository dated 2015-01-16
+License: GNU AFFERO GENERAL PUBLIC LICENSE Version 3, 19 November 2007
 }
 \seealso{
 Currently none

@@ -31,11 +31,11 @@ df2 <- def.rsmp(data = df,FreqInp = 10,FreqOut = 0.5, MethRsmp = "zoo",ColDisc =
 }
 \author{
 Stefan Metzger \email{eddy4R.info@gmail.com}
-Natchaya Pingintha-Durden
+Natchaya Pingintha-Durden \email{ndurden@battelleecology.org}
 }
 \references{
 Currently none
-License: Terms of use of the NEON FIU algorithm repository dated 2015-01-16
+License: GNU AFFERO GENERAL PUBLIC LICENSE Version 3, 19 November 2007.
 }
 \seealso{
 Currently none

@@ -22,10 +22,10 @@ posQf <- list(var01=list(qfRng = list(fail=c(2,5),na=c(3,10)),qfStep = list(fail
 qf <- def.conv.qf.vrbs(posQf=posQf,numRow=10) # Convert to quality flag values
 }
 \author{
-Cove Sturtevant \email{csturtevant@neoninc.org} \cr
+Cove Sturtevant \email{eddy4R.info@gmail.com} \cr
 }
 \references{
-None
+License: GNU AFFERO GENERAL PUBLIC LICENSE Version 3, 19 November 2007
 }
 \seealso{
 \code{\link[eddy4R.qaqc]{def.plau}}
