@@ -1,8 +1,9 @@
 ##############################################################################################
 #' @title  Definition function: Load pre-defined site specific information into the global environment
 
-#' @author Stefan Metzger \email{eddy4R.info@gmail.com}\cr
-#' Dave Durden
+#' @author
+#' Stefan Metzger \email{eddy4R.info@gmail.com}\cr
+#' David Durden  \email{ddurden@battelleecology.org}
 
 #' @description Load pre-defined site specific information into the global environment.
 
@@ -11,7 +12,7 @@
 #' @return Site specific information provided as a list \code{SiteInfo}
 
 #' @references 
-#' License: Terms of use of the NEON FIU algorithm repository dated 2015-01-16. 
+#' License: GNU AFFERO GENERAL PUBLIC LICENSE Version 3, 19 November 2007. 
 
 #' @keywords site, metadata, preprocessing
 
