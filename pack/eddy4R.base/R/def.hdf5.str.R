@@ -2,7 +2,7 @@
 #' @title Definition function: Create the ECTE HDF5 file structure
 
 #' @author 
-#' Dave Durden \email{ddurden@battelleecology.org}
+#' David Durden \email{ddurden@battelleecology.org}
 
 #' @description 
 #' Definition function. Function creates the standard NEON HDF5 file structure for the ECTE data products.
@@ -14,7 +14,8 @@
 
 #' @return A NEON formatted HDF5 file that is output to /code{DirOut} 
 
-#' @references Currently none.
+#' @references
+#' License: GNU AFFERO GENERAL PUBLIC LICENSE Version 3, 19 November 2007.
 
 #' @keywords NEON, HDF5, eddy-covariance, ECTE
 
