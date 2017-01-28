@@ -1,7 +1,8 @@
 ##############################################################################################
 #' @title Wrapper function: Calculate quality metrics, alpha and beta quality metrics, and final quality flag for the NEON eddy-covariance turbulent exchange data products
 
-#' @author Natchaya Pingintha-Durden \email{ndurden@neoninc.org} \cr
+#' @author
+#' Natchaya Pingintha-Durden \email{ndurden@battelleecology.org}
 
 #' @description Wrapper function. Calculate quality metrics, alpha and beta quality metrics, and final quality flag for the NEON eddy-covariance turbulent exchange data products.
 
@@ -18,7 +19,7 @@
 #' \code{qfSciRevw} A vector of class "numeric", [0,1], containing the scientific review quality flag for L1 sub-data products. [-] \cr
 
 #' @references
-#' License: Terms of use of the NEON FIU algorithm repository dated 2015-01-16
+#' License: GNU AFFERO GENERAL PUBLIC LICENSE Version 3, 19 November 2007.
 
 #' @keywords NEON QAQC, quality flags, quality metrics
 
