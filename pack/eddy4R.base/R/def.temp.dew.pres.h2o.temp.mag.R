@@ -3,7 +3,7 @@
 
 #' @author 
 #' Stefan Metzger \email{eddy4R.info@gmail.com} \cr
-#' Natchaya P-Durden
+#' Natchaya Pingintha-Durden \email{ndurden@battelleecology.org}
 
 #' @description  Calculate dew point temperature from water vapor pressure and ambient temperature using Magnus equation.
 
@@ -14,7 +14,7 @@
 #' @return Dew point temperature and of the same length as \code{presH2o} and \code{temp}. [K]
 
 #' @references
-#' License: Terms of use of the NEON FIU algorithm repository dated 2015-01-16
+#' License: GNU AFFERO GENERAL PUBLIC LICENSE Version 3, 19 November 2007.
 #' Gueymard, C.: Assessment of the accuracy and computing speed of simplified saturation vapor equations using a new reference dataset, J. Appl. Meteorol., 32, 1294-1300, doi:10.1175/1520-0450(1993)0321294:aotaac2.0.co;2, 1993. \cr
 
 #' @keywords dew point, humidity conversion, Magnus equation
