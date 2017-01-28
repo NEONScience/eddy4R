@@ -3,7 +3,7 @@
 
 #' @author 
 #' Stefan Metzger \email{eddy4R.info@gmail.com} \cr
-#' Natchaya Pingintha-Durden
+#' Natchaya Pingintha-Durden \email{ndurden@battelleecology.org}
 
 #' @description Calculate specific humidity from water vapor pressure and static pressure.
 
@@ -13,7 +13,7 @@
 #' @return Specific humidity and of the same length as \code{presH2o} and \code{pres}. [kg kg-1]
 
 #' @references 
-#' License: Terms of use of the NEON FIU algorithm repository dated 2015-01-16
+#' License: GNU AFFERO GENERAL PUBLIC LICENSE Version 3, 19 November 2007.
 
 #' @keywords humidity conversion, specific, ratio
 
