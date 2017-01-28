@@ -42,9 +42,10 @@ Function wrapper. Aggregates Level 0' (calibrated raw) data and accompanying qua
 Currently none
 }
 \author{
-Cove Sturtevant \email{csturtevant@neoninc.org}
+Cove Sturtevant \email{eddy4R.info@gmail.com}
 }
 \references{
+License: GNU AFFERO GENERAL PUBLIC LICENSE Version 3, 19 November 2007.
 NEON Algorithm Theoretical Basis Document: Quality Flags and Quality Metrics for TIS Data Products (NEON.DOC.001113)
 }
 \seealso{

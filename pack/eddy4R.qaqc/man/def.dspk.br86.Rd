@@ -101,7 +101,7 @@ Stefan Metzger \email{eddy4R.info@gmail.com} \cr
 Cove Sturtevant \email{eddy4R.info@gmail.com}
 }
 \references{
-license: Terms of use of the NEON FIU algorithm repository dated 2015-01-16 \cr
+License: GNU AFFERO GENERAL PUBLIC LICENSE Version 3, 19 November 2007. \cr
 Brock, F. V. A Nonlinear Filter to Remove Impulse Noise from Meteorological Data. J. Atmos. Oceanic Technol. 3, 51–58 (1986). \cr
 Starkenburg, D. et al. Assessment of Despiking Methods for Turbulence Data in Micrometeorology. J. Atmos. Oceanic Technol. 33, 2001–2013 (2016). \cr
 Vickers, D. & Mahrt, L. Quality control and flux sampling problems for tower and aircraft data. in 512–526 (Amer Meteorological Soc, 1997). \cr
