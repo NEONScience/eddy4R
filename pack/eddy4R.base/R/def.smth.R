@@ -3,7 +3,7 @@
 
 #' @author 
 #' Stefan Metzger \email{eddy4R.info@gmail.com} \cr
-#' Natchaya Pingintha-Durden
+#' Natchaya Pingintha-Durden \email{ndurden@battelleecology.org}
 
 #' @description Function definition.Data smoothing method.
 
@@ -14,8 +14,8 @@
 #' @return Estimated smooth values and of the same length as \code{data}. []
 
 #' @references 
-#' License: Terms of use of the NEON FIU algorithm repository dated 2015-01-16 \cr
-#' http://www.stat.rutgers.edu/home/rebecka/Stat565/lab42007.pdf \cr
+#' License: GNU AFFERO GENERAL PUBLIC LICENSE Version 3, 19 November 2007. \cr
+#' http://www.stat.rutgers.edu/home/rebecka/Stat565/lab42007.pdf
 
 #' @keywords Kernel smoother
 
