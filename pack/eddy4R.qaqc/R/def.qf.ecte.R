@@ -2,7 +2,7 @@
 #' @title Definition function: Create fake flags for ECTE sensors
 
 #' @author 
-#' Dave Durden \email{ddurden@battelleecology.org}
+#' David Durden \email{ddurden@battelleecology.org}
 
 #' @description 
 #' Workflow. File to create fake flags for soni to test the QAQC test
@@ -14,7 +14,8 @@
 
 #' @return Currently none.
 
-#' @references Currently none.
+#' @references
+#' License: GNU AFFERO GENERAL PUBLIC LICENSE Version 3, 19 November 2007.
 
 #' @keywords NEON, QAQC, SOM
 
