@@ -1,7 +1,8 @@
 ##############################################################################################
 #' @title Definition function: Assign unit attribute to each variable in a new object from an existing object
 
-#' @author Stefan Metzger \email{eddy4R.info@gmail.com}
+#' @author
+#' Stefan Metzger \email{eddy4R.info@gmail.com}
 
 #' @description Function defintion. eddy4R strives to provide a unit attribute individually for each physical parameter and variable in an object. However, most native R functions do not propagate an existing unit attribute in the returned object. The function \code{def.unit.var} fills this gap, by assigning the unit attribute of a parameter/variable that exists (by name) in \code{refe} to the corresponding parameter/variable in \code{samp}. \code{def.unit.var} currently only supports data.frames, but additional methods can be added for lists and ffdf objects.
 
@@ -11,7 +12,7 @@
 #' @return The function returns \code{samp} with the corresponding units from \code{refe} assigned to each of its variables.
 
 #' @references
-#' License: Terms of use of the NEON FIU algorithm repository dated 2015-01-16. \cr
+#' License: GNU AFFERO GENERAL PUBLIC LICENSE Version 3, 19 November 2007.
 
 #' @keywords assign, data.frame, unit, variable
 
