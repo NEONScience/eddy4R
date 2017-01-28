@@ -3,7 +3,7 @@
 
 #' @author 
 #' Stefan Metzger \email{eddy4R.info@gmail.com} \cr
-#' Cove Sturtevant \email{csturtevant@neoninc.org}
+#' Cove Sturtevant \email{eddy4R.info@gmail.com}
 
 #' @description 
 #' Function definition. Determines spike locations based on window-based Gaussian statistics (arithmetic mean and standard deviation) and distribution statistics (median, median absolute deviation).
@@ -33,6 +33,7 @@
 #' \code{qfSpk}: output if \code{Vrbs} is TRUE. A data frame the same size as data with the quality flag values [-1,0,1] for each input variable
 
 #' @references
+#' License: GNU AFFERO GENERAL PUBLIC LICENSE Version 3, 19 November 2007.
 #' Hojstrup, J.: A statistical data screening procedure, Meas. Sci. Technol., 4, 153-157, doi:10.1088/0957-0233/4/2/003, 1993. \cr
 #' Metzger, S., Junkermann, W., Mauder, M., Beyrich, F., Butterbach-Bahl, K., Schmid, H. P., and Foken, T.: Eddy-covariance flux measurements with a weight-shift microlight aircraft, Atmos. Meas. Tech., 5, 1699-1717, doi:10.5194/amt-5-1699-2012, 2012. \cr
 #' Vickers, D., and Mahrt, L.: Quality control and flux sampling problems for tower and aircraft data, J. Atmos. Oceanic Technol., 14, 512-526, doi:10.1175/1520-0426(1997)014<0512:QCAFSP>2.0.CO;2, 1997. \cr
