@@ -3,7 +3,7 @@
 
 #' @author 
 #' Stefan Metzger \email{eddy4R.info@gmail.com} \cr
-#' Natchaya P-Durden
+#' Natchaya Pingintha-Durden \email{ndurden@battelleecology.org}
 
 #' @description Calculate descriptive statistics based on arithmetic mean, median and mode.
 
@@ -16,7 +16,7 @@
 #' @return \code{NumSamp} Sample size which not included NaNs. \cr
 
 #' @references
-#' License: Terms of use of the NEON FIU algorithm repository dated 2015-01-16 \cr
+#' License: GNU AFFERO GENERAL PUBLIC LICENSE Version 3, 19 November 2007 \cr
 #' Croux, C., and Rousseeuw, P. J.: Time-efficient algorithms for two highly robust estimators of scale, Computational Statistics, 1, 411-428, 1992. \cr
 #' http://stackoverflow.com/questions/2547402/standard-library-function-in-r-for-finding-the-mode \cr
 
