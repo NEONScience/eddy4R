@@ -2,7 +2,7 @@
 #' @title Definition function: Convert from non-verbose to verbose output of quality tests
 
 #' @author
-#' Cove Sturtevant \email{csturtevant@neoninc.org} \cr
+#' Cove Sturtevant \email{eddy4R.info@gmail.com} \cr
 
 #' @description 
 #' Function definition. Convert from the non-verbose option (vector positions of failed and na test results) of quality test algorithms to the verbose output (actual quality flag values).  
@@ -12,7 +12,8 @@
 
 #' @return A list of variables matching those in \code{posQf}, each containing a data frame of quality flags for that variable. Number of rows match that of \code{numRow} 
 
-#' @references None
+#' @references
+#' License: GNU AFFERO GENERAL PUBLIC LICENSE Version 3, 19 November 2007
 
 #' @keywords quality flag
 
