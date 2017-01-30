@@ -52,7 +52,7 @@ Currently none
 Cove Sturtevant \email{eddy4R.info@gmail.com}
 }
 \references{
-license: Terms of use of the NEON FIU algorithm repository dated 2015-01-16
+License: GNU AFFERO GENERAL PUBLIC LICENSE Version 3, 19 November 2007.
 }
 \seealso{
 \code{\link{def.unit.conv}}, \code{\link{def.unit.intl}}, \code{\link{IntlUnit$Intl}}

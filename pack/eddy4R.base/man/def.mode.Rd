@@ -20,10 +20,10 @@ def.mode(x = rnorm(100))
 }
 \author{
 Stefan Metzger \email{eddy4R.info@gmail.com} \cr
-Natchaya P-Durden
+Natchaya Pingintha-Durden \email{ndurden@battelleecology.org}
 }
 \references{
-License: Terms of use of the NEON FIU algorithm repository dated 2015-01-16 \cr
+License: GNU AFFERO GENERAL PUBLIC LICENSE Version 3, 19 November 2007 \cr
 http://stackoverflow.com/questions/2547402/standard-library-function-in-r-for-finding-the-mode \cr
 }
 \seealso{

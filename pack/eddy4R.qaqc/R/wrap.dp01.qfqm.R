@@ -2,7 +2,7 @@
 #' @title Wrapper function: Generate basic L1 data product, including descriptive statics, quality metrics, and final quality flag 
 
 #' @author
-#' Cove Sturtevant \email{csturtevant@neoninc.org}
+#' Cove Sturtevant \email{eddy4R.info@gmail.com}
 
 #' @description 
 #' Function wrapper. Aggregates Level 0' (calibrated raw) data and accompanying quality flags and metrics into a basic time-aggregated L1 data product, including descriptive statics, quality metrics, and final quality flag.
@@ -21,7 +21,8 @@
 #' timeAgrEnd - the ending time stamp (non-inclusive) of aggregated L1 data and quality metrics
 #' dataAgr - a list of variables, each containing a data frame of the time-aggregated mean, minimum, maximum, variance, number of points going into the average, and quality metrics (pass, fail, NA) pertaining to that variable for each flag in posQf, as well as the alpha & beta quality metrics and final quality flag.
 
-#' @references 
+#' @references
+#' License: GNU AFFERO GENERAL PUBLIC LICENSE Version 3, 19 November 2007.
 #' NEON Algorithm Theoretical Basis Document: Quality Flags and Quality Metrics for TIS Data Products (NEON.DOC.001113)
 
 #' @keywords NEON QAQC, quality flags and metrics, L1 average, final quality flag

@@ -13,9 +13,8 @@
 #' @return A single character string specifying the corresponding eddy4R internal unit.
 
 #' @references 
-#' license: Terms of use of the NEON FIU algorithm repository dated 2015-01-16
+#' License: GNU AFFERO GENERAL PUBLIC LICENSE Version 3, 19 November 2007.
 #' eddy4R.base::def.unit.info.R
-#' 
 
 #' @keywords unit conversion, internal unit base, input units, output units
 

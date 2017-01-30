@@ -15,7 +15,8 @@
 
 #' @return Coriolis coefficient for \code{lat} [rad s-1].
 
-#' @references Currently none
+#' @references
+#' License: GNU AFFERO GENERAL PUBLIC LICENSE Version 3, 19 November 2007
 
 #' @keywords natural constants
 

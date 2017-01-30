@@ -1,8 +1,9 @@
 ##############################################################################################
 #' @title Definition function: RMSD, bias, precision and coefficient of determination - incl. deadband
 
-#' @author Stefan Metzger \email{eddy4R.info@gmail.com} \cr
-#' @author Hongyan Luo \email{eddy4R.info@gmail.com}
+#' @author
+#' Stefan Metzger \email{eddy4R.info@gmail.com} \cr
+#' Hongyan Luo \email{hluo@battelleecology.org}
 
 #' @description Function defintion.RMSD, bias, precision and coefficient of determination - incl. deadband.  
 
@@ -11,13 +12,11 @@
 #' @param \code{Perc}  Variable of class logical. It describe if the output is in percentage.
 #' @param \code{Deba}  Variable of class numeric. Numbers of the deadband around zero denominator
 #' @param \code{DebaRltv}  Variable of class logical.Absolute or relative (percentage) deadband around zero. True indicates Deba in relative (percentage), False indicates Deba in absolute numbers. 
-#' 
 
 #' @return Currently none
 
-#' @references Currently none
-#' license: Terms of use of the NEON FIU algorithm repository dated 2015-01-16.
-
+#' @references
+#' License: GNU AFFERO GENERAL PUBLIC LICENSE Version 3, 19 November 2007.
 
 #' @keywords RMSD, bias, precision, R-square
 

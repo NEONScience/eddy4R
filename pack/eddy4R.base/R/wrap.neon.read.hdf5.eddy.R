@@ -1,7 +1,8 @@
 ##############################################################################################
 #' @title Wrapper function: Reading NEON HDF5 files
 
-#' @author Stefan Metzger \email{eddy4R.info@gmail.com}
+#' @author
+#' Stefan Metzger \email{eddy4R.info@gmail.com}
 
 #' @description Wrapper function. Reads an HDF5 input file in NEON standard format from \code{DirInpLoca}. Subsequently, (i) name and unit attributes are converted to eddy4R standard terms, (ii) variable units are converted accordingly, (iii) the data is regularized, (iv) sensor diagnostic tests are performed, (v) a range test is performed, and (vi) the data is de-spiked.
 
@@ -17,7 +18,7 @@
 #' Named list containing pre-processed time-series $time and $data.
 
 #' @references
-#' License: Terms of use of the NEON FIU algorithm repository dated 2015-01-16. \cr
+#' License: GNU AFFERO GENERAL PUBLIC LICENSE Version 3, 19 November 2007.
 
 #' @keywords file, read, pre-processing, unit conversion, regularization, diagnostic, range, spike
 
@@ -38,7 +39,7 @@
 # 		full implementation requires updating unit-specific behavior of eddy4R.base::def.rglr()
 ##############################################################################################
         
-wrap.read.hdf5.neon.eddy <- function(
+wrap.neon.read.hdf5.eddy <- function(
   DirInpLoca,
   SiteLoca,
   DateLoca,

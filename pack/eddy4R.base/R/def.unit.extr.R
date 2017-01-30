@@ -2,7 +2,7 @@
 #' @title Definition function: Extract variable with unit attribute from data frame
 
 #' @author 
-#' Cove Sturtevant \email{csturtevant@neoninc.org}
+#' Cove Sturtevant \email{eddy4R.info@gmail.com}
 
 #' @description Function definition. Extracts a variable from a data frame (with units attached as attributes
 #' at the data frame level), and attaches the variable's unit directly to the extracted variable. 
@@ -19,7 +19,7 @@
 #' @return The desired variable with units attached as attribute. 
 #' 
 #' @references 
-#' license: Terms of use of the NEON FIU algorithm repository dated 2015-01-16
+#' License: GNU AFFERO GENERAL PUBLIC LICENSE Version 3, 19 November 2007.
 
 #' @keywords Fulcrum
 

@@ -23,10 +23,10 @@ def.rtio.mass.h2o.wet.pres.h2o.pres(presH2o = c(2212.04, 348.69, 87.17) , pres =
 }
 \author{
 Stefan Metzger \email{eddy4R.info@gmail.com} \cr
-Natchaya Pingintha-Durden
+Natchaya Pingintha-Durden \email{ndurden@battelleecology.org}
 }
 \references{
-License: Terms of use of the NEON FIU algorithm repository dated 2015-01-16
+License: GNU AFFERO GENERAL PUBLIC LICENSE Version 3, 19 November 2007.
 }
 \seealso{
 Currently none

@@ -2,8 +2,8 @@
 #' @title Definition function: Final Quality Flag
 
 #' @author
-#' Cove Sturtevant \email{csturtevant@neoninc.org} \cr
-#' Natchaya Pingintha-Durden \email{ndurdent@neoninc.org} \cr
+#' Cove Sturtevant \email{eddy4R.info@gmail.com} \cr
+#' Natchaya Pingintha-Durden \email{ndurden@battelleecology.org}
 
 #' @description 
 #' Function definition. Determine the final quality flag for individual level 1 data product following the method described in Smith et.al. (2014). The alpha and beta quality flags and metrics are also computed in this function. Performed for the entire set of input data.
@@ -18,6 +18,7 @@
 #' \code{qfqm} A dataframe containing alpha and beta quality metric and final qualiy flag. [-] \cr
 
 #' @references 
+#' License: GNU AFFERO GENERAL PUBLIC LICENSE Version 3, 19 November 2007.
 #' NEON Algorithm Theoretical Basis Document: Quality Flags and Quality Metrics for TIS Data Products (NEON.DOC.001113) \cr
 #' Smith, D.E., Metzger, S., and Taylor, J.R.: A transparent and transferable framework for tracking quality information in large datasets. PLoS ONE, 9(11), e112249.doi:10.1371/journal.pone.0112249, 2014. \cr 
 

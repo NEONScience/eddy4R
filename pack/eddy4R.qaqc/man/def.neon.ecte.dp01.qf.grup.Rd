@@ -37,10 +37,10 @@ qfGrupIrgaCo2 <- def.neon.ecte.dp01.qf.grup(qfSens00 = inp$qf$irga, qfSens01 = i
 qfGrupSoni <- def.neon.ecte.dp01.qf.grup(qfSens00 = inp$qf$soni, qfSens01 = inp$qf$irga, dp01="soni")
 }
 \author{
-Natchaya Pingintha-Durden \email{ndurden@neoninc.org} \cr
+Natchaya Pingintha-Durden \email{ndurden@battelleecology.org}
 }
 \references{
-License: Terms of use of the NEON FIU algorithm repository dated 2015-01-16
+License: GNU AFFERO GENERAL PUBLIC LICENSE Version 3, 19 November 2007
 }
 \seealso{
 Currently none

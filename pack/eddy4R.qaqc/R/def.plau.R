@@ -2,7 +2,7 @@
 #' @title Definition function: Plausibility tests (Range, Step, Persistence, Null, Gap) 
 
 #' @author
-#' Cove Sturtevant \email{csturtevant@neoninc.org}
+#' Cove Sturtevant \email{eddy4R.info@gmail.com}
 
 #' @description 
 #' Function definition. Determines inplausible data indices based on user-specified limits for the data range, step between adjacent values, persistence (similarity of adjacent values), nulls, and gaps.
@@ -28,7 +28,7 @@
 
 #' @references 
 #' NEON Algorithm Theoretical Basis Document QA/QC Plausibility Testing (NEON.DOC.011081)
-#' license: Terms of use of the NEON FIU algorithm repository dated 2015-01-16
+#' License: GNU AFFERO GENERAL PUBLIC LICENSE Version 3, 19 November 2007
 #' 
 #' @keywords NEON QAQC, plausibility, range, step, persistence, null, gap
 

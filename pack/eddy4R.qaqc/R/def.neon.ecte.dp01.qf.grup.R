@@ -1,8 +1,8 @@
 ##############################################################################################
 #' @title Definition function: Grouping the quality flags for each of NEON eddy-covariance turbulent exchange L1 data product
 
-#' @author Natchaya Pingintha-Durden \email{ndurden@neoninc.org} \cr
-#' 
+#' @author
+#' Natchaya Pingintha-Durden \email{ndurden@battelleecology.org}
 
 #' @description Function definition. Grouping the quality flags of each NEON eddy-covariance turbulent exchange L1 data product into a single dataframe for further use in the calculation of Alpha, Beta, and Final flag.
 
@@ -14,7 +14,7 @@
 #' @return A list of data frame of the quality flags related to that sub-data product. \cr
 
 #' @references
-#' License: Terms of use of the NEON FIU algorithm repository dated 2015-01-16
+#' License: GNU AFFERO GENERAL PUBLIC LICENSE Version 3, 19 November 2007
 
 #' @keywords NEON QAQC, quality flags, quality metrics
 

@@ -1,7 +1,8 @@
 ##############################################################################################
 #' @title Definition function: Median and median absolute deviation as robust measures of scale and dispersion
 
-#' @author Stefan Metzger \email{eddy4R.info@gmail.com}
+#' @author
+#' Stefan Metzger \email{eddy4R.info@gmail.com}
 
 #' @description Function defintion. Calculates the median as robust measure of scale, and the sample-size corrected median absolute deviation as robust measure of dispersion. By default, the univariate statistics of the test data \code{test} are returned. If reference data \code{refe} is provided, the bivariate statistics of the residuals \code{test - refe} are returned.
 
@@ -12,7 +13,7 @@
 #' @return Returns object of class "numeric" [1, 1:3] containing median, median absolute deviation, and sample size (NaNs not included).
 
 #' @references
-#' License: Terms of use of the NEON FIU algorithm repository dated 2015-01-16. \cr
+#' License: GNU AFFERO GENERAL PUBLIC LICENSE Version 3, 19 November 2007. \cr
 #' Croux, C., and Rousseeuw, P. J.: Time-efficient algorithms for two highly robust estimators of scale, Computational Statistics, 1, 411-428, 1992. \cr
 
 #' @keywords robust statistics
