@@ -11,7 +11,10 @@
 #' 
 #' @return A dataframe (\code{qfIrga}) of sensor specific irga quality flags as described in NEON.DOC.000807.
 
-#' @references NEON.DOC.000807, Licor LI7200 reference manual
+#' @references 
+#' License: GNU AFFERO GENERAL PUBLIC LICENSE Version 3, 19 November 2007.
+#' NEON Algorithm Theoretical Basis Document:Eddy Covariance Turbulent Exchange Subsystem Level 0 to Level 0’ data product conversions and calculations (NEON.DOC.000807)
+#' Licor LI7200 reference manual
 
 #' @keywords NEON, irga, qfqm
 
@@ -40,31 +43,31 @@ def.qf.irga <- function(diag01, MethQf = c("qfqm","lico")[1]){
   } 
  
 # Turn the diag01 into a matrix of 32 bits separated into columns for the timeseries of diagnostic values  
-qfIrga <- t(sapply(diag01,function(x){ as.integer(intToBits(x))}))
+qfIrga <- t(base::sapply(diag01,function(x){ base::as.integer(base::intToBits(x))}))
 
 # Function to aggregate bits to base 10 representation
 bitsToInt<-function(x) {
-  packBits(rev(c(rep(FALSE, 32-length(x)%%32), as.logical(x))), "integer")
+  packBits(rev(c(rep(FALSE, 32-length(x)%%32), base::as.logical(x))), "integer")
 }
 
 #Calculate the IRGA AGC value based on the first 4 bits (0-3) of the binary
-qfIrgaAgc <- sapply(seq_len(nrow(qfIrga)), function(x) ((bitsToInt(qfIrga[x,1:4])*6.25)+ 6.25)/100)
+qfIrgaAgc <- base::sapply(seq_len(nrow(qfIrga)), function(x) ((bitsToInt(qfIrga[x,1:4])*6.25)+ 6.25)/100)
 
 #Create outpu dataframe
-qfIrga <- data.frame(qfIrgaAgc, qfIrga[,5:13])
+qfIrga <- base::data.frame(qfIrgaAgc, qfIrga[,5:13])
 
 
 #Provide column names to the output
-names(qfIrga) <- c("qfIrgaAgc", "qfIrgaSync", "qfIrgaPll", "qfIrgaChop","qfIrgaDetc", "qfIrgaPres", "qfIrgaAux", "qfIrgaTempIn", "qfIrgaTempOut", "qfIrgaHead")
+base::names(qfIrga) <- c("qfIrgaAgc", "qfIrgaSync", "qfIrgaPll", "qfIrgaChop","qfIrgaDetc", "qfIrgaPres", "qfIrgaAux", "qfIrgaTempIn", "qfIrgaTempOut", "qfIrgaHead")
 
 
 if (MethQf == "qfqm"){
 #Change all the 1 values to 0 and 0 to 1 to fit the NEON qfqm framework
-lapply(names(qfIrga[!names(qfIrga) == "qfIrgaAgc"]), function(x) {
+base::lapply(base::names(qfIrga[!names(qfIrga) == "qfIrgaAgc"]), function(x) {
   pos <- which(qfIrga[,x] == 1)
-  qfIrga[pos,x] <<- as.integer(0)
-  qfIrga[-pos,x] <<- as.integer(1)
-  qfIrga[,x] <<- as.integer(qfIrga[,x])
+  qfIrga[pos,x] <<- base::as.integer(0)
+  qfIrga[-pos,x] <<- base::as.integer(1)
+  qfIrga[,x] <<- base::as.integer(qfIrga[,x])
   })}
 
 #return dataframe
