@@ -1,8 +1,9 @@
 ##############################################################################################
 #' @title Definition function: Calculation of total pressure in LI-7200 IRGA cell
 
-#' @author Stefan Metzger \email{eddy4R.info@gmail.com}
-#' Hongyan Luo \email{eddy4R.info@gmail.com}
+#' @author
+#' Stefan Metzger \email{eddy4R.info@gmail.com}
+#' Hongyan Luo \email{hluo@battelleecology.org}
 
 #' @description Function definition. Calculation of total pressure from static pressure and differential pressure
 
@@ -13,7 +14,7 @@
 #' The returned object is the total pressure calculated by summing the static pressure (presAtm) and the differential pressure (presDiff).  
 
 #' @references
-#' Currently none.
+#' License: GNU AFFERO GENERAL PUBLIC LICENSE Version 3, 19 November 2007.
 
 #' @keywords pressure
 

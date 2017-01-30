@@ -23,10 +23,10 @@ def.pres.h2o.rtio.mole.h2o.dry.pres(rtioMoleDryH2o = c(6.52*1e-6, 11.617*1e-6, 4
 }
 \author{
 Stefan Metzger \email{eddy4R.info@gmail.com} \cr
-Natchaya Pingintha-Durden
+Natchaya Pingintha-Durden \email{ndurden@battelleecology.org}
 }
 \references{
-License: Terms of use of the NEON FIU algorithm repository dated 2015-01-16
+License: GNU AFFERO GENERAL PUBLIC LICENSE Version 3, 19 November 2007
 }
 \seealso{
 Currently none

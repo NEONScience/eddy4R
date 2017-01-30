@@ -27,10 +27,11 @@ Currently none
 }
 \author{
 Stefan Metzger \email{eddy4R.info@gmail.com} \cr
-Cove Sturtevant \email{eddy4R.info@gmail.com}
+Cove Sturtevant \email{eddy4R.info@gmail.com} \cr
+Natchaya Pingintha-Durden \email{ndurden@battelleecology.org}
 }
 \references{
-license: Terms of use of the NEON FIU algorithm repository dated 2015-01-16
+License: GNU AFFERO GENERAL PUBLIC LICENSE Version 3, 19 November 2007
 }
 \seealso{
 Currently none

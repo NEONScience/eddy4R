@@ -1,8 +1,9 @@
 #############################################################################################
 #' @title Definition function: Calculation of the wet mass fraction (specifc humidity) from mole density of water vapor and mole density of dry air
 
-#' @author Stefan Metzger \email{eddy4R.info@gmail.com}
-#' Hongyan Luo \email{eddy4R.info@gmail.com}
+#' @author
+#' Stefan Metzger \email{eddy4R.info@gmail.com}
+#' Hongyan Luo \email{hluo@battelleecology.org}
 
 #' @description Function definition. Calculate the wet mass fraction (specific humidity) of air mixture from mole density of water vapor and mole density of dry air 
 
@@ -13,7 +14,7 @@
 #' The returned object is wet mass fraction (specific humidity)  
 
 #' @references
-#' Currently none.
+#' License: GNU AFFERO GENERAL PUBLIC LICENSE Version 3, 19 November 2007.
 
 #' @keywords specific humidity, mole density
 

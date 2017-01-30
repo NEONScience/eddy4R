@@ -33,10 +33,10 @@ PcntQf <- 0.05
 qfSens <- def.qf.ecte(TimeBgn = TimeBgn, TimeEnd = TimeEnd, Freq = Freq, Sens = Sens, PcntQf = PcntQf)
 }
 \author{
-Dave Durden \email{ddurden@battelleecology.org}
+David Durden \email{ddurden@battelleecology.org}
 }
 \references{
-Currently none.
+License: GNU AFFERO GENERAL PUBLIC LICENSE Version 3, 19 November 2007.
 }
 \seealso{
 Currently none

@@ -3,7 +3,7 @@
 
 #' @author 
 #' Stefan Metzger \email{eddy4R.info@gmail.com} \cr
-#' Natchaya Pingintha-Durden
+#' Natchaya Pingintha-Durden \email{ndurden@battelleecology.org}
 
 #' @description Calculate water vapor pressure from dry mole fraction and static pressure.
 
@@ -13,7 +13,7 @@
 #' @return Water vapor pressure and of the same length as \code{rtioMoleDryH2o} and \code{pres}. [Pa]
 
 #' @references 
-#' License: Terms of use of the NEON FIU algorithm repository dated 2015-01-16
+#' License: GNU AFFERO GENERAL PUBLIC LICENSE Version 3, 19 November 2007
 
 #' @keywords humidity conversion
 

@@ -104,7 +104,7 @@ Currently none
 Cove Sturtevant \email{eddy4R.info@gmail.com}
 }
 \references{
-license: Terms of use of the NEON FIU algorithm repository dated 2015-01-16
+License: GNU AFFERO GENERAL PUBLIC LICENSE Version 3, 19 November 2007.
 }
 \seealso{
 \code{\link{IntlUnit}}, \code{\link{def.unit.info}}, \code{\link{def.unit.intl}}

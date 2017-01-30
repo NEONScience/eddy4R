@@ -1,8 +1,9 @@
 ##############################################################################################
 #' @title Definition function: Resampling function
 
-#' @author Stefan Metzger \email{eddy4R.info@gmail.com}
-#' Natchaya Pingintha-Durden
+#' @author
+#' Stefan Metzger \email{eddy4R.info@gmail.com}
+#' Natchaya Pingintha-Durden \email{ndurden@battelleecology.org}
 
 #' @description Function definition. Resampling data by changing the sample rate from high frequency to low frequency.
 
@@ -15,7 +16,7 @@
 #' @return Data frame of resampling data and of the same number of variables as \code{data}. [user-defined]
 
 #' @references Currently none
-#' License: Terms of use of the NEON FIU algorithm repository dated 2015-01-16
+#' License: GNU AFFERO GENERAL PUBLIC LICENSE Version 3, 19 November 2007.
 
 #' @keywords resampling
 

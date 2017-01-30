@@ -1,7 +1,9 @@
 ##############################################################################################
 #' @title Definition function: Calculation of RH from water vapor partial pressure and saturation pressure 
-#' @author Stefan Metzger \email{eddy4R.info@gmail.com}
-#' Hongyan Luo \email{eddy4R.info@gmail.com}
+
+#' @author
+#' Stefan Metzger \email{eddy4R.info@gmail.com}
+#' Hongyan Luo \email{hluo@battelleecology.org}
 
 #' @description Function definition. Calculation of RH from water vapor partial pressure and saturation pressure  
 
@@ -12,7 +14,7 @@
 #' The returned object is the RH calculated from water vapor partial pressure and saturation pressure    
 
 #' @references
-#' Currently none.
+#' License: GNU AFFERO GENERAL PUBLIC LICENSE Version 3, 19 November 2007.
 
 #' @keywords RH, water vapor,partial pressure, saturation pressure, irga
 

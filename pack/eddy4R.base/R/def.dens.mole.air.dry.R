@@ -2,8 +2,9 @@
 ##############################################################################################
 #' @title Definition function: Calculation of the molar density of the dry air alone
 
-#' @author Stefan Metzger \email{eddy4R.info@gmail.com}
-#' Hongyan Luo \email{eddy4R.info@gmail.com}
+#' @author
+#' Stefan Metzger \email{eddy4R.info@gmail.com}
+#' Hongyan Luo \email{hluo@battelleecology.org}
 
 #' @description Function definition. Calculation of the molar density of the mdry air alone
 
@@ -14,7 +15,7 @@
 #' The returned object is the the molar density of the dry air alone  
 
 #' @references
-#' Currently none.
+#' License: GNU AFFERO GENERAL PUBLIC LICENSE Version 3, 19 November 2007
 
 #' @keywords mole density
 

@@ -44,10 +44,10 @@ qfqm$soni <- wrap.neon.ecte.dp01.qfqm (qfSens00 = inp$qf$soni, qfSens01 = inp$qf
 qfqm$soniAmrs <- wrap.neon.ecte.dp01.qfqm (qfSens00 = inp$qf$soniAmrs, dp01 = "soniAmrs")
 }
 \author{
-Natchaya Pingintha-Durden \email{ndurden@neoninc.org} \cr
+Natchaya Pingintha-Durden \email{ndurden@battelleecology.org}
 }
 \references{
-License: Terms of use of the NEON FIU algorithm repository dated 2015-01-16
+License: GNU AFFERO GENERAL PUBLIC LICENSE Version 3, 19 November 2007.
 }
 \seealso{
 Currently none

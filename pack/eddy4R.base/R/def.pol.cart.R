@@ -3,7 +3,7 @@
 
 #' @author 
 #' Stefan Metzger \email{eddy4R.info@gmail.com} \cr
-#' Natchaya P-Durden
+#' Natchaya Pingintha-Durden \email{ndurden@battelleecology.org}
 
 #' @description Composing azimuth angle from cartesian vector data.
 
@@ -11,7 +11,8 @@
 
 #' @return clockwise azimuth angle with 0 / 360 degree discontinuity in north [decimal degrees]
 
-#' @references Currently none
+#' @references
+#' License: GNU AFFERO GENERAL PUBLIC LICENSE Version 3, 19 November 2007
 
 #' @keywords unit vector
 
