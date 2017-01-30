@@ -31,7 +31,7 @@ def.med.mad(test = rnorm(10), refe = rnorm(5000))
 Stefan Metzger \email{eddy4R.info@gmail.com}
 }
 \references{
-License: Terms of use of the NEON FIU algorithm repository dated 2015-01-16. \cr
+License: GNU AFFERO GENERAL PUBLIC LICENSE Version 3, 19 November 2007. \cr
 Croux, C., and Rousseeuw, P. J.: Time-efficient algorithms for two highly robust estimators of scale, Computational Statistics, 1, 411-428, 1992. \cr
 }
 \seealso{

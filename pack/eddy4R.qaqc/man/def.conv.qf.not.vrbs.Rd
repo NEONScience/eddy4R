@@ -22,10 +22,10 @@ qf <- list(var01=data.frame(qfRng = c(0,1,-1,0,1,0,0,0,0,-1),qfStep = c(0,0,-1,-
 posQf <- def.conv.qf.not.vrbs(qf=qf) # Convert to vector positions of failed and na quality tests
 }
 \author{
-Cove Sturtevant \email{csturtevant@neoninc.org} \cr
+Cove Sturtevant \email{eddy4R.info@gmail.com}
 }
 \references{
-None
+License: GNU AFFERO GENERAL PUBLIC LICENSE Version 3, 19 November 2007
 }
 \seealso{
 \code{\link[eddy4R.qaqc]{def.plau}}

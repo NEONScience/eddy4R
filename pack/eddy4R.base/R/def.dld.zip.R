@@ -1,7 +1,8 @@
 ##############################################################################################
 #' @title Definition function: Download and extract .zip archives from a web address
 
-#' @author Stefan Metzger \email{eddy4R.info@gmail.com}
+#' @author
+#' Stefan Metzger \email{eddy4R.info@gmail.com}
 
 #' @description Function defintion. Downloads .zip archives from a web \code{Url}, and saves and extracts the archive into the directory \code{Dir}.
 
@@ -12,7 +13,7 @@
 #' @return The function saves the extracted .zip archive into the directory \code{Dir}. Currently no values are returned to the environment it is called from.
 
 #' @references
-#' License: Terms of use of the NEON FIU algorithm repository dated 2015-01-16. \cr
+#' License: GNU AFFERO GENERAL PUBLIC LICENSE Version 3, 19 November 2007. \cr
 #' \url{http://hydroecology.net/downloading-extracting-and-reading-files-in-r/}. \cr
 
 #' @keywords Dropbox, zip, archive, download

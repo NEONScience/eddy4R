@@ -62,9 +62,10 @@ Function definition. Compute NEON Level 1 data product descriptive statistics (m
 }
 \author{
 Stefan Metzger \email{eddy4R.info@gmail.com} \cr
-Cove Sturtevant \email{csturtevant@neoninc.org}
+Cove Sturtevant \email{eddy4R.info@gmail.com}
 }
 \references{
+License: GNU AFFERO GENERAL PUBLIC LICENSE Version 3, 19 November 2007. \cr
 NEON.DOC.003311 - NEON DATA PRODUCTS DEVELOPMENT PLAN
 }
 \seealso{

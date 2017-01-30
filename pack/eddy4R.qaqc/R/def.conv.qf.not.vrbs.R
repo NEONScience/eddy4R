@@ -2,7 +2,7 @@
 #' @title Definition function: Convert from verbose to non-verbose output of quality tests
 
 #' @author
-#' Cove Sturtevant \email{csturtevant@neoninc.org} \cr
+#' Cove Sturtevant \email{eddy4R.info@gmail.com}
 
 #' @description 
 #' Function definition. Convert from the verbose output of quality test algorithms (actual quality flag values) to the non-verbose option (vector positions of failed and na test results).  
@@ -13,7 +13,8 @@
 #' (standard or user-defined names), with nested lists of $fail and $na vector positions of failed and na 
 #' quality test results for that variable and flag (eg. posQf$X$posQfStep$fail and posQf$Y$posQfStep$na). 
 
-#' @references None
+#' @references
+#' License: GNU AFFERO GENERAL PUBLIC LICENSE Version 3, 19 November 2007
 
 #' @keywords quality flag
 

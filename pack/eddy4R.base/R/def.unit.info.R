@@ -41,7 +41,7 @@
 #' posSpcs: the integer list position in eddy4R.base::IntlUnit$Spcs corresponding to the chemical species
 
 #' @references 
-#' license: Terms of use of the NEON FIU algorithm repository dated 2015-01-16
+#' License: GNU AFFERO GENERAL PUBLIC LICENSE Version 3, 19 November 2007.
 
 #' @keywords unit conversion, input units, output units
 

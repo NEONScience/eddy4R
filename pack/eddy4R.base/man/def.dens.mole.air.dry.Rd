@@ -29,10 +29,10 @@ def.dens.mole.air.dry(densMoleAir, densMoleH2o)
 }
 \author{
 Stefan Metzger \email{eddy4R.info@gmail.com}
-Hongyan Luo \email{eddy4R.info@gmail.com}
+Hongyan Luo \email{hluo@battelleecology.org}
 }
 \references{
-Currently none.
+License: GNU AFFERO GENERAL PUBLIC LICENSE Version 3, 19 November 2007
 }
 \seealso{
 Currently none.

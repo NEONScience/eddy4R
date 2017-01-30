@@ -86,10 +86,10 @@ def.rglr(
 \author{
 Stefan Metzger \email{eddy4R.info@gmail.com}
 Cove Sturtevant \email{eddy4R.info@gmail.com}
-Dave Durden \email{eddy4R.info@gmail.com}
+David Durden \email{ddurden@battelleecology.org}
 }
 \references{
-License: Terms of use of the NEON FIU algorithm repository dated 2015-01-16. \cr
+License: GNU AFFERO GENERAL PUBLIC LICENSE Version 3, 19 November 2007. \cr
 NEON.DOC.001069 Preprocessing ATBD: The ATBD that describes the CybiEc and CybiDflt regularization methods. \cr
 }
 \seealso{

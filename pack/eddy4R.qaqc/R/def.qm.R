@@ -2,8 +2,8 @@
 #' @title Definition function: Quality Metrics 
 
 #' @author
-#' Cove Sturtevant \email{csturtevant@neoninc.org} \cr
-#' Natchaya Pingintha-Durden \email{ndurdent@neoninc.org} \cr
+#' Cove Sturtevant \email{eddy4R.info@gmail.com}\cr
+#' Natchaya Pingintha-Durden \email{ndurden@battelleecology.org}
 
 #' @description 
 #' Function definition. Determine the quality metrics of failed, pass, and NA for each of the individual quality flag following the method described in Smith et.al. (2014). Performed for the entire set of input data.
@@ -14,6 +14,7 @@
 #' @return A dataframe containing quality metrics (fractions) of failed, pass, and NA for each of the individual flag defined in \code{qf}.
 
 #' @references 
+#' License: GNU AFFERO GENERAL PUBLIC LICENSE Version 3, 19 November 2007.
 #' NEON Algorithm Theoretical Basis Document: Quality Flags and Quality Metrics for TIS Data Products (NEON.DOC.001113) \cr
 #' Smith, D.E., Metzger, S., and Taylor, J.R.: A transparent and transferable framework for tracking quality information in large datasets. PLoS ONE, 9(11), e112249.doi:10.1371/journal.pone.0112249, 2014. \cr 
 
