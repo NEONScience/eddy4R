@@ -95,14 +95,14 @@ def.hdf5.crte <- function(
   #Create the file, create a class
   idFile <- rhdf5::H5Fcreate(paste0(DirOut,"/","ECTE_",LevlDp,"_", Site, "_", Date, "_new_format.h5"))
   #If the file is already created use:
-  #fileGrpId <- H5Fopen("HDF5TIS_L0_prototype.h5")
+  #idFile <- H5Fopen("HDF5TIS_L0_prototype.h5")
   
   #Create a group level for SERC
-  idSite <- rhdf5::H5Gcreate(fileGrpId, Site) 
+  idSite <- rhdf5::H5Gcreate(idFile, Site) 
   #If the group is already created use:
-  #siteGrpId <- H5Gopen(fileGrpId,"SERC")
-  idDp0p <- rhdf5::H5Gcreate(siteGrpId,"dp0p")
-  idDp01 <- rhdf5::H5Gcreate(siteGrpId,"dp01")
+  #idSite <- H5Gopen(idFile,"SERC")
+  idDp0p <- rhdf5::H5Gcreate(idSite,"dp0p")
+  idDp01 <- rhdf5::H5Gcreate(idSite,"dp01")
   
   idDataLvlDp0p <- rhdf5::H5Gcreate(idDp0p,"data")
   idDataLvlDp01 <- rhdf5::H5Gcreate(idDp01,"data")
@@ -111,7 +111,7 @@ def.hdf5.crte <- function(
   idQfqmLvlDp01 <- rhdf5::H5Gcreate(idDp01,"qfqm")
   
   #Create a function to create group levels for each L0 DP
-  #grpCrte <- function(x) H5Gcreate(siteGrpId, x)
+  #grpCrte <- function(x) H5Gcreate(idSite, x)
   #grpCrte <- function(x) H5Gcreate(dplid, x)
   
   #Apply the function to produce the group levels in the data file
@@ -133,7 +133,7 @@ def.hdf5.crte <- function(
   lapply(grpListDp01, function(x) rhdf5::H5Gcreate(idQfqmLvlDp01, paste0(x,"/",LevlTowr,"_30m")))
   lapply(grpListDp01, function(x) {
     if(x == "soni") {rhdf5::H5Gcreate(idQfqmLvlDp01, paste0(x,"/",LevlTowr,"_02m"))} else {rhdf5::H5Gcreate(idQfqmLvlDp01, paste0(x,"/",LevlTowr,"_01m"))}})
-  #lapply(seq_len(nrow(attrSiteList)), function(x) h5writeAttribute(attrSiteList[x,"Field Description"], h5obj = siteGrpId, name = attrSiteList[x,"fieldName"]))
+  #lapply(seq_len(nrow(attrSiteList)), function(x) h5writeAttribute(attrSiteList[x,"Field Description"], h5obj = idSite, name = attrSiteList[x,"fieldName"]))
   
   #Used to write the datasets into the groups with attributes attached.
   idData <- rhdf5::H5Oopen(idDataLvlDp0p,"soni_001")
