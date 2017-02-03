@@ -342,9 +342,9 @@ REYNcomp_FD_mole_dry <- function(
   
   #scalar length scales
   #calculate scales
-  isca_scal <- sapply(whr_scal, function(x) INTsca(
-    d_xy_flow=REYN_loc$data$d_xy_flow,
-    depe=REYN_loc$imfl[,x]
+  isca_scal <- sapply(whr_scal, function(x) def.dist.isca(
+    distHorFlht=REYN_loc$data$d_xy_flow,
+    data=REYN_loc$imfl[,x]
   )
   )
   isca_scal <- as.data.frame( matrix(isca_scal, ncol=length(whr_scal)) )
@@ -352,9 +352,9 @@ REYNcomp_FD_mole_dry <- function(
   
   #variance length scales
   #calculate scales
-  isca_vari <- sapply(whr_scal, function(x) INTsca(
-    d_xy_flow=REYN_loc$data$d_xy_flow,
-    depe=REYN_loc$imfl[,x]^2
+  isca_vari <- sapply(whr_scal, function(x) def.dist.isca(
+    distHorFlht=REYN_loc$data$d_xy_flow,
+    data=REYN_loc$imfl[,x]^2
   )
   )
   isca_vari <- as.data.frame( matrix(isca_vari, ncol=length(whr_scal)) )
@@ -368,9 +368,9 @@ REYNcomp_FD_mole_dry <- function(
   if(length(whr_not) == 0) whr_flux_loc <-  whr_flux else whr_flux_loc <-  whr_flux[-whr_not]
   
   #calculate scales    
-  isca_flux <- sapply(whr_flux_loc, function(x) INTsca(
-    d_xy_flow=REYN_loc$data$d_xy_flow,
-    depe=REYN_loc$imfl[,x]
+  isca_flux <- sapply(whr_flux_loc, function(x) def.dist.isca(
+    distHorFlht=REYN_loc$data$d_xy_flow,
+    data=REYN_loc$imfl[,x]
   )
   )
   isca_flux <- as.data.frame( matrix(isca_flux, ncol=length(whr_flux_loc)) )
