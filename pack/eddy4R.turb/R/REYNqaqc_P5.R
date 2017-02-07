@@ -339,11 +339,12 @@ REYNcomp_FD_mole_dry <- function(
   
   #-----------------------------------------------------------
   #INTEGRAL LENGTH SCALES
-  
+  attributes(REYN_loc$data$d_xy_flow)$unit <- "m"
+ 
   #scalar length scales
   #calculate scales
   isca_scal <- sapply(whr_scal, function(x) def.dist.isca(
-    distHorFlht=REYN_loc$data$d_xy_flow,
+    scalEddy=REYN_loc$data$d_xy_flow,
     data=REYN_loc$imfl[,x]
   )
   )
@@ -353,7 +354,7 @@ REYNcomp_FD_mole_dry <- function(
   #variance length scales
   #calculate scales
   isca_vari <- sapply(whr_scal, function(x) def.dist.isca(
-    distHorFlht=REYN_loc$data$d_xy_flow,
+    scalEddy=REYN_loc$data$d_xy_flow,
     data=REYN_loc$imfl[,x]^2
   )
   )
@@ -369,7 +370,7 @@ REYNcomp_FD_mole_dry <- function(
   
   #calculate scales    
   isca_flux <- sapply(whr_flux_loc, function(x) def.dist.isca(
-    distHorFlht=REYN_loc$data$d_xy_flow,
+    scalEddy=REYN_loc$data$d_xy_flow,
     data=REYN_loc$imfl[,x]
   )
   )
