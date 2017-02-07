@@ -8,8 +8,9 @@
 #' @description 
 #' Function defintion. Integral length scales.
 
-#' @param \code{distHorFlht}  A vector or data frame containing flight distances and of class "numeric". [m]
+#' @param \code{scalEddy}  A vector containing distances or times and of class "numeric". [m] or [s]
 #' @param \code{data} A vector containing the input data. Of class "numeric" or "integer". [user-defined]
+#' @param \code{veloXaxs} Mean along-axis horizontal wind speed. Only supplied when users define scalEddy in terms of time. If provided, of class "numeric", otherwise NULL. [m/s]
 
 
 #' @return Estimated Integral length scale.
@@ -37,31 +38,71 @@
 #     Renaming in accordance with Eddy4R conventions
 ##############################################################################################
 def.dist.isca <- function(
-  distHorFlht,
-  data
+  scalEddy,
+  data,
+  veloXaxs = NULL
 ) {
   
+  # test if units exist for input variables
+  
+  if(!("unit" %in% names(attributes(scalEddy)))) {
+    
+    stop("def.dist.isca(): scalEddy is missing unit attribute.")
+  }
+  
+  # test for correct units of input variables
+  if(attributes(scalEddy)$unit != "m") {
+    
+    if(attributes(scalEddy)$unit != "s") {
+    
+    stop("def.dist.isca(): input units are not matching internal units, please check.")
+      
+    }
+    
+  }
+  
+  # If user supplies a time for scalEddy, but does not provide mean wind speed measurement, throw error.
+  if(attributes(scalEddy)$unit == "s" && is.null(veloXaxs) ) {  
+    
+    stop("def.dist.isca(): input units for scalEddy are in [s], therefore user must provide wind speed measurements in order for scalEddy to be converted to [m].")
+    
+  }
+  
+  # If user specifies a time for scalEddy, convert to a distance using frozen turbulence hypothesis
+  if(attributes(scalEddy)$unit == "s") {  
+    
+    # test for correct units of input variables
+    if(attributes(veloXaxs)$unit != "m s-1") {
+      
+      stop("def.dist.isca(): input units are not matching internal units, please check.")
+      
+    }
+    
+    scalEddy = scalEddy * veloXaxs
+    
+  }
+  
   #fill gaps via linear interpolation
-  data <- stats::approx(distHorFlht, data, xout=distHorFlht)[[2]]
+  data <- stats::approx(scalEddy, data, xout=scalEddy)[[2]]
   
   #get rid of NAs at start and end
-  tmp <- stats::na.omit(base::data.frame(distHorFlht=distHorFlht, data=data))
-  distHorFlht <- tmp$distHorFlht
+  tmp <- stats::na.omit(base::data.frame(scalEddy=scalEddy, data=data))
+  scalEddy <- tmp$scalEddy
   data <- tmp$data
   rm(tmp)
   
   #demeaning and detrending
-  data <- stats::lm(data ~ distHorFlht)$residuals
+  data <- stats::lm(data ~ scalEddy)$residuals
   
   #path through air [m] per increment, the stepwidth of the integral scale
-  incr <- base::max(distHorFlht - base::min(distHorFlht)) / base::length(distHorFlht)
+  incr <- base::max(scalEddy - base::min(scalEddy)) / base::length(scalEddy)
   
   #calculate auto-correlation function
   lag <- 10; crit <- 1
   while(crit > 0) {
     lag <- lag * 2
-    rptAcf <- stats::acf(data, lag.max = lag, type = "correlation", plot = FALSE, na.action = na.fail, demean = TRUE)
-    crit <- base::min(rptAcf$acf)
+    rptCorr <- stats::acf(data, lag.max = lag, type = "correlation", plot = FALSE, na.action = na.fail, demean = TRUE)
+    crit <- base::min(rptCorr$acf)
   }
   
   #integral length scale: typical size of the largest or most energy-transporting eddies.
@@ -73,12 +114,16 @@ def.dist.isca <- function(
   require(EMD)
   #data needs have extrema, otherwise it will not identify the zero crossing
   #hence attaching sin(1:10) to the end
-  posZero <- EMD::extrema(y=c(rptAcf$acf, sin(1:10)))$cross[1,2]
+  posZero <- EMD::extrema(y=c(rptCorr$acf, sin(1:10)))$cross[1,2]
   
   #for each cell, weight distance increment with correlation coefficient
-  distIsca <- base::sum(rptAcf$acf[1:posZero]) * incr
+  distIsca <- base::sum(rptCorr$acf[1:posZero]) * incr
   #alternatively: all in one, assume that correlation monotonously decreases after peak
   #distIsca <- base::max(base::cumsum(rptAcf$acf)) * incr
+  
+  
+  # assign output unit
+  attributes(distIsca)$unit <- "m"
   
   #return result
   return(distIsca)
