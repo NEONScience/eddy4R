@@ -203,11 +203,11 @@ REYNcomp_FD_mole_dry <- function(
   
   #-----------------------------------------------------------
   #STATISTICAL ERRORS FOR FLUXES
-  REYN_loc$erro <- REYNerro_FD_mole_dry(
-    isca=REYN_loc$isca,		#integral scale lengths
-    mn=REYN_loc$mn,			#mean values
-    rc=REYN_loc$cor,		#flux correlation coefficient
-    Lf=REYN_loc$max$d_xy_flow		#averaging distance (length of air d_xy_flow flown through [m])
+  REYN_loc$erro <- def.ucrt.samp(
+    distIsca=REYN_loc$isca,		#integral scale lengths
+    valuMean=REYN_loc$mn,			#mean values
+    coefCorr=REYN_loc$cor,		#flux correlation coefficient
+    distAve=REYN_loc$max$d_xy_flow		#averaging distance (length of air d_xy_flow flown through [m])
   )
   
   
