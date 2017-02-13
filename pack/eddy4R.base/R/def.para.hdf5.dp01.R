@@ -23,14 +23,6 @@
 #' @examples 
 
 
-#'#Set directory for example output to working directory
-#'DirOut <- getwd()
-#'
-#'fileOut <- "ECTE_dp01_SERC_2016-04-24_new_format.h5"
-
-#'#Running example
-#'def.para.hdf5.dp01(fileIn = , fileOut = )
-
 #' @seealso Currently none
 
 #' @export
