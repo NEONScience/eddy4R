@@ -49,33 +49,31 @@ def.para.hdf5.dp01 <- function(
 ){
 
   #list of everything written within the input file
-listPara <- h5ls(FileIn, datasetinfo = FALSE)
+listPara <- rhdf5::h5ls(FileIn, datasetinfo = FALSE)
 
 #Grabbing just the HDF5 groups
 listPara <- listPara[listPara$otype == "H5I_GROUP",]
-listGrup <- paste(listPara$group, listPara$name, sep = "/") # Combining output
+listGrup <- base::paste(listPara$group, listPara$name, sep = "/") # Combining output
 
 
 # read attributes from input file
-listAttr <- lapply(listGrup, h5readAttributes, file = FileIn)
+listAttr <- base::lapply(listGrup, h5readAttributes, file = FileIn)
 
 #Apply group names to the attributes list
-names(listAttr) <- listGrup
+base::names(listAttr) <- listGrup
 
 #Remove all empty lists
-listAttr <- listAttr[!sapply(listAttr, function(x) length(x) == 0)]
+listAttr <- listAttr[!base::sapply(listAttr, function(x) base::length(x) == 0)]
 
 
 #Open the output file HDF5 link
-fid <- H5Fopen()
+fid <- rhdf5::H5Fopen(fileOut)
   
 #Write the attributes to the new file
 lapply(names(listAttr), function(x){
-  print(x)
-  gid <- H5Gopen(fid, x)
- lapply(names(listAttr[[x]]), function(y){
-   print(y)
-   h5writeAttribute(attr = listAttr[[x]][[y]], h5obj = gid, name = y)})
+  gid <- rhdf5::H5Gopen(fid, x)
+ base::lapply(names(listAttr[[x]]), function(y){
+   rhdf5::h5writeAttribute(attr = listAttr[[x]][[y]], h5obj = gid, name = y)})
 })
 
 }
