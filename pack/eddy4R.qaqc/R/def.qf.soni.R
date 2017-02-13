@@ -42,11 +42,11 @@ def.qf.soni <- function(diag16){
     stop("Input 'diag16' is required")
   } 
 
-  if(!(base::is.integer(diag16)|is.numeric(diag16))) {
+  if(!(base::is.integer(diag16)|base::is.numeric(diag16))) {
   stop("Input 'diag16' is required as an integer or numeric")
   } 
  
-  diag16[is.na(diag16)] <- -99999 # Convert NAs or NaNs to -99999
+  diag16[base::is.na(diag16)] <- -99999 # Convert NAs or NaNs to -99999
   
 # Turn the diag16 into a matrix of 32 bits separated into columns for the timeseries of diagnostic values  
 qfSoni <- t(base::sapply(diag16,function(x){ base::as.integer(base::intToBits(x))}))
@@ -56,11 +56,11 @@ qfSoni <- t(base::sapply(diag16,function(x){ base::as.integer(base::intToBits(x)
 qfSoni <- base::data.frame(qfSoni[,c(13:16)])
 
 #Check for base-10 described flags
-qfSoniUnrs <- ifelse(diag16 == -99999, 1, 0)
-qfSoniData <- ifelse(diag16 == 61503, 1, 0)
-qfSoniTrig <- ifelse(diag16 == 61440, 1, 0)
-qfSoniComm <- ifelse(diag16 == 61441, 1, 0)
-qfSoniCode <- ifelse(diag16 == 61442, 1, 0)
+qfSoniUnrs <- base::as.integer(base::ifelse(diag16 == -99999, 1, 0))
+qfSoniData <- base::as.integer(base::ifelse(diag16 == 61503, 1, 0))
+qfSoniTrig <- base::as.integer(base::ifelse(diag16 == 61440, 1, 0))
+qfSoniComm <- base::as.integer(base::ifelse(diag16 == 61441, 1, 0))
+qfSoniCode <- base::as.integer(base::ifelse(diag16 == 61442, 1, 0))
 
 # Create the output data frame
 qfSoni <- base::data.frame( qfSoniUnrs,qfSoniData,qfSoniTrig,qfSoniComm, qfSoniCode, qfSoni[,1:4])
