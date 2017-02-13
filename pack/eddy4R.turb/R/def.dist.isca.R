@@ -10,7 +10,7 @@
 
 #' @param \code{scalEddy}  A vector containing distances or times and of class "numeric". [m] or [s]
 #' @param \code{data} A vector containing the input data. Of class "numeric" or "integer". [user-defined]
-#' @param \code{veloXaxs} Mean along-axis horizontal wind speed. Only supplied when users define scalEddy in terms of time. If provided, of class "numeric", otherwise NULL. [m/s]
+#' @param \code{veloXaxs} Instantaneous wind speed. Only supplied when users define scalEddy in terms of time. If provided, of class "numeric", otherwise NULL. [m/s]
 
 
 #' @return Estimated Integral length scale.
@@ -61,7 +61,7 @@ def.dist.isca <- function(
     
   }
   
-  # If user supplies a time for scalEddy, but does not provide mean wind speed measurement, throw error.
+  # If user supplies a time for scalEddy, but does not provide wind speed measurement, throw error.
   if(attributes(scalEddy)$unit == "s" && is.null(veloXaxs) ) {  
     
     stop("def.dist.isca(): input units for scalEddy are in [s], therefore user must provide wind speed measurements in order for scalEddy to be converted to [m].")
