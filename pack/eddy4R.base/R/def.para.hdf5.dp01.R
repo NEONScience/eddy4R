@@ -40,6 +40,14 @@ def.para.hdf5.dp01 <- function(
   FileOut
 ){
 
+  if(!base::file.exists(FileIn)) {
+    stop("Input file does not exist")
+  } 
+  
+  if(!base::file.exists(FileOut)) {
+    stop("Output file does not exist")
+  } 
+  
   #list of everything written within the input file
 listPara <- rhdf5::h5ls(FileIn, datasetinfo = FALSE)
 
