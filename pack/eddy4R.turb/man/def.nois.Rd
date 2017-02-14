@@ -41,19 +41,18 @@ Function defintion. Determine the noise bias, noise dispersion, detection limit 
 \examples{
 Currently none
 }
-\author{
-Stefan Metzger \email{eddy4R.info@gmail.com} \ cr
-Hongyan Luo \email{eddy4R.info@gmail.com}
-}
 \references{
 Billesbach, D.P. (2011) Estimating uncertainties in individual eddy covariance flux measurements: A comparison of methods and proposed new method. Agricultural and Forest Meteorology, 151, 394-405.
 }
 \seealso{
 Currently none
 }
+\author{
+Stefan Metzger \email{eddy4R.info@gmail.com} \ cr
+Hongyan Luo \email{eddy4R.info@gmail.com}
+}
 \keyword{detection}
 \keyword{eddy-covariance,}
 \keyword{flux,}
 \keyword{limit}
 \keyword{turbulent}
-

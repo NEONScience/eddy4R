@@ -19,15 +19,14 @@ Model (co)spectrum after Massman, 2005 (in Lee, 2005).
 \examples{
 Currently none
 }
-\author{
-Stefan Metzger \email{eddy4R.info@gmail.com}
-}
 \references{
 Currently none
 }
 \seealso{
 Currently none
 }
+\author{
+Stefan Metzger \email{eddy4R.info@gmail.com}
+}
 \keyword{Currently}
 \keyword{none}
-

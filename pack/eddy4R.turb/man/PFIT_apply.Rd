@@ -18,19 +18,18 @@ Function defintion. Performs planar fit transformation on wind vector in right-h
 \examples{
 Currently none
 }
-\author{
-Ke Xu \email{xuke2012abroad@gmail.com},
-Stefan Metzger \email{eddy4R.info@gmail.com}
-}
 \references{
 Currently none
 }
 \seealso{
 Currently none
 }
+\author{
+Ke Xu \email{xuke2012abroad@gmail.com},
+Stefan Metzger \email{eddy4R.info@gmail.com}
+}
 \keyword{coordinate}
 \keyword{fit,}
 \keyword{planar}
 \keyword{rotation,}
 \keyword{transformation}
-
