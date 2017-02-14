@@ -36,9 +36,6 @@ DirOut <- getwd()
 #Running example
 def.hdf5.crte(Date = Date, Site = Site, LevlTowr = LevlTowr, DirOut = DirOut, LevlDp)
 }
-\author{
-David Durden \email{ddurden@battelleecology.org}
-}
 \references{
 License: GNU AFFERO GENERAL PUBLIC LICENSE Version 3, 19 November 2007.
 NEON Algorithm Theoretical Basis Document:Eddy Covariance Turbulent Exchange Subsystem Level 0 to Level 0’ data product conversions and calculations (NEON.DOC.000807)
@@ -46,8 +43,10 @@ NEON Algorithm Theoretical Basis Document:Eddy Covariance Turbulent Exchange Sub
 \seealso{
 Currently none
 }
+\author{
+David Durden \email{ddurden@battelleecology.org}
+}
 \keyword{ECTE}
 \keyword{HDF5,}
 \keyword{NEON,}
 \keyword{eddy-covariance,}
-

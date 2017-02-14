@@ -43,18 +43,17 @@ qfqm$irgaH2o <- wrap.neon.ecte.dp01.qfqm (qfSens00 = inp$qf$irga, qfSens01 = inp
 qfqm$soni <- wrap.neon.ecte.dp01.qfqm (qfSens00 = inp$qf$soni, qfSens01 = inp$qf$irga, dp01 = "soni")
 qfqm$soniAmrs <- wrap.neon.ecte.dp01.qfqm (qfSens00 = inp$qf$soniAmrs, dp01 = "soniAmrs")
 }
-\author{
-Natchaya Pingintha-Durden \email{ndurden@battelleecology.org}
-}
 \references{
 License: GNU AFFERO GENERAL PUBLIC LICENSE Version 3, 19 November 2007.
 }
 \seealso{
 Currently none
 }
+\author{
+Natchaya Pingintha-Durden \email{ndurden@battelleecology.org}
+}
 \keyword{NEON}
 \keyword{QAQC,}
 \keyword{flags,}
 \keyword{metrics}
 \keyword{quality}
-

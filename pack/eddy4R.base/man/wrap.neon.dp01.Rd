@@ -53,17 +53,16 @@ Wrapper function. Compute NEON Level 1 data product descriptive statistics (mean
   attributes(rpt$sens02$se$velo)$unit
   # [1] "m s-1"
 }
-\author{
-Stefan Metzger \email{eddy4R.info@gmail.com}
-}
 \references{
 License: GNU AFFERO GENERAL PUBLIC LICENSE Version 3, 19 November 2007.
 }
 \seealso{
 Currently none.
 }
+\author{
+Stefan Metzger \email{eddy4R.info@gmail.com}
+}
 \keyword{aggregate,}
 \keyword{average,}
 \keyword{descriptive}
 \keyword{statistics}
-

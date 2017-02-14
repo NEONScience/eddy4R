@@ -21,9 +21,6 @@ Function definition. Convert from the non-verbose option (vector positions of fa
 posQf <- list(var01=list(qfRng = list(fail=c(2,5),na=c(3,10)),qfStep = list(fail=numeric(0),na=c(3,4,10)))) # non-verbose output from quality testing
 qf <- def.conv.qf.vrbs(posQf=posQf,numRow=10) # Convert to quality flag values
 }
-\author{
-Cove Sturtevant \email{eddy4R.info@gmail.com} \cr
-}
 \references{
 License: GNU AFFERO GENERAL PUBLIC LICENSE Version 3, 19 November 2007
 }
@@ -31,6 +28,8 @@ License: GNU AFFERO GENERAL PUBLIC LICENSE Version 3, 19 November 2007
 \code{\link[eddy4R.qaqc]{def.plau}}
 \code{\link[eddy4R.qaqc]{def.conv.qf.not.vrbs}}
 }
+\author{
+Cove Sturtevant \email{eddy4R.info@gmail.com} \cr
+}
 \keyword{flag}
 \keyword{quality}
-

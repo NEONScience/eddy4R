@@ -22,18 +22,17 @@ Function defintion. Calculates the mean, external, internal and total variance, 
 \examples{
 def.vari.seSq.agr(data = data.frame(mean = rnorm(10), vari = rnorm(10)^2))
 }
-\author{
-Ke Xu \email{xuke2012abroad@gmail.com} \cr
-Stefan Metzger \email{eddy4R.info@gmail.com}
-}
 \references{
 License: GNU AFFERO GENERAL PUBLIC LICENSE Version 3, 19 November 2007
 }
 \seealso{
 Currently none
 }
+\author{
+Ke Xu \email{xuke2012abroad@gmail.com} \cr
+Stefan Metzger \email{eddy4R.info@gmail.com}
+}
 \keyword{aggregate}
 \keyword{deviation,}
 \keyword{error,}
 \keyword{standard}
-

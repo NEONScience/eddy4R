@@ -21,16 +21,15 @@ Calculate absolute humidity from water vapor pressure and ambient temperature.
 def.dens.mass.h2o.press.h2o.temp(presH2o = 2054.04, temp = 298.15)
 def.dens.mass.h2o.press.h2o.temp(presH2o = c(42.22, 348.70, 2054.04), temp = c(265.15, 278.15, 298.15))
 }
-\author{
-Stefan Metzger \email{eddy4R.info@gmail.com} \cr
-Natchaya Pingintha-Durden \email{ndurden@battelleecology.org}
-}
 \references{
 License: GNU AFFERO GENERAL PUBLIC LICENSE Version 3, 19 November 2007
 }
 \seealso{
 Currently none
 }
+\author{
+Stefan Metzger \email{eddy4R.info@gmail.com} \cr
+Natchaya Pingintha-Durden \email{ndurden@battelleecology.org}
+}
 \keyword{conversion}
 \keyword{humidity}
-

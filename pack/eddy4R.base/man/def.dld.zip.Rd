@@ -24,9 +24,6 @@ def.dld.zip(Inp = list(
 Url = "https://www.dropbox.com/s/1yv1ais1wdvoq1l/outRefe_20160410.zip?dl=1",
 Dir = tempdir()))
 }
-\author{
-Stefan Metzger \email{eddy4R.info@gmail.com}
-}
 \references{
 License: GNU AFFERO GENERAL PUBLIC LICENSE Version 3, 19 November 2007. \cr
 \url{http://hydroecology.net/downloading-extracting-and-reading-files-in-r/}. \cr
@@ -34,8 +31,10 @@ License: GNU AFFERO GENERAL PUBLIC LICENSE Version 3, 19 November 2007. \cr
 \seealso{
 Currently none.
 }
+\author{
+Stefan Metzger \email{eddy4R.info@gmail.com}
+}
 \keyword{Dropbox,}
 \keyword{archive,}
 \keyword{download}
 \keyword{zip,}
-

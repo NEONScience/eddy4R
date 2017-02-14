@@ -48,14 +48,14 @@ species, and unit suffix (raise to the power of)
 \examples{
 Currently none
 }
-\author{
-Cove Sturtevant \email{eddy4R.info@gmail.com}
-}
 \references{
 License: GNU AFFERO GENERAL PUBLIC LICENSE Version 3, 19 November 2007.
 }
 \seealso{
 \code{\link{def.unit.conv}}, \code{\link{def.unit.intl}}, \code{\link{IntlUnit$Intl}}
+}
+\author{
+Cove Sturtevant \email{eddy4R.info@gmail.com}
 }
 \keyword{conversion,}
 \keyword{input}
@@ -63,4 +63,3 @@ License: GNU AFFERO GENERAL PUBLIC LICENSE Version 3, 19 November 2007.
 \keyword{unit}
 \keyword{units}
 \keyword{units,}
-

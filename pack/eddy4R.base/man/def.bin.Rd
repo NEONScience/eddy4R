@@ -30,15 +30,14 @@ Function definition. Smooth data using Binning method.
 def.bin(idep = rnorm(5000), depe = rnorm(5000), RngMinMax = NULL, NumBin = 23, widtBin = "log10", meanFunc = "mean" )
 def.bin(idep = rnorm(500), depe = rnorm(500), RngMinMax = c(0.1, 0.4), NumBin = 12, widtBin = "lin", meanFunc = "median" )
 }
-\author{
-Stefan Metzger \email{eddy4R.info@gmail.com} \cr
-Natchaya Pingintha-Durden \email{ndurden@battelleecology.org}
-}
 \references{
 License: GNU AFFERO GENERAL PUBLIC LICENSE Version 3, 19 November 2007
 }
 \seealso{
 Currently none
 }
+\author{
+Stefan Metzger \email{eddy4R.info@gmail.com} \cr
+Natchaya Pingintha-Durden \email{ndurden@battelleecology.org}
+}
 \keyword{bin}
-

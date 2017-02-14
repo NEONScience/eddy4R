@@ -25,16 +25,15 @@ Poisson's equation (adiabatic change) - density as function of pressure change.
 \examples{
 dens02 <- def.dens.pres.pois(dens01 = 1.056, pres01 = 845, pres02 = 1000, Kppa = eddy4R.base::IntlNatu$KppaDry)
 }
-\author{
-Stefan Metzger \email{eddy4R.info@gmail.com} \cr
-Natchaya Pingintha-Durden \email{ndurden@battelleecology.org}
-}
 \references{
 License: GNU AFFERO GENERAL PUBLIC LICENSE Version 3, 19 November 2007
 }
 \seealso{
 Currently none
 }
+\author{
+Stefan Metzger \email{eddy4R.info@gmail.com} \cr
+Natchaya Pingintha-Durden \email{ndurden@battelleecology.org}
+}
 \keyword{Currently}
 \keyword{none}
-
