@@ -24,18 +24,17 @@ Function defintion. Coordinate transformation from CSAT3 body coordinate system 
 veloIn01 <- data.frame(xaxs=rnorm(20), yaxs=rnorm(20), zaxs=rnorm(20)) 
 def.met.body(AzSoniInst=60, veloBody=veloIn01)
 }
-\author{
-Stefan Metzger \email{eddy4R.info@gmail.com} \cr
-Hongyan Luo \email{hluo@battelleecology.org}
-}
 \references{
 License: GNU AFFERO GENERAL PUBLIC LICENSE Version 3, 19 November 2007.
 }
 \seealso{
 Currently none
 }
+\author{
+Stefan Metzger \email{eddy4R.info@gmail.com} \cr
+Hongyan Luo \email{hluo@battelleecology.org}
+}
 \keyword{anemometer,}
 \keyword{coordinate,}
 \keyword{sonic}
 \keyword{transformation}
-

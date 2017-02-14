@@ -19,10 +19,6 @@ Calculate saturated water vapor pressure from temperature using Magnus equation.
 def.pres.h2o.sat.temp.mag(temp = 265.15)
 def.pres.h2o.sat.temp.mag(temp = c(265.15, 285.0, 290.2))
 }
-\author{
-Stefan Metzger \email{eddy4R.info@gmail.com} \cr
-Natchaya Pingintha-Durden \email{ndurden@battelleecology.org}
-}
 \references{
 License: GNU AFFERO GENERAL PUBLIC LICENSE Version 3, 19 November 2007. \cr
 Gueymard, C.: Assessment of the accuracy and computing speed of simplified saturation vapor equations using a new reference dataset, J. Appl. Meteorol., 32, 1294-1300, doi:10.1175/1520-0450(1993)0321294:aotaac2.0.co;2, 1993. \cr
@@ -30,8 +26,11 @@ Gueymard, C.: Assessment of the accuracy and computing speed of simplified satur
 \seealso{
 Currently none
 }
+\author{
+Stefan Metzger \email{eddy4R.info@gmail.com} \cr
+Natchaya Pingintha-Durden \email{ndurden@battelleecology.org}
+}
 \keyword{Magnus}
 \keyword{conversion,}
 \keyword{equation}
 \keyword{humidity}
-

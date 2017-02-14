@@ -29,10 +29,6 @@ df <- data.frame("A"= runif(200, min=0, max=360),"B" = runif(200, min=0.1, max=1
 df1 <- def.rsmp(data = df,FreqInp = 10,FreqOut = 5, MethRsmp = "filt",ColDisc = c(1))
 df2 <- def.rsmp(data = df,FreqInp = 10,FreqOut = 0.5, MethRsmp = "zoo",ColDisc = c("A"))
 }
-\author{
-Stefan Metzger \email{eddy4R.info@gmail.com}
-Natchaya Pingintha-Durden \email{ndurden@battelleecology.org}
-}
 \references{
 Currently none
 License: GNU AFFERO GENERAL PUBLIC LICENSE Version 3, 19 November 2007.
@@ -40,5 +36,8 @@ License: GNU AFFERO GENERAL PUBLIC LICENSE Version 3, 19 November 2007.
 \seealso{
 Currently none
 }
+\author{
+Stefan Metzger \email{eddy4R.info@gmail.com}
+Natchaya Pingintha-Durden \email{ndurden@battelleecology.org}
+}
 \keyword{resampling}
-

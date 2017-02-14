@@ -21,16 +21,15 @@ Calculate water vapor pressure from dry mole fraction and static pressure.
 def.pres.h2o.rtio.mole.h2o.dry.pres(rtioMoleDryH2o = 6.52*1e-6, pres = 83000) 
 def.pres.h2o.rtio.mole.h2o.dry.pres(rtioMoleDryH2o = c(6.52*1e-6, 11.617*1e-6, 4.931*1e-6), pres = c(83000, 65000, 110000)) 
 }
-\author{
-Stefan Metzger \email{eddy4R.info@gmail.com} \cr
-Natchaya Pingintha-Durden \email{ndurden@battelleecology.org}
-}
 \references{
 License: GNU AFFERO GENERAL PUBLIC LICENSE Version 3, 19 November 2007
 }
 \seealso{
 Currently none
 }
+\author{
+Stefan Metzger \email{eddy4R.info@gmail.com} \cr
+Natchaya Pingintha-Durden \email{ndurden@battelleecology.org}
+}
 \keyword{conversion}
 \keyword{humidity}
-

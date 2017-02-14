@@ -21,16 +21,15 @@ Calculate water pressure from absolute humidity and ambient temperature.
 def.pres.h2o.dens.mass.h2o.temp(densMassH2o = 1.493*1e-2, temp = 298.15)
 def.pres.h2o.dens.mass.h2o.temp(densMassH2o = c(3.451*1e-4, 2.717*1e-3, 1.493*1e-2), temp = c(265.15, 278.15, 298.15))
 }
-\author{
-Stefan Metzger \email{eddy4R.info@gmail.com} \cr
-Natchaya Pingintha-Durden \email{ndurden@battelleecology.org}
-}
 \references{
 License: GNU AFFERO GENERAL PUBLIC LICENSE Version 3, 19 November 2007
 }
 \seealso{
 Currently none
 }
+\author{
+Stefan Metzger \email{eddy4R.info@gmail.com} \cr
+Natchaya Pingintha-Durden \email{ndurden@battelleecology.org}
+}
 \keyword{conversion}
 \keyword{humidity}
-

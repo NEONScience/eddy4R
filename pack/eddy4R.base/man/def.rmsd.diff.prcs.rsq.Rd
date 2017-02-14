@@ -32,18 +32,17 @@ df2 <- c(runif(200, min=-100, max=400))
 #run function
 def.rmsd.diff.prcs.rsq(refe=df1,test=df2,Perc = FALSE,Deba=NULL, DebaRltv=FALSE)
 }
-\author{
-Stefan Metzger \email{eddy4R.info@gmail.com} \cr
-Hongyan Luo \email{hluo@battelleecology.org}
-}
 \references{
 License: GNU AFFERO GENERAL PUBLIC LICENSE Version 3, 19 November 2007.
 }
 \seealso{
 Currently none
 }
+\author{
+Stefan Metzger \email{eddy4R.info@gmail.com} \cr
+Hongyan Luo \email{hluo@battelleecology.org}
+}
 \keyword{R-square}
 \keyword{RMSD,}
 \keyword{bias,}
 \keyword{precision,}
-

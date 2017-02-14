@@ -45,10 +45,6 @@ Function definition. Determines spike locations based on window-based Gaussian s
 \examples{
 Currently none
 }
-\author{
-Stefan Metzger \email{eddy4R.info@gmail.com} \cr
-Cove Sturtevant \email{eddy4R.info@gmail.com}
-}
 \references{
 License: GNU AFFERO GENERAL PUBLIC LICENSE Version 3, 19 November 2007.
 Hojstrup, J.: A statistical data screening procedure, Meas. Sci. Technol., 4, 153-157, doi:10.1088/0957-0233/4/2/003, 1993. \cr
@@ -58,6 +54,9 @@ Vickers, D., and Mahrt, L.: Quality control and flux sampling problems for tower
 \seealso{
 Currently none
 }
+\author{
+Stefan Metzger \email{eddy4R.info@gmail.com} \cr
+Cove Sturtevant \email{eddy4R.info@gmail.com}
+}
 \keyword{de-spiking}
 \keyword{spike,}
-

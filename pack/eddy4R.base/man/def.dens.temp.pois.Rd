@@ -25,16 +25,15 @@ Poisson's equation (adiabatic change) - density as function of temperature chang
 \examples{
 dens02 <- def.dens.temp.pois(dens01 = 1.056, temp01 = 298.15, temp02 = 288.15, Kppa = eddy4R.base::IntlNatu$KppaDry)
 }
-\author{
-Stefan Metzger \email{eddy4R.info@gmail.com} \cr
-Natchaya Pingintha-Durden \email{ndurden@battelleecology.org}
-}
 \references{
 License: GNU AFFERO GENERAL PUBLIC LICENSE Version 3, 19 November 2007
 }
 \seealso{
 Currently none
 }
+\author{
+Stefan Metzger \email{eddy4R.info@gmail.com} \cr
+Natchaya Pingintha-Durden \email{ndurden@battelleecology.org}
+}
 \keyword{Currently}
 \keyword{none}
-

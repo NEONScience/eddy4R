@@ -18,17 +18,16 @@ Load pre-defined site specific information into the global environment.
 \examples{
 def.site.info("SERC")
 }
-\author{
-Stefan Metzger \email{eddy4R.info@gmail.com}\cr
-David Durden  \email{ddurden@battelleecology.org}
-}
 \references{
 License: GNU AFFERO GENERAL PUBLIC LICENSE Version 3, 19 November 2007.
 }
 \seealso{
 Currently none
 }
+\author{
+Stefan Metzger \email{eddy4R.info@gmail.com}\cr
+David Durden  \email{ddurden@battelleecology.org}
+}
 \keyword{metadata,}
 \keyword{preprocessing}
 \keyword{site,}
-

@@ -83,11 +83,6 @@ def.rglr(
   PosWndw = "Clst"
 )  
 }
-\author{
-Stefan Metzger \email{eddy4R.info@gmail.com}
-Cove Sturtevant \email{eddy4R.info@gmail.com}
-David Durden \email{ddurden@battelleecology.org}
-}
 \references{
 License: GNU AFFERO GENERAL PUBLIC LICENSE Version 3, 19 November 2007. \cr
 NEON.DOC.001069 Preprocessing ATBD: The ATBD that describes the CybiEc and CybiDflt regularization methods. \cr
@@ -95,7 +90,11 @@ NEON.DOC.001069 Preprocessing ATBD: The ATBD that describes the CybiEc and CybiD
 \seealso{
 ?zoo:na.approx, ?stats::approx
 }
+\author{
+Stefan Metzger \email{eddy4R.info@gmail.com}
+Cove Sturtevant \email{eddy4R.info@gmail.com}
+David Durden \email{ddurden@battelleecology.org}
+}
 \keyword{equidistant,}
 \keyword{preprocessing}
 \keyword{regularization,}
-
