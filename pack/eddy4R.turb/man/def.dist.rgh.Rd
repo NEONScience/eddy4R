@@ -27,10 +27,6 @@ Function defintion. Aerodynamic roughness length.
 \examples{
 def.dist.rgh (distZaxsMeas = 13.5, distObkv = 45, veloXaxs = 3, veloFric = 0.8, RngStblObkv = c(-2, 1))
 }
-\author{
-Stefan Metzger \email{eddy4R.info@gmail.com} \cr
-Natchaya Pingintha-Durden
-}
 \references{
 Businger, J. A., Wyngaard, J. C., Izumi, Y., and Bradley, E. F.: Flux-proﬁle relationships in the atmospheric surface layer, Journal of the Atmospheric Sciences, 28, 181–189, 1971. \cr
 Foken, T.: Micrometeorology, Springer, Berlin, Heidelberg, 2008. \cr
@@ -39,9 +35,12 @@ Högström, U.: Non-dimensional wind and temperature proﬁles in the atmospheri
 \seealso{
 Currently none
 }
+\author{
+Stefan Metzger \email{eddy4R.info@gmail.com} \cr
+Natchaya Pingintha-Durden
+}
 \keyword{eddy-covariance,}
 \keyword{flux}
 \keyword{length,}
 \keyword{roughness}
 \keyword{turbulent}
-
