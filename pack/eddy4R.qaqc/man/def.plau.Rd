@@ -48,15 +48,15 @@ Function definition. Determines inplausible data indices based on user-specified
 \examples{
 Currently none
 }
-\author{
-Cove Sturtevant \email{eddy4R.info@gmail.com}
-}
 \references{
 NEON Algorithm Theoretical Basis Document QA/QC Plausibility Testing (NEON.DOC.011081)
 License: GNU AFFERO GENERAL PUBLIC LICENSE Version 3, 19 November 2007
 }
 \seealso{
 Currently none
+}
+\author{
+Cove Sturtevant \email{eddy4R.info@gmail.com}
 }
 \keyword{NEON}
 \keyword{QAQC,}
@@ -66,4 +66,3 @@ Currently none
 \keyword{plausibility,}
 \keyword{range,}
 \keyword{step,}
-

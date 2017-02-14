@@ -18,16 +18,15 @@ Function definition. Determine coriolis coefficient.
 \examples{
 Currently none
 }
-\author{
-Stefan Metzger \email{eddy4R.info@gmail.com} \cr
-Cove Sturtevant \email{eddy4R.info@gmail.com}
-}
 \references{
 License: GNU AFFERO GENERAL PUBLIC LICENSE Version 3, 19 November 2007
 }
 \seealso{
 Currently none
 }
+\author{
+Stefan Metzger \email{eddy4R.info@gmail.com} \cr
+Cove Sturtevant \email{eddy4R.info@gmail.com}
+}
 \keyword{constants}
 \keyword{natural}
-

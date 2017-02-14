@@ -21,16 +21,15 @@ Calculate water vapor pressure from dry mass fraction and static pressure.
 def.pres.h2o.rtio.mass.h2o.dry.pres(rtioMassDryH2o = 2.144*1e-2, pres = 65000) 
 def.pres.h2o.rtio.mass.h2o.dry.pres(rtioMassDryH2o = c(2.144*1e-2, 2.617*1e-3, 4.931*1e-4), pres = c(65000, 83000, 110000)) 
 }
-\author{
-Stefan Metzger \email{eddy4R.info@gmail.com} \cr
-Natchaya Pingintha-Durden \email{ndurden@battelleecology.org}
-}
 \references{
 License: GNU AFFERO GENERAL PUBLIC LICENSE Version 3, 19 November 2007
 }
 \seealso{
 Currently none
 }
+\author{
+Stefan Metzger \email{eddy4R.info@gmail.com} \cr
+Natchaya Pingintha-Durden \email{ndurden@battelleecology.org}
+}
 \keyword{conversion}
 \keyword{humidity}
-

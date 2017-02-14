@@ -21,15 +21,15 @@ internal unit (string) used within the eddy4R family of functions.
 \examples{
 Currently none
 }
-\author{
-Cove Sturtevant \email{eddy4R.info@gmail.com}
-}
 \references{
 License: GNU AFFERO GENERAL PUBLIC LICENSE Version 3, 19 November 2007.
 eddy4R.base::def.unit.info.R
 }
 \seealso{
 \code{\link{def.unit.info}}, \code{\link{IntlUnit$Intl}}, \code{\link{def.unit.conv}}
+}
+\author{
+Cove Sturtevant \email{eddy4R.info@gmail.com}
 }
 \keyword{base,}
 \keyword{conversion,}
@@ -39,4 +39,3 @@ eddy4R.base::def.unit.info.R
 \keyword{unit}
 \keyword{units}
 \keyword{units,}
-

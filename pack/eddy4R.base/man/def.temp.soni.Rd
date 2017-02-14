@@ -23,10 +23,6 @@ veloSoni = 344
 attributes(veloSoni)$unit = "m s-1"
 def.temp.soni(veloSoni)
 }
-\author{
-Stefan Metzger \email{eddy4R.info@gmail.com}
-Hongyan Luo \email{hluo@battelleecology.org}
-}
 \references{
 License: GNU AFFERO GENERAL PUBLIC LICENSE Version 3, 19 November 2007.
 CSAT3 Three Dimensional Sonic Anemometer Instruction Mannual (Revisoin 2/15). Logan, Utah, USA. Campbell Scientifc, Inc. (2015)
@@ -34,7 +30,10 @@ CSAT3 Three Dimensional Sonic Anemometer Instruction Mannual (Revisoin 2/15). Lo
 \seealso{
 Currently none.
 }
+\author{
+Stefan Metzger \email{eddy4R.info@gmail.com}
+Hongyan Luo \email{hluo@battelleecology.org}
+}
 \keyword{anemometer}
 \keyword{sonic}
 \keyword{temperature,}
-

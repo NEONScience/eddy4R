@@ -29,10 +29,6 @@ test<-list()
 test$qf <- data.frame(qfA,qfB,qfC)
 out <- def.qf.finl(qf=test$qf, WghtAlphBeta=c(2,1), Thsh=0.2)
 }
-\author{
-Cove Sturtevant \email{eddy4R.info@gmail.com} \cr
-Natchaya Pingintha-Durden \email{ndurden@battelleecology.org}
-}
 \references{
 License: GNU AFFERO GENERAL PUBLIC LICENSE Version 3, 19 November 2007.
 NEON Algorithm Theoretical Basis Document: Quality Flags and Quality Metrics for TIS Data Products (NEON.DOC.001113) \cr
@@ -42,6 +38,10 @@ Smith, D.E., Metzger, S., and Taylor, J.R.: A transparent and transferable frame
 \code{\link[eddy4R.qaqc]{wrap.dp01.qfqm}} \cr
 \code{\link[eddy4R.qaqc]{def.qm}} \cr
 }
+\author{
+Cove Sturtevant \email{eddy4R.info@gmail.com} \cr
+Natchaya Pingintha-Durden \email{ndurden@battelleecology.org}
+}
 \keyword{NEON}
 \keyword{QAQC,}
 \keyword{and}
@@ -50,4 +50,3 @@ Smith, D.E., Metzger, S., and Taylor, J.R.: A transparent and transferable frame
 \keyword{flags}
 \keyword{metrics}
 \keyword{quality}
-

@@ -26,17 +26,16 @@ ReplFrom = c("Celsius", "percent"),
 ReplTo = c("C", "\%")
 )
 }
-\author{
-Stefan Metzger \email{eddy4R.info@gmail.com}
-}
 \references{
 License: GNU AFFERO GENERAL PUBLIC LICENSE Version 3, 19 November 2007.
 }
 \seealso{
 Currently none.
 }
+\author{
+Stefan Metzger \email{eddy4R.info@gmail.com}
+}
 \keyword{character,}
 \keyword{lookup}
 \keyword{replacement,}
 \keyword{table}
-

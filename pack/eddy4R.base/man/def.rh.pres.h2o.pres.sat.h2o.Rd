@@ -27,15 +27,15 @@ attributes(presH2o)$unit = "Pa"
 attributes(presH2oSat)$unit = "Pa"
 def.rh.pres.h2o.pres.sat.h2o(presH2o, presH2oSat)
 }
-\author{
-Stefan Metzger \email{eddy4R.info@gmail.com}
-Hongyan Luo \email{hluo@battelleecology.org}
-}
 \references{
 License: GNU AFFERO GENERAL PUBLIC LICENSE Version 3, 19 November 2007.
 }
 \seealso{
 Currently none.
+}
+\author{
+Stefan Metzger \email{eddy4R.info@gmail.com}
+Hongyan Luo \email{hluo@battelleecology.org}
 }
 \keyword{RH,}
 \keyword{irga}
@@ -43,4 +43,3 @@ Currently none.
 \keyword{saturation}
 \keyword{vapor,partial}
 \keyword{water}
-

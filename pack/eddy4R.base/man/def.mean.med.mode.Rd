@@ -30,10 +30,6 @@ def.mean.med.mode(test = rnorm(100))
 #returns error message
 def.mean.med.mode(test = rnorm(10), refe = 0, Perc = TRUE)
 }
-\author{
-Stefan Metzger \email{eddy4R.info@gmail.com} \cr
-Natchaya Pingintha-Durden \email{ndurden@battelleecology.org}
-}
 \references{
 License: GNU AFFERO GENERAL PUBLIC LICENSE Version 3, 19 November 2007 \cr
 Croux, C., and Rousseeuw, P. J.: Time-efficient algorithms for two highly robust estimators of scale, Computational Statistics, 1, 411-428, 1992. \cr
@@ -42,6 +38,9 @@ http://stackoverflow.com/questions/2547402/standard-library-function-in-r-for-fi
 \seealso{
 \code{\link[eddy4R.base]{def.mode}}
 }
+\author{
+Stefan Metzger \email{eddy4R.info@gmail.com} \cr
+Natchaya Pingintha-Durden \email{ndurden@battelleecology.org}
+}
 \keyword{descriptive}
 \keyword{statistics}
-

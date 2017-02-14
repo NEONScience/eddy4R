@@ -21,16 +21,15 @@ Calculate water vapor pressure from saturated water vapor pressure and relative 
 def.pres.h2o.pres.h2o.sat.rh(presH2oSat = 3160.057, rh = 0.65)
 def.pres.h2o.pres.h2o.sat.rh(presH2oSat = c(422.19, 1701.67, 6265.31), rh = c(0.10, 0.45, 0.80))
 }
-\author{
-Stefan Metzger \email{eddy4R.info@gmail.com} \cr
-Natchaya Pingintha-Durden \email{ndurden@battelleecology.org}
-}
 \references{
 License: GNU AFFERO GENERAL PUBLIC LICENSE Version 3, 19 November 2007
 }
 \seealso{
 Currently none
 }
+\author{
+Stefan Metzger \email{eddy4R.info@gmail.com} \cr
+Natchaya Pingintha-Durden \email{ndurden@battelleecology.org}
+}
 \keyword{conversion}
 \keyword{humidity}
-

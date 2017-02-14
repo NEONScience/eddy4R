@@ -27,18 +27,17 @@ The function reads in the new data produced in the tmp directory and compares th
 \examples{
 Currently none
 }
-\author{
-David Durden \email{ddurden@battelleecology.org} \cr
-Cove Sturtevant \email{eddy4R.info@gmail.com}
-}
 \references{
 License: GNU AFFERO GENERAL PUBLIC LICENSE Version 3, 19 November 2007. \cr
 }
 \seealso{
 Currently none
 }
+\author{
+David Durden \email{ddurden@battelleecology.org} \cr
+Cove Sturtevant \email{eddy4R.info@gmail.com}
+}
 \keyword{file}
 \keyword{function}
 \keyword{gold}
 \keyword{test,}
-

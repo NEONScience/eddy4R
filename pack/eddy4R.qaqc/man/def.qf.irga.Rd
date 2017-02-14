@@ -21,9 +21,6 @@ Definition function to interpret the irga sensor flags from \code{diag01}.
 diag01 <- rep(8191, 72000)
 def.qf.irga(diag01 = diag01)
 }
-\author{
-Dave Durden \email{ddurden@battelleecology.org}
-}
 \references{
 License: GNU AFFERO GENERAL PUBLIC LICENSE Version 3, 19 November 2007.
 NEON Algorithm Theoretical Basis Document:Eddy Covariance Turbulent Exchange Subsystem Level 0 to Level 0’ data product conversions and calculations (NEON.DOC.000807)
@@ -32,7 +29,9 @@ Licor LI7200 reference manual
 \seealso{
 Currently none
 }
+\author{
+Dave Durden \email{ddurden@battelleecology.org}
+}
 \keyword{NEON,}
 \keyword{irga,}
 \keyword{qfqm}
-

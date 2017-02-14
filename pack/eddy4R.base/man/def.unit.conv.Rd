@@ -100,14 +100,14 @@ or numerical conversion factors
 \examples{
 Currently none
 }
-\author{
-Cove Sturtevant \email{eddy4R.info@gmail.com}
-}
 \references{
 License: GNU AFFERO GENERAL PUBLIC LICENSE Version 3, 19 November 2007.
 }
 \seealso{
 \code{\link{IntlUnit}}, \code{\link{def.unit.info}}, \code{\link{def.unit.intl}}
+}
+\author{
+Cove Sturtevant \email{eddy4R.info@gmail.com}
 }
 \keyword{conversion,}
 \keyword{input}
@@ -115,4 +115,3 @@ License: GNU AFFERO GENERAL PUBLIC LICENSE Version 3, 19 November 2007.
 \keyword{unit}
 \keyword{units}
 \keyword{units,}
-
