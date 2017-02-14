@@ -29,11 +29,7 @@ Function wrapper. Flux computation sequence.
 }
 \examples{
 Currently none
-}
-\author{
-Stefan Metzger \email{eddy4R.info@gmail.com}
-
-Stefan Metzger \email{eddy4R.info@gmail.com}
+Currently none
 }
 \references{
 Currently none
@@ -45,7 +41,11 @@ Currently none
 
 Currently none
 }
+\author{
+Stefan Metzger \email{eddy4R.info@gmail.com}
+
+Stefan Metzger \email{eddy4R.info@gmail.com}
+}
 \keyword{eddy-covariance,}
 \keyword{flux}
 \keyword{turbulent}
-
