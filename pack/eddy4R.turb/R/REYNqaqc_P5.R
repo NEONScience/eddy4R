@@ -204,7 +204,7 @@ REYNcomp_FD_mole_dry <- function(
   
   #-----------------------------------------------------------
   #STATISTICAL ERRORS FOR FLUXES
-  REYN_loc$erro <- def.ucrt.samp(
+  REYN_loc$erro <- 100*def.ucrt.samp(
     distIsca=REYN_loc$isca,		#integral scale lengths
     valuMean=REYN_loc$mn,			#mean values
     coefCorr=REYN_loc$cor,		#flux correlation coefficient

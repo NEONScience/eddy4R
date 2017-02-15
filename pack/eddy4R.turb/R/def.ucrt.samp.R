@@ -72,20 +72,20 @@ def.ucrt.samp <- function(
   #in case of Wavelet, the convolution of the mother Wavelet at a particular scale of interest (here: the integral length scale) 
   #is influced by a multiple of that scale fore and aft the averaging interval (e-folding time).
   #This should be considered for the random error ( + timeFold * distVariIsca in denominator)
-  ucrtRandVari <- base::sqrt(2 * distVariIsca / (distAve + timeFold * distVariIsca)) * 100
+  ucrtRandVari <- base::sqrt(2 * distVariIsca / (distAve + timeFold * distVariIsca))
   
   #fluxes
   
   #directly from flux length scales (Lenschow, 1986 Eq. (7) == Lenschow, 1994 Eq. (48))
   #error estimate
   #large error in F_CH4_mass due to four times lower correlation coefficient
-   ucrtRandFlux <- base::data.frame(base::sqrt(2 * distFluxIsca / (distAve + timeFold * distFluxIsca) * (coefCorr^(-2) + 1)) * 100)
+   ucrtRandFlux <- base::data.frame(base::sqrt(2 * distFluxIsca / (distAve + timeFold * distFluxIsca) * (coefCorr^(-2) + 1)))
   #error reproduction
   #Bange: u_star2_x and u_star2_y are orthogonal == indepenend -> for random error we can use Gauss reproduction
    ucrtRandFlux$u_star <- (
-    (valuMean$u_star2_x *  ucrtRandFlux$u_star2_x / 100 * valuMean$u_star2_x / valuMean$u_star^2)^2 +
-      (valuMean$u_star2_y *  ucrtRandFlux$u_star2_y / 100 * valuMean$u_star2_y / valuMean$u_star^2)^2
-  )^(1/4) / valuMean$u_star * 100
+    (valuMean$u_star2_x *  ucrtRandFlux$u_star2_x * valuMean$u_star2_x / valuMean$u_star^2)^2 +
+      (valuMean$u_star2_y *  ucrtRandFlux$u_star2_y * valuMean$u_star2_y / valuMean$u_star^2)^2
+  )^(1/4) / valuMean$u_star 
   
   #upper limit from scalar length scales
   #upper limt for lenght scale following Mann (1994) Eq. (9), Bange (2002) Eq. (10)
@@ -97,15 +97,15 @@ def.ucrt.samp <- function(
   ))
   #error estimate
   #with Mann / Bange length scale
-  ucrtRandFluxMann <- base::data.frame(base::sapply(1:base::length(coefCorr), function(x) base::sqrt(2 *  distMax[x] / (distAve + timeFold * distMax[x]) * (coefCorr[x]^(-2) + 1)) * 100))
+  ucrtRandFluxMann <- base::data.frame(base::sapply(1:base::length(coefCorr), function(x) base::sqrt(2 *  distMax[x] / (distAve + timeFold * distMax[x]) * (coefCorr[x]^(-2) + 1))))
   #according to Lenschow, 1994 Eq. (49); Bange (2002) Eq. (16) says: WRONG
   #errm <- base::data.frame(base::sapply(1:base::length(coefCorr), function(x) base::abs(2 / coefCorr[x] * base::sqrt(min(distScalIsca$w_hor, distScalIsca[,x]) / (distAve + timeFold * distScalIsca[,x]))) * 100))
   #error reproduction (Bange, 2007 Eq.(3.32))
   #u_star: Bange u_star2_x and u_star2_y are orthogonal == indepenend -> for random error we can use Gauss reproduction
   ucrtRandFluxMann$u_star <- (
-    (valuMean$u_star2_x * ucrtRandFluxMann$u_star2_x / 100 * valuMean$u_star2_x / valuMean$u_star^2)^2 +
-      (valuMean$u_star2_y * ucrtRandFluxMann$u_star2_y / 100 * valuMean$u_star2_y / valuMean$u_star^2)^2
-  )^(1/4) / valuMean$u_star * 100
+    (valuMean$u_star2_x * ucrtRandFluxMann$u_star2_x * valuMean$u_star2_x / valuMean$u_star^2)^2 +
+      (valuMean$u_star2_y * ucrtRandFluxMann$u_star2_y * valuMean$u_star2_y / valuMean$u_star^2)^2
+  )^(1/4) / valuMean$u_star
   
   #save to list
   ran <- base::list()
@@ -124,32 +124,32 @@ def.ucrt.samp <- function(
   #SYSTEMATIC ERROR
   
   #variance (Lenschow, 1994 Eq. 36)
-  ucrtSysVari <- 2 * distVariIsca / distAve * 100
+  ucrtSysVari <- 2 * distVariIsca / distAve 
   
   #fluxes
   
   #directly from flux length scales (Lenschow, 1994 Eq. (27) == Bange, 2007 Eq. (3.20))
   #error estimate
-  ucrtSysFlux <- base::data.frame(2 * distFluxIsca / distAve * 100)
+  ucrtSysFlux <- base::data.frame(2 * distFluxIsca / distAve)
   #error reproduction
   #u_star upper bound (no independence and randomness required)
   ucrtSysFlux$u_star <- (
-    (valuMean$u_star2_x * ucrtSysFlux$u_star2_x / 100 * valuMean$u_star2_x / valuMean$u_star^2)^2 +
-      (valuMean$u_star2_y * ucrtSysFlux$u_star2_y / 100 * valuMean$u_star2_y / valuMean$u_star^2)^2
-  )^(1/4) / valuMean$u_star * 100
+    (valuMean$u_star2_x * ucrtSysFlux$u_star2_x * valuMean$u_star2_x / valuMean$u_star^2)^2 +
+      (valuMean$u_star2_y * ucrtSysFlux$u_star2_y * valuMean$u_star2_y / valuMean$u_star^2)^2
+  )^(1/4) / valuMean$u_star
   
   #upper limit from scalar length scales
   #error estimate
   #with Mann / Bange length scale
-  ucrtSysFluxMann <- base::data.frame(base::sapply(1:base::length(coefCorr), function(x) 2 *  distMax[x] / distAve * 100))
+  ucrtSysFluxMann <- base::data.frame(base::sapply(1:base::length(coefCorr), function(x) 2 *  distMax[x] / distAve))
   #according to Lenschow, 1994 Eq. (29); same!
   #ersm <- base::data.frame(base::sapply(1:base::length(coefCorr), function(x) base::abs(2 / coefCorr[x] * base::sqrt(distScalIsca$w_hor * distScalIsca[,x] ) / distAve) * 100))
   #error reproduction
   #u_star upper bound (no independence and randomness required)
   ucrtSysFluxMann$u_star <- (
-    (valuMean$u_star2_x * ucrtSysFluxMann$u_star2_x / 100 * valuMean$u_star2_x / valuMean$u_star^2)^2 +
-      (valuMean$u_star2_y * ucrtSysFluxMann$u_star2_y / 100 * valuMean$u_star2_y / valuMean$u_star^2)^2
-  )^(1/4) / valuMean$u_star * 100
+    (valuMean$u_star2_x * ucrtSysFluxMann$u_star2_x * valuMean$u_star2_x / valuMean$u_star^2)^2 +
+      (valuMean$u_star2_y * ucrtSysFluxMann$u_star2_y * valuMean$u_star2_y / valuMean$u_star^2)^2
+  )^(1/4) / valuMean$u_star
   
   #save to list
   sys <- base::list()
