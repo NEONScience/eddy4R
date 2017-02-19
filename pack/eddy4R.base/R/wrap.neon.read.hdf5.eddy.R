@@ -6,13 +6,14 @@
 
 #' @description Wrapper function. Reads an HDF5 input file in NEON standard format from \code{DirInpLoca}. Subsequently, (i) name and unit attributes are converted to eddy4R standard terms, (ii) variable units are converted accordingly, (iii) the data is regularized, (iv) sensor diagnostic tests are performed, (v) a range test is performed, and (vi) the data is de-spiked.
 
-#' @param \code{DirInpLoca} Character: Input directory.
-#' @param \code{SiteLoca} Character: Site location.
-#' @param \code{DateLoca} Character: Date in ISO format "(2016-05-26").
-#' @param \code{VarLoca} Character: Which instrument to read data from.
-#' @param \code{FreqLoca} Integer: Measurement frequency.
-#' @param \code{RngLoca} List of named ingegers: Thresholds for range test.
-#' @param \code{DespLoca} List of integers: De-spiking parameters
+#' @param DirInpLoca Character: Input directory.
+#' @param SiteLoca Character: Site location.
+#' @param DateLoca Character: Date in ISO format "(2016-05-26").
+#' @param VarLoca Character: Which instrument to read data from.
+#' @param LevlTowr The tower level that the sensor data is being collected in NEON data product convention (HOR_VER)
+#' @param FreqLoca Integer: Measurement frequency.
+#' @param RngLoca List of named ingegers: Thresholds for range test.
+#' @param DespLoca List of integers: De-spiking parameters
 
 #' @return 
 #' Named list containing pre-processed time-series $time and $data.
@@ -44,6 +45,7 @@ wrap.neon.read.hdf5.eddy <- function(
   SiteLoca,
   DateLoca,
   VarLoca,
+  LevlTowr = c("000_040", "000_050", "000_060")[3],
   FreqLoca,
   Rglr = FALSE,
   Diag = FALSE,
@@ -89,11 +91,11 @@ if(!(DateLoca %in% file)) {
     
     data <- data.frame(matrix(data = NaN, ncol = 19, nrow = length(time)))
     names(data) <- c("asrpCo2", "asrpH2o", "densMoleCo2", "densMoleH2o", "potCool", "powrCo2Refe", "powrCo2Samp", "powrH2oRefe",
-                     "powrH2oSamp", "presAtm", "presDiff", "rtioMoleDryCo2", "rtioMoleDryH2o", "ssiCo2", "ssiH2o", "tempIn",
+                     "powrH2oSamp", "presAtm", "presDiff","presSum", "rtioMoleDryCo2", "rtioMoleDryH2o", "ssiCo2", "ssiH2o", "tempIn", "tempMean",
                      "tempOut", "tempRefe", "time")
     data$time <- time
-    attributes(data)$unit <- c("-", "-", "molCo2 m-3", "molH2o m-3", "V", "W", "W", "W", "W", "Pa", "Pa", "molCo2 mol-1Dry",
-                               "molH2o mol-1Dry", "-", "-", "K", "K", "K", "YYYY-MM-DD hh:mm:ss.sss")
+    attributes(data)$unit <- c("-", "-", "molCo2 m-3", "molH2o m-3", "V", "W", "W", "W", "W", "Pa", "Pa", "Pa", "molCo2 mol-1Dry",
+                               "molH2o mol-1Dry", "-", "-", "K", "K", "K", "K", "YYYY-MM-DD hh:mm:ss.sss")
     names(attributes(data)$unit) <- names(data)
   
   }
@@ -109,13 +111,23 @@ if(!(DateLoca %in% file)) {
     
   }
 
+  # irga Solenoids in NEMA enclosure
+  if(VarLoca == "irgaSndValiNema") {
+    
+    data <- data.frame(matrix(data = NaN, ncol = 6, nrow = length(time)))
+    names(data) <- c("qfGas01", "qfGas02", "qfGas03", "qfGas04", "qfGas05", "time")
+    data$time <- time
+    attributes(data)$unit <- c("NA", "NA", "NA", "NA", "NA", "YYYY-MM-DD hh:mm:ss.sss")
+    names(attributes(data)$unit) <- names(data)
+    
+  }
   # soni
   if(VarLoca == "soni") {
     
     data <- data.frame(matrix(data = NaN, ncol = 6, nrow = length(time)))
-    names(data) <- c("idx", "time", "veloSoni", "veloXaxs", "veloYaxs", "veloZaxs")
+    names(data) <- c("idx", "tempSoni", "time", "veloSoni", "veloXaxs", "veloYaxs", "veloZaxs")
     data$time <- time
-    attributes(data)$unit <- c("NA", "YYYY-MM-DD hh:mm:ss.sss", "m s-1", "m s-1", "m s-1", "m s-1")
+    attributes(data)$unit <- c("NA", "K", "YYYY-MM-DD hh:mm:ss.sss", "m s-1", "m s-1", "m s-1", "m s-1")
     names(attributes(data)$unit) <- names(data)
     
   }
@@ -147,7 +159,7 @@ if(!(DateLoca %in% file)) {
     # read-in hdf5 data from the specified sensor
     # options via open connection: fid <- H5Fopen(paste0(DirInpLoca, "/ECTE_L0_", SiteLoca, "_", DateLoca, ".h5")); h5ls(fid)
     data <- rhdf5::h5read(file = base::paste0(DirInpLoca, "/ECTE_L0_", SiteLoca, "_", DateLoca, ".h5"),
-                          name = base::paste0("/", SiteLoca, "/dp0p/data/", VarLoca, "_001/000_060"),
+                          name = base::paste0("/", SiteLoca, "/dp0p/data/", VarLoca, "_001/",LevlTowr),
                           read.attributes = TRUE)
 
     # convert 1-d array list-elements to vector list-elements
@@ -168,7 +180,7 @@ if(!(DateLoca %in% file)) {
     
     # read attributes
     attr <- rhdf5::h5readAttributes(file = base::paste0(DirInpLoca, "/ECTE_L0_", SiteLoca, "_", DateLoca, ".h5"),
-                                    name = base::paste0("/", SiteLoca, "/dp0p/data/", VarLoca, "_001"))
+                                    name = base::paste0("/", SiteLoca, "/dp0p/data/", VarLoca, "_001/", LevlTowr))
     
     # which attributes are of type character?
     Pos01 <- base::names(attr)[base::sapply(base::names(attr), function(x) base::is.character(attr[[x]]))]
