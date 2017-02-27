@@ -2,7 +2,7 @@
 % Please edit documentation in R/spectral.r
 \name{find_F0}
 \alias{find_F0}
-\title{Determine cutoff frequency empirically}
+\title{Definition function: Determine cutoff frequency empirically}
 \usage{
 find_F0(f0,
   ide = SPEout$fr_obs[SPEout$fr_whr][which(SPEout$fr_obs[SPEout$fr_whr] >=
@@ -21,15 +21,14 @@ Determine cutoff frequency empirically .
 \examples{
 Currently none
 }
-\author{
-Stefan Metzger \email{eddy4R.info@gmail.com}
-}
 \references{
 Currently none
 }
 \seealso{
 Currently none
 }
+\author{
+Stefan Metzger \email{eddy4R.info@gmail.com}
+}
 \keyword{Currently}
 \keyword{none}
-

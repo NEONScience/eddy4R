@@ -2,7 +2,7 @@
 % Please edit documentation in R/def.stna.R
 \name{def.stna}
 \alias{def.stna}
-\title{Stationarity tests}
+\title{Definition function: Stationarity tests}
 \usage{
 def.stna(data, MethStna = c(1, 2, 3)[2], whrVar, NumSubSamp = 6,
   corTempPot = TRUE, presTempPot = NULL, PltfEc = "airc",
@@ -34,10 +34,6 @@ Function defintion. Stationarity tests based on Vickers and Mahrt (1997) and Fok
 \examples{
 Will provide in the future.
 }
-\author{
-Stefan Metzger \email{eddy4R.info@gmail.com} \cr
-Natchaya Pingintha-Durden
-}
 \references{
 Foken, T. and Wichura, B.: Tools for quality assessment of surface-based flux measurements, Agricultural and Forest Meteorology, 78, 83-105, (1996) \cr
 Vickers, D. and Mahrt, L.: Quality control and flux sampling problems for tower and aircraft data, Journal of Atmospheric and Oceanic Technology, 14, 512-526, 1997. \cr
@@ -45,8 +41,11 @@ Vickers, D. and Mahrt, L.: Quality control and flux sampling problems for tower 
 \seealso{
 Currently none
 }
+\author{
+Stefan Metzger \email{eddy4R.info@gmail.com} \cr
+Natchaya Pingintha-Durden
+}
 \keyword{eddy-covariance,}
 \keyword{flux}
 \keyword{stationarity,}
 \keyword{turbulent}
-

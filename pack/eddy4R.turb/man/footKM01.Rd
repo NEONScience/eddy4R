@@ -2,7 +2,7 @@
 % Please edit documentation in R/footprints.r
 \name{footKM01}
 \alias{footKM01}
-\title{Flux footprint after Kormann & Meixner (2001)}
+\title{Definition function: Flux footprint after Kormann & Meixner (2001)}
 \usage{
 footKM01(angle, Csize, hor, sigV, ustar, zmeas, Lvirt, cutoff = 0.01)
 }
@@ -32,9 +32,6 @@ Function for calclulating one flux footprint matrix at a time for the crosswind 
 \examples{
 Currently none
 }
-\author{
-Stefan Metzger \email{eddy4R.info@gmail.com}
-}
 \references{
 #'Kormann, R., and F. X. Meixner, 2001: An analytical footprint model for non-neutral stratification. Boundary-Layer Meteorol., 99, 207-224, doi:10.1023/A:1018991015119. \cr
 Pasquill, F., Atmospheric diffusion; the dispersion of windborne material from industrial and other sources. 2d ed. Chichester [Eng.] E. Horwood; New York, Halsted Press [1974], https://search.library.wisc.edu/catalog/999623699702121. \cr
@@ -43,7 +40,9 @@ Neftel, A., C. Spirig, and C. Ammann, 2008: Application and test of a simple too
 \seealso{
 Currently none
 }
+\author{
+Stefan Metzger \email{eddy4R.info@gmail.com}
+}
 \keyword{area}
 \keyword{footprint,}
 \keyword{source}
-

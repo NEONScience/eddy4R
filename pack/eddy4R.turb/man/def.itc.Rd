@@ -2,7 +2,7 @@
 % Please edit documentation in R/def.itc.R
 \name{def.itc}
 \alias{def.itc}
-\title{Integral turbulence characteristics}
+\title{Definition function: Integral turbulence characteristics}
 \usage{
 def.itc(stblObkv, lat, VarInp = c("veloXaxs", "veloZaxs", "temp", "all")[4],
   sd, varScal)
@@ -33,15 +33,15 @@ def.itc(stblObkv=0.0255, lat=70.4214, VarInp=c("all"), sd=sd, varScal=varScal)
 #single entry
 def.itc(stblObkv=0.0255, lat=70.4214, VarInp=c("veloXaxs"), sd=0.5254, varScal=0.1918)
 }
-\author{
-Stefan Metzger \email{eddy4R.info@gmail.com} \cr
-Natchaya Pingintha-Durden \cr
-}
 \references{
 Thomas, C. and Foken, T: Re-evaluation of integral turbulence characteristics and their parameterisations, 15th Conference on Turbulence and Boundary Layers, Wageningen, NL, American Meteorological Society, pp. 129-132, 2002.
 }
 \seealso{
 Currently none
+}
+\author{
+Stefan Metzger \email{eddy4R.info@gmail.com} \cr
+Natchaya Pingintha-Durden \cr
 }
 \keyword{characteristics,}
 \keyword{eddy-covariance,}
@@ -49,4 +49,3 @@ Currently none
 \keyword{integral}
 \keyword{turbulence}
 \keyword{turbulent}
-

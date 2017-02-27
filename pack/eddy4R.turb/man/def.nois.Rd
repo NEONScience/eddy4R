@@ -2,10 +2,10 @@
 % Please edit documentation in R/def.nois.R
 \name{def.nois}
 \alias{def.nois}
-\title{Determination of noise and detection limit for eddy-covariance turbulent fluxes}
+\title{Definition function: Determination of noise and detection limit for eddy-covariance turbulent fluxes}
 \usage{
 def.nois(dataTest, dataRefe, idxFlux, AlgBase, corTempPot = TRUE,
-  presTempPot = NULL, ConfLevl = 0.95, CritMax = 0.01, PltfEc = "towr",
+  presTempPot = NULL, ConfLvl = 0.95, CritMax = 0.01, PltfEc = "towr",
   flagCh4 = TRUE)
 }
 \arguments{
@@ -24,7 +24,7 @@ def.nois(dataTest, dataRefe, idxFlux, AlgBase, corTempPot = TRUE,
 
 \item{\code{presTempPot}}{A vector containing the air pressure data that will be used in the calculation when \code{corTempPot} = TRUE. Of class "numeric" or "integer" and of the same length as \code{dataTest} or single entry. [Pa]}
 
-\item{\code{ConfLevl}}{The confidence level at which the detection limit is calculated. Of class "numeric", defaults to 0.95. [-]}
+\item{\code{ConfLvl}}{The confidence level at which the detection limit is calculated. Of class "numeric", defaults to 0.95. [-]}
 
 \item{\code{CritMax}}{The stop criterion for the iteration. Of class "numeric", defaults to 0.01 (i.e., 1 percent change among subsequent runs). [-]}
 
@@ -41,19 +41,18 @@ Function defintion. Determine the noise bias, noise dispersion, detection limit 
 \examples{
 Currently none
 }
-\author{
-Stefan Metzger \email{eddy4R.info@gmail.com} \ cr
-Hongyan Luo \email{eddy4R.info@gmail.com}
-}
 \references{
 Billesbach, D.P. (2011) Estimating uncertainties in individual eddy covariance flux measurements: A comparison of methods and proposed new method. Agricultural and Forest Meteorology, 151, 394-405.
 }
 \seealso{
 Currently none
 }
+\author{
+Stefan Metzger \email{eddy4R.info@gmail.com} \ cr
+Hongyan Luo \email{eddy4R.info@gmail.com}
+}
 \keyword{detection}
 \keyword{eddy-covariance,}
 \keyword{flux,}
 \keyword{limit}
 \keyword{turbulent}
-

@@ -2,7 +2,7 @@
 % Please edit documentation in R/REYNflux_P5.R
 \name{REYNflux_FD_mole_dry}
 \alias{REYNflux_FD_mole_dry}
-\title{Calculate turbulent vertical flux and auxiliary variables}
+\title{Definition function: Calculate turbulent vertical flux and auxiliary variables}
 \usage{
 REYNflux_FD_mole_dry(data = eddy.data, AlgBase = c("mean", "trnd",
   "ord03")[1], FcorPOT = TRUE, FcorPOTl = NULL, PltfEc = "airc",
@@ -20,16 +20,15 @@ Function defintion. Calculate turbulent vertical flux and auxiliary variables.
 \examples{
 Currently none
 }
-\author{
-Stefan Metzger \email{eddy4R.info@gmail.com}
-}
 \references{
 Currently none
 }
 \seealso{
 Currently none
 }
+\author{
+Stefan Metzger \email{eddy4R.info@gmail.com}
+}
 \keyword{eddy-covariance,}
 \keyword{flux}
 \keyword{turbulent}
-

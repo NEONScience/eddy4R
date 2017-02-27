@@ -2,7 +2,7 @@
 % Please edit documentation in R/spectral.r
 \name{fun_TSIG}
 \alias{fun_TSIG}
-\title{Sigmoidal transfer function (Lorentzian)}
+\title{Definition function: Sigmoidal transfer function (Lorentzian)}
 \usage{
 fun_TSIG(freq_0, freq)
 }
@@ -18,15 +18,14 @@ Sigmoidal transfer function (Lorentzian) after Eugster and Senn (1995) in Aubine
 \examples{
 Currently none
 }
-\author{
-Stefan Metzger \email{eddy4R.info@gmail.com}
-}
 \references{
 Currently none
 }
 \seealso{
 Currently none
 }
+\author{
+Stefan Metzger \email{eddy4R.info@gmail.com}
+}
 \keyword{Currently}
 \keyword{none}
-

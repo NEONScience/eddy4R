@@ -2,7 +2,7 @@
 % Please edit documentation in R/spectral.r
 \name{COSP.plot}
 \alias{COSP.plot}
-\title{Plot cospectra}
+\title{Definition function: Plot cospectra}
 \usage{
 COSP.plot(name, IDE, DEP, title, labx = NA, laby = NA, colvec = c(1, 2,
   1), limx = NULL, limy = NULL, weight = T, wl = F, norm = NULL,
@@ -21,15 +21,14 @@ Plot cospectra.
 \examples{
 Currently none
 }
-\author{
-Stefan Metzger \email{eddy4R.info@gmail.com}
-}
 \references{
 Currently none
 }
 \seealso{
 Currently none
 }
+\author{
+Stefan Metzger \email{eddy4R.info@gmail.com}
+}
 \keyword{Currently}
 \keyword{none}
-

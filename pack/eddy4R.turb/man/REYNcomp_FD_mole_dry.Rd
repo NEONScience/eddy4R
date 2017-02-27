@@ -2,7 +2,7 @@
 % Please edit documentation in R/REYNqaqc_P5.R
 \name{REYNcomp_FD_mole_dry}
 \alias{REYNcomp_FD_mole_dry}
-\title{Detection limit for fluxes}
+\title{Definition function: Detection limit for fluxes}
 \usage{
 REYNcomp_FD_mole_dry(eddy.data_loc = eddy.data, whr_scal = c("u_hor",
   "v_hor", "w_hor", "T_air", "T_air_0", "T_v_0", "FD_mole_H2O", "FD_mole_CH4",
@@ -29,11 +29,7 @@ Function wrapper. Flux computation sequence.
 }
 \examples{
 Currently none
-}
-\author{
-Stefan Metzger \email{eddy4R.info@gmail.com}
-
-Stefan Metzger \email{eddy4R.info@gmail.com}
+Currently none
 }
 \references{
 Currently none
@@ -45,7 +41,11 @@ Currently none
 
 Currently none
 }
+\author{
+Stefan Metzger \email{eddy4R.info@gmail.com}
+
+Stefan Metzger \email{eddy4R.info@gmail.com}
+}
 \keyword{eddy-covariance,}
 \keyword{flux}
 \keyword{turbulent}
-

@@ -2,7 +2,7 @@
 % Please edit documentation in R/spectral.r
 \name{COSP.fwd}
 \alias{COSP.fwd}
-\title{Generate cospectra}
+\title{Definition function: Generate cospectra}
 \usage{
 COSP.fwd(FS, TS, cparho = 1)
 }
@@ -18,15 +18,14 @@ Generate cospectra.
 \examples{
 Currently none
 }
-\author{
-Stefan Metzger \email{eddy4R.info@gmail.com}
-}
 \references{
 Currently none
 }
 \seealso{
 Currently none
 }
+\author{
+Stefan Metzger \email{eddy4R.info@gmail.com}
+}
 \keyword{Currently}
 \keyword{none}
-

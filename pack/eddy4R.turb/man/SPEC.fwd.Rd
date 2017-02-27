@@ -2,7 +2,7 @@
 % Please edit documentation in R/spectral.r
 \name{SPEC.fwd}
 \alias{SPEC.fwd}
-\title{Fast Fourier transform}
+\title{Definition function: Fast Fourier transform}
 \usage{
 SPEC.fwd(tstamp = POST$UT, data, relmot = POST$veloTAmagn,
   height = POST$lengMCzLS, fre = freq, demean = F, detrend = T,
@@ -20,15 +20,14 @@ Fast Fourier transform.
 \examples{
 Currently none
 }
-\author{
-Stefan Metzger \email{eddy4R.info@gmail.com}
-}
 \references{
 Currently none
 }
 \seealso{
 Currently none
 }
+\author{
+Stefan Metzger \email{eddy4R.info@gmail.com}
+}
 \keyword{Currently}
 \keyword{none}
-

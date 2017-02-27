@@ -2,7 +2,7 @@
 % Please edit documentation in R/spectral.r
 \name{SPEmod}
 \alias{SPEmod}
-\title{Model (co)spectrum after Massman, 2005 (in Lee, 2005)}
+\title{Definition function: Model (co)spectrum after Massman, 2005 (in Lee, 2005)}
 \usage{
 SPEmod(ide = SPEout$fr_obs[SPEout$fr_whr], sc = c("spe", "cos")[2],
   si = OUT$REYN$mn$sigma[FILE], fx = 0.1, weight = TRUE)
@@ -19,15 +19,14 @@ Model (co)spectrum after Massman, 2005 (in Lee, 2005).
 \examples{
 Currently none
 }
-\author{
-Stefan Metzger \email{eddy4R.info@gmail.com}
-}
 \references{
 Currently none
 }
 \seealso{
 Currently none
 }
+\author{
+Stefan Metzger \email{eddy4R.info@gmail.com}
+}
 \keyword{Currently}
 \keyword{none}
-

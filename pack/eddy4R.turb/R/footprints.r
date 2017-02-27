@@ -1,5 +1,5 @@
 ##############################################################################################
-#' @title Flux footprint after Kormann & Meixner (2001)
+#' @title Definition function: Flux footprint after Kormann & Meixner (2001)
 
 # type (one of function defintion, function wrapper, workflow, demo): function defintion
 
@@ -268,7 +268,7 @@ footKM01 <- function(
 
 
 ##############################################################################################
-#' @title Flux footprint after Kljun et a. (2004), Metzger et al. (2012)
+#' @title Definition function: Flux footprint after Kljun et a. (2004), Metzger et al. (2012)
 
 # type (one of function defintion, function wrapper, workflow, demo): function defintion
 

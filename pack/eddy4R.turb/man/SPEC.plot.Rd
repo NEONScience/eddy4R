@@ -2,7 +2,7 @@
 % Please edit documentation in R/spectral.r
 \name{SPEC.plot}
 \alias{SPEC.plot}
-\title{Plot power spectra of up to three variables}
+\title{Definition function: Plot power spectra of up to three variables}
 \usage{
 SPEC.plot(name, IDE, DEP, legtext, labx = NA, laby = NA, colvec = NULL,
   limx = NULL, limy = NULL, setoff = NULL, powerc = NULL,
@@ -20,15 +20,14 @@ Plot power spectra of up to three variables.
 \examples{
 Currently none
 }
-\author{
-Stefan Metzger \email{eddy4R.info@gmail.com}
-}
 \references{
 Currently none
 }
 \seealso{
 Currently none
 }
+\author{
+Stefan Metzger \email{eddy4R.info@gmail.com}
+}
 \keyword{Currently}
 \keyword{none}
-

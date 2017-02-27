@@ -2,7 +2,7 @@
 % Please edit documentation in R/spectral.r
 \name{const_t}
 \alias{const_t}
-\title{63\% time constant after Aubinet (2012) Eq. 4.22}
+\title{Definition function: 63\% time constant after Aubinet (2012) Eq. 4.22}
 \usage{
 const_t(f0)
 }
@@ -18,15 +18,14 @@ Currently none
 \examples{
 Currently none
 }
-\author{
-Stefan Metzger \email{eddy4R.info@gmail.com}
-}
 \references{
 Currently none
 }
 \seealso{
 Currently none
 }
+\author{
+Stefan Metzger \email{eddy4R.info@gmail.com}
+}
 \keyword{Currently}
 \keyword{none}
-

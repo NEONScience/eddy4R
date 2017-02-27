@@ -2,7 +2,7 @@
 % Please edit documentation in R/spectral.r
 \name{OGIV.plot}
 \alias{OGIV.plot}
-\title{Plot ogives}
+\title{Definition function: Plot ogives}
 \usage{
 OGIV.plot(name, IDR, RAW, IDS, SMO, thresh, Fperi, title = NULL,
   labx = NULL, laby = NULL, colvec = c("grey", 1, 1), LIMX = NULL,
@@ -20,15 +20,14 @@ Plot ogives.
 \examples{
 Currently none
 }
-\author{
-Stefan Metzger \email{eddy4R.info@gmail.com}
-}
 \references{
 Currently none
 }
 \seealso{
 Currently none
 }
+\author{
+Stefan Metzger \email{eddy4R.info@gmail.com}
+}
 \keyword{Currently}
 \keyword{none}
-

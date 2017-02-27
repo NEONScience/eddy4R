@@ -2,7 +2,7 @@
 % Please edit documentation in R/REYNqaqc_P5.R
 \name{REYNerro_FD_mole_dry}
 \alias{REYNerro_FD_mole_dry}
-\title{Statistical errors for fluxes}
+\title{Definition function: Statistical errors for fluxes}
 \usage{
 REYNerro_FD_mole_dry(isca, mn, rc, Lf, COI = 0)
 }
@@ -18,16 +18,15 @@ Function defintion. Statistical errors for fluxes.
 \examples{
 Currently none
 }
-\author{
-Stefan Metzger \email{eddy4R.info@gmail.com}
-}
 \references{
 Currently none
 }
 \seealso{
 Currently none
 }
+\author{
+Stefan Metzger \email{eddy4R.info@gmail.com}
+}
 \keyword{eddy-covariance,}
 \keyword{flux}
 \keyword{turbulent}
-
