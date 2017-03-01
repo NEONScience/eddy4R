@@ -31,6 +31,7 @@
 #     changed naming conventions to match eddy4R 
 ##############################################################################################
 def.ucrt.samp <- function(
+  data = NULL,           #instantaneous data
   distIsca,		    #integral scale lengths
   valuMean,		      #mean values
   coefCorr,		      #flux correlation coefficient
@@ -73,6 +74,7 @@ def.ucrt.samp <- function(
   #is influced by a multiple of that scale fore and aft the averaging interval (e-folding time).
   #This should be considered for the random error ( + timeFold * distVariIsca in denominator)
   ucrtRandVari <- base::sqrt(2 * distVariIsca / (distAve + timeFold * distVariIsca))
+
   
   #fluxes
   
@@ -80,6 +82,7 @@ def.ucrt.samp <- function(
   #error estimate
   #large error in F_CH4_mass due to four times lower correlation coefficient
    ucrtRandFlux <- base::data.frame(base::sqrt(2 * distFluxIsca / (distAve + timeFold * distFluxIsca) * (coefCorr^(-2) + 1)))
+   
   #error reproduction
   #Bange: u_star2_x and u_star2_y are orthogonal == indepenend -> for random error we can use Gauss reproduction
    ucrtRandFlux$u_star <- (
@@ -109,12 +112,53 @@ def.ucrt.samp <- function(
   
   #save to list
   ran <- base::list()
+
   #sampling error in variance
-  ran$vari$act=ucrtRandVari
+  ran$vari$act=ucrtRandVari*100
   #actual flux random error (flux length scales)
-  ran$flux$act= ucrtRandFlux		
+  ran$flux$act= ucrtRandFlux*100
   #maximum flux random error (scalar length scales)
-  ran$flux$max=ucrtRandFluxMann		
+  ran$flux$max=ucrtRandFluxMann*100		
+  
+  #Below is the Moving Block Bootstrap technique to estimate sampling uncertainty for scalars, variances, and fluxes. Only run if user supplies instantaneous data
+  
+  if (length(data) > 1) {
+  
+  #scalar
+  
+  require(boot)
+  #Compute the mean of the Relative Error from the B = 1000 bootstrap samples
+  distCrit <- def.dist.mbb(data$scal)
+  tmp <- boot::tsboot(data$scal,mean, 1000, l = round(distCrit), sim = "fixed")
+  ucrtRandScal <- sd(tmp$t)/mean(data$scal)
+  rm(tmp)
+  
+  #save sampling error to list
+  ran$scal$act = ucrtRandScal*100
+  
+  #variance
+  
+  #Compute the mean of the Relative Error from the B = 1000 bootstrap samples
+  distCrit <- def.dist.mbb(data$vari)
+  tmp <- boot::tsboot(data$vari,mean, 1000, l = round(distCrit), sim = "fixed")
+  ucrtRandVariMBB <- sd(tmp$t)/mean(data$vari)
+  rm(tmp)
+  
+  #sampling error in variance using MBB
+  ran$vari$mbb=ucrtRandVariMBB*100
+  
+  #flux
+  
+  #Compute the mean of the Relative Error from the B = 1000 bootstrap samples
+  distCrit <- def.dist.mbb(data$flux)
+  tmp <- boot::tsboot(data$flux,mean, 1000, l = round(distCrit), sim = "fixed")
+  ucrtRandFluxMBB <- sd(tmp$t)/mean(data$flux)
+  rm(tmp)
+  
+  #Sampling error using MBB
+  ran$flux$mbb= ucrtRandFluxMBB*100
+  
+  }
   
   #clean up
   rm(ucrtRandFlux, ucrtRandVari, ucrtRandFluxMann)
@@ -154,11 +198,11 @@ def.ucrt.samp <- function(
   #save to list
   sys <- base::list()
   #sampling error in variance
-  sys$vari$act=ucrtSysVari
+  sys$vari$act=ucrtSysVari*100
   #actual flux systematic error (flux length scales)
-  sys$flux$act=ucrtSysFlux
+  sys$flux$act=ucrtSysFlux*100
   #maximum flux systematic error (scalar length scales)
-  sys$flux$max=ucrtSysFluxMann
+  sys$flux$max=ucrtSysFluxMann*100
   
   #clean up
   rm(distScalIsca, distVariIsca, distFluxIsca, ucrtSysFlux, ucrtSysVari, ucrtSysFluxMann,  distMax)
