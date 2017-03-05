@@ -181,4 +181,3 @@ Conversion factors are always specified as n-element vectors of polynomial coeff
 a0,a1,a2,... corresponding to a0 + a1*x + a2*x^2 + ..., where n is 1 + the polynomial degree
 }
 \keyword{datasets}
-

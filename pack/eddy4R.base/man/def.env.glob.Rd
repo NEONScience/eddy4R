@@ -20,9 +20,6 @@ Function defintion. To avoid user-location-specific dependencies, the system loc
 \examples{
 Currently none
 }
-\author{
-Stefan Metzger \email{eddy4R.info@gmail.com}
-}
 \references{
 License: GNU AFFERO GENERAL PUBLIC LICENSE Version 3, 19 November 2007. \cr
 \url{http://www.inside-r.org/r-doc/base/Sys.setlocale}
@@ -30,6 +27,8 @@ License: GNU AFFERO GENERAL PUBLIC LICENSE Version 3, 19 November 2007. \cr
 \seealso{
 Currently none
 }
+\author{
+Stefan Metzger \email{eddy4R.info@gmail.com}
+}
 \keyword{environment}
 \keyword{global}
-

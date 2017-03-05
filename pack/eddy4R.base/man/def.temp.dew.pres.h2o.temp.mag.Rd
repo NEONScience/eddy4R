@@ -21,10 +21,6 @@ Calculate dew point temperature from water vapor pressure and ambient temperatur
 def.temp.dew.pres.h2o.temp.mag(presH2o = 2212.04, temp = 298.15)
 def.temp.dew.pres.h2o.temp.mag(presH2o = c(42.22, 87.22, 699.78), temp = c(265.15, 278.15, 293.15))
 }
-\author{
-Stefan Metzger \email{eddy4R.info@gmail.com} \cr
-Natchaya Pingintha-Durden \email{ndurden@battelleecology.org}
-}
 \references{
 License: GNU AFFERO GENERAL PUBLIC LICENSE Version 3, 19 November 2007.
 Gueymard, C.: Assessment of the accuracy and computing speed of simplified saturation vapor equations using a new reference dataset, J. Appl. Meteorol., 32, 1294-1300, doi:10.1175/1520-0450(1993)0321294:aotaac2.0.co;2, 1993. \cr
@@ -32,10 +28,13 @@ Gueymard, C.: Assessment of the accuracy and computing speed of simplified satur
 \seealso{
 Currently none
 }
+\author{
+Stefan Metzger \email{eddy4R.info@gmail.com} \cr
+Natchaya Pingintha-Durden \email{ndurden@battelleecology.org}
+}
 \keyword{Magnus}
 \keyword{conversion,}
 \keyword{dew}
 \keyword{equation}
 \keyword{humidity}
 \keyword{point,}
-

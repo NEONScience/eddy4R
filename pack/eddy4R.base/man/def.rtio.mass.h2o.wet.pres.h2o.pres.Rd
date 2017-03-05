@@ -21,18 +21,17 @@ Calculate specific humidity from water vapor pressure and static pressure.
 def.rtio.mass.h2o.wet.pres.h2o.pres(presH2o = 2212.04 , pres = 65000)
 def.rtio.mass.h2o.wet.pres.h2o.pres(presH2o = c(2212.04, 348.69, 87.17) , pres = c(65000, 83000, 110000))
 }
-\author{
-Stefan Metzger \email{eddy4R.info@gmail.com} \cr
-Natchaya Pingintha-Durden \email{ndurden@battelleecology.org}
-}
 \references{
 License: GNU AFFERO GENERAL PUBLIC LICENSE Version 3, 19 November 2007.
 }
 \seealso{
 Currently none
 }
+\author{
+Stefan Metzger \email{eddy4R.info@gmail.com} \cr
+Natchaya Pingintha-Durden \email{ndurden@battelleecology.org}
+}
 \keyword{conversion,}
 \keyword{humidity}
 \keyword{ratio}
 \keyword{specific,}
-
