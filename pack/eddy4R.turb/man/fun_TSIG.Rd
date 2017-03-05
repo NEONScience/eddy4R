@@ -18,15 +18,14 @@ Sigmoidal transfer function (Lorentzian) after Eugster and Senn (1995) in Aubine
 \examples{
 Currently none
 }
-\author{
-Stefan Metzger \email{eddy4R.info@gmail.com}
-}
 \references{
 Currently none
 }
 \seealso{
 Currently none
 }
+\author{
+Stefan Metzger \email{eddy4R.info@gmail.com}
+}
 \keyword{Currently}
 \keyword{none}
-

@@ -18,16 +18,15 @@ Flux footprint after Kljun et a. (2004), Metzger et al. (2012).
 \examples{
 Currently none
 }
-\author{
-Stefan Metzger \email{eddy4R.info@gmail.com}
-}
 \references{
 Currently none
 }
 \seealso{
 Currently none
 }
+\author{
+Stefan Metzger \email{eddy4R.info@gmail.com}
+}
 \keyword{area}
 \keyword{footprint,}
 \keyword{source}
-
