@@ -27,9 +27,6 @@ def.med.mad(test = rnorm(10), refe = rnorm(10))
 #returns error message
 def.med.mad(test = rnorm(10), refe = rnorm(5000))
 }
-\author{
-Stefan Metzger \email{eddy4R.info@gmail.com}
-}
 \references{
 License: GNU AFFERO GENERAL PUBLIC LICENSE Version 3, 19 November 2007. \cr
 Croux, C., and Rousseeuw, P. J.: Time-efficient algorithms for two highly robust estimators of scale, Computational Statistics, 1, 411-428, 1992. \cr
@@ -37,6 +34,8 @@ Croux, C., and Rousseeuw, P. J.: Time-efficient algorithms for two highly robust
 \seealso{
 Function eddy4R.base:::def.rmsd.bias.prec.cdet() for Gaussian statistics-based measures of scale and dispersion.
 }
+\author{
+Stefan Metzger \email{eddy4R.info@gmail.com}
+}
 \keyword{robust}
 \keyword{statistics}
-

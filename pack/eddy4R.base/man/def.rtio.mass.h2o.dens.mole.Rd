@@ -27,18 +27,17 @@ attributes(densMoleH2o)$unit = "molH2o m-3"
 attributes(densMoleAirDry)$unit = "mol m-3"
 def.rtio.mass.h2o.dens.mole (densMoleH2o, densMoleAirDry)
 }
-\author{
-Stefan Metzger \email{eddy4R.info@gmail.com}
-Hongyan Luo \email{hluo@battelleecology.org}
-}
 \references{
 License: GNU AFFERO GENERAL PUBLIC LICENSE Version 3, 19 November 2007.
 }
 \seealso{
 Currently none.
 }
+\author{
+Stefan Metzger \email{eddy4R.info@gmail.com}
+Hongyan Luo \email{hluo@battelleecology.org}
+}
 \keyword{density}
 \keyword{humidity,}
 \keyword{mole}
 \keyword{specific}
-

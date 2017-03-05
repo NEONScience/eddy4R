@@ -45,17 +45,16 @@ NULL
   attributes(samp$velo)$unit
   [1] "m s-1"
 }
-\author{
-Stefan Metzger \email{eddy4R.info@gmail.com}
-}
 \references{
 License: GNU AFFERO GENERAL PUBLIC LICENSE Version 3, 19 November 2007.
 }
 \seealso{
 Currently none.
 }
+\author{
+Stefan Metzger \email{eddy4R.info@gmail.com}
+}
 \keyword{assign,}
 \keyword{data.frame,}
 \keyword{unit,}
 \keyword{variable}
-

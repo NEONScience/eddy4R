@@ -31,14 +31,14 @@ Wrapper function. Reads an HDF5 input file in NEON standard format from \code{Di
 \examples{
 Currently none.
 }
-\author{
-Stefan Metzger \email{eddy4R.info@gmail.com}
-}
 \references{
 License: GNU AFFERO GENERAL PUBLIC LICENSE Version 3, 19 November 2007.
 }
 \seealso{
 Currently none.
+}
+\author{
+Stefan Metzger \email{eddy4R.info@gmail.com}
 }
 \keyword{conversion,}
 \keyword{diagnostic,}
@@ -49,4 +49,3 @@ Currently none.
 \keyword{regularization,}
 \keyword{spike}
 \keyword{unit}
-

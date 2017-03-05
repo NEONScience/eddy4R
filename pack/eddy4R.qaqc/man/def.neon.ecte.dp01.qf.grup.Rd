@@ -36,18 +36,17 @@ inp$qf$soniAmrs <- eddy4R.qaqc::def.qf.ecte(TimeBgn = TimeBgn, TimeEnd = TimeEnd
 qfGrupIrgaCo2 <- def.neon.ecte.dp01.qf.grup(qfSens00 = inp$qf$irga, qfSens01 = inp$qf$irgaMfcSamp, dp01="irgaCo2")
 qfGrupSoni <- def.neon.ecte.dp01.qf.grup(qfSens00 = inp$qf$soni, qfSens01 = inp$qf$irga, dp01="soni")
 }
-\author{
-Natchaya Pingintha-Durden \email{ndurden@battelleecology.org}
-}
 \references{
 License: GNU AFFERO GENERAL PUBLIC LICENSE Version 3, 19 November 2007
 }
 \seealso{
 Currently none
 }
+\author{
+Natchaya Pingintha-Durden \email{ndurden@battelleecology.org}
+}
 \keyword{NEON}
 \keyword{QAQC,}
 \keyword{flags,}
 \keyword{metrics}
 \keyword{quality}
-

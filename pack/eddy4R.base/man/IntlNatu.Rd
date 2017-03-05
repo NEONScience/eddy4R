@@ -42,4 +42,3 @@ IntlNatu
 Natural constants, such as the ideal gas constant, for use across eddy4R package suite.
 }
 \keyword{datasets}
-

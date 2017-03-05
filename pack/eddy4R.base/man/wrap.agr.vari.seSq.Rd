@@ -38,14 +38,14 @@ zone = -6,
 MethAgr = "agrHour"
 )
 }
-\author{
-Ke Xu \email{xuke2012abroad@gmail.com}
-}
 \references{
 License: GNU AFFERO GENERAL PUBLIC LICENSE Version 3, 19 November 2007.
 }
 \seealso{
 Currently none
+}
+\author{
+Ke Xu \email{xuke2012abroad@gmail.com}
 }
 \keyword{aggregate,}
 \keyword{cycle}
@@ -55,4 +55,3 @@ Currently none
 \keyword{minutely,}
 \keyword{standard}
 \keyword{variance,}
-

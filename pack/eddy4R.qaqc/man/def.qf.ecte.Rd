@@ -32,16 +32,15 @@ Sens <- "soni"
 PcntQf <- 0.05
 qfSens <- def.qf.ecte(TimeBgn = TimeBgn, TimeEnd = TimeEnd, Freq = Freq, Sens = Sens, PcntQf = PcntQf)
 }
-\author{
-David Durden \email{ddurden@battelleecology.org}
-}
 \references{
 License: GNU AFFERO GENERAL PUBLIC LICENSE Version 3, 19 November 2007.
 }
 \seealso{
 Currently none
 }
+\author{
+David Durden \email{ddurden@battelleecology.org}
+}
 \keyword{NEON,}
 \keyword{QAQC,}
 \keyword{SOM}
-
