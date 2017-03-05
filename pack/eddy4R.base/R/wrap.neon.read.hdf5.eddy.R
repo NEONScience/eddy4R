@@ -38,6 +38,8 @@
 #   Stefan Metzger (2016-10-04)
 #     added replacement statements for unit attributes on individual variables in data.frame
 # 		full implementation requires updating unit-specific behavior of eddy4R.base::def.rglr()
+#   David Durden (2017-02-24)
+#     Updating to new L0p HDF5 file, the unit are now on data table level
 ##############################################################################################
         
 wrap.neon.read.hdf5.eddy <- function(
@@ -182,18 +184,19 @@ if(!(DateLoca %in% file)) {
     attr <- rhdf5::h5readAttributes(file = base::paste0(DirInpLoca, "/ECTE_L0_", SiteLoca, "_", DateLoca, ".h5"),
                                     name = base::paste0("/", SiteLoca, "/dp0p/data/", VarLoca, "_001/", LevlTowr))
     
-    # which attributes are of type character?
-    Pos01 <- base::names(attr)[base::sapply(base::names(attr), function(x) base::is.character(attr[[x]]))]
+    #########This section not needed after moving the names and units to the data table level###########################
+    # which attributes are of type character? 
+#    Pos01 <- base::names(attr)[base::sapply(base::names(attr), function(x) base::is.character(attr[[x]]))]
     
     # split characters by comma separator and trim white spaces
-    if(base::length(Pos01) > 0) attr[Pos01] <- base::sapply(Pos01, function(x) base::trimws(base::unlist(base::strsplit(x = attr[[x]], split = ","))))
+#    if(base::length(Pos01) > 0) attr[Pos01] <- base::sapply(Pos01, function(x) base::trimws(base::unlist(base::strsplit(x = attr[[x]], split = ","))))
 
     # assign variable names to units to enable sorting
     base::names(attr$Unit) <- attr$Name
 
     # sort and assign unit descriptions in same order as data
     base::attributes(data)$unit <- attr$Unit[base::names(data)]
-    rm(attr, Pos01)
+    rm(attr) 
     
       # replacement statement for assigning units to individual variables in data
       # # assign units to variables in data
