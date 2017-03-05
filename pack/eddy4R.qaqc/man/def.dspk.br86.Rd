@@ -96,10 +96,6 @@ Error escapes:\cr
 \examples{
 Currently none
 }
-\author{
-Stefan Metzger \email{eddy4R.info@gmail.com} \cr
-Cove Sturtevant \email{eddy4R.info@gmail.com}
-}
 \references{
 License: GNU AFFERO GENERAL PUBLIC LICENSE Version 3, 19 November 2007. \cr
 Brock, F. V. A Nonlinear Filter to Remove Impulse Noise from Meteorological Data. J. Atmos. Oceanic Technol. 3, 51–58 (1986). \cr
@@ -111,6 +107,9 @@ NEON Algorithm Theoretical Basis Document: Quality Flags and Quality Metrics for
 \seealso{
 Currently none
 }
+\author{
+Stefan Metzger \email{eddy4R.info@gmail.com} \cr
+Cove Sturtevant \email{eddy4R.info@gmail.com}
+}
 \keyword{Currently}
 \keyword{none}
-
