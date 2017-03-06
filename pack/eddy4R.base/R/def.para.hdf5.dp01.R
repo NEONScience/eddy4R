@@ -52,22 +52,23 @@ def.para.hdf5.dp01 <- function(
 listPara <- rhdf5::h5ls(FileIn, datasetinfo = FALSE)
 
 #Grabbing just the HDF5 groups
-listPara <- listPara[listPara$otype == "H5I_GROUP",]
-listGrup <- base::paste(listPara$group, listPara$name, sep = "/") # Combining output
+#listPara <- listPara[listPara$otype == "H5I_GROUP",] #Used to grab metadata if it is only attached to the group level
+listGrp <- base::paste(listPara$group, listPara$name, sep = "/") # Combining output
 
 
 # read attributes from input file
-listAttr <- base::lapply(listGrup, h5readAttributes, file = FileIn)
+listAttr <- base::lapply(listGrp, h5readAttributes, file = FileIn)
+
 
 #Apply group names to the attributes list
-base::names(listAttr) <- listGrup
+base::names(listAttr) <- listGrp
 
 #Remove all empty lists
 listAttr <- listAttr[!base::sapply(listAttr, function(x) base::length(x) == 0)]
 
 
 #Open the output file HDF5 link
-fid <- rhdf5::H5Fopen(fileOut)
+fid <- rhdf5::H5Fopen(FileOut)
   
 #Write the attributes to the new file
 lapply(names(listAttr), function(x){
