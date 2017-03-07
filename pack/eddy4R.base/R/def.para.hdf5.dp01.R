@@ -72,9 +72,10 @@ fid <- rhdf5::H5Fopen(FileOut)
   
 #Write the attributes to the new file
 lapply(names(listAttr), function(x){
-  gid <- rhdf5::H5Gopen(fid, x)
+  gid <- rhdf5::H5Oopen(fid, x)
  base::lapply(names(listAttr[[x]]), function(y){
    rhdf5::h5writeAttribute(attr = listAttr[[x]][[y]], h5obj = gid, name = y)})
 })
 
+H5close()
 }
