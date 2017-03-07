@@ -160,7 +160,7 @@ if(!(DateLoca %in% file)) {
     
     # read-in hdf5 data from the specified sensor
     # options via open connection: fid <- H5Fopen(paste0(DirInpLoca, "/ECTE_L0_", SiteLoca, "_", DateLoca, ".h5")); h5ls(fid)
-    data <- rhdf5::h5read(file = base::paste0(DirInpLoca, "/ECTE_L0_", SiteLoca, "_", DateLoca, ".h5"),
+    data <- rhdf5::h5read(file = base::paste0(DirInpLoca, "/ECTE_dp0p_", SiteLoca, "_", DateLoca, ".h5"),
                           name = base::paste0("/", SiteLoca, "/dp0p/data/", VarLoca, "_001/",LevlTowr),
                           read.attributes = TRUE)
 
@@ -181,7 +181,7 @@ if(!(DateLoca %in% file)) {
   # assign hdf5 attributes
     
     # read attributes
-    attr <- rhdf5::h5readAttributes(file = base::paste0(DirInpLoca, "/ECTE_L0_", SiteLoca, "_", DateLoca, ".h5"),
+    attr <- rhdf5::h5readAttributes(file = base::paste0(DirInpLoca, "/ECTE_dp0p_", SiteLoca, "_", DateLoca, ".h5"),
                                     name = base::paste0("/", SiteLoca, "/dp0p/data/", VarLoca, "_001/", LevlTowr))
     
     #########This section not needed after moving the names and units to the data table level###########################
