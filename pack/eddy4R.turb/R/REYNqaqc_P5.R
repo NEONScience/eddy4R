@@ -209,7 +209,7 @@ REYNcomp_FD_mole_dry <- function(
     distIsca=REYN_loc$isca,		#integral scale lengths
     valuMean=REYN_loc$mn,			#mean values
     coefCorr=REYN_loc$cor,		#flux correlation coefficient
-    distAve=REYN_loc$max$d_xy_flow		#averaging distance (length of air d_xy_flow flown through [m])
+    distMean=REYN_loc$max$d_xy_flow		#averaging distance (length of air d_xy_flow flown through [m])
   )
   
   

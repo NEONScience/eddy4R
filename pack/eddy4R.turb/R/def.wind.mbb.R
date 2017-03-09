@@ -10,7 +10,7 @@
 
 #' @param \code{scalEddy}  A vector containing distances or times and of class "numeric". [m] or [s]
 #' @param \code{data} A vector containing the input data. Of class "numeric" or "integer". [user-defined]
-#' @param \code{veloXaxs} Instantaneous wind speed. Only supplied when users define scalEddy in terms of time. If provided, of class "numeric", otherwise NULL. [m/s]
+#' @param \code{veloXaxs} Instantaneous wind speed. Only supplied when users define scalEddy in terms of time. If provided, of class "numeric", otherwise NULL. [ms-1]
 
 
 #' @return Optimal Length for the Moving Block Bootstrap.
@@ -31,7 +31,7 @@
 #   Kenny Pratt(2017-02-28)
 #     original creation
 ##############################################################################################
-def.dist.mbb <- function(
+def.wind.mbb <- function(
   data
 ) {
 
@@ -52,30 +52,30 @@ rptCorr <- stats::acf(data, lag.max = 2.1*lag, type = "correlation", plot = FALS
 #hence attaching sin(1:10) to the end
 posZero <- EMD::extrema(y=c(rptCorr$acf, sin(1:10)))$cross[1,2]
 
-m = posZero
-M = 2*m
-k_m = seq(-M,M)/M
+tmpM = posZero
 
-for (ii in 1:length(k_m)){
+tmpKm = seq(-2*tmpM,2*tmpM)/2*tmpM
+
+for (ii in 1:length(tmpKm)){
   
-  if (abs(k_m[ii]) < .5) {
+  if (abs(tmpKm[ii]) < .5) {
     
-    lambda[ii] = 1
+    tmpLam[ii] = 1
     
   } else
     
-    lambda[ii] = 2*(1-abs(k_m[ii]))
+    tmpLam[ii] = 2*(1-abs(tmpKm[ii]))
   
 }
 
-twoSidedAcf = c(rptCorr$acf[M:1],1,rptCorr$acf[1:M])
+twoSideAcf = c(rptCorr$acf[2*tmpM:1],1,rptCorr$acf[1:2*tmpM])
 
-hzero = base::sum(lambda*twoSidedAcf)
-D = (4/3)*hzero^2
-H = base::sum(lambda*abs(seq(-2*posZero,2*posZero))*twoSidedAcf)
+tmpHzer = base::sum(tmpLam*twoSideAcf)
+tmpD = (4/3)*tmpHzer^2
+tmpH = base::sum(tmpLam*abs(seq(-2*posZero,2*posZero))*twoSideAcf)
 
-bopt <- (((2*H^2)/D)^(1/3))*length(data)^(1/3)
+windOpt <- (((2*tmpH^2)/tmpD)^(1/3))*length(data)^(1/3)
 
-return(bopt)
+return(windOpt)
 
 }

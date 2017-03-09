@@ -8,13 +8,24 @@
 #' @description 
 #' Function defintion. Statistical errors for scalars, variances, and fluxes.
 
-#' @param Currently none
+#' @param \code{data} A vector of instantaneous data. If user provides vector, Moving block bootstrap technique will be implemented to provide an additional uncertainty estimate. If NULL is provided, only Lenschow technique will be performed.
+#' @param \code{distIsca} A list of integral length scales for scalars, variances, and fluxes.
+#' @param \code{valuMean} Mean Values.
+#' @param \code{coefCorr} Flux correlation coefficient
+#' @param \code{distMean} Average flight length
+#' @param \code{timeFold} e-folding time
 
-#' @return Currently none
+#' @return Statistical Errors for scalars, variances, and fluxes
 
-#' @references Currently none
+#' @references Torrence and Compo, 1998 \cr
+#' Lenschow, 1994 \cr
+#' D.H. Lenschow, B.B.Stankov. (1986) Length Scales in the Convective Boundary Layer. Journal of the Atmospheric Sciences. 43:12, 1198-1209 \cr
+#' J.Mann, D. Lenschow (1994) Errors in airborne flux measurements. JGR:Atmospheres, 99, 14519-14526 \cr
+#' J. Bange (2002). Airborne Measurements of Turbulent Energy Exchange Between the Earth Surface and the Atmosphere. \cr
+#' S. Salesky, M. Chamecki, N. Dias (2012) Estimating random error in eddy covariance fluxes and other turbulence statistics: the filtering method .  Boundary-Layer Meteorology., 144, 113-135. \cr 
+#' J.Bange, F. Beyrich, D. Engelbart. (2002) Airborne measurements of turbulent fluxes during LITFASS-98: Comparison with ground measurements and remote sensing in a case study. Theor. Appl. Climatol. 73, 35-51 \cr
 
-#' @keywords eddy-covariance, turbulent flux
+#' @keywords eddy-covariance, sampling uncertainty
 
 #' @examples Currently none
 
@@ -28,14 +39,14 @@
 #   Stefan Metzger (2015-11-29)
 #     added Roxygen2 tags
 #   Kenny Pratt (2017-02-08)
-#     changed naming conventions to match eddy4R 
+#     changed naming conventions to match eddy4R and added Moving Block Bootstrap technique
 ##############################################################################################
 def.ucrt.samp <- function(
   data = NULL,           #instantaneous data
   distIsca,		    #integral scale lengths
   valuMean,		      #mean values
   coefCorr,		      #flux correlation coefficient
-  distAve,		      #averaging distance ()
+  distMean,		      #averaging distance ()
   timeFold = 0     #e-folding time for the autocorrelation of wavelet power at
   #each scale (Torrence and Compo, 1998, Table 1). This e-folding time is chosen
   #so that the wavelet power for a discontinuity at the
@@ -73,7 +84,7 @@ def.ucrt.samp <- function(
   #in case of Wavelet, the convolution of the mother Wavelet at a particular scale of interest (here: the integral length scale) 
   #is influced by a multiple of that scale fore and aft the averaging interval (e-folding time).
   #This should be considered for the random error ( + timeFold * distVariIsca in denominator)
-  ucrtRandVari <- base::sqrt(2 * distVariIsca / (distAve + timeFold * distVariIsca))
+  ucrtRandVari <- base::sqrt(2 * distVariIsca / (distMean + timeFold * distVariIsca))
 
   
   #fluxes
@@ -81,11 +92,11 @@ def.ucrt.samp <- function(
   #directly from flux length scales (Lenschow, 1986 Eq. (7) == Lenschow, 1994 Eq. (48))
   #error estimate
   #large error in F_CH4_mass due to four times lower correlation coefficient
-   ucrtRandFlux <- base::data.frame(base::sqrt(2 * distFluxIsca / (distAve + timeFold * distFluxIsca) * (coefCorr^(-2) + 1)))
+   ucrtRandFlux <- base::data.frame(base::sqrt(2 * distFluxIsca / (distMean + timeFold * distFluxIsca) * (coefCorr^(-2) + 1)))
    
   #error reproduction
   #Bange: u_star2_x and u_star2_y are orthogonal == indepenend -> for random error we can use Gauss reproduction
-   ucrtRandFlux$u_star <- (
+   ucrtRandFlux$veloFric <- (
     (valuMean$u_star2_x *  ucrtRandFlux$u_star2_x * valuMean$u_star2_x / valuMean$u_star^2)^2 +
       (valuMean$u_star2_y *  ucrtRandFlux$u_star2_y * valuMean$u_star2_y / valuMean$u_star^2)^2
   )^(1/4) / valuMean$u_star 
@@ -100,63 +111,63 @@ def.ucrt.samp <- function(
   ))
   #error estimate
   #with Mann / Bange length scale
-  ucrtRandFluxMann <- base::data.frame(base::sapply(1:base::length(coefCorr), function(x) base::sqrt(2 *  distMax[x] / (distAve + timeFold * distMax[x]) * (coefCorr[x]^(-2) + 1))))
+  ucrtRandFluxMann <- base::data.frame(base::sapply(1:base::length(coefCorr), function(x) base::sqrt(2 *  distMax[x] / (distMean + timeFold * distMax[x]) * (coefCorr[x]^(-2) + 1))))
   #according to Lenschow, 1994 Eq. (49); Bange (2002) Eq. (16) says: WRONG
-  #errm <- base::data.frame(base::sapply(1:base::length(coefCorr), function(x) base::abs(2 / coefCorr[x] * base::sqrt(min(distScalIsca$w_hor, distScalIsca[,x]) / (distAve + timeFold * distScalIsca[,x]))) * 100))
+  #errm <- base::data.frame(base::sapply(1:base::length(coefCorr), function(x) base::abs(2 / coefCorr[x] * base::sqrt(min(distScalIsca$w_hor, distScalIsca[,x]) / (distMean + timeFold * distScalIsca[,x]))) * 100))
   #error reproduction (Bange, 2007 Eq.(3.32))
   #u_star: Bange u_star2_x and u_star2_y are orthogonal == indepenend -> for random error we can use Gauss reproduction
-  ucrtRandFluxMann$u_star <- (
+  ucrtRandFluxMann$veloFric <- (
     (valuMean$u_star2_x * ucrtRandFluxMann$u_star2_x * valuMean$u_star2_x / valuMean$u_star^2)^2 +
       (valuMean$u_star2_y * ucrtRandFluxMann$u_star2_y * valuMean$u_star2_y / valuMean$u_star^2)^2
   )^(1/4) / valuMean$u_star
   
   #save to list
-  ran <- base::list()
+  ucrtRand <- base::list()
 
   #sampling error in variance
-  ran$vari$act=ucrtRandVari*100
+  ucrtRand$vari$act=ucrtRandVari*100
   #actual flux random error (flux length scales)
-  ran$flux$act= ucrtRandFlux*100
+  ucrtRand$flux$act= ucrtRandFlux*100
   #maximum flux random error (scalar length scales)
-  ran$flux$max=ucrtRandFluxMann*100		
+  ucrtRand$flux$max=ucrtRandFluxMann*100		
   
   #Below is the Moving Block Bootstrap technique to estimate sampling uncertainty for scalars, variances, and fluxes. Only run if user supplies instantaneous data
   
-  if (length(data) > 1) {
+  if (!is.null(data)) {
   
   #scalar
   
   require(boot)
   #Compute the mean of the Relative Error from the B = 1000 bootstrap samples
-  distCrit <- def.dist.mbb(data$scal)
+  distCrit <- def.wind.mbb(data$scal)
   tmp <- boot::tsboot(data$scal,mean, 1000, l = round(distCrit), sim = "fixed")
   ucrtRandScal <- sd(tmp$t)/mean(data$scal)
   rm(tmp)
   
   #save sampling error to list
-  ran$scal$act = ucrtRandScal*100
+  ucrtRand$scal$act = ucrtRandScal*100
   
   #variance
   
   #Compute the mean of the Relative Error from the B = 1000 bootstrap samples
-  distCrit <- def.dist.mbb(data$vari)
+  distCrit <- def.wind.mbb(data$vari)
   tmp <- boot::tsboot(data$vari,mean, 1000, l = round(distCrit), sim = "fixed")
-  ucrtRandVariMBB <- sd(tmp$t)/mean(data$vari)
+  ucrtRandVariMbb <- sd(tmp$t)/mean(data$vari)
   rm(tmp)
   
   #sampling error in variance using MBB
-  ran$vari$mbb=ucrtRandVariMBB*100
+  ucrtRand$vari$mbb=ucrtRandVariMBB*100
   
   #flux
   
   #Compute the mean of the Relative Error from the B = 1000 bootstrap samples
-  distCrit <- def.dist.mbb(data$flux)
+  distCrit <- def.wind.mbb(data$flux)
   tmp <- boot::tsboot(data$flux,mean, 1000, l = round(distCrit), sim = "fixed")
-  ucrtRandFluxMBB <- sd(tmp$t)/mean(data$flux)
+  ucrtRandFluxMbb <- sd(tmp$t)/mean(data$flux)
   rm(tmp)
   
   #Sampling error using MBB
-  ran$flux$mbb= ucrtRandFluxMBB*100
+  ucrtRand$flux$mbb= ucrtRandFluxMBB*100
   
   }
   
@@ -168,16 +179,16 @@ def.ucrt.samp <- function(
   #SYSTEMATIC ERROR
   
   #variance (Lenschow, 1994 Eq. 36)
-  ucrtSysVari <- 2 * distVariIsca / distAve 
+  ucrtSysVari <- 2 * distVariIsca / distMean 
   
   #fluxes
   
   #directly from flux length scales (Lenschow, 1994 Eq. (27) == Bange, 2007 Eq. (3.20))
   #error estimate
-  ucrtSysFlux <- base::data.frame(2 * distFluxIsca / distAve)
+  ucrtSysFlux <- base::data.frame(2 * distFluxIsca / distMean)
   #error reproduction
   #u_star upper bound (no independence and randomness required)
-  ucrtSysFlux$u_star <- (
+  ucrtSysFlux$veloFric <- (
     (valuMean$u_star2_x * ucrtSysFlux$u_star2_x * valuMean$u_star2_x / valuMean$u_star^2)^2 +
       (valuMean$u_star2_y * ucrtSysFlux$u_star2_y * valuMean$u_star2_y / valuMean$u_star^2)^2
   )^(1/4) / valuMean$u_star
@@ -185,24 +196,24 @@ def.ucrt.samp <- function(
   #upper limit from scalar length scales
   #error estimate
   #with Mann / Bange length scale
-  ucrtSysFluxMann <- base::data.frame(base::sapply(1:base::length(coefCorr), function(x) 2 *  distMax[x] / distAve))
+  ucrtSysFluxMann <- base::data.frame(base::sapply(1:base::length(coefCorr), function(x) 2 *  distMax[x] / distMean))
   #according to Lenschow, 1994 Eq. (29); same!
-  #ersm <- base::data.frame(base::sapply(1:base::length(coefCorr), function(x) base::abs(2 / coefCorr[x] * base::sqrt(distScalIsca$w_hor * distScalIsca[,x] ) / distAve) * 100))
+  #ersm <- base::data.frame(base::sapply(1:base::length(coefCorr), function(x) base::abs(2 / coefCorr[x] * base::sqrt(distScalIsca$w_hor * distScalIsca[,x] ) / distMean) * 100))
   #error reproduction
   #u_star upper bound (no independence and randomness required)
-  ucrtSysFluxMann$u_star <- (
+  ucrtSysFluxMann$veloFric <- (
     (valuMean$u_star2_x * ucrtSysFluxMann$u_star2_x * valuMean$u_star2_x / valuMean$u_star^2)^2 +
       (valuMean$u_star2_y * ucrtSysFluxMann$u_star2_y * valuMean$u_star2_y / valuMean$u_star^2)^2
   )^(1/4) / valuMean$u_star
   
   #save to list
-  sys <- base::list()
+  ucrtSys <- base::list()
   #sampling error in variance
-  sys$vari$act=ucrtSysVari*100
+  ucrtSys$vari$act=ucrtSysVari*100
   #actual flux systematic error (flux length scales)
-  sys$flux$act=ucrtSysFlux*100
+  ucrtSys$flux$act=ucrtSysFlux*100
   #maximum flux systematic error (scalar length scales)
-  sys$flux$max=ucrtSysFluxMann*100
+  ucrtSys$flux$max=ucrtSysFluxMann*100
   
   #clean up
   rm(distScalIsca, distVariIsca, distFluxIsca, ucrtSysFlux, ucrtSysVari, ucrtSysFluxMann,  distMax)
@@ -212,13 +223,13 @@ def.ucrt.samp <- function(
   #AGGREGATE AND EXPORT RESULTS
   
   #aggregate
-  exrt <- base::list(
-    ran=ran,
-    sys=sys
+  rprt <- base::list(
+    ran=ucrtRand,
+    sys=ucrtSys
   )
   #clean up
-  rm(ran, sys)
+  rm(ucrtRand, ucrtSys)
   #export
-  return(exrt)
+  return(rprt)
   
 }
