@@ -9,14 +9,14 @@
 
 #' @param \code{refe} A vector with variable in reference time frame. Of class numeric. [-]
 #' @param \code{meas} A vector with variable in time frame to be adjusted. Of class numeric. [-]
-#' @param \code{freq_loc} Acquisition frequency of refe and meas. Of class ingeter. [Hz]
+#' @param \code{freq} Acquisition frequency of refe and meas. Of class ingeter. [Hz]
 #' @param \code{dataRefe} A matrix or data.frame with all data that carries the time frame of refe. Defaults to refe. Of any class. [-]
 #' @param \code{dataMeas} A matrix or data.frame with all data that carries the time frame of meas. Defaults to meas. Of any class. [-]
 #' @param \code{measVar} A vector specifying if only several columns in dataMeas shall be lagged. Defaults to NULL. Of class integer or character. [-]
-#' @param \code{lagMax} Maximum lag, by default 2 x freq_loc. Of class integer. [-]
+#' @param \code{lagMax} Maximum lag, by default 2 x freq. Of class integer. [-]
 #' @param \code{lagCnst} TRUE - interpret lagMax as maximum permissible lag; FALSE - start with lagMax as first estimate and increase iteratively. Defaults to TRUE. Of class logical. [-]
 #' @param \code{lagNgtvPstv} "n" - consider negative lag times only, i.e. meas is expected to lag behind refe; "p" - consider positive lag times only, i.e. refe is expected to lag behind meas; "np" - consider negative and positive lag times. Defaults to "np". Of class character. [-]
-#' @param \code{lag} TRUE - consider positive and negative correlations when finding lag time; FALSE - consider positive correlations only when finding lag time. Defaults to TRUE. Of class logical. [-]
+#' @param \code{lagAll} TRUE - consider positive and negative correlations when finding lag time; FALSE - consider positive correlations only when finding lag time. Defaults to TRUE. Of class logical. [-]
 #' @param \code{hpf} TRUE - apply Butterworth high-pass filter; FALSE - use raw data. Defaults to TRUE. Of class logical. [-]
 #' @param \code{fracMin} Minimum fraction of data to attempt lag determination. Defaults to 0.1. Of class numeric. [-]
 
@@ -53,14 +53,14 @@
 def.lag <- function(
   refe,
   meas,
-  freq_loc,
+  freq,
   dataRefe = refe,
   dataMeas = meas,
   measVar = NULL,
-  lagMax = 2 * freq_loc,
+  lagMax = 2 * freq,
   lagCnst = TRUE,
   lagNgtvPstv = c("n", "p", "np")[3],
-  lag = TRUE,
+  lagAll = TRUE,
   hpf = TRUE,
   fracMin = 0.1
 ) {
@@ -114,15 +114,15 @@ def.lag <- function(
       
       #create high-pass filter
       #nyquist frequency [Hz]
-      NY <- freq_loc / 2
+      NY <- freq / 2
       #cutoff frequency [Hz]
-      cutoff <- 1 / (2 * lagMax / freq_loc)
+      cutoff <- 1 / (2 * lagMax / freq)
       #butterworth filter        
       bf1 <- signal::butter(n=4, W=cutoff/NY, type="high")
       
       #apply high-pass filter
       #discard two filter lengths from start and end        
-      whr_not <- -c(1:(freq_loc/cutoff * 3), (length(refe)-(freq_loc/cutoff * 3)):length(refe)) 
+      whr_not <- -c(1:(freq/cutoff * 3), (length(refe)-(freq/cutoff * 3)):length(refe)) 
       #actual application
       refe_loc <- signal::filtfilt(bf1, refe)[whr_not]
       #           plot(refe[whr_not], type="l")
@@ -152,7 +152,7 @@ def.lag <- function(
       #consider positive lag times only: set correlations for negative lag time to zero
       if(lagNgtvPstv == "p") lagt$acf[which(lagt$lag < 0)] <- 0
       #determine lag time
-      lag <- ifelse(lag == FALSE,
+      lag <- ifelse(lagAll == FALSE,
                     lagt$lag[which(lagt$acf == max(lagt$acf))],		#(-): meas lags behind refe
                     lagt$lag[which(abs(lagt$acf) == max(abs(lagt$acf)))]
       )      
@@ -174,7 +174,7 @@ def.lag <- function(
         #consider positive lag times only: set correlations for negative lag time to zero
         if(lagNgtvPstv == "p") lagt$acf[which(lagt$lag < 0)] <- 0
         #determine lag time
-        lag <- ifelse(lag == FALSE,
+        lag <- ifelse(lagAll == FALSE,
                       lagt$lag[which(lagt$acf == max(lagt$acf))],		#(-): meas lags behind refe
                       lagt$lag[which(abs(lagt$acf) == max(abs(lagt$acf)))]
         )
@@ -215,7 +215,7 @@ def.lag <- function(
       dataRefe=refeOUT,
       dataMeas=measOUT,
       lag=lag,
-      ccf=ifelse(lag==TRUE, max(abs(lagt$acf)), max(lagt$acf))
+      ccf=ifelse(lagAll==TRUE, max(abs(lagt$acf)), max(lagt$acf))
     )
     return(output)
     
