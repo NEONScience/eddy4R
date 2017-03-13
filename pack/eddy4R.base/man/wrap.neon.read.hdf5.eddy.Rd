@@ -4,23 +4,26 @@
 \alias{wrap.neon.read.hdf5.eddy}
 \title{Wrapper function: Reading NEON HDF5 files}
 \usage{
-wrap.neon.read.hdf5.eddy(DirInpLoca, SiteLoca, DateLoca, VarLoca, FreqLoca,
-  Rglr = FALSE, Diag = FALSE, Rng = FALSE, RngLoca, DespLoca)
+wrap.neon.read.hdf5.eddy(DirInpLoca, SiteLoca, DateLoca, VarLoca,
+  LevlTowr = c("000_040", "000_050", "000_060")[3], FreqLoca, Rglr = FALSE,
+  Diag = FALSE, Rng = FALSE, RngLoca, DespLoca)
 }
 \arguments{
-\item{\code{DirInpLoca}}{Character: Input directory.}
+\item{DirInpLoca}{Character: Input directory.}
 
-\item{\code{SiteLoca}}{Character: Site location.}
+\item{SiteLoca}{Character: Site location.}
 
-\item{\code{DateLoca}}{Character: Date in ISO format "(2016-05-26").}
+\item{DateLoca}{Character: Date in ISO format "(2016-05-26").}
 
-\item{\code{VarLoca}}{Character: Which instrument to read data from.}
+\item{VarLoca}{Character: Which instrument to read data from.}
 
-\item{\code{FreqLoca}}{Integer: Measurement frequency.}
+\item{LevlTowr}{The tower level that the sensor data is being collected in NEON data product convention (HOR_VER)}
 
-\item{\code{RngLoca}}{List of named ingegers: Thresholds for range test.}
+\item{FreqLoca}{Integer: Measurement frequency.}
 
-\item{\code{DespLoca}}{List of integers: De-spiking parameters}
+\item{RngLoca}{List of named ingegers: Thresholds for range test.}
+
+\item{DespLoca}{List of integers: De-spiking parameters}
 }
 \value{
 Named list containing pre-processed time-series $time and $data.
