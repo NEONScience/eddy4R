@@ -24,7 +24,7 @@
 #' \code{dataRefe} The reference data.
 #' \code{dataMeas} The data that was lagged to coincide with the reference data.
 #' \code{lag} The number of data points by which the lag correction was performed.
-#' \code{ccf} The cross-correction coefficient between refe and meas for the determined lag time.
+#' \code{corrCros} The cross-correction coefficient between refe and meas for the determined lag time.
 
 #' @references 
 #' License: GNU AFFERO GENERAL PUBLIC LICENSE Version 3, 19 November 2007.
@@ -76,7 +76,7 @@ def.lag <- function(
       dataRefe=dataRefe,
       dataMeas=dataMeas,
       lag=NA,
-      ccf=NA
+      corrCros=NA
     )
     return(rpt)
     
@@ -146,15 +146,15 @@ def.lag <- function(
     if(lagCnst == TRUE) {
       
       #calculate autocorrelation
-      lagt <- ccf(refe, meas, lag.max = lagMax, plot = FALSE, na.action = na.pass)
+      corr <- ccf(refe, meas, lag.max = lagMax, plot = FALSE, na.action = na.pass)
       #consider negative lag times only: set correlations for positive lag time to zero
-      if(lagNgtvPstv == "n") lagt$acf[which(lagt$lag > 0)] <- 0          
+      if(lagNgtvPstv == "n") corr$acf[which(corr$lag > 0)] <- 0          
       #consider positive lag times only: set correlations for negative lag time to zero
-      if(lagNgtvPstv == "p") lagt$acf[which(lagt$lag < 0)] <- 0
+      if(lagNgtvPstv == "p") corr$acf[which(corr$lag < 0)] <- 0
       #determine lag time
       lag <- ifelse(lagAll == FALSE,
-                    lagt$lag[which(lagt$acf == max(lagt$acf))],		#(-): meas lags behind refe
-                    lagt$lag[which(abs(lagt$acf) == max(abs(lagt$acf)))]
+                    corr$lag[which(corr$acf == max(corr$acf))],		#(-): meas lags behind refe
+                    corr$lag[which(abs(corr$acf) == max(abs(corr$acf)))]
       )      
       #don't lag if determined lag equals lagMax
       if(abs(lag) == lagMax) lag <- 0
@@ -168,15 +168,15 @@ def.lag <- function(
         #increase lagMax argument
         if(count > 1) lagMax <- 2 * lagMax
         #calculate autocorrelation
-        lagt <- ccf(refe, meas, lag.max = lagMax, plot = FALSE, na.action = na.pass)
+        corr <- ccf(refe, meas, lag.max = lagMax, plot = FALSE, na.action = na.pass)
         #consider negative lag times only: set correlations for positive lag time to zero
-        if(lagNgtvPstv == "n") lagt$acf[which(lagt$lag > 0)] <- 0          
+        if(lagNgtvPstv == "n") corr$acf[which(corr$lag > 0)] <- 0          
         #consider positive lag times only: set correlations for negative lag time to zero
-        if(lagNgtvPstv == "p") lagt$acf[which(lagt$lag < 0)] <- 0
+        if(lagNgtvPstv == "p") corr$acf[which(corr$lag < 0)] <- 0
         #determine lag time
         lag <- ifelse(lagAll == FALSE,
-                      lagt$lag[which(lagt$acf == max(lagt$acf))],		#(-): meas lags behind refe
-                      lagt$lag[which(abs(lagt$acf) == max(abs(lagt$acf)))]
+                      corr$lag[which(corr$acf == max(corr$acf))],		#(-): meas lags behind refe
+                      corr$lag[which(abs(corr$acf) == max(abs(corr$acf)))]
         )
         count <- count + 1
       }
@@ -200,22 +200,22 @@ def.lag <- function(
     
     #if only certain variables within dataMeas shall be lagged:
     if(is.null(measVar)) {
-      refeOUT <- as.matrix(dataRefe)
-      measOUT <- as.matrix(dataMeas)
+      refeOut <- as.matrix(dataRefe)
+      measOut <- as.matrix(dataMeas)
     } else {
-      refeOUT <- as.matrix(dataRefe[,1:colRefe])
-      measOUT <- as.matrix(dataRefe[,(colRefe+1):ncol(dataRefe)])
-      measOUT[,measVar] <- dataMeas
+      refeOut <- as.matrix(dataRefe[,1:colRefe])
+      measOut <- as.matrix(dataRefe[,(colRefe+1):ncol(dataRefe)])
+      measOut[,measVar] <- dataMeas
     }
     
     #prepare output
-    if(ncol(refeOUT) == 1) refeOUT <- refeOUT[,1]
-    if(ncol(measOUT) == 1) measOUT <- measOUT[,1]
+    if(ncol(refeOut) == 1) refeOut <- refeOut[,1]
+    if(ncol(measOut) == 1) measOut <- measOut[,1]
     rpt <- list(
-      dataRefe=refeOUT,
-      dataMeas=measOUT,
+      dataRefe=refeOut,
+      dataMeas=measOut,
       lag=lag,
-      ccf=ifelse(lagAll==TRUE, max(abs(lagt$acf)), max(lagt$acf))
+      corrCros=ifelse(lagAll==TRUE, max(abs(corr$acf)), max(corr$acf))
     )
     return(rpt)
     
