@@ -72,13 +72,13 @@ def.lag <- function(
     
     
     
-    output <- list(
+    rpt <- list(
       dataRefe=dataRefe,
       dataMeas=dataMeas,
       lag=NA,
       ccf=NA
     )
-    return(output)
+    return(rpt)
     
     
     
@@ -94,7 +94,7 @@ def.lag <- function(
       dataRefe <- as.matrix(dataRefe)
       dataMeas <- as.matrix(dataMeas)
     } else {
-      refecol <- ncol(dataRefe)
+      colRefe <- ncol(dataRefe)
       dataRefe <- cbind(dataRefe, dataMeas)
       dataMeas <- as.matrix(dataMeas[,measVar])
     }
@@ -104,39 +104,39 @@ def.lag <- function(
     meas <- approx(x=zoo::index(meas), y=meas, xout=zoo::index(meas))[[2]]
     
     #get rid of NAs at start and end
-    dum_NA <- na.omit(data.frame(refe=refe, meas=meas))
-    refe <- dum_NA$refe
-    meas <- dum_NA$meas
-    rm(dum_NA)
+    naNot <- na.omit(data.frame(refe=refe, meas=meas))
+    refe <- naNot$refe
+    meas <- naNot$meas
+    rm(naNot)
     
     #apply high-pass filter    
     if(hpf == TRUE) {
       
       #create high-pass filter
       #nyquist frequency [Hz]
-      NY <- freq / 2
+      freqSplt <- freq / 2
       #cutoff frequency [Hz]
-      cutoff <- 1 / (2 * lagMax / freq)
+      freqThsh <- 1 / (2 * lagMax / freq)
       #butterworth filter        
-      bf1 <- signal::butter(n=4, W=cutoff/NY, type="high")
+      filt <- signal::butter(n=4, W=freqThsh/freqSplt, type="high")
       
       #apply high-pass filter
       #discard two filter lengths from start and end        
-      whr_not <- -c(1:(freq/cutoff * 3), (length(refe)-(freq/cutoff * 3)):length(refe)) 
+      filtTmp <- -c(1:(freq/freqThsh * 3), (length(refe)-(freq/freqThsh * 3)):length(refe)) 
       #actual application
-      refe_loc <- signal::filtfilt(bf1, refe)[whr_not]
-      #           plot(refe[whr_not], type="l")
-      #           lines(I(refe_loc + mean(refe)), col=2)
-      meas_loc <- signal::filtfilt(bf1, meas)[whr_not]
-      #           plot(meas[whr_not], type="l")
-      #           lines(I(meas_loc + mean(meas[whr_not])), col=2)
+      posRefe <- signal::filtfilt(filt, refe)[filtTmp]
+      #           plot(refe[filtTmp], type="l")
+      #           lines(I(posRefe + mean(refe)), col=2)
+      posMeas <- signal::filtfilt(filt, meas)[filtTmp]
+      #           plot(meas[filtTmp], type="l")
+      #           lines(I(posMeas + mean(meas[filtTmp])), col=2)
       
       #assign results
-      refe <- refe_loc
-      meas <- meas_loc
+      refe <- posRefe
+      meas <- posMeas
       
       #clean up
-      rm(whr_not)
+      rm(filtTmp)
       
     }
     
@@ -203,21 +203,21 @@ def.lag <- function(
       refeOUT <- as.matrix(dataRefe)
       measOUT <- as.matrix(dataMeas)
     } else {
-      refeOUT <- as.matrix(dataRefe[,1:refecol])
-      measOUT <- as.matrix(dataRefe[,(refecol+1):ncol(dataRefe)])
+      refeOUT <- as.matrix(dataRefe[,1:colRefe])
+      measOUT <- as.matrix(dataRefe[,(colRefe+1):ncol(dataRefe)])
       measOUT[,measVar] <- dataMeas
     }
     
     #prepare output
     if(ncol(refeOUT) == 1) refeOUT <- refeOUT[,1]
     if(ncol(measOUT) == 1) measOUT <- measOUT[,1]
-    output <- list(
+    rpt <- list(
       dataRefe=refeOUT,
       dataMeas=measOUT,
       lag=lag,
       ccf=ifelse(lagAll==TRUE, max(abs(lagt$acf)), max(lagt$acf))
     )
-    return(output)
+    return(rpt)
     
     
     
