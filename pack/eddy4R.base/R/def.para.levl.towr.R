@@ -41,10 +41,18 @@ def.para.levl.towr <- function(
     stop("Input file does not exist")
   } 
   
-  
+  #Grab a list of all the data levels in the HDF5
   listPara <- rhdf5::h5ls(FileIn, datasetinfo = FALSE)
   
-  LevlTowr <- sub("_30m","",unique(listPara[grep("_30m",listPara$name),"name"]))
+  #Grab the group level with the _30m aggregation, remove that part of the string
+  LevlTowr <- sub("_30m","",unique(listPara[grep("_30m",listPara$name),"name"])) #This must be a ECTE dp0p HDF5 file to work
+  
+  
+  #Throw an error if length of the returned value is not 1
+  if(!base::length(LevlTowr) == 1) {
+    stop("Input file is not standard dp0p HDF5 structure")
+    #LevlTowr <- unique(listPara[grep("000_",listPara$name),"name"]) #Second way to determine
+  }
   
   return(LevlTowr)
   
