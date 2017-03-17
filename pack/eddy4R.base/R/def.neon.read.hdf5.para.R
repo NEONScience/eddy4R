@@ -1,3 +1,42 @@
+##############################################################################################
+#' @title Definition function: Function to read in dp0p files 
+
+#' @author
+#' Stefan Metzger \email{eddy4R.info@gmail.com}
+#' David Durden \email{ddurden@battelleecology.org}
+#' Hongyan Luo \email{hluo@battelleecology.org}
+
+#' @description Definition function. A function to read in dp0p files and extact relevant attributes as parameters for future use.
+
+#' @param \code{DirFileParaLoca} Absolute path to h5 file from which workflow and scientific parameters are to be used, of class "character". [-]
+#' @param \code{GrpName} Absolute path to h5 file group and variable name from which parameters are to be read, of class "character". [-]
+#' @param \code{PosPara} Parameters can be subset by PosPara; defaults to NULL which imports all parameters. A vector of characters. [-]
+
+#' @return 
+#' The returned object is the parameters extracted from dp0p file for future use.  
+
+#' @references
+#' License: Terms of use of the NEON FIU algorithm repository dated 2015-01-16. \cr
+
+#' @keywords parameter, hdf5, dp0p
+
+#' @examples Currently none
+
+#' @seealso Currently none.
+
+#' @export
+
+# changelog and author contributions / copyrights
+#   Stefan Metzger (2016-09-06)
+#     original creation
+##   David Durden (2016-05-04)
+#     added HDF5 ingest
+#   Stefan Metzger (2016-11-16)
+#     initial transition to external parameter repo
+#   Hongyan Luo (2017-03-17)
+#     add header to the function
+###############################################################################################
+
 # definition function for parameter extraction
 def.neon.read.hdf5.para <- function(
   # absolute path to h5 file from which workflow and scientific parameters are to be used
