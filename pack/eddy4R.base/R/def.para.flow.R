@@ -67,7 +67,7 @@ def.para.flow <- function(
   }
   
   # Check if the FileDp0p is specified
-    if(is.null(ParaFlow$FileDp0p) {stop("FileDp0p must be defined.")}
+    if(is.null(ParaFlow$FileDp0p)) {stop("FileDp0p must be defined.")}
    
   # Check if the DirFilePara is specified, if not run gold file example, download gold file from dropbox         
     if(is.null(ParaFlow$DirFilePara)) {
