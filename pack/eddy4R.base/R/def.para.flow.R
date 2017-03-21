@@ -16,7 +16,7 @@
 #' NEON Algorithm Theoretical Basis Document:Eddy Covariance Turbulent Exchange Subsystem Level 0 to Level 0’ data product conversions and calculations (NEON.DOC.000823)
 #' NEON Algorithm Theoretical Basis Document:Eddy Covariance Turbulent Exchange Subsystem Level 1 data product calculations (NEON.DOC.000807)
 
-#' @keywords NEON, HDF5, eddy-covariance, ECTE
+#' @keywords NEON, environment variables, eddy-covariance, ECTE
 
 #' @examples 
 
@@ -54,24 +54,37 @@ def.para.flow <- function(
   if(MethParaFlow == "EnvVar"){
     #Create a list with all the specified function arguments
     
+  #lapply across all specified ParaFlow variables  
+    lapply(base::names(ParaFlow), function(x) {
+      if(base::toupper(x) %in% base::names(base::Sys.getenv())) {
+        ParaFlow[[x]] <<- Sys.getenv(base::toupper(x))
+        } else {warning(paste0("The variable ParaFlow$",x," is not specified as ENV variable"))}
+        })
     
-    if("DIRFILEPARA" %in% base::names(base::Sys.getenv())) {ParaFlow$DirFilePara <- Sys.getenv("DIRFILEPARA")} else {warning("The variable ParaFlow$DirFilePara is not specified as ENV variable")}
-    if("DIRINP" %in% base::names(base::Sys.getenv())) {ParaFlow$DirInp <- Sys.getenv("DIRINP")} else {warning("The variable ParaFlow$DirInp is not specified as ENV variable")}
-    if("DIRMNT" %in% base::names(base::Sys.getenv())) {ParaFlow$DirMnt <- Sys.getenv("DIRMNT")} else {warning("The variable ParaFlow$DirMnt is not specified as ENV variable")}
-    if("DIROUT" %in% base::names(base::Sys.getenv())) {ParaFlow$DirOut <- Sys.getenv("DIROUT")} else {warning("The variable ParaFlow$DirOut is not specified as ENV variable")}
-    if("DIRTMP" %in% base::names(base::Sys.getenv())) {ParaFlow$DirTmp <- Sys.getenv("DIRTMP")} else {warning("The variable ParaFlow$DirTmp is not specified as ENV variable")}
-    if("DIRWRK" %in% base::names(base::Sys.getenv())) {ParaFlow$DirWrk <- Sys.getenv("DIRWRK")} else {warning("The variable ParaFlow$DirWrk is not specified as ENV variable")}
-    if("FILEDP0P" %in% base::names(base::Sys.getenv())) {ParaFlow$FileDp0p <- Sys.getenv("FILEDP0P")} else {warning("The variable ParaFlow$FileDp0p is not specified as ENV variable")}
-    if("LOC" %in% base::names(base::Sys.getenv())) {ParaFlow$Loc <- Sys.getenv("LOC")} else {warning("The variable ParaFlow$Loc is not specified as ENV variable")}
-    if("METHPARAFLOW" %in% base::names(base::Sys.getenv())) {ParaFlow$MethParaFlow <- Sys.getenv("METHPARAFLOW")} else {warning("The variable ParaFlow$MethParaFlow is not specified as ENV variable")}
-    if("READ" %in% base::names(base::Sys.getenv())) {ParaFlow$Read <- Sys.getenv("READ")} else {warning("The variable ParaFlow$Read is not specified as ENV variable")}
-    if("VERSDP" %in% base::names(base::Sys.getenv())) {ParaFlow$VersDp <- Sys.getenv("VERSDP")} else {warning("The variable ParaFlow$VersDp is not specified as ENV variable")}
-    if("VERSEDDY" %in% base::names(base::Sys.getenv())) {ParaFlow$VersEddy <- Sys.getenv("VERSEDDY")} else {warning("The variable ParaFlow$VersEddy is not specified as ENV variable")}
-    
+    #Format to grab one variable at a time:
+    # if("DIRFILEPARA" %in% base::names(base::Sys.getenv())) {ParaFlow$DirFilePara <- Sys.getenv("DIRFILEPARA")} else {warning("The variable ParaFlow$DirFilePara is not specified as ENV variable")}
+
   }
   
-  
-    if(is.null(ParaFlow$FileDp0p)|is.null(ParaFlow$DirFilePara)){stop("DirFilePara and FileDp0p must be defined.")}
+  # Check if the FileDp0p is specified
+    if(is.null(ParaFlow$FileDp0p) {stop("FileDp0p must be defined.")}
+   
+  # Check if the DirFilePara is specified, if not run gold file example, download gold file from dropbox         
+    if(is.null(ParaFlow$DirFilePara)) {
+      # input data
+      
+      # download data
+      eddy4R.base::def.dld.zip(Inp = list(Url = "https://www.dropbox.com/s/qlp1pyanm5rn2eq/inpRefe_20170308.zip?dl=1",
+                                          Dir = tempdir()))
+      
+      # assign corresponding DirFilePara
+      ParaFlow$DirFilePara <- paste0(tempdir(), "/inpRefe/", list.files(paste0(tempdir(), "/inpRefe"))[1])
+      
+      # output data
+      eddy4R.base::def.dld.zip(Inp = list(Url = "https://www.dropbox.com/s/65azuhnay8ro463/outRefe_20161227.zip?dl=1",
+                                          Dir = tempdir()))
+      
+    }
     if(is.null(ParaFlow$Loc)) warning("The variable Loc is NULL") 
   #Grab the 
 
