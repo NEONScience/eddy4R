@@ -7,9 +7,20 @@
 #' @description 
 #' Definition function. Function to determine the workflow variables by either reading them in from the environmental variables, defining them explicitly, or defining them by default values
 
-#' @param 
+#' @param DirFilePara is file path for the hdf5 dp0p input data file 
+#' @param DirInp is directory path for the hdf5 dp0p input data file 
+#' @param DirMnt is the base directory path for where the docker is mounted 
+#' @param DirOut is directory path for the output data
+#' @param DirTmp is directory path for temporary storage during processing
+#' @param DirWrk is directory path for working storage during processing
+#' @param FileDp0p is a character string that lists the dates to be processed
+#' @param Loc is site where the data was collected (NEON 4 letter code, e.g. SERC)
+#' @param Read determine if the data are read from hdf5 dp0p input data file or other input files 
+#' @param VersDp is the data product level that will be output 
+#' @param VersEddy is the version of the eddy4R docker that is being used to perform the processing
+#' @param MethParaFlow is the method used to specify workflow parameters, "EnvVar" will grab ParaFlow parameters from environmental variable and "DfltInp" will use whatever is specified in the function call. 
 
-#' @return \code{ParaFlow} is a list returned that indicates the workflow control parameters, including \code{ParaFlow$DirInp}, \code{ParaFlow$DirMnt}, \code{ParaFlow$DirOut}, \code{ParaFlow$DirTmp}, \code{ParaFlow$DirWrk}, \code{ParaFlow$Loc}, \code{ParaFlow$DirFilePara}, \code{ParaFlow$FileDp0p}, \code{ParaFlow$Read}, \code{ParaFlow$VersDp}, \code{ParaFlow$VersEddy}. 
+#' @return \code{ParaFlow} is a list returned that indicates the workflow control parameters, including \code{ParaFlow$DirFilePara},\code{ParaFlow$DirInp}, \code{ParaFlow$DirMnt}, \code{ParaFlow$DirOut}, \code{ParaFlow$DirTmp}, \code{ParaFlow$DirWrk}, \code{ParaFlow$FileDp0p}, \code{ParaFlow$Loc},  \code{ParaFlow$Read}, \code{ParaFlow$VersDp}, \code{ParaFlow$VersEddy}. 
 
 #' @references
 #' License: GNU AFFERO GENERAL PUBLIC LICENSE Version 3, 19 November 2007.
@@ -19,6 +30,7 @@
 #' @keywords NEON, environment variables, eddy-covariance, ECTE
 
 #' @examples 
+#' def.para.flow(DirFilePara = "test.h5", MethParaFlow = "DfltInp")
 
 
 #' @seealso Currently none
@@ -35,11 +47,11 @@
 
 def.para.flow <- function(
   DirFilePara  = NULL,
-  DirInp = "NA", 
-  DirMnt  = "NA",
-  DirOut  = "NA",
-  DirTmp  = "NA",
-  DirWrk  = "NA",
+  DirInp = NA, 
+  DirMnt  = NA,
+  DirOut  = NA,
+  DirTmp  = NA,
+  DirWrk  = NA,
   FileDp0p  = NULL,
   Loc  = NULL,
   Read  = "hdf5",
@@ -67,7 +79,7 @@ def.para.flow <- function(
   }
   
   # Check if the FileDp0p is specified
-    if(is.null(ParaFlow$FileDp0p)) {stop("FileDp0p must be defined.")}
+    if(is.null(ParaFlow$FileDp0p)|!is.character(ParaFlow$FileDp0p)) {stop("FileDp0p must be defined and a character string.")} else {ParaFlow$FileDp0p <- base::trimws(base::unlist(base::strsplit(x = ParaFlow$FileDp0p, split = ",")))}
    
   # Check if the DirFilePara is specified, if not run gold file example, download gold file from dropbox         
     if(is.null(ParaFlow$DirFilePara)) {
