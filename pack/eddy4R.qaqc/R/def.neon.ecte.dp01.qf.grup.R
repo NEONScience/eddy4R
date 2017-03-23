@@ -51,7 +51,7 @@ def.neon.dp01.qf.grp <- function(
   qfInput = list(),
   MethMeas = c("ecte", "ecse")[1],
   TypeMeas = c("samp", "vali")[1], 
-  dp01 = c("envHut", "irgaCo2", "irgaH2o", "isoCo2", "isoH2o", "soni", "soniAmrs", "tempAirLvl", "tempAirTop")[1]
+  dp01 = c("envHut", "irgaCo2", "irgaH2o", "isopCo2", "isopH2o", "soni", "soniAmrs", "tempAirLvl", "tempAirTop")[1]
 ){
   
   rpt <- list()
@@ -484,8 +484,8 @@ if (MethMeas == "ecse") {
     setQf <- NULL
   }#closed loop for irgaCo2 and irgaH2o
   
-#isoCo2 ####################################################################################
-  if (dp01 == "isoCo2") {
+#isopCo2 ####################################################################################
+  if (dp01 == "isopCo2") {
     
     setQf$rtioMoleDryCo2 <- data.frame("qfRngMinRtioMoleDryCo2" = qfInput$crdCo2$qfRngMinRtioMoleDryCo2, 
                                        "qfStepRtioMoleDryCo2" = qfInput$crdCo2$qfStepRtioMoleDryCo2,
@@ -617,9 +617,135 @@ if (MethMeas == "ecse") {
       rpt$temp <- data.frame(setQf$tempCrdCo2, setQf$sensCrdCo2)
       rpt$pres <- data.frame(setQf$presCrdCo2, setQf$sensCrdCo2)
     }#closed loop for vali
-    
-    }#Closed loop for isoCo2
+    #remove setQf
+    setQf <- NULL
+    }#Closed loop for isopCo2
 
+#isopH2o ####################################################################################
+  if (dp01 == "isopH2o") {
+    setQf$rtioMoleDryH2o <- data.frame("qfRngMinRtioMoleDryH2o" = qfInput$crdH2o$qfRngMinRtioMoleDryH2o, 
+                                       "qfStepRtioMoleDryH2o" = qfInput$crdH2o$qfStepRtioMoleDryH2o,
+                                       "qfPersRtioMoleDryH2o" = qfInput$crdH2o$qfPersRtioMoleDryH2o, 
+                                       "qfCalRtioMoleDryH2o" = qfInput$crdH2o$qfCalRtioMoleDryH2o)
+    setQf$rtioMoleWetH2o <- data.frame("qfRngMinRtioMoleWetH2o" = qfInput$crdH2o$qfRngMinRtioMoleWetH2o, 
+                                       "qfStepRtioMoleWetH2o" = qfInput$crdH2o$qfStepRtioMoleWetH2o,
+                                       "qfPersRtioMoleWetH2o" = qfInput$crdH2o$qfPersRtioMoleWetH2o, 
+                                       "qfCalRtioMoleWetH2o" = qfInput$crdH2o$qfCalRtioMoleWetH2o)
+    setQf$dlta18OH2o <- data.frame("qfRngMinDlta18OH2o" = qfInput$crdH2o$qfRngMinDlta18OH2o, 
+                                   "qfStepDlta18OH2o" = qfInput$crdH2o$qfStepDlta18OH2o,
+                                   "qfPersDlta18OH2o" = qfInput$crdH2o$qfPersDlta18OH2o, 
+                                   "qfCalDlta18OH2o" = qfInput$crdH2o$qfCalDlta18OH2o)
+    setQf$dlta2HH2o <- data.frame("qfRngMinDlta2HH2o" = qfInput$crdH2o$qfRngMinDlta2HH2o, 
+                                  "qfStepDlta2HH2o" = qfInput$crdH2o$qfStepDlta2HH2o,
+                                  "qfPersDlta2HH2o" = qfInput$crdH2o$qfPersDlta2HH2o, 
+                                  "qfCalDlta2HH2o" = qfInput$crdH2o$qfCalDlta2HH2o)
+    setQf$presCrdH2o <- data.frame("qfRngMinPres" = qfInput$crdH2o$qfRngMinPres, 
+                                   "qfStepPres" = qfInput$crdH2o$qfStepPres,
+                                   "qfPersPres" = qfInput$crdH2o$qfPersPres, 
+                                   "qfCalPres" = qfInput$crdH2o$qfCalPres)
+    setQf$tempCrdH2o <- data.frame("qfRngMinTemp" = qfInput$crdH2o$qfRngMinTemp, 
+                                   "qfStepTemp" = qfInput$crdH2o$qfStepTemp,
+                                   "qfPersTemp" = qfInput$crdH2o$qfPersTemp, 
+                                   "qfCalTemp" = qfInput$crdH2o$qfCalTemp)
+    
+    #define qf which use only sampling period
+    if (TypeMeas == "samp") {
+      #qf from sensor, heater, and envHut
+      setQf$sensCrdH2o <- data.frame("qfSensStus" = qfInput$crdH2o$qfSensStus,
+                                     "qfStusN2" = qfInput$crdH2o$qfStusN2,
+                                     "qfHeat" = ifelse(!is.null(qfInput$heatInlt), qfInput$heatInlt$qfHeat, -1),
+                                     "qfRh" = ifelse(!is.null(qfInput$envHut), qfInput$envHut$qfRh, -1))
+    }#closed loop for samp
+    
+    #define qf which use only validation period
+    if (TypeMeas == "vali") {
+      #qf from sensor, and envHut
+      setQf$sensCrdH2o <- data.frame("qfSensStus" = qfInput$crdH2o$qfSensStus,
+                                     "qfStusN2" = qfInput$crdH2o$qfStusN2,
+                                     "qfRh" = ifelse(!is.null(qfInput$envHut), qfInput$envHut$qfRh, -1))
+    }#closed loop for vali
+    
+    #grouping qulity flags that related to isopH2o L1 sub-data product  
+    rpt$rtioMoleDryH2o <- data.frame(setQf$rtioMoleDryH2o, setQf$sensCrdH2o)
+    rpt$rtioMoleWetH2o <- data.frame(setQf$rtioMoleWetH2o, setQf$sensCrdH2o)
+    rpt$dlta18OH2o <- data.frame(setQf$dlta18OH2o, setQf$sensCrdH2o)
+    rpt$dlta2HH2o <- data.frame(setQf$dlta2HH2o, setQf$sensCrdH2o)
+    rpt$pres <- data.frame(setQf$presCrdH2o, setQf$sensCrdH2o)
+    rpt$temp <- data.frame(setQf$tempCrdH2o, setQf$sensCrdH2o) 
+    
+    #remove setQf
+    setQf <- NULL
+  }#closed loop for isopH2o 
+
+#envHut ####################################################################################
+  if (dp01 == "envHut") {
+    setQf$tempEnvHut <- data.frame("qfRngMinTemp" = qfInput$envHut$qfRngMinTemp, 
+                                   "qfStepTemp" = qfInput$envHut$qfStepTemp,
+                                   "qfPersTemp" = qfInput$envHut$qfPersTemp)
+    setQf$rh <- data.frame("qfRngMinRh" = qfInput$envHut$qfRngMin, 
+                           "qfStepRh" = qfInput$envHut$qfStep,
+                           "qfPersRh" = qfInput$envHut$qfPers)
+    setQf$presEnvHut <- data.frame("qfRngMinPres" = qfInput$envHut$qfRngMinPres, 
+                                   "qfStepPres" = qfInput$envHut$qfStepPres,
+                                   "qfPersPres" = qfInput$envHut$qfPersPres)
+    setQf$rtioMoleWetH2o <- data.frame("qfRngMinRtioMoleWetH2o" = qfInput$envHut$qfRngMinRtioMoleWetH2o, 
+                                       "qfStepRtioMoleWetH2o" = qfInput$envHut$qfStepRtioMoleWetH2o,
+                                       "qfPersRtioMoleWetH2o" = qfInput$envHut$qfPersRtioMoleWetH2o)
+    
+    #grouping qulity flags that related to envHut L1 sub-data product
+    rpt$temp <- data.frame(setQf$tempEnvHut)
+    rpt$rh <- data.frame(setQf$rh)
+    rpt$pres <- data.frame(setQf$presEnvHut)
+    rpt$rtioMoleWetH2o <- data.frame(setQf$rtioMoleWetH2o)
+    
+    #remove setQf
+    setQf <- NULL
+  }#closed loop for envHut
+
+#tempAirLvl ####################################################################################
+  if (dp01 == "tempAirLvl") {
+    setQf$tempAirLvl <- data.frame("qfRngMinTemp" = qfInput$tempAirLvl$qfRngMinTemp, 
+                                   "qfStepTemp" = qfInput$tempAirLvl$qfStepTemp,
+                                   "qfPersTemp" = qfInput$tempAirLvl$qfPersTemp,
+                                   "qfCalTemp" = qfInput$tempAirLvl$qfCalTemp)
+    
+    setQf$sensTempAirLvl <- data.frame("qfHeat" = qfInput$tempAirLvl$qfHeat,
+                                       "qfFlow" = qfInput$tempAirLvl$qfFlow)
+    
+    #grouping qulity flags that related to tempAirLvl L1 sub-data product
+    rpt$temp <- data.frame(setQf$tempAirLvl, setQf$sensTempAirLvl)
+    
+    #remove setQf
+    setQf <- NULL
+  }#closed loop for tempAirLvl
+  
+#tempAirTop ####################################################################################
+  if (dp01 == "tempAirTop") {
+    setQf$temp01 <- data.frame("qfRngMinTemp01" = qfInput$tempAirTop$qfRngMinTemp01, 
+                                   "qfStepTemp01" = qfInput$tempAirTop$qfStepTemp01,
+                                   "qfPersTemp01" = qfInput$tempAirTop$qfPersTemp01,
+                                   "qfCalTemp01" = qfInput$tempAirTop$qfCalTemp01)
+    
+    setQf$temp02 <- data.frame("qfRngMinTemp02" = qfInput$tempAirTop$qfRngMinTemp02, 
+                               "qfStepTemp02" = qfInput$tempAirTop$qfStepTemp02,
+                               "qfPersTemp02" = qfInput$tempAirTop$qfPersTemp02,
+                               "qfCalTemp02" = qfInput$tempAirTop$qfCalTemp02)
+    
+    setQf$temp03 <- data.frame("qfRngMinTemp03" = qfInput$tempAirTop$qfRngMinTemp03, 
+                               "qfStepTemp03" = qfInput$tempAirTop$qfStepTemp03,
+                               "qfPersTemp03" = qfInput$tempAirTop$qfPersTemp03,
+                               "qfCalTemp03" = qfInput$tempAirTop$qfCalTemp03)
+    
+    setQf$sensTempAirTop <- data.frame("qfHeat" = qfInput$tempAirTop$qfHeat,
+                                       "qfFlow" = qfInput$tempAirTop$qfFlow)
+    
+    #grouping qulity flags that related to tempAirLvl L1 sub-data product
+    rpt$temp <- data.frame(setQf$temp01, setQf$temp02,
+                           setQf$temp03, setQf$sensTempAirTop)
+    
+    #remove setQf
+    setQf <- NULL
+  }#closed loop for tempAirLvl
 }# closed loop for ecse
   return(rpt)
   
