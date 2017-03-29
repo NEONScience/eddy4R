@@ -356,7 +356,7 @@ if (MethMeas == "ecse") {
                                        "qfPersRtioMoleWetH2o" = qfInput$irga$qfPersRtioMoleWetH2o,
                                        "qfCalsRtioMoleWetH2o" = qfInput$irga$qfCalRtioMoleWetH2o)
     
-    setQf$presIrga <- data.frame("qfRngMinPresS" = qfInput$irga$qfRngMinPres, 
+    setQf$presIrga <- data.frame("qfRngMinPres" = qfInput$irga$qfRngMinPres, 
                                 "qfStepPres" = qfInput$irga$qfStepPres,
                                 "qfPersPres" = qfInput$irga$qfPersPres, 
                                 "qfCalPres" = qfInput$irga$qfCalPres)
@@ -365,13 +365,14 @@ if (MethMeas == "ecse") {
                                  "qfStepTemp" = qfInput$irga$qfStepTemp,
                                  "qfPersTemp" = qfInput$irga$qfPersTemp, 
                                  "qfCalTemp" = qfInput$irga$qfCalTemp)
+    setQf$envHut <- data.frame("qfTemp" = ifelse(!is.null(qfInput$envHut), qfInput$envHut$qfTemp, -1))
+    setQf$valvAux <- data.frame("qfValvIrga" = ifelse(!is.null(qfInput$valvAux), qfInput$valvAux$qfValvIrga, -1))
+    setQf$heatInlt <- data.frame("qfHeat" = ifelse(!is.null(qfInput$heatInlt), qfInput$heatInlt$qfHeat, -1))
+  
     
     #using irgaMfcSamp during sampling period
     if (TypeMeas == "samp") {
-      #set of qf from envHut, heater, and valvAux
-      setQf$sensIrga <- data.frame("qfTemp" = ifelse(!is.null(qfInput$envHut), qfInput$envHut$qfTemp, -1),#qf from envHut
-                                   "qfHeat" = ifelse(!is.null(qfInput$heatInlt), qfInput$heatInlt$qfHeat, -1),
-                                   "qfValvIrga" = ifelse(!is.null(qfInput$valvAux), qfInput$valvAux$qfValvIrga, -1))
+      
       if (!is.null(qfInput$irgaMfcSamp)){
         #irgaMfcSamp
         setQf$frt00 <- data.frame("qfRngMinFrt00" = qfInput$irgaMfcSamp$qfRngMinFrt00, 
@@ -403,14 +404,55 @@ if (MethMeas == "ecse") {
                                     "qfPersTemp" = -1)
         setQf$sensMfc <- data.frame("qfFrt00" = -1)
       }
+#grouping qulity flags that related to irgaCo2 L1 sub-data product
+      if (dp01 == "irgaCo2") {
+        rpt$rtioMoleDryCo2 <- data.frame(setQf$rtioMoleDryCo2, setQf$asrpCo2,
+                                         setQf$asrpH2o, setQf$rtioMoleWetCo2,
+                                         setQf$rtioMoleWetH2o, setQf$presIrga,
+                                         setQf$tempIrga, setQf$envHut, 
+                                         setQf$valvAux, setQf$heatInlt,
+                                         setQf$frt00, setQf$frt, 
+                                         setQf$presAtmMfc, setQf$tempMfc,
+                                         setQf$sensMfc)
+        rpt$rtioMoleWetCo2 <- data.frame(setQf$rtioMoleWetCo2, setQf$asrpCo2,
+                                         setQf$asrpH2o, setQf$rtioMoleWetH2o, 
+                                         setQf$presIrga, setQf$tempIrga, 
+                                         setQf$envHut, setQf$valvAux, 
+                                         setQf$heatInlt, setQf$frt00, 
+                                         setQf$frt, setQf$presAtmMfc, 
+                                         setQf$tempMfc, setQf$sensMfc)
+        rpt$pres <- data.frame(setQf$presIrga)
+        rpt$frt00 <- data.frame (setQf$frt00, setQf$frt,
+                                 setQf$presAtmMfc, setQf$tempMfc,
+                                 setQf$sensMfc)
+        rpt$temp <- data.frame (setQf$tempIrga)
+      }
+#grouping qulity flags that related to irgaH2o L1 sub-data product    
+      if (dp01 == "irgaH2o") {
+        rpt$rtioMoleDryH2o <- data.frame(setQf$rtioMoleDryH2o, setQf$asrpH2o,
+                                         setQf$rtioMoleWetH2o, setQf$presIrga,
+                                         setQf$tempIrga, setQf$envHut, 
+                                         setQf$valvAux, setQf$heatInlt, 
+                                         setQf$frt00, setQf$frt, 
+                                         setQf$presAtmMfc, setQf$tempMfc, 
+                                         setQf$sensMfc)
+        rpt$rtioMoleWetH2o <- data.frame(setQf$rtioMoleWetH2o, setQf$asrpH2o,
+                                         setQf$presIrga, setQf$tempIrga,
+                                         setQf$envHut, setQf$valvAux, 
+                                         setQf$heatInlt, setQf$frt00, 
+                                         setQf$frt, setQf$presAtmMfc, 
+                                         setQf$tempMfc, setQf$sensMfc)
+        rpt$pres <- data.frame(setQf$presIrga)
+        rpt$frt00 <- data.frame(setQf$frt00, setQf$frt,
+                                setQf$presAtmMfc, setQf$tempMfc,
+                                setQf$sensMfc) 
+        rpt$temp <- data.frame(setQf$tempIrga) 
+      } 
+      
     } # closed MeasType loop
     
   #using mfcVali during validation period
    if (TypeMeas == "vali") {
-     #set of qf from envHut, and valvAux
-     setQf$sensIrga <- data.frame("qfTemp" = ifelse(!is.null(qfInput$envHut), qfInput$envHut$qfTemp, -1),#qf from envHut
-                                  "qfValvIrga" = ifelse(!is.null(qfInput$valvAux), qfInput$valvAux$qfValvIrga, -1))
-     
      if (!is.null(qfInput$mfcVali)){
         #irgaMfcVali
         setQf$frt00 <- data.frame("qfRngMinFrt00" = qfInput$mfcVali$qfRngMinFrt00, 
@@ -442,44 +484,52 @@ if (MethMeas == "ecse") {
                                     "qfPersTemp" = -1)
         setQf$sensMfc <- data.frame("qfFrt00" = -1)
       }
+     
+#grouping qulity flags that related to irgaCo2 L1 sub-data product
+     if (dp01 == "irgaCo2") {
+       rpt$rtioMoleDryCo2 <- data.frame(setQf$rtioMoleDryCo2, setQf$asrpCo2,
+                                        setQf$asrpH2o, setQf$rtioMoleWetCo2,
+                                        setQf$rtioMoleWetH2o, setQf$presIrga,
+                                        setQf$tempIrga, setQf$envHut, 
+                                        setQf$valvAux, setQf$frt00, 
+                                        setQf$frt, setQf$presAtmMfc, 
+                                        setQf$tempMfc, setQf$sensMfc)
+       rpt$rtioMoleWetCo2 <- data.frame(setQf$rtioMoleWetCo2, setQf$asrpCo2,
+                                        setQf$asrpH2o, setQf$rtioMoleWetH2o, 
+                                        setQf$presIrga, setQf$tempIrga, 
+                                        setQf$envHut, setQf$valvAux, 
+                                        setQf$frt00, setQf$frt, 
+                                        setQf$presAtmMfc, setQf$tempMfc, 
+                                        setQf$sensMfc)
+       rpt$pres <- data.frame(setQf$presIrga)
+       rpt$frt00 <- data.frame (setQf$frt00, setQf$frt,
+                                setQf$presAtmMfc, setQf$tempMfc,
+                                setQf$sensMfc)
+       rpt$temp <- data.frame (setQf$tempIrga)
+     }
+#grouping qulity flags that related to irgaH2o L1 sub-data product    
+     if (dp01 == "irgaH2o") {
+       rpt$rtioMoleDryH2o <- data.frame(setQf$rtioMoleDryH2o, setQf$asrpH2o,
+                                        setQf$rtioMoleWetH2o, setQf$presIrga,
+                                        setQf$tempIrga, setQf$envHut, 
+                                        setQf$valvAux, setQf$frt00, 
+                                        setQf$frt, setQf$presAtmMfc, 
+                                        setQf$tempMfc, setQf$sensMfc)
+       rpt$rtioMoleWetH2o <- data.frame(setQf$rtioMoleWetH2o, setQf$asrpH2o,
+                                        setQf$presIrga, setQf$tempIrga, 
+                                        setQf$envHut, setQf$valvAux, 
+                                        setQf$frt00, setQf$frt, 
+                                        setQf$presAtmMfc, setQf$tempMfc, 
+                                        setQf$sensMfc)
+       rpt$pres <- data.frame(setQf$presIrga)
+       rpt$frt00 <- data.frame(setQf$frt00, setQf$frt,
+                               setQf$presAtmMfc, setQf$tempMfc,
+                               setQf$sensMfc) 
+       rpt$temp <- data.frame(setQf$tempIrga) 
+     }
     } # closed MeasType loop
   
-#grouping qulity flags that related to irgaCo2 L1 sub-data product
-    if (dp01 == "irgaCo2") {
-      rpt$rtioMoleDryCo2 <- data.frame(setQf$rtioMoleDryCo2, setQf$sensIrga,
-                                       setQf$asrpCo2, setQf$presIrga,
-                                       setQf$tempIrga, setQf$frt00,
-                                       setQf$frt, setQf$presAtmMfc,
-                                       setQf$tempMfc, setQf$sensMfc)
-      rpt$rtioMoleWetCo2 <- data.frame(setQf$rtioMoleWetCo2, setQf$sensIrga,
-                                       setQf$asrpCo2, setQf$presIrga,
-                                       setQf$tempIrga, setQf$frt00,
-                                       setQf$frt, setQf$presAtmMfc,
-                                       setQf$tempMfc, setQf$sensMfc)
-      rpt$pres <- data.frame(setQf$presIrga, setQf$sensIrga)
-      rpt$frt00 <- data.frame (setQf$frt00, setQf$frt,
-                          setQf$presAtmMfc, setQf$tempMfc,
-                          setQf$sensMfc)
-      rpt$temp <- data.frame (setQf$tempIrga, setQf$sensIrga)
-    }
-    #grouping qulity flags that related to irgaH2o L1 sub-data product    
-    if (dp01 == "irgaH2o") {
-      rpt$rtioMoleDryH2o <- data.frame(setQf$rtioMoleDryH2o, setQf$sensIrga, 
-                                  setQf$asrpH2o, setQf$presIrga,
-                                  setQf$tempIrga, setQf$frt00, 
-                                  setQf$frt, setQf$presAtmMfc,
-                                  setQf$tempMfc, setQf$sensMfc)
-      rpt$rtioMoleWetH2o <- data.frame(setQf$rtioMoleWetH2o, setQf$sensIrga, 
-                                  setQf$asrpH2o, setQf$presIrga,
-                                  setQf$tempIrga, setQf$frt00, 
-                                  setQf$frt, setQf$presAtmMfc,
-                                  setQf$tempMfc, setQf$sensMfc)
-      rpt$pres <- data.frame(setQf$presIrga, setQf$sensIrga)
-      rpt$frt00 <- data.frame(setQf$frt00, setQf$frt, 
-                         setQf$presAtmMfc, setQf$tempMfc,
-                         setQf$sensMfc) 
-      rpt$temp <- data.frame(setQf$tempIrga, setQf$sensIrga) 
-    }
+
     #remove setQf
     setQf <- NULL
   }#closed loop for irgaCo2 and irgaH2o
@@ -546,20 +596,44 @@ if (MethMeas == "ecse") {
                                  "qfStepTempWbox" = qfInput$crdCo2$qfStepTempWbox,
                                  "qfPersTempWbox" = qfInput$crdCo2$qfPersTempWbox, 
                                  "qfCalTempWbox" = qfInput$crdCo2$qfCalTempWbox)
+    setQf$sensCrdCo2 <- data.frame("qfSensStus" = qfInput$crdCo2$qfSensStus)
+    setQf$heatInlt <- data.frame("qfHeat" = ifelse(!is.null(qfInput$heatInlt), qfInput$heatInlt$qfHeat, -1))
+    
     #define qf which use only sampling period
     if (TypeMeas == "samp") {
-      
-      setQf$sensCrdCo2 <- data.frame("qfSensStus" = qfInput$crdCo2$qfSensStus,
-                                     "qfHeat" = ifelse(!is.null(qfInput$heatInlt), qfInput$heatInlt$qfHeat, -1))
       #grouping qulity flags that related to isoCo2 L1 sub-data product  
-      rpt$rtioMoleWetCo2 <- data.frame(setQf$rtioMoleWetCo2, setQf$sensCrdCo2)
-      rpt$rtioMoleDryCo2 <- data.frame(setQf$rtioMoleDryCo2, setQf$sensCrdCo2)
-      rpt$rtioMoleWet12CCo2 <- data.frame(setQf$rtioMoleWet12CCo2, setQf$sensCrdCo2)
-      rpt$rtioMoleDry12CCo2 <- data.frame(setQf$rtioMoleDry12CCo2, setQf$sensCrdCo2)
-      rpt$rtioMoleWet13CCo2 <- data.frame(setQf$rtioMoleWet13CCo2, setQf$sensCrdCo2)
-      rpt$dlta13CCo2 <- data.frame(setQf$dlta13CCo2, setQf$sensCrdCo2)
-      rpt$rtioMoleWetH2o <- data.frame(setQf$rtioMoleWetH2o, setQf$sensCrdCo2)
-      rpt$rtioMoleDryH2o <- data.frame(setQf$rtioMoleDryH2o, setQf$sensCrdCo2)
+      rpt$rtioMoleWetCo2 <- data.frame(setQf$rtioMoleWetCo2, setQf$dlta13CCo2,
+                                       setQf$rtioMoleWet12CCo2, setQf$presCrdCo2, 
+                                       setQf$tempCrdCo2, setQf$tempWbox,
+                                       setQf$sensCrdCo2, setQf$heatInlt)
+      rpt$rtioMoleDryCo2 <- data.frame(setQf$rtioMoleDryCo2, setQf$dlta13CCo2,
+                                       setQf$rtioMoleWet12CCo2, setQf$presCrdCo2, 
+                                       setQf$tempCrdCo2, setQf$tempWbox,
+                                       setQf$sensCrdCo2, setQf$heatInlt)
+      rpt$rtioMoleWet12CCo2 <- data.frame(setQf$rtioMoleWet12CCo2, setQf$presCrdCo2, 
+                                          setQf$tempCrdCo2, setQf$tempWbox,
+                                          setQf$sensCrdCo2, setQf$heatInlt)
+      rpt$rtioMoleDry12CCo2 <- data.frame(setQf$rtioMoleDry12CCo2, setQf$rtioMoleWet13CCo2,
+                                          setQf$presCrdCo2, setQf$tempCrdCo2, 
+                                          setQf$tempWbox, setQf$sensCrdCo2, 
+                                          setQf$heatInlt)
+      rpt$rtioMoleWet13CCo2 <- data.frame(setQf$rtioMoleWet13CCo2, setQf$presCrdCo2, 
+                                          setQf$tempCrdCo2, setQf$tempWbox,
+                                          setQf$sensCrdCo2, setQf$heatInlt)
+      rpt$rtioMoleDry13CCo2 <- data.frame(setQf$rtioMoleDry13CCo2, setQf$rtioMoleWet13CCo2,
+                                          setQf$presCrdCo2, setQf$tempCrdCo2, 
+                                          setQf$tempWbox, setQf$sensCrdCo2, 
+                                          setQf$heatInlt)
+      rpt$dlta13CCo2 <- data.frame(setQf$dlta13CCo2, setQf$presCrdCo2,
+                                   setQf$tempCrdCo2, setQf$tempWbox,
+                                   setQf$sensCrdCo2, setQf$heatInlt)
+      rpt$rtioMoleWetH2o <- data.frame(setQf$rtioMoleWetH2o, setQf$presCrdCo2,
+                                       setQf$tempCrdCo2, setQf$tempWbox,
+                                       setQf$sensCrdCo2, setQf$heatInlt)
+      rpt$rtioMoleDryH2o <- data.frame(setQf$rtioMoleDryH2o, setQf$rtioMoleWetH2o, 
+                                       setQf$presCrdCo2, setQf$tempCrdCo2, 
+                                       setQf$tempWbox, setQf$sensCrdCo2, 
+                                       setQf$heatInlt)
       rpt$temp <- data.frame(setQf$tempCrdCo2, setQf$sensCrdCo2)
       rpt$pres <- data.frame(setQf$presCrdCo2, setQf$sensCrdCo2)
       
@@ -601,19 +675,57 @@ if (MethMeas == "ecse") {
         setQf$sensMfc <- data.frame("qfFrt00" = -1)
       }
       
-      setQf$sensCrdCo2 <- data.frame("qfSensStus" = qfInput$crdCo2$qfSensStus,
-                                setQf$frt00, setQf$frt,
-                                setQf$presAtmMfc, setQf$tempMfc,
-                                setQf$sensMfc)
       #grouping qulity flags that related to isoCo2 L1 sub-data product  
-      rpt$rtioMoleWetCo2 <- data.frame(setQf$rtioMoleWetCo2, setQf$sensCrdCo2)
-      rpt$rtioMoleDryCo2 <- data.frame(setQf$rtioMoleDryCo2, setQf$sensCrdCo2)
-      rpt$rtioMoleWet12CCo2 <- data.frame(setQf$rtioMoleWet12CCo2, setQf$sensCrdCo2)
-      rpt$rtioMoleDry12CCo2 <- data.frame(setQf$rtioMoleDry12CCo2, setQf$sensCrdCo2)
-      rpt$rtioMoleWet13CCo2 <- data.frame(setQf$rtioMoleWet13CCo2, setQf$sensCrdCo2)
-      rpt$dlta13CCo2 <- data.frame(setQf$dlta13CCo2, setQf$sensCrdCo2)
-      rpt$rtioMoleWetH2o <- data.frame(setQf$rtioMoleWetH2o, setQf$sensCrdCo2)
-      rpt$rtioMoleDryH2o <- data.frame(setQf$rtioMoleDryH2o, setQf$sensCrdCo2)
+      rpt$rtioMoleWetCo2 <- data.frame(setQf$rtioMoleWetCo2, setQf$dlta13CCo2,
+                                       setQf$rtioMoleWet12CCo2, setQf$presCrdCo2, 
+                                       setQf$tempCrdCo2, setQf$tempWbox,
+                                       setQf$sensCrdCo2, setQf$frt00, 
+                                       setQf$frt, setQf$presAtmMfc, 
+                                       setQf$tempMfc, setQf$sensMfc)
+      rpt$rtioMoleDryCo2 <- data.frame(setQf$rtioMoleDryCo2, setQf$dlta13CCo2,
+                                       setQf$rtioMoleWet12CCo2, setQf$presCrdCo2, 
+                                       setQf$tempCrdCo2, setQf$tempWbox,
+                                       setQf$sensCrdCo2, setQf$frt00, 
+                                       setQf$frt, setQf$presAtmMfc, 
+                                       setQf$tempMfc, setQf$sensMfc)
+      rpt$rtioMoleWet12CCo2 <- data.frame(setQf$rtioMoleWet12CCo2, setQf$presCrdCo2, 
+                                          setQf$tempCrdCo2, setQf$tempWbox,
+                                          setQf$sensCrdCo2, setQf$frt00, 
+                                          setQf$frt, setQf$presAtmMfc, 
+                                          setQf$tempMfc, setQf$sensMfc)
+      rpt$rtioMoleDry12CCo2 <- data.frame(setQf$rtioMoleDry12CCo2, setQf$rtioMoleWet13CCo2,
+                                          setQf$presCrdCo2, setQf$tempCrdCo2, 
+                                          setQf$tempWbox, setQf$sensCrdCo2, 
+                                          setQf$frt00, setQf$frt, 
+                                          setQf$presAtmMfc, setQf$tempMfc, 
+                                          setQf$sensMfc)
+      rpt$rtioMoleWet13CCo2 <- data.frame(setQf$rtioMoleWet13CCo2, setQf$presCrdCo2, 
+                                          setQf$tempCrdCo2, setQf$tempWbox,
+                                          setQf$sensCrdCo2, setQf$frt00, 
+                                          setQf$frt, setQf$presAtmMfc, 
+                                          setQf$tempMfc, setQf$sensMfc)
+      rpt$rtioMoleDry13CCo2 <- data.frame(setQf$rtioMoleDry13CCo2, setQf$rtioMoleWet13CCo2,
+                                          setQf$presCrdCo2, setQf$tempCrdCo2, 
+                                          setQf$tempWbox, setQf$sensCrdCo2, 
+                                          setQf$frt00, setQf$frt, 
+                                          setQf$presAtmMfc, setQf$tempMfc, 
+                                          setQf$sensMfc)
+      rpt$dlta13CCo2 <- data.frame(setQf$dlta13CCo2, setQf$presCrdCo2,
+                                   setQf$tempCrdCo2, setQf$tempWbox,
+                                   setQf$sensCrdCo2, setQf$frt00, 
+                                   setQf$frt, setQf$presAtmMfc, 
+                                   setQf$tempMfc, setQf$sensMfc)
+      rpt$rtioMoleWetH2o <- data.frame(setQf$rtioMoleWetH2o, setQf$presCrdCo2,
+                                       setQf$tempCrdCo2, setQf$tempWbox,
+                                       setQf$sensCrdCo2, setQf$frt00, 
+                                       setQf$frt, setQf$presAtmMfc, 
+                                       setQf$tempMfc, setQf$sensMfc)
+      rpt$rtioMoleDryH2o <- data.frame(setQf$rtioMoleDryH2o, setQf$rtioMoleWetH2o, 
+                                       setQf$presCrdCo2, setQf$tempCrdCo2, 
+                                       setQf$tempWbox, setQf$sensCrdCo2, 
+                                       setQf$frt00, setQf$frt, 
+                                       setQf$presAtmMfc, setQf$tempMfc, 
+                                       setQf$sensMfc)
       rpt$temp <- data.frame(setQf$tempCrdCo2, setQf$sensCrdCo2)
       rpt$pres <- data.frame(setQf$presCrdCo2, setQf$sensCrdCo2)
     }#closed loop for vali
@@ -647,35 +759,61 @@ if (MethMeas == "ecse") {
                                    "qfStepTemp" = qfInput$crdH2o$qfStepTemp,
                                    "qfPersTemp" = qfInput$crdH2o$qfPersTemp, 
                                    "qfCalTemp" = qfInput$crdH2o$qfCalTemp)
+    setQf$tempWbox <- data.frame("qfRngMinTempWbox" = qfInput$crdH2o$qfRngMinTempWbox, 
+                                 "qfStepTempWbox" = qfInput$crdH2o$qfStepTempWbox,
+                                 "qfPersTempWbox" = qfInput$crdH2o$qfPersTempWbox, 
+                                 "qfCalTempWbox" = qfInput$crdH2o$qfCalTempWbox)
+    setQf$sensCrdH2o <- data.frame("qfSensStus" = qfInput$crdH2o$qfSensStus,
+                                   "qfStusN2" = qfInput$crdH2o$qfStusN2)
+    setQf$envHut <- data.frame("qfRh" = ifelse(!is.null(qfInput$envHut), qfInput$envHut$qfRh, -1))
+    setQf$heatInlt <- data.frame("qfHeat" = ifelse(!is.null(qfInput$heatInlt), qfInput$heatInlt$qfHeat))
     
-    #define qf which use only sampling period
-    if (TypeMeas == "samp") {
-      #qf from sensor, heater, and envHut
-      setQf$sensCrdH2o <- data.frame("qfSensStus" = qfInput$crdH2o$qfSensStus,
-                                     "qfStusN2" = qfInput$crdH2o$qfStusN2,
-                                     "qfHeat" = ifelse(!is.null(qfInput$heatInlt), qfInput$heatInlt$qfHeat, -1),
-                                     "qfRh" = ifelse(!is.null(qfInput$envHut), qfInput$envHut$qfRh, -1))
-    }#closed loop for samp
+  #define qf which use only sampling period
+    if (TypeMeas == "samp") {     
+  #grouping qulity flags that related to isopH2o L1 sub-data product  
+    rpt$rtioMoleDryH2o <- data.frame(setQf$rtioMoleDryH2o, setQf$rtioMoleWetH2o,
+                                     setQf$presCrdH2o, setQf$tempCrdH2o,
+                                     setQf$tempWbox,  setQf$sensCrdH2o,
+                                     setQf$envHut, setQf$heatInlt)
+    rpt$rtioMoleWetH2o <- data.frame(setQf$rtioMoleWetH2o, setQf$presCrdH2o, 
+                                     setQf$tempCrdH2o, setQf$tempWbox,  
+                                     setQf$sensCrdH2o, setQf$envHut, 
+                                     setQf$heatInlt)
+    rpt$dlta18OH2o <- data.frame(setQf$dlta18OH2o, setQf$presCrdH2o, 
+                                 setQf$tempCrdH2o, setQf$tempWbox,  
+                                 setQf$sensCrdH2o, setQf$envHut, 
+                                 setQf$heatInlt)
+    rpt$dlta2HH2o <- data.frame(setQf$dlta2HH2o, setQf$presCrdH2o, 
+                                setQf$tempCrdH2o, setQf$tempWbox,  
+                                setQf$sensCrdH2o, setQf$envHut, 
+                                setQf$heatInlt)
+    rpt$pres <- data.frame(setQf$presCrdH2o, qfSensStus = setQf$sensCrdH2o$qfSensStus)
+    rpt$temp <- data.frame(setQf$tempCrdH2o, qfSensStus = setQf$sensCrdH2o$qfSensStus) 
+   }#closed loop for samp
     
     #define qf which use only validation period
-    if (TypeMeas == "vali") {
-      #qf from sensor, and envHut
-      setQf$sensCrdH2o <- data.frame("qfSensStus" = qfInput$crdH2o$qfSensStus,
-                                     "qfStusN2" = qfInput$crdH2o$qfStusN2,
-                                     "qfRh" = ifelse(!is.null(qfInput$envHut), qfInput$envHut$qfRh, -1))
-    }#closed loop for vali
-    
-    #grouping qulity flags that related to isopH2o L1 sub-data product  
-    rpt$rtioMoleDryH2o <- data.frame(setQf$rtioMoleDryH2o, setQf$sensCrdH2o)
-    rpt$rtioMoleWetH2o <- data.frame(setQf$rtioMoleWetH2o, setQf$sensCrdH2o)
-    rpt$dlta18OH2o <- data.frame(setQf$dlta18OH2o, setQf$sensCrdH2o)
-    rpt$dlta2HH2o <- data.frame(setQf$dlta2HH2o, setQf$sensCrdH2o)
-    rpt$pres <- data.frame(setQf$presCrdH2o, setQf$sensCrdH2o)
-    rpt$temp <- data.frame(setQf$tempCrdH2o, setQf$sensCrdH2o) 
+    if (TypeMeas == "vali") {     
+  #grouping qulity flags that related to isopH2o L1 sub-data product  
+      rpt$rtioMoleDryH2o <- data.frame(setQf$rtioMoleDryH2o, setQf$rtioMoleWetH2o,
+                                       setQf$presCrdH2o, setQf$tempCrdH2o,
+                                       setQf$tempWbox,  setQf$sensCrdH2o,
+                                       setQf$envHut)
+      rpt$rtioMoleWetH2o <- data.frame(setQf$rtioMoleWetH2o, setQf$presCrdH2o, 
+                                       setQf$tempCrdH2o, setQf$tempWbox,  
+                                       setQf$sensCrdH2o, setQf$envHut)
+      rpt$dlta18OH2o <- data.frame(setQf$dlta18OH2o, setQf$presCrdH2o, 
+                                   setQf$tempCrdH2o, setQf$tempWbox,  
+                                   setQf$sensCrdH2o, setQf$envHut)
+      rpt$dlta2HH2o <- data.frame(setQf$dlta2HH2o, setQf$presCrdH2o, 
+                                  setQf$tempCrdH2o, setQf$tempWbox,  
+                                  setQf$sensCrdH2o, setQf$envHut)
+      rpt$pres <- data.frame(setQf$presCrdH2o, qfSensStus = setQf$sensCrdH2o$qfSensStus)
+      rpt$temp <- data.frame(setQf$tempCrdH2o, qfSensStus = setQf$sensCrdH2o$qfSensStus)  
+  }#closed loop for vali
     
     #remove setQf
     setQf <- NULL
-  }#closed loop for isopH2o 
+}#closed loop for isopH2o 
 
 #envHut ####################################################################################
   if (dp01 == "envHut") {
