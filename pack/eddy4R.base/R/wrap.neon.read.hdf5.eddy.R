@@ -209,7 +209,7 @@ if(!(DateLoca %in% file)) {
   # unit conversion
     
     # perform unit conversion
-    data <- base::suppressWarnings(eddy4R.base::def.unit.conv(data = data,
+    data <- base::suppressWarnings(eddy4R.base::def.conv.unit(data = data,
                                                               unitFrom = attributes(data)$unit,
                                                               unitTo = "intl"))
 
