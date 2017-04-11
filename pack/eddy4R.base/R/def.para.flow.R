@@ -7,6 +7,7 @@
 #' @description 
 #' Definition function. Function to determine the workflow variables by either reading them in from the environmental variables, defining them explicitly, or defining them by default values
 
+#' @param Deve is logical that determines if only a subset of the data should be read in to reduce testing time during development (\code{Deve = TRUE}) or all the input data should be read in (\code{Deve = FALSE})
 #' @param DirFilePara is file path for the hdf5 dp0p input data file 
 #' @param DirInp is directory path for the hdf5 dp0p input data file 
 #' @param DirMnt is the base directory path for where the docker is mounted 
@@ -40,12 +41,15 @@
 # changelog and author contributions / copyrights
 #   Dave Durden (2016-03-12)
 #     original creation
+#   Dave Durden (2016-04-05)
+#     adding Deve parameter
 
 ##############################################################################################################
 #Start of function call to determine workflow parameters
 ##############################################################################################################
 
 def.para.flow <- function(
+  Deve = TRUE,
   DirFilePara  = NULL,
   DirInp = NA, 
   DirMnt  = NA,
@@ -56,12 +60,12 @@ def.para.flow <- function(
   Loc  = NULL,
   Read  = "hdf5",
   VersDp  = c("001","004")[1],
-  VersEddy  = "cybi",
+  VersEddy  = "latest",
   MethParaFlow = c("DfltInp","EnvVar")[1],
   ...
 ){
   
-  ParaFlow <- list(DirFilePara = DirFilePara,DirInp = DirInp,DirMnt = DirMnt,DirOut = DirOut,DirTmp = DirTmp,DirWrk = DirWrk,FileDp0p = FileDp0p,Loc = Loc,MethParaFlow = MethParaFlow,Read = Read,VersDp = VersDp,VersEddy = VersEddy, ...)
+  ParaFlow <- list(Deve = Deve, DirFilePara = DirFilePara,DirInp = DirInp,DirMnt = DirMnt,DirOut = DirOut,DirTmp = DirTmp,DirWrk = DirWrk,FileDp0p = FileDp0p,Loc = Loc,MethParaFlow = MethParaFlow,Read = Read,VersDp = VersDp,VersEddy = VersEddy, ...)
   
   if(MethParaFlow == "EnvVar"){
     #Create a list with all the specified function arguments
