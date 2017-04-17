@@ -561,83 +561,87 @@ if (MethMeas == "ecte") {
                                "qfPersSsiH2o" = -1, 
                                "qfCalSsiH2o" = -1)   
     }#close if else statement for irga
-    
-    #external quality flags from irga for grouping qf of tempAir
-    if ("soniAmrs" %in% names(qfInput)){
-      #subset only odd row to match with soni frequency at 20Hz
-      qfColNames <- colnames(qfInput$soniAmrs)
-      qfInput$soniAmrs <- data.frame(qfInput$soniAmrs[seq(1,nrow(qfInput$soniAmrs),2),])
-      colnames(qfInput$soniAmrs) <- qfColNames
-      
-      setQf$soniAmrs <- data.frame("qfAmrsVal" = qfInput$soniAmrs$qfAmrsVal,
-                                   "qfAmrsFilt" = qfInput$soniAmrs$qfAmrsFilt,
-                                   "qfAmrsVelo" = qfInput$soniAmrs$qfAmrsVelo,
-                                   "qfAmrsRng" = qfInput$soniAmrs$qfAmrsRng,
-                                   "qfRngAngXaxs" = qfInput$soniAmrs$qfRngAngXaxs,
-                                   "qfStepAngXaxs" = qfInput$soniAmrs$qfStepAngXaxs,
-                                   "qfPersAngXaxs" = qfInput$soniAmrs$qfPersAngXaxs,
-                                   "qfCalAngXaxs" = qfInput$soniAmrs$qfCalAngXaxs,
-                                   "qfRngAngYaxs" = qfInput$soniAmrs$qfRngAngYaxs,
-                                   "qfStepAngYaxs" = qfInput$soniAmrs$qfStepAngYaxs,
-                                   "qfPersAngYaxs" = qfInput$soniAmrs$qfPersAngYaxs,
-                                   "qfCalAngYaxs" = qfInput$soniAmrs$qfCalAngYaxs,
-                                   "qfRngAngZaxs" = qfInput$soniAmrs$qfRngAngZaxs,
-                                   "qfStepAngZaxs" = qfInput$soniAmrs$qfStepAngZaxs,
-                                   "qfPersAngZaxs" = qfInput$soniAmrs$qfPersAngZaxs,
-                                   "qfCalAngZaxs" = qfInput$soniAmrs$qfCalAngZaxs)
-      
-      setQf$accXaxsDiff <- data.frame("qfRngAccXaxsDiff" = qfInput$soniAmrs$qfRngAccXaxsDiff,
-                                      "qfStepAccXaxsDiff" = qfInput$soniAmrs$qfStepAccXaxsDiff,
-                                      "qfPersAccXaxsDiff" = qfInput$soniAmrs$qfPersAccXaxsDiff,
-                                      "qfCalAccXaxsDiff" = qfInput$soniAmrs$qfCalAccXaxsDiff)
-      
-      setQf$accYaxsDiff <- data.frame("qfRngAccYaxsDiff" = qfInput$soniAmrs$qfRngAccYaxsDiff,
-                                      "qfStepAccYaxsDiff" = qfInput$soniAmrs$qfStepAccYaxsDiff,
-                                      "qfPersAccYaxsDiff" = qfInput$soniAmrs$qfPersAccYaxsDiff,
-                                      "qfCalAccYaxsDiff" = qfInput$soniAmrs$qfCalAccYaxsDiff)
-      
-      setQf$accZaxsDiff <- data.frame("qfRngAccZaxsDiff" = qfInput$soniAmrs$qfRngAccZaxsDiff,
-                                      "qfStepAccZaxsDiff" = qfInput$soniAmrs$qfStepAccZaxsDiff,
-                                      "qfPersAccZaxsDiff" = qfInput$soniAmrs$qfPersAccZaxsDiff,
-                                      "qfCalAccZaxsDiff" = qfInput$soniAmrs$qfCalAccZaxsDiff)
-    } else {
-      setQf$soniAmrs <- data.frame("qfAmrsVal" = -1,
-                                   "qfAmrsFilt" = -1,
-                                   "qfAmrsVelo" = -1,
-                                   "qfAmrsRng" = -1,
-                                   "qfRngAngXaxs" = -1,
-                                   "qfStepAngXaxs" = -1,
-                                   "qfPersAngXaxs" = -1,
-                                   "qfCalAngXaxs" = -1,
-                                   "qfRngAngYaxs" = -1,
-                                   "qfStepAngYaxs" = -1,
-                                   "qfPersAngYaxs" = -1,
-                                   "qfCalAngYaxs" = -1,
-                                   "qfRngAngZaxs" =-1,
-                                   "qfStepAngZaxs" = -1,
-                                   "qfPersAngZaxs" = -1,
-                                   "qfCalAngZaxs" = -1)
-      
-      setQf$accXaxsDiff <- data.frame("qfRngAccXaxsDiff" = -1,
-                                      "qfStepAccXaxsDiff" = -1,
-                                      "qfPersAccXaxsDiff" = -1,
-                                      "qfCalAccXaxsDiff" = -1)
-      
-      setQf$accYaxsDiff <- data.frame("qfRngAccYaxsDiff" = -1,
-                                      "qfStepAccYaxsDiff" = -1,
-                                      "qfPersAccYaxsDiff" = -1,
-                                      "qfCalAccYaxsDiff" = -1)
-      
-      setQf$accZaxsDiff <- data.frame("qfRngAccZaxsDiff" = -1,
-                                      "qfStepAccZaxsDiff" = -1,
-                                      "qfPersAccZaxsDiff" = -1,
-                                      "qfCalAccZaxsDiff" = -1) 
-    }#close if else statement for qf soniAmrs
+    ##TO DO##Considering later when the AMRS is collaborating to correct the SONI data
+    # #external quality flags from irga for grouping qf of tempAir
+    # if ("soniAmrs" %in% names(qfInput)){
+    #   #subset only odd row to match with soni frequency at 20Hz
+    #   qfColNames <- colnames(qfInput$soniAmrs)
+    #   qfInput$soniAmrs <- data.frame(qfInput$soniAmrs[seq(1,nrow(qfInput$soniAmrs),2),])
+    #   colnames(qfInput$soniAmrs) <- qfColNames
+    #   
+    #   setQf$soniAmrs <- data.frame("qfAmrsVal" = qfInput$soniAmrs$qfAmrsVal,
+    #                                "qfAmrsFilt" = qfInput$soniAmrs$qfAmrsFilt,
+    #                                "qfAmrsVelo" = qfInput$soniAmrs$qfAmrsVelo,
+    #                                "qfAmrsRng" = qfInput$soniAmrs$qfAmrsRng,
+    #                                "qfRngAngXaxs" = qfInput$soniAmrs$qfRngAngXaxs,
+    #                                "qfStepAngXaxs" = qfInput$soniAmrs$qfStepAngXaxs,
+    #                                "qfPersAngXaxs" = qfInput$soniAmrs$qfPersAngXaxs,
+    #                                "qfCalAngXaxs" = qfInput$soniAmrs$qfCalAngXaxs,
+    #                                "qfRngAngYaxs" = qfInput$soniAmrs$qfRngAngYaxs,
+    #                                "qfStepAngYaxs" = qfInput$soniAmrs$qfStepAngYaxs,
+    #                                "qfPersAngYaxs" = qfInput$soniAmrs$qfPersAngYaxs,
+    #                                "qfCalAngYaxs" = qfInput$soniAmrs$qfCalAngYaxs,
+    #                                "qfRngAngZaxs" = qfInput$soniAmrs$qfRngAngZaxs,
+    #                                "qfStepAngZaxs" = qfInput$soniAmrs$qfStepAngZaxs,
+    #                                "qfPersAngZaxs" = qfInput$soniAmrs$qfPersAngZaxs,
+    #                                "qfCalAngZaxs" = qfInput$soniAmrs$qfCalAngZaxs)
+    #   
+    #   setQf$accXaxsDiff <- data.frame("qfRngAccXaxsDiff" = qfInput$soniAmrs$qfRngAccXaxsDiff,
+    #                                   "qfStepAccXaxsDiff" = qfInput$soniAmrs$qfStepAccXaxsDiff,
+    #                                   "qfPersAccXaxsDiff" = qfInput$soniAmrs$qfPersAccXaxsDiff,
+    #                                   "qfCalAccXaxsDiff" = qfInput$soniAmrs$qfCalAccXaxsDiff)
+    #   
+    #   setQf$accYaxsDiff <- data.frame("qfRngAccYaxsDiff" = qfInput$soniAmrs$qfRngAccYaxsDiff,
+    #                                   "qfStepAccYaxsDiff" = qfInput$soniAmrs$qfStepAccYaxsDiff,
+    #                                   "qfPersAccYaxsDiff" = qfInput$soniAmrs$qfPersAccYaxsDiff,
+    #                                   "qfCalAccYaxsDiff" = qfInput$soniAmrs$qfCalAccYaxsDiff)
+    #   
+    #   setQf$accZaxsDiff <- data.frame("qfRngAccZaxsDiff" = qfInput$soniAmrs$qfRngAccZaxsDiff,
+    #                                   "qfStepAccZaxsDiff" = qfInput$soniAmrs$qfStepAccZaxsDiff,
+    #                                   "qfPersAccZaxsDiff" = qfInput$soniAmrs$qfPersAccZaxsDiff,
+    #                                   "qfCalAccZaxsDiff" = qfInput$soniAmrs$qfCalAccZaxsDiff)
+    # } else {
+    #   setQf$soniAmrs <- data.frame("qfAmrsVal" = -1,
+    #                                "qfAmrsFilt" = -1,
+    #                                "qfAmrsVelo" = -1,
+    #                                "qfAmrsRng" = -1,
+    #                                "qfRngAngXaxs" = -1,
+    #                                "qfStepAngXaxs" = -1,
+    #                                "qfPersAngXaxs" = -1,
+    #                                "qfCalAngXaxs" = -1,
+    #                                "qfRngAngYaxs" = -1,
+    #                                "qfStepAngYaxs" = -1,
+    #                                "qfPersAngYaxs" = -1,
+    #                                "qfCalAngYaxs" = -1,
+    #                                "qfRngAngZaxs" =-1,
+    #                                "qfStepAngZaxs" = -1,
+    #                                "qfPersAngZaxs" = -1,
+    #                                "qfCalAngZaxs" = -1)
+    #   
+    #   setQf$accXaxsDiff <- data.frame("qfRngAccXaxsDiff" = -1,
+    #                                   "qfStepAccXaxsDiff" = -1,
+    #                                   "qfPersAccXaxsDiff" = -1,
+    #                                   "qfCalAccXaxsDiff" = -1)
+    #   
+    #   setQf$accYaxsDiff <- data.frame("qfRngAccYaxsDiff" = -1,
+    #                                   "qfStepAccYaxsDiff" = -1,
+    #                                   "qfPersAccYaxsDiff" = -1,
+    #                                   "qfCalAccYaxsDiff" = -1)
+    #   
+    #   setQf$accZaxsDiff <- data.frame("qfRngAccZaxsDiff" = -1,
+    #                                   "qfStepAccZaxsDiff" = -1,
+    #                                   "qfPersAccZaxsDiff" = -1,
+    #                                   "qfCalAccZaxsDiff" = -1) 
+    # }#close if else statement for qf soniAmrs
     
     #grouping qulity flags that related to L1 sub-data product
     rpt$angZaxsErth <- data.frame(setQf$sensSoni, setQf$veloXaxs,
                                   setQf$veloYaxs, setQf$veloZaxs,
-                                  setQf$veloSoni, setQf$soniAmrs)
+                                  setQf$veloSoni)
+    ##TO DO##Considering later when the AMRS is collaborating to correct the SONI data 
+    # rpt$angZaxsErth <- data.frame(setQf$sensSoni, setQf$veloXaxs,
+    #                               setQf$veloYaxs, setQf$veloZaxs,
+    #                               setQf$veloSoni, setQf$soniAmrs)
     
     rpt$tempAir <- data.frame(setQf$sensSoni, setQf$veloSoni, 
                               setQf$tempSoni, setQf$irga)
@@ -646,21 +650,33 @@ if (MethMeas == "ecte") {
                                setQf$tempSoni)
     
     rpt$veloXaxsErth <- data.frame(setQf$sensSoni, setQf$veloXaxs,
-                                   setQf$veloSoni, setQf$soniAmrs,
-                                   setQf$accXaxsDiff)
+                                setQf$veloSoni)
     
     rpt$veloXaxsYaxsErth <- data.frame(setQf$sensSoni, setQf$veloXaxs,
-                                       setQf$veloYaxs, setQf$veloSoni, 
-                                       setQf$soniAmrs, setQf$accXaxsDiff,
-                                       setQf$accYaxsDiff)
+                                       setQf$veloYaxs, setQf$veloSoni)
     
     rpt$veloYaxsErth <- data.frame(setQf$sensSoni, setQf$veloYaxs,
-                                   setQf$veloSoni, setQf$soniAmrs,
-                                   setQf$accYaxsDiff)
+                                   setQf$veloSoni)
     
     rpt$veloZaxsErth <- data.frame(setQf$sensSoni, setQf$veloZaxs,
-                                   setQf$veloSoni, setQf$soniAmrs,
-                                   setQf$accZaxsDiff)
+                                   setQf$veloSoni)
+    ##TO DO##Considering later when the AMRS is collaborating to correct the SONI data
+    # rpt$veloXaxsErth <- data.frame(setQf$sensSoni, setQf$veloXaxs,
+    #                                setQf$veloSoni, setQf$soniAmrs,
+    #                                setQf$accXaxsDiff)
+    # 
+    # rpt$veloXaxsYaxsErth <- data.frame(setQf$sensSoni, setQf$veloXaxs,
+    #                                    setQf$veloYaxs, setQf$veloSoni, 
+    #                                    setQf$soniAmrs, setQf$accXaxsDiff,
+    #                                    setQf$accYaxsDiff)
+    # 
+    # rpt$veloYaxsErth <- data.frame(setQf$sensSoni, setQf$veloYaxs,
+    #                                setQf$veloSoni, setQf$soniAmrs,
+    #                                setQf$accYaxsDiff)
+    # 
+    # rpt$veloZaxsErth <- data.frame(setQf$sensSoni, setQf$veloZaxs,
+    #                                setQf$veloSoni, setQf$soniAmrs,
+    #                                setQf$accZaxsDiff)
     #remove setQf
     setQf <- NULL 
     }# close if statement of TypeMeas %in% c("samp", "vali")
