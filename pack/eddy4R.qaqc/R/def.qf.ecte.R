@@ -78,7 +78,7 @@ def.qf.ecte <- function(
     qfNameSens <- c("qfSoniUnrs", "qfSoniData", "qfSoniTrig", "qfSoniComm", "qfSoniCode", "qfSoniTemp", "qfSoniSgnlPoor", "qfSoniSgnlHigh","qfSoniSgnlLow" )}
   
   if(Sens == "irga"){
-    varName <- c("asrpCo2", "asrpH2o", "densMoleCo2", "densMoleH2o", "tempRefe",  "presAtm","presDiff", "potCool", "rtioMoleDryCo2", "rtioMoleDryH2o", "tempIn","tempOut", "powrH2oSamp", "powrH2ORefe", "powrCo2Samp", "powrCo2Refe","ssiCo2", "ssiH2o","tempMean", "presSum")
+    varName <- c("asrpCo2", "asrpH2o", "densMoleCo2", "densMoleH2o", "tempRefe",  "presAtm","presDiff", "potCool", "rtioMoleDryCo2", "rtioMoleDryH2o", "tempIn","tempOut", "powrH2oSamp", "powrH2oRefe", "powrCo2Samp", "powrCo2Refe","ssiCo2", "ssiH2o","tempMean", "presSum")
     qfNameSens <- c("qfIrgaHead", "qfIrgaTemp", "qfIrgaTempIn", "qfIrgaAux", "qfIrgaPres", "qfIrgaChop", "qfIrgaDetc", "qfIrgaPll","qfIrgaSync", "qfIrgaAgc" )}
   
   if(Sens == "irgaMfcSamp"){
@@ -91,7 +91,7 @@ def.qf.ecte <- function(
 ################################################################################################################################
   
   # Name of prefixes for qaqc plausibility tests
-  qfNamePlau <- c("qfRngMin","qfStep", "qfPers", "qfCal" )
+  qfNamePlau <- c("qfRng","qfStep", "qfPers", "qfCal" )
   
   #varNameUp <- paste(toupper(substr(varName, 1, 1)), substr(varName, 2, nchar(varName)), sep="")
   
