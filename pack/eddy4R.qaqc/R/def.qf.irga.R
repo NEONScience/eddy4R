@@ -76,7 +76,7 @@ base::lapply(base::names(qfIrga[!names(qfIrga) == "qfIrgaAgc"]), function(x) {
 
 qfIrga[posNa,] <- -1L
 
-qfIrga$qfIrgaAgc[posNa] <- NA
+qfIrga$qfIrgaAgc[posNa] <- NaN
 
 
 #return dataframe
