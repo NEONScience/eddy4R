@@ -42,7 +42,11 @@ def.qf.irga <- function(diag01, MethQf = c("qfqm","lico")[1]){
   stop("Input 'diag01' is required as an integer or numeric")
   } 
  
-# Turn the diag01 into a matrix of 32 bits separated into columns for the timeseries of diagnostic values  
+
+  #Grab position of NA's
+  posNa <- which(is.na(diag01))
+  
+  # Turn the diag01 into a matrix of 32 bits separated into columns for the timeseries of diagnostic values  
 qfIrga <- t(base::sapply(diag01,function(x){ base::as.integer(base::intToBits(x))}))
 
 # Function to aggregate bits to base 10 representation
@@ -68,7 +72,12 @@ base::lapply(base::names(qfIrga[!names(qfIrga) == "qfIrgaAgc"]), function(x) {
   qfIrga[pos,x] <<- base::as.integer(0)
   qfIrga[-pos,x] <<- base::as.integer(1)
   qfIrga[,x] <<- base::as.integer(qfIrga[,x])
-  })}
+})}
+
+qfIrga[posNa,] <- -1L
+
+qfIrga$qfIrgaAgc[posNa] <- NA
+
 
 #return dataframe
 return(qfIrga)
