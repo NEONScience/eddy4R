@@ -87,7 +87,8 @@ def.ecte.data.cmbn <- function(date, site = "CPER", levlTowr) {
     
     dataList[[idx]] <- cbind(dataList[[idx]], time = strftime(timeRglr, format="%Y-%m-%dT%H:%M:%OSZ", tz="UTC"))
     
-    rm(tmp)                   
+    rm(tmp) 
+    invisible(gc())
   }
   
   #Save the dp00 data as an Rdata binary file
