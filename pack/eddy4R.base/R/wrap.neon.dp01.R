@@ -76,11 +76,8 @@ wrap.neon.dp01 <- function(
   if(is.data.frame(data)) rpt <- eddy4R.base::def.neon.dp01(data = data, vrbs = TRUE)
   
   # if data is a list, calculate NEON Level 1 data products recursively for each list element
-<<<<<<< HEAD
-  if(!is.data.frame(data)) rpt <- lapply(X = data[idx], FUN = eddy4R.base::def.neon.dp01, vrbs = TRUE)
-=======
   if(is.list(data)) rpt <- lapply(X = data[idx], FUN = eddy4R.base::def.neon.dp01, vrbs = TRUE)
->>>>>>> master
+
   
   # return results
   return(rpt)
