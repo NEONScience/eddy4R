@@ -3,6 +3,7 @@
 
 #' @author
 #' Natchaya Pingintha-Durden \email{ndurden@battelleecology.org}
+#' David Durden \email{ddurden@battelleecology.org}
 
 #' @description Wrapper function. Calculate quality metrics, alpha and beta quality metrics, and final quality flag for the NEON eddy-covariance turbulent and storage exchange L1 data products.
 
@@ -14,10 +15,10 @@
 
 #' @return A list of: \cr
 #' \code{qm}  A list of data frame containing quality metrics (fractions) of failed, pass, and NA for each of the individual flag which related to L1 sub-data products. [fraction] \cr
-#' \code{qmAlph} A vector of class "numeric" containing the alpha quality metric for L1 sub-data products. [fraction] \cr
-#' \code{qmBeta} A vector of class "numeric" containing the beta quality metric for L1 sub-data products. [fraction] \cr
-#' \code{qfFinl} A vector of class "numeric", [0,1], containing the final quality flag for L1 sub-data products. [-] \cr
-#' \code{qfSciRevw} A vector of class "numeric", [0,1], containing the scientific review quality flag for L1 sub-data products. [-] \cr
+#' \code{qmAlph} A dataframe containing metrics in a  columns of class "numeric" containing the alpha quality metric for L1 sub-data products. [fraction] \cr
+#' \code{qmBeta} A dataframe containing metrics in a columns of class "numeric" containing the beta quality metric for L1 sub-data products. [fraction] \cr
+#' \code{qfFinl} A dataframe containing flags in a columns of class "numeric", [0,1], containing the final quality flag for L1 sub-data products. [-] \cr
+#' \code{qfSciRevw} A dataframe containing flags in a columns of class "numeric", [0,1], containing the scientific review quality flag for L1 sub-data products. [-] \cr
 
 #' @references
 #' License: GNU AFFERO GENERAL PUBLIC LICENSE Version 3, 19 November 2007.
@@ -52,6 +53,8 @@
 #   Natchaya P-Durden (2017-03-23)
 #     revised original function to wrap.neon.dp01.qfqm ()
 #     added ECSE quality flags
+#   Dave Durden (2017-04-24)
+#     Changed output to dataframes and updated the output type.
 ##############################################################################################
 
 wrap.neon.dp01.qfqm <- function(
@@ -65,7 +68,7 @@ wrap.neon.dp01.qfqm <- function(
   rpt <- list()
   tmp <- list()
   #grouping qf
-  inp <- def.neon.dp01.qf.grp(qfInput = qfInput, MethMeas = MethMeas, TypeMeas = TypeMeas, dp01=dp01)
+  inp <- eddy4R.qaqc::def.neon.dp01.qf.grp(qfInput = qfInput, MethMeas = MethMeas, TypeMeas = TypeMeas, dp01=dp01)
   
   #calculate qmAlpha, qmBeta, qfFinl
   tmp <- lapply(inp, FUN = eddy4R.qaqc::def.qf.finl)
@@ -78,9 +81,14 @@ wrap.neon.dp01.qfqm <- function(
   lapply(names(tmp), function(x) rpt$qm[[x]] <<- tmp[[x]]$qm)
   lapply(names(tmp), function(x) rpt$qmAlph[[x]] <<- tmp[[x]]$qfqm$qmAlph)
   lapply(names(tmp), function(x) rpt$qmBeta[[x]] <<- tmp[[x]]$qfqm$qmBeta)
-  lapply(names(tmp), function(x) rpt$qfFinl[[x]] <<- tmp[[x]]$qfqm$qfFinl)
-  lapply(names(tmp), function(x) rpt$qfSciRevw[[x]] <<- tmp[[x]]$qfqm$qfSciRevw)
+  lapply(names(tmp), function(x) rpt$qfFinl[[x]] <<- as.integer(tmp[[x]]$qfqm$qfFinl))
+  lapply(names(tmp), function(x) rpt$qfSciRevw[[x]] <<- as.integer(tmp[[x]]$qfqm$qfSciRevw))
   
+  
+  rpt$qmAlph <- data.frame(t(rpt$qmAlph), row.names = NULL)
+  rpt$qmBeta <-  data.frame(t(rpt$qmBeta), row.names = NULL)
+  rpt$qfFinl <- data.frame(t(rpt$qfFinl), row.names = NULL)
+  rpt$qfSciRevw <- data.frame(t(rpt$qfSciRevw), row.names = NULL)
   #return results
   return(rpt)
   
