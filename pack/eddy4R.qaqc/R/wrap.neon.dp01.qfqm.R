@@ -7,14 +7,15 @@
 
 #' @description Wrapper function. Calculate quality metrics, alpha and beta quality metrics, and final quality flag for the NEON eddy-covariance turbulent and storage exchange L1 data products.
 
-#' @param \code{qfInput} A list of data frame containing the input quality flag data that related to L1 data products are being grouped. Of class integer". [-] 
-#' @param \code{MethMeas} A vector of class "character" containing the name of measurement method (eddy-covariance turbulent exchange or storage exchange), MethMeas = c("ecte", "ecse"). Defaults to "ecse". [-] 
-#' @param \code{TypeMeas} A vector of class "character" containing the name of measurement type (sampling or validation), TypeMeas = c("samp", "ecse"). Defaults to "samp". [-]
-#' @param \code{dp01} A vector of class "character" containing the name of NEON ECTE and ECSE L1 data products which the flags are being grouped, \cr
+#' @param qfInput A list of data frame containing the input quality flag data that related to L1 data products are being grouped. Of class integer". [-] 
+#' @param MethMeas A vector of class "character" containing the name of measurement method (eddy-covariance turbulent exchange or storage exchange), MethMeas = c("ecte", "ecse"). Defaults to "ecse". [-] 
+#' @param TypeMeas A vector of class "character" containing the name of measurement type (sampling or validation), TypeMeas = c("samp", "ecse"). Defaults to "samp". [-]
+#' @param RptExpd A logical parameter that determines if the full quality metric \code{qm} is output in the returned list (defaults to FALSE).
+#' @param dp01 A vector of class "character" containing the name of NEON ECTE and ECSE L1 data products which the flags are being grouped, \cr
 #' c("envHut", "irgaCo2", "irgaH2o", "isoCo2", "isoH2o", "soni", "soniAmrs", "tempAirLvl", "tempAirTop"). Defaults to "irgaCo2". [-] 
 
 #' @return A list of: \cr
-#' \code{qm}  A list of data frame containing quality metrics (fractions) of failed, pass, and NA for each of the individual flag which related to L1 sub-data products. [fraction] \cr
+#' \code{qm}  A list of data frame's containing quality metrics (fractions) of failed, pass, and NA for each of the individual flag which related to L1 sub-data products if RptExpd = TRUE. [fraction] \cr
 #' \code{qmAlph} A dataframe containing metrics in a  columns of class "numeric" containing the alpha quality metric for L1 sub-data products. [fraction] \cr
 #' \code{qmBeta} A dataframe containing metrics in a columns of class "numeric" containing the beta quality metric for L1 sub-data products. [fraction] \cr
 #' \code{qfFinl} A dataframe containing flags in a columns of class "numeric", [0,1], containing the final quality flag for L1 sub-data products. [-] \cr
@@ -54,13 +55,15 @@
 #     revised original function to wrap.neon.dp01.qfqm ()
 #     added ECSE quality flags
 #   Dave Durden (2017-04-24)
-#     Changed output to dataframes and updated the output type.
+#     Changed output to dataframes, added switch 
+#     for expanded output and updated the output data type.
 ##############################################################################################
 
 wrap.neon.dp01.qfqm <- function(
   qfInput = list(),
   MethMeas = c("ecte", "ecse")[1],
   TypeMeas = c("samp", "vali")[1], 
+  RptExpd = FALSE,
   dp01 = c("envHut", "irgaCo2", "irgaH2o", "isopCo2", "isopH2o", "soni", "soniAmrs", "tempAirLvl", "tempAirTop")[1]
 ) {
 
@@ -76,9 +79,12 @@ wrap.neon.dp01.qfqm <- function(
   #assign default qfSciRevw
   lapply(names(tmp), function(x) tmp[[x]]$qfqm$qfSciRevw <<- 0)
   #calculate qmAlph, qmBeta, qfFinl, qfSciRevw
-  lapply(names(tmp), function(x) tmp[[x]]$qm <<- eddy4R.qaqc::def.qm(qf=inp[[x]], nameQmOut=NULL))
+  if(RptExpd == TRUE){
+    lapply(names(tmp), function(x) tmp[[x]]$qm <<- eddy4R.qaqc::def.qm(qf=inp[[x]], nameQmOut=NULL))
   #assign return results
-  lapply(names(tmp), function(x) rpt$qm[[x]] <<- tmp[[x]]$qm)
+  #Only report expanded quality metrics if producing expanded file
+ lapply(names(tmp), function(x) rpt$qm[[x]] <<- tmp[[x]]$qm)
+ }
   lapply(names(tmp), function(x) rpt$qmAlph[[x]] <<- tmp[[x]]$qfqm$qmAlph)
   lapply(names(tmp), function(x) rpt$qmBeta[[x]] <<- tmp[[x]]$qfqm$qmBeta)
   lapply(names(tmp), function(x) rpt$qfFinl[[x]] <<- as.integer(tmp[[x]]$qfqm$qfFinl))
