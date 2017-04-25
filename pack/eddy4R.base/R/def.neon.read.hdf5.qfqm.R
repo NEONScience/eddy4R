@@ -39,21 +39,17 @@ def.neon.read.hdf5.qfqm <- function(
   DateLoca,
   VarLoca,
   LevlTowr = c("000_040", "000_050", "000_060")[3],
-  FreqLoca,
-  Rglr = FALSE
+  FreqLoca
 ){
   
+#Read in the flags from the HDF5 file  
 qfqm <- rhdf5::h5read(file = base::paste0(DirInpLoca, "/ECTE_dp0p_", SiteLoca, "_", DateLoca, ".h5"),
                       name = base::paste0("/", SiteLoca, "/dp0p/qfqm/", VarLoca, "_001/",LevlTowr), read.attributes = TRUE)
-                      
+ 
+#Convert each flag to a vector from a 1D array                     
 for(idx in base::names(qfqm)) qfqm[[idx]] <- base::as.vector(qfqm[[idx]]); base::rm(idx)
 
-
-#Check that the units are in eddy4R internal units
-qfqm <- base::suppressWarnings(eddy4R.base::def.unit.conv(data = qfqm,
-                                                          unitFrom = attributes(qfqm)$Unit,
-                                                          unitTo = "intl"))
-
+#Apply units to each flag
 lapply(seq_len(length(qfqm)), function(x){ 
   print(x)
   attributes(qfqm[[x]])$Unit <<- attributes(qfqm)$Unit[[x]]
@@ -62,6 +58,6 @@ lapply(seq_len(length(qfqm)), function(x){
 # convert list to data.frame
 qfqm <- base::as.data.frame(qfqm, stringsAsFactors = FALSE)
 
-retur
+return(qfqm)
 }
 
