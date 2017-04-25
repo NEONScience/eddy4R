@@ -37,10 +37,11 @@
 #' qf$soniAmrs <- eddy4R.qaqc::def.qf.ecte(TimeBgn = TimeBgn, TimeEnd = TimeEnd, Freq = 40, Sens = "soniAmrs", PcntQf = 0.05)
 #' #calculate quality metric, qmAlpha, qmBeta, qfFinl
 #' qfqm <- list()
-#' qfqm$irgaCo2 <- wrap.neon.dp01.qfqm (qfInput = qf, MethMeas = "ecte", TypeMeas = "samp", dp01="irgaCo2")
-#' qfqm$irgaH2o <- wrap.neon.dp01.qfqm (qfInput = qf, MethMeas = "ecte", TypeMeas = "samp", dp01="irgaH2o")
-#' qfqm$soni <- wrap.neon.dp01.qfqm (qfInput = qf, MethMeas = "ecte", TypeMeas = "samp", dp01="soni")
-#' qfqm$soniAmrs <- wrap.neon.dp01.qfqm (qfInput = qf, MethMeas = "ecte", TypeMeas = "samp", dp01="soniAmrs")
+#' qfqm$irgaCo2 <- eddy4R.qaqc::wrap.neon.dp01.qfqm (qfInput = qf, MethMeas = "ecte", TypeMeas = "samp", dp01="irgaCo2")
+#' qfqm$irgaH2o <- eddy4R.qaqc::wrap.neon.dp01.qfqm (qfInput = qf, MethMeas = "ecte", TypeMeas = "samp", dp01="irgaH2o")
+#' qfqm$soni <- eddy4R.qaqc::wrap.neon.dp01.qfqm (qfInput = qf, MethMeas = "ecte", TypeMeas = "samp", dp01="soni")
+#' # Example with expanded quality metrics included
+#' qfqm$soniAmrs <- eddy4R.qaqc::wrap.neon.dp01.qfqm (qfInput = qf, MethMeas = "ecte", TypeMeas = "samp", RptExpd = TRUE, dp01="soniAmrs")
 
 #' @seealso Currently none
 
@@ -78,19 +79,21 @@ wrap.neon.dp01.qfqm <- function(
   
   #assign default qfSciRevw
   lapply(names(tmp), function(x) tmp[[x]]$qfqm$qfSciRevw <<- 0)
-  #calculate qmAlph, qmBeta, qfFinl, qfSciRevw
-  if(RptExpd == TRUE){
-    lapply(names(tmp), function(x) tmp[[x]]$qm <<- eddy4R.qaqc::def.qm(qf=inp[[x]], nameQmOut=NULL))
-  #assign return results
   #Only report expanded quality metrics if producing expanded file
+  if(RptExpd == TRUE){
+    #calculate quality metrics (pass, fail, NA for each flag)
+     lapply(names(tmp), function(x) tmp[[x]]$qm <<- eddy4R.qaqc::def.qm(qf=inp[[x]], nameQmOut=NULL))
+  #assign return results for expanded results
  lapply(names(tmp), function(x) rpt$qm[[x]] <<- tmp[[x]]$qm)
- }
+  }
+  
+  #assign return results for basic results
   lapply(names(tmp), function(x) rpt$qmAlph[[x]] <<- tmp[[x]]$qfqm$qmAlph)
   lapply(names(tmp), function(x) rpt$qmBeta[[x]] <<- tmp[[x]]$qfqm$qmBeta)
   lapply(names(tmp), function(x) rpt$qfFinl[[x]] <<- as.integer(tmp[[x]]$qfqm$qfFinl))
   lapply(names(tmp), function(x) rpt$qfSciRevw[[x]] <<- as.integer(tmp[[x]]$qfqm$qfSciRevw))
   
-  
+  # Convert output to dataframe's
   rpt$qmAlph <- data.frame(t(rpt$qmAlph), row.names = NULL)
   rpt$qmBeta <-  data.frame(t(rpt$qmBeta), row.names = NULL)
   rpt$qfFinl <- data.frame(t(rpt$qfFinl), row.names = NULL)
