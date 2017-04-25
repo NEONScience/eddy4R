@@ -85,7 +85,11 @@ wrap.neon.dp01.qfqm <- function(
      lapply(names(tmp), function(x) tmp[[x]]$qm <<- eddy4R.qaqc::def.qm(qf=inp[[x]], nameQmOut=NULL))
   #assign return results for expanded results
  lapply(names(tmp), function(x) rpt$qm[[x]] <<- tmp[[x]]$qm)
-  }
+ #Add units to the output of expanded quality metrics
+ for(idxVar in names(rpt$qm)){
+ lapply(names(rpt$qm[[idxVar]]), function(x) attr(rpt$qm[[idxVar]][[x]], which = "unit") <<- "-") 
+ }
+ }
   
   #assign return results for basic results
   lapply(names(tmp), function(x) rpt$qmAlph[[x]] <<- tmp[[x]]$qfqm$qmAlph)
@@ -98,6 +102,11 @@ wrap.neon.dp01.qfqm <- function(
   rpt$qmBeta <-  data.frame(t(rpt$qmBeta), row.names = NULL)
   rpt$qfFinl <- data.frame(t(rpt$qfFinl), row.names = NULL)
   rpt$qfSciRevw <- data.frame(t(rpt$qfSciRevw), row.names = NULL)
+  
+  lapply(names(rpt$qmAlph), function(x) attr(rpt$qmAlph[[x]], which = "unit") <<- "-")
+  lapply(names(rpt$qmBeta), function(x) attr(rpt$qmBeta[[x]], which = "unit") <<- "-")
+  lapply(names(rpt$qfFinl), function(x) attr(rpt$qfFinl[[x]], which = "unit") <<- "NA")
+  lapply(names(rpt$qfSciRevw), function(x) attr(rpt$qfSciRevw[[x]], which = "unit") <<- "NA")
   #return results
   return(rpt)
   
