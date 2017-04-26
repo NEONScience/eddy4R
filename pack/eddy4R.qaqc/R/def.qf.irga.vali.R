@@ -3,13 +3,14 @@
 
 #' @author 
 #' Natchaya Pingintha-Durden \email{ndurden@battelleecology.org}
+#' David Durden \email{ddurden@battelleecology.org}
 
 #' @description 
 #' Definition function to generate the validation flags for IRGA from the IRGA sampling mass flow controller flow rate set point \code{frtSet00}. Flag indicating when the sensor is operated under validation period (1 = validation period, 0 = normal operating condition, -1 = NA).
 
-#' @param \code{frtSet00} The flow rate set point measured by the IRGA sampling mass flow controller. [dm3 s-1]
+#' @param frtSet00 The flow rate set point measured by the IRGA sampling mass flow controller. [dm3 s-1]
 
-#' @return A vector class of numeric (\code{qfIrgaVali}) of IRGA validation flags. Flag indicating when the sensor is operated under validation period (1 = validation period, 0 = normal operating condition, -1 = NA) [-]
+#' @return A vector class of integer (\code{qfIrgaVali}) of IRGA validation flags. Flag indicating when the sensor is operated under validation period (1 = validation period, 0 = normal operating condition, -1 = NA) [-]
 
 #' @references 
 #' License: GNU AFFERO GENERAL PUBLIC LICENSE Version 3, 19 November 2007.
@@ -28,6 +29,8 @@
 # changelog and author contributions / copyrights
 #   Natchaya Pingintha-Durden (2017-04-25)
 #     original creation
+#   David Durden (2017-04-26)
+#     Added unit attribute
 ##############################################################################################
 
 def.qf.irga.vali <- function(frtSet00){
@@ -39,7 +42,11 @@ def.qf.irga.vali <- function(frtSet00){
   #determine the flag (1=validation period, 0=normal operating condition, else = -1)
   qfIrgaVali <- as.integer(ifelse(frtSet00 == 0, 1,
                             ifelse( frtSet00 >= critLow & frtSet00 <= critHigh, 0, -1)))
-  #output
+  
+ # Add unit attribute to the output  
+ attr(qfIrgaVali, which = "unit") <- "NA"
+  
+ #output
   return(qfIrgaVali)
   #end of def.qf.irga.vali()
 }
