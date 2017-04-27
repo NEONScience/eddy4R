@@ -30,8 +30,8 @@
 #' qf$soniAmrs <- eddy4R.qaqc::def.qf.ecte(TimeBgn = TimeBgn, TimeEnd = TimeEnd, Freq = 40, Sens = "soniAmrs", PcntQf = 0.05)
 #' 
 #' #grouping the set of the flags
-#' qfGrpIrgaCo2 <- def.neon.dp01.qf.grp(qfInput = qf, MethMeas = "ecte", TypeMeas = "vali", dp01="irgaCo2")
-#' qfGrpSoni <- def.neon.dp01.qf.grp(qfInput = qf, MethMeas = "ecte", TypeMeas = "samp", dp01="soni")
+#' qfGrpIrgaCo2 <- eddy4R.qaqc::def.neon.dp01.qf.grp(qfInput = qf, MethMeas = "ecte", TypeMeas = "vali", dp01="irgaCo2")
+#' qfGrpSoni <- eddy4R.qaqc::def.neon.dp01.qf.grp(qfInput = qf, MethMeas = "ecte", TypeMeas = "samp", dp01="soni")
 
 #' @seealso Currently none
 
@@ -496,10 +496,6 @@ if (MethMeas == "ecte") {
                                "qfStepPowrH2oRefe" = qfInput$irga$qfStepPowrH2oRefe,
                                "qfPersPowrH2oRefe" = qfInput$irga$qfPersPowrH2oRefe,
                                #"qfCalPowrH2oRefe" = qfInput$irga$qfCalPowrH2oRefe,
-                               "qfRngPowrH2oRefe" = qfInput$irga$qfRngPowrH2oRefe,
-                               "qfStepPowrH2oRefe" = qfInput$irga$qfStepPowrH2oRefe,
-                               "qfPersPowrH2oRefe" = qfInput$irga$qfPersPowrH2oRefe,
-                               #"qfCalPowrH2oRefe" = qfInput$irga$qfCalPowrH2oRefe,
                                "qfRngAsrpH2o" = qfInput$irga$qfRngAsrpH2o, 
                                "qfStepAsrpH2o" = qfInput$irga$qfStepAsrpH2o, 
                                "qfPersAsrpH2o" = qfInput$irga$qfPersAsrpH2o, 
@@ -534,10 +530,6 @@ if (MethMeas == "ecte") {
                                "qfStepPowrH2oSamp" = -1,
                                "qfPersPowrH2oSamp" = -1,
                                #"qfCalPowrH2oSamp" = -1,
-                               "qfRngPowrH2oRefe" = -1,
-                               "qfStepPowrH2oRefe" = -1,
-                               "qfPersPowrH2oRefe" = -1,
-                               #"qfCalPowrH2oRefe" = -1,
                                "qfRngPowrH2oRefe" = -1,
                                "qfStepPowrH2oRefe" = -1,
                                "qfPersPowrH2oRefe" = -1,
