@@ -5,26 +5,29 @@
 \title{Wrapper function: Calculate quality metrics, alpha and beta quality metrics, and final quality flag for the NEON eddy-covariance turbulent and stroage exchange L1 data products}
 \usage{
 wrap.neon.dp01.qfqm(qfInput = list(), MethMeas = c("ecte", "ecse")[1],
-  TypeMeas = c("samp", "vali")[1], dp01 = c("envHut", "irgaCo2", "irgaH2o",
-  "isopCo2", "isopH2o", "soni", "soniAmrs", "tempAirLvl", "tempAirTop")[1])
+  TypeMeas = c("samp", "vali")[1], RptExpd = FALSE, dp01 = c("envHut",
+  "irgaCo2", "irgaH2o", "isopCo2", "isopH2o", "soni", "soniAmrs", "tempAirLvl",
+  "tempAirTop")[1])
 }
 \arguments{
-\item{\code{qfInput}}{A list of data frame containing the input quality flag data that related to L1 data products are being grouped. Of class integer". [-]}
+\item{qfInput}{A list of data frame containing the input quality flag data that related to L1 data products are being grouped. Of class integer". [-]}
 
-\item{\code{MethMeas}}{A vector of class "character" containing the name of measurement method (eddy-covariance turbulent exchange or storage exchange), MethMeas = c("ecte", "ecse"). Defaults to "ecse". [-]}
+\item{MethMeas}{A vector of class "character" containing the name of measurement method (eddy-covariance turbulent exchange or storage exchange), MethMeas = c("ecte", "ecse"). Defaults to "ecse". [-]}
 
-\item{\code{TypeMeas}}{A vector of class "character" containing the name of measurement type (sampling or validation), TypeMeas = c("samp", "ecse"). Defaults to "samp". [-]}
+\item{TypeMeas}{A vector of class "character" containing the name of measurement type (sampling or validation), TypeMeas = c("samp", "ecse"). Defaults to "samp". [-]}
 
-\item{\code{dp01}}{A vector of class "character" containing the name of NEON ECTE and ECSE L1 data products which the flags are being grouped, \cr
+\item{RptExpd}{A logical parameter that determines if the full quality metric \code{qm} is output in the returned list (defaults to FALSE).}
+
+\item{dp01}{A vector of class "character" containing the name of NEON ECTE and ECSE L1 data products which the flags are being grouped, \cr
 c("envHut", "irgaCo2", "irgaH2o", "isoCo2", "isoH2o", "soni", "soniAmrs", "tempAirLvl", "tempAirTop"). Defaults to "irgaCo2". [-]}
 }
 \value{
 A list of: \cr
-\code{qm}  A list of data frame containing quality metrics (fractions) of failed, pass, and NA for each of the individual flag which related to L1 sub-data products. [fraction] \cr
-\code{qmAlph} A vector of class "numeric" containing the alpha quality metric for L1 sub-data products. [fraction] \cr
-\code{qmBeta} A vector of class "numeric" containing the beta quality metric for L1 sub-data products. [fraction] \cr
-\code{qfFinl} A vector of class "numeric", [0,1], containing the final quality flag for L1 sub-data products. [-] \cr
-\code{qfSciRevw} A vector of class "numeric", [0,1], containing the scientific review quality flag for L1 sub-data products. [-] \cr
+\code{qm}  A list of data frame's containing quality metrics (fractions) of failed, pass, and NA for each of the individual flag which related to L1 sub-data products if RptExpd = TRUE. [fraction] \cr
+\code{qmAlph} A dataframe containing metrics in a  columns of class "numeric" containing the alpha quality metric for L1 sub-data products. [fraction] \cr
+\code{qmBeta} A dataframe containing metrics in a columns of class "numeric" containing the beta quality metric for L1 sub-data products. [fraction] \cr
+\code{qfFinl} A dataframe containing flags in a columns of class "numeric", [0,1], containing the final quality flag for L1 sub-data products. [-] \cr
+\code{qfSciRevw} A dataframe containing flags in a columns of class "numeric", [0,1], containing the scientific review quality flag for L1 sub-data products. [-] \cr
 }
 \description{
 Wrapper function. Calculate quality metrics, alpha and beta quality metrics, and final quality flag for the NEON eddy-covariance turbulent and storage exchange L1 data products.
@@ -40,10 +43,11 @@ qf$soni <- eddy4R.qaqc::def.qf.ecte(TimeBgn = TimeBgn, TimeEnd = TimeEnd, Freq =
 qf$soniAmrs <- eddy4R.qaqc::def.qf.ecte(TimeBgn = TimeBgn, TimeEnd = TimeEnd, Freq = 40, Sens = "soniAmrs", PcntQf = 0.05)
 #calculate quality metric, qmAlpha, qmBeta, qfFinl
 qfqm <- list()
-qfqm$irgaCo2 <- wrap.neon.dp01.qfqm (qfInput = qf, MethMeas = "ecte", TypeMeas = "samp", dp01="irgaCo2")
-qfqm$irgaH2o <- wrap.neon.dp01.qfqm (qfInput = qf, MethMeas = "ecte", TypeMeas = "samp", dp01="irgaH2o")
-qfqm$soni <- wrap.neon.dp01.qfqm (qfInput = qf, MethMeas = "ecte", TypeMeas = "samp", dp01="soni")
-qfqm$soniAmrs <- wrap.neon.dp01.qfqm (qfInput = qf, MethMeas = "ecte", TypeMeas = "samp", dp01="soniAmrs")
+qfqm$irgaCo2 <- eddy4R.qaqc::wrap.neon.dp01.qfqm (qfInput = qf, MethMeas = "ecte", TypeMeas = "samp", dp01="irgaCo2")
+qfqm$irgaH2o <- eddy4R.qaqc::wrap.neon.dp01.qfqm (qfInput = qf, MethMeas = "ecte", TypeMeas = "samp", dp01="irgaH2o")
+qfqm$soni <- eddy4R.qaqc::wrap.neon.dp01.qfqm (qfInput = qf, MethMeas = "ecte", TypeMeas = "samp", dp01="soni")
+# Example with expanded quality metrics included
+qfqm$soniAmrs <- eddy4R.qaqc::wrap.neon.dp01.qfqm (qfInput = qf, MethMeas = "ecte", TypeMeas = "samp", RptExpd = TRUE, dp01="soniAmrs")
 }
 \references{
 License: GNU AFFERO GENERAL PUBLIC LICENSE Version 3, 19 November 2007.
@@ -53,6 +57,7 @@ Currently none
 }
 \author{
 Natchaya Pingintha-Durden \email{ndurden@battelleecology.org}
+David Durden \email{ddurden@battelleecology.org}
 }
 \keyword{NEON}
 \keyword{QAQC,}
