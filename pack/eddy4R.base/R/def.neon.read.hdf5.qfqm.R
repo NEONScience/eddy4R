@@ -14,7 +14,7 @@
 #' @param FreqLoca Integer: Measurement frequency.
 
 #' @return 
-#' Named list \code(qfqm) containing time-series of quality flags.
+#' Named list \code{qfqm} containing time-series of quality flags.
 
 #' @references
 #' License: GNU AFFERO GENERAL PUBLIC LICENSE Version 3, 19 November 2007.
