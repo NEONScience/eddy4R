@@ -5,12 +5,12 @@
 #' David Durden \email{ddurden@battelleecology.org}
 
 #' @description 
-#' Definition function to generate the signal strength flags for the IRGA from the diagnostic output quality metric \code{qfIrgaAgc}. Flag indicating when the sensor is operating with low signal strength using 50% as the default threshold (1 = when qfIrgaAgc <= 0.50, 0 = when qfIrgaAgc >= 0.50, -1 = NA).
+#' Definition function to generate the signal strength flags for the IRGA from the diagnostic output quality metric \code{qfIrgaAgc}. Flag indicating when the sensor is operating with low signal strength using 50 percent as the default threshold (1 = when qfIrgaAgc <= 0.50, 0 = when qfIrgaAgc >= 0.50, -1 = NA).
 
 #' @param qfIrgaAgc The quality metric derived from the IRGA diagnostics to determine signal strength. Presented as a dimensionless fraction. [-]
-#' @param critThsh The critical threshold value for the \code{qfIrgaAgc} value to throw the flag for low signal strength (defaults to 0.50 or 50%).
+#' @param critThsh The critical threshold value for the \code{qfIrgaAgc} value to throw the flag for low signal strength (defaults to 0.50 or 50 percent).
 
-#' @return A vector class of integer (\code{qfIrgaVali}) of IRGA AGC flags. Flag indicating when the sensor is operating with low signal strength using 50% as the default threshold (1 = when qfIrgaAgc <= 0.50, 0 = when qfIrgaAgc >= 0.50, -1 = NA). [-]
+#' @return A vector class of integer (\code{qfIrgaAgc}) of IRGA AGC flags. Flag indicating when the sensor is operating with low signal strength using 50 percent as the default threshold (1 = when qfIrgaAgc <= 0.50, 0 = when qfIrgaAgc >= 0.50, -1 = NA). [-]
 
 #' @references 
 #' License: GNU AFFERO GENERAL PUBLIC LICENSE Version 3, 19 November 2007.
