@@ -90,7 +90,7 @@ def.para.flow <- function(
       # input data
       
       # download data
-      eddy4R.base::def.dld.zip(Inp = list(Url = "https://www.dropbox.com/s/qlp1pyanm5rn2eq/inpRefe_20170308.zip?dl=1",
+      eddy4R.base::def.dld.zip(Inp = list(Url = "https://www.dropbox.com/s/q1add2a3vg5g228/inpRefe_2.zip?dl=1",
                                           Dir = tempdir()))
       
       # assign corresponding DirFilePara
