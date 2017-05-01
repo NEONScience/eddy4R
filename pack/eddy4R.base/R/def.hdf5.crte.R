@@ -93,7 +93,7 @@ def.hdf5.crte <- function(
   
   #Create the file, create a class
   #Create the file, create a class
-  idFile <- rhdf5::H5Fcreate(paste0(DirOut,"/","ECTE_",LevlDp,"_", Site, "_", Date, "_new_format.h5"))
+  idFile <- rhdf5::H5Fcreate(paste0(DirOut,"/","ECSE_",LevlDp,"_", Site, "_", Date, "_new_format.h5"))
   #If the file is already created use:
   #idFile <- H5Fopen("HDF5TIS_L0_prototype.h5")
   
@@ -124,11 +124,39 @@ def.hdf5.crte <- function(
   
   #Creating level 1 file structures
   
-  grpListDp01 <- c("soniAmrs", "irgaCo2", "irgaH2o", "soni")
+  grpListDp01 <- c("irgaCo2", "irgaH2o", "tempAirLvl", "tempAirTop")
   lapply(grpListDp01, function(x) rhdf5::H5Gcreate(idDataLvlDp01, x))
   lapply(grpListDp01, function(x) rhdf5::H5Gcreate(idQfqmLvlDp01, x))
-  lapply(grpListDp01, function(x) rhdf5::H5Gcreate(idDataLvlDp01, paste0(x,"/",LevlTowr,"_30m")))
-  lapply(grpListDp01, function(x) {
+  
+  LevlTowr <- list(
+    "irgaCo2" = c("000_010", "000_020", "000_030", "000_040"),
+    "irgaH2o" = c("000_010", "000_020", "000_030", "000_040"),
+    "tempAirLvl" = c("000_010", "000_020", "000_030"),
+    "tempAirTop" = c("000_040")
+  )
+  
+  freqDp01 <- list(
+    "irgaCo2" = c(2, 30),
+    "irgaH2o" = c(2, 30),
+    "tempAirLvl" = c(1,  30),
+    "tempAirTop" = c(1, 30)
+  )
+  
+  sprintf("%02d", 2)
+  
+  #TODO: level should be automatically determined from the node name in dp0p input
+  
+    lapply(grpListDp01, function(x) 
+      #x <- "irgaCo2"
+      lapply(LevlTowr[[x]], function(y) 
+  
+      rhdf5::H5Gcreate(idDataLvlDp01, paste0(x,"/",y,"_30m"))
+      )#end of lapply
+           )#end of lapply
+  
+  
+  
+   lapply(grpListDp01, function(x) {
     print(x)
     if(x == "soni"){rhdf5::H5Gcreate(idDataLvlDp01, paste0(x,"/",LevlTowr,"_02m"))} else {rhdf5::H5Gcreate(idDataLvlDp01, paste0(x,"/",LevlTowr,"_01m"))}})
   lapply(grpListDp01, function(x) rhdf5::H5Gcreate(idQfqmLvlDp01, paste0(x,"/",LevlTowr,"_30m")))
