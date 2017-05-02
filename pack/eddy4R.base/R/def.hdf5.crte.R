@@ -83,7 +83,7 @@ def.hdf5.crte <- function(
   
   
   #Create a list of all the L0 DPs for creation of group hierarchy (fard)
-  grpList <- c("irga","soni","soniAmrs","irgaMfcSamp","irgaSndValiNema")
+  grpList <- c("irgaCo2", "irgaH2o", "tempAirLvl", "tempAirTop")
   #              ,"irgaGasCyl","irgaMfcVali",
   #              "irgaPresTrap","irgaPresValiLine","irgaPresValiRegIn",
   #              "irgaPresValiRegOut","irgaPump","irgaSndLeakHeat",
@@ -96,6 +96,7 @@ def.hdf5.crte <- function(
   idFile <- rhdf5::H5Fcreate(paste0(DirOut,"/","ECSE_",LevlDp,"_", Site, "_", Date, "_new_format.h5"))
   #If the file is already created use:
   #idFile <- H5Fopen("HDF5TIS_L0_prototype.h5")
+  # idFile <- rhdf5::H5Fopen(paste0(DirOut,"/","ECSE_",LevlDp,"_", Site, "_", Date, "_new_format.h5"))
   
   #Create a group level for SERC
   idSite <- rhdf5::H5Gcreate(idFile, Site) 
@@ -149,10 +150,12 @@ def.hdf5.crte <- function(
     lapply(grpListDp01, function(x) 
       #x <- "irgaCo2"
       lapply(LevlTowr[[x]], function(y) 
-  
-      rhdf5::H5Gcreate(idDataLvlDp01, paste0(x,"/",y,"_30m"))
+  #y <- LevlTowr[[x]]
+        lapply(freqDp01[[x]], function(z) 
+      rhdf5::H5Gcreate(idDataLvlDp01, paste0(x,"/",y,"_", sprintf("%02d", z), "m"))
       )#end of lapply
            )#end of lapply
+    )#end of lapply
   
   
   
