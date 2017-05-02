@@ -108,9 +108,26 @@ def.hdf5.crte <- function(
   idDataLvlDp0p <- rhdf5::H5Gcreate(idDp0p,"data")
   idDataLvlDp01 <- rhdf5::H5Gcreate(idDp01,"data")
   
+  
+  lapply(grpListDp01, function(x) 
+    #x <- "irgaCo2"
+    lapply(LevlTowr[[x]], function(y) 
+      #y <- LevlTowr[[x]]
+      lapply(freqDp01[[x]], function(z) 
+        rhdf5::H5Gcreate(idDataLvlDp01, paste0(x,"/",y,"_", sprintf("%02d", z), "m"))
+      )#end of lapply
+    )#end of lapply
+  )#end of lapply
+  
+  
+  
+  
   idQfqmLvlDp0p <- rhdf5::H5Gcreate(idDp0p,"qfqm")
   idQfqmLvlDp01 <- rhdf5::H5Gcreate(idDp01,"qfqm")
   idUcrtLvlDp01 <- rhdf5::H5Gcreate(idDp01,"ucrt")
+  
+  
+  
   
   #Create a function to create group levels for each L0 DP
   #grpCrte <- function(x) H5Gcreate(idSite, x)
