@@ -1,3 +1,32 @@
+##############################################################################################
+#' @title Definition function: Coordinate transformation from the east-north-up (ENU) coordiante system to the north-east-down (NED) coordiante system
+#' 
+#' @author
+#' David Durden \email{ddurden@battelleecology.org} 
+
+#' @description Function defintion. Coordinate transformation from the east-north-up (ENU) coordiante system to the north-east-down (NED) coordiante system, and vice versa.
+
+
+#' @return Wind speed in meteorological coordinate system [m s-1]
+
+#' @references
+#' License: GNU AFFERO GENERAL PUBLIC LICENSE Version 3, 19 November 2007. 
+
+#' @keywords coordinate, AMRS, IMU, transformation
+
+#' @examples 
+
+#' @seealso Currently none
+
+#' @export
+
+# changelog and author contributions / copyrights
+#   David Durden (2017-05-05)
+#     original creation
+
+##############################################################################################
+
+
 # Test scripts for angle conversions
 
 angNED <- rnorm(10, 275, 10)
