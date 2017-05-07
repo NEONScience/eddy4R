@@ -9,6 +9,8 @@
 
 #' @param qfqm A data.frame or list containing the L0p input data quality flags (sensor and plausibility flags) at native resolution. Of type numeric or integer. [-]
 #' @param idx If data is a list, which list entries should be processed into Level 1 data product quality metrics? Defaults to NULL which expects qfqm to be a data.frame. Of type character. [-]
+#' @param TypeMeas A vector of class "character" containing the name of measurement type (sampling or validation), TypeMeas = c("samp", "ecse"). Defaults to "samp". [-]
+#' @param MethMeas A vector of class "character" containing the name of measurement method (eddy-covariance turbulent exchange or storage exchange), MethMeas = c("ecte", "ecse"). Defaults to "ecse". [-]
 #' @param RptExpd A logical parameter that determines if the full quality metric \code{qm} is output in the returned list (defaults to FALSE).
 
 #' @return A list of: \cr
@@ -34,7 +36,7 @@
 #' qf$soniAmrs <- eddy4R.qaqc::def.qf.ecte(TimeBgn = TimeBgn, TimeEnd = TimeEnd, Freq = 40, Sens = "soniAmrs", PcntQf = 0.05)
 #' #calculate quality metric, qmAlpha, qmBeta, qfFinl
 #' qfqm <- list()
-#' qfqm <- wrap.neon.dp01.qfqm.ecte(qfqm = wrk$qfqm, idx = c("soni", "soniAmrs", "irgaCo2", "irgaH2o") )
+#' qfqm <- wrap.neon.dp01.qfqm.ec(qfqm = wrk$qfqm, idx = c("soni", "soniAmrs", "irgaCo2", "irgaH2o") )
 
 
 #' @references
@@ -51,22 +53,23 @@
 ##############################################################################################
 
 
-# start function wrap.neon.dp01()
-wrap.neon.dp01.qfqm.ecte <- function(
+# start function wrap.neon.dp01.qfqm.ec()
+wrap.neon.dp01.qfqm.ec <- function(
   qfqm,
   idx = NULL,
   TypeMeas = "samp",
+  MethMeas = c("ecte","ecse")[1],
   RptExpd = FALSE
 ) {
   
   # stop if data is a list but idx is not specified  
-  if(!is.list(qfqm)|is.null(idx)) stop("wrap.neon.dp01.qfqm.ecte: qfqm is a list please specify idx.")
+  if(!is.list(qfqm)|is.null(idx)) stop("wrap.neon.dp01.qfqm.ec: qfqm is a list please specify idx.")
   
   
   
   # if data is a list, calculate NEON Level 1 data products recursively for each list element
  rpt <- lapply(idx, function(x) {
-   eddy4R.qaqc::wrap.neon.dp01.qfqm (qfInput = wrk$qfqm, MethMeas = "ecte", TypeMeas = TypeMeas, dp01=x, RptExpd = RptExpd)
+   eddy4R.qaqc::wrap.neon.dp01.qfqm (qfInput = wrk$qfqm, MethMeas = MethMeas, TypeMeas = TypeMeas, dp01=x, RptExpd = RptExpd)
                                      })
   
  names(rpt) <- idx
@@ -74,4 +77,4 @@ wrap.neon.dp01.qfqm.ecte <- function(
   return(rpt)
   
 }
-# end function wrap.neon.dp01.qfqm.ecte()
+# end function wrap.neon.dp01.qfqm.ec()
