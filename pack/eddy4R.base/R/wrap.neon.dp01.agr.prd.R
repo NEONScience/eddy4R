@@ -47,11 +47,8 @@
 
 
 wrap.neon.dp01.agr.prd <- function(
- inpList,
- 
-  
-  
-){
+ inpList
+ ){
 
 rpt <- list()
 tmp <- list()
