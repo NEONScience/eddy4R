@@ -69,7 +69,7 @@ wrap.neon.dp01.qfqm.ec <- function(
   
   # if data is a list, calculate NEON Level 1 data products recursively for each list element
  rpt <- lapply(idx, function(x) {
-   eddy4R.qaqc::wrap.neon.dp01.qfqm (qfInput = wrk$qfqm, MethMeas = MethMeas, TypeMeas = TypeMeas, dp01=x, RptExpd = RptExpd)
+   eddy4R.qaqc::wrap.neon.dp01.qfqm (qfInput = qfqm, MethMeas = MethMeas, TypeMeas = TypeMeas, dp01=x, RptExpd = RptExpd)
                                      })
   
  names(rpt) <- idx
