@@ -53,16 +53,28 @@ wrap.neon.dp01.agr.prd <- function(
 rpt <- list()
 tmp <- list()
 
-#Grab sub-indices to calculate shorter timescale
-tmp$idx <- def.idx.agr(time = wrk$data$time$UTC, PrdAgr = 60, FreqLoca = 20)
 
-tmp$idxSoni <- def.idx.agr(time = DATA$soniAmrs$time, PrdAgr = 120, FreqLoca = 20)
 
-tmp$idxSoniAmrs <- def.idx.agr(time = DATA$soniAmrs$time, PrdAgr = 60, FreqLoca = 40)
+invisible(lapply(names(inpList$tmp$data), function(x) {
+  if(x == "soniAmrs") {
+  tmp$idx[[x]] <<- def.idx.agr(time = inpList$data$soniAmrs$time, PrdAgr = 60, FreqLoca = 40)
+} else if (x == "soni") {
+  
+  tmp$idx[[x]] <<- def.idx.agr(time = inpList$data$time$UTC, PrdAgr = 120, FreqLoca = 20)
+} else {  
+  
+  tmp$idx[[x]] <<- def.idx.agr(time = inpList$data$time$UTC, PrdAgr = 60, FreqLoca = 20)
+}}))
+  
+#Determine the number of iterations by max list of elements  
+iter <- max(sapply(names(tmp$idx), function(x) length(tmp$idx[[x]]$idxBgn)))
+
 
 numAgr <- 0
 
-for(idxAgr in 1:length(tmp$idxSoniAmrs)){
+  
+  
+for(idxAgr in 1:iter){
   # only the first 10 half-hours for standard testing
   #for(idxAgr in 1:10){
   # idxAgr <- 1
@@ -71,28 +83,30 @@ for(idxAgr in 1:length(tmp$idxSoniAmrs)){
   #Create a list identifier for the Aggregation loops
   levlAgr <- paste0("numAgr",ifelse(numAgr < 10, paste0("0",numAgr),numAgr))
 
-for(idxSens in names(inpList$data)){
+  for(idxSens in names(inpList$tmp$data)){
+  #Grab sub-indices to calculate shorter timescale
   
   # assign data
-  
-  if(idxSens == "soniAmrs") {
-    
-    tmp$data[[idxSens]] <- inpList$data[[idxSens]][tmp$idxSoniAmrs$idxBgn[idxAgr]:tmp$idxSoniAmrs$idxEnd[idxAgr],]
-    tmp$qfqm[[idxSens]] <- inpList$qfqm[[idxSens]][tmp$idxSoniAmrs$idxBgn[idxAgr]:tmp$idxSoniAmrs$idxEnd[idxAgr],]
-    
-  } else if (idxSens == "soni") {
-    
-    tmp$data[[idxSens]] <- inpList$data[[idxSens]][tmp$idxSoni$idxBgn[idxAgr]:tmp$idxSoni$idxEnd[idxAgr],]
-    tmp$qfqm[[idxSens]] <- inpList$qfqm[[idxSens]][tmp$idxSoni$idxBgn[idxAgr]:tmp$idxSoni$idxEnd[idxAgr],]
-    
-   
-  } else {
-    
-    tmp$data[[idxSens]] <- inpList$data[[idxSens]][tmp$idx$idxBgn[idxAgr]:tmp$idx$idxEnd[idxAgr],]
-    tmp$qfqm[[idxSens]] <- inpList$qfqm[[idxSens]][tmp$idx$idxBgn[idxAgr]:tmp$idx$idxEnd[idxAgr],]
-    
+    tmp$data[[idxSens]] <- inpList$tmp$data[[idxSens]][tmp$idx[[idxSens]]$idxBgn[idxAgr]:tmp$idx[[idxSens]]$idxEnd[idxAgr],]
+    tmp$qfqm[[idxSens]] <- inpList$qfqm[[idxSens]][tmp$idx[[idxSens]]$idxBgn[idxAgr]:tmp$idx[[idxSens]]$idxEnd[idxAgr],]
   }
   
+    tmp$dp01[[levlAgr]] <- eddy4R.base::wrap.neon.dp01(
+      # assign data: data.frame or list of type numeric or integer
+      data = tmp$data,
+      # if data is a list, which list entries should be processed into Level 1 data products?
+      # defaults to NULL which expects data to be a data.frame
+      idx = c("soni", "soniAmrs", "irgaCo2", "irgaH2o")
+    )
+    
+    tmp$qfqmOut[[levlAgr]] <- eddy4R.base::wrap.neon.dp01.qfqm.ec(qfqm = tmp$qfqm, idx = c("soni", "soniAmrs", "irgaCo2", "irgaH2o"), MethMeas = "ecte", RptExpd = FALSE )
+  
+tmp$data <- NULL
+tmp$qfqm <- NULL
+invisible(gc())
+}
 
+rpt <- eddy4R.base::def.agr.ecte.dp01(inpList = tmp)
 
-}}}
+return(rpt)
+}
