@@ -124,7 +124,7 @@ MethSubAgr = FALSE
       lapply(length(inpList$dp01AgrSub), function(y) 
         
         # second call to lapply, targeting the observations to be combined into the result data.frames
-        do.call(rbind, inpList$dp01AgrSub[[y]]$time))
+        do.call(rbind, as.character(inpList$dp01AgrSub[[y]]$time[[idxDp01]])))
     
    # names(rpt$dp01AgrSub$time) <- names(inpList$dp01AgrSub[[1]]$time)
     
