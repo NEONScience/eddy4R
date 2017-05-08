@@ -36,21 +36,22 @@ inpList
   # concatenate results
   rpt <- list()
   # timestamps
-  rpt$time <- data.frame(
-    timeBgn = inpList$whrData20hz$timeBgn,
-    timeEnd = inpList$whrData20hz$timeEnd
-  )
-  
-  
+
   
   # loop around data products
   for(idxDp01 in names(inpList$dp01[[1]])) {
+    
+    rpt$time <- data.frame(
+      timeBgn = inpList$idx[[idxDp01]]$timeBgn,
+      timeEnd = inpList$idx[[idxDp01]]$timeEnd
+    )
     
     # combine data for different time periods
     # http://stackoverflow.com/questions/10832288/coerce-a-specific-sublist-of-a-list-to-a-matrix-data-frame-with-base-r
     # https://ryouready.wordpress.com/2009/01/23/r-combining-vectors-or-data-frames-of-unequal-length-into-one-data-frame/
     # http://stackoverflow.com/questions/15673550/why-is-rbindlist-better-than-rbind
     # http://stackoverflow.com/questions/26843861/replace-rbind-in-for-loop-with-lapply-2nd-circle-of-hell
+    
     rpt$data[[idxDp01]] <- 
       
       # first call to lapply, targeting the result data.frames to be created (data sub-products: mean, min, max, vari", numSamp)
