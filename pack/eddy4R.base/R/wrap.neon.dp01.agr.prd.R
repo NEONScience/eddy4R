@@ -55,15 +55,15 @@ tmp <- list()
 
 
 
-invisible(lapply(names(inpList$tmp$data), function(x) {
+invisible(lapply(union(names(inpList$tmp$data), names(inpList$qfqm)), function(x) {
   if(x == "soniAmrs") {
-  tmp$idx[[x]] <<- def.idx.agr(time = inpList$data$soniAmrs$time, PrdAgr = 60, FreqLoca = 40)
+  tmp$idx[[x]] <<- eddy4R.base::def.idx.agr(time = inpList$data$soniAmrs$time, PrdAgr = 60, FreqLoca = 40)
 } else if (x == "soni") {
   
-  tmp$idx[[x]] <<- def.idx.agr(time = inpList$data$time$UTC, PrdAgr = 120, FreqLoca = 20)
+  tmp$idx[[x]] <<- eddy4R.base::def.idx.agr(time = inpList$data$time$UTC, PrdAgr = 120, FreqLoca = 20)
 } else {  
   
-  tmp$idx[[x]] <<- def.idx.agr(time = inpList$data$time$UTC, PrdAgr = 60, FreqLoca = 20)
+  tmp$idx[[x]] <<- eddy4R.base::def.idx.agr(time = inpList$data$time$UTC, PrdAgr = 60, FreqLoca = 20)
 }}))
   
 #Determine the number of iterations by max list of elements  
@@ -87,19 +87,27 @@ for(idxAgr in 1:iter){
   #Grab sub-indices to calculate shorter timescale
   
   # assign data
+    if(!idxAgr > length(tmp$idx[[idxSens]]$idxBgn)){
+    
     tmp$data[[idxSens]] <- inpList$tmp$data[[idxSens]][tmp$idx[[idxSens]]$idxBgn[idxAgr]:tmp$idx[[idxSens]]$idxEnd[idxAgr],]
+    }}
+  
+  for(idxSens in names(inpList$qfqm[grep(pattern = "time", x = names(inpList$qfqm), invert = TRUE)])){
+    
+    if(!idxAgr > length(tmp$idx[[idxSens]]$idxBgn)){
+      
     tmp$qfqm[[idxSens]] <- inpList$qfqm[[idxSens]][tmp$idx[[idxSens]]$idxBgn[idxAgr]:tmp$idx[[idxSens]]$idxEnd[idxAgr],]
-  }
+  }}
   
     tmp$dp01[[levlAgr]] <- eddy4R.base::wrap.neon.dp01(
       # assign data: data.frame or list of type numeric or integer
       data = tmp$data,
       # if data is a list, which list entries should be processed into Level 1 data products?
       # defaults to NULL which expects data to be a data.frame
-      idx = c("soni", "soniAmrs", "irgaCo2", "irgaH2o")
+      idx = names(tmp$data)
     )
     
-    tmp$qfqmOut[[levlAgr]] <- eddy4R.base::wrap.neon.dp01.qfqm.ec(qfqm = tmp$qfqm, idx = c("soni", "soniAmrs", "irgaCo2", "irgaH2o"), MethMeas = "ecte", RptExpd = FALSE )
+    tmp$qfqmOut[[levlAgr]] <- eddy4R.base::wrap.neon.dp01.qfqm.ec(qfqm = tmp$qfqm, idx = names(tmp$data), MethMeas = "ecte", RptExpd = FALSE )
   
 tmp$data <- NULL
 tmp$qfqm <- NULL
