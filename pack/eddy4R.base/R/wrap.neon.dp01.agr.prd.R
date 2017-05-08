@@ -90,14 +90,32 @@ for(idxAgr in 1:iter){
     if(!idxAgr > length(tmp$idx[[idxSens]]$idxBgn)){
     
     tmp$data[[idxSens]] <- inpList$tmp$data[[idxSens]][tmp$idx[[idxSens]]$idxBgn[idxAgr]:tmp$idx[[idxSens]]$idxEnd[idxAgr],]
-    }}
+    }
+    
+    for(idxVar in base::names(tmp$data[[idxSens]])) {
+      
+      base::attr(x = tmp$data[[idxSens]][[idxVar]], which = "unit") <-
+        base::attr(x = inpList$tmp$data[[idxSens]][[idxVar]], which = "unit")
+      
+    }; rm(idxVar)
+    }
   
   for(idxSens in names(inpList$qfqm[grep(pattern = "time", x = names(inpList$qfqm), invert = TRUE)])){
     
     if(!idxAgr > length(tmp$idx[[idxSens]]$idxBgn)){
       
     tmp$qfqm[[idxSens]] <- inpList$qfqm[[idxSens]][tmp$idx[[idxSens]]$idxBgn[idxAgr]:tmp$idx[[idxSens]]$idxEnd[idxAgr],]
-  }}
+    }
+    
+    for(idxVar in base::names(tmp$qfqm[[idxSens]])) {
+      
+      base::attr(x = tmp$qfqm[[idxSens]][[idxVar]], which = "unit") <-
+        base::attr(x = inpList$qfqm[[idxSens]][[idxVar]], which = "unit")
+      
+    }; rm(idxVar)
+    
+    }
+  
   
     tmp$dp01[[levlAgr]] <- eddy4R.base::wrap.neon.dp01(
       # assign data: data.frame or list of type numeric or integer
