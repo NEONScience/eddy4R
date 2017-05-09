@@ -40,11 +40,11 @@ MethSubAgr = FALSE
   names(inpList$idx)[which(names(inpList$idx) == "irga")] <- "irgaCo2"
   names(inpList$idx)[which(names(inpList$idx) == "irgaMfcSamp")] <- "irgaH2o"
   
-  #Use irga as the standard time for outputs
-  rpt$time <- data.frame(
-    timeBgn = inpList$idx$irgaH2o$timeBgn,
-    timeEnd = inpList$idx$irgaH2o$timeEnd
-  )[1:length(inpList$dp01),]
+  # #Use irga as the standard time for outputs
+  # rpt$time <- data.frame(
+  #   timeBgn = inpList$idx$irgaH2o$timeBgn,
+  #   timeEnd = inpList$idx$irgaH2o$timeEnd
+  # )[1:length(inpList$dp01),]
   
   # loop around data products
   for(idxDp01 in names(inpList$dp01[[1]])) {
@@ -118,15 +118,36 @@ MethSubAgr = FALSE
 
 ###################################################################################
     # Time
+    # Remove NA's in the time
+    invisible(lapply(names(inpList$dp01AgrSub), function(y){  
+    inpList$dp01AgrSub[[y]]$time[[idxDp01]] <<- na.omit(inpList$dp01AgrSub[[y]]$time[[idxDp01]])}))
+    
+    #Format output time vectors 
+    invisible(lapply(names(inpList$dp01AgrSub), function(y){
+      
+      inpList$dp01AgrSub[[y]]$time[[idxDp01]]$timeBgn <<- strftime(inpList$dp01AgrSub[[y]]$time[[idxDp01]]$timeBgn, format="%Y-%m-%dT%H:%M:%OSZ", tz="UTC")
+      inpList$dp01AgrSub[[y]]$time[[idxDp01]]$timeEnd <<- strftime(inpList$dp01AgrSub[[y]]$time[[idxDp01]]$timeEnd, format="%Y-%m-%dT%H:%M:%OSZ", tz="UTC")}))
+      
+    
+    # rpt$dp01AgrSub$time[[idxDp01]] <- 
+    #   
+    #   # first call to lapply, targeting the result data.frames to be created (data sub-products: mean, min, max, vari", numSamp)
+    #   lapply(names(inpList$dp01AgrSub), function(y) {
+    #     
+    #     # second call to lapply, targeting the observations to be combined into the result data.frames
+    #     do.call(rbind, lapply(1:length(inpList$dp01AgrSub[[y]]$time[[idxDp01]])})
+    # 
+   # names(rpt$dp01AgrSub$time) <- names(inpList$dp01AgrSub[[1]]$time)
+    
     rpt$dp01AgrSub$time[[idxDp01]] <- 
       
       # first call to lapply, targeting the result data.frames to be created (data sub-products: mean, min, max, vari", numSamp)
-      lapply(length(inpList$dp01AgrSub), function(y) 
+     # lapply(names(inpList$dp01AgrSub[[1]]$time[[idxDp01]]), function(y) 
         
         # second call to lapply, targeting the observations to be combined into the result data.frames
-        do.call(rbind, as.character(inpList$dp01AgrSub[[y]]$time[[idxDp01]])))
+        do.call(rbind, lapply(1:length(inpList$dp01AgrSub), function(x) inpList$dp01AgrSub[[x]]$time[[idxDp01]]))
+      #)
     
-   # names(rpt$dp01AgrSub$time) <- names(inpList$dp01AgrSub[[1]]$time)
     
     }
     
