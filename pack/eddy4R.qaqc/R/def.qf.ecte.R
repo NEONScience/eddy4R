@@ -79,7 +79,7 @@ def.qf.ecte <- function(
   
   if(Sens == "irga"){
     varName <- c("asrpCo2", "asrpH2o", "densMoleCo2", "densMoleH2o", "tempRefe",  "presAtm","presDiff", "potCool", "rtioMoleDryCo2", "rtioMoleDryH2o", "tempIn","tempOut", "powrH2oSamp", "powrH2oRefe", "powrCo2Samp", "powrCo2Refe","ssiCo2", "ssiH2o","tempMean", "presSum")
-    qfNameSens <- c("qfIrgaHead", "qfIrgaTemp", "qfIrgaTempIn", "qfIrgaAux", "qfIrgaPres", "qfIrgaChop", "qfIrgaDetc", "qfIrgaPll","qfIrgaSync", "qfIrgaAgc" )}
+    qfNameSens <- c("qfIrgaHead", "qfIrgaTempOut", "qfIrgaTempIn", "qfIrgaAux", "qfIrgaPres", "qfIrgaChop", "qfIrgaDetc", "qfIrgaPll","qfIrgaSync", "qfIrgaAgc" )}
   
   if(Sens == "irgaMfcSamp"){
     varName <- c("presAtm", "temp", "frt", "frt00", "frtSet00")
