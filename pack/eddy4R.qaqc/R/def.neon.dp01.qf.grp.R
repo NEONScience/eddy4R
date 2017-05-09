@@ -30,8 +30,8 @@
 #' qf$soniAmrs <- eddy4R.qaqc::def.qf.ecte(TimeBgn = TimeBgn, TimeEnd = TimeEnd, Freq = 40, Sens = "soniAmrs", PcntQf = 0.05)
 #' 
 #' #grouping the set of the flags
-#' qfGrpIrgaCo2 <- def.neon.dp01.qf.grp(qfInput = qf, MethMeas = "ecte", TypeMeas = "vali", dp01="irgaCo2")
-#' qfGrpSoni <- def.neon.dp01.qf.grp(qfInput = qf, MethMeas = "ecte", TypeMeas = "samp", dp01="soni")
+#' qfGrpIrgaCo2 <- eddy4R.qaqc::def.neon.dp01.qf.grp(qfInput = qf, MethMeas = "ecte", TypeMeas = "vali", dp01="irgaCo2")
+#' qfGrpSoni <- eddy4R.qaqc::def.neon.dp01.qf.grp(qfInput = qf, MethMeas = "ecte", TypeMeas = "samp", dp01="soni")
 
 #' @seealso Currently none
 
@@ -45,6 +45,8 @@
 #   Natchaya P-Durden (2017-03-21)
 #     revised original function to def.neon.dp01.qf.grp ()
 #     added ECSE quality flags
+#   Natchaya P-Durden (2017-04-26)
+#     commented out the qfCal in irga and soni
 ##############################################################################################
 
 def.neon.dp01.qf.grp <- function(
@@ -112,7 +114,7 @@ if (MethMeas == "ecte") {
     #organized all quality flags from irga into the set of flags (for frequency use)
     #irga sensor flags
     setQf$sensIrga <- data.frame("qfIrgaHead" = qfInput$irga$qfIrgaHead, 
-                             "qfIrgaTemp" = qfInput$irga$qfIrgaTemp, 
+                             "qfIrgaTempOut" = qfInput$irga$qfIrgaTempOut, 
                              "qfIrgaTempIn" = qfInput$irga$qfIrgaTempIn,
                              "qfIrgaAux" = qfInput$irga$qfIrgaAux, 
                              "qfIrgaPres" = qfInput$irga$qfIrgaPres, 
@@ -123,103 +125,101 @@ if (MethMeas == "ecte") {
     
     setQf$tempIn <- data.frame("qfRngTempIn" = qfInput$irga$qfRngTempIn,
                                "qfStepTempIn" = qfInput$irga$qfStepTempIn,
-                               "qfPersTempIn" = qfInput$irga$qfPersTempIn,
-                               "qfCalTempIn" = qfInput$irga$qfCalTempIn)
+                               "qfPersTempIn" = qfInput$irga$qfPersTempIn)
+                               #"qfCalTempIn" = qfInput$irga$qfCalTempIn)
     
     setQf$tempOut <- data.frame("qfRngTempOut" = qfInput$irga$qfRngTempOut,
                                 "qfStepTempOut" = qfInput$irga$qfStepTempOut,
-                                "qfPersTempOut" = qfInput$irga$qfPersTempOut,
-                                "qfCalTempOut" = qfInput$irga$qfCalTempOut)
+                                "qfPersTempOut" = qfInput$irga$qfPersTempOut)
+                                #"qfCalTempOut" = qfInput$irga$qfCalTempOut)
     
     setQf$tempAve <- data.frame ("qfRngTempMean" = qfInput$irga$qfRngTempMean, 
                                  "qfStepTempMean" = qfInput$irga$qfStepTempMean,
-                                 "qfPersTempMean" = qfInput$irga$qfPersTempMean, 
-                                 "qfCalTempMean" = qfInput$irga$qfCalTempMean)
+                                 "qfPersTempMean" = qfInput$irga$qfPersTempMean) 
+                                 #"qfCalTempMean" = qfInput$irga$qfCalTempMean)
     
     setQf$presAtmIrga <- data.frame("qfRngPresAtm" = qfInput$irga$qfRngPresAtm, 
                                 "qfStepPresAtm" = qfInput$irga$qfStepPresAtm,
-                                "qfPersPresAtm" = qfInput$irga$qfPersPresAtm, 
-                                "qfCalPresAtm" = qfInput$irga$qfCalPresAtm)
+                                "qfPersPresAtm" = qfInput$irga$qfPersPresAtm) 
+                                #"qfCalPresAtm" = qfInput$irga$qfCalPresAtm)
     
     setQf$presDiffIrga <- data.frame("qfRngPresDiff" = qfInput$irga$qfRngPresDiff,
                                      "qfStepPresDiff" = qfInput$irga$qfStepPresDiff,
-                                     "qfPersPresDiff" = qfInput$irga$qfPersPresDiff,
-                                     "qfCalPresDiff" = qfInput$irga$qfCalPresDiff) 
+                                     "qfPersPresDiff" = qfInput$irga$qfPersPresDiff)
+                                     #"qfCalPresDiff" = qfInput$irga$qfCalPresDiff) 
     
     setQf$presSum <- data.frame("qfRngPresSum" = qfInput$irga$qfRngPresSum,
                                 "qfStepPresSum" = qfInput$irga$qfStepPresSum,
-                                "qfPersPresSum" = qfInput$irga$qfPersPresSum,
-                                "qfCalPresSum" = qfInput$irga$qfCalPresSum)
+                                "qfPersPresSum" = qfInput$irga$qfPersPresSum)
+                                #"qfCalPresSum" = qfInput$irga$qfCalPresSum)
     
     setQf$powrH2oSamp <- data.frame ("qfRngPowrH2oSamp" = qfInput$irga$qfRngPowrH2oSamp,
                                      "qfStepPowrH2oSamp" = qfInput$irga$qfStepPowrH2oSamp,
-                                     "qfPersPowrH2oSamp" = qfInput$irga$qfPersPowrH2oSamp,
-                                     "qfCalPowrH2oSamp" = qfInput$irga$qfCalPowrH2oSamp)
+                                     "qfPersPowrH2oSamp" = qfInput$irga$qfPersPowrH2oSamp)
+                                     #"qfCalPowrH2oSamp" = qfInput$irga$qfCalPowrH2oSamp)
     
     setQf$powrH2oRefe <- data.frame ("qfRngPowrH2oRefe" = qfInput$irga$qfRngPowrH2oRefe,
                                      "qfStepPowrH2oRefe" = qfInput$irga$qfStepPowrH2oRefe,
-                                     "qfPersPowrH2oRefe" = qfInput$irga$qfPersPowrH2oRefe,
-                                     "qfCalPowrH2oRefe" = qfInput$irga$qfCalPowrH2oRefe)
+                                     "qfPersPowrH2oRefe" = qfInput$irga$qfPersPowrH2oRefe)
+                                     #"qfCalPowrH2oRefe" = qfInput$irga$qfCalPowrH2oRefe)
     
     setQf$asrpH2o <- data.frame("qfRngAsrpH2o" = qfInput$irga$qfRngAsrpH2o, 
                                 "qfStepAsrpH2o" = qfInput$irga$qfStepAsrpH2o, 
-                                "qfPersAsrpH2o" = qfInput$irga$qfPersAsrpH2o, 
-                                "qfCalAsrpH2o" = qfInput$irga$qfCalAsrpH2o)
+                                "qfPersAsrpH2o" = qfInput$irga$qfPersAsrpH2o) 
+                                #"qfCalAsrpH2o" = qfInput$irga$qfCalAsrpH2o)
     
     setQf$densMoleH2o <- data.frame("qfRngDensMoleH2o" = qfInput$irga$qfRngDensMoleH2o, 
                                     "qfStepDensMoleH2o" = qfInput$irga$qfStepDensMoleH2o, 
-                                    "qfPersDensMoleH2o" = qfInput$irga$qfPersDensMoleH2o, 
-                                    "qfCalDensMoleH2o" = qfInput$irga$qfCalDensMoleH2o)
+                                    "qfPersDensMoleH2o" = qfInput$irga$qfPersDensMoleH2o)
+                                    #"qfCalDensMoleH2o" = qfInput$irga$qfCalDensMoleH2o)
     
     setQf$rtioMoleDryH2o <- data.frame("qfRngRtioMoleDryH2o" = qfInput$irga$qfRngRtioMoleDryH2o,
                                        "qfStepRtioMoleDryH2o" = qfInput$irga$qfStepRtioMoleDryH2o,
-                                       "qfPersRtioMoleDryH2o" = qfInput$irga$qfPersRtioMoleDryH2o,
-                                       "qfCalRtioMoleDryH2o" = qfInput$irga$qfCalRtioMoleDryH2o)
+                                       "qfPersRtioMoleDryH2o" = qfInput$irga$qfPersRtioMoleDryH2o)
+                                       #"qfCalRtioMoleDryH2o" = qfInput$irga$qfCalRtioMoleDryH2o)
     
     setQf$powrCo2Samp <- data.frame("qfRngPowrCo2Samp" = qfInput$irga$qfRngPowrCo2Samp,
                                     "qfStepPowrCo2Samp" = qfInput$irga$qfStepPowrCo2Samp,
-                                    "qfPersPowrCo2Samp" = qfInput$irga$qfPersPowrCo2Samp,
-                                    "qfCalPowrCo2Samp" = qfInput$irga$qfCalPowrCo2Samp)
+                                    "qfPersPowrCo2Samp" = qfInput$irga$qfPersPowrCo2Samp)
+                                    #"qfCalPowrCo2Samp" = qfInput$irga$qfCalPowrCo2Samp)
     
     setQf$powrCo2Refe <- data.frame ("qfRngPowrCo2Refe" = qfInput$irga$qfRngPowrCo2Refe,
                                      "qfStepPowrCo2Refe" = qfInput$irga$qfStepPowrCo2Refe,
-                                     "qfPersPowrCo2Refe" = qfInput$irga$qfPersPowrCo2Refe,
-                                     "qfCalPowrCo2Refe" = qfInput$irga$qfCalPowrCo2Refe)
+                                     "qfPersPowrCo2Refe" = qfInput$irga$qfPersPowrCo2Refe)
+                                     #"qfCalPowrCo2Refe" = qfInput$irga$qfCalPowrCo2Refe)
     
     setQf$asrpCo2 <- data.frame("qfRngAsrpCo2" = qfInput$irga$qfRngAsrpCo2, 
                                 "qfStepAsrpCo2" = qfInput$irga$qfStepAsrpCo2, 
-                                "qfPersAsrpCo2" = qfInput$irga$qfPersAsrpCo2, 
-                                "qfCalAsrpCo2" = qfInput$irga$qfCalAsrpCo2)
+                                "qfPersAsrpCo2" = qfInput$irga$qfPersAsrpCo2) 
+                                #"qfCalAsrpCo2" = qfInput$irga$qfCalAsrpCo2)
     
     setQf$densMoleCo2 <- data.frame("qfRngDensMoleCo2" = qfInput$irga$qfRngDensMoleCo2,
                                     "qfStepDensMoleCo2" = qfInput$irga$qfStepDensMoleCo2,
-                                    "qfPersDensMoleCo2" = qfInput$irga$qfPersDensMoleCo2, 
-                                    "qfCalDensMoleCo2" = qfInput$irga$qfCalDensMoleCo2) 
+                                    "qfPersDensMoleCo2" = qfInput$irga$qfPersDensMoleCo2) 
+                                    #"qfCalDensMoleCo2" = qfInput$irga$qfCalDensMoleCo2) 
     
     setQf$rtioMoleDryCo2 <- data.frame("qfRngRtioMoleDryCo2" = qfInput$irga$qfRngRtioMoleDryCo2,
                                        "qfStepRtioMoleDryCo2" = qfInput$irga$qfStepRtioMoleDryCo2,
-                                       "qfPersRtioMoleDryCo2" = qfInput$irga$qfPersRtioMoleDryCo2,
-                                       "qfCalRtioMoleDryCo2" = qfInput$irga$qfCalRtioMoleDryCo2)
+                                       "qfPersRtioMoleDryCo2" = qfInput$irga$qfPersRtioMoleDryCo2)
+                                      # "qfCalRtioMoleDryCo2" = qfInput$irga$qfCalRtioMoleDryCo2)
     
     setQf$ssiCo2 <- data.frame("qfRngSsiCo2" = qfInput$irga$qfRngSsiCo2, 
                                "qfStepSsiCo2" = qfInput$irga$qfStepSsiCo2, 
-                               "qfPersSsiCo2" = qfInput$irga$qfPersSsiCo2, 
-                               "qfCalSsiCo2" = qfInput$irga$qfCalSsiCo2)
+                               "qfPersSsiCo2" = qfInput$irga$qfPersSsiCo2)
+                               #"qfCalSsiCo2" = qfInput$irga$qfCalSsiCo2)
     
     setQf$ssiH2o <- data.frame("qfRngSsiH2o" = qfInput$irga$qfRngSsiH2o, 
                                "qfStepSsiH2o" = qfInput$irga$qfStepSsiH2o, 
-                               "qfPersSsiH2o" = qfInput$irga$qfPersSsiH2o, 
-                               "qfCalSsiH2o" = qfInput$irga$qfCalSsiH2o)
+                               "qfPersSsiH2o" = qfInput$irga$qfPersSsiH2o) 
+                               #"qfCalSsiH2o" = qfInput$irga$qfCalSsiH2o)
     
     #external quality flags from irgaMfcSamp
     if ("irgaMfcSamp" %in% names(qfInput)){
       #irgaMfcSamp
       setQf$frt00IrgaMfcSamp <- data.frame("qfRngFrt00" = qfInput$irgaMfcSamp$qfRngFrt00, 
-                                "qfStepFrt00" = qfInput$irgaMfcSamp$qfStepFrt00, 
                                 "qfPersFrt00" = qfInput$irgaMfcSamp$qfPersFrt00)
       
       setQf$frtIrgaMfcSamp <- data.frame("qfRngFrt" = qfInput$irgaMfcSamp$qfRngFrt,
-                              "qfStepFrt" = qfInput$irgaMfcSamp$qfStepFrt,
                               "qfPersFrt" = qfInput$irgaMfcSamp$qfPersFrt)
       
       setQf$presAtmIrgaMfcSamp <- data.frame("qfRngPresAtm" = qfInput$irgaMfcSamp$qfRngPresAtm, 
@@ -232,11 +232,9 @@ if (MethMeas == "ecte") {
       } else {
       #assign qf for irgaMfcSamp to -1 when qf irgaMfcSamp is missing
       setQf$frt00IrgaMfcSamp <- data.frame("qfRngFrt00" = -1, 
-                                "qfStepFrt00" = -1, 
                                 "qfPersFrt00" = -1)
       
       setQf$frtIrgaMfcSamp <- data.frame("qfRngFrt" = -1,
-                              "qfStepFrt" = -1,
                               "qfPersFrt" = -1)
       
       setQf$presAtmIrgaMfcSamp <- data.frame("qfRngPresAtm" = -1, 
@@ -252,11 +250,9 @@ if (MethMeas == "ecte") {
     if ("irgaMfcVali" %in% names(qfInput)){
       #irgaMfcVali
       setQf$frt00IrgaMfcVali <- data.frame("qfRngFrt00" = qfInput$irgaMfcVali$qfRngFrt00, 
-                                "qfStepFrt00" = qfInput$irgaMfcVali$qfStepFrt00, 
-                                "qfPersFrt00" = qfInput$irgaMfcVali$qfPersFrt00)
+                                 "qfPersFrt00" = qfInput$irgaMfcVali$qfPersFrt00)
       
       setQf$frtIrgaMfcVali <- data.frame("qfRngFrt" = qfInput$irgaMfcVali$qfRngFrt,
-                              "qfStepFrt" = qfInput$irgaMfcVali$qfStepFrt,
                               "qfPersFrt" = qfInput$irgaMfcVali$qfPersFrt)
       
       setQf$presAtmIrgaMfcVali <- data.frame("qfRngPresAtm" = qfInput$irgaMfcVali$qfRngPresAtm, 
@@ -269,11 +265,9 @@ if (MethMeas == "ecte") {
       } else {
       #assign qf for irgaMfcVali to -1 when qf irgaMfcVali is missing
       setQf$frt00IrgaMfcVali <- data.frame("qfRngFrt00" = -1, 
-                                "qfStepFrt00" = -1, 
                                 "qfPersFrt00" = -1)
       
       setQf$frtIrgaMfcVali <- data.frame("qfRngFrt" = -1,
-                              "qfStepFrt" = -1,
                               "qfPersFrt" = -1)
       
       setQf$presAtmIrgaMfcVali <- data.frame("qfRngPresAtm" = -1, 
@@ -287,11 +281,11 @@ if (MethMeas == "ecte") {
 
     #quality flags from soni for grouping qf of tempDew 
     if ("soni" %in% names(qfInput)){
-      setQf$soni <- data.frame("qfCalVeloSoni" = qfInput$soni$qfCalVeloSoni,
+      setQf$soni <- data.frame(#"qfCalVeloSoni" = qfInput$soni$qfCalVeloSoni,
                                "qfPersVeloSoni" = qfInput$soni$qfPersVeloSoni,
                                "qfRngVeloSoni" = qfInput$soni$qfRngVeloSoni,
                                "qfStepVeloSoni" = qfInput$soni$qfStepVeloSoni,
-                               "qfCalTempSoni" = qfInput$soni$qfCalTempSoni,
+                               #"qfCalTempSoni" = qfInput$soni$qfCalTempSoni,
                                "qfPersTempSoni" = qfInput$soni$qfPersTempSoni,
                                "qfRngTempSoni" = qfInput$soni$qfRngTempSoni,
                                "qfStepTempSoni" = qfInput$soni$qfStepTempSoni,
@@ -306,11 +300,11 @@ if (MethMeas == "ecte") {
                                "qfSoniSgnlLow" = qfInput$soni$qfSoniSgnlLow
                                )
     } else {
-      setQf$soni <- data.frame("qfCalVeloSoni" = -1,
+      setQf$soni <- data.frame(#"qfCalVeloSoni" = -1,
                                "qfPersVeloSoni" = -1,
                                "qfRngVeloSoni" = -1,
                                "qfStepVeloSoni" = -1,
-                               "qfCalTempSoni" = -1,
+                               #"qfCalTempSoni" = -1,
                                "qfPersTempSoni" = -1,
                                "qfRngTempSoni" = -1,
                                "qfStepTempSoni" = -1,
@@ -452,33 +446,33 @@ if (MethMeas == "ecte") {
     #qf for along-axis wind speed
     setQf$veloXaxs <- data.frame("qfRngVeloXaxs" = qfInput$soni$qfRngVeloXaxs, 
                                  "qfStepVeloXaxs" = qfInput$soni$qfStepVeloXaxs, 
-                                 "qfPersVeloXaxs" = qfInput$soni$qfPersVeloXaxs, 
-                                 "qfCalVeloXaxs" = qfInput$soni$qfCalVeloXaxs)
+                                 "qfPersVeloXaxs" = qfInput$soni$qfPersVeloXaxs) 
+                                 #"qfCalVeloXaxs" = qfInput$soni$qfCalVeloXaxs)
     #qf for cross-axis wind speed
     setQf$veloYaxs <- data.frame("qfRngVeloYaxs" = qfInput$soni$qfRngVeloYaxs, 
                                  "qfStepVeloYaxs" = qfInput$soni$qfStepVeloYaxs, 
-                                 "qfPersVeloYaxs" = qfInput$soni$qfPersVeloYaxs, 
-                                 "qfCalVeloYaxs" = qfInput$soni$qfCalVeloYaxs)
+                                 "qfPersVeloYaxs" = qfInput$soni$qfPersVeloYaxs) 
+                                 #"qfCalVeloYaxs" = qfInput$soni$qfCalVeloYaxs)
     #qf for vertical-axis wind speed
     setQf$veloZaxs <- data.frame("qfRngVeloZaxs" = qfInput$soni$qfRngVeloZaxs, 
                                  "qfStepVeloZaxs" = qfInput$soni$qfStepVeloZaxs, 
-                                 "qfPersVeloZaxs" = qfInput$soni$qfPersVeloZaxs, 
-                                 "qfCalVeloZaxs" = qfInput$soni$qfCalVeloZaxs)
+                                 "qfPersVeloZaxs" = qfInput$soni$qfPersVeloZaxs) 
+                                 #"qfCalVeloZaxs" = qfInput$soni$qfCalVeloZaxs)
     #qf for sonic velocity
     setQf$veloSoni <- data.frame("qfRngVeloSoni" = qfInput$soni$qfRngVeloSoni, 
                                  "qfStepVeloSoni" = qfInput$soni$qfStepVeloSoni, 
-                                 "qfPersVeloSoni" = qfInput$soni$qfPersVeloSoni, 
-                                 "qfCalVeloSoni" = qfInput$soni$qfCalVeloSoni)
+                                 "qfPersVeloSoni" = qfInput$soni$qfPersVeloSoni) 
+                                 #"qfCalVeloSoni" = qfInput$soni$qfCalVeloSoni)
     #qf for soic temperature
     setQf$tempSoni <- data.frame("qfRngTempSoni" = qfInput$soni$qfRngTempSoni, 
                                  "qfStepTempSoni" = qfInput$soni$qfStepTempSoni, 
-                                 "qfPersTempSoni" = qfInput$soni$qfPersTempSoni, 
-                                 "qfCalTempSoni" = qfInput$soni$qfCalTempSoni)
+                                 "qfPersTempSoni" = qfInput$soni$qfPersTempSoni) 
+                                 #"qfCalTempSoni" = qfInput$soni$qfCalTempSoni)
     
     #external quality flags from irga for grouping qf of tempAir
     if ("irga" %in% names(qfInput)){
       setQf$irga <- data.frame("qfIrgaHead" = qfInput$irga$qfIrgaHead,
-                               "qfIrgaTemp" = qfInput$irga$qfIrgaTemp, 
+                               "qfIrgaTempOut" = qfInput$irga$qfIrgaTempOut, 
                                "qfIrgaTempIn" = qfInput$irga$qfIrgaTempIn,
                                "qfIrgaAux" = qfInput$irga$qfIrgaAux, 
                                "qfIrgaPres" = qfInput$irga$qfIrgaPres,
@@ -489,38 +483,34 @@ if (MethMeas == "ecte") {
                                "qfRngTempMean" = qfInput$irga$qfRngTempMean, 
                                "qfStepTempMean" = qfInput$irga$qfStepTempMean,
                                "qfPersTempMean" = qfInput$irga$qfPersTempMean, 
-                               "qfCalTempMean" = qfInput$irga$qfCalTempMean,
+                               #"qfCalTempMean" = qfInput$irga$qfCalTempMean,
                                "qfRngPresDiff" = qfInput$irga$qfRngPresDiff,
                                "qfStepPresDiff" = qfInput$irga$qfStepPresDiff,
                                "qfPersPresDiff" = qfInput$irga$qfPersPresDiff,
-                               "qfCalPresDiff" = qfInput$irga$qfCalPresDiff,
+                               #"qfCalPresDiff" = qfInput$irga$qfCalPresDiff,
                                "qfRngPowrH2oSamp" = qfInput$irga$qfRngPowrH2oSamp,
                                "qfStepPowrH2oSamp" = qfInput$irga$qfStepPowrH2oSamp,
                                "qfPersPowrH2oSamp" = qfInput$irga$qfPersPowrH2oSamp,
-                               "qfCalPowrH2oSamp" = qfInput$irga$qfCalPowrH2oSamp,
+                               #"qfCalPowrH2oSamp" = qfInput$irga$qfCalPowrH2oSamp,
                                "qfRngPowrH2oRefe" = qfInput$irga$qfRngPowrH2oRefe,
                                "qfStepPowrH2oRefe" = qfInput$irga$qfStepPowrH2oRefe,
                                "qfPersPowrH2oRefe" = qfInput$irga$qfPersPowrH2oRefe,
-                               "qfCalPowrH2oRefe" = qfInput$irga$qfCalPowrH2oRefe,
-                               "qfRngPowrH2oRefe" = qfInput$irga$qfRngPowrH2oRefe,
-                               "qfStepPowrH2oRefe" = qfInput$irga$qfStepPowrH2oRefe,
-                               "qfPersPowrH2oRefe" = qfInput$irga$qfPersPowrH2oRefe,
-                               "qfCalPowrH2oRefe" = qfInput$irga$qfCalPowrH2oRefe,
+                               #"qfCalPowrH2oRefe" = qfInput$irga$qfCalPowrH2oRefe,
                                "qfRngAsrpH2o" = qfInput$irga$qfRngAsrpH2o, 
                                "qfStepAsrpH2o" = qfInput$irga$qfStepAsrpH2o, 
                                "qfPersAsrpH2o" = qfInput$irga$qfPersAsrpH2o, 
-                               "qfCalAsrpH2o" = qfInput$irga$qfCalAsrpH2o,
+                               #"qfCalAsrpH2o" = qfInput$irga$qfCalAsrpH2o,
                                "qfRngDensMoleH2o" = qfInput$irga$qfRngDensMoleH2o, 
                                "qfStepDensMoleH2o" = qfInput$irga$qfStepDensMoleH2o, 
                                "qfPersDensMoleH2o" = qfInput$irga$qfPersDensMoleH2o, 
-                               "qfCalDensMoleH2o" = qfInput$irga$qfCalDensMoleH2o,
+                               #"qfCalDensMoleH2o" = qfInput$irga$qfCalDensMoleH2o,
                                "qfRngSsiH2o" = qfInput$irga$qfRngSsiH2o, 
                                "qfStepSsiH2o" = qfInput$irga$qfStepSsiH2o, 
-                               "qfPersSsiH2o" = qfInput$irga$qfPersSsiH2o, 
-                               "qfCalSsiH2o" = qfInput$irga$qfCalSsiH2o)
+                               "qfPersSsiH2o" = qfInput$irga$qfPersSsiH2o) 
+                               #"qfCalSsiH2o" = qfInput$irga$qfCalSsiH2o)
       } else {
       setQf$irga <- data.frame("qfIrgaHead" = -1,
-                               "qfIrgaTemp" = -1, 
+                               "qfIrgaTempOut" = -1, 
                                "qfIrgaTempIn" = -1,
                                "qfIrgaAux" = -1, 
                                "qfIrgaPres" = -1,
@@ -531,35 +521,31 @@ if (MethMeas == "ecte") {
                                "qfRngTempMean" = -1, 
                                "qfStepTempMean" = -1,
                                "qfPersTempMean" = -1, 
-                               "qfCalTempMean" = -1,
+                               #"qfCalTempMean" = -1,
                                "qfRngPresDiff" = -1,
                                "qfStepPresDiff" = -1,
                                "qfPersPresDiff" = -1,
-                               "qfCalPresDiff" = -1,
+                               #"qfCalPresDiff" = -1,
                                "qfRngPowrH2oSamp" = -1,
                                "qfStepPowrH2oSamp" = -1,
                                "qfPersPowrH2oSamp" = -1,
-                               "qfCalPowrH2oSamp" = -1,
+                               #"qfCalPowrH2oSamp" = -1,
                                "qfRngPowrH2oRefe" = -1,
                                "qfStepPowrH2oRefe" = -1,
                                "qfPersPowrH2oRefe" = -1,
-                               "qfCalPowrH2oRefe" = -1,
-                               "qfRngPowrH2oRefe" = -1,
-                               "qfStepPowrH2oRefe" = -1,
-                               "qfPersPowrH2oRefe" = -1,
-                               "qfCalPowrH2oRefe" = -1,
+                               #"qfCalPowrH2oRefe" = -1,
                                "qfRngAsrpH2o" = -1, 
                                "qfStepAsrpH2o" = -1, 
                                "qfPersAsrpH2o" = -1, 
-                               "qfCalAsrpH2o" = -1,
+                               #"qfCalAsrpH2o" = -1,
                                "qfRngDensMoleH2o" = -1, 
                                "qfStepDensMoleH2o" = -1, 
                                "qfPersDensMoleH2o" = -1, 
-                               "qfCalDensMoleH2o" = -1,
+                               #"qfCalDensMoleH2o" = -1,
                                "qfRngSsiH2o" = -1, 
                                "qfStepSsiH2o" = -1, 
-                               "qfPersSsiH2o" = -1, 
-                               "qfCalSsiH2o" = -1)   
+                               "qfPersSsiH2o" = -1) 
+                               #"qfCalSsiH2o" = -1)   
     }#close if else statement for irga
     ##TO DO##Considering later when the AMRS is collaborating to correct the SONI data
     # #external quality flags from irga for grouping qf of tempAir
@@ -576,30 +562,24 @@ if (MethMeas == "ecte") {
     #                                "qfRngAngXaxs" = qfInput$soniAmrs$qfRngAngXaxs,
     #                                "qfStepAngXaxs" = qfInput$soniAmrs$qfStepAngXaxs,
     #                                "qfPersAngXaxs" = qfInput$soniAmrs$qfPersAngXaxs,
-    #                                "qfCalAngXaxs" = qfInput$soniAmrs$qfCalAngXaxs,
     #                                "qfRngAngYaxs" = qfInput$soniAmrs$qfRngAngYaxs,
     #                                "qfStepAngYaxs" = qfInput$soniAmrs$qfStepAngYaxs,
     #                                "qfPersAngYaxs" = qfInput$soniAmrs$qfPersAngYaxs,
-    #                                "qfCalAngYaxs" = qfInput$soniAmrs$qfCalAngYaxs,
     #                                "qfRngAngZaxs" = qfInput$soniAmrs$qfRngAngZaxs,
     #                                "qfStepAngZaxs" = qfInput$soniAmrs$qfStepAngZaxs,
-    #                                "qfPersAngZaxs" = qfInput$soniAmrs$qfPersAngZaxs,
-    #                                "qfCalAngZaxs" = qfInput$soniAmrs$qfCalAngZaxs)
+    #                                "qfPersAngZaxs" = qfInput$soniAmrs$qfPersAngZaxs)
     #   
     #   setQf$accXaxsDiff <- data.frame("qfRngAccXaxsDiff" = qfInput$soniAmrs$qfRngAccXaxsDiff,
     #                                   "qfStepAccXaxsDiff" = qfInput$soniAmrs$qfStepAccXaxsDiff,
-    #                                   "qfPersAccXaxsDiff" = qfInput$soniAmrs$qfPersAccXaxsDiff,
-    #                                   "qfCalAccXaxsDiff" = qfInput$soniAmrs$qfCalAccXaxsDiff)
+    #                                   "qfPersAccXaxsDiff" = qfInput$soniAmrs$qfPersAccXaxsDiff)
     #   
     #   setQf$accYaxsDiff <- data.frame("qfRngAccYaxsDiff" = qfInput$soniAmrs$qfRngAccYaxsDiff,
     #                                   "qfStepAccYaxsDiff" = qfInput$soniAmrs$qfStepAccYaxsDiff,
-    #                                   "qfPersAccYaxsDiff" = qfInput$soniAmrs$qfPersAccYaxsDiff,
-    #                                   "qfCalAccYaxsDiff" = qfInput$soniAmrs$qfCalAccYaxsDiff)
+    #                                   "qfPersAccYaxsDiff" = qfInput$soniAmrs$qfPersAccYaxsDiff)
     #   
     #   setQf$accZaxsDiff <- data.frame("qfRngAccZaxsDiff" = qfInput$soniAmrs$qfRngAccZaxsDiff,
     #                                   "qfStepAccZaxsDiff" = qfInput$soniAmrs$qfStepAccZaxsDiff,
-    #                                   "qfPersAccZaxsDiff" = qfInput$soniAmrs$qfPersAccZaxsDiff,
-    #                                   "qfCalAccZaxsDiff" = qfInput$soniAmrs$qfCalAccZaxsDiff)
+    #                                   "qfPersAccZaxsDiff" = qfInput$soniAmrs$qfPersAccZaxsDiff)
     # } else {
     #   setQf$soniAmrs <- data.frame("qfAmrsVal" = -1,
     #                                "qfAmrsFilt" = -1,
@@ -608,30 +588,24 @@ if (MethMeas == "ecte") {
     #                                "qfRngAngXaxs" = -1,
     #                                "qfStepAngXaxs" = -1,
     #                                "qfPersAngXaxs" = -1,
-    #                                "qfCalAngXaxs" = -1,
     #                                "qfRngAngYaxs" = -1,
     #                                "qfStepAngYaxs" = -1,
     #                                "qfPersAngYaxs" = -1,
-    #                                "qfCalAngYaxs" = -1,
     #                                "qfRngAngZaxs" =-1,
     #                                "qfStepAngZaxs" = -1,
-    #                                "qfPersAngZaxs" = -1,
-    #                                "qfCalAngZaxs" = -1)
+    #                                "qfPersAngZaxs" = -1)
     #   
     #   setQf$accXaxsDiff <- data.frame("qfRngAccXaxsDiff" = -1,
     #                                   "qfStepAccXaxsDiff" = -1,
-    #                                   "qfPersAccXaxsDiff" = -1,
-    #                                   "qfCalAccXaxsDiff" = -1)
+    #                                   "qfPersAccXaxsDiff" = -1)
     #   
     #   setQf$accYaxsDiff <- data.frame("qfRngAccYaxsDiff" = -1,
     #                                   "qfStepAccYaxsDiff" = -1,
-    #                                   "qfPersAccYaxsDiff" = -1,
-    #                                   "qfCalAccYaxsDiff" = -1)
+    #                                   "qfPersAccYaxsDiff" = -1)
     #   
     #   setQf$accZaxsDiff <- data.frame("qfRngAccZaxsDiff" = -1,
     #                                   "qfStepAccZaxsDiff" = -1,
-    #                                   "qfPersAccZaxsDiff" = -1,
-    #                                   "qfCalAccZaxsDiff" = -1) 
+    #                                   "qfPersAccZaxsDiff" = -1) 
     # }#close if else statement for qf soniAmrs
     
     #grouping qulity flags that related to L1 sub-data product
@@ -694,63 +668,51 @@ if (MethMeas == "ecte") {
       
       setQf$accXaxs <- data.frame("qfRngAccXaxs" = qfInput$soniAmrs$qfRngAccXaxs,
                                   "qfStepAccXaxs" = qfInput$soniAmrs$qfStepAccXaxs,
-                                  "qfPersAccXaxs" = qfInput$soniAmrs$qfPersAccXaxs,
-                                  "qfCalAccXaxs" = qfInput$soniAmrs$qfCalAccXaxs)
+                                  "qfPersAccXaxs" = qfInput$soniAmrs$qfPersAccXaxs)
       
       setQf$accYaxs <- data.frame("qfRngAccYaxs" = qfInput$soniAmrs$qfRngAccYaxs,
                                   "qfStepAccYaxs" = qfInput$soniAmrs$qfStepAccYaxs,
-                                  "qfPersAccYaxs" = qfInput$soniAmrs$qfPersAccYaxs,
-                                  "qfCalAccYaxs" = qfInput$soniAmrs$qfCalAccYaxs)
+                                  "qfPersAccYaxs" = qfInput$soniAmrs$qfPersAccYaxs)
       
       setQf$accZaxs <- data.frame("qfRngAccZaxs" = qfInput$soniAmrs$qfRngAccZaxs,
                                   "qfStepAccZaxs" = qfInput$soniAmrs$qfStepAccZaxs,
-                                  "qfPersAccZaxs" = qfInput$soniAmrs$qfPersAccZaxs,
-                                  "qfCalAccZaxs" = qfInput$soniAmrs$qfCalAccZaxs)
+                                  "qfPersAccZaxs" = qfInput$soniAmrs$qfPersAccZaxs)
       
       setQf$accXaxsDiff <- data.frame("qfRngAccXaxsDiff" = qfInput$soniAmrs$qfRngAccXaxsDiff,
                                       "qfStepAccXaxsDiff" = qfInput$soniAmrs$qfStepAccXaxsDiff,
-                                      "qfPersAccXaxsDiff" = qfInput$soniAmrs$qfPersAccXaxsDiff,
-                                      "qfCalAccXaxsDiff" = qfInput$soniAmrs$qfCalAccXaxsDiff)
+                                      "qfPersAccXaxsDiff" = qfInput$soniAmrs$qfPersAccXaxsDiff)
       
       setQf$accYaxsDiff <- data.frame("qfRngAccYaxsDiff" = qfInput$soniAmrs$qfRngAccYaxsDiff,
                                       "qfStepAccYaxsDiff" = qfInput$soniAmrs$qfStepAccYaxsDiff,
-                                      "qfPersAccYaxsDiff" = qfInput$soniAmrs$qfPersAccYaxsDiff,
-                                      "qfCalAccYaxsDiff" = qfInput$soniAmrs$qfCalAccYaxsDiff)
+                                      "qfPersAccYaxsDiff" = qfInput$soniAmrs$qfPersAccYaxsDiff)
       
       setQf$accZaxsDiff <- data.frame("qfRngAccZaxsDiff" = qfInput$soniAmrs$qfRngAccZaxsDiff,
                                       "qfStepAccZaxsDiff" = qfInput$soniAmrs$qfStepAccZaxsDiff,
-                                      "qfPersAccZaxsDiff" = qfInput$soniAmrs$qfPersAccZaxsDiff,
-                                      "qfCalAccZaxsDiff" = qfInput$soniAmrs$qfCalAccZaxsDiff)
+                                      "qfPersAccZaxsDiff" = qfInput$soniAmrs$qfPersAccZaxsDiff)
       
       setQf$avelXaxs <- data.frame("qfRngAvelXaxs" = qfInput$soniAmrs$qfRngAvelXaxs,
                                    "qfStepAvelXaxs" = qfInput$soniAmrs$qfStepAvelXaxs,
-                                   "qfPersAvelXaxs" = qfInput$soniAmrs$qfPersAvelXaxs,
-                                   "qfCalAvelXaxs" = qfInput$soniAmrs$qfCalAvelXaxs)
+                                   "qfPersAvelXaxs" = qfInput$soniAmrs$qfPersAvelXaxs)
       
       setQf$avelYaxs <- data.frame("qfRngAvelYaxs" = qfInput$soniAmrs$qfRngAvelYaxs,
                                    "qfStepAvelYaxs" = qfInput$soniAmrs$qfStepAvelYaxs,
-                                   "qfPersAvelYaxs" = qfInput$soniAmrs$qfPersAvelYaxs,
-                                   "qfCalAvelYaxs" = qfInput$soniAmrs$qfCalAvelYaxs)
+                                   "qfPersAvelYaxs" = qfInput$soniAmrs$qfPersAvelYaxs)
       
       setQf$avelZaxs <- data.frame("qfRngAvelZaxs" = qfInput$soniAmrs$qfRngAvelZaxs,
                                    "qfStepAvelZaxs" = qfInput$soniAmrs$qfStepAvelZaxs,
-                                   "qfPersAvelZaxs" = qfInput$soniAmrs$qfPersAvelZaxs,
-                                   "qfCalAvelZaxs" = qfInput$soniAmrs$qfCalAvelXaxs)
+                                   "qfPersAvelZaxs" = qfInput$soniAmrs$qfPersAvelZaxs)
       
       setQf$angXaxs <- data.frame("qfRngAngXaxs" = qfInput$soniAmrs$qfRngAngXaxs,
                                   "qfStepAngXaxs" = qfInput$soniAmrs$qfStepAngXaxs,
-                                  "qfPersAngXaxs" = qfInput$soniAmrs$qfPersAngXaxs,
-                                  "qfCalAngXaxs" = qfInput$soniAmrs$qfCalAngXaxs)
+                                  "qfPersAngXaxs" = qfInput$soniAmrs$qfPersAngXaxs)
       
       setQf$angYaxs <- data.frame("qfRngAngYaxs" = qfInput$soniAmrs$qfRngAngYaxs,
                                   "qfStepAngYaxs" = qfInput$soniAmrs$qfStepAngYaxs,
-                                  "qfPersAngYaxs" = qfInput$soniAmrs$qfPersAngYaxs,
-                                  "qfCalAngYaxs" = qfInput$soniAmrs$qfCalAngYaxs)
+                                  "qfPersAngYaxs" = qfInput$soniAmrs$qfPersAngYaxs)
       
       setQf$angZaxs <- data.frame("qfRngAngZaxs" = qfInput$soniAmrs$qfRngAngZaxs,
                                   "qfStepAngZaxs" = qfInput$soniAmrs$qfStepAngZaxs,
-                                  "qfPersAngZaxs" = qfInput$soniAmrs$qfPersAngZaxs,
-                                  "qfCalAngZaxs" = qfInput$soniAmrs$qfCalAngZaxs)
+                                  "qfPersAngZaxs" = qfInput$soniAmrs$qfPersAngZaxs)
     
     #grouping qulity flags that related to L1 sub-data product
       rpt$angNedXaxs <- data.frame(setQf$sensSoniAmrs, setQf$angXaxs)
