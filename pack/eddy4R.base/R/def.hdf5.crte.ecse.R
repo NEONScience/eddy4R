@@ -43,17 +43,17 @@ def.hdf5.crte.ecse <- function(
   library(XLConnect)
   
   
-  date <- c("20161023", "20161024", "20161025", "20161026")
+#  date <- c("20161023", "20161024", "20161025", "20161026")
   #date <- c("20161023")
-  dateIn <- c("2016-10-23", "2016-10-24", "2016-10-25", "2016-10-26")
+ # dateIn <- c("2016-10-23", "2016-10-24", "2016-10-25", "2016-10-26")
   #dateIn <- c("2016-10-23")
-  DirIn <- "~/eddy/data/CPER/out/dp0pH5/V02"
-  DirOut <- "~/eddy/data/CPER/out/HDF5/V02/"
+  #DirIn <- "~/eddy/data/CPER/out/dp0pH5/V02"
+  #DirOut <- "~/eddy/data/CPER/out/HDF5/V02/"
   #DirOut <- "~/eddy/data/CPER/out/HDF5/V02/iso/" #for iso community
   
   #Meta Data################################################################################################
   #Create a connection to the workbook
-  wk <- loadWorkbook("~/eddy/data/CPER/wrk/metaData/NEON_HDF5_metadata_ECSE_CPER_20170112.xlsx") 
+  wk <- loadWorkbook("~/eddy/NEON_HDF5_metadata_ECSE_CPER_20170112.xlsx") 
   #Read the workbook into a data frame
   metaList <- readWorksheet(wk, sheet="TIS", check.names = F) 
   #attribute list for site level
@@ -129,7 +129,7 @@ def.hdf5.crte.ecse <- function(
     #h5createGroup("HDF5TIS_L0_SERCtest.h5", "SERC")
     
     #Create the file, create a class
-    idFile <- H5Fcreate(paste0(DirOut,"ECSE_dp01_", site, "_", dateIn[i], ".h5"))
+    idFile <- H5Fcreate(paste0(DirOut,"/ECSE_dp01_", site, "_", dateIn[i], ".h5"))
     #If the file is already created use:
     #idFile <- H5Fopen("HDF5TIS_L0_prototype.h5")
     
