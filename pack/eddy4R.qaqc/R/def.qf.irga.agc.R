@@ -45,7 +45,7 @@ def.qf.irga.agc <- function(qfIrgaAgc, critThsh = 0.50){
  #   stop("Input parameter qfIrgaAgc must be in units of dimensionless fractions.")
  # }
   
-  #determine the flag (1=validation period, 0=normal operating condition, else = -1)
+  #determine the flag (1=irga AGC value less than threshold indicating the signal strength is low, 0= irga AGC value was above threshold indicating the signal strength was sufficient for measurements, else = -1)
   qfIrgaAgc <- as.integer(ifelse(is.na(qfIrgaAgc), -1,
                                   ifelse( qfIrgaAgc >= critThsh, 0, 1)))
   
