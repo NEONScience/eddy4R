@@ -9,6 +9,7 @@
 #'
 #' @param inpList a list of dp01 computed output statistics or dp01 quality flags and quality metrics over multiple aggregations periods that need to be combined and formatted for output to HDF5.
 #'@param time a dataframe including the timeBgn and timeEnd for the aggregated periods should be included in the data to be combined.
+#'@param Dp01 which data product is being packaged to be written to the HDF5 file
 #'  
 #' @return A list of dataframes of for aggregation periods.
 
@@ -33,16 +34,18 @@
 
 def.hdf5.dp01.pack <- function(
   inpList,
-  time
+  time,
+  Dp01
 ){
 
 rpt <- list()
 tmp <- list()
 
-for(idxVar in names(inpList[[idxDp01]][[1]])) {
+
+for(idxVar in names(inpList[[Dp01]][[1]])) {
   print(idxVar)  
-  lapply(names(inpList[[idxDp01]]), function(x) {
-    tmp[[idxVar]][[x]] <<- inpList[[idxDp01]][[x]][,idxVar]
+  lapply(names(inpList[[Dp01]]), function(x) {
+    tmp[[idxVar]][[x]] <<- inpList[[Dp01]][[x]][,idxVar]
   }) 
   
 };rm(idxVar)
@@ -52,13 +55,13 @@ rpt <- lapply(names(tmp), function(x) data.frame(do.call("cbind", tmp[[x]])))
 
 names(rpt) <- names(tmp)
 
-rpt <- lapply(rpt, cbind, timeBgn = strftime(time$timeBgn, format="%Y-%m-%dT%H:%M:%OSZ", tz="UTC"), timeEnd = strftime(time$timeEnd, format="%Y-%m-%dT%H:%M:%OSZ", tz="UTC"), stringsAsFactors = FALSE)
+rpt <- lapply(rpt, cbind, timeBgn = strftime(time[[Dp01]]$timeBgn, format="%Y-%m-%dT%H:%M:%OSZ", tz="UTC"), timeEnd = strftime(time[[Dp01]]$timeEnd, format="%Y-%m-%dT%H:%M:%OSZ", tz="UTC"), stringsAsFactors = FALSE)
 
 
-for(idxVar in base::names(inpList[[idxDp01]][[1]])) {
+for(idxVar in base::names(inpList[[Dp01]][[1]])) {
   
   base::attr(x = rpt[[idxVar]], which = "unit") <-
-    base::attr(x = inpList[[idxDp01]][[1]][,idxVar], which = "unit")
+    base::attr(x = inpList[[Dp01]][[1]][,idxVar], which = "unit")
   
 }; rm(idxVar)
 
