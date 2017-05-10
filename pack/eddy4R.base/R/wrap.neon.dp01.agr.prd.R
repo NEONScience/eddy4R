@@ -30,7 +30,7 @@
 #' @keywords average, aggregate, descriptive statistics, NEON QAQC, quality flags, quality metrics
 
 #' @examples 
-
+#' Currently none
 
 #' @references
 #' License: GNU AFFERO GENERAL PUBLIC LICENSE Version 3, 19 November 2007.
