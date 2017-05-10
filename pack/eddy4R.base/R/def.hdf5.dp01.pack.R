@@ -19,7 +19,7 @@
 #' @keywords NEON, dp01, averaging intervals, HDF5
 
 #' @examples 
-
+#' Currently none
 
 #' @seealso Currently none
 
