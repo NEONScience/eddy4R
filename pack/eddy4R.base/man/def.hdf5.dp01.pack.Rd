@@ -19,6 +19,9 @@ A list of dataframes of for aggregation periods.
 \description{
 Definition function to produce a list of dataframes corresponding times for aggregation periods for dp01, and are packaged to be written to the HDF5 file.
 }
+\examples{
+Currently none
+}
 \references{
 License: GNU AFFERO GENERAL PUBLIC LICENSE Version 3, 19 November 2007.
 }
