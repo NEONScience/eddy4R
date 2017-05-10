@@ -17,6 +17,9 @@ A NEON formatted HDF5 file that has parameters from the input file written to th
 \description{
 Definition function. Function recreates the metadata from an HDF5 file to another HDF5 file with the same group heirarchy structure.
 }
+\examples{
+Currently none
+}
 \references{
 License: GNU AFFERO GENERAL PUBLIC LICENSE Version 3, 19 November 2007.
 NEON Algorithm Theoretical Basis Document:Eddy Covariance Turbulent Exchange Subsystem Level 0 to Level 0’ data product conversions and calculations (NEON.DOC.000823)
