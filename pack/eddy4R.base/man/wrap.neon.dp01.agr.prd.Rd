@@ -28,6 +28,9 @@ A list containing dp01 data and quality flags and metrics for all sensors includ
 \description{
 Wrapper function. Compute NEON Level 1 data products with quality flags and quality metrics for different aggregation periods (e.g. 1 minute).
 }
+\examples{
+Currently none
+}
 \references{
 License: GNU AFFERO GENERAL PUBLIC LICENSE Version 3, 19 November 2007.
 
