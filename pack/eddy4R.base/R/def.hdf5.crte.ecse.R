@@ -55,7 +55,7 @@ def.hdf5.crte.ecse <- function(
   #Create a connection to the workbook
   wk <- loadWorkbook("~/eddy/NEON_HDF5_metadata_ECSE_CPER_20170112.xlsx") 
   #Read the workbook into a data frame
-  metaList <- readWorksheet(wk, sheet="TIS", check.names = F) 
+  metaList <- readWorksheet(wk, sheet="TIS", check.names = F) #"ECSE_CPER" #select the sheet of xlsx file
   #attribute list for site level
   attrSiteList <- metaList[which(metaList$`HDF5 Site Group` == "X" & metaList$`ECSE Eddy4R-processing-level` == "L0p"), c("fieldName","Values")]
   
