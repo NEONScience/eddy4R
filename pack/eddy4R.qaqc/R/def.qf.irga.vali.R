@@ -35,7 +35,7 @@
 #' #determine the flag using irgaMfcSamp
 #' data$qfqm$irga$qfIrgaVali <- def.qf.irga.vali(data = data$irgaMfcSamp, Sens = "irgaMfcSamp")
 #' #determine the flag using irgaSndValiNema
-#' data$qfqm$irgaqfIrgaVali <- def.qf.irga.vali(data = data$irgaSndValiNema, Sens = "irgaSndValiNema")
+#' data$qfqm$irga$qfIrgaVali <- def.qf.irga.vali(data = data$irgaSndValiNema, Sens = "irgaSndValiNema")
 
 #' @seealso Currently none
 
