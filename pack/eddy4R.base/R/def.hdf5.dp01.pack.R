@@ -41,6 +41,7 @@ def.hdf5.dp01.pack <- function(
 rpt <- list()
 tmp <- list()
 
+options(digits.secs = 3)
 
 for(idxVar in names(inpList[[Dp01]][[1]])) {
   print(idxVar)  
@@ -54,6 +55,9 @@ for(idxVar in names(inpList[[Dp01]][[1]])) {
 rpt <- lapply(names(tmp), function(x) data.frame(do.call("cbind", tmp[[x]])))
 
 names(rpt) <- names(tmp)
+
+#If values come in as characters, they must first be converted to Posix
+if(is.character(time[[Dp01]]$timeBgn)){time[[Dp01]] <- lapply(time[[Dp01]], as.POSIXct, format="%Y-%m-%dT%H:%M:%OSZ")}
 
 rpt <- lapply(rpt, cbind, timeBgn = strftime(time[[Dp01]]$timeBgn, format="%Y-%m-%dT%H:%M:%OSZ", tz="UTC"), timeEnd = strftime(time[[Dp01]]$timeEnd, format="%Y-%m-%dT%H:%M:%OSZ", tz="UTC"), stringsAsFactors = FALSE)
 
