@@ -37,8 +37,8 @@
 def.qf.irga.agc <- function(qfIrgaAgc, critThsh = 0.50){
   
   #Check that the input is numeric
-  if(!base::is.numeric(qfIrgaAgc)) {
-    stop("Input parameter qfIrgaAgc must be numeric.")
+  if(!base::is.numeric(qfIrgaAgc) & !is.ff(qfIrgaAgc)) {
+    stop("Input parameter qfIrgaAgc must be numeric or an ff object.")
   }
   
  # if(!attributes(qfIrgaAgc)$unit == "-") {
