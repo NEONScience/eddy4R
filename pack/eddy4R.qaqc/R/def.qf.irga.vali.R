@@ -65,11 +65,22 @@ def.qf.irga.vali <- function(
     critLow <- eddy4R.base::def.unit.conv(data=8, unitFrom = "dm3 min-1", unitTo = "intl")
     critHigh <- eddy4R.base::def.unit.conv(data=15, unitFrom = "dm3 min-1", unitTo = "intl")
     
+    if(is.ffdf(data)){
+    qfIrgaVali <- rep(0L, length(data$frtSet00))
+    
+    idx <- ffwhich(data, frtSet00 < critLow | frtSet00 > critHigh)
+    
+    idxNa <- ffwhich(data, is.na(frtSet00))
+    
+    qfIrgaVali[idx[]] <- 1L
+    
+    qfIrgaVali[idxNa[]] <- -1L
+    } else {
     #determine the flag (1=validation period, 0=normal operating condition, else = -1)
     qfIrgaVali <- as.integer(ifelse(is.na(data$frtSet00), -1,
                                     ifelse(data$frtSet00 >= critLow & data$frtSet00 <= critHigh, 0, 1)))
     
-    }#close if statement of Sens %in% "irgaMfcSamp"
+    }}#close if statement of Sens %in% "irgaMfcSamp"
   
   if (Sens %in% "irgaSndValiNema"){
     #check if frtSet00 existing in the input data
@@ -77,13 +88,26 @@ def.qf.irga.vali <- function(
       base::stop("Missing the one or more of IRGA validation soleniod valves data")
     }#close if statement of is.null()
     
+    if(is.ffdf(data)){
+      qfIrgaVali <- rep(0L, length(data$qfGas01))
+      
+      idx <- ffwhich(data, qfGas01 == 1|qfGas02 == 1|qfGas03 == 1|qfGas04 == 1|qfGas05 == 1)
+      
+      idxNa <- ffwhich(data, is.na(qfGas01)|is.na(qfGas02)|is.na(qfGas03)|is.na(qfGas04)|is.na(qfGas05))
+      
+      qfIrgaVali[idx[]] <- 1L
+      
+      qfIrgaVali[idxNa[]] <- -1L
+    } else {
+    
+    
     #determine the flag (1=validation period, 0=normal operating condition, else = -1)
     qfIrgaVali <- as.integer(ifelse(is.na(data$qfGas01) | is.na(data$qfGas02) |
                                       is.na(data$qfGas03) | is.na(data$qfGas04) | is.na(data$qfGas05), -1,
                                     ifelse(data$qfGas01 == 1| data$qfGas02 == 1|
                                              data$qfGas03 == 1| data$qfGas04 == 1| data$qfGas05 == 1, 1, 0)))
     
-  }#close if statement of Sens %in% "irgaSndValiNema"
+  }}#close if statement of Sens %in% "irgaSndValiNema"
   
   #Add unit attribute to the output  
   attr(qfIrgaVali, which = "unit") <- "NA"
