@@ -123,16 +123,16 @@ wrap.derv.prd.day <- function(
   
   #Additional QAQC tests
   ###########################################################
-  
-  
-  
   #Run the test to output Validation flag
   inpList$qfqm$irga$qfIrgaVali <- ff::as.ff(eddy4R.qaqc::def.qf.irga.vali(data = inpList$data$irgaMfcSamp))#Use this one for MFC set point
+
 #  inpList$qfqm$irga$qfIrgaVali <- eddy4R.qaqc::def.qf.irga.vali(data = inpList$data$irgaSndValiNema, Sens = "irgaSndValiNema")
   
   
   #Run the test to determine the irgaAgc flag
-  inpList$qfqm$irga$qfIrgaAgc <- eddy4R.qaqc::def.qf.irga.agc(qfIrgaAgc = inpList$qfqm$irga$qfIrgaAgc)
+  inpList$qfqm$irga$qfIrgaAgc <- ff::as.ff(eddy4R.qaqc::def.qf.irga.agc(qfIrgaAgc = inpList$qfqm$irga$qfIrgaAgc))
+  
+  
   ###########################################################   
   
   
