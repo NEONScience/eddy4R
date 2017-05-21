@@ -10,7 +10,7 @@
 #' @param qfIrgaAgc The quality metric derived from the IRGA diagnostics to determine signal strength. Presented as a dimensionless fraction. [-]
 #' @param critThsh The critical threshold value for the \code{qfIrgaAgc} value to throw the flag for low signal strength (defaults to 0.50 or 50 percent).
 
-#' @return A vector class of integer (\code{qfIrgaAgc}) of IRGA AGC flags. Flag indicating when the sensor is operating with low signal strength using 50 percent as the default threshold (1 = when qfIrgaAgc <= 0.50, 0 = when qfIrgaAgc >= 0.50, -1 = NA). [-]
+#' @return A vector class of integer (\code{qfIrgaAgcOut}) of IRGA AGC flags. Flag indicating when the sensor is operating with low signal strength using 50 percent as the default threshold (1 = when qfIrgaAgc <= 0.50, 0 = when qfIrgaAgc >= 0.50, -1 = NA). [-]
 
 #' @references 
 #' License: GNU AFFERO GENERAL PUBLIC LICENSE Version 3, 19 November 2007.
@@ -22,7 +22,7 @@
 #' qfIrgaAgc[c(2,8)] <- NA
 #' attributes(qfIrgaAgc)$unit <- "-"
 #' 
-#' qfIrgaAgc <- def.qf.irga.agc(qfIrgaAgc = qfIrgaAgc)
+#' qfIrgaAgcOut <- def.qf.irga.agc(qfIrgaAgc = qfIrgaAgc)
 #' 
 
 #' @seealso Currently none
@@ -45,14 +45,28 @@ def.qf.irga.agc <- function(qfIrgaAgc, critThsh = 0.50){
  #   stop("Input parameter qfIrgaAgc must be in units of dimensionless fractions.")
  # }
   
+  if(is.ff(qfIrgaAgc)){
+    qfIrgaAgcOut <- rep(0L, length(qfIrgaAgc))
+    
+    idx <- ffwhich(data, qfIrgaAgc < critThsh)
+    
+    idxNa <- ffwhich(data, is.na(qfIrgaAgc))
+    
+    qfIrgaAgcOut[idx[]] <- 1L
+    
+    qfIrgaAgcOut[idxNa[]] <- -1L
+  } else {
+  
+  
   #determine the flag (1=irga AGC value less than threshold indicating the signal strength is low, 0= irga AGC value was above threshold indicating the signal strength was sufficient for measurements, else = -1)
-  qfIrgaAgc <- as.integer(ifelse(is.na(qfIrgaAgc), -1,
+  qfIrgaAgcOut <- as.integer(ifelse(is.na(qfIrgaAgc), -1,
                                   ifelse( qfIrgaAgc >= critThsh, 0, 1)))
   
-  # Add unit attribute to the output  
-  attr(qfIrgaAgc, which = "unit") <- "NA"
+  }
+   # Add unit attribute to the output  
+  attr(qfIrgaAgcOut, which = "unit") <- "NA"
   
   #output
-  return(qfIrgaAgc)
+  return(qfIrgaAgcOut)
   #end of def.qf.irga.agc()
 }
