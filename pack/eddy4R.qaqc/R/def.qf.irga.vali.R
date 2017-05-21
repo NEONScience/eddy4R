@@ -65,15 +65,17 @@ def.qf.irga.vali <- function(
     critLow <- eddy4R.base::def.unit.conv(data=8, unitFrom = "dm3 min-1", unitTo = "intl")
     critHigh <- eddy4R.base::def.unit.conv(data=15, unitFrom = "dm3 min-1", unitTo = "intl")
     
+    #Check if object passed is an ff object
     if(is.ffdf(data)){
+      #create a vector of zero's
     qfIrgaVali <- rep(0L, length(data$frtSet00))
-    
+    #Find indices where irgaMfcSamp$frtSet00 is less than or greater than the critical thresholds
     idx <- ffwhich(data, frtSet00 < critLow | frtSet00 > critHigh)
-    
+    #Find indices where irgaMfcSamp$frtSet00 is NA
     idxNa <- ffwhich(data, is.na(frtSet00))
-    
+    #Fill indices where irgaMfcSamp$frtSet00 is less than or greater than the critical thresholds with a thrown flag (qfIrgaVali = 1)
     qfIrgaVali[idx[]] <- 1L
-    
+    #Fill indices where irgaMfcSamp$frtSet00 is missing data with a thrown flag (qfIrgaVali = -1)
     qfIrgaVali[idxNa[]] <- -1L
     } else {
     #determine the flag (1=validation period, 0=normal operating condition, else = -1)
@@ -88,15 +90,17 @@ def.qf.irga.vali <- function(
       base::stop("Missing the one or more of IRGA validation soleniod valves data")
     }#close if statement of is.null()
     
+    #Check if object passed is an ff object
     if(is.ffdf(data)){
+      #create a vector of zero's
       qfIrgaVali <- rep(0L, length(data$qfGas01))
-      
+      #Find indices where validation solenoid are open qfGas.. == 1
       idx <- ffwhich(data, qfGas01 == 1|qfGas02 == 1|qfGas03 == 1|qfGas04 == 1|qfGas05 == 1)
-      
+      #Find indices where qfGas.. is NA
       idxNa <- ffwhich(data, is.na(qfGas01)|is.na(qfGas02)|is.na(qfGas03)|is.na(qfGas04)|is.na(qfGas05))
-      
+      #Fill indices where qfGas.. is equal to 1 indicating open validation valves with a flag (qfIrgaVali = 1)
       qfIrgaVali[idx[]] <- 1L
-      
+      #fill the indices where irgaSndValiNema has missing data
       qfIrgaVali[idxNa[]] <- -1L
     } else {
     
@@ -107,7 +111,12 @@ def.qf.irga.vali <- function(
                                     ifelse(data$qfGas01 == 1| data$qfGas02 == 1|
                                              data$qfGas03 == 1| data$qfGas04 == 1| data$qfGas05 == 1, 1, 0)))
     
-  }}#close if statement of Sens %in% "irgaSndValiNema"
+  }
+    qfIrgaVali <- rep(qfIrgaVali, each = 100) # Convert from 0.2 Hz to 20 Hz, could be implemented better
+    
+    }#close if statement of Sens %in% "irgaSndValiNema"
+  
+  
   
   #Add unit attribute to the output  
   attr(qfIrgaVali, which = "unit") <- "NA"
