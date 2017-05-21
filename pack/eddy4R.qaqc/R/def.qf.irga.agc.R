@@ -45,15 +45,17 @@ def.qf.irga.agc <- function(qfIrgaAgc, critThsh = 0.50){
  #   stop("Input parameter qfIrgaAgc must be in units of dimensionless fractions.")
  # }
   
+  #Check if object passed is an ff object
   if(is.ff(qfIrgaAgc)){
+    #create a vector of zero's
     qfIrgaAgcOut <- rep(0L, length(qfIrgaAgc))
-    
+    #Find indices where qfIrgaAgc is less than threshold
     idx <- ffwhich(data, qfIrgaAgc < critThsh)
-    
+    #Find indices where qfIrgaAgc is NA
     idxNa <- ffwhich(data, is.na(qfIrgaAgc))
-    
+    #Fill indices where qfIrgaAgc is less than threshold with a thrown flag (qfIrgaAgc = 1)
     qfIrgaAgcOut[idx[]] <- 1L
-    
+    #Fill indices where qfIrgaAgc is missing data with a thrown flag (qfIrgaAgc = -1)
     qfIrgaAgcOut[idxNa[]] <- -1L
   } else {
   
