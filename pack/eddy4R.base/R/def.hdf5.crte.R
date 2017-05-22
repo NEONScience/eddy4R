@@ -55,7 +55,7 @@ def.hdf5.crte <- function(
   LevlTowr, 
   DirOut, 
   LevlDp = "dp01"
-) {
+  ) {
   
   
   #fomatting Date for file names
@@ -135,12 +135,12 @@ def.hdf5.crte <- function(
   lapply(grpListDp01, function(x) {
     if(x == "soni") {rhdf5::H5Gcreate(idQfqmLvlDp01, paste0(x,"/",LevlTowr,"_02m"))} else {rhdf5::H5Gcreate(idQfqmLvlDp01, paste0(x,"/",LevlTowr,"_01m"))}})
   
-  # idDataLvlDp01HorVer <- H5Gopen(idDataLvlDp01, paste0("irgaCo2/",LevlTowr,"_30m"))
+ # idDataLvlDp01HorVer <- H5Gopen(idDataLvlDp01, paste0("irgaCo2/",LevlTowr,"_30m"))
   #sid <- H5Screate_simple(c(0,0,0))
   #idDp01DataTbl <- H5Dcreate(idDataLvlDp01HorVer, "rtioMoleDryCo2","H5T_NATIVE_DOUBLE", sid)
-  
-  # idDataLvlDp01HorVer <- H5Gopen(idDataLvlDp01, paste0("irgaH2o/",LevlTowr,"_30m"))
-  # sid <- H5Screate_simple(c(0,0,0))
+ 
+ # idDataLvlDp01HorVer <- H5Gopen(idDataLvlDp01, paste0("irgaH2o/",LevlTowr,"_30m"))
+ # sid <- H5Screate_simple(c(0,0,0))
   #idDp01DataTbl <- H5Dcreate(idDataLvlDp01HorVer, "rtioMoleDryH2o","H5T_NATIVE_DOUBLE", sid) #Used for metadata attribution, but it causes problem to write to later.
   #lapply(seq_len(nrow(attrSiteList)), function(x) h5writeAttribute(attrSiteList[x,"Field Description"], h5obj = idSite, name = attrSiteList[x,"fieldName"]))
   
