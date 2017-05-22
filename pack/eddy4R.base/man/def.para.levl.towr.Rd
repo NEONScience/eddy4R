@@ -15,6 +15,9 @@ def.para.levl.towr(FileIn)
 \description{
 Definition function. Function determines tower top measurement level from input dp0p ECTE HDF5 file structure
 }
+\examples{
+Currently none
+}
 \references{
 License: GNU AFFERO GENERAL PUBLIC LICENSE Version 3, 19 November 2007.
 NEON Algorithm Theoretical Basis Document:Eddy Covariance Turbulent Exchange Subsystem Level 0 to Level 0’ data product conversions and calculations (NEON.DOC.000823)
