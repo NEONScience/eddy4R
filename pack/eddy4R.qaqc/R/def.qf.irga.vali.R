@@ -48,6 +48,8 @@
 #     Added unit attribute
 #   Natchaya Pingintha-Durden (2017-05-12)
 #     revised the original by adding the sensor option to indicate qfIrgaVali
+#   David Durden (2017-04-26)
+#     Adapted to work with ff objects and output 20Hz flag if irgaSndValiNema is used
 ##############################################################################################
 
 def.qf.irga.vali <- function(
@@ -111,8 +113,12 @@ def.qf.irga.vali <- function(
                                     ifelse(data$qfGas01 == 1| data$qfGas02 == 1|
                                              data$qfGas03 == 1| data$qfGas04 == 1| data$qfGas05 == 1, 1, 0)))
     
-  }
-    qfIrgaVali <- rep(qfIrgaVali, each = 100) # Convert from 0.2 Hz to 20 Hz, could be implemented better
+    }
+    
+    #Test that input data for irgaSndValiNema was the right length
+    if(!length(qfIrgaVali) == 17280) { stop("qfIrgaVali is not the appropriate length for 0.2 Hz input data")}
+    #Convert from 0.2 Hz to 20 Hz
+    qfIrgaVali <- rep(qfIrgaVali, each = 100) #TODO: this could be implemented better to handle different input data
     
     }#close if statement of Sens %in% "irgaSndValiNema"
   
