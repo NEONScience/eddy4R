@@ -21,7 +21,7 @@
 #' @keywords NEON, HDF5, eddy-covariance, ECTE
 
 #' @examples 
-
+#' Currently none
 
 #' @seealso Currently none
 

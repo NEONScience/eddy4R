@@ -17,6 +17,9 @@ A dataframe of indices and corresponding times for aggregation periods.
 \description{
 Definition function to produce a dataframe of indices and corresponding times for aggregation periods.
 }
+\examples{
+Currently none
+}
 \references{
 License: GNU AFFERO GENERAL PUBLIC LICENSE Version 3, 19 November 2007.
 }
