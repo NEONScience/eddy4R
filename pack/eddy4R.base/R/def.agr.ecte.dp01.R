@@ -18,7 +18,7 @@
 #' @keywords NEON, aggregation, averaging intervals
 
 #' @examples 
-
+#' Currently none
 
 #' @seealso Currently none
 
