@@ -20,7 +20,9 @@
 #' @param VersDp is the data product level that will be output 
 #' @param VersEddy is the version of the eddy4R docker that is being used to perform the processing
 #' @param MethParaFlow is the method used to specify workflow parameters, "EnvVar" will grab ParaFlow parameters from environmental variable and "DfltInp" will use whatever is specified in the function call. 
-
+#' @param MethMeas A vector of class "character" containing the name of measurement method (eddy-covariance turbulent exchange or storage exchange), MethMeas = c("ecte", "ecse"). Defaults to "ecte". 
+#' 
+#' 
 #' @return \code{ParaFlow} is a list returned that indicates the workflow control parameters, including \code{ParaFlow$DirFilePara},\code{ParaFlow$DirInp}, \code{ParaFlow$DirMnt}, \code{ParaFlow$DirOut}, \code{ParaFlow$DirTmp}, \code{ParaFlow$DirWrk}, \code{ParaFlow$FileDp0p}, \code{ParaFlow$Loc},  \code{ParaFlow$Read}, \code{ParaFlow$VersDp}, \code{ParaFlow$VersEddy}. 
 
 #' @references
@@ -43,6 +45,8 @@
 #     original creation
 #   Dave Durden (2016-04-05)
 #     adding Deve parameter
+#   Ke Xu (2017-05-22)
+#     adding parameter MethMeas to distinguish different cases for ecte and ecse
 
 ##############################################################################################################
 #Start of function call to determine workflow parameters
@@ -62,6 +66,7 @@ def.para.flow <- function(
   VersDp  = c("001","004")[1],
   VersEddy  = "latest",
   MethParaFlow = c("DfltInp","EnvVar")[1],
+  MethMeas = c("ecte", "ecse")[1],
   ...
 ){
   
@@ -90,8 +95,13 @@ def.para.flow <- function(
       # input data
       
       # download data
-      eddy4R.base::def.dld.zip(Inp = list(Url = "https://www.dropbox.com/s/xb6ol3rxnwi0k3r/inpRefe.zip?dl=1",
-                                          Dir = tempdir()))
+      if(MethMeas == "ecte") eddy4R.base::def.dld.zip(Inp = list(Url = "https://www.dropbox.com/s/qlp1pyanm5rn2eq/inpRefe_20170308.zip?dl=1",
+                                                                 Dir = tempdir()))
+      
+      
+      if(MethMeas == "ecse") eddy4R.base::def.dld.zip(Inp = list(Url = "https://www.dropbox.com/s/xb6ol3rxnwi0k3r/inpRefe.zip?dl=1",
+                                                                 Dir = tempdir()))
+     
       
       # assign corresponding DirFilePara
       ParaFlow$DirFilePara <- paste0(tempdir(), "/inpRefe/", list.files(paste0(tempdir(), "/inpRefe"))[1])
