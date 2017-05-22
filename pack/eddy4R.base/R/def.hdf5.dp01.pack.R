@@ -56,12 +56,11 @@ rpt <- lapply(names(tmp), function(x) data.frame(do.call("cbind", tmp[[x]])))
 
 names(rpt) <- names(tmp)
 
-#If values come in as characters, they must first be converted to Posix
-if(is.character(time[[Dp01]]$timeBgn)){time[[Dp01]] <- lapply(time[[Dp01]], as.POSIXlt, format="%Y-%m-%dT%H:%M:%OSZ") 
-#Add fraction of a second to prevent rounding
-time[[Dp01]]$secs <- time[[Dp01]]$secs + 0.0001}
+#If values come in as Posix, they must first be converted to characters
+if(!is.character(time[[Dp01]]$timeBgn)){time[[Dp01]] <- lapply(time[[Dp01]], strftime, format="%Y-%m-%dT%H:%M:%OSZ", tz="UTC")} 
 
-rpt <- lapply(rpt, cbind, timeBgn = strftime(time[[Dp01]]$timeBgn, format="%Y-%m-%dT%H:%M:%OSZ", tz="UTC"), timeEnd = strftime(time[[Dp01]]$timeEnd, format="%Y-%m-%dT%H:%M:%OSZ", tz="UTC"), stringsAsFactors = FALSE)
+
+rpt <- lapply(rpt, cbind, timeBgn = time[[Dp01]]$timeBgn, timeEnd = time[[Dp01]]$timeEnd, stringsAsFactors = FALSE)
 
 
 for(idxVar in base::names(inpList[[Dp01]][[1]])) {
