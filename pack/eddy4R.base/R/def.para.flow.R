@@ -107,8 +107,12 @@ def.para.flow <- function(
       ParaFlow$DirFilePara <- paste0(tempdir(), "/inpRefe/", list.files(paste0(tempdir(), "/inpRefe"))[1])
       
       # output data
-      eddy4R.base::def.dld.zip(Inp = list(Url = "https://www.dropbox.com/s/65azuhnay8ro463/outRefe_20161227.zip?dl=1",
+      if(MethMeas == "ecte") eddy4R.base::def.dld.zip(Inp = list(Url = "https://www.dropbox.com/s/65azuhnay8ro463/outRefe_20161227.zip?dl=1",
                                           Dir = tempdir()))
+      
+      if(MethMeas == "ecse") eddy4R.base::def.dld.zip(Inp = list(Url = "https://www.dropbox.com/s/iaok16s0zf9rcja/outRefe.zip?dl=1",
+                                                                 Dir = tempdir()))
+      
       
     }
     if(is.null(ParaFlow$Loc)) warning("The variable Loc is NULL") 
