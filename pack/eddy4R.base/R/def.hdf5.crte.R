@@ -55,7 +55,7 @@ def.hdf5.crte <- function(
   LevlTowr, 
   DirOut, 
   LevlDp = "dp01"
-  ) {
+) {
   
   
   #fomatting Date for file names
@@ -83,7 +83,7 @@ def.hdf5.crte <- function(
   
   
   #Create a list of all the L0 DPs for creation of group hierarchy (fard)
-  grpList <- c("irgaCo2", "irgaH2o", "tempAirLvl", "tempAirTop")
+  grpList <- c("irga","soni","soniAmrs","irgaMfcSamp","irgaSndValiNema")
   #              ,"irgaGasCyl","irgaMfcVali",
   #              "irgaPresTrap","irgaPresValiLine","irgaPresValiRegIn",
   #              "irgaPresValiRegOut","irgaPump","irgaSndLeakHeat",
@@ -93,10 +93,9 @@ def.hdf5.crte <- function(
   
   #Create the file, create a class
   #Create the file, create a class
-  idFile <- rhdf5::H5Fcreate(paste0(DirOut,"/","ECSE_",LevlDp,"_", Site, "_", Date, "_new_format.h5"))
+  idFile <- rhdf5::H5Fcreate(paste0(DirOut,"/","ECTE_",LevlDp,"_", Site, "_", Date, "_new_format.h5"))
   #If the file is already created use:
   #idFile <- H5Fopen("HDF5TIS_L0_prototype.h5")
-  # idFile <- rhdf5::H5Fopen(paste0(DirOut,"/","ECSE_",LevlDp,"_", Site, "_", Date, "_new_format.h5"))
   
   #Create a group level for SERC
   idSite <- rhdf5::H5Gcreate(idFile, Site) 
@@ -108,26 +107,9 @@ def.hdf5.crte <- function(
   idDataLvlDp0p <- rhdf5::H5Gcreate(idDp0p,"data")
   idDataLvlDp01 <- rhdf5::H5Gcreate(idDp01,"data")
   
-  
-  lapply(grpListDp01, function(x) 
-    #x <- "irgaCo2"
-    lapply(LevlTowr[[x]], function(y) 
-      #y <- LevlTowr[[x]]
-      lapply(freqDp01[[x]], function(z) 
-        rhdf5::H5Gcreate(idDataLvlDp01, paste0(x,"/",y,"_", sprintf("%02d", z), "m"))
-      )#end of lapply
-    )#end of lapply
-  )#end of lapply
-  
-  
-  
-  
   idQfqmLvlDp0p <- rhdf5::H5Gcreate(idDp0p,"qfqm")
   idQfqmLvlDp01 <- rhdf5::H5Gcreate(idDp01,"qfqm")
   idUcrtLvlDp01 <- rhdf5::H5Gcreate(idDp01,"ucrt")
-  
-  
-  
   
   #Create a function to create group levels for each L0 DP
   #grpCrte <- function(x) H5Gcreate(idSite, x)
@@ -142,53 +124,23 @@ def.hdf5.crte <- function(
   
   #Creating level 1 file structures
   
-  grpListDp01 <- c("irgaCo2", "irgaH2o", "tempAirLvl", "tempAirTop")
+  grpListDp01 <- c("soniAmrs", "irgaCo2", "irgaH2o", "soni")
   lapply(grpListDp01, function(x) rhdf5::H5Gcreate(idDataLvlDp01, x))
   lapply(grpListDp01, function(x) rhdf5::H5Gcreate(idQfqmLvlDp01, x))
-  
-  LevlTowr <- list(
-    "irgaCo2" = c("000_010", "000_020", "000_030", "000_040"),
-    "irgaH2o" = c("000_010", "000_020", "000_030", "000_040"),
-    "tempAirLvl" = c("000_010", "000_020", "000_030"),
-    "tempAirTop" = c("000_040")
-  )
-  
-  freqDp01 <- list(
-    "irgaCo2" = c(2, 30),
-    "irgaH2o" = c(2, 30),
-    "tempAirLvl" = c(1,  30),
-    "tempAirTop" = c(1, 30)
-  )
-  
-  sprintf("%02d", 2)
-  
-  #TODO: level should be automatically determined from the node name in dp0p input
-  
-    lapply(grpListDp01, function(x) 
-      #x <- "irgaCo2"
-      lapply(LevlTowr[[x]], function(y) 
-  #y <- LevlTowr[[x]]
-        lapply(freqDp01[[x]], function(z) 
-      rhdf5::H5Gcreate(idDataLvlDp01, paste0(x,"/",y,"_", sprintf("%02d", z), "m"))
-      )#end of lapply
-           )#end of lapply
-    )#end of lapply
-  
-  
-  
-   lapply(grpListDp01, function(x) {
+  lapply(grpListDp01, function(x) rhdf5::H5Gcreate(idDataLvlDp01, paste0(x,"/",LevlTowr,"_30m")))
+  lapply(grpListDp01, function(x) {
     print(x)
     if(x == "soni"){rhdf5::H5Gcreate(idDataLvlDp01, paste0(x,"/",LevlTowr,"_02m"))} else {rhdf5::H5Gcreate(idDataLvlDp01, paste0(x,"/",LevlTowr,"_01m"))}})
   lapply(grpListDp01, function(x) rhdf5::H5Gcreate(idQfqmLvlDp01, paste0(x,"/",LevlTowr,"_30m")))
   lapply(grpListDp01, function(x) {
     if(x == "soni") {rhdf5::H5Gcreate(idQfqmLvlDp01, paste0(x,"/",LevlTowr,"_02m"))} else {rhdf5::H5Gcreate(idQfqmLvlDp01, paste0(x,"/",LevlTowr,"_01m"))}})
   
- # idDataLvlDp01HorVer <- H5Gopen(idDataLvlDp01, paste0("irgaCo2/",LevlTowr,"_30m"))
+  # idDataLvlDp01HorVer <- H5Gopen(idDataLvlDp01, paste0("irgaCo2/",LevlTowr,"_30m"))
   #sid <- H5Screate_simple(c(0,0,0))
   #idDp01DataTbl <- H5Dcreate(idDataLvlDp01HorVer, "rtioMoleDryCo2","H5T_NATIVE_DOUBLE", sid)
- 
- # idDataLvlDp01HorVer <- H5Gopen(idDataLvlDp01, paste0("irgaH2o/",LevlTowr,"_30m"))
- # sid <- H5Screate_simple(c(0,0,0))
+  
+  # idDataLvlDp01HorVer <- H5Gopen(idDataLvlDp01, paste0("irgaH2o/",LevlTowr,"_30m"))
+  # sid <- H5Screate_simple(c(0,0,0))
   #idDp01DataTbl <- H5Dcreate(idDataLvlDp01HorVer, "rtioMoleDryH2o","H5T_NATIVE_DOUBLE", sid) #Used for metadata attribution, but it causes problem to write to later.
   #lapply(seq_len(nrow(attrSiteList)), function(x) h5writeAttribute(attrSiteList[x,"Field Description"], h5obj = idSite, name = attrSiteList[x,"fieldName"]))
   
