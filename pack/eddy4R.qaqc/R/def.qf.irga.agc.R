@@ -50,9 +50,9 @@ def.qf.irga.agc <- function(qfIrgaAgc, critThsh = 0.50){
     #create a vector of zero's
     qfIrgaAgcOut <- rep(0L, length(qfIrgaAgc))
     #Find indices where qfIrgaAgc is less than threshold
-    idx <- ffwhich(data, qfIrgaAgc < critThsh)
+    idx <- ffwhich(qfIrgaAgc, qfIrgaAgc < critThsh)
     #Find indices where qfIrgaAgc is NA
-    idxNa <- ffwhich(data, is.na(qfIrgaAgc))
+    idxNa <- ffwhich(qfIrgaAgc, is.na(qfIrgaAgc))
     #Fill indices where qfIrgaAgc is less than threshold with a thrown flag (qfIrgaAgc = 1)
     qfIrgaAgcOut[idx[]] <- 1L
     #Fill indices where qfIrgaAgc is missing data with a thrown flag (qfIrgaAgc = -1)
