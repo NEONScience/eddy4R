@@ -32,6 +32,8 @@
 # changelog and author contributions / copyrights
 #   David Durden (2017-04-26)
 #     original creation
+#   David Durden (2017-05-22)
+#     updating to work with ff objects
 ##############################################################################################
 
 def.qf.irga.agc <- function(qfIrgaAgc, critThsh = 0.50){
