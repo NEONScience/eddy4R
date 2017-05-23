@@ -4,21 +4,37 @@
 \alias{def.qf.irga.vali}
 \title{Definition function: Validation flag for IRGA}
 \usage{
-def.qf.irga.vali(frtSet00)
+def.qf.irga.vali(data, Sens = c("irgaMfcSamp", "irgaSndValiNema")[1])
 }
 \arguments{
-\item{frtSet00}{The flow rate set point measured by the IRGA sampling mass flow controller. [dm3 s-1]}
+\item{data}{A data.frame containing the L0p input IRGA sampling mass flow controller data or the IRGA validation soleniod valves data at native resolution. Of type numeric or integer. [User-defined]}
+
+\item{Sens}{A vector of class "character" containing the name of sensor used to determine the flag (IRGA sampling mass flow controller data or the IRGA validation soleniod valves), Sens = c("irgaMfcSamp", "irgaSndValiNema"). Defaults to "irgaMfcSamp". [-]}
 }
 \value{
 A vector class of integer (\code{qfIrgaVali}) of IRGA validation flags. Flag indicating when the sensor is operated under validation period (1 = validation period, 0 = normal operating condition, -1 = NA) [-]
 }
 \description{
-Definition function to generate the validation flags for IRGA from the IRGA sampling mass flow controller flow rate set point \code{frtSet00}. Flag indicating when the sensor is operated under validation period (1 = validation period, 0 = normal operating condition, -1 = NA).
+Definition function to generate the validation flags for IRGA from the IRGA sampling mass flow controller flow rate set point or from the IRGA validation soleniod valves. Flag indicating when the sensor is operated under validation period (1 = validation period, 0 = normal operating condition, -1 = NA).
 }
 \examples{
-qfIrgaVali <- def.qf.irga.vali(frtSet00 = 0.000241)
-data <- data.frame(frtSet00 = c(0, 0, 0, -1, -1, -1, 0.000242, 0.000242))
-data$qfIrgaVali <- def.qf.irga.vali(frtSet00 = data$frtSet00)
+data <- list()
+#generate test data for irgaMfcSamp
+data$irgaMfcSamp <- data.frame(frt = c(0.0003621, 0.00035066, NA, NA, 0, 0),
+frt00 = c(0.00020, 0.0001983, NA, NA, 0, 0), 
+frtSet00 = c(0.00020, 0.00020, NA, NA, 0, 0), 
+presAtm = c(57200, 58500, NA, NA, 58600, 58600), 
+temp = c(300, 301, NA, NA, 299, 300))
+#generate test data for irgaSndValiNema
+data$irgaSndValiNema <- data.frame(qfGas01 = c(rep(0, 25)),
+qfGas02 = c(rep(0, 5), rep(1, 5), rep(0, 15)),
+qfGas03 = c(rep(0, 10), rep(1, 5), rep(0, 10)),
+qfGas04 = c(rep(0, 15), rep(1, 5), rep(0, 5)),
+qfGas05 = c(rep(0, 20), rep(NA, 5)))
+#determine the flag using irgaMfcSamp
+data$qfqm$irga$qfIrgaVali <- def.qf.irga.vali(data = data$irgaMfcSamp, Sens = "irgaMfcSamp")
+#determine the flag using irgaSndValiNema
+data$qfqm$irga$qfIrgaVali <- def.qf.irga.vali(data = data$irgaSndValiNema, Sens = "irgaSndValiNema")
 }
 \references{
 License: GNU AFFERO GENERAL PUBLIC LICENSE Version 3, 19 November 2007.
