@@ -20,11 +20,10 @@
 #' @examples 
 #' diag16 <- as.integer(rep(135, 36000))
 
-#' def.qf.soni(diag16 = diag16)
-#' 
 #' pos <- runif(20,1, 36000) # inserting error positions for other flags
 #' diag16[pos] <- as.integer(c(32768,16384,8192,4096,61442, 61441,61440,61503, -99999, NaN)) # filling with numbers that would indicate flags soni flags
 #' 
+#' eddy4R.qaqc::def.qf.soni(diag16 = diag16)
 
 #' @seealso Currently none
 
@@ -33,6 +32,8 @@
 # changelog and author contributions / copyrights
 #   Dave Durden (2017-02-08)
 #     original creation
+#   Dave Durden (2017-05-12)
+#     fixing bug in order of qfSoni flags
 ##############################################################################################
 
 
@@ -66,7 +67,7 @@ qfSoniCode <- base::as.integer(base::ifelse(diag16 == 61442, 1, 0))
 qfSoni <- base::data.frame( qfSoniUnrs,qfSoniData,qfSoniTrig,qfSoniComm, qfSoniCode, qfSoni[,1:4])
 
 #Provide column names to the output
-base::names(qfSoni) <- c("qfSoniUnrs", "qfSoniData", "qfSoniTrig", "qfSoniComm", "qfSoniCode", "qfSoniTemp", "qfSoniSgnlPoor", "qfSoniSgnlHigh", "qfSoniSgnlLow")
+base::names(qfSoni) <- c("qfSoniUnrs", "qfSoniData", "qfSoniTrig", "qfSoniComm", "qfSoniCode", "qfSoniSgnlLow", "qfSoniSgnlHigh", "qfSoniSgnlPoor", "qfSoniTemp")
 
 
 #return dataframe
