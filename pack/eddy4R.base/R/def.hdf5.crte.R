@@ -61,14 +61,14 @@ def.hdf5.crte <- function(
   
   
   #fomatting Date for file names
-  dateFileIn <- gsub(pattern = "-", replacement = "", x = Date)
+  dateFileIn <- base::gsub(pattern = "-", replacement = "", x = Date)
   
   #Directory where the data is being written, need to change locally to add N:
   #datDirOut <- paste("/home/ddurden/eddy/data/L0prime_gold/", Site,"/", dateFileIn,"/", sep = "")
   
   
   #Check to see if the directory exists, if not create the directory. Recursive required to write nested file directories
-  if (dir.exists(DirOut) == FALSE) dir.create(DirOut, recursive = TRUE)
+  if (base::dir.exists(DirOut) == FALSE) base::dir.create(DirOut, recursive = TRUE)
 
   
   #Download file description readme and object list  
@@ -76,13 +76,13 @@ def.hdf5.crte <- function(
                                       Dir = DirOut))
   
   #Store the path to the readme file
-  fileNameReadMe <- list.files( path = paste0(DirOut,"/fileDesc"), pattern = ".txt", full.names = TRUE)
+  fileNameReadMe <- base::list.files( path = base::paste0(DirOut,"/fileDesc"), pattern = ".txt", full.names = TRUE)
   #Store the path to the object description file
-  fileNameObjDesc <- list.files( path = paste0(DirOut,"/fileDesc/"), pattern = ".csv", full.names = TRUE)
+  fileNameObjDesc <- base::list.files( path = base::paste0(DirOut,"/fileDesc/"), pattern = ".csv", full.names = TRUE)
   #Read in the readme file
-  readMe <- readChar(fileNameReadMe, file.info(fileNameReadMe)$size)
+  readMe <- base::readChar(fileNameReadMe, base::file.info(fileNameReadMe)$size)
   #Read in the object description file
-  objDesc <- read.csv(fileNameObjDesc,header = TRUE, stringsAsFactors = FALSE)
+  objDesc <- utils::read.csv(fileNameObjDesc,header = TRUE, stringsAsFactors = FALSE)
   
   
   #Create a connection to the workbook
@@ -106,10 +106,10 @@ def.hdf5.crte <- function(
   #              "irgaPresValiRegOut","irgaPump","irgaSndLeakHeat",
   #              "irgaSndValiHut","irgaSndValiNema",)
   #The DP level, the data product ID and the Rev number
-  grpList <- paste(grpList, "_001", sep = "")
+  grpList <- base::paste(grpList, "_001", sep = "")
   
   #Output filename
-  fileOut <- paste0(DirOut,"/","ECTE_",LevlDp,"_", Site, "_", Date, "_new_format.h5")
+  fileOut <- base::paste0(DirOut,"/","ECTE_",LevlDp,"_", Site, "_", Date, "_new_format.h5")
   #Create the file, create a class
   #Create the file, create a class
   idFile <- rhdf5::H5Fcreate(fileOut)
