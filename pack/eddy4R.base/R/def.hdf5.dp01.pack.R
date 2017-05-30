@@ -28,6 +28,8 @@
 # changelog and author contributions / copyrights
 #   Dave Durden (2017-05-07)
 #     original creation
+#   Dave Durden (2017-05-22)
+#     Updating time formatting for output
 ##############################################################################################
 
 
@@ -38,28 +40,36 @@ def.hdf5.dp01.pack <- function(
   Dp01
 ){
 
+  #Initializing lists
 rpt <- list()
 tmp <- list()
 
 
+#Looping around variables
 for(idxVar in names(inpList[[Dp01]][[1]])) {
-  print(idxVar)  
+  #print(idxVar) #For testing
+  #Reformatting data to have data subproducts at a higher hierarchical level than descriptive stats for HDF5 output
   lapply(names(inpList[[Dp01]]), function(x) {
     tmp[[idxVar]][[x]] <<- inpList[[Dp01]][[x]][,idxVar]
   }) 
   
 };rm(idxVar)
 
-
+# Combining list of data into datafram
 rpt <- lapply(names(tmp), function(x) data.frame(do.call("cbind", tmp[[x]])))
 
+#Copying names from input
 names(rpt) <- names(tmp)
 
-rpt <- lapply(rpt, cbind, timeBgn = strftime(time[[Dp01]]$timeBgn, format="%Y-%m-%dT%H:%M:%OSZ", tz="UTC"), timeEnd = strftime(time[[Dp01]]$timeEnd, format="%Y-%m-%dT%H:%M:%OSZ", tz="UTC"), stringsAsFactors = FALSE)
+#If values come in as Posix, they must first be converted to characters
+if(!is.character(time[[Dp01]]$timeBgn)){time[[Dp01]] <- lapply(time[[Dp01]], strftime, format="%Y-%m-%dT%H:%M:%OSZ", tz="UTC")} 
 
+#Adding time to output dataframe
+rpt <- lapply(rpt, cbind, timeBgn = time[[Dp01]]$timeBgn, timeEnd = time[[Dp01]]$timeEnd, stringsAsFactors = FALSE)
 
+#Looping around varaibles
 for(idxVar in base::names(inpList[[Dp01]][[1]])) {
-  
+ #Writing unit attributes to each variable 
   base::attr(x = rpt[[idxVar]], which = "unit") <-
     base::attr(x = inpList[[Dp01]][[1]][,idxVar], which = "unit")
   

@@ -12,7 +12,7 @@ def.qf.irga.agc(qfIrgaAgc, critThsh = 0.5)
 \item{critThsh}{The critical threshold value for the \code{qfIrgaAgc} value to throw the flag for low signal strength (defaults to 0.50 or 50 percent).}
 }
 \value{
-A vector class of integer (\code{qfIrgaAgc}) of IRGA AGC flags. Flag indicating when the sensor is operating with low signal strength using 50 percent as the default threshold (1 = when qfIrgaAgc <= 0.50, 0 = when qfIrgaAgc >= 0.50, -1 = NA). [-]
+A vector class of integer (\code{qfIrgaAgcOut}) of IRGA AGC flags. Flag indicating when the sensor is operating with low signal strength using 50 percent as the default threshold (1 = when qfIrgaAgc <= 0.50, 0 = when qfIrgaAgc >= 0.50, -1 = NA). [-]
 }
 \description{
 Definition function to generate the signal strength flags for the IRGA from the diagnostic output quality metric \code{qfIrgaAgc}. Flag indicating when the sensor is operating with low signal strength using 50 percent as the default threshold (1 = when qfIrgaAgc <= 0.50, 0 = when qfIrgaAgc >= 0.50, -1 = NA).
@@ -22,7 +22,7 @@ qfIrgaAgc <- rnorm(10,0.70,0.15)
 qfIrgaAgc[c(2,8)] <- NA
 attributes(qfIrgaAgc)$unit <- "-"
 
-qfIrgaAgc <- def.qf.irga.agc(qfIrgaAgc = qfIrgaAgc)
+qfIrgaAgcOut <- def.qf.irga.agc(qfIrgaAgc = qfIrgaAgc)
 
 }
 \references{
