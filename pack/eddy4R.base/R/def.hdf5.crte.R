@@ -12,7 +12,7 @@
 #' @param \code{DirOut} is the output directory where the file being generated is stored.
 #' @param \code{LevlDp} is output file DP level for the file naming.
 
-#' @return A NEON formatted HDF5 file that is output to /code{DirOut} 
+#' @return A NEON formatted HDF5 file that is output to /code{DirOut} with a readme and object description included.
 
 #' @references
 #' License: GNU AFFERO GENERAL PUBLIC LICENSE Version 3, 19 November 2007.
@@ -44,6 +44,8 @@
 # changelog and author contributions / copyrights
 #   Dave Durden (2016-12-22)
 #     original creation
+#   Dave Durden (2016-05-30)
+#     Added readme and object description to generated files
 
 ##############################################################################################################
 #Start of function call to generate NEON HDF5 files
