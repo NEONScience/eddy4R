@@ -89,7 +89,7 @@ MethUcrt = FALSE
     # assign names to data.frames      
     names(rpt$qfqm[[idxDp01]]) <- names(inpList$qfqmOut[[1]][[idxDp01]])
     
-    if(MethUcrt == TRUE{
+    if(MethUcrt == TRUE){
       #Put together output list for qfqm 
       rpt$ucrt[[idxDp01]] <- 
         
