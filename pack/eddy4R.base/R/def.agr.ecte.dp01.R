@@ -31,7 +31,8 @@
 
 def.agr.ecte.dp01 <- function(
 inpList, 
-MethSubAgr = FALSE  
+MethSubAgr = FALSE,
+MethUcrt = FALSE
 ){
   
   # concatenate results
@@ -48,7 +49,7 @@ MethSubAgr = FALSE
   
   # loop around data products
   for(idxDp01 in names(inpList$dp01[[1]])) {
-    
+   #idxDp01 <-  names(inpList$dp01[[1]])[1]
    
      rpt$time[[idxDp01]] <- data.frame(
       timeBgn = inpList$idx[[idxDp01]]$timeBgn,
@@ -87,6 +88,23 @@ MethSubAgr = FALSE
     
     # assign names to data.frames      
     names(rpt$qfqm[[idxDp01]]) <- names(inpList$qfqmOut[[1]][[idxDp01]])
+    
+    if(MethUcrt == TRUE{
+      #Put together output list for qfqm 
+      rpt$ucrt[[idxDp01]] <- 
+        
+        # first call to lapply, targeting the result data.frames to be created (data sub-products: mean, min, max, vari", numSamp)
+        lapply(names(inpList$err$filt[[1]][[idxDp01]]), function(y)
+          
+          # second call to lapply, targeting the observations to be combined into the result data.frames
+          do.call(rbind, lapply(1:length(inpList$err$filt), function(x) inpList$err$filt[[x]][[idxDp01]][[y]]$`30m` ))
+          
+        )
+      
+      # assign names to data.frames      
+      names(rpt$ucrt[[idxDp01]]) <- names(inpList$err$filt[[1]][[idxDp01]]) 
+      
+    }
     
     if(MethSubAgr == TRUE){
 
