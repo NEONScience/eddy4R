@@ -115,7 +115,7 @@ def.hdf5.crte <- function(
   #idFile <- H5Fopen("HDF5TIS_L0_prototype.h5")
   
   # Write the readme as a data table to the HDF5 file
-  rhdf5::h5write.default(obj = readMe, file = fileOut, name = "readMe")
+  rhdf5::h5writeDataset.character(obj = readMe, h5loc = idFile, name = "readMe")
   
   # Write the object description as a data table in  the HDF5 file
   rhdf5::h5writeDataset.data.frame(obj = objDesc, h5loc = idFile, name = "objDesc")
