@@ -4,21 +4,21 @@
 \alias{wrap.derv.prd.day}
 \title{Wrapper function: Calculation of derived quantities (daily extent, native resolution)}
 \usage{
-wrap.derv.prd.day(data, ZoneTime)
+wrap.derv.prd.day(inpList, ZoneTime)
 }
 \arguments{
-\item{\code{data}}{List consisting of \code{ff::ffdf} file-backed objects, in the format provided by function \code{eddy4R.base::wrap.neon.read.hdf5.eddy()}. Of types numeric and integer.}
+\item{inpList}{List consisting of \code{ff::ffdf} file-backed objects, in the format provided by function \code{eddy4R.base::wrap.neon.read.hdf5.eddy()}. Of types numeric and integer.}
 
-\item{\code{SiteLoca}}{List consisting of site-specific parameters. Of types numeric, integer and character.}
+\item{SiteLoca}{List consisting of site-specific parameters. Of types numeric, integer and character.}
 }
 \value{
-The returned object consistes of \code{data}, with the derived variables added to the respective list entry, and all list levels sorted alphabetically.
+The returned object consistes of \code{inpList}, with the derived variables added to the respective list entry, and all list levels sorted alphabetically.
 }
 \description{
-Wrapper function. Reads the list \code{data} in the format provided by function \code{eddy4R.base::wrap.neon.read.hdf5.eddy()}. For the list entries in \code{data} the following derived quantities are calculated, each through the call to a separate definition function: \cr
-\code{data$time}: fractional UTC time, fractional day of year, local standard time;  \cr
-\code{data$irga}: average signal strength, delta signal strength, total pressure, average temperature, water vapor partial pressure, water vapor saturation pressure, relative humidity, molar density of air (dry air and water vapor), molar density of dry air, wet mass fraction (specific humidity);  \cr
-\code{data$soni}: sonic temperature.
+Wrapper function. Reads the list \code{inpList} in the format provided by function \code{eddy4R.base::wrap.neon.read.hdf5.eddy()}. For the list entries in \code{inpList} the following derived quantities are calculated, each through the call to a separate definition function: \cr
+\code{inpList$data$time}: fractional UTC time, fractional day of year, local standard time;  \cr
+\code{inpList$data$irga}: average signal strength, delta signal strength, total pressure, average temperature, water vapor partial pressure, water vapor saturation pressure, relative humidity, molar density of air (dry air and water vapor), molar density of dry air, wet mass fraction (specific humidity);  \cr
+\code{inpList$data$soni}: sonic temperature.
 }
 \examples{
 Currently none.
@@ -37,5 +37,6 @@ Stefan Metzger \email{eddy4R.info@gmail.com}
 \keyword{irga,}
 \keyword{post-processing,}
 \keyword{pre-processing,}
+\keyword{qfqm}
 \keyword{sonic,}
-\keyword{time}
+\keyword{time,}
