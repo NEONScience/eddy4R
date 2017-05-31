@@ -4,21 +4,21 @@
 #' @author
 #' Stefan Metzger \email{eddy4R.info@gmail.com}
 
-#' @description Wrapper function. Reads the list \code{data} in the format provided by function \code{eddy4R.base::wrap.neon.read.hdf5.eddy()}. For the list entries in \code{data} the following derived quantities are calculated, each through the call to a separate definition function: \cr
-#' \code{data$time}: fractional UTC time, fractional day of year, local standard time;  \cr
-#' \code{data$irga}: average signal strength, delta signal strength, total pressure, average temperature, water vapor partial pressure, water vapor saturation pressure, relative humidity, molar density of air (dry air and water vapor), molar density of dry air, wet mass fraction (specific humidity);  \cr
-#' \code{data$soni}: sonic temperature.
+#' @description Wrapper function. Reads the list \code{inpList} in the format provided by function \code{eddy4R.base::wrap.neon.read.hdf5.eddy()}. For the list entries in \code{inpList} the following derived quantities are calculated, each through the call to a separate definition function: \cr
+#' \code{inpList$data$time}: fractional UTC time, fractional day of year, local standard time;  \cr
+#' \code{inpList$data$irga}: average signal strength, delta signal strength, total pressure, average temperature, water vapor partial pressure, water vapor saturation pressure, relative humidity, molar density of air (dry air and water vapor), molar density of dry air, wet mass fraction (specific humidity);  \cr
+#' \code{inpList$data$soni}: sonic temperature.
 
-#' @param \code{data} List consisting of \code{ff::ffdf} file-backed objects, in the format provided by function \code{eddy4R.base::wrap.neon.read.hdf5.eddy()}. Of types numeric and integer.
-#' @param \code{SiteLoca} List consisting of site-specific parameters. Of types numeric, integer and character.
+#' @param inpList List consisting of \code{ff::ffdf} file-backed objects, in the format provided by function \code{eddy4R.base::wrap.neon.read.hdf5.eddy()}. Of types numeric and integer.
+#' @param SiteLoca List consisting of site-specific parameters. Of types numeric, integer and character.
 
 #' @return 
-#' The returned object consistes of \code{data}, with the derived variables added to the respective list entry, and all list levels sorted alphabetically.
+#' The returned object consistes of \code{inpList}, with the derived variables added to the respective list entry, and all list levels sorted alphabetically.
 
 #' @references
 #' License: GNU AFFERO GENERAL PUBLIC LICENSE Version 3, 19 November 2007.
 
-#' @keywords derived, high-frequency, irga, post-processing, pre-processing, sonic, time
+#' @keywords derived, high-frequency, irga, post-processing, pre-processing, sonic, time, qfqm
 
 #' @examples
 #' Currently none.
@@ -30,34 +30,36 @@
 # changelog and author contributions / copyrights
 #   Stefan Metzger (2016-09-06)
 #     original creation
+#   David Durden (2017-05-14)
+#     adapting to include derived flags
 ##############################################################################################
     
     
 # derived quantities: daily basis upon import
 
 wrap.derv.prd.day <- function(
-  data,
+  inpList,
   ZoneTime
 ) {
 
 # time
 
   # create temporary variable holding POSIXlt object
-  tmp <- as.POSIXlt(data$time$UTC[])
+  tmp <- as.POSIXlt(inpList$time$UTC[])
 
   # fractional UTC time
-  data$time$UTC_frac <- ff::as.ff(tmp$hour + tmp$min / 60 + tmp$sec / 3600)
-  base::attr(x = data$time$UTC_frac, which = "unit") <- "h"
+  inpList$time$UTC_frac <- ff::as.ff(tmp$hour + tmp$min / 60 + tmp$sec / 3600)
+  base::attr(x = inpList$time$UTC_frac, which = "unit") <- "h"
 
   # fractional day of year [DOY]
-  data$time$DOY_frac <- ff::as.ff(tmp$yday + 1 + data$time$UTC_frac[] / 24)
-  base::attr(x = data$time$DOY_frac, which = "unit") <- "d"
+  inpList$time$DOY_frac <- ff::as.ff(tmp$yday + 1 + inpList$time$UTC_frac[] / 24)
+  base::attr(x = inpList$time$DOY_frac, which = "unit") <- "d"
   
   # calculate local standard time
-  tmp <- data$time$UTC[]
+  tmp <- inpList$time$UTC[]
   attributes(tmp)$tzone <- ZoneTime
-  data$time$Loca <- ff::as.ff(tmp)
-  base::attr(x = data$time$Loca, which = "unit") <- "YYYY-MM-DD hh:mm:ss.sss"
+  inpList$time$Loca <- ff::as.ff(tmp)
+  base::attr(x = inpList$time$Loca, which = "unit") <- "YYYY-MM-DD hh:mm:ss.sss"
 
   # clean up
   rm(tmp)
@@ -65,43 +67,43 @@ wrap.derv.prd.day <- function(
 #irga
 
   # average signal strength
-  data$irga$ssiMean <- ff::as.ff(def.ssi.mean(ssiCo2 = data$irga$ssiCo2, ssiH2o = data$irga$ssiH2o))
+  inpList$data$irga$ssiMean <- ff::as.ff(def.ssi.mean(ssiCo2 = inpList$data$irga$ssiCo2, ssiH2o = inpList$data$irga$ssiH2o))
 
   # delta signal strength
-  data$irga$ssiDiff <- def.ssi.diff(ssiCo2 = data$irga$ssiCo2, ssiH2o = data$irga$ssiH2o)
+  inpList$data$irga$ssiDiff <- def.ssi.diff(ssiCo2 = inpList$data$irga$ssiCo2, ssiH2o = inpList$data$irga$ssiH2o)
  
   # total pressure in irga cell
-  data$irga$presSum <- def.pres.sum(presAtm = data$irga$presAtm, presDiff = data$irga$presDiff)
+  inpList$data$irga$presSum <- def.pres.sum(presAtm = inpList$data$irga$presAtm, presDiff = inpList$data$irga$presDiff)
 
   # average temperature in irga cell 
-  data$irga$tempMean <- def.temp.mean.7200(tempIn = data$irga$tempIn, tempOut = data$irga$tempOut)
+  inpList$data$irga$tempMean <- def.temp.mean.7200(tempIn = inpList$data$irga$tempIn, tempOut = inpList$data$irga$tempOut)
  
   # RH in cell
 
     # water vapor partial pressure
-    data$irga$presH2o <- ff::as.ff(def.pres.h2o.rtio.mole.h2o.dry.pres(rtioMoleDryH2o = data$irga$rtioMoleDryH2o, pres = data$irga$presSum))
-    base::attr(x = data$irga$presH2o, which = "unit") <- "Pa"
+    inpList$data$irga$presH2o <- ff::as.ff(def.pres.h2o.rtio.mole.h2o.dry.pres(rtioMoleDryH2o = inpList$data$irga$rtioMoleDryH2o, pres = inpList$data$irga$presSum))
+    base::attr(x = inpList$data$irga$presH2o, which = "unit") <- "Pa"
 
     # water vapor saturation pressure
-    if(!is.na(mean(data$irga$tempMean, na.rm=TRUE))) {
-      data$irga$presH2oSat <- ff::as.ff(as.vector(def.pres.h2o.sat.temp.mag(temp = data$irga$tempMean[])))
+    if(!is.na(mean(inpList$data$irga$tempMean, na.rm=TRUE))) {
+      inpList$data$irga$presH2oSat <- ff::as.ff(as.vector(def.pres.h2o.sat.temp.mag(temp = inpList$data$irga$tempMean[])))
     } else {
-      data$irga$presH2oSat <- ff::as.ff(rep(NaN, length(data$irga$tempMean)))
+      inpList$data$irga$presH2oSat <- ff::as.ff(rep(NaN, length(inpList$data$irga$tempMean)))
     }
-    base::attr(x = data$irga$presH2oSat, which = "unit") <- "Pa"
+    base::attr(x = inpList$data$irga$presH2oSat, which = "unit") <- "Pa"
     
     # calcuate RH
-    data$irga$rh <- def.rh.pres.h2o.pres.sat.h2o(presH2o = data$irga$presH2o, presH2oSat = data$irga$presH2oSat)
+    inpList$data$irga$rh <- def.rh.pres.h2o.pres.sat.h2o(presH2o = inpList$data$irga$presH2o, presH2oSat = inpList$data$irga$presH2oSat)
     
 
   # molar density of dry air and water vapor
-  data$irga$densMoleAir <- def.dens.mole.air(presSum = data$irga$presSum, tempMean = data$irga$tempMean)
+  inpList$data$irga$densMoleAir <- def.dens.mole.air(presSum = inpList$data$irga$presSum, tempMean = inpList$data$irga$tempMean)
   
   # molar density of dry air alone
-  data$irga$densMoleAirDry <- def.dens.mole.air.dry(densMoleAir = data$irga$densMoleAir, densMoleH2o = data$irga$densMoleH2o)
+  inpList$data$irga$densMoleAirDry <- def.dens.mole.air.dry(densMoleAir = inpList$data$irga$densMoleAir, densMoleH2o = inpList$data$irga$densMoleH2o)
 
   # wet mass fraction (specific humidity)
-  data$irga$rtioMassH2o <- def.rtio.mass.h2o.dens.mole(densMoleH2o = data$irga$densMoleH2o, densMoleAirDry = data$irga$densMoleAirDry)
+  inpList$data$irga$rtioMassH2o <- def.rtio.mass.h2o.dens.mole(densMoleH2o = inpList$data$irga$densMoleH2o, densMoleAirDry = inpList$data$irga$densMoleAirDry)
 
 # soni
   
@@ -110,33 +112,54 @@ wrap.derv.prd.day <- function(
   # rotate wind vector into meteorological coordinate system (positive from west, south and below)
   
   # magnitude of horizontal wind speed
-  data$soni$veloXaxsYaxsErth <- sqrt(data$soni$veloXaxs^2 + data$soni$veloYaxs^2)
+  inpList$data$soni$veloXaxsYaxsErth <- sqrt(inpList$data$soni$veloXaxs^2 + inpList$data$soni$veloYaxs^2)
 
   # wind direction
   # need to redo for vector averaging, see REYNflux_P5.R line 139
-  # data$angZaxsErth <- eddy4R.base::def.pol.cart(matrix(c(data$v_met, data$u_met), ncol=2))
+  # inpList$data$angZaxsErth <- eddy4R.base::def.pol.cart(matrix(c(inpList$data$v_met, inpList$data$u_met), ncol=2))
   
   # sonic temperature [K] from speed of sound [m s-1] (Campbell Scientific, Eq. (9))
-  data$soni$tempSoni <- def.temp.soni(veloSoni = data$soni$veloSoni)
+  inpList$data$soni$tempSoni <- def.temp.soni(veloSoni = inpList$data$soni$veloSoni)
   
-# sort object levels alphabetically
+  #Additional QAQC tests
+  ###########################################################
+  #Run the test to output Validation flag
+  inpList$qfqm$irga$qfIrgaVali <- ff::as.ff(eddy4R.qaqc::def.qf.irga.vali(data = inpList$data$irgaMfcSamp))#Use this one for MFC set point
 
-  # data
-  data <- data[names(data)[order(tolower(names(data)))]]
+#  inpList$qfqm$irga$qfIrgaVali <- eddy4R.qaqc::def.qf.irga.vali(data = inpList$data$irgaSndValiNema, Sens = "irgaSndValiNema")
+  
+  
+  #Run the test to determine the irgaAgc flag
+  inpList$qfqm$irga$qfIrgaAgc <- ff::as.ff(eddy4R.qaqc::def.qf.irga.agc(qfIrgaAgc = inpList$qfqm$irga$qfIrgaAgc))
+  
+  
+  ###########################################################   
+  
+  
+  # sort object levels alphabetically
 
-  # data$irga
-  data$irga <- data$irga[names(data$irga)[order(tolower(names(data$irga)))]]
+  #inpList
+  inpList <- inpList[names(inpList)[order(tolower(names(inpList)))]]
   
-  # data$irga MFC
-  data$irgaMfcSamp <- data$irgaMfcSamp[names(data$irgaMfcSamp)[order(tolower(names(data$irgaMfcSamp)))]]
+  # inpList$data
+  inpList$data <- inpList$data[names(inpList$data)[order(tolower(names(inpList$data)))]]
+
+  # inpList$data$irga
+  inpList$data$irga <- inpList$data$irga[names(inpList$data$irga)[order(tolower(names(inpList$data$irga)))]]
   
-  # data$soni
-  data$soni <- data$soni[names(data$soni)[order(tolower(names(data$soni)))]]
+  # inpList$data$irga MFC
+  inpList$data$irgaMfcSamp <- inpList$data$irgaMfcSamp[names(inpList$data$irgaMfcSamp)[order(tolower(names(inpList$data$irgaMfcSamp)))]]
   
-  # data$soniAmrs
-  data$soniAmrs <- data$soniAmrs[names(data$soniAmrs)[order(tolower(names(data$soniAmrs)))]]
+  # inpList$data$irga Solenoids
+  inpList$data$irgaSndValiNema <- inpList$data$irgaSndValiNema[names(inpList$data$irgaSndValiNema)[order(tolower(names(inpList$data$irgaSndValiNema)))]]
+  
+  # inpList$data$soni
+  inpList$data$soni <- inpList$data$soni[names(inpList$data$soni)[order(tolower(names(inpList$data$soni)))]]
+  
+  # inpList$data$soniAmrs
+  inpList$data$soniAmrs <- inpList$data$soniAmrs[names(inpList$data$soniAmrs)[order(tolower(names(inpList$data$soniAmrs)))]]
 
 # return results
-return(data)
+return(inpList)
     
 }
