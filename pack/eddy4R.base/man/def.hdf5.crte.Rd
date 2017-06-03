@@ -18,7 +18,7 @@ def.hdf5.crte(Date, Site = "SERC", LevlTowr, DirOut, LevlDp = "dp01")
 \item{\code{LevlDp}}{is output file DP level for the file naming.}
 }
 \value{
-A NEON formatted HDF5 file that is output to /code{DirOut}
+A NEON formatted HDF5 file that is output to /code{DirOut} with a readme and object description included.
 }
 \description{
 Definition function. Function creates the standard NEON HDF5 file structure for the ECTE data products.

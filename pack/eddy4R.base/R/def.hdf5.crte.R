@@ -12,7 +12,7 @@
 #' @param \code{DirOut} is the output directory where the file being generated is stored.
 #' @param \code{LevlDp} is output file DP level for the file naming.
 
-#' @return A NEON formatted HDF5 file that is output to /code{DirOut} 
+#' @return A NEON formatted HDF5 file that is output to /code{DirOut} with a readme and object description included.
 
 #' @references
 #' License: GNU AFFERO GENERAL PUBLIC LICENSE Version 3, 19 November 2007.
@@ -44,6 +44,8 @@
 # changelog and author contributions / copyrights
 #   Dave Durden (2016-12-22)
 #     original creation
+#   Dave Durden (2016-05-30)
+#     Added readme and object description to generated files
 
 ##############################################################################################################
 #Start of function call to generate NEON HDF5 files
@@ -59,14 +61,29 @@ def.hdf5.crte <- function(
   
   
   #fomatting Date for file names
-  dateFileIn <- gsub(pattern = "-", replacement = "", x = Date)
+  dateFileIn <- base::gsub(pattern = "-", replacement = "", x = Date)
   
   #Directory where the data is being written, need to change locally to add N:
   #datDirOut <- paste("/home/ddurden/eddy/data/L0prime_gold/", Site,"/", dateFileIn,"/", sep = "")
   
   
   #Check to see if the directory exists, if not create the directory. Recursive required to write nested file directories
-  if (dir.exists(DirOut) == FALSE) dir.create(DirOut, recursive = TRUE)
+  if (base::dir.exists(DirOut) == FALSE) base::dir.create(DirOut, recursive = TRUE)
+
+  
+  #Download file description readme and object list  
+  eddy4R.base::def.dld.zip(Inp = list(Url = "https://www.dropbox.com/s/dqq3j7epiy98y29/fileDesc.zip?dl=1",
+                                      Dir = DirOut))
+  
+  #Store the path to the readme file
+  fileNameReadMe <- base::list.files( path = base::paste0(DirOut,"/fileDesc"), pattern = ".txt", full.names = TRUE)
+  #Store the path to the object description file
+  fileNameObjDesc <- base::list.files( path = base::paste0(DirOut,"/fileDesc/"), pattern = ".csv", full.names = TRUE)
+  #Read in the readme file
+  readMe <- base::readChar(fileNameReadMe, base::file.info(fileNameReadMe)$size)
+  #Read in the object description file
+  objDesc <- utils::read.csv(fileNameObjDesc,header = TRUE, stringsAsFactors = FALSE)
+  
   
   #Create a connection to the workbook
   #wk <- loadWorkbook("/home/ddurden/eddy/data/Thresholds_EC/NEON_HDF5_metadata.xlsx") 
@@ -89,14 +106,21 @@ def.hdf5.crte <- function(
   #              "irgaPresValiRegOut","irgaPump","irgaSndLeakHeat",
   #              "irgaSndValiHut","irgaSndValiNema",)
   #The DP level, the data product ID and the Rev number
-  grpList <- paste(grpList, "_001", sep = "")
+  grpList <- base::paste(grpList, "_001", sep = "")
   
+  #Output filename
+  fileOut <- base::paste0(DirOut,"/","ECTE_",LevlDp,"_", Site, "_", Date, "_new_format.h5")
   #Create the file, create a class
   #Create the file, create a class
-  idFile <- rhdf5::H5Fcreate(paste0(DirOut,"/","ECTE_",LevlDp,"_", Site, "_", Date, "_new_format.h5"))
+  idFile <- rhdf5::H5Fcreate(fileOut)
   #If the file is already created use:
   #idFile <- H5Fopen("HDF5TIS_L0_prototype.h5")
   
+  # Write the readme as a data table to the HDF5 file
+  rhdf5::h5writeDataset.character(obj = readMe, h5loc = idFile, name = "readMe")
+  
+  # Write the object description as a data table in  the HDF5 file
+  rhdf5::h5writeDataset.data.frame(obj = objDesc, h5loc = idFile, name = "objDesc")
   #Create a group level for SERC
   idSite <- rhdf5::H5Gcreate(idFile, Site) 
   #If the group is already created use:
