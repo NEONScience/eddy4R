@@ -14,6 +14,7 @@
 #' @param DirOut is directory path for the output data
 #' @param DirTmp is directory path for temporary storage during processing
 #' @param DirWrk is directory path for working storage during processing
+#' @param Dom is the NEON domain the site is located in
 #' @param FileDp0p is a character string that lists the dates to be processed
 #' @param Loc is site where the data was collected (NEON 4 letter code, e.g. SERC)
 #' @param Read determine if the data are read from hdf5 dp0p input data file or other input files 
@@ -21,7 +22,7 @@
 #' @param VersEddy is the version of the eddy4R docker that is being used to perform the processing
 #' @param MethParaFlow is the method used to specify workflow parameters, "EnvVar" will grab ParaFlow parameters from environmental variable and "DfltInp" will use whatever is specified in the function call. 
 
-#' @return \code{ParaFlow} is a list returned that indicates the workflow control parameters, including \code{ParaFlow$DirFilePara},\code{ParaFlow$DirInp}, \code{ParaFlow$DirMnt}, \code{ParaFlow$DirOut}, \code{ParaFlow$DirTmp}, \code{ParaFlow$DirWrk}, \code{ParaFlow$FileDp0p}, \code{ParaFlow$Loc},  \code{ParaFlow$Read}, \code{ParaFlow$VersDp}, \code{ParaFlow$VersEddy}. 
+#' @return \code{ParaFlow} is a list returned that indicates the workflow control parameters, including \code{ParaFlow$DirFilePara},\code{ParaFlow$DirInp}, \code{ParaFlow$DirMnt}, \code{ParaFlow$DirOut}, \code{ParaFlow$DirTmp}, \code{ParaFlow$DirWrk},\code{ParaFlow$Dom}, \code{ParaFlow$FileDp0p}, \code{ParaFlow$Loc},  \code{ParaFlow$Read}, \code{ParaFlow$VersDp}, \code{ParaFlow$VersEddy}. 
 
 #' @references
 #' License: GNU AFFERO GENERAL PUBLIC LICENSE Version 3, 19 November 2007.
@@ -56,6 +57,7 @@ def.para.flow <- function(
   DirOut  = NA,
   DirTmp  = NA,
   DirWrk  = NA,
+  Dom = NA,
   FileDp0p  = NULL,
   Loc  = NULL,
   Read  = "hdf5",
@@ -65,7 +67,7 @@ def.para.flow <- function(
   ...
 ){
   
-  ParaFlow <- list(Deve = Deve, DirFilePara = DirFilePara,DirInp = DirInp,DirMnt = DirMnt,DirOut = DirOut,DirTmp = DirTmp,DirWrk = DirWrk,FileDp0p = FileDp0p,Loc = Loc,MethParaFlow = MethParaFlow,Read = Read,VersDp = VersDp,VersEddy = VersEddy, ...)
+  ParaFlow <- list(Deve = Deve, DirFilePara = DirFilePara,DirInp = DirInp,DirMnt = DirMnt,DirOut = DirOut,DirTmp = DirTmp,DirWrk = DirWrk, Dom = Dom, FileDp0p = FileDp0p,Loc = Loc,MethParaFlow = MethParaFlow,Read = Read,VersDp = VersDp,VersEddy = VersEddy, ...)
   
   if(MethParaFlow == "EnvVar"){
     #Create a list with all the specified function arguments
@@ -102,6 +104,7 @@ def.para.flow <- function(
       
     }
     if(is.null(ParaFlow$Loc)) warning("The variable Loc is NULL") 
+    if(is.null(ParaFlow$Dom)) warning("The variable Dom is NULL") 
   #Grab the 
 
  return(ParaFlow)
