@@ -119,7 +119,7 @@ def.hdf5.crte <- function(
   #The DP level, the data product ID and the Rev number
   grpList <- base::paste(grpList, "_001", sep = "")
   
-  #Output filename
+  #Output filename - the data product number is the umbrella EC data product number
   fileOut <- base::paste0(DirOut,"/","NEON.",Dom,".", Site, "DP4.00200.001.ec-flux.", Date,".", MethOut,".", strftime(Sys.time(), format="%Y-%m-%dT%H:%M:%OSZ", tz="UTC"),".h5")
   #Create the file, create a class
   #Create the file, create a class
