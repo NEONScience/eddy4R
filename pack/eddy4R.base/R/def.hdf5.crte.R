@@ -10,7 +10,6 @@
 #' @param Site is the site for which the output file is being generated.
 #' @param LevlTowr is the measurement level of the tower top to determine the VER number of the NEON DP naming convention.
 #' @param DirOut is the output directory where the file being generated is stored.
-#' @param LevlDp is output file DP level for the file naming.
 #' @param Dom is the NEON domain
 #' @param MethExpd logical indicating if the output should be expanded or basic
 
@@ -28,7 +27,6 @@
 #'#Setting Site
 #'Site <- "SERC"
 #'LevlTowr <- "000_060"
-#'LevlDp <- "dp01"
 #'Dom <- "D02"
 #'MethExpd <- TRUE
 
@@ -39,7 +37,7 @@
 #'DirOut <- getwd()
 
 #'#Running example
-#'def.hdf5.crte(Date = Date, Site = Site, LevlTowr = LevlTowr, DirOut = DirOut, LevlDp, Dom = Dom, MethExpd = MethExpd)
+#'def.hdf5.crte(Date = Date, Site = Site, LevlTowr = LevlTowr, DirOut = DirOut, Dom = Dom, MethExpd = MethExpd)
 
 #' @seealso Currently none
 
@@ -62,7 +60,6 @@ def.hdf5.crte <- function(
   Site = "SERC", 
   LevlTowr, 
   DirOut, 
-  LevlDp = "dp01",
   Dom = Dom,
   MethExpd = TRUE
   ) {
