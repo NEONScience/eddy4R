@@ -6,11 +6,13 @@
 
 #' @description 
 #' Definition function. Function creates the standard NEON HDF5 file structure for the ECTE data products.
-#' @param \code{Date} is the date for the output file being generated.
-#' @param \code{Site} is the site for which the output file is being generated.
-#' @param \code{LevlTowr} is the measurement level of the tower top to determine the VER number of the NEON DP naming convention.
-#' @param \code{DirOut} is the output directory where the file being generated is stored.
-#' @param \code{LevlDp} is output file DP level for the file naming.
+#' @param Date is the date for the output file being generated.
+#' @param Site is the site for which the output file is being generated.
+#' @param LevlTowr is the measurement level of the tower top to determine the VER number of the NEON DP naming convention.
+#' @param DirOut is the output directory where the file being generated is stored.
+#' @param LevlDp is output file DP level for the file naming.
+#' @param Dom is the NEON domain
+#' @param MethExpd logical indicating if the output should be expanded or basic
 
 #' @return A NEON formatted HDF5 file that is output to /code{DirOut} with a readme and object description included.
 
@@ -27,6 +29,8 @@
 #'Site <- "SERC"
 #'LevlTowr <- "000_060"
 #'LevlDp <- "dp01"
+#'Dom <- "D02"
+#'MethExpd <- TRUE
 
 #'#Setting Date to be processed
 #'Date <- "2016-04-24"
@@ -35,7 +39,7 @@
 #'DirOut <- getwd()
 
 #'#Running example
-#'def.hdf5.crte(Date = Date, Site = Site, LevlTowr = LevlTowr, DirOut = DirOut, LevlDp)
+#'def.hdf5.crte(Date = Date, Site = Site, LevlTowr = LevlTowr, DirOut = DirOut, LevlDp, Dom = Dom, MethExpd = MethExpd)
 
 #' @seealso Currently none
 
@@ -44,8 +48,10 @@
 # changelog and author contributions / copyrights
 #   Dave Durden (2016-12-22)
 #     original creation
-#   Dave Durden (2016-05-30)
+#   Dave Durden (2017-05-30)
 #     Added readme and object description to generated files
+#   Dave Durden (2017-06-04)
+#     Formatting output name to align with NEON DPS
 
 ##############################################################################################################
 #Start of function call to generate NEON HDF5 files
@@ -56,7 +62,9 @@ def.hdf5.crte <- function(
   Site = "SERC", 
   LevlTowr, 
   DirOut, 
-  LevlDp = "dp01"
+  LevlDp = "dp01",
+  Dom = Dom,
+  MethExpd = TRUE
   ) {
   
   
@@ -65,6 +73,9 @@ def.hdf5.crte <- function(
   
   #Directory where the data is being written, need to change locally to add N:
   #datDirOut <- paste("/home/ddurden/eddy/data/L0prime_gold/", Site,"/", dateFileIn,"/", sep = "")
+  
+  #Determine basic vs. expanded
+  ifelse(MethExpd == TRUE, MethOut <- "expanded", MethOut <- "basic")
   
   
   #Check to see if the directory exists, if not create the directory. Recursive required to write nested file directories
@@ -109,7 +120,7 @@ def.hdf5.crte <- function(
   grpList <- base::paste(grpList, "_001", sep = "")
   
   #Output filename
-  fileOut <- base::paste0(DirOut,"/","ECTE_",LevlDp,"_", Site, "_", Date, "_new_format.h5")
+  fileOut <- base::paste0(DirOut,"/","NEON.",Dom,".", Site, "DP4.00200.001.ec-flux.", Date,".", MethOut,".", strftime(Sys.time(), format="%Y-%m-%dT%H:%M:%OSZ", tz="UTC"),".h5")
   #Create the file, create a class
   #Create the file, create a class
   idFile <- rhdf5::H5Fcreate(fileOut)
