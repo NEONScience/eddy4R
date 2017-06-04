@@ -110,7 +110,7 @@ def.para.flow <- function(
       if(MethMeas == "ecte") eddy4R.base::def.dld.zip(Inp = list(Url = "https://www.dropbox.com/s/65azuhnay8ro463/outRefe_20161227.zip?dl=1",
                                           Dir = tempdir()))
       
-      if(MethMeas == "ecse") eddy4R.base::def.dld.zip(Inp = list(Url = "https://www.dropbox.com/s/anlmtxdgn56n867/outRefe.zip?dl=1",
+      if(MethMeas == "ecse") eddy4R.base::def.dld.zip(Inp = list(Url = "https://www.dropbox.com/s/fn0c2wgtuxp461a/outRefe.zip?dl=1",
                                                                  Dir = tempdir()))
       
       
