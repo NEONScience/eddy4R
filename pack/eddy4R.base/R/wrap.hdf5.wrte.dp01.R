@@ -8,6 +8,7 @@
 #' Wrapper function. To write NEON Level 1 data product descriptive statistics (mean, minimum, maximum, variance, number of non-NA points), quality flags and quality metrics, and uncertainty quantification to an output HDF5 file. 
 
 #' @param inpList A list of including dp01 data, quality flags and quality metrics, and uncertainty calculations to package and write to an output HDF5 file
+#' @param FileIn The file name for the input dp0p HDF5 file to grab metadata
 #' @param FileOut The file name for the output HDF5 file
 #' @param SiteLoca Character: Site location.
 #' @param LevlTowr The tower level that the sensor data is being collected in NEON data product convention (HOR_VER)
@@ -36,6 +37,7 @@
 
 wrap.hdf5.wrte.dp01 <- function(
   inpList,
+  FileIn,
   FileOut,
   SiteLoca,
   LevlTowr
@@ -60,4 +62,7 @@ outList$dp01AgrSub$data <- sapply(names(inpList$qfqm), function(x) eddy4R.base::
 outList$dp01AgrSub$qfqm <- sapply(names(inpList$qfqm), function(x) eddy4R.base::def.hdf5.dp01.pack(inpList = inpList$dp01AgrSub$qfqm, time = inpList$dp01AgrSub$time, Dp01 = x))
 
 lapply(names(outList$data), function(x) def.hdf5.wrte.dp01(inpList = outList, FileOut = FileOut, SiteLoca = SiteLoca, LevlTowr = LevlTowr, Dp01 = x))
+
+eddy4R.base::def.para.hdf5.dp01(FileIn = FileIn, FileOut = FileOut))
+
 }
