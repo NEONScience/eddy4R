@@ -58,9 +58,9 @@ tmp <- list()
 invisible(lapply(union(names(inpList$tmp$data), names(inpList$qfqm)), function(x) {
   if(x == "soniAmrs") {
   tmp$idx[[x]] <<- eddy4R.base::def.idx.agr(time = inpList$data$soniAmrs$time, PrdAgr = 60, FreqLoca = 40)
-} else if (x == "soni") {
+#} else if (x == "soni") {
   
-  tmp$idx[[x]] <<- eddy4R.base::def.idx.agr(time = inpList$data$time$UTC, PrdAgr = 120, FreqLoca = 20)
+  #tmp$idx[[x]] <<- eddy4R.base::def.idx.agr(time = inpList$data$time$UTC, PrdAgr = 120, FreqLoca = 20)
 } else {  
   
   tmp$idx[[x]] <<- eddy4R.base::def.idx.agr(time = inpList$data$time$UTC, PrdAgr = 60, FreqLoca = 20)
