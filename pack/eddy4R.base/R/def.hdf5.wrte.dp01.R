@@ -42,12 +42,13 @@ def.hdf5.wrte.dp01 <- function(
   Dp01
 ){
   
-
+#Determine if the output file should be expanded or basic by creating a logical determined from the filename
 MethExpd <- grepl(pattern = "expanded", x = FileOut)
-  
+
+#Create HDF5 connection to the output file  
 fid <- rhdf5::H5Fopen(FileOut)
 
-# Open connection to the group level
+# Open connection to the group levels for data and qfqm for 1-min and 30-min output
 if (Dp01 == "soni")
 {gid01 <- rhdf5::H5Gopen(fid,paste0("/", SiteLoca, "/dp01/data/",Dp01,"/",LevlTowr,"_02m"))
 gid30 <- rhdf5::H5Gopen(fid,paste0("/", SiteLoca, "/dp01/data/",Dp01,"/",LevlTowr,"_30m"))
@@ -81,31 +82,43 @@ lapply(names(inpList$dp01AgrSub$data[[Dp01]]), function(x) {
   }})
 
 
-
+#If statement to determine if output should be expanded or basic
 if(MethExpd == FALSE){
 #Writing 30-min qfqm to output HDF5 file
 lapply(names(inpList$qfqm[[Dp01]]), function(x)  {
+  #convert to integer
   inpList$qfqm[[Dp01]][[x]]$qfFinl <<- as.integer(inpList$qfqm[[Dp01]][[x]]$qfFinl)
+  #convert to integer
   inpList$qfqm[[Dp01]][[x]]$qfSciRevw <<- as.integer(inpList$qfqm[[Dp01]][[x]]$qfSciRevw)
+  #Write 30-min qfqm output to HDF5
   rhdf5::h5writeDataset.data.frame(obj = inpList$qfqm[[Dp01]][[x]][,c("qfFinl","timeBgn","timeEnd")], h5loc = qfid30, name = x, DataFrameAsCompound = TRUE)})
 
 #Writing sub-aggregated (e.g.1-min) qfqm to output HDF5 file
 lapply(names(inpList$dp01AgrSub$qfqm[[Dp01]]), function(x)  {
-  inpList$dp01AgrSub$qfqm[[Dp01]][[x]]$qfFinl <<- as.integer(inpList$dp01AgrSub$qfqm[[Dp01]][[x]]$qfFinl)
-  inpList$dp01AgrSub$qfqm[[Dp01]][[x]]$qfSciRevw <<- as.integer(inpList$dp01AgrSub$qfqm[[Dp01]][[x]]$qfSciRevw)
+  #convert to integer
+  inpList$dp01AgrSub$qfqm[[Dp01]][[x]]$qfFinl <<- as.integer(inpList$dp01AgrSub$qfqm[[Dp01]][[x]]$qfFinl) 
+  #convert to integer
+  inpList$dp01AgrSub$qfqm[[Dp01]][[x]]$qfSciRevw <<- as.integer(inpList$dp01AgrSub$qfqm[[Dp01]][[x]]$qfSciRevw) 
+  #Write 1-min output to HDF5
   rhdf5::h5writeDataset.data.frame(obj = inpList$dp01AgrSub$qfqm[[Dp01]][[x]][,c("qfFinl","timeBgn","timeEnd")], h5loc = qfid01, name = x, DataFrameAsCompound = TRUE)})
 
 } else {
   
   lapply(names(inpList$qfqm[[Dp01]]), function(x)  {
-    inpList$qfqm[[Dp01]][[x]]$qfFinl <<- as.integer(inpList$qfqm[[Dp01]][[x]]$qfFinl)
+    #convert to integer
+    inpList$qfqm[[Dp01]][[x]]$qfFinl <<- as.integer(inpList$qfqm[[Dp01]][[x]]$qfFinl) 
+    #convert to integer
     inpList$qfqm[[Dp01]][[x]]$qfSciRevw <<- as.integer(inpList$qfqm[[Dp01]][[x]]$qfSciRevw)
+    #Write 30-min qfqm output to HDF5
     rhdf5::h5writeDataset.data.frame(obj = inpList$qfqm[[Dp01]][[x]], h5loc = qfid30, name = x, DataFrameAsCompound = TRUE)})
   
   #Writing sub-aggregated (e.g.1-min) qfqm to output HDF5 file
   lapply(names(inpList$dp01AgrSub$qfqm[[Dp01]]), function(x)  {
-    inpList$dp01AgrSub$qfqm[[Dp01]][[x]]$qfFinl <<- as.integer(inpList$dp01AgrSub$qfqm[[Dp01]][[x]]$qfFinl)
-    inpList$dp01AgrSub$qfqm[[Dp01]][[x]]$qfSciRevw <<- as.integer(inpList$dp01AgrSub$qfqm[[Dp01]][[x]]$qfSciRevw)
+    #convert to integer
+    inpList$dp01AgrSub$qfqm[[Dp01]][[x]]$qfFinl <<- as.integer(inpList$dp01AgrSub$qfqm[[Dp01]][[x]]$qfFinl) 
+    #convert to integer
+    inpList$dp01AgrSub$qfqm[[Dp01]][[x]]$qfSciRevw <<- as.integer(inpList$dp01AgrSub$qfqm[[Dp01]][[x]]$qfSciRevw) 
+    #Write 1-min output to HDF5
     rhdf5::h5writeDataset.data.frame(obj = inpList$dp01AgrSub$qfqm[[Dp01]][[x]], h5loc = qfid01, name = x, DataFrameAsCompound = TRUE)})
   }
 
