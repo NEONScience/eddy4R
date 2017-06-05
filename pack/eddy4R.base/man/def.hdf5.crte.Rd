@@ -4,18 +4,21 @@
 \alias{def.hdf5.crte}
 \title{Definition function: Create the ECTE HDF5 file structure}
 \usage{
-def.hdf5.crte(Date, Site = "SERC", LevlTowr, DirOut, LevlDp = "dp01")
+def.hdf5.crte(Date, Site = "SERC", LevlTowr, DirOut, Dom = Dom,
+  MethExpd = TRUE)
 }
 \arguments{
-\item{\code{Date}}{is the date for the output file being generated.}
+\item{Date}{is the date for the output file being generated.}
 
-\item{\code{Site}}{is the site for which the output file is being generated.}
+\item{Site}{is the site for which the output file is being generated.}
 
-\item{\code{LevlTowr}}{is the measurement level of the tower top to determine the VER number of the NEON DP naming convention.}
+\item{LevlTowr}{is the measurement level of the tower top to determine the VER number of the NEON DP naming convention.}
 
-\item{\code{DirOut}}{is the output directory where the file being generated is stored.}
+\item{DirOut}{is the output directory where the file being generated is stored.}
 
-\item{\code{LevlDp}}{is output file DP level for the file naming.}
+\item{Dom}{is the NEON domain}
+
+\item{MethExpd}{logical indicating if the output should be expanded or basic}
 }
 \value{
 A NEON formatted HDF5 file that is output to /code{DirOut} with a readme and object description included.
@@ -28,13 +31,14 @@ Definition function. Function creates the standard NEON HDF5 file structure for 
 #Setting Site
 Site <- "SERC"
 LevlTowr <- "000_060"
-LevlDp <- "dp01"
+Dom <- "D02"
+MethExpd <- TRUE
 #Setting Date to be processed
 Date <- "2016-04-24"
 #Set directory for example output to working directory
 DirOut <- getwd()
 #Running example
-def.hdf5.crte(Date = Date, Site = Site, LevlTowr = LevlTowr, DirOut = DirOut, LevlDp)
+def.hdf5.crte(Date = Date, Site = Site, LevlTowr = LevlTowr, DirOut = DirOut, Dom = Dom, MethExpd = MethExpd)
 }
 \references{
 License: GNU AFFERO GENERAL PUBLIC LICENSE Version 3, 19 November 2007.
