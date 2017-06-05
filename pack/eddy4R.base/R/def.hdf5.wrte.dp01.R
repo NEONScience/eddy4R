@@ -49,17 +49,17 @@ MethExpd <- grepl(pattern = "expanded", x = FileOut)
 fid <- rhdf5::H5Fopen(FileOut)
 
 # Open connection to the group levels for data and qfqm for 1-min and 30-min output
-if (Dp01 == "soni")
-{gid01 <- rhdf5::H5Gopen(fid,paste0("/", SiteLoca, "/dp01/data/",Dp01,"/",LevlTowr,"_02m"))
-gid30 <- rhdf5::H5Gopen(fid,paste0("/", SiteLoca, "/dp01/data/",Dp01,"/",LevlTowr,"_30m"))
-qfid01 <- rhdf5::H5Gopen(fid,paste0("/", SiteLoca, "/dp01/qfqm/",Dp01,"/",LevlTowr,"_02m"))
-qfid30 <- rhdf5::H5Gopen(fid,paste0("/", SiteLoca, "/dp01/qfqm/",Dp01,"/",LevlTowr,"_30m"))
-} else {
+# if (Dp01 == "soni")
+# {gid01 <- rhdf5::H5Gopen(fid,paste0("/", SiteLoca, "/dp01/data/",Dp01,"/",LevlTowr,"_02m"))
+# gid30 <- rhdf5::H5Gopen(fid,paste0("/", SiteLoca, "/dp01/data/",Dp01,"/",LevlTowr,"_30m"))
+# qfid01 <- rhdf5::H5Gopen(fid,paste0("/", SiteLoca, "/dp01/qfqm/",Dp01,"/",LevlTowr,"_02m"))
+# qfid30 <- rhdf5::H5Gopen(fid,paste0("/", SiteLoca, "/dp01/qfqm/",Dp01,"/",LevlTowr,"_30m"))
+# } else {
   gid01 <- rhdf5::H5Gopen(fid,paste0("/", SiteLoca, "/dp01/data/",Dp01,"/",LevlTowr,"_01m"))
   gid30 <- rhdf5::H5Gopen(fid,paste0("/", SiteLoca, "/dp01/data/",Dp01,"/",LevlTowr,"_30m"))
   qfid01 <- rhdf5::H5Gopen(fid,paste0("/", SiteLoca, "/dp01/qfqm/",Dp01,"/",LevlTowr,"_01m"))
   qfid30 <- rhdf5::H5Gopen(fid,paste0("/", SiteLoca, "/dp01/qfqm/",Dp01,"/",LevlTowr,"_30m"))
-}
+#}
 
 #Writing 30-min data to output HDF5 file
 lapply(names(inpList$data[[Dp01]]), function(x) rhdf5::h5writeDataset.data.frame(obj = inpList$data[[Dp01]][[x]], h5loc = gid30, name = x, DataFrameAsCompound = TRUE))
