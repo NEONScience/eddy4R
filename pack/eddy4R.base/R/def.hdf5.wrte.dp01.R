@@ -61,67 +61,67 @@ qfid30 <- rhdf5::H5Gopen(fid,paste0("/", SiteLoca, "/dp01/qfqm/",Dp01,"/",LevlTo
 }
 
 #Writing 30-min data to output HDF5 file
-lapply(names(inpList$data), function(x) rhdf5::h5writeDataset.data.frame(obj = inpList$data[[x]], h5loc = gid30, name = x, DataFrameAsCompound = TRUE))
+lapply(names(inpList$data[[Dp01]]), function(x) rhdf5::h5writeDataset.data.frame(obj = inpList$data[[Dp01]][[x]], h5loc = gid30, name = x, DataFrameAsCompound = TRUE))
 
 #Writing sub-aggregated (e.g.1-min) data to output HDF5 file
-lapply(names(inpList$dp01AgrSub$data), function(x) rhdf5::h5writeDataset.data.frame(obj = inpList$dp01AgrSub$data[[x]], h5loc = gid01, name = x, DataFrameAsCompound = TRUE))
+lapply(names(inpList$dp01AgrSub$data[[Dp01]]), function(x) rhdf5::h5writeDataset.data.frame(obj = inpList$dp01AgrSub$data[[Dp01]][[x]], h5loc = gid01, name = x, DataFrameAsCompound = TRUE))
 
 #Writing 30-min data unit attributes to output HDF5 file
-lapply(names(inpList$data), function(x) {
-  if (!is.null(attributes(inpList$data[[x]])$unit) == TRUE){
+lapply(names(inpList$data[[Dp01]]), function(x) {
+  if (!is.null(attributes(inpList$data[[Dp01]][[x]])$unit) == TRUE){
     dgid <- rhdf5::H5Dopen(gid30, x)
-    rhdf5::h5writeAttribute(attributes(inpList$data[[x]])$unit, h5obj = dgid, name = "unit")
+    rhdf5::h5writeAttribute(attributes(inpList$data[[Dp01]][[x]])$unit, h5obj = dgid, name = "unit")
   }})
 
 #Writing sub-aggregated (e.g.1-min) data unit attributes to output HDF5 file
-lapply(names(inpList$dp01AgrSub$data), function(x) {
-  if (!is.null(attributes(inpList$dp01AgrSub$data[[x]])$unit) == TRUE){
+lapply(names(inpList$dp01AgrSub$data[[Dp01]]), function(x) {
+  if (!is.null(attributes(inpList$dp01AgrSub$data[[Dp01]][[x]])$unit) == TRUE){
     dgid <- rhdf5::H5Dopen(gid01, x)
-    rhdf5::h5writeAttribute(attributes(inpList$dp01AgrSub$data[[x]])$unit, h5obj = dgid, name = "unit")
+    rhdf5::h5writeAttribute(attributes(inpList$dp01AgrSub$data[[Dp01]][[x]])$unit, h5obj = dgid, name = "unit")
   }})
 
 
 
 if(MethExpd == FALSE){
 #Writing 30-min qfqm to output HDF5 file
-lapply(names(inpList$qfqm), function(x)  {
-  inpList$qfqm[[x]]$qfFinl <<- as.integer(inpList$qfqm[[x]]$qfFinl)
-  inpList$qfqm[[x]]$qfSciRevw <<- as.integer(inpList$qfqm[[x]]$qfSciRevw)
-  rhdf5::h5writeDataset.data.frame(obj = inpList$qfqm[[x]][,c("qfFinl","timeBgn","timeEnd")], h5loc = qfid30, name = x, DataFrameAsCompound = TRUE)})
+lapply(names(inpList$qfqm[[Dp01]]), function(x)  {
+  inpList$qfqm[[Dp01]][[x]]$qfFinl <<- as.integer(inpList$qfqm[[Dp01]][[x]]$qfFinl)
+  inpList$qfqm[[Dp01]][[x]]$qfSciRevw <<- as.integer(inpList$qfqm[[Dp01]][[x]]$qfSciRevw)
+  rhdf5::h5writeDataset.data.frame(obj = inpList$qfqm[[Dp01]][[x]][,c("qfFinl","timeBgn","timeEnd")], h5loc = qfid30, name = x, DataFrameAsCompound = TRUE)})
 
 #Writing sub-aggregated (e.g.1-min) qfqm to output HDF5 file
-lapply(names(inpList$dp01AgrSub$qfqm), function(x)  {
-  inpList$dp01AgrSub$qfqm[[x]]$qfFinl <<- as.integer(inpList$dp01AgrSub$qfqm[[x]]$qfFinl)
-  inpList$dp01AgrSub$qfqm[[x]]$qfSciRevw <<- as.integer(inpList$dp01AgrSub$qfqm[[x]]$qfSciRevw)
-  rhdf5::h5writeDataset.data.frame(obj = inpList$dp01AgrSub$qfqm[[x]][,c("qfFinl","timeBgn","timeEnd")], h5loc = qfid01, name = x, DataFrameAsCompound = TRUE)})
+lapply(names(inpList$dp01AgrSub$qfqm[[Dp01]]), function(x)  {
+  inpList$dp01AgrSub$qfqm[[Dp01]][[x]]$qfFinl <<- as.integer(inpList$dp01AgrSub$qfqm[[Dp01]][[x]]$qfFinl)
+  inpList$dp01AgrSub$qfqm[[Dp01]][[x]]$qfSciRevw <<- as.integer(inpList$dp01AgrSub$qfqm[[Dp01]][[x]]$qfSciRevw)
+  rhdf5::h5writeDataset.data.frame(obj = inpList$dp01AgrSub$qfqm[[Dp01]][[x]][,c("qfFinl","timeBgn","timeEnd")], h5loc = qfid01, name = x, DataFrameAsCompound = TRUE)})
 
 } else {
   
-  lapply(names(inpList$qfqm), function(x)  {
-    inpList$qfqm[[x]]$qfFinl <<- as.integer(inpList$qfqm[[x]]$qfFinl)
-    inpList$qfqm[[x]]$qfSciRevw <<- as.integer(inpList$qfqm[[x]]$qfSciRevw)
-    rhdf5::h5writeDataset.data.frame(obj = inpList$qfqm[[x]], h5loc = qfid30, name = x, DataFrameAsCompound = TRUE)})
+  lapply(names(inpList$qfqm[[Dp01]]), function(x)  {
+    inpList$qfqm[[Dp01]][[x]]$qfFinl <<- as.integer(inpList$qfqm[[Dp01]][[x]]$qfFinl)
+    inpList$qfqm[[Dp01]][[x]]$qfSciRevw <<- as.integer(inpList$qfqm[[Dp01]][[x]]$qfSciRevw)
+    rhdf5::h5writeDataset.data.frame(obj = inpList$qfqm[[Dp01]][[x]], h5loc = qfid30, name = x, DataFrameAsCompound = TRUE)})
   
   #Writing sub-aggregated (e.g.1-min) qfqm to output HDF5 file
-  lapply(names(inpList$dp01AgrSub$qfqm), function(x)  {
-    inpList$dp01AgrSub$qfqm[[x]]$qfFinl <<- as.integer(inpList$dp01AgrSub$qfqm[[x]]$qfFinl)
-    inpList$dp01AgrSub$qfqm[[x]]$qfSciRevw <<- as.integer(inpList$dp01AgrSub$qfqm[[x]]$qfSciRevw)
-    rhdf5::h5writeDataset.data.frame(obj = inpList$dp01AgrSub$qfqm[[x]], h5loc = qfid01, name = x, DataFrameAsCompound = TRUE)})
+  lapply(names(inpList$dp01AgrSub$qfqm[[Dp01]]), function(x)  {
+    inpList$dp01AgrSub$qfqm[[Dp01]][[x]]$qfFinl <<- as.integer(inpList$dp01AgrSub$qfqm[[Dp01]][[x]]$qfFinl)
+    inpList$dp01AgrSub$qfqm[[Dp01]][[x]]$qfSciRevw <<- as.integer(inpList$dp01AgrSub$qfqm[[Dp01]][[x]]$qfSciRevw)
+    rhdf5::h5writeDataset.data.frame(obj = inpList$dp01AgrSub$qfqm[[Dp01]][[x]], h5loc = qfid01, name = x, DataFrameAsCompound = TRUE)})
   }
 
 
 #Writing 30-min qfqm unit attributes to output HDF5 file
-lapply(names(inpList$qfqm), function(x) {
-  if (!is.null(attributes(inpList$qfqm[[x]])$unit) == TRUE){
+lapply(names(inpList$qfqm[[Dp01]]), function(x) {
+  if (!is.null(attributes(inpList$qfqm[[Dp01]][[x]])$unit) == TRUE){
     dgid <- rhdf5::H5Dopen(qfid30, x)
-    rhdf5::h5writeAttribute(attributes(inpList$qfqm[[x]])$unit, h5obj = dgid, name = "unit")
+    rhdf5::h5writeAttribute(attributes(inpList$qfqm[[Dp01]][[x]])$unit, h5obj = dgid, name = "unit")
   }})
 
 #Writing sub-aggregated (e.g.1-min) qfqm unit attributes to output HDF5 file
-lapply(names(inpList$dp01AgrSub$qfqm), function(x) {
-  if (!is.null(attributes(inpList$dp01AgrSub$qfqm[[x]])$unit) == TRUE){
+lapply(names(inpList$dp01AgrSub$qfqm[[Dp01]]), function(x) {
+  if (!is.null(attributes(inpList$dp01AgrSub$qfqm[[Dp01]][[x]])$unit) == TRUE){
     dgid <- rhdf5::H5Dopen(qfid01, x)
-    rhdf5::h5writeAttribute(attributes(inpList$dp01AgrSub$qfqm[[x]])$unit, h5obj = dgid, name = "unit")
+    rhdf5::h5writeAttribute(attributes(inpList$dp01AgrSub$qfqm[[Dp01]][[x]])$unit, h5obj = dgid, name = "unit")
   }})
 
 
