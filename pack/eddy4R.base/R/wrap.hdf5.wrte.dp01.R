@@ -44,8 +44,8 @@ wrap.hdf5.wrte.dp01 <- function(
 ){
 
 
-#for(idxDp01 in names(OUT$data)[which(names(OUT$data) != "time")]) {
 
+#Initializing output list
 outList <- list()
 
 
@@ -61,8 +61,10 @@ outList$dp01AgrSub$data <- sapply(names(inpList$qfqm), function(x) eddy4R.base::
 #Packaging sub-aggregated (e.g.1-min) dp01 qfqm for writing to HDF5 file
 outList$dp01AgrSub$qfqm <- sapply(names(inpList$qfqm), function(x) eddy4R.base::def.hdf5.dp01.pack(inpList = inpList$dp01AgrSub$qfqm, time = inpList$dp01AgrSub$time, Dp01 = x))
 
+#Applying the HDF5 write output function across all DPs
 lapply(names(outList$data), function(x) eddy4R.base::def.hdf5.wrte.dp01(inpList = outList, FileOut = FileOut, SiteLoca = SiteLoca, LevlTowr = LevlTowr, Dp01 = x))
 
+#Writing metadata from input dp0p file to output dp01 file
 eddy4R.base::def.para.hdf5.dp01(FileIn = FileIn, FileOut = FileOut)
 
 }
