@@ -6,13 +6,14 @@
 
 #' @description 
 #' Definition function. Function creates the standard NEON HDF5 file structure for the ECTE data products.
-#' @param \code{Date} is the date for the output file being generated.
-#' @param \code{Site} is the site for which the output file is being generated.
-#' @param \code{LevlTowr} is the measurement level of the tower top to determine the VER number of the NEON DP naming convention.
-#' @param \code{DirOut} is the output directory where the file being generated is stored.
-#' @param \code{LevlDp} is output file DP level for the file naming.
+#' @param Date is the date for the output file being generated.
+#' @param Site is the site for which the output file is being generated.
+#' @param LevlTowr is the measurement level of the tower top to determine the VER number of the NEON DP naming convention.
+#' @param DirOut is the output directory where the file being generated is stored.
+#' @param Dom is the NEON domain
+#' @param MethExpd logical indicating if the output should be expanded or basic
 
-#' @return A NEON formatted HDF5 file that is output to /code{DirOut} 
+#' @return A NEON formatted HDF5 file that is output to /code{DirOut} with a readme and object description included.
 
 #' @references
 #' License: GNU AFFERO GENERAL PUBLIC LICENSE Version 3, 19 November 2007.
@@ -26,7 +27,8 @@
 #'#Setting Site
 #'Site <- "SERC"
 #'LevlTowr <- "000_060"
-#'LevlDp <- "dp01"
+#'Dom <- "D02"
+#'MethExpd <- TRUE
 
 #'#Setting Date to be processed
 #'Date <- "2016-04-24"
@@ -35,7 +37,7 @@
 #'DirOut <- getwd()
 
 #'#Running example
-#'def.hdf5.crte(Date = Date, Site = Site, LevlTowr = LevlTowr, DirOut = DirOut, LevlDp)
+#'def.hdf5.crte(Date = Date, Site = Site, LevlTowr = LevlTowr, DirOut = DirOut, Dom = Dom, MethExpd = MethExpd)
 
 #' @seealso Currently none
 
@@ -44,6 +46,10 @@
 # changelog and author contributions / copyrights
 #   Dave Durden (2016-12-22)
 #     original creation
+#   Dave Durden (2017-05-30)
+#     Added readme and object description to generated files
+#   Dave Durden (2017-06-04)
+#     Formatting output name to align with NEON DPS
 
 ##############################################################################################################
 #Start of function call to generate NEON HDF5 files
@@ -54,19 +60,38 @@ def.hdf5.crte <- function(
   Site = "SERC", 
   LevlTowr, 
   DirOut, 
-  LevlDp = "dp01"
+  Dom = Dom,
+  MethExpd = TRUE
   ) {
   
   
   #fomatting Date for file names
-  dateFileIn <- gsub(pattern = "-", replacement = "", x = Date)
+  dateFileIn <- base::gsub(pattern = "-", replacement = "", x = Date)
   
   #Directory where the data is being written, need to change locally to add N:
   #datDirOut <- paste("/home/ddurden/eddy/data/L0prime_gold/", Site,"/", dateFileIn,"/", sep = "")
   
+  #Determine basic vs. expanded
+  base::ifelse(MethExpd == TRUE, MethOut <- "expanded", MethOut <- "basic")
+  
   
   #Check to see if the directory exists, if not create the directory. Recursive required to write nested file directories
-  if (dir.exists(DirOut) == FALSE) dir.create(DirOut, recursive = TRUE)
+  if (base::dir.exists(DirOut) == FALSE) base::dir.create(DirOut, recursive = TRUE)
+
+  
+  #Download file description readme and object list  
+  eddy4R.base::def.dld.zip(Inp = list(Url = "https://www.dropbox.com/s/dqq3j7epiy98y29/fileDesc.zip?dl=1",
+                                      Dir = DirOut))
+  
+  #Store the path to the readme file
+  fileNameReadMe <- base::list.files( path = base::paste0(DirOut,"/fileDesc"), pattern = ".txt", full.names = TRUE)
+  #Store the path to the object description file
+  fileNameObjDesc <- base::list.files( path = base::paste0(DirOut,"/fileDesc/"), pattern = ".csv", full.names = TRUE)
+  #Read in the readme file
+  readMe <- base::readChar(fileNameReadMe, base::file.info(fileNameReadMe)$size)
+  #Read in the object description file
+  objDesc <- utils::read.csv(fileNameObjDesc,header = TRUE, stringsAsFactors = FALSE)
+  
   
   #Create a connection to the workbook
   #wk <- loadWorkbook("/home/ddurden/eddy/data/Thresholds_EC/NEON_HDF5_metadata.xlsx") 
@@ -89,14 +114,21 @@ def.hdf5.crte <- function(
   #              "irgaPresValiRegOut","irgaPump","irgaSndLeakHeat",
   #              "irgaSndValiHut","irgaSndValiNema",)
   #The DP level, the data product ID and the Rev number
-  grpList <- paste(grpList, "_001", sep = "")
+  grpList <- base::paste(grpList, "_001", sep = "")
   
+  #Output filename - the data product number is the umbrella EC data product number
+  fileOut <- base::paste0(DirOut,"/","NEON.",Dom,".", Site, ".DP4.00200.001.ec-flux.", Date,".", MethOut,".", base::strftime(base::Sys.time(), format="%Y%m%dT%H%M%SZ", tz="UTC"),".h5")
   #Create the file, create a class
   #Create the file, create a class
-  idFile <- rhdf5::H5Fcreate(paste0(DirOut,"/","ECTE_",LevlDp,"_", Site, "_", Date, "_new_format.h5"))
+  idFile <- rhdf5::H5Fcreate(fileOut)
   #If the file is already created use:
   #idFile <- H5Fopen("HDF5TIS_L0_prototype.h5")
   
+  # Write the readme as a data table to the HDF5 file
+  rhdf5::h5writeDataset.character(obj = readMe, h5loc = idFile, name = "readMe")
+  
+  # Write the object description as a data table in  the HDF5 file
+  rhdf5::h5writeDataset.data.frame(obj = objDesc, h5loc = idFile, name = "objDesc")
   #Create a group level for SERC
   idSite <- rhdf5::H5Gcreate(idFile, Site) 
   #If the group is already created use:
@@ -129,11 +161,13 @@ def.hdf5.crte <- function(
   lapply(grpListDp01, function(x) rhdf5::H5Gcreate(idQfqmLvlDp01, x))
   lapply(grpListDp01, function(x) rhdf5::H5Gcreate(idDataLvlDp01, paste0(x,"/",LevlTowr,"_30m")))
   lapply(grpListDp01, function(x) {
-    print(x)
-    if(x == "soni"){rhdf5::H5Gcreate(idDataLvlDp01, paste0(x,"/",LevlTowr,"_02m"))} else {rhdf5::H5Gcreate(idDataLvlDp01, paste0(x,"/",LevlTowr,"_01m"))}})
+   # print(x)
+   # if(x == "soni"){rhdf5::H5Gcreate(idDataLvlDp01, paste0(x,"/",LevlTowr,"_02m"))} else {
+    rhdf5::H5Gcreate(idDataLvlDp01, paste0(x,"/",LevlTowr,"_01m"))})
   lapply(grpListDp01, function(x) rhdf5::H5Gcreate(idQfqmLvlDp01, paste0(x,"/",LevlTowr,"_30m")))
   lapply(grpListDp01, function(x) {
-    if(x == "soni") {rhdf5::H5Gcreate(idQfqmLvlDp01, paste0(x,"/",LevlTowr,"_02m"))} else {rhdf5::H5Gcreate(idQfqmLvlDp01, paste0(x,"/",LevlTowr,"_01m"))}})
+   # if(x == "soni") {rhdf5::H5Gcreate(idQfqmLvlDp01, paste0(x,"/",LevlTowr,"_02m"))} else {
+    rhdf5::H5Gcreate(idQfqmLvlDp01, paste0(x,"/",LevlTowr,"_01m"))})
   
  # idDataLvlDp01HorVer <- H5Gopen(idDataLvlDp01, paste0("irgaCo2/",LevlTowr,"_30m"))
   #sid <- H5Screate_simple(c(0,0,0))
