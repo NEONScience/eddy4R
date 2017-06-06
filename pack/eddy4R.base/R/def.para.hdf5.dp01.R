@@ -57,7 +57,7 @@ listGrp <- base::paste(listPara$group, listPara$name, sep = "/") # Combining out
 
 
 # read attributes from input file
-listAttr <- base::lapply(listGrp, h5readAttributes, file = FileIn)
+listAttr <- base::lapply(listGrp, rhdf5::h5readAttributes, file = FileIn)
 
 
 #Apply group names to the attributes list
@@ -72,8 +72,11 @@ fid <- rhdf5::H5Fopen(FileOut)
   
 #Write the attributes to the new file
 lapply(names(listAttr), function(x){
+  
+  #x <- "/CPER/dp0p/data/irga_001/000_020"
   gid <- rhdf5::H5Oopen(fid, x)
  base::lapply(names(listAttr[[x]]), function(y){
+   #y <- names(listAttr[[x]])[1]
    rhdf5::h5writeAttribute(attr = listAttr[[x]][[y]], h5obj = gid, name = y)})
 })
 
