@@ -29,6 +29,8 @@
 # changelog and author contributions / copyrights 
 #   David Durden (2017-06-04)
 #     original creation
+#   David Durden (2017-06-04)
+#     Adding ucrt to dp01 output HDF5
 ##############################################################################################
 
 
@@ -48,17 +50,22 @@ MethExpd <- grepl(pattern = "expanded", x = FileOut)
 #Create HDF5 connection to the output file  
 fid <- rhdf5::H5Fopen(FileOut)
 
-# Open connection to the group levels for data and qfqm for 1-min and 30-min output
+# Was used to open connection to the group levels for data and qfqm for 1-min, 2-min (soni) and 30-min output
 # if (Dp01 == "soni")
 # {gid01 <- rhdf5::H5Gopen(fid,paste0("/", SiteLoca, "/dp01/data/",Dp01,"/",LevlTowr,"_02m"))
 # gid30 <- rhdf5::H5Gopen(fid,paste0("/", SiteLoca, "/dp01/data/",Dp01,"/",LevlTowr,"_30m"))
 # qfid01 <- rhdf5::H5Gopen(fid,paste0("/", SiteLoca, "/dp01/qfqm/",Dp01,"/",LevlTowr,"_02m"))
 # qfid30 <- rhdf5::H5Gopen(fid,paste0("/", SiteLoca, "/dp01/qfqm/",Dp01,"/",LevlTowr,"_30m"))
 # } else {
+
+# Open connection to the group levels for data and qfqm for 1-min and 30-min output
+# data group level connections
 idData01 <- rhdf5::H5Gopen(fid,paste0("/", SiteLoca, "/dp01/data/",Dp01,"/",LevlTowr,"_01m"))
 idData30 <- rhdf5::H5Gopen(fid,paste0("/", SiteLoca, "/dp01/data/",Dp01,"/",LevlTowr,"_30m"))
+# qfqm group level connections
 idQfqm01 <- rhdf5::H5Gopen(fid,paste0("/", SiteLoca, "/dp01/qfqm/",Dp01,"/",LevlTowr,"_01m"))
 idQfqm30 <- rhdf5::H5Gopen(fid,paste0("/", SiteLoca, "/dp01/qfqm/",Dp01,"/",LevlTowr,"_30m"))
+# ucrt group level connections
 idUcrt01 <- rhdf5::H5Gopen(fid,paste0("/", SiteLoca, "/dp01/qfqm/",Dp01,"/",LevlTowr,"_01m"))
 idUcrt30 <- rhdf5::H5Gopen(fid,paste0("/", SiteLoca, "/dp01/qfqm/",Dp01,"/",LevlTowr,"_30m"))
 #}
@@ -147,20 +154,20 @@ lapply(names(inpList$dp01AgrSub$qfqm[[Dp01]]), function(x) {
 ##########################################################################################
 #Ucrt
 ##########################################################################################
-#Writing 30-min data to output HDF5 file
+#Writing 30-min ucrt to output HDF5 file
 lapply(names(inpList$ucrt[[Dp01]]), function(x) rhdf5::h5writeDataset.data.frame(obj = inpList$ucrt[[Dp01]][[x]], h5loc = idUcrt30, name = x, DataFrameAsCompound = TRUE))
 
-#Writing sub-aggregated (e.g.1-min) data to output HDF5 file
+#Writing sub-aggregated (e.g.1-min) ucrt to output HDF5 file
 lapply(names(inpList$dp01AgrSub$ucrt[[Dp01]]), function(x) rhdf5::h5writeDataset.data.frame(obj = inpList$dp01AgrSub$ucrt[[Dp01]][[x]], h5loc = idUcrt01, name = x, DataFrameAsCompound = TRUE))
 
-#Writing 30-min data unit attributes to output HDF5 file
+#Writing 30-min ucrt unit attributes to output HDF5 file
 lapply(names(inpList$ucrt[[Dp01]]), function(x) {
   if (!is.null(attributes(inpList$ucrt[[Dp01]][[x]])$unit) == TRUE){
     dgid <- rhdf5::H5Dopen(idUcrt30, x)
     rhdf5::h5writeAttribute(attributes(inpList$ucrt[[Dp01]][[x]])$unit, h5obj = dgid, name = "unit")
   }})
 
-#Writing sub-aggregated (e.g.1-min) data unit attributes to output HDF5 file
+#Writing sub-aggregated (e.g.1-min) ucrt unit attributes to output HDF5 file
 lapply(names(inpList$dp01AgrSub$ucrt[[Dp01]]), function(x) {
   if (!is.null(attributes(inpList$dp01AgrSub$ucrt[[Dp01]][[x]])$unit) == TRUE){
     dgid <- rhdf5::H5Dopen(idUcrt01, x)
