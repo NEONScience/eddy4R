@@ -66,8 +66,8 @@ idData30 <- rhdf5::H5Gopen(fid,paste0("/", SiteLoca, "/dp01/data/",Dp01,"/",Levl
 idQfqm01 <- rhdf5::H5Gopen(fid,paste0("/", SiteLoca, "/dp01/qfqm/",Dp01,"/",LevlTowr,"_01m"))
 idQfqm30 <- rhdf5::H5Gopen(fid,paste0("/", SiteLoca, "/dp01/qfqm/",Dp01,"/",LevlTowr,"_30m"))
 # ucrt group level connections
-idUcrt01 <- rhdf5::H5Gopen(fid,paste0("/", SiteLoca, "/dp01/qfqm/",Dp01,"/",LevlTowr,"_01m"))
-idUcrt30 <- rhdf5::H5Gopen(fid,paste0("/", SiteLoca, "/dp01/qfqm/",Dp01,"/",LevlTowr,"_30m"))
+idUcrt01 <- rhdf5::H5Gopen(fid,paste0("/", SiteLoca, "/dp01/ucrt/",Dp01,"/",LevlTowr,"_01m"))
+idUcrt30 <- rhdf5::H5Gopen(fid,paste0("/", SiteLoca, "/dp01/ucrt/",Dp01,"/",LevlTowr,"_30m"))
 #}
 
 ##########################################################################################
