@@ -159,15 +159,13 @@ def.hdf5.crte <- function(
   grpListDp01 <- c("soniAmrs", "irgaCo2", "irgaH2o", "soni")
   lapply(grpListDp01, function(x) rhdf5::H5Gcreate(idDataLvlDp01, x))
   lapply(grpListDp01, function(x) rhdf5::H5Gcreate(idQfqmLvlDp01, x))
+  lapply(grpListDp01, function(x) rhdf5::H5Gcreate(idUcrtLvlDp01, x))
   lapply(grpListDp01, function(x) rhdf5::H5Gcreate(idDataLvlDp01, paste0(x,"/",LevlTowr,"_30m")))
-  lapply(grpListDp01, function(x) {
-   # print(x)
-   # if(x == "soni"){rhdf5::H5Gcreate(idDataLvlDp01, paste0(x,"/",LevlTowr,"_02m"))} else {
-    rhdf5::H5Gcreate(idDataLvlDp01, paste0(x,"/",LevlTowr,"_01m"))})
+  lapply(grpListDp01, function(x) rhdf5::H5Gcreate(idDataLvlDp01, paste0(x,"/",LevlTowr,"_01m")))
   lapply(grpListDp01, function(x) rhdf5::H5Gcreate(idQfqmLvlDp01, paste0(x,"/",LevlTowr,"_30m")))
-  lapply(grpListDp01, function(x) {
-   # if(x == "soni") {rhdf5::H5Gcreate(idQfqmLvlDp01, paste0(x,"/",LevlTowr,"_02m"))} else {
-    rhdf5::H5Gcreate(idQfqmLvlDp01, paste0(x,"/",LevlTowr,"_01m"))})
+  lapply(grpListDp01, function(x) rhdf5::H5Gcreate(idQfqmLvlDp01, paste0(x,"/",LevlTowr,"_01m")))
+  lapply(grpListDp01, function(x) rhdf5::H5Gcreate(idUcrtLvlDp01, paste0(x,"/",LevlTowr,"_30m")))
+  lapply(grpListDp01, function(x) rhdf5::H5Gcreate(idUcrtLvlDp01, paste0(x,"/",LevlTowr,"_01m")))
   
  # idDataLvlDp01HorVer <- H5Gopen(idDataLvlDp01, paste0("irgaCo2/",LevlTowr,"_30m"))
   #sid <- H5Screate_simple(c(0,0,0))
