@@ -5,9 +5,10 @@
 \title{Definition function: Determine the workflow variables}
 \usage{
 def.para.flow(Deve = TRUE, DirFilePara = NULL, DirInp = NA, DirMnt = NA,
-  DirOut = NA, DirTmp = NA, DirWrk = NA, FileDp0p = NULL, Loc = NULL,
-  Read = "hdf5", VersDp = c("001", "004")[1], VersEddy = "latest",
-  MethParaFlow = c("DfltInp", "EnvVar")[1], ...)
+  DirOut = NA, DirTmp = NA, DirWrk = NA, Dom = NA, FileDp0p = NULL,
+  Loc = NULL, Read = "hdf5", VersDp = c("001", "004")[1],
+  VersEddy = "latest", MethParaFlow = c("DfltInp", "EnvVar")[1],
+  MethMeas = c("ecte", "ecse")[1], ...)
 }
 \arguments{
 \item{Deve}{is logical that determines if only a subset of the data should be read in to reduce testing time during development (\code{Deve = TRUE}) or all the input data should be read in (\code{Deve = FALSE})}
@@ -24,6 +25,8 @@ def.para.flow(Deve = TRUE, DirFilePara = NULL, DirInp = NA, DirMnt = NA,
 
 \item{DirWrk}{is directory path for working storage during processing}
 
+\item{Dom}{is the NEON domain the site is located in}
+
 \item{FileDp0p}{is a character string that lists the dates to be processed}
 
 \item{Loc}{is site where the data was collected (NEON 4 letter code, e.g. SERC)}
@@ -35,9 +38,11 @@ def.para.flow(Deve = TRUE, DirFilePara = NULL, DirInp = NA, DirMnt = NA,
 \item{VersEddy}{is the version of the eddy4R docker that is being used to perform the processing}
 
 \item{MethParaFlow}{is the method used to specify workflow parameters, "EnvVar" will grab ParaFlow parameters from environmental variable and "DfltInp" will use whatever is specified in the function call.}
+
+\item{MethMeas}{A vector of class "character" containing the name of measurement method (eddy-covariance turbulent exchange or storage exchange), MethMeas = c("ecte", "ecse"). Defaults to "ecte".}
 }
 \value{
-\code{ParaFlow} is a list returned that indicates the workflow control parameters, including \code{ParaFlow$DirFilePara},\code{ParaFlow$DirInp}, \code{ParaFlow$DirMnt}, \code{ParaFlow$DirOut}, \code{ParaFlow$DirTmp}, \code{ParaFlow$DirWrk}, \code{ParaFlow$FileDp0p}, \code{ParaFlow$Loc},  \code{ParaFlow$Read}, \code{ParaFlow$VersDp}, \code{ParaFlow$VersEddy}.
+\code{ParaFlow} is a list returned that indicates the workflow control parameters, including \code{ParaFlow$DirFilePara},\code{ParaFlow$DirInp}, \code{ParaFlow$DirMnt}, \code{ParaFlow$DirOut}, \code{ParaFlow$DirTmp}, \code{ParaFlow$DirWrk},\code{ParaFlow$Dom}, \code{ParaFlow$FileDp0p}, \code{ParaFlow$Loc},  \code{ParaFlow$Read}, \code{ParaFlow$VersDp}, \code{ParaFlow$VersEddy}.
 }
 \description{
 Definition function. Function to determine the workflow variables by either reading them in from the environmental variables, defining them explicitly, or defining them by default values
