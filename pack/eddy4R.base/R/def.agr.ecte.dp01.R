@@ -94,15 +94,15 @@ MethUcrt = FALSE
       rpt$ucrt[[idxDp01]] <- 
         
         # first call to lapply, targeting the result data.frames to be created (data sub-products: mean, min, max, vari", numSamp)
-        lapply(names(inpList$err$filt[[1]][[idxDp01]]), function(y)
+        lapply(names(inpList$ucrt[[1]][[idxDp01]]$`30m`), function(y)
           
           # second call to lapply, targeting the observations to be combined into the result data.frames
-          do.call(rbind, lapply(1:length(inpList$err$filt), function(x) inpList$err$filt[[x]][[idxDp01]][[y]]$`30m` ))
+          do.call(rbind, lapply(1:length(inpList$ucrt), function(x) inpList$ucrt[[x]][[idxDp01]]$`30m`[[y]] ))
           
         )
       
       # assign names to data.frames      
-      names(rpt$ucrt[[idxDp01]]) <- names(inpList$err$filt[[1]][[idxDp01]]) 
+      names(rpt$ucrt[[idxDp01]]) <- names(inpList$ucrt[[1]][[idxDp01]]$`30m`) 
       
     }
     
@@ -139,15 +139,15 @@ MethUcrt = FALSE
       rpt$dp01AgrSub$ucrt[[idxDp01]] <- 
         
         # first call to lapply, targeting the result data.frames to be created (data sub-products: mean, min, max, vari", numSamp)
-        lapply(names(inpList$err$filt[[1]][[idxDp01]]), function(y)
+        lapply(names(inpList$ucrt[[1]][[idxDp01]]$`01m`), function(y)
           
           # second call to lapply, targeting the observations to be combined into the result data.frames
-          do.call(rbind, lapply(1:length(inpList$err$filt), function(x) inpList$err$filt[[x]][[idxDp01]][[y]][[1]])) #The shorter time period will always come before the 30min output
+          do.call(rbind, lapply(1:length(inpList$ucrt), function(x) inpList$ucrt[[x]][[idxDp01]]$`01m`[[y]] ))
           
         )
       
       # assign names to data.frames      
-      names(rpt$ucrt[[idxDp01]]) <- names(inpList$err$filt[[1]][[idxDp01]]) 
+      names(rpt$dp01AgrSub$ucrt[[idxDp01]]) <- names(inpList$ucrt[[1]][[idxDp01]]$`01m`) 
       
     }
 
