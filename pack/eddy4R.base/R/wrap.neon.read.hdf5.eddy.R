@@ -14,6 +14,8 @@
 #' @param FreqLoca Integer: Measurement frequency.
 #' @param RngLoca List of named ingegers: Thresholds for range test.
 #' @param DespLoca List of integers: De-spiking parameters
+#' @param MethMeas A vector of class "character" containing the name of measurement method (eddy-covariance turbulent exchange or storage exchange), MethMeas = c("ecte", "ecse"). Defaults to "ecte". 
+
 
 #' @return 
 #' Named list containing pre-processed time-series $time and $data.
@@ -40,6 +42,8 @@
 # 		full implementation requires updating unit-specific behavior of eddy4R.base::def.rglr()
 #   David Durden (2017-02-24)
 #     Updating to new L0p HDF5 file, the unit are now on data table level
+#   Ke Xu (2017-05-22)
+#     adding parameter MethMeas to distinguish different cases for ecte and ecse
 ##############################################################################################
         
 wrap.neon.read.hdf5.eddy <- function(
@@ -53,7 +57,8 @@ wrap.neon.read.hdf5.eddy <- function(
   Diag = FALSE,
   Rng = FALSE,
   RngLoca,
-  DespLoca
+  DespLoca,
+  MethMeas = c("ecte", "ecse")[1]
 ) {
   
 # create regular time dimension
@@ -159,10 +164,18 @@ if(!(DateLoca %in% file)) {
   # read-in data
     
     # read-in hdf5 data from the specified sensor
-    # options via open connection: fid <- H5Fopen(paste0(DirInpLoca, "/ECTE_L0_", SiteLoca, "_", DateLoca, ".h5")); h5ls(fid)
-    data <- rhdf5::h5read(file = base::paste0(DirInpLoca, "/ECTE_dp0p_", SiteLoca, "_", DateLoca, ".h5"),
-                          name = base::paste0("/", SiteLoca, "/dp0p/data/", VarLoca, "_001/",LevlTowr),
-                          read.attributes = TRUE)
+    # options via open connection: fid <- H5Fopen(paste0(DirInpLoca, "/ECSE_L0_", SiteLoca, "_", DateLoca, ".h5")); h5ls(fid)
+  
+   
+  if(MethMeas == "ecte")  data <- rhdf5::h5read(file = base::paste0(DirInpLoca, "/ECTE_dp0p_", SiteLoca, "_", DateLoca, ".h5"),
+                                                name = base::paste0("/", SiteLoca, "/dp0p/data/", VarLoca, "_001/",LevlTowr),
+                                                read.attributes = TRUE)
+  
+  
+  if(MethMeas == "ecse")  data <- rhdf5::h5read(file = base::paste0(DirInpLoca, "/ECSE_dp0p_", SiteLoca, "_", DateLoca, ".h5"),
+                                                name = base::paste0("/", SiteLoca, "/dp0p/data/", VarLoca, "_001/",LevlTowr),
+                                                read.attributes = TRUE)
+  
 
     # convert 1-d array list-elements to vector list-elements
     # can be omitted once Dave figures out to store h5 data tables as vector list-elements
@@ -181,7 +194,12 @@ if(!(DateLoca %in% file)) {
   # assign hdf5 attributes
     
     # read attributes
-    attr <- rhdf5::h5readAttributes(file = base::paste0(DirInpLoca, "/ECTE_dp0p_", SiteLoca, "_", DateLoca, ".h5"),
+  
+  if(MethMeas == "ecte") attr <- rhdf5::h5readAttributes(file = base::paste0(DirInpLoca, "/ECTE_dp0p_", SiteLoca, "_", DateLoca, ".h5"),
+                                                         name = base::paste0("/", SiteLoca, "/dp0p/data/", VarLoca, "_001/", LevlTowr))
+  
+  
+   if(MethMeas == "ecse") attr <- rhdf5::h5readAttributes(file = base::paste0(DirInpLoca, "/ECSE_dp0p_", SiteLoca, "_", DateLoca, ".h5"),
                                     name = base::paste0("/", SiteLoca, "/dp0p/data/", VarLoca, "_001/", LevlTowr))
     
     #########This section not needed after moving the names and units to the data table level###########################

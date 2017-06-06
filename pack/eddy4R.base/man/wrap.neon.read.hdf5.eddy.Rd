@@ -6,7 +6,8 @@
 \usage{
 wrap.neon.read.hdf5.eddy(DirInpLoca, SiteLoca, DateLoca, VarLoca,
   LevlTowr = c("000_040", "000_050", "000_060")[3], FreqLoca, Rglr = FALSE,
-  Diag = FALSE, Rng = FALSE, RngLoca, DespLoca)
+  Diag = FALSE, Rng = FALSE, RngLoca, DespLoca, MethMeas = c("ecte",
+  "ecse")[1])
 }
 \arguments{
 \item{DirInpLoca}{Character: Input directory.}
@@ -24,6 +25,8 @@ wrap.neon.read.hdf5.eddy(DirInpLoca, SiteLoca, DateLoca, VarLoca,
 \item{RngLoca}{List of named ingegers: Thresholds for range test.}
 
 \item{DespLoca}{List of integers: De-spiking parameters}
+
+\item{MethMeas}{A vector of class "character" containing the name of measurement method (eddy-covariance turbulent exchange or storage exchange), MethMeas = c("ecte", "ecse"). Defaults to "ecte".}
 }
 \value{
 Named list containing pre-processed time-series $time and $data.
