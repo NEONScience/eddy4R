@@ -50,6 +50,8 @@
 #     Added readme and object description to generated files
 #   Dave Durden (2017-06-04)
 #     Formatting output name to align with NEON DPS
+#   Dave Durden (2017-06-05)
+#     Adding uncertainty level output
 
 ##############################################################################################################
 #Start of function call to generate NEON HDF5 files
@@ -154,16 +156,22 @@ def.hdf5.crte <- function(
   lapply(grpList, function(x) rhdf5::H5Gcreate(idDataLvlDp0p, x))
   lapply(grpList, function(x) rhdf5::H5Gcreate(idQfqmLvlDp0p, x))
   
-  #Creating level 1 file structures
-  
+  #Creating level 1 file structures########################################
+  #DPs to be used to create levels
   grpListDp01 <- c("soniAmrs", "irgaCo2", "irgaH2o", "soni")
+  #Create dp01 data product levels in data
   lapply(grpListDp01, function(x) rhdf5::H5Gcreate(idDataLvlDp01, x))
+  #Create dp01 data product levels in qfqm
   lapply(grpListDp01, function(x) rhdf5::H5Gcreate(idQfqmLvlDp01, x))
+  #Create dp01 data product levels in ucrt
   lapply(grpListDp01, function(x) rhdf5::H5Gcreate(idUcrtLvlDp01, x))
+  #Create HOR_VER_TMI level for each DP under data
   lapply(grpListDp01, function(x) rhdf5::H5Gcreate(idDataLvlDp01, paste0(x,"/",LevlTowr,"_30m")))
   lapply(grpListDp01, function(x) rhdf5::H5Gcreate(idDataLvlDp01, paste0(x,"/",LevlTowr,"_01m")))
+  #Create HOR_VER_TMI level for each DP under qfqm
   lapply(grpListDp01, function(x) rhdf5::H5Gcreate(idQfqmLvlDp01, paste0(x,"/",LevlTowr,"_30m")))
   lapply(grpListDp01, function(x) rhdf5::H5Gcreate(idQfqmLvlDp01, paste0(x,"/",LevlTowr,"_01m")))
+  #Create HOR_VER_TMI level for each DP under ucrt
   lapply(grpListDp01, function(x) rhdf5::H5Gcreate(idUcrtLvlDp01, paste0(x,"/",LevlTowr,"_30m")))
   lapply(grpListDp01, function(x) rhdf5::H5Gcreate(idUcrtLvlDp01, paste0(x,"/",LevlTowr,"_01m")))
   
