@@ -16,6 +16,7 @@
 #' "specBgn" is the specific method to determine the beginning and ending indicies using the first indency when data is available. \cr
 #' "specEnd" is the specific method to determine the beginning and ending indicies using the last indency when data is available. \cr
 #' Defaults to "rglr". [-]
+#' @param crdH2oVali a logical parameter indicating indices are being produced for a crdH2o during validation period.  (defaults to FALSE).
 #' @param data a vector of input data which will be used to determine when data is available when "specBgn" or "specEnd" is selected. Defaults to NULL. [User-defined]
 #' @param CritTime the critcal time to include before determine the beginning and ending indicies, e.g. CritTime = 60 for aggregation only the last 2 min from 3 min measurement time. Defaults to 0. [s]
 #' 
@@ -50,10 +51,12 @@ def.idx.agr <- function(
   time,
   PrdAgr,
   FreqLoca,
-  MethIdx = c("rglr", "specBgn", "specEnd")[1],
+  MethIdx = c("rglr", "specBgn", "specEnd")[1], 
+  crdH2oVali = FALSE,
   data = NULL,
   CritTime = 0
 ){
+#regular method #########################################################################
   if (MethIdx == "rglr"){
     #Beginning indices
     idxBgn <- seq(from = 1, to = length(time), by = PrdAgr * FreqLoca)
@@ -67,14 +70,15 @@ def.idx.agr <- function(
     #Ending time based on indices
     timeEnd <- time[idxEnd]
     }#close if statement of MethIdx %in% "rglr"
-  
+
+#specBgn method #########################################################################  
   if (MethIdx %in% "specBgn"){
     if (is.null(data)){base::stop("Missing input data")}
     
     if(length(which(!is.na(data))) > 0){
       #determine the indices which have data  
       whrMsm <- which(!is.na(data))
-      #assign the begin indicy
+      #assign the begin index
       whrBgn <- whrMsm[1]
       #calculate the difference between indices
       whrMsmDif <- sapply(1:(length(whrMsm)-1), function(xx) whrMsm[(xx + 1)] - whrMsm[xx])
@@ -96,14 +100,15 @@ def.idx.agr <- function(
       timeEnd <- time[idxEnd]
     }#close if statement of length(which(!is.na(data))) > 0 
   }#close if statement of MethIdx %in% "specBgn"
-  
+
+#specEnd method #########################################################################  
   if (MethIdx %in% "specEnd"){
     if (is.null(data)){base::stop("Missing input data")}
-        
+    if (crdH2oVali == FALSE) {
         if(length(which(!is.na(data))) > 0){
           #determine the indices which have data  
           whrMsm <- which(!is.na(data))
-          #assign the last ending indicy
+          #assign the last ending index
           whrEnd <- whrMsm[length(whrMsm)]
           #calculate the difference between indices
           whrMsmDif <- sapply(1:(length(whrMsm)-1), function(xx) whrMsm[(xx + 1)] - whrMsm[xx])
@@ -114,19 +119,43 @@ def.idx.agr <- function(
             #whrEnd <- data.frame(whrEnd = c(whrEnd[2:length(whrEnd)], whrEnd[1]))
             whrEnd <- c(whrEnd[2:length(whrEnd)], whrEnd[1])
           }
-          #determine idxBgn
-          #cut off some of the last data point
-          #CritTime <- 0
-          #PrdAgr <- 120 
-          idxBgn <- whrEnd - (CritTime*FreqLoca) - PrdAgr + 1
-          #Beginning time based on indices
-          timeBgn <- time[idxBgn]
-          #determine the Ending indices
-          idxEnd <- whrEnd - (CritTime*FreqLoca)
-          #Ending time based on indices
-          timeEnd <- time[idxEnd]
-          }#close if statement of length(which(!is.na(data))) > 0 
-        }#close if statement of MethIdx %in% "specEnd"
+        }
+      }#end of crdH2oVali == FALSE
+    
+    if (crdH2oVali == TRUE) {
+      #replace injection number = 0 by NaN
+      data <- ifelse(data != 0, data, NaN )
+      if(length(which(!is.na(data))) > 0){
+        whrMsm <- which(!is.na(data))
+        #assign the last ending indicy
+        whrEnd <- whrMsm[length(whrMsm)]
+        #get injection number when is not NaN
+        tmp <- data[whrMsm]
+        #calculate the difference between indices
+        whrMsmDif <- sapply(1:(length(tmp)-1), function(xx) tmp[(xx + 1)] - tmp[xx])
+        
+        #determine the rest of Ending indicies
+        if(length(which(whrMsmDif > 0)) > 0){
+          whrEnd <- c(whrEnd, whrMsm[which(whrMsmDif > 0)])
+          #whrEnd <- data.frame(whrEnd = c(whrEnd[2:length(whrEnd)], whrEnd[1]))
+          whrEnd <- c(whrEnd[2:length(whrEnd)], whrEnd[1])
+        }
+        }
+      }#end of crdH2oVali == TRUE
+    
+    #determine idxBgn
+    #cut off some of the last data point
+    #CritTime <- 0
+    #PrdAgr <- 120
+    idxBgn <- whrEnd - (CritTime*FreqLoca) - PrdAgr + 1
+    #Beginning time based on indices
+    timeBgn <- time[idxBgn]
+    #determine the Ending indices
+    idxEnd <- whrEnd - (CritTime*FreqLoca)
+    #Ending time based on indices
+    timeEnd <- time[idxEnd]
+    
+    }#close if statement of MethIdx %in% "specEnd"
     
     #Packaging for output in dataframe
     rpt <- data.frame(idxBgn,idxEnd,timeBgn,timeEnd)
