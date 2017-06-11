@@ -11,7 +11,8 @@
 
 #' @param inpList List consisting of \code{ff::ffdf} file-backed objects, in the format provided by function \code{eddy4R.base::wrap.neon.read.hdf5.eddy()}. Of types numeric and integer.
 #' @param SiteLoca List consisting of site-specific parameters. Of types numeric, integer and character.
-
+#' @param AngZaxsSoniInst  Parameter of class numeric. Azimuth (angle around z axis) direction against true north in which sonic anemometer installation (transducer array) is pointing [deg]
+#' 
 #' @return 
 #' The returned object consistes of \code{inpList}, with the derived variables added to the respective list entry, and all list levels sorted alphabetically.
 
@@ -39,7 +40,8 @@
 
 wrap.derv.prd.day <- function(
   inpList,
-  ZoneTime
+  ZoneTime,
+  AngZaxsSoniInst
 ) {
 
 # time
@@ -108,16 +110,19 @@ wrap.derv.prd.day <- function(
 # soni
   
   # correction for attitude and motion via AMRS
-
+  
+  #Convert the angle of installation to radians
+  AngZaxsSoniInst <- eddy4R.base::def.unit.conv(data=AngZaxsSoniInst,unitFrom="deg",unitTo="rad")
   # rotate wind vector into meteorological coordinate system (positive from west, south and below)
+  inpList$data$soni <- def.met.body(AngZaxsSoniInst = AngZaxsSoniInst, veloBody = inpList$data$soni)
   
   # magnitude of horizontal wind speed
   inpList$data$soni$veloXaxsYaxsErth <- sqrt(inpList$data$soni$veloXaxs^2 + inpList$data$soni$veloYaxs^2)
-
+  
   # wind direction
   # need to redo for vector averaging, see REYNflux_P5.R line 139
-  # inpList$data$angZaxsErth <- eddy4R.base::def.pol.cart(matrix(c(inpList$data$v_met, inpList$data$u_met), ncol=2))
-  
+   inpList$data$angZaxsErth <- ((2*pi + atan2(-inpList$data$soni$veloYaxs[], -inpList$data$soni$veloXaxs[]))%%(2*pi))
+
   # sonic temperature [K] from speed of sound [m s-1] (Campbell Scientific, Eq. (9))
   inpList$data$soni$tempSoni <- def.temp.soni(veloSoni = inpList$data$soni$veloSoni)
   
