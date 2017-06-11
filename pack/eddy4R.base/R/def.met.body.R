@@ -4,11 +4,12 @@
 #' @author
 #' Stefan Metzger \email{eddy4R.info@gmail.com} \cr
 #' Hongyan Luo \email{hluo@battelleecology.org}
+#' David Durden \email{ddurden@battelleecology.org}
 
 #' @description Function defintion. Coordinate transformation from CSAT3 body coordinate system to meteorological coordiante system.
 
-#' @param \code{AzSoniInst}  Parameter of class numeric. Azimuth direction against true north in which sonic anemometer installation (transducer array) is pointing [rad]
-#' @param \code{AzSoniOfst} Parameter of class integer or numeric.  Azimuth Offset of meteorological x-axis against true north. That is, angle by which sonic data has to be clockwise azimuth-rotated when sonic anemometer body x-axis points perfectly north (azSonic = 0) [rad]
+#' @param \code{AngZaxsSoniInst}  Parameter of class numeric. Azimuth (angle around z axis) direction against true north in which sonic anemometer installation (transducer array) is pointing [rad]
+#' @param \code{AngZaxsSoniOfst} Parameter of class integer or numeric.  Azimuth Offset of meteorological x-axis against true north. That is, angle by which sonic data has to be clockwise azimuth-rotated when sonic anemometer body x-axis points perfectly north (azSonic = 0) [rad]
 #' @param \code{veloBody}  Variable of class numeric. Data frame containing wind speeds along x-axis (veloXaxs), y-axis (veloYaxs),and z-axis (veloZaxs) in sonic anemometer body coordinate system. For example: \code{veloBody <- data.frame(veloXaxs=rnorm(20), veloYaxs=rnorm(20), veloZaxs=rnorm(20))} [m s-1]
 
 
@@ -36,12 +37,14 @@
 #     adjust to eddy4R terms
 #   Natchaya P-Durden (2016-11-26)
 #     rename function to def.met.body()
+#   David Durden (2017-06-10)
+#    Adapt function to eddy4R terms
 ##############################################################################################
 
 def.met.body <- function(
-    AzSoniInst,
-    AzSoniOfst =  eddy4R.base::def.unit.conv(data=90,unitFrom="deg",unitTo="rad"),
-     veloBody 
+    AngZaxsSoniInst,
+    AngZaxsSoniOfst =  eddy4R.base::def.unit.conv(data=90,unitFrom="deg",unitTo="rad"),
+    veloBody 
   ) {
 
 #body coordinate system (BCS)
@@ -63,21 +66,21 @@ def.met.body <- function(
   
   #determine "body angle" of the sonic
   #the direction against true north in which the sonic x-axis is pointing [radians]
-    azSoni <- AzSoniInst - pi
-    if(azSoni < 0)  azSoni <- azSoni + 2 * pi  
+  AngZaxsSoni <- AngZaxsSoniInst - pi
+    if(AngZaxsSoni < 0)  AngZaxsSoni <- AngZaxsSoni + 2 * pi  
 
   #resulting clockwise azimuth rotation angle from BCS to MCS  [radians]
-    azMet <- AzSoniOfst - azSoni
-    if(azMet < 0)  azMet <- azMet + 2 * pi
+    AngZaxsMet <- AngZaxsSoniOfst - AngZaxsSoni
+    if(AngZaxsMet < 0)  AngZaxsMet <- AngZaxsMet + 2 * pi
 
   #prepare data.frame for output
     veloMet <- veloBody
-    veloMet$veloXaxs <- NA
-    veloMet$veloYaxs <- NA
+   # veloMet$veloXaxs <- NA
+  #  veloMet$veloYaxs <- NA
 
   #perform actual rotation
-    veloMet$veloXaxs <- veloBody$veloXaxs * cos(azMet) - veloBody$veloYaxs * sin(azMet)  
-    veloMet$veloYaxs <- veloBody$veloXaxs * sin(azMet) + veloBody$veloYaxs * cos(azMet)
+    veloMet$veloXaxs <- veloBody$veloXaxs * cos(AngZaxsMet) - veloBody$veloYaxs * sin(AngZaxsMet)  
+    veloMet$veloYaxs <- veloBody$veloXaxs * sin(AngZaxsMet) + veloBody$veloYaxs * cos(AngZaxsMet)
 
   #return results
     return(veloMet)
