@@ -121,7 +121,7 @@ wrap.derv.prd.day <- function(
   
   # wind direction
   # need to redo for vector averaging, see REYNflux_P5.R line 139
-  inpList$data$soni$angZaxsErth <- ((2*pi + atan2(-inpList$data$soni$veloYaxs[], -inpList$data$soni$veloXaxs[]))%%(2*pi))
+  inpList$data$soni$angZaxsErth <- ff::as.ff((2*pi + atan2(-inpList$data$soni$veloYaxs[], -inpList$data$soni$veloXaxs[]))%%(2*pi))
 
   # sonic temperature [K] from speed of sound [m s-1] (Campbell Scientific, Eq. (9))
   inpList$data$soni$tempSoni <- def.temp.soni(veloSoni = inpList$data$soni$veloSoni)
