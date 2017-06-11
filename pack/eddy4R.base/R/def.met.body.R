@@ -8,9 +8,9 @@
 
 #' @description Function defintion. Coordinate transformation from CSAT3 body coordinate system to meteorological coordiante system.
 
-#' @param \code{AngZaxsSoniInst}  Parameter of class numeric. Azimuth (angle around z axis) direction against true north in which sonic anemometer installation (transducer array) is pointing [rad]
-#' @param \code{AngZaxsSoniOfst} Parameter of class integer or numeric.  Azimuth Offset of meteorological x-axis against true north. That is, angle by which sonic data has to be clockwise azimuth-rotated when sonic anemometer body x-axis points perfectly north (azSonic = 0) [rad]
-#' @param \code{veloBody}  Variable of class numeric. Data frame containing wind speeds along x-axis (veloXaxs), y-axis (veloYaxs),and z-axis (veloZaxs) in sonic anemometer body coordinate system. For example: \code{veloBody <- data.frame(veloXaxs=rnorm(20), veloYaxs=rnorm(20), veloZaxs=rnorm(20))} [m s-1]
+#' @param AngZaxsSoniInst  Parameter of class numeric. Azimuth (angle around z axis) direction against true north in which sonic anemometer installation (transducer array) is pointing [rad]
+#' @param AngZaxsSoniOfst Parameter of class integer or numeric.  Azimuth Offset of meteorological x-axis against true north. That is, angle by which sonic data has to be clockwise azimuth-rotated when sonic anemometer body x-axis points perfectly north (azSonic = 0) [rad]
+#' @param veloBody  Variable of class numeric. Data frame containing wind speeds along x-axis (veloXaxs), y-axis (veloYaxs),and z-axis (veloZaxs) in sonic anemometer body coordinate system. For example: \code{veloBody <- data.frame(veloXaxs=rnorm(20), veloYaxs=rnorm(20), veloZaxs=rnorm(20))} [m s-1]
 
 
 #' @return Wind speed in meteorological coordinate system [m s-1]
