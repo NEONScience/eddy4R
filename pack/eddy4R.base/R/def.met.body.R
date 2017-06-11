@@ -9,7 +9,7 @@
 
 #' @param \code{AzSoniInst}  Parameter of class numeric. Azimuth direction against true north in which sonic anemometer installation (transducer array) is pointing [rad]
 #' @param \code{AzSoniOfst} Parameter of class integer or numeric.  Azimuth Offset of meteorological x-axis against true north. That is, angle by which sonic data has to be clockwise azimuth-rotated when sonic anemometer body x-axis points perfectly north (azSonic = 0) [rad]
-#' @param \code{veloBody}  Variable of class numeric. Data frame containing wind speeds along x-axis (xaxs), y-axis (yaxs),and z-axis (zaxs) in sonic anemometer body coordinate system. For example: \code{veloBody <- data.frame(xaxs=rnorm(20), yaxs=rnorm(20), zaxs=rnorm(20))} [m s-1]
+#' @param \code{veloBody}  Variable of class numeric. Data frame containing wind speeds along x-axis (veloXaxs), y-axis (veloYaxs),and z-axis (veloZaxs) in sonic anemometer body coordinate system. For example: \code{veloBody <- data.frame(veloXaxs=rnorm(20), veloYaxs=rnorm(20), veloZaxs=rnorm(20))} [m s-1]
 
 
 #' @return Wind speed in meteorological coordinate system [m s-1]
@@ -20,7 +20,7 @@
 #' @keywords coordinate, sonic anemometer, transformation
 
 #' @examples 
-#' veloIn01 <- data.frame(xaxs=rnorm(20), yaxs=rnorm(20), zaxs=rnorm(20)) 
+#' veloIn01 <- data.frame(veloXaxs=rnorm(20), veloYaxs=rnorm(20), veloZaxs=rnorm(20)) 
 #' def.met.body(AzSoniInst=60, veloBody=veloIn01)
 
 #' @seealso Currently none
@@ -40,7 +40,7 @@
 
 def.met.body <- function(
     AzSoniInst,
-    AzSoniOfst =  eddy4R.base::def.unit.conv(data=90,unitFrom="deg",unitTo="rad")$data[[1]],
+    AzSoniOfst =  eddy4R.base::def.unit.conv(data=90,unitFrom="deg",unitTo="rad"),
      veloBody 
   ) {
 
@@ -63,21 +63,21 @@ def.met.body <- function(
   
   #determine "body angle" of the sonic
   #the direction against true north in which the sonic x-axis is pointing [radians]
-    azSonic <- AzSoniInst - pi
-    if(azSonic < 0)  azSonic <- azSonic + 2 * pi  
+    azSoni <- AzSoniInst - pi
+    if(azSoni < 0)  azSoni <- azSoni + 2 * pi  
 
   #resulting clockwise azimuth rotation angle from BCS to MCS  [radians]
-    azMet <- AzSoniOfst - azSonic
+    azMet <- AzSoniOfst - azSoni
     if(azMet < 0)  azMet <- azMet + 2 * pi
 
   #prepare data.frame for output
     veloMet <- veloBody
-    veloMet$xaxs <- NA
-    veloMet$yaxs <- NA
+    veloMet$veloXaxs <- NA
+    veloMet$veloYaxs <- NA
 
   #perform actual rotation
-    veloMet$xaxs <- veloBody$xaxs * cos(azMet) - veloBody$yaxs * sin(azMet)  
-    veloMet$yaxs <- veloBody$xaxs * sin(azMet) + veloBody$yaxs * cos(azMet)
+    veloMet$veloXaxs <- veloBody$veloXaxs * cos(azMet) - veloBody$veloYaxs * sin(azMet)  
+    veloMet$veloYaxs <- veloBody$veloXaxs * sin(azMet) + veloBody$veloYaxs * cos(azMet)
 
   #return results
     return(veloMet)
