@@ -128,7 +128,7 @@ wrap.derv.prd.day <- function(
   base::attr(x = inpList$data$soni$angZaxsErth, which = "unit") <- "rad"
 
   # sonic temperature [K] from speed of sound [m s-1] (Campbell Scientific, Eq. (9))
-  inpList$data$soni$tempSoni <- def.temp.soni(veloSoni = inpList$data$soni$veloSoni)
+  inpList$data$soni$tempSoni <- eddy4R.base::def.temp.soni(veloSoni = inpList$data$soni$veloSoni)
   
   #Additional QAQC tests
   ###########################################################
