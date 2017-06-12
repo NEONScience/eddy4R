@@ -95,7 +95,7 @@ def.dir.wind <- function(
   # Minimum angular distance technique in ATBD
   distAng <- base::abs(base::acos(cos(inp - rpt$mean)))
   # Correct the angles sign
-  distAngCor <- ifelse(inp >= rpt$mean & inp < (rpt$mean + pi), distAng, -distAng)
+  distAngCor <- base::ifelse(inp >= rpt$mean & inp < (rpt$mean + pi), distAng, -distAng)
   # Average the angular distance
   distAngAgr <- base::mean(distAngCor, na.rm = TRUE)
   #Calculate angular distance variance
@@ -107,9 +107,9 @@ def.dir.wind <- function(
   # Determine the squared estimator
   estSq <- 1 - (veloYaxsAgr^2 + veloXaxsAgr^2)
   # Determine the estimator
-  est <- sqrt(estSq)
+  est <- base::sqrt(estSq)
   # standard deviation of the wind direction
-  sdDirWindEst <- asin(est)*(1.0 + (2/sqrt(3)*est^3))
+  sdDirWindEst <- base::asin(est)*(1.0 + (2/base::sqrt(3)*est^3))
   # Calculate variance of the wind direction
   rpt$vari <- sdDirWindEst^2
   }
@@ -118,10 +118,10 @@ def.dir.wind <- function(
   rpt$se <- base::sqrt(rpt$vari)/base::sqrt(rpt$numSamp)
   
   #Convert output to a dataframe
-  rpt <- data.frame(stringsAsFactors = FALSE, base::t(unlist(rpt)))
+  rpt <- base::data.frame(stringsAsFactors = FALSE, base::t(unlist(rpt)))
   
   # assign units for each variable
-  lapply(names(rpt), function(x) {attr(rpt[[x]], which = "unit") <<- "rad"})
+  base::lapply(names(rpt), function(x) {base::attr(rpt[[x]], which = "unit") <<- "rad"})
   
   return(rpt)
 }
