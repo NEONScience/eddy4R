@@ -114,6 +114,14 @@ def.dir.wind <- function(
   rpt$vari <- sdDirWindEst^2
   }
   
+  # standard error
+  rpt$se <- base::sqrt(rpt$vari)/base::sqrt(rpt$numSamp)
+  
+  #Convert output to a dataframe
+  rpt <- data.frame(stringsAsFactors = FALSE, base::t(unlist(rpt)))
+  
+  # assign units for each variable
+  lapply(names(rpt), function(x) {attr(rpt[[x]], which = "unit") <<- "rad"})
+  
   return(rpt)
-
 }
