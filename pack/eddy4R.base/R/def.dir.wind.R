@@ -38,10 +38,6 @@ def.dir.wind <- function(
   MethVari = c("02StepRad", "02StepDeg", "DistAngMin", "Yama")[4]
   ) {
   
-  # check whether inp is vector or data.frame
-  if(!base::is.vector(inp)) {
-    base::stop("Input must be a vector")
-  }
   
   # check whether data is numeric
   if(!base::is.numeric(inp)){
