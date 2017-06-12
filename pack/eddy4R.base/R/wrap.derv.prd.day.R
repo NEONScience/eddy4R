@@ -118,10 +118,14 @@ wrap.derv.prd.day <- function(
   
   # magnitude of horizontal wind speed
   inpList$data$soni$veloXaxsYaxsErth <- sqrt(inpList$data$soni$veloXaxs^2 + inpList$data$soni$veloYaxs^2)
+  # Assign unit to horizontal wind speed
+  base::attr(x = inpList$data$soni$veloXaxsYaxsErth, which = "unit") <- "m s-1"
   
   # wind direction
   # need to redo for vector averaging, see REYNflux_P5.R line 139
   inpList$data$soni$angZaxsErth <- ff::as.ff((2*pi + atan2(-inpList$data$soni$veloYaxs[], -inpList$data$soni$veloXaxs[]))%%(2*pi))
+  # Assign unit to wind direction
+  base::attr(x = inpList$data$soni$angZaxsErth, which = "unit") <- "rad"
 
   # sonic temperature [K] from speed of sound [m s-1] (Campbell Scientific, Eq. (9))
   inpList$data$soni$tempSoni <- def.temp.soni(veloSoni = inpList$data$soni$veloSoni)
