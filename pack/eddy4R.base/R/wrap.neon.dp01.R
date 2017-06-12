@@ -60,6 +60,8 @@
 # changelog and author contributions / copyrights 
 #   Stefan Metzger (2016-12-02)
 #     original creation
+#   David Durden (2017-06-10)
+#     Adding calculations for wind direction
 ##############################################################################################
 
 
@@ -78,7 +80,13 @@ wrap.neon.dp01 <- function(
   # if data is a list, calculate NEON Level 1 data products recursively for each list element
   if(is.list(data) & !is.data.frame(data)) rpt <- lapply(X = data[idx], FUN = eddy4R.base::def.neon.dp01, vrbs = TRUE)
 
-  
+  if("soni" %in% idx){
+    dirWind <- def.dir.wind(inp = data$soni$angZaxsErth, MethVari = "Yama")
+    rpt$soni$mean$angZaxsErth <- dirWind$mean
+    rpt$soni$numSamp$angZaxsErth <- dirWind$numSamp
+    rpt$soni$vari$angZaxsErth <- dirWind$vari
+    rpt$soni$se$angZaxsErth <- dirWind$se
+  }
   # return results
   return(rpt)
   
