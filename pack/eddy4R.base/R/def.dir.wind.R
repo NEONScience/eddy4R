@@ -35,7 +35,7 @@
 
 def.dir.wind <- function(
   inp,
-  MethVari
+  MethVari = c("02StepRad", "02StepDeg", "DistAngMin", "Yama")[4]
   ) {
   
   # check whether inp is vector or data.frame
