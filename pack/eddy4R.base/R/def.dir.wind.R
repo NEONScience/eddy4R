@@ -113,5 +113,7 @@ def.dir.wind <- function(
   # Calculate variance of the wind direction
   rpt$vari <- sdDirWindEst^2
   }
+  
+  return(rpt)
 
 }
