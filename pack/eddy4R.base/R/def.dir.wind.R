@@ -64,7 +64,7 @@ def.dir.wind <- function(
   ##########################################################################
   #Variance calculations
   ##########################################################################
-  if(MethVari = "02StepRad"){
+  if(MethVari == "02StepRad"){
   # 2-step approach
   # Determine the minimum absolute difference for variance calculation
   diff01 <- base::abs(inp - rpt$mean)
@@ -76,7 +76,7 @@ def.dir.wind <- function(
   rpt$vari <- stats::var(diffOut)
   }
   
-  if(MethVari = "02StepDeg"){
+  if(MethVari == "02StepDeg"){
   #2 pass approach in degrees
   # Convert mean wind direction to degrees
   meanDeg <- rpt$mean*(180/pi)
@@ -91,7 +91,7 @@ def.dir.wind <- function(
   rpt$vari <- stats::var(diffOutDeg)
   }
   
-  if(MethVari = "DistAngMin"){
+  if(MethVari == "DistAngMin"){
   # Minimum angular distance technique in ATBD
   distAng <- base::abs(base::acos(cos(inp - rpt$mean)))
   # Correct the angles sign
@@ -102,7 +102,7 @@ def.dir.wind <- function(
   rpt$vari <- stats::var(distAngCor, na.rm = TRUE)
   }
   
-  if(MethVari = "Yama"){
+  if(MethVari == "Yama"){
   # Yamartino method
   # Determine the squared estimator
   estSq <- 1 - (veloYaxsAgr^2 + veloXaxsAgr^2)
