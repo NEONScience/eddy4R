@@ -81,7 +81,7 @@ wrap.neon.dp01 <- function(
   if(is.list(data) & !is.data.frame(data)) rpt <- lapply(X = data[idx], FUN = eddy4R.base::def.neon.dp01, vrbs = TRUE)
 
   if("soni" %in% idx){
-    dirWind <- def.dir.wind(inp = data$soni$angZaxsErth, MethVari = "Yama")
+    dirWind <- eddy4R.base::def.dir.wind(inp = data$soni$angZaxsErth, MethVari = "Yama")
     rpt$soni$mean$angZaxsErth <- dirWind$mean
     rpt$soni$numSamp$angZaxsErth <- dirWind$numSamp
     rpt$soni$vari$angZaxsErth <- dirWind$vari
