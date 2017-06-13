@@ -14,9 +14,9 @@
 
 #' @keywords coordinate, AMRS, IMU, transformation
 
-#' @examples 
+#' @examples Currently none.
 
-#' @seealso Currently none
+#' @seealso Currently none.
 
 #' @export
 
