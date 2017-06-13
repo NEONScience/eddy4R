@@ -38,7 +38,7 @@ def.rot.enu.ned <- function(angEnu, Meth = c("vec", "ang")) {
   #Assign unit
   attr(x = angNed, which = "unit") <- "rad"
   #Return the value
-  Return(angNed)
+  return(angNed)
   
 }
 
