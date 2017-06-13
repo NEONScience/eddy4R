@@ -82,7 +82,7 @@ wrap.neon.dp01 <- function(
 
   if("soni" %in% idx){
     dirWind <- eddy4R.base::def.dir.wind(inp = data$soni$angZaxsErth, MethVari = "Yama")
-    rpt$soni$mean$angZaxsErth <- dirWind$mean
+    rpt$soni$mean$angZaxsErth <- eddy4R.base::def.rot.enu.ned(angEnu = dirWind$mean)
     rpt$soni$numSamp$angZaxsErth <- dirWind$numSamp
     rpt$soni$vari$angZaxsErth <- dirWind$vari
     rpt$soni$se$angZaxsErth <- dirWind$se
