@@ -21,6 +21,9 @@
 #' @keywords wind direction, sonic anemometer, vector averaging
 
 #' @examples 
+#' #Instantaneous wind direction
+#' windDirInst <- rnorm(3600, 180, 10)
+#' def.dir.wind(windDirInst, MethVari = "DistAngMin")
 
 #' @seealso Currently none
 
