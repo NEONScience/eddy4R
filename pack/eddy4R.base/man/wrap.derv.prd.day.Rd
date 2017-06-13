@@ -4,10 +4,12 @@
 \alias{wrap.derv.prd.day}
 \title{Wrapper function: Calculation of derived quantities (daily extent, native resolution)}
 \usage{
-wrap.derv.prd.day(inpList, ZoneTime)
+wrap.derv.prd.day(inpList, ZoneTime, AngZaxsSoniInst)
 }
 \arguments{
 \item{inpList}{List consisting of \code{ff::ffdf} file-backed objects, in the format provided by function \code{eddy4R.base::wrap.neon.read.hdf5.eddy()}. Of types numeric and integer.}
+
+\item{AngZaxsSoniInst}{Parameter of class numeric. Azimuth (angle around z axis) direction against true north in which sonic anemometer installation (transducer array) is pointing [deg]}
 
 \item{SiteLoca}{List consisting of site-specific parameters. Of types numeric, integer and character.}
 }
