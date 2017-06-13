@@ -69,6 +69,18 @@ outList$dp01AgrSub$qfqm <- sapply(names(inpList$dp01AgrSub$qfqm), function(x) ed
 #Packaging sub-aggregated (e.g.1-min) dp01 ucrt for writing to HDF5 file
 outList$dp01AgrSub$ucrt <- sapply(names(inpList$dp01AgrSub$ucrt), function(x) eddy4R.base::def.hdf5.dp01.pack(inpList = inpList$dp01AgrSub$ucrt, time = inpList$dp01AgrSub$time, Dp01 = x))
 
+outList$data$soni$angZaxsErth[,which(names(outList$data$soni$angZaxsErth) %in% c("mean","min","max","vari"))] <- def.unit.conv(outList$data$soni$angZaxsErth[,which(names(outList$data$soni$angZaxsErth) %in% c("mean","min","max","vari"))], unitFrom = "rad", unitTo = "deg")
+attr(x = outList$data$soni$angZaxsErth, which = "unit") <- "deg"
+
+outList$dp01AgrSub$data$soni$angZaxsErth[,which(names(outList$dp01AgrSub$data$soni$angZaxsErth) %in% c("mean","min","max","vari"))] <- def.unit.conv(outList$dp01AgrSub$data$soni$angZaxsErth[,which(names(outList$dp01AgrSub$data$soni$angZaxsErth) %in% c("mean","min","max","vari"))], unitFrom = "rad", unitTo = "deg")
+attr(x = outList$dp01AgrSub$data$soni$angZaxsErth, which = "unit") <- "deg"
+
+outList$ucrt$soni$angZaxsErth[,which(names(outList$ucrt$soni$angZaxsErth) %in% c("mean","vari","se"))] <- def.unit.conv(outList$ucrt$soni$angZaxsErth[,which(names(outList$ucrt$soni$angZaxsErth) %in% c("mean","vari","se"))], unitFrom = "rad", unitTo = "deg")
+attr(x = outList$ucrt$soni$angZaxsErth, which = "unit") <- "deg"
+
+outList$dp01AgrSub$ucrt$soni$angZaxsErth[,which(names(outList$dp01AgrSub$ucrt$soni$angZaxsErth) %in% c("mean","vari","se"))] <- def.unit.conv(outList$dp01AgrSub$ucrt$soni$angZaxsErth[,which(names(outList$dp01AgrSub$ucrt$soni$angZaxsErth) %in% c("mean","vari","se"))], unitFrom = "rad", unitTo = "deg")
+attr(x = outList$dp01AgrSub$ucrt$soni$angZaxsErth, which = "unit") <- "deg"
+
 #Applying the HDF5 write output function across all DPs
 lapply(names(outList$data), function(x) eddy4R.base::def.hdf5.wrte.dp01(inpList = outList, FileOut = FileOut, SiteLoca = SiteLoca, LevlTowr = LevlTowr, Dp01 = x))
 
