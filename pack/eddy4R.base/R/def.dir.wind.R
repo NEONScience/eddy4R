@@ -7,7 +7,7 @@
 #' @description Function defintion. Calculate the mean and variance of the wind direction.
 #' 
 #' @param inp numeric vector containing instantaneous wind directions
-#' @param MethVari This is a character string to determine the method to calculate the wind direction variance. The methods include "02StepRad", "02StepDeg", "DistAngMin", and "Yama"
+#' @param MethVari This is a character string to determine the method to calculate the wind direction variance. The methods include "02StepRad", "DistAngMin", and "Yama"
 
 
 
@@ -35,7 +35,7 @@
 
 def.dir.wind <- function(
   inp,
-  MethVari = c("02StepRad", "02StepDeg", "DistAngMin", "Yama")[4]
+  MethVari = c("02StepRad", "DistAngMin", "Yama")[3]
   ) {
   
   
@@ -72,20 +72,6 @@ def.dir.wind <- function(
   rpt$vari <- stats::var(diffOut)
   }
   
-  if(MethVari == "02StepDeg"){
-  #2 pass approach in degrees
-  # Convert mean wind direction to degrees
-  meanDeg <- rpt$mean*(180/pi)
-  # Convert instantenous wind direction to degrees
-  inpDeg <- inp*(180/pi)
-  # Determine the minimum absolute difference for variance calculation
-  diffDeg01 <- base::abs(inpDeg - meanDeg)
-  # Determine the minimum absolute difference from the other direction for variance calculation
-  diffDeg02 <- 360 - base::abs(inpDeg - meanDeg)
-  # Determine the minimum difference
-  diffOutDeg <- base::pmin(diffDeg01,diffDeg02)
-  rpt$vari <- stats::var(diffOutDeg)
-  }
   
   if(MethVari == "DistAngMin"){
   # Minimum angular distance technique in ATBD
