@@ -19,7 +19,7 @@
 
 #' @keywords output, HDF5
 
-#' @examples
+#' @examples Currently none.
 
 
 #' @seealso Currently none.
