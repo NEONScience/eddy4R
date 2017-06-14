@@ -62,6 +62,8 @@
 #     original creation
 #   David Durden (2017-06-10)
 #     Adding calculations for wind direction
+#   David Durden (2017-06-10)
+#     Adding fix for infinite min and max wind direction
 ##############################################################################################
 
 
