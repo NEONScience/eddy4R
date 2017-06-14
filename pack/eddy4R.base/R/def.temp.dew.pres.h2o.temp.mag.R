@@ -43,8 +43,8 @@ def.temp.dew.pres.h2o.temp.mag <- function(presH2o, temp) {
   #defined local constants for Magnus formula
   CnstLoc <- list(Cnst01 = 6.11, Cnst02 = 17.08, Cnst03 = 234.18, Cnst04 = 22.44, Cnst05 = 272.44)
   
-  #temp >= 273.15 K (0 degC):
-  if(mean(temp, na.rm=TRUE) >= eddy4R.base::IntlConv$CelsKelv[1]) {
+   #temp >= 273.15 K (0 degC):
+  if(mean(temp, na.rm=TRUE) >= eddy4R.base::IntlConv$CelsKelv[1] | is.na(mean(temp, na.rm=TRUE))) {
     #dew point:
     tempDew <- (CnstLoc$Cnst03 * log(presH2o*1e-2 / CnstLoc$Cnst01) / (CnstLoc$Cnst02 - log(presH2o*1e-2 / CnstLoc$Cnst01)))
     attributes(tempDew)$unit <- NULL
