@@ -84,7 +84,11 @@ wrap.neon.dp01 <- function(
     dirWind <- eddy4R.base::def.dir.wind(inp = data$soni$angZaxsErth, MethVari = "Yama")
     rpt$soni$mean$angZaxsErth <- eddy4R.base::def.rot.enu.ned(angEnu = dirWind$mean)
     rpt$soni$min$angZaxsErth <- base::min(eddy4R.base::def.rot.enu.ned(angEnu = data$soni$angZaxsErth), na.rm = TRUE)
+    rpt$soni$min$angZaxsErth[is.infinite(rpt$soni$min$angZaxsErth)] <- NaN
+    base::attr(rpt$soni$min$angZaxsErth, which = "unit") <- "rad"
     rpt$soni$max$angZaxsErth  <- base::max(eddy4R.base::def.rot.enu.ned(angEnu = data$soni$angZaxsErth), na.rm = TRUE)
+    rpt$soni$max$angZaxsErth[is.infinite(rpt$soni$max$angZaxsErth)] <- NaN
+    base::attr(rpt$soni$max$angZaxsErth, which = "unit") <- "rad"
     rpt$soni$numSamp$angZaxsErth <- dirWind$numSamp
     rpt$soni$vari$angZaxsErth <- dirWind$vari
     rpt$soni$se$angZaxsErth <- dirWind$se
