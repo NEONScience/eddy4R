@@ -36,6 +36,8 @@
 #     rename function to def.temp.dew.pres.h2o.temp.mag()
 #   Stefan Metzger (2015-12-21)
 #     fixing unit assignment
+#   David Durden (2017-06-14)
+#     fixing bug if all NA's are passed
 ##############################################################################################
 
 def.temp.dew.pres.h2o.temp.mag <- function(presH2o, temp) {
