@@ -2,11 +2,15 @@ rm(list=ls())
 #clear Consoule
 cat("\014")
 
-source('~/eddy/docker/ecseDataProc/def.conv.thrs.ecse.R')
+#source('~/eddy/docker/ecseDataProc/def.conv.thrs.ecse.R')
 DirIn <- "~/eddy/data/threshold"
-dpName <- c("CrdCo2","CrdH2o", "EnvHut", "Irga", "IrgaMfcSamp",
-            "IrgaPresValiRegIn", "IrgaPresValiRegOut", "MfcVali",
-            "Mfm", "PresInlt", "Pump", "TempAirLvl", "TempAirTop")
+
+
+dpName <- c("Irga","IrgaMfcSamp","Soni","SoniAmrs")#Only MVP sensors included currently
+
+#dpName <- c("CrdCo2","CrdH2o", "EnvHut", "Irga", "IrgaMfcSamp",
+#            "IrgaPresValiRegIn", "IrgaPresValiRegOut", "MfcVali",
+#            "Mfm", "PresInlt", "Pump", "TempAirLvl", "TempAirTop")
 DirOut <- "~/eddy/data/threshold_ecse"
 
 DirOut00 <- paste0(DirOut ,"/")
