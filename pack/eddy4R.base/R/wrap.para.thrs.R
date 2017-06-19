@@ -3,7 +3,7 @@ rm(list=ls())
 cat("\014")
 
 #source('~/eddy/docker/ecseDataProc/def.conv.thrs.ecse.R')
-DirIn <- "~/eddy/data/threshold"
+DirIn <- "~/eddy/data/Thresholds_EC/CI-Parameter-Repo/ParaSci/Ecte/Dp0p"
 
 
 dpName <- c("Irga","IrgaMfcSamp","Soni","SoniAmrs")#Only MVP sensors included currently
@@ -11,7 +11,7 @@ dpName <- c("Irga","IrgaMfcSamp","Soni","SoniAmrs")#Only MVP sensors included cu
 #dpName <- c("CrdCo2","CrdH2o", "EnvHut", "Irga", "IrgaMfcSamp",
 #            "IrgaPresValiRegIn", "IrgaPresValiRegOut", "MfcVali",
 #            "Mfm", "PresInlt", "Pump", "TempAirLvl", "TempAirTop")
-DirOut <- "~/eddy/data/threshold_ecse"
+DirOut <- "~/eddy/data/Thresholds_EC/threshold_ecte"
 
 DirOut00 <- paste0(DirOut ,"/")
 
