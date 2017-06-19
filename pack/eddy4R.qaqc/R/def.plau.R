@@ -55,7 +55,8 @@
 #     also fix duplicate NA and fail indices for step and persistence tests
 #   Cove Sturtevant (2016-11-09)
 #     adjusted output of vector positions of failed and na spike positions (Vrbs = FALSE) to be nested 
-#        under each variable rather than each variable nested under the lists of failed and na results 
+#        under each variable rather than each variable nested under the lists of failed and na results #   Dave Durden (2017-06-19)
+#    An escape from the persistance function if all values are NA
 ##############################################################################################
 def.plau <- function (
   data,                               # a data frame containing the data to be evaluated (do not include the time stamp vector here). Required input.
@@ -211,6 +212,7 @@ def.plau <- function (
     posQf[[idxVar]]$posQfPers <- list(fail=numeric(0),na=numeric(0)) # initialize
     posQf[[idxVar]]$posQfPers$na <- which(is.na(data[,idxVar])) # Initialize output
     
+    if(!length(posQf[[idxVar]]$posQfPers$na) == nrow(data)){
     idxDataBgn <- 1 # initialize starting index
     
     # Make sure we aren't on a null value
@@ -315,7 +317,7 @@ def.plau <- function (
         posQf[[idxVar]]$posQfPers$na <- unique(c(posQf[[idxVar]]$posQfPers$na,idxDataBgn:idxData))
       }
     }
-    
+    }
     # For Verbose option, output actual flag values
     if(Vrbs) {
       qf[[idxVar]]$qfPers[posQf[[idxVar]]$posQfPers$fail] <- 1
