@@ -1,16 +1,16 @@
 Package: eddy4R.qaqc
 Title: Eddy-covariance calculation for R: Quality assurance and quality control
-Version: 0.2.0-rc1
+Version: 0.1.7
 Authors@R: c( person("Cove", "Sturtevant", email = "eddy4R.info@gmail.com", role = c("aut", "cre")),
               person("Stefan", "Metzger", email = "eddy4R.info@gmail.com", role = c("aut")),
               person("Natchaya", "Pingintha-Durden", email = "ndurden@battelleecology.org", role = c("aut"))
             )
-Description: Eddy-covariance calculation for R: Quality assurance and quality. Currently removed from Imports because devtools::install_github() ignores and attempts to re-install previously installed packages, but without passing GITHUB_PAT (starting 2016-06-26, only affets packages hosted on private Github repos with access token, such as NEONInc/NEON-FIU-algorithm): eddy4R.base (>= 0.2.0-rc1).
+Description: Eddy-covariance calculation for R: Quality assurance and quality. Currently removed from Imports because devtools::install_github() ignores and attempts to re-install previously installed packages, but without passing GITHUB_PAT (starting 2016-06-26, only affets packages hosted on private Github repos with access token, such as NEONInc/NEON-FIU-algorithm): eddy4R.base (>= 0.1.18).
 Depends:
-    R (>= 3.4.0)
+    R (>= 3.3.2)
 Imports:
     ggplot2 (>= 2.2.1),
-    grid(>= 3.4.0),
+    grid(>= 3.3.2),
     gridExtra (>= 2.2.1),
     gtable (>= 0.2.0),
     lattice (>= 0.20-35),
