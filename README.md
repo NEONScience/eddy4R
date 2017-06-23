@@ -11,7 +11,7 @@ The eddy-covariance flux processor eddy4R consists of modular software packages 
   - libnetcdf-dev
   - udunits-bin
 
-Build additions on the R-side via the [eddy4R installation script](https://www.dropbox.com/s/b9kosg2jr34w3lk/flow.inst.R?dl=1):
+Build additions on the R-side via the [eddy4R installation script](https://www.dropbox.com/s/xmgsctjbrekfyw8/flow.inst.eddy4r.R?dl=1):
 
 - eddy4R.base
 - eddy4R.qaqc
