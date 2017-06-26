@@ -23,6 +23,9 @@ An HDF5 file with dp01 data, qfqm, and uncertainty written
 \description{
 Wrapper function. To write NEON Level 1 data product descriptive statistics (mean, minimum, maximum, variance, number of non-NA points), quality flags and quality metrics, and uncertainty quantification to an output HDF5 file.
 }
+\examples{
+Currently none.
+}
 \references{
 License: GNU AFFERO GENERAL PUBLIC LICENSE Version 3, 19 November 2007.
 }
