@@ -4,15 +4,16 @@
 \alias{def.met.body}
 \title{Definition function: Coordinate transformation from CSAT3 body coordinate system to meteorological coordinate system}
 \usage{
-def.met.body(AzSoniInst, AzSoniOfst = eddy4R.base::def.unit.conv(data = 90,
-  unitFrom = "deg", unitTo = "rad")$data[[1]], veloBody)
+def.met.body(AngZaxsSoniInst,
+  AngZaxsSoniOfst = eddy4R.base::def.unit.conv(data = 90, unitFrom = "deg",
+  unitTo = "rad"), veloBody)
 }
 \arguments{
-\item{\code{AzSoniInst}}{Parameter of class numeric. Azimuth direction against true north in which sonic anemometer installation (transducer array) is pointing [rad]}
+\item{AngZaxsSoniInst}{Parameter of class numeric. Azimuth (angle around z axis) direction against true north in which sonic anemometer installation (transducer array) is pointing [rad]}
 
-\item{\code{AzSoniOfst}}{Parameter of class integer or numeric.  Azimuth Offset of meteorological x-axis against true north. That is, angle by which sonic data has to be clockwise azimuth-rotated when sonic anemometer body x-axis points perfectly north (azSonic = 0) [rad]}
+\item{AngZaxsSoniOfst}{Parameter of class integer or numeric.  Azimuth Offset of meteorological x-axis against true north. That is, angle by which sonic data has to be clockwise azimuth-rotated when sonic anemometer body x-axis points perfectly north (azSonic = 0) [rad]}
 
-\item{\code{veloBody}}{Variable of class numeric. Data frame containing wind speeds along x-axis (xaxs), y-axis (yaxs),and z-axis (zaxs) in sonic anemometer body coordinate system. For example: \code{veloBody <- data.frame(xaxs=rnorm(20), yaxs=rnorm(20), zaxs=rnorm(20))} [m s-1]}
+\item{veloBody}{Variable of class numeric. Data frame containing wind speeds along x-axis (veloXaxs), y-axis (veloYaxs),and z-axis (veloZaxs) in sonic anemometer body coordinate system. For example: \code{veloBody <- data.frame(veloXaxs=rnorm(20), veloYaxs=rnorm(20), veloZaxs=rnorm(20))} [m s-1]}
 }
 \value{
 Wind speed in meteorological coordinate system [m s-1]
@@ -21,7 +22,7 @@ Wind speed in meteorological coordinate system [m s-1]
 Function defintion. Coordinate transformation from CSAT3 body coordinate system to meteorological coordiante system.
 }
 \examples{
-veloIn01 <- data.frame(xaxs=rnorm(20), yaxs=rnorm(20), zaxs=rnorm(20)) 
+veloIn01 <- data.frame(veloXaxs=rnorm(20), veloYaxs=rnorm(20), veloZaxs=rnorm(20)) 
 def.met.body(AzSoniInst=60, veloBody=veloIn01)
 }
 \references{
@@ -33,6 +34,7 @@ Currently none
 \author{
 Stefan Metzger \email{eddy4R.info@gmail.com} \cr
 Hongyan Luo \email{hluo@battelleecology.org}
+David Durden \email{ddurden@battelleecology.org}
 }
 \keyword{anemometer,}
 \keyword{coordinate,}

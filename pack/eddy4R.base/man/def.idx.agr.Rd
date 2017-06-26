@@ -5,7 +5,7 @@
 \title{Definition function: indices for aggregation periods}
 \usage{
 def.idx.agr(time, PrdAgr, FreqLoca, MethIdx = c("rglr", "specBgn",
-  "specEnd")[1], data = NULL, CritTime = 0)
+  "specEnd")[1], crdH2oVali = FALSE, data = NULL, CritTime = 0)
 }
 \arguments{
 \item{time}{a vector of timestamps}
@@ -19,6 +19,8 @@ def.idx.agr(time, PrdAgr, FreqLoca, MethIdx = c("rglr", "specBgn",
 "specBgn" is the specific method to determine the beginning and ending indicies using the first indency when data is available. \cr
 "specEnd" is the specific method to determine the beginning and ending indicies using the last indency when data is available. \cr
 Defaults to "rglr". [-]}
+
+\item{crdH2oVali}{a logical parameter indicating indices are being produced for a crdH2o during validation period.  (defaults to FALSE).}
 
 \item{data}{a vector of input data which will be used to determine when data is available when "specBgn" or "specEnd" is selected. Defaults to NULL. [User-defined]}
 
