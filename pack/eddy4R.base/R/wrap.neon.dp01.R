@@ -60,6 +60,10 @@
 # changelog and author contributions / copyrights 
 #   Stefan Metzger (2016-12-02)
 #     original creation
+#   David Durden (2017-06-10)
+#     Adding calculations for wind direction
+#   David Durden (2017-06-10)
+#     Adding fix for infinite min and max wind direction
 ##############################################################################################
 
 
@@ -78,7 +82,26 @@ wrap.neon.dp01 <- function(
   # if data is a list, calculate NEON Level 1 data products recursively for each list element
   if(is.list(data) & !is.data.frame(data)) rpt <- lapply(X = data[idx], FUN = eddy4R.base::def.neon.dp01, vrbs = TRUE)
 
-  
+  if("soni" %in% idx){
+    #Calculate wind direction using vector averaging approach
+    dirWind <- eddy4R.base::def.dir.wind(inp = data$soni$angZaxsErth, MethVari = "Yama")
+    #Rotating to NED coordinates
+    rpt$soni$mean$angZaxsErth <- eddy4R.base::def.rot.enu.ned(angEnu = dirWind$mean)
+    #Rotating to NED coordinates to find minimum
+    rpt$soni$min$angZaxsErth <- base::min(eddy4R.base::def.rot.enu.ned(angEnu = data$soni$angZaxsErth), na.rm = TRUE)
+    #Checking for infinite output and replacing with NaN
+    rpt$soni$min$angZaxsErth[is.infinite(rpt$soni$min$angZaxsErth)] <- NaN
+    base::attr(rpt$soni$min$angZaxsErth, which = "unit") <- "rad"
+    #Rotating to NED coordinates to find maximum
+    rpt$soni$max$angZaxsErth  <- base::max(eddy4R.base::def.rot.enu.ned(angEnu = data$soni$angZaxsErth), na.rm = TRUE)
+    #Checking for infinite output and replacing with NaN
+    rpt$soni$max$angZaxsErth[is.infinite(rpt$soni$max$angZaxsErth)] <- NaN
+    base::attr(rpt$soni$max$angZaxsErth, which = "unit") <- "rad"
+    #Applying vector average function output to wrapper output
+    rpt$soni$numSamp$angZaxsErth <- dirWind$numSamp
+    rpt$soni$vari$angZaxsErth <- dirWind$vari
+    rpt$soni$se$angZaxsErth <- dirWind$se
+  }
   # return results
   return(rpt)
   

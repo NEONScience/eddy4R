@@ -24,7 +24,7 @@ MAINTAINER "Stefan Metzger" eddy4R.info@gmail.com
         udunits-bin
 
 # install the eddy4R packages via web-hosted installation script
-RUN R -e 'source("https://www.dropbox.com/s/b9kosg2jr34w3lk/flow.inst.R?dl=1")'
+RUN R -e 'source("https://www.dropbox.com/s/xmgsctjbrekfyw8/flow.inst.eddy4r.R?dl=1")'
 
 # provide read and write access for default R library location to Rstudio users 
 RUN chmod -R 777 /usr/local/lib/R/site-library

@@ -100,7 +100,7 @@ def.para.flow <- function(
                                                                  Dir = tempdir()))
       
       
-      if(MethMeas == "ecse") eddy4R.base::def.dld.zip(Inp = list(Url = "https://www.dropbox.com/s/xb6ol3rxnwi0k3r/inpRefe.zip?dl=1",
+      if(MethMeas == "ecse") eddy4R.base::def.dld.zip(Inp = list(Url = "https://www.dropbox.com/s/dn3yzcuf032zh2u/inpRefe.zip?dl=1",
                                                                  Dir = tempdir()))
      
       
@@ -108,10 +108,10 @@ def.para.flow <- function(
       ParaFlow$DirFilePara <- paste0(tempdir(), "/inpRefe/", list.files(paste0(tempdir(), "/inpRefe"))[1])
       
       # output data
-      if(MethMeas == "ecte") eddy4R.base::def.dld.zip(Inp = list(Url = "https://www.dropbox.com/s/65azuhnay8ro463/outRefe_20161227.zip?dl=1",
+      if(MethMeas == "ecte") eddy4R.base::def.dld.zip(Inp = list(Url = "https://www.dropbox.com/s/60s78ehk7s5j6rd/outRefe_20170612.zip?dl=1",
                                           Dir = tempdir()))
       
-      if(MethMeas == "ecse") eddy4R.base::def.dld.zip(Inp = list(Url = "https://www.dropbox.com/s/fn0c2wgtuxp461a/outRefe.zip?dl=1",
+      if(MethMeas == "ecse") eddy4R.base::def.dld.zip(Inp = list(Url = "https://www.dropbox.com/s/nsjqbzi5mcpnynm/outRefe.zip?dl=1",
                                                                  Dir = tempdir()))
       
       
