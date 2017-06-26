@@ -47,6 +47,8 @@
 #     adding Deve parameter
 #   Ke Xu (2017-05-22)
 #     adding parameter MethMeas to distinguish different cases for ecte and ecse
+#   Ke Xu (2017-06-22)
+#     adding parameter LevlDp to distinguish different data product level
 
 ##############################################################################################################
 #Start of function call to determine workflow parameters
