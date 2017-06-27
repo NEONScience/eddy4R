@@ -223,8 +223,8 @@ if (MethMeas == "ecte") {
     #external quality flags from irgaMfcSamp
     if ("irgaMfcSamp" %in% names(qfInput)){
       #irgaMfcSamp
-      setQf$frt00IrgaMfcSamp <- data.frame("qfRngFrt00" = qfInput$irgaMfcSamp$qfRngFrt00, 
-                                "qfPersFrt00" = qfInput$irgaMfcSamp$qfPersFrt00)
+      setQf$frt00IrgaMfcSamp <- data.frame("qfRngFrt00" = qfInput$irgaMfcSamp$qfRngFrt00) 
+                                #,"qfPersFrt00" = qfInput$irgaMfcSamp$qfPersFrt00)
       
       setQf$frtIrgaMfcSamp <- data.frame("qfRngFrt" = qfInput$irgaMfcSamp$qfRngFrt,
                               "qfPersFrt" = qfInput$irgaMfcSamp$qfPersFrt)
@@ -238,8 +238,8 @@ if (MethMeas == "ecte") {
                                   "qfPersTemp" = qfInput$irgaMfcSamp$qfPersTemp)
       } else {
       #assign qf for irgaMfcSamp to -1 when qf irgaMfcSamp is missing
-      setQf$frt00IrgaMfcSamp <- data.frame("qfRngFrt00" = -1, 
-                                "qfPersFrt00" = -1)
+      setQf$frt00IrgaMfcSamp <- data.frame("qfRngFrt00" = -1)
+                                           #,"qfPersFrt00" = -1)
       
       setQf$frtIrgaMfcSamp <- data.frame("qfRngFrt" = -1,
                               "qfPersFrt" = -1)
@@ -256,8 +256,8 @@ if (MethMeas == "ecte") {
     #external quality flags from irgaMfcVali
     if ("irgaMfcVali" %in% names(qfInput)){
       #irgaMfcVali
-      setQf$frt00IrgaMfcVali <- data.frame("qfRngFrt00" = qfInput$irgaMfcVali$qfRngFrt00, 
-                                 "qfPersFrt00" = qfInput$irgaMfcVali$qfPersFrt00)
+      setQf$frt00IrgaMfcVali <- data.frame("qfRngFrt00" = qfInput$irgaMfcVali$qfRngFrt00) 
+                                # "qfPersFrt00" = qfInput$irgaMfcVali$qfPersFrt00)
       
       setQf$frtIrgaMfcVali <- data.frame("qfRngFrt" = qfInput$irgaMfcVali$qfRngFrt,
                               "qfPersFrt" = qfInput$irgaMfcVali$qfPersFrt)
@@ -271,8 +271,8 @@ if (MethMeas == "ecte") {
                                   "qfPersTemp" = qfInput$irgaMfcVali$qfPersTemp)
       } else {
       #assign qf for irgaMfcVali to -1 when qf irgaMfcVali is missing
-      setQf$frt00IrgaMfcVali <- data.frame("qfRngFrt00" = -1, 
-                                "qfPersFrt00" = -1)
+      setQf$frt00IrgaMfcVali <- data.frame("qfRngFrt00" = -1) 
+                                #"qfPersFrt00" = -1)
       
       setQf$frtIrgaMfcVali <- data.frame("qfRngFrt" = -1,
                               "qfPersFrt" = -1)
