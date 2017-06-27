@@ -51,6 +51,8 @@
 #     commented out the qfCal in irga and soni
 #   Natchaya P-Durden (2017-05-12)
 #     added qfIrgaVali and qfIrgaAgc
+#   David Durden (2017-06-27)
+#     removing qfPersFrt00 flag from processing
 ##############################################################################################
 
 def.neon.dp01.qf.grp <- function(
