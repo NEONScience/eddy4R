@@ -23,16 +23,19 @@ MAINTAINER "Stefan Metzger" eddy4R.info@gmail.com
       libnetcdf-dev \
       udunits-bin
 
-# eddy4R-Docker executable instruction file template and example data
+# eddy4R-Docker example workflow and data
 
   # create directory
   RUN mkdir -p /home/eddy
   
-  # provide read and write access to Rstudio users
+  # provide read and write access to web-hosted installation script
   RUN chmod -R 777 /home/eddy
 
 # install the eddy4R packages via web-hosted installation script
 RUN R -e 'source("https://www.dropbox.com/s/xmgsctjbrekfyw8/flow.inst.eddy4r.R?dl=1")'
 
-# provide read and write access  to Rstudio users for default R library location
+  # provide read and write access to Rstudio users for example workflow and data location
+  RUN chmod -R 777 /home/eddy
+
+# provide read and write access to Rstudio users for default R library location
 RUN chmod -R 777 /usr/local/lib/R/site-library
