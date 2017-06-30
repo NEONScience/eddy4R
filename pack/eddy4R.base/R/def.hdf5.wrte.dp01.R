@@ -13,7 +13,7 @@
 #' @param LevlTowr Character: The tower level that the sensor data is being collected in NEON data product convention (HOR_VER).
 #' @param MethUcrt Logical: Determines if uncertainty information is available for output.
 #' @param MethSubAgr Logical: Determines if 1-minute data is available for output.
-#' 
+#'
 #' @return An HDF5 file with dp01 data, qfqm, and uncertainty written
 #' 
 #' @references
@@ -33,6 +33,8 @@
 #     original creation
 #   David Durden (2017-06-04)
 #     Adding ucrt to dp01 output HDF5
+#   David Durden (2017-06-29)
+#     Adding switches for writing output
 ##############################################################################################
 
 
