@@ -8,8 +8,8 @@
 #' Definition function to produce a dataframe of indices and corresponding times for aggregation periods.
 #'
 #' @param inpList a list of dp01 computed output statistics and dp01 quality flags and quality metrics over multiple aggregations periods that need to be combined.
-#'@param MethSubAgr a logical to indicate if the subset aggregated periods should be included in the data to be combined.
-#'  
+#' @param MethSubAgr a logical to indicate if the subset aggregated periods should be included in the data to be combined.
+#' @param RptExpd A logical parameter that determines if the full quality metric \code{qm} is output in the returned list (defaults to FALSE). 
 #' @return A dataframe of indices and corresponding times for aggregation periods.
 
 #' @references 
@@ -32,7 +32,8 @@
 def.agr.ecte.dp01 <- function(
 inpList, 
 MethSubAgr = FALSE,
-MethUcrt = FALSE
+MethUcrt = FALSE,
+RptExpd = FALSE
 ){
   
   # concatenate results
@@ -88,6 +89,22 @@ MethUcrt = FALSE
     
     # assign names to data.frames      
     names(rpt$qfqm[[idxDp01]]) <- names(inpList$qfqmOut[[1]][[idxDp01]])
+    #report the expand package
+    if(RptExpd == TRUE){
+      #Put together output list for qfqm 
+      rpt$qfqm[[idxDp01]]$qm <- 
+        
+        # first call to lapply, targeting the result data.frames to be created (data sub-products: mean, min, max, vari", numSamp)
+        lapply(names(inpList$qfqmOut[[1]][[idxDp01]]$qm), function(y)
+          
+          # second call to lapply, targeting the observations to be combined into the result data.frames
+          do.call(rbind, lapply(1:length(inpList$qfqmOut), function(x) inpList$qfqmOut[[x]][[idxDp01]]$qm[[y]] ))
+          
+        )
+      
+      # assign names to data.frames      
+      names(rpt$qfqm[[idxDp01]]$qm) <- names(inpList$qfqmOut[[1]][[idxDp01]]$qm)
+    }
     
     if(MethUcrt == TRUE){
       #Put together output list for qfqm 
@@ -134,6 +151,18 @@ MethUcrt = FALSE
     
     names(rpt$dp01AgrSub$qfqm[[idxDp01]]) <- names(inpList$dp01AgrSub[[1]]$qfqm[[idxDp01]])
     
+    if(RptExpd == TRUE){
+      rpt$dp01AgrSub$qfqm[[idxDp01]]$qm <- 
+        
+        # first call to lapply, targeting the result data.frames to be created (data sub-products: mean, min, max, vari", numSamp)
+        lapply(names(inpList$dp01AgrSub[[1]]$qfqm[[idxDp01]]$qm), function(y) 
+          
+          # second call to lapply, targeting the observations to be combined into the result data.frames
+          do.call(rbind, lapply(1:length(inpList$dp01AgrSub), function(x) inpList$dp01AgrSub[[x]]$qfqm[[idxDp01]]$qm[[y]] ))
+        )
+      
+      names(rpt$dp01AgrSub$qfqm[[idxDp01]]$qm) <- names(inpList$dp01AgrSub[[1]]$qfqm[[idxDp01]]$qm)
+    }
     if(MethUcrt == TRUE){
       #Put together output list for qfqm 
       rpt$dp01AgrSub$ucrt[[idxDp01]] <- 
