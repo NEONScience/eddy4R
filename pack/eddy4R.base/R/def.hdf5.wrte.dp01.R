@@ -7,10 +7,11 @@
 #' @description 
 #' Definition function. To write NEON Level 1 data product descriptive statistics (mean, minimum, maximum, variance, number of non-NA points), quality flags and quality metrics, and uncertainty quantification to an output HDF5 file. 
 
-#' @param inpList A list of including dp01 data, quality flags and quality metrics, and uncertainty calculations to package and write to an output HDF5 file
+#' @param inpList A list of including dp01 data, quality flags and quality metrics, and uncertainty calculations to package and write to an output HDF5 file.
 #' @param FileOut Character: The file name for the output HDF5 file
 #' @param SiteLoca Character: Site location.
-#' @param LevlTowr Character: The tower level that the sensor data is being collected in NEON data product convention (HOR_VER)
+#' @param LevlTowr Character: The tower level that the sensor data is being collected in NEON data product convention (HOR_VER).
+#' @param MethUcrt Logical: Determines if uncertainty information is available for output.
 #' 
 #' @return An HDF5 file with dp01 data, qfqm, and uncertainty written
 #' 
@@ -41,7 +42,8 @@ def.hdf5.wrte.dp01 <- function(
   FileOut,
   SiteLoca,
   LevlTowr,
-  Dp01
+  Dp01,
+  MethUcrt = TRUE
 ){
   
 #Determine if the output file should be expanded or basic by creating a logical determined from the filename
@@ -154,6 +156,8 @@ lapply(names(inpList$dp01AgrSub$qfqm[[Dp01]]), function(x) {
 ##########################################################################################
 #Ucrt
 ##########################################################################################
+if(MethUcrt == TRUE){
+
 #Writing 30-min ucrt to output HDF5 file
 lapply(names(inpList$ucrt[[Dp01]]), function(x) rhdf5::h5writeDataset.data.frame(obj = inpList$ucrt[[Dp01]][[x]], h5loc = idUcrt30, name = x, DataFrameAsCompound = TRUE))
 
@@ -173,7 +177,7 @@ lapply(names(inpList$dp01AgrSub$ucrt[[Dp01]]), function(x) {
     dgid <- rhdf5::H5Dopen(idUcrt01, x)
     rhdf5::h5writeAttribute(attributes(inpList$dp01AgrSub$ucrt[[Dp01]][[x]])$unit, h5obj = dgid, name = "unit")
   }})
-
+}
 
 #Close HDF5 connections
 rhdf5::H5close()
