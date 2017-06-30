@@ -12,6 +12,9 @@
 #' @param FileOut The file name for the output HDF5 file
 #' @param SiteLoca Character: Site location.
 #' @param LevlTowr The tower level that the sensor data is being collected in NEON data product convention (HOR_VER)
+#' @param MethUcrt Logical: Determines if uncertainty information is available for output.
+#' @param MethSubAgr Logical: Determines if 1-minute data is available for output.
+
 #' 
 #' @return An HDF5 file with dp01 data, qfqm, and uncertainty written
 #' 
@@ -32,6 +35,8 @@
 #     original creation
 #   David Durden (2017-06-06)
 #     Adding uncertaitny HDF5 packaging calls
+#   David Durden (2017-06-29)
+#     Adding switches for writing output
 ##############################################################################################
 
 
@@ -42,10 +47,10 @@ wrap.hdf5.wrte.dp01 <- function(
   FileIn,
   FileOut,
   SiteLoca,
-  LevlTowr
+  LevlTowr,
+  MethUcrt = TRUE,
+  MethSubAgr = TRUE
 ){
-
-
 
 #Initializing output list
 outList <- list()
@@ -57,32 +62,42 @@ outList$data <- sapply(names(inpList$data), function(x) eddy4R.base::def.hdf5.dp
 #Packaging 30-min dp01 qfqm output for writing to HDF5 file
 outList$qfqm <- sapply(names(inpList$qfqm), function(x) eddy4R.base::def.hdf5.dp01.pack(inpList = inpList$qfqm, time = inpList$time, Dp01 = x))
 
+if(MethUcrt == TRUE){
 #Packaging 30-min dp01 ucrt output for writing to HDF5 file
 outList$ucrt <- sapply(names(inpList$ucrt), function(x) eddy4R.base::def.hdf5.dp01.pack(inpList = inpList$ucrt, time = inpList$time, Dp01 = x))
+}
 
-#Packaging sub-aggregated (e.g.1-min) dp01 data for writing to HDF5 file
-outList$dp01AgrSub$data <- sapply(names(inpList$dp01AgrSub$data), function(x) eddy4R.base::def.hdf5.dp01.pack(inpList = inpList$dp01AgrSub$data, time = inpList$dp01AgrSub$time, Dp01 = x))
-
-#Packaging sub-aggregated (e.g.1-min) dp01 qfqm for writing to HDF5 file
-outList$dp01AgrSub$qfqm <- sapply(names(inpList$dp01AgrSub$qfqm), function(x) eddy4R.base::def.hdf5.dp01.pack(inpList = inpList$dp01AgrSub$qfqm, time = inpList$dp01AgrSub$time, Dp01 = x))
-
-#Packaging sub-aggregated (e.g.1-min) dp01 ucrt for writing to HDF5 file
-outList$dp01AgrSub$ucrt <- sapply(names(inpList$dp01AgrSub$ucrt), function(x) eddy4R.base::def.hdf5.dp01.pack(inpList = inpList$dp01AgrSub$ucrt, time = inpList$dp01AgrSub$time, Dp01 = x))
+if(MethSubAgr == TRUE){
+  #Packaging sub-aggregated (e.g.1-min) dp01 data for writing to HDF5 file
+  outList$dp01AgrSub$data <- sapply(names(inpList$dp01AgrSub$data), function(x) eddy4R.base::def.hdf5.dp01.pack(inpList = inpList$dp01AgrSub$data, time = inpList$dp01AgrSub$time, Dp01 = x))
+  
+  #Packaging sub-aggregated (e.g.1-min) dp01 qfqm for writing to HDF5 file
+  outList$dp01AgrSub$qfqm <- sapply(names(inpList$dp01AgrSub$qfqm), function(x) eddy4R.base::def.hdf5.dp01.pack(inpList = inpList$dp01AgrSub$qfqm, time = inpList$dp01AgrSub$time, Dp01 = x))
+  
+  if(MethUcrt == TRUE){
+  #Packaging sub-aggregated (e.g.1-min) dp01 ucrt for writing to HDF5 file
+  outList$dp01AgrSub$ucrt <- sapply(names(inpList$dp01AgrSub$ucrt), function(x) eddy4R.base::def.hdf5.dp01.pack(inpList = inpList$dp01AgrSub$ucrt, time = inpList$dp01AgrSub$time, Dp01 = x))
+  }
+}
 
 outList$data$soni$angZaxsErth[,which(names(outList$data$soni$angZaxsErth) %in% c("mean","min","max","vari"))] <- def.unit.conv(outList$data$soni$angZaxsErth[,which(names(outList$data$soni$angZaxsErth) %in% c("mean","min","max","vari"))], unitFrom = "rad", unitTo = "deg")
 attr(x = outList$data$soni$angZaxsErth, which = "unit") <- "deg"
 
-outList$dp01AgrSub$data$soni$angZaxsErth[,which(names(outList$dp01AgrSub$data$soni$angZaxsErth) %in% c("mean","min","max","vari"))] <- def.unit.conv(outList$dp01AgrSub$data$soni$angZaxsErth[,which(names(outList$dp01AgrSub$data$soni$angZaxsErth) %in% c("mean","min","max","vari"))], unitFrom = "rad", unitTo = "deg")
-attr(x = outList$dp01AgrSub$data$soni$angZaxsErth, which = "unit") <- "deg"
+if(MethSubAgr == TRUE){
+  outList$dp01AgrSub$data$soni$angZaxsErth[,which(names(outList$dp01AgrSub$data$soni$angZaxsErth) %in% c("mean","min","max","vari"))] <- def.unit.conv(outList$dp01AgrSub$data$soni$angZaxsErth[,which(names(outList$dp01AgrSub$data$soni$angZaxsErth) %in% c("mean","min","max","vari"))], unitFrom = "rad", unitTo = "deg")
+  attr(x = outList$dp01AgrSub$data$soni$angZaxsErth, which = "unit") <- "deg"
+}
+  if(MethUcrt == TRUE){
+  outList$ucrt$soni$angZaxsErth[,which(names(outList$ucrt$soni$angZaxsErth) %in% c("mean","vari","se"))] <- def.unit.conv(outList$ucrt$soni$angZaxsErth[,which(names(outList$ucrt$soni$angZaxsErth) %in% c("mean","vari","se"))], unitFrom = "rad", unitTo = "deg")
+  attr(x = outList$ucrt$soni$angZaxsErth, which = "unit") <- "deg"
 
-outList$ucrt$soni$angZaxsErth[,which(names(outList$ucrt$soni$angZaxsErth) %in% c("mean","vari","se"))] <- def.unit.conv(outList$ucrt$soni$angZaxsErth[,which(names(outList$ucrt$soni$angZaxsErth) %in% c("mean","vari","se"))], unitFrom = "rad", unitTo = "deg")
-attr(x = outList$ucrt$soni$angZaxsErth, which = "unit") <- "deg"
-
-outList$dp01AgrSub$ucrt$soni$angZaxsErth[,which(names(outList$dp01AgrSub$ucrt$soni$angZaxsErth) %in% c("mean","vari","se"))] <- def.unit.conv(outList$dp01AgrSub$ucrt$soni$angZaxsErth[,which(names(outList$dp01AgrSub$ucrt$soni$angZaxsErth) %in% c("mean","vari","se"))], unitFrom = "rad", unitTo = "deg")
-attr(x = outList$dp01AgrSub$ucrt$soni$angZaxsErth, which = "unit") <- "deg"
-
+  if(MethSubAgr == TRUE){
+  outList$dp01AgrSub$ucrt$soni$angZaxsErth[,which(names(outList$dp01AgrSub$ucrt$soni$angZaxsErth) %in% c("mean","vari","se"))] <- def.unit.conv(outList$dp01AgrSub$ucrt$soni$angZaxsErth[,which(names(outList$dp01AgrSub$ucrt$soni$angZaxsErth) %in% c("mean","vari","se"))], unitFrom = "rad", unitTo = "deg")
+  attr(x = outList$dp01AgrSub$ucrt$soni$angZaxsErth, which = "unit") <- "deg"
+  }
+}
 #Applying the HDF5 write output function across all DPs
-lapply(names(outList$data), function(x) eddy4R.base::def.hdf5.wrte.dp01(inpList = outList, FileOut = FileOut, SiteLoca = SiteLoca, LevlTowr = LevlTowr, Dp01 = x))
+lapply(names(outList$data), function(x) eddy4R.base::def.hdf5.wrte.dp01(inpList = outList, FileOut = FileOut, SiteLoca = SiteLoca, LevlTowr = LevlTowr, Dp01 = x, MethUcrt = MethUcrt, MethSubAgr = MethSubAgr))
 
 #Writing metadata from input dp0p file to output dp01 file
 eddy4R.base::def.para.hdf5.dp01(FileIn = FileIn, FileOut = FileOut)
