@@ -1,23 +1,24 @@
 ##############################################################################################
-#' @title Workflow template implementation for processing NEON eddy-covariance turbulence data with eddy4R
+#' @title Example workflow for processing NEON eddy-covariance turbulence data with eddy4R
 
 #' @author
-#' #' David Durden \email{eddy4R.info@gmail.com} \cr
-#' Stefan Metzger \email{eddy4R.info@gmail.com} 
+#' David Durden \email{eddy4R.info@gmail.com} \cr
+#' Stefan Metzger \email{eddy4R.info@gmail.com} \cr
 #' Natchaya  Pingintha-Durden \email{eddy4R.info@gmail.com}
 
 #' @description 
-#' Workflow. Template implementation for processing NEON eddy-covariance turbulence data using the eddy4R family of R-packages and their dependencies. Based on "flow.turb.tow.r"
+#' Workflow. Example for processing NEON eddy-covariance turbulence data using the eddy4R family of R-packages and their dependencies. Based on "flow.turb.tow.neon.R" commit d90785a0.
 
 #' @param Currently none
 
 #' @return Currently none
 
 #' @references
-#' License: Terms of use of the NEON FIU algorithm repository dated 2015-01-16. \cr
-#' Metzger, S., Burba, G., Burns, S. P., Blanken, P. D., Li, J., Luo, H., and Zulueta, R. C.: Optimization of an enclosed gas analyzer sampling system for measuring eddy covariance fluxes of H2O and CO2, Atmos. Meas. Tech., 9, 1341-1359, doi:10.5194/amt-9-1341-2016, 2016.
+#' License: GNU AFFERO GENERAL PUBLIC LICENSE Version 3, 19 November 2007. \cr
+#' Metzger, S., Durden, D., Sturtevant, C., Luo, H., Pingintha-Durden, N., Sachs, T., Serafimovich, A., Hartmann, J., Li, J., Xu, K., and Desai, A. R.: eddy4R: A community-extensible processing, analysis and modeling framework for eddy-covariance data based on R, Git, Docker and HDF5, Geosci. Model Dev. Discuss., 2017, 1-26, doi:10.5194/gmd-2016-318, 2017. \cr
+#' NEON Data Portal \url{http://data.neonscience.org/data-product-catalog}
 
-#' @keywords eddy-covariance, NEON, SERC, turbulent flux
+#' @keywords Central Plains Experimental Range, CPER, eddy4R, eddy-covariance, NEON, turbulence
 
 #' @examples Currently none
 
