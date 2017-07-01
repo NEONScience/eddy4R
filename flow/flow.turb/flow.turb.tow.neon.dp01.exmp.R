@@ -55,13 +55,10 @@
 
 ##############################################################################################
 # 2. Here We set the environmental variables to control this eddy4R example workflow. This allows to modify parameters that control the processing, such as the input file (DIRFILEPARA), input file directory (DIRINP), where a local file system is mounted in the Docker container (DIRMNT), output file directory (DIROUT), the domain the NEON site is located in (DOM), the dates of the files being ingested into the workflow (FILEDP0P), the NEON measurement site (LOC), and whether to set the environmental variables or pass them directly to the eddy4R.base::def.para.flow() function (METHPARAFLOW). Additional information can be found by calling ?eddy4R.base::def.para.flow.
-  # TODO: clean up commented-out lines
 ###############################################################################################  
 if(TRUE) {
   base::Sys.setenv("DIRFILEPARA" = "/home/eddy/inpExmp/ECTE_dp0p_CPER_2017-05-01.h5")
-  # base::Sys.setenv("DIRFILEPARA" =  base::paste0("/home/", base::Sys.getenv("USER"), "/eddy/data/turbTow/inpRefe/ECTE_dp0p_CPER_2017-05-01.h5"))
   base::Sys.setenv("DIRINP" = "/home/eddy/inpExmp")
-  # base::Sys.setenv("DIRINP" =  base::paste0("/home/", base::Sys.getenv("USER"), "/eddy/data/turbTow/inpRefe"))
   # base::Sys.setenv("DIRMNT" = base::paste0("/home/", base::Sys.getenv("USER"), "/eddy"))
   base::Sys.setenv("DIROUT" = "/home/eddy/out")
   base::Sys.setenv("DOM" = "D10")
@@ -743,7 +740,7 @@ out <- eddy4R.base::def.agr.ecte.dp01(inpList = wrk, MethSubAgr = TRUE, MethUcrt
   wrk$qfqmOut <- NULL
 
 ################################################################################################ 
-# Lastly, we prepare the data for output and write it to the dp01 output HDF5 file. We first create the skeleton structure of the NEON HDF5 file using eddy4R.base::def.hdf5.crte(). we perform some packaging of the results to match the NEON HDF5 structure and write the output to output NEON dp01 HDF5 file.
+# 8. Lastly, we prepare the data for output and write it to the dp01 output HDF5 file. We first create the skeleton structure of the NEON HDF5 file using eddy4R.base::def.hdf5.crte(). We then perform some packaging of the results to match the NEON HDF5 structure and write the output to the NEON dp01 HDF5 file.
 ################################################################################################ 
   
 #Git rid of the qm column after the example
@@ -758,7 +755,7 @@ eddy4R.base::def.hdf5.crte(Date = date, Site = Para$Flow$Loc, LevlTowr = Para$Fl
 # Determine the output filename of the file that was just created  
 FileOut <- base::list.files(path = base::paste0(Para$Flow$DirOut, "/", Para$Flow$Loc, "/", Para$Flow$VersDp), pattern = ".h5", full.names = TRUE)
  
-# Call the wrapper functio to package and write data to output HDF5 files, both basic and expanded
+# Call the wrapper function to package and write data to output HDF5 files, both basic and expanded
 eddy4R.base::wrap.hdf5.wrte.dp01(inpList = out, FileIn = base::paste0(Para$Flow$DirInp,"/","ECTE_dp0p_",  Para$Flow$Loc, "_", date, ".h5"), FileOut = FileOut, SiteLoca = Para$Flow$Loc, LevlTowr = Para$Flow$LevlTowr, MethUcrt = FALSE, MethSubAgr = TRUE)
 
 ################################################################################################
