@@ -27,9 +27,9 @@
 #' 
 
 #' @references 
+#' License: GNU AFFERO GENERAL PUBLIC LICENSE Version 3, 19 November 2007 \cr
 #' NEON Algorithm Theoretical Basis Document QA/QC Plausibility Testing (NEON.DOC.011081)
-#' License: GNU AFFERO GENERAL PUBLIC LICENSE Version 3, 19 November 2007
-#' 
+
 #' @keywords NEON QAQC, plausibility, range, step, persistence, null, gap
 
 #' @examples Currently none
