@@ -701,9 +701,8 @@ print(paste0(format(Sys.time(), "%F %T"), ": dataset ", date, " DP01 calculation
 ###
 
 ################################################################################################ 
-# Now, we aggregate the results of the data analysis and determination of the quality metrics and final quality flag. The first step is to aggregate the half-hourly sets of data and qfqm from the processing. Then, we demonstrate the final quality flag and it's relation to the alpha (fraction of quality flags set high from a set of sensor and statistical plausibility tests flags) and beta (fraction of quality flags not available due to missing data) quality metrics is presented in a graph.
+# 7. Now, we aggregate the results of the data analysis and determination of the quality metrics and final quality flag. The first step is to aggregate the half-hourly sets of data and qfqm from the processing. Then, we plot the final quality flag and it's relation to the alpha (fraction of quality flags set high from a set of sensor and statistical plausibility tests flags) and beta (fraction of quality flags not available due to missing data) quality metrics.
 ################################################################################################ 
-
 # concatenate results
 out <- eddy4R.base::def.agr.ecte.dp01(inpList = wrk, MethSubAgr = TRUE, MethUcrt = FALSE)
 
