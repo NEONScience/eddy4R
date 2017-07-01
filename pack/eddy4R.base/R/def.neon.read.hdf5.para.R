@@ -2,8 +2,8 @@
 #' @title Definition function: Function to read in dp0p files 
 
 #' @author
-#' Stefan Metzger \email{eddy4R.info@gmail.com}
-#' David Durden \email{ddurden@battelleecology.org}
+#' Stefan Metzger \email{eddy4R.info@gmail.com} \cr
+#' David Durden \email{ddurden@battelleecology.org} \cr
 #' Hongyan Luo \email{hluo@battelleecology.org}
 
 #' @description Definition function. A function to read in dp0p files and extact relevant attributes as parameters for future use.
@@ -16,7 +16,7 @@
 #' The returned object is the parameters extracted from dp0p file for future use.  
 
 #' @references
-#' License: Terms of use of the NEON FIU algorithm repository dated 2015-01-16. \cr
+#' License: GNU AFFERO GENERAL PUBLIC LICENSE Version 3, 19 November 2007. \cr
 
 #' @keywords parameter, hdf5, dp0p
 

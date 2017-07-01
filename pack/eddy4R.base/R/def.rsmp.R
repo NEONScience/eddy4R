@@ -2,7 +2,7 @@
 #' @title Definition function: Resampling function
 
 #' @author
-#' Stefan Metzger \email{eddy4R.info@gmail.com}
+#' Stefan Metzger \email{eddy4R.info@gmail.com} \cr
 #' Natchaya Pingintha-Durden \email{ndurden@battelleecology.org}
 
 #' @description Function definition. Resampling data by changing the sample rate from high frequency to low frequency.

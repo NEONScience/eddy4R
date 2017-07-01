@@ -2,9 +2,9 @@
 #' @title Example workflow for processing NEON eddy-covariance turbulence data with eddy4R
 
 #' @author
-#' David Durden \email{eddy4R.info@gmail.com} \cr
+#' David Durden \email{ddurden@battelleecology.org} \cr
 #' Stefan Metzger \email{eddy4R.info@gmail.com} \cr
-#' Natchaya  Pingintha-Durden \email{eddy4R.info@gmail.com}
+#' Natchaya  Pingintha-Durden \email{ndurden@battelleecology.org}
 
 #' @description 
 #' Workflow. Example for processing NEON eddy-covariance turbulence data using the eddy4R family of R-packages and their dependencies. Based on "flow.turb.tow.neon.R" commit d90785a0.
