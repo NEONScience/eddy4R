@@ -26,7 +26,7 @@
 
 
 ##############################################################################################
-# Initially we set up the environment by installing and loading any packages that may be necessary in the workflow that are not necessary for eddy4R definition and wrapper functions; and thus are not installed with the eddy4R packages. Additionally we set up our global environment.
+# Initially we set up the environment by installing and loading any packages that may be necessary in the workflow. External packages that are used by eddy4R definition and wrapper functions have already been pre-installed in the Docker image and are excluded here. Additionally we set up our global environment.
 ##############################################################################################
 # load and attach required  packages
   # ensure that workflow dependency packages are installed
