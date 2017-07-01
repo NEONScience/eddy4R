@@ -43,7 +43,7 @@ License: GNU AFFERO GENERAL PUBLIC LICENSE Version 3, 19 November 2007.
 Currently none
 }
 \author{
-Natchaya Pingintha-Durden \email{ndurden@battelleecology.org}
+Natchaya Pingintha-Durden \email{ndurden@battelleecology.org} \cr
 David Durden \email{ddurden@battelleecology.org}
 }
 \keyword{IRGA,}
