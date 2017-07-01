@@ -70,7 +70,6 @@ if(TRUE) {
   
 ###############################################################################################
 # 3. First we read in all of the metadata. Workflow parameters are read from the environmental variables (see point 2.) or can be specified directly in the eddy4R.base::def.para.flow() function. In this example we use the environmental variables set above. This automatically occurs if the METHPARAFLOW environmental variable is set. After the workflow metadata is read, the science parameters or additional metadata is read in from the input HDF5 file using eddy4R.base::def.neon.read.hdf5.para(). This call is made to read data at all the group levels within the NEON HDF5 structure. For a description of NEON HDF5 structure please see the "readMe" file included in the output HDF5 file, or Metzger et al. (2017).
-  # TODO: is the output readme read from Dropbox? If so, how can we ensure it doesn't break once the file is removed from Dropbox?
 ###############################################################################################
 # Initialize your parameter list
 Para <- list()
@@ -750,7 +749,10 @@ lapply(names(out$qfqm), function(x){
 
 # Call the NEON HDF5 structure generating for expanded file
 eddy4R.base::def.hdf5.crte(Date = date, Site = Para$Flow$Loc, LevlTowr = Para$Flow$LevlTowr, 
-                             DirOut = base::paste0(Para$Flow$DirOut, "/", Para$Flow$Loc, "/", Para$Flow$VersDp), Dom = Para$Flow$Dom, MethExpd = TRUE)
+                           DirOut = base::paste0(Para$Flow$DirOut, "/", Para$Flow$Loc, "/", Para$Flow$VersDp),
+                           Dom = Para$Flow$Dom, MethExpd = TRUE,
+                           fileNameReadMe = "/home/eddy/inpExmp/ECTE_HDF5_readme.txt",
+                           fileNameObjDesc = "/home/eddy/inpExmp/ECTE_HDF5_object_description.csv")
 
 # Determine the output filename of the file that was just created  
 FileOut <- base::list.files(path = base::paste0(Para$Flow$DirOut, "/", Para$Flow$Loc, "/", Para$Flow$VersDp), pattern = ".h5", full.names = TRUE)
