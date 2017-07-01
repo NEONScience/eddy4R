@@ -3,7 +3,7 @@
 #' @title Definition function: Calculation of the molar density of the mixture of dry air and water vapor
 
 #' @author
-#' Stefan Metzger \email{eddy4R.info@gmail.com}
+#' Stefan Metzger \email{eddy4R.info@gmail.com} \cr
 #' Hongyan Luo \email{hluo@battelleecology.org}
 
 #' @description Function definition. Calculation of the molar density of the misxture of dry air and water vapor

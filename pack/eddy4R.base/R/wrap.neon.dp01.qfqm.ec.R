@@ -38,11 +38,6 @@
 #' qfqm <- list()
 #' qfqm <- wrap.neon.dp01.qfqm.ec(qfqm = wrk$qfqm, idx = c("soni", "soniAmrs", "irgaCo2", "irgaH2o") )
 
-
-#' @references
-#' License: GNU AFFERO GENERAL PUBLIC LICENSE Version 3, 19 November 2007.
-
-
 #' @seealso Currently none.
 
 #' @export

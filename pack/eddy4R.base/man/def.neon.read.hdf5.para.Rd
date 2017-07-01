@@ -23,14 +23,14 @@ Definition function. A function to read in dp0p files and extact relevant attrib
 Currently none
 }
 \references{
-License: Terms of use of the NEON FIU algorithm repository dated 2015-01-16. \cr
+License: GNU AFFERO GENERAL PUBLIC LICENSE Version 3, 19 November 2007. \cr
 }
 \seealso{
 Currently none.
 }
 \author{
-Stefan Metzger \email{eddy4R.info@gmail.com}
-David Durden \email{ddurden@battelleecology.org}
+Stefan Metzger \email{eddy4R.info@gmail.com} \cr
+David Durden \email{ddurden@battelleecology.org} \cr
 Hongyan Luo \email{hluo@battelleecology.org}
 }
 \keyword{dp0p}
