@@ -26,7 +26,7 @@
 
 
 ##############################################################################################
-# Initially we set up the environment by installing and loading any packages that may be necessary in the workflow. External packages that are used by eddy4R definition and wrapper functions have already been pre-installed in the Docker image and are excluded here. Additionally we set up our global environment.
+# 1. Initially we set up the environment by installing and loading any packages that may be necessary in the workflow. External packages that are used by eddy4R definition and wrapper functions have already been pre-installed in the Docker image and are excluded here. Additionally we set up our global environment.
 ##############################################################################################
 # load and attach required  packages
   # ensure that workflow dependency packages are installed
@@ -54,7 +54,7 @@
 
 
 ##############################################################################################
-# Here We set the environmental variables to control this eddy4R example workflow. This allows to modify parameters that control the processing, such as the input file (DIRFILEPARA), input file directory (DIRINP), where a local file system is mounted in the Docker container (DIRMNT), output file directory (DIROUT), the domain the NEON site is located in (DOM), the dates of the files being ingested into the workflow (FILEDP0P), the NEON measurement site (LOC), and whether to set the environmental variables or pass them directly to the eddy4r.base::def.para.flow() function (METHPARAFLOW). Additional information can be found by calling ?eddy4R.base::def.para.flow.
+# 2. Here We set the environmental variables to control this eddy4R example workflow. This allows to modify parameters that control the processing, such as the input file (DIRFILEPARA), input file directory (DIRINP), where a local file system is mounted in the Docker container (DIRMNT), output file directory (DIROUT), the domain the NEON site is located in (DOM), the dates of the files being ingested into the workflow (FILEDP0P), the NEON measurement site (LOC), and whether to set the environmental variables or pass them directly to the eddy4r.base::def.para.flow() function (METHPARAFLOW). Additional information can be found by calling ?eddy4R.base::def.para.flow.
   # TODO: clean up commented-out lines
 ###############################################################################################  
 if(TRUE) {
@@ -72,7 +72,8 @@ if(TRUE) {
   
   
 ###############################################################################################
-#First we read in all of the metadata. Workflow parameters are read in from environmental variables (see above) or can be specified directly in the eddy4r.base::def.para.flow() function. In this example we use the environmental varianbles set above. This automatically occurs if the METHPARAFLOW environmental variable is set. After the workflow metadata is read, the science parameters or additional metadata is read in from the input HDF5 file using eddy4r.base::def.neon.read.hdf5.para(), this call is made to read data at all the group levels within the NEON HDF5 structure (readMe) within the output HDF5 or Metzger et al., 2017 for a description of NEON HDF5 structure.
+# 3. First we read in all of the metadata. Workflow parameters are read from the environmental variables (see point 2.) or can be specified directly in the eddy4r.base::def.para.flow() function. In this example we use the environmental variables set above. This automatically occurs if the METHPARAFLOW environmental variable is set. After the workflow metadata is read, the science parameters or additional metadata is read in from the input HDF5 file using eddy4r.base::def.neon.read.hdf5.para(). This call is made to read data at all the group levels within the NEON HDF5 structure. For a description of NEON HDF5 structure please see the "readMe" file included in the output HDF5 file, or Metzger et al. (2017).
+  # TODO: is the output readme read from Dropbox? If so, how can we ensure it doesn't break once the file is removed from Dropbox?
 ###############################################################################################
 # Initialize your parameter list
 Para <- list()
