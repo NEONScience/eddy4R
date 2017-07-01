@@ -11,8 +11,8 @@
 #' @return A dataframe (\code{qfSoni}) of sensor specific AMRS quality flags as described in NEON.DOC.000807.
 
 #' @references 
-#' License: GNU AFFERO GENERAL PUBLIC LICENSE Version 3, 19 November 2007.
-#' NEON Algorithm Theoretical Basis Document:Eddy Covariance Turbulent Exchange Subsystem Level 0 to Level 0’ data product conversions and calculations (NEON.DOC.000807)
+#' License: GNU AFFERO GENERAL PUBLIC LICENSE Version 3, 19 November 2007. \cr
+#' NEON Algorithm Theoretical Basis Document:Eddy Covariance Turbulent Exchange Subsystem Level 0 to Level 0’ data product conversions and calculations (NEON.DOC.000807) \cr
 #' Campbell Scientific CSAT3 reference manual
 
 #' @keywords NEON, soni, sonic anemometer, CSAT3, qfqm

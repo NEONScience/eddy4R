@@ -17,7 +17,7 @@
 #' @return Running this function will output 3 plots per data variable: 1) basic L1 statistics (mean, min, max, etc). 2) Pass, Fail, and NA quality metrics for ever flag, 3) the final Alpha and Beta quality metrics and the final quality flag.
 
 #' @references 
-#' License: GNU AFFERO GENERAL PUBLIC LICENSE Version 3, 19 November 2007.
+#' License: GNU AFFERO GENERAL PUBLIC LICENSE Version 3, 19 November 2007. \cr
 #' NEON Algorithm Theoretical Basis Document: Quality Flags and Quality Metrics for TIS Data Products (NEON.DOC.001113)
 
 #' @keywords NEON QAQC, quality flags and metrics, L1 average, final quality flag
