@@ -274,7 +274,7 @@ if("METHPARAFLOW" %in% base::names(base::Sys.getenv())) {
     }
 
 ############################################################################################### 
-#After all the workflow parameters and additional metadata have been read in from the file, we can now begin to read the data and quality flag information from the input NEON HDF5 dp0p file. Upon readin, variable unit information stored as attributes in the HDF5 file are read in and attributed to the data and quality flag information. We then store all this information using the ff package as binary files to reduce the memory footprint for large datastes. 
+# 5. After all the workflow parameters and additional metadata have been read in from the file, we can now begin to read the data and quality flag information from the input NEON HDF5 dp0p file. Upon read-in, variable unit information stored as attributes in the HDF5 file are read in and attributed to the data and quality flag information. We then assign all this information using the ff package as binary files to reduce the memory footprint for large datasets.
 ################################################################################################ 
 #READ LIST OF FILES
 
