@@ -54,7 +54,7 @@
 
 
 ##############################################################################################
-# 2. Here We set the environmental variables to control this eddy4R example workflow. This allows to modify parameters that control the processing, such as the input file (DIRFILEPARA), input file directory (DIRINP), where a local file system is mounted in the Docker container (DIRMNT), output file directory (DIROUT), the domain the NEON site is located in (DOM), the dates of the files being ingested into the workflow (FILEDP0P), the NEON measurement site (LOC), and whether to set the environmental variables or pass them directly to the eddy4r.base::def.para.flow() function (METHPARAFLOW). Additional information can be found by calling ?eddy4R.base::def.para.flow.
+# 2. Here We set the environmental variables to control this eddy4R example workflow. This allows to modify parameters that control the processing, such as the input file (DIRFILEPARA), input file directory (DIRINP), where a local file system is mounted in the Docker container (DIRMNT), output file directory (DIROUT), the domain the NEON site is located in (DOM), the dates of the files being ingested into the workflow (FILEDP0P), the NEON measurement site (LOC), and whether to set the environmental variables or pass them directly to the eddy4R.base::def.para.flow() function (METHPARAFLOW). Additional information can be found by calling ?eddy4R.base::def.para.flow.
   # TODO: clean up commented-out lines
 ###############################################################################################  
 if(TRUE) {
@@ -72,7 +72,7 @@ if(TRUE) {
   
   
 ###############################################################################################
-# 3. First we read in all of the metadata. Workflow parameters are read from the environmental variables (see point 2.) or can be specified directly in the eddy4r.base::def.para.flow() function. In this example we use the environmental variables set above. This automatically occurs if the METHPARAFLOW environmental variable is set. After the workflow metadata is read, the science parameters or additional metadata is read in from the input HDF5 file using eddy4r.base::def.neon.read.hdf5.para(). This call is made to read data at all the group levels within the NEON HDF5 structure. For a description of NEON HDF5 structure please see the "readMe" file included in the output HDF5 file, or Metzger et al. (2017).
+# 3. First we read in all of the metadata. Workflow parameters are read from the environmental variables (see point 2.) or can be specified directly in the eddy4R.base::def.para.flow() function. In this example we use the environmental variables set above. This automatically occurs if the METHPARAFLOW environmental variable is set. After the workflow metadata is read, the science parameters or additional metadata is read in from the input HDF5 file using eddy4R.base::def.neon.read.hdf5.para(). This call is made to read data at all the group levels within the NEON HDF5 structure. For a description of NEON HDF5 structure please see the "readMe" file included in the output HDF5 file, or Metzger et al. (2017).
   # TODO: is the output readme read from Dropbox? If so, how can we ensure it doesn't break once the file is removed from Dropbox?
 ###############################################################################################
 # Initialize your parameter list
@@ -446,12 +446,12 @@ numDate <- numDate + 1
 ###
 
 ################################################################################################ 
-# Beginning the data analysis (data) and determination of the quality metrics and final quality flag (qfqm). The first step is to grab the half-hourly indices used to extract the data from the file-backed objects into internal memory as a list of data.frames. Then, the lag time correction is applied to the irga data based off the sonic anemometer vertical velocity using the eddy4r.base::def.lag() ) function. After the lag correction has been applied, half-hourly derived data products relative humidity and dewpoint temperature are calculated. Then, the data that are provided as NEON Level 1 data products are subsetted from the sensor output and naming syntax are changed to match NEON Level 1 data product output conventions. We use eddy4R.base::wrap.neon.dp01.agr.prd() to calculate the 1-minute averaged data statistics and quality metrics.Finally, we calculate 30-minute data statistics using eddy4R.base::wrap.neon.dp01() and determine the quality metrics and final quality flag using eddy4R.base::wrap.neon.dp01.qfqm.ec().
+# 6. Beginning the data analysis (data) and determination of the quality metrics and final quality flag (qfqm). The first step is to grab the half-hourly indices used to extract the data from the file-backed objects into internal memory as a list of data.frames. Then, the lag time correction is applied to the irga data based off the sonic anemometer vertical velocity using the eddy4R.base::def.lag() ) function. After the lag correction has been applied, the half-hourly derived data sub-products "relative humidity" and "dewpoint temperature" are calculated. Then, the data that are provided as NEON Level 1 data products are subsetted from the sensor output and naming syntax are changed to match NEON Level 1 data product output conventions. We use eddy4R.base::wrap.neon.dp01.agr.prd() to calculate the 1-minute averaged data statistics and quality metrics. Finally, we calculate 30-minute data statistics using eddy4R.base::wrap.neon.dp01() and determine the quality metrics and final quality flag using eddy4R.base::wrap.neon.dp01.qfqm.ec().
 ################################################################################################ 
 
 
 ###
-# begin: derived quantities (experimental)
+# begin: derived quantities
 print(paste0(format(Sys.time(), "%F %T"), ": dataset ", date, " derived quantities (experimental) begin"))
 ###
 
