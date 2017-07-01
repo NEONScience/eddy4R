@@ -185,7 +185,7 @@ if("METHPARAFLOW" %in% base::names(base::Sys.getenv())) {
 
 
 ###############################################################################################    
-#Set the sampling frequency of the sensors from the input HDF5 metadata for reading in the data and designate plausible ranges for the measurement streams to be tested during the read in of the input HDF5 file. Additionally, we set the working directory and ensure the directories defined above exist (if not, they are created).    
+# 4. Set the sampling frequency of the sensors from the input HDF5 metadata for reading in the data and designate plausible ranges for the measurement streams to be tested during the read in of the input HDF5 file. Additionally, we set the working directory and ensure the directories defined above exist (if not, they are created).    
 ###############################################################################################     
        
     FreqSamp <- list(
