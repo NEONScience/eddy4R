@@ -91,8 +91,8 @@ NEON.DOC.001069 Preprocessing ATBD: The ATBD that describes the CybiEc and CybiD
 ?zoo:na.approx, ?stats::approx
 }
 \author{
-Stefan Metzger \email{eddy4R.info@gmail.com}
-Cove Sturtevant \email{eddy4R.info@gmail.com}
+Stefan Metzger \email{eddy4R.info@gmail.com} \cr
+Cove Sturtevant \email{eddy4R.info@gmail.com} \cr
 David Durden \email{ddurden@battelleecology.org}
 }
 \keyword{equidistant,}

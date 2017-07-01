@@ -48,7 +48,7 @@ License: GNU AFFERO GENERAL PUBLIC LICENSE Version 3, 19 November 2007.
 Currently none
 }
 \author{
-Dave Durden \email{ddurden@battelleecology.org}
+Dave Durden \email{ddurden@battelleecology.org} \cr
 Natchaya Pingintha-Durden \email{ndurden@battelleecology.org}
 }
 \keyword{NEON,}

@@ -2,8 +2,8 @@
 #' @title Definition function: Regularizing irregular data to strictly regular / equidistant data
 
 #' @author
-#' Stefan Metzger \email{eddy4R.info@gmail.com}
-#' Cove Sturtevant \email{eddy4R.info@gmail.com}
+#' Stefan Metzger \email{eddy4R.info@gmail.com} \cr
+#' Cove Sturtevant \email{eddy4R.info@gmail.com} \cr
 #' David Durden \email{ddurden@battelleecology.org}
 
 #' @description Function defintion. 
