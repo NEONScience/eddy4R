@@ -2,7 +2,8 @@
 #' @title Definition function: Create the ECTE HDF5 file structure
 
 #' @author 
-#' David Durden \email{ddurden@battelleecology.org}
+#' David Durden \email{ddurden@battelleecology.org} \cr
+#' Stefan Metzger \email{eddy4R.info@gmail.com}
 
 #' @description 
 #' Definition function. Function creates the standard NEON HDF5 file structure for the ECTE data products.
@@ -12,6 +13,8 @@
 #' @param DirOut is the output directory where the file being generated is stored.
 #' @param Dom is the NEON domain
 #' @param MethExpd logical indicating if the output should be expanded or basic
+#' @param fileNameReadMe character indicating the filename incl. absolute path to the ReadMe file for inclusion in the output HDF5 file. Defaults to \code{NULL}, which downloads the readme file from a web location.
+#' @param fileNameObjDesc = character indicating the filename incl. absolute path to the object description file for inclusion in the output HDF5 file. Defaults to \code{NULL}, which downloads the object description file from a web location.
 
 #' @return A NEON formatted HDF5 file that is output to /code{DirOut} with a readme and object description included.
 
@@ -52,6 +55,8 @@
 #     Formatting output name to align with NEON DPS
 #   Dave Durden (2017-06-05)
 #     Adding uncertainty level output
+#   Stefan Metzger (2017-07-01)
+#     added switch for readme and object description file
 
 ##############################################################################################################
 #Start of function call to generate NEON HDF5 files
@@ -63,7 +68,9 @@ def.hdf5.crte <- function(
   LevlTowr, 
   DirOut, 
   Dom = Dom,
-  MethExpd = TRUE
+  MethExpd = TRUE,
+  fileNameReadMe = NULL,
+  fileNameObjDesc = NULL
   ) {
   
   
@@ -80,15 +87,20 @@ def.hdf5.crte <- function(
   #Check to see if the directory exists, if not create the directory. Recursive required to write nested file directories
   if (base::dir.exists(DirOut) == FALSE) base::dir.create(DirOut, recursive = TRUE)
 
+  # download readme and object description file only if not previously provided
+  if(base::is.null(fileNameReadMe) && base::is.null(fileNameObjDesc)) {
+
+    #Download file description readme and object list  
+    eddy4R.base::def.dld.zip(Inp = list(Url = "https://www.dropbox.com/s/dqq3j7epiy98y29/fileDesc.zip?dl=1",
+                                        Dir = DirOut))
+    
+    #Store the path to the readme file
+    fileNameReadMe <- base::list.files( path = base::paste0(DirOut,"/fileDesc"), pattern = ".txt", full.names = TRUE)
+    #Store the path to the object description file
+    fileNameObjDesc <- base::list.files( path = base::paste0(DirOut,"/fileDesc/"), pattern = ".csv", full.names = TRUE)
+
+  }
   
-  #Download file description readme and object list  
-  eddy4R.base::def.dld.zip(Inp = list(Url = "https://www.dropbox.com/s/dqq3j7epiy98y29/fileDesc.zip?dl=1",
-                                      Dir = DirOut))
-  
-  #Store the path to the readme file
-  fileNameReadMe <- base::list.files( path = base::paste0(DirOut,"/fileDesc"), pattern = ".txt", full.names = TRUE)
-  #Store the path to the object description file
-  fileNameObjDesc <- base::list.files( path = base::paste0(DirOut,"/fileDesc/"), pattern = ".csv", full.names = TRUE)
   #Read in the readme file
   readMe <- base::readChar(fileNameReadMe, base::file.info(fileNameReadMe)$size)
   #Read in the object description file
