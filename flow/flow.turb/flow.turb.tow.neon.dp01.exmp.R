@@ -54,20 +54,23 @@
 
 
 ##############################################################################################
-# We will set workflow environment variables to control the eddy4R workflow for this executable instruction template. This allows you to modify parameters that control the processing, such as the input file (DIRFILEPARA), input file directory (DIRINP), where the docker is mounted or home directory (DIRMNT),output file directory (DIROUT), the domain the NEON site is located in (DOM), the dates of the files being ingested into the workflow (FILEDP0P), the NEON measurement site (LOC), and wether to environmental variables or pass them directly to the eddy4r.base::def.para.flow() function (METHPARAFLOW). Additional workflow parameters and information can be found by ?eddy4r.base::def.para.flow().
+# Here We set the environmental variables to control this eddy4R example workflow. This allows to modify parameters that control the processing, such as the input file (DIRFILEPARA), input file directory (DIRINP), where a local file system is mounted in the Docker container (DIRMNT), output file directory (DIROUT), the domain the NEON site is located in (DOM), the dates of the files being ingested into the workflow (FILEDP0P), the NEON measurement site (LOC), and whether to set the environmental variables or pass them directly to the eddy4r.base::def.para.flow() function (METHPARAFLOW). Additional information can be found by calling ?eddy4R.base::def.para.flow.
+  # TODO: clean up commented-out lines
 ###############################################################################################  
 if(TRUE) {
- # base::Sys.setenv("DIRFILEPARA" = "/home/eddy/inpRefe/ECTE_dp0p_SERC_2016-04-24.h5")
-  base::Sys.setenv("DIRFILEPARA" =  base::paste0("/home/", base::Sys.getenv("USER"), "/eddy/data/turbTow/inpRefe/ECTE_dp0p_CPER_2017-05-01.h5"))
- # base::Sys.setenv("DIRINP" = "/home/eddy/inpRefe")
-  base::Sys.setenv("DIRINP" =  base::paste0("/home/", base::Sys.getenv("USER"), "/eddy/data/turbTow/inpRefe"))
-  base::Sys.setenv("DIRMNT" = base::paste0("/home/", base::Sys.getenv("USER"), "/eddy"))
-  base::Sys.setenv("DIROUT" = base::paste0("/home/", base::Sys.getenv("USER"), "/eddy/data/out"))
+  base::Sys.setenv("DIRFILEPARA" = "/home/eddy/inpExmp/ECTE_dp0p_CPER_2017-05-01.h5")
+  # base::Sys.setenv("DIRFILEPARA" =  base::paste0("/home/", base::Sys.getenv("USER"), "/eddy/data/turbTow/inpRefe/ECTE_dp0p_CPER_2017-05-01.h5"))
+  base::Sys.setenv("DIRINP" = "/home/eddy/inpExmp")
+  # base::Sys.setenv("DIRINP" =  base::paste0("/home/", base::Sys.getenv("USER"), "/eddy/data/turbTow/inpRefe"))
+  # base::Sys.setenv("DIRMNT" = base::paste0("/home/", base::Sys.getenv("USER"), "/eddy"))
+  base::Sys.setenv("DIROUT" = "/home/eddy/out")
   base::Sys.setenv("DOM" = "D10")
   base::Sys.setenv("FILEDP0P" = "2017-05-01")
   base::Sys.setenv("LOC" = "CPER")
   base::Sys.setenv("METHPARAFLOW" = "EnvVar")
 }
+  
+  
 ###############################################################################################
 #First we read in all of the metadata. Workflow parameters are read in from environmental variables (see above) or can be specified directly in the eddy4r.base::def.para.flow() function. In this example we use the environmental varianbles set above. This automatically occurs if the METHPARAFLOW environmental variable is set. After the workflow metadata is read, the science parameters or additional metadata is read in from the input HDF5 file using eddy4r.base::def.neon.read.hdf5.para(), this call is made to read data at all the group levels within the NEON HDF5 structure (readMe) within the output HDF5 or Metzger et al., 2017 for a description of NEON HDF5 structure.
 ###############################################################################################
