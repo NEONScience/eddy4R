@@ -49,8 +49,8 @@ Function definition. Determines inplausible data indices based on user-specified
 Currently none
 }
 \references{
+License: GNU AFFERO GENERAL PUBLIC LICENSE Version 3, 19 November 2007 \cr
 NEON Algorithm Theoretical Basis Document QA/QC Plausibility Testing (NEON.DOC.011081)
-License: GNU AFFERO GENERAL PUBLIC LICENSE Version 3, 19 November 2007
 }
 \seealso{
 Currently none

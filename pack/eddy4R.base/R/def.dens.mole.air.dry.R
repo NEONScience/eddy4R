@@ -3,7 +3,7 @@
 #' @title Definition function: Calculation of the molar density of the dry air alone
 
 #' @author
-#' Stefan Metzger \email{eddy4R.info@gmail.com}
+#' Stefan Metzger \email{eddy4R.info@gmail.com} \cr
 #' Hongyan Luo \email{hluo@battelleecology.org}
 
 #' @description Function definition. Calculation of the molar density of the mdry air alone

@@ -25,7 +25,7 @@ pos <- runif(15,1, 72000) # inserting error positions for other flags
 diag32[pos] <- as.integer(c(262279,524423, 1048710)) # filling with numbers that would indicate flags for qfAmrsVal, qfAmrsVelo, and qfAmrsRng
 }
 \references{
-License: GNU AFFERO GENERAL PUBLIC LICENSE Version 3, 19 November 2007.
+License: GNU AFFERO GENERAL PUBLIC LICENSE Version 3, 19 November 2007. \cr
 NEON Algorithm Theoretical Basis Document:Eddy Covariance Turbulent Exchange Subsystem Level 0 to Level 0’ data product conversions and calculations (NEON.DOC.000807)
 XSens AMRS reference manual
 }

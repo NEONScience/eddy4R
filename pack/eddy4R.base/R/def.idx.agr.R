@@ -2,7 +2,7 @@
 #' @title Definition function: indices for aggregation periods
 
 #' @author 
-#' Dave Durden \email{ddurden@battelleecology.org}
+#' Dave Durden \email{ddurden@battelleecology.org} \cr
 #' Natchaya Pingintha-Durden \email{ndurden@battelleecology.org}
 
 #' @description 
