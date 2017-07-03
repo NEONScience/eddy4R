@@ -2,7 +2,7 @@
 #' @title Definition function: Validation flag for IRGA
 
 #' @author 
-#' Natchaya Pingintha-Durden \email{ndurden@battelleecology.org}
+#' Natchaya Pingintha-Durden \email{ndurden@battelleecology.org} \cr
 #' David Durden \email{ddurden@battelleecology.org}
 
 #' @description 

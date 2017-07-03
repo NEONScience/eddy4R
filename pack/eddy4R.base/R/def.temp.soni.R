@@ -3,7 +3,7 @@
 #' @title Definition function: Calculation of sonic temperature from speed of sound
 
 #' @author
-#' Stefan Metzger \email{eddy4R.info@gmail.com}
+#' Stefan Metzger \email{eddy4R.info@gmail.com} \cr
 #' Hongyan Luo \email{hluo@battelleecology.org}
 
 #' @description Function definition. Calculation of sonic temperature from speed of sound using Eq. (9) in Appendix C of CSAT3 Three Dimensional Sonic Anemometer Instruction manual
@@ -14,7 +14,7 @@
 #' The returned object is sonic temperature  
 
 #' @references
-#' License: GNU AFFERO GENERAL PUBLIC LICENSE Version 3, 19 November 2007.
+#' License: GNU AFFERO GENERAL PUBLIC LICENSE Version 3, 19 November 2007. \cr
 #' CSAT3 Three Dimensional Sonic Anemometer Instruction Mannual (Revisoin 2/15). Logan, Utah, USA. Campbell Scientifc, Inc. (2015)
 
 #' @keywords temperature, sonic anemometer

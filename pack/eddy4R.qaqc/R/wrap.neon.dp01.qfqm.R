@@ -2,7 +2,7 @@
 #' @title Wrapper function: Calculate quality metrics, alpha and beta quality metrics, and final quality flag for the NEON eddy-covariance turbulent and stroage exchange L1 data products
 
 #' @author
-#' Natchaya Pingintha-Durden \email{ndurden@battelleecology.org}
+#' Natchaya Pingintha-Durden \email{ndurden@battelleecology.org} \cr
 #' David Durden \email{ddurden@battelleecology.org}
 
 #' @description Wrapper function. Calculate quality metrics, alpha and beta quality metrics, and final quality flag for the NEON eddy-covariance turbulent and storage exchange L1 data products.

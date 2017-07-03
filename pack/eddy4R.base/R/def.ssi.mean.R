@@ -2,7 +2,7 @@
 #' @title Definition function: Calculation of average signal strength for LI-7200 IRGA
 
 #' @author
-#' Stefan Metzger \email{eddy4R.info@gmail.com}
+#' Stefan Metzger \email{eddy4R.info@gmail.com} \cr
 #' Hongyan Luo \email{hluo@battelleecology.org}
 
 #' @description Function definition. Calculation of average signal strength for LI-7200 IRGA.

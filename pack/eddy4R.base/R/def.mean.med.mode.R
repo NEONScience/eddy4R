@@ -18,7 +18,7 @@
 #' @references
 #' License: GNU AFFERO GENERAL PUBLIC LICENSE Version 3, 19 November 2007 \cr
 #' Croux, C., and Rousseeuw, P. J.: Time-efficient algorithms for two highly robust estimators of scale, Computational Statistics, 1, 411-428, 1992. \cr
-#' http://stackoverflow.com/questions/2547402/standard-library-function-in-r-for-finding-the-mode \cr
+#' \url{http://stackoverflow.com/questions/2547402/standard-library-function-in-r-for-finding-the-mode} \cr
 
 #' @keywords descriptive statistics
 

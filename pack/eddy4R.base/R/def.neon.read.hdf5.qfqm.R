@@ -2,7 +2,7 @@
 #' @title Wrapper function: Reading quality flags from NEON HDF5 files
 
 #' @author
-#' David Durden \email{eddy4R.info@gmail.com}
+#' David Durden \email{ddurden@battelleecology.org}
 
 #' @description definition function. Reads an HDF5 input file in NEON standard format from \code{DirInpLoca}. 
 
