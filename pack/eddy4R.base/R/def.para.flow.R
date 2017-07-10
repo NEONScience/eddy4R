@@ -47,8 +47,6 @@
 #     adding Deve parameter
 #   Ke Xu (2017-05-22)
 #     adding parameter MethMeas to distinguish different cases for ecte and ecse
-#   Ke Xu (2017-06-22)
-#     adding parameter LevlDp to distinguish different data product level
 
 ##############################################################################################################
 #Start of function call to determine workflow parameters
@@ -70,7 +68,6 @@ def.para.flow <- function(
   VersEddy  = "latest",
   MethParaFlow = c("DfltInp","EnvVar")[1],
   MethMeas = c("ecte", "ecse")[1],
-  LevlDp = c("dp01", "dp02")[1],
   ...
 ){
   
@@ -95,7 +92,6 @@ def.para.flow <- function(
   if(is.null(ParaFlow$FileDp0p)|!is.character(ParaFlow$FileDp0p)) {stop("FileDp0p must be defined and a character string.")} else {ParaFlow$FileDp0p <- base::trimws(base::unlist(base::strsplit(x = ParaFlow$FileDp0p, split = ",")))}
   
   # Check if the DirFilePara is specified, if not run gold file example, download gold file from dropbox         
-
   if(is.null(ParaFlow$DirFilePara)) {
     # input data
     
@@ -104,11 +100,8 @@ def.para.flow <- function(
                                                                Dir = tempdir()))
     
     
-    if(MethMeas == "ecse" & LevlDp == "dp01") eddy4R.base::def.dld.zip(Inp = list(Url = "https://www.dropbox.com/s/dn3yzcuf032zh2u/inpRefe.zip?dl=1",
+    if(MethMeas == "ecse") eddy4R.base::def.dld.zip(Inp = list(Url = "https://www.dropbox.com/s/dn3yzcuf032zh2u/inpRefe.zip?dl=1",
                                                                Dir = tempdir()))
-    
-    if(MethMeas == "ecse" & LevlDp == "dp02") eddy4R.base::def.dld.zip(Inp = list(Url = "https://www.dropbox.com/s/po0hrudtzpqq5kh/inpRefe%202.zip?dl=1",
-                                        Dir = tempdir()))
     
     
     # assign corresponding DirFilePara
@@ -118,16 +111,13 @@ def.para.flow <- function(
     if(MethMeas == "ecte") eddy4R.base::def.dld.zip(Inp = list(Url = "https://www.dropbox.com/s/60s78ehk7s5j6rd/outRefe_20170612.zip?dl=1",
                                                                Dir = tempdir()))
     
-    if(MethMeas == "ecse" & LevlDp == "dp01") eddy4R.base::def.dld.zip(Inp = list(Url = "https://www.dropbox.com/s/nsjqbzi5mcpnynm/outRefe.zip?dl=1",
+    if(MethMeas == "ecse") eddy4R.base::def.dld.zip(Inp = list(Url = "https://www.dropbox.com/s/nsjqbzi5mcpnynm/outRefe.zip?dl=1",
                                                                Dir = tempdir()))
     
-    if(MethMeas == "ecse" & LevlDp == "dp02") eddy4R.base::def.dld.zip(Inp = list(Url = "https://www.dropbox.com/s/szr727byj9na7bg/outRefe_ecse_dp02.zip?dl=1",
-                                                                                  Dir = tempdir()))
+    
   }
   if(is.null(ParaFlow$Loc)) warning("The variable Loc is NULL") 
   if(is.null(ParaFlow$Dom)) warning("The variable Dom is NULL") 
-
-   
   #Grab the 
   
   return(ParaFlow)
