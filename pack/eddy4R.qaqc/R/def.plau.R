@@ -32,7 +32,21 @@
 
 #' @keywords NEON QAQC, plausibility, range, step, persistence, null, gap
 
-#' @examples Currently none
+#' @examples 
+#' data <- data.frame(x=rnorm(1000,mean=0,sd=1)) # Start off with a vector of 1000 random values
+#' data$x[c(20,50,500,90)] <- 50 # insert some spikes
+#' data$x[600:699] <- rnorm(100,mean=0,sd=0.001) # Add some "stuck" data
+#' data$x[800:810] <- NA
+#' RngMin <- -4
+#' RngMax <- 4
+#' DiffStepMax <- 6
+#' DiffPersMin <- 0.1
+#' WndwPers <- as.difftime(10,units="secs") # We are using the default time variable, which generates a freq of 1 second
+#' TestNull <- TRUE
+#' NumGap <- 11
+#' Vrbs=TRUE
+#' qf <- eddy4R.qaqc::def.plau(data=data,RngMin=RngMin,RngMax=RngMax,DiffStepMax=DiffStepMax,DiffPersMin=DiffPersMin,WndwPers=WndwPers,TestNull=TestNull,NumGap=NumGap,Vrbs=Vrbs)
+
 
 #' @seealso Currently none
 
@@ -56,6 +70,10 @@
 #   Cove Sturtevant (2016-11-09)
 #     adjusted output of vector positions of failed and na spike positions (Vrbs = FALSE) to be nested 
 #        under each variable rather than each variable nested under the lists of failed and na results 
+#   Cove Sturtevant (2017-07-14)
+#     Fixed bug causing neverending loop when all data NA
+#     Added example
+#     Fixed bug in step test not flagging the first point if NA
 ##############################################################################################
 def.plau <- function (
   data,                               # a data frame containing the data to be evaluated (do not include the time stamp vector here). Required input.
@@ -190,6 +208,9 @@ def.plau <- function (
     posQf[[idxVar]]$posQfStep$fail <- unique(c(posQf[[idxVar]]$posQfStep$fail,posQf[[idxVar]]$posQfStep$fail+1))
     posQf[[idxVar]]$posQfStep$na <- which(is.na(diff(data[,idxVar])))+1
     
+    # If either of the first two values are NULL, flag NA (the first value is missed by the above code)
+    if(base::is.na(base::diff(data[,idxVar])[1])){posQf[[idxVar]]$posQfStep$na <- unique(c(1,posQf[[idxVar]]$posQfStep$na))}
+       
     # If previous point is null, but next value is present, evaluate the step test with next value
     posQf[[idxVar]]$posQfStep$na <- setdiff(posQf[[idxVar]]$posQfStep$na,which(!is.na(diff(data[,idxVar]))))
   
@@ -203,14 +224,22 @@ def.plau <- function (
   # Do persistence test
   for(idxVar in 1:length(data)) {
     
+    # Initialize
+    posQf[[idxVar]]$posQfPers <- list(fail=numeric(0),na=numeric(0))
+    posQf[[idxVar]]$posQfPers$na <- which(is.na(data[,idxVar])) 
+    
+    # Quit if all data are NA
+    if(base::sum(!base::is.na(data[[idxVar]])) == 0){
+      if(Vrbs){qf[[idxVar]]$qfPers[posQf[[idxVar]]$posQfPers$na] <- -1}
+      next
+    }
+    
     # Let users know persistence test may take some time
     if (DiffPersMin[idxVar] > 0) {
       print(paste0("Running persistence test for variable ",nameData[idxVar], ". This may take some time..."))
     }
     
-    posQf[[idxVar]]$posQfPers <- list(fail=numeric(0),na=numeric(0)) # initialize
-    posQf[[idxVar]]$posQfPers$na <- which(is.na(data[,idxVar])) # Initialize output
-    
+
     idxDataBgn <- 1 # initialize starting index
     
     # Make sure we aren't on a null value
