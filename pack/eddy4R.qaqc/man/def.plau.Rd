@@ -46,7 +46,19 @@ Each flag is itself a nested list of failed and na (unable to eval) flagged vect
 Function definition. Determines inplausible data indices based on user-specified limits for the data range, step between adjacent values, persistence (similarity of adjacent values), nulls, and gaps.
 }
 \examples{
-Currently none
+data <- data.frame(x=rnorm(1000,mean=0,sd=1)) # Start off with a vector of 1000 random values
+data$x[c(20,50,500,90)] <- 50 # insert some spikes
+data$x[600:699] <- rnorm(100,mean=0,sd=0.001) # Add some "stuck" data
+data$x[800:810] <- NA
+RngMin <- -4
+RngMax <- 4
+DiffStepMax <- 6
+DiffPersMin <- 0.1
+WndwPers <- as.difftime(10,units="secs") # We are using the default time variable, which generates a freq of 1 second
+TestNull <- TRUE
+NumGap <- 11
+Vrbs=TRUE
+qf <- eddy4R.qaqc::def.plau(data=data,RngMin=RngMin,RngMax=RngMax,DiffStepMax=DiffStepMax,DiffPersMin=DiffPersMin,WndwPers=WndwPers,TestNull=TestNull,NumGap=NumGap,Vrbs=Vrbs)
 }
 \references{
 License: GNU AFFERO GENERAL PUBLIC LICENSE Version 3, 19 November 2007 \cr
