@@ -247,7 +247,7 @@ def.plau <- function (
       posQf[[idxVar]]$posQfPers$na <- which(is.na(dataIdxVar)) 
       
       # Quit if all data are NA
-      if(sum(!is.na(dataIdxVar)) == 0){
+      if(sum(!is.na(dataIdxVar)) <= 1){
         if(Vrbs){qf[[idxVar]]$qfPers[posQf[[idxVar]]$posQfPers$na] <- -1}
         next
       }
@@ -389,7 +389,7 @@ def.plau <- function (
       tmpQfPersNa <- rep(-1,numData) # Set up a variable to coincidentally mark whether the data were able to be evaluated
       
       # Quit if all data are NA
-      if(sum(!is.na(data[[idxVar]])) == 0){
+      if(sum(!is.na(data[[idxVar]])) <= 1){
         if(Vrbs){qf[[idxVar]]$qfPers[posQf[[idxVar]]$posQfPers$na] <- -1}
         next
       }
