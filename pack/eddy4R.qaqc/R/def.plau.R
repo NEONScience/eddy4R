@@ -390,6 +390,7 @@ def.plau <- function (
       
       # Quit if all data are NA
       if(sum(!is.na(data[[idxVar]])) <= 1){
+        posQf[[idxVar]]$posQfPers$na <- 1:numData
         if(Vrbs){qf[[idxVar]]$qfPers[posQf[[idxVar]]$posQfPers$na] <- -1}
         next
       }
