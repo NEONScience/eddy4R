@@ -27,8 +27,8 @@ def.plau(data, time = as.POSIXlt(seq.POSIXt(from = Sys.time(), by = "sec",
 \item{\code{DiffPersMin}}{Optional. A numeric vector of length equal to number of variables in data containing the minimum absolute change in value over the interval specified in WndwPers to indicate the sensor is not "stuck". Defaults to a vector of zeros (no flags will result).}
 
 \item{\code{WndwPers}}{Optional. The time window for evaluting the persistence test. This must be a vector of length equal to number of variables in data. If the values are numeric (integer), then WndwPers specifies number of data points over which to test for the minimum absolute change in value specified in DiffPersMin. 
-If the vector is a difftime object (e.g. as.difftime(5,units="secs")), it specifies the time interval over which to test for the minimum absolute change in value specified in DiffPersMin. Defaults to a difftime object of 60 x median observed time difference. Note that the windowing approach based on number of points is 
-tends to be faster than the time-based windowing approach, although the results are the same if the time-based window exactly corresponds to an integer number of data points.}
+If the vector is a difftime object (e.g. as.difftime(5,units="secs")), it specifies the time interval over which to test for the minimum absolute change in value specified in DiffPersMin. The results are the same if the time-based window exactly corresponds to an integer number of data points.
+Defaults to a difftime object of 60 x median observed time difference.}
 
 \item{\code{TestNull}}{Optional. Apply the null test? A logical vector of [TRUE or FALSE] of length equal to number of variables in data. Defaults to FALSE (no null values are flagged)}
 
