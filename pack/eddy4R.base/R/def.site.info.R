@@ -39,13 +39,36 @@
 
 def.site.info <- function(
   #location
-  loc=c("IM", "LOS", "NR", "NS", "PF" , "SERC")[6]
+  loc=c("IM", "LOS", "NR", "NS", "PF" , "SERC", "CPER")[6]
 ) {
   
   #allocate empty list for site information
   SiteInfo <- list()
   
   #get site info
+  
+  #CPER, CO, U.S.A.
+  if(loc == "CPER") {
+    #UTC to local time difference (Mountain standard time, MST)
+    SiteInfo$TimeDiffUtcLt <- -7
+    # SiteInfo$Tz <- "MST"
+    #coordinates in UTM [m]
+    SiteInfo$ZoneUtm <- data.frame(Zone=13, Estg=521456, Nthg=4518311)
+    #height of tower base above sea level [m]
+    SiteInfo$ElevAslTow <- 1654
+    #measurement height [m]
+    SiteInfo$DistZaxsMeas <- 8.3
+    #displacement height 1.5 +/- 1.5[m]
+    SiteInfo$DistZaxsDisp <- 1.5
+    #canopy height 0 - 4[m]
+    SiteInfo$DistZaxsCnpy <- 2
+    # #CSAT3 boom angle [degrees from true North]
+    # SiteInfo$AzSoni <- 270
+    # #planar fit coefficients (CoefPf [degree] [degree] [m s-1] alpha (CoefAngYaxs), beta (CoefAngXaxs),
+    # #and the regression offset (CoefOfstReg)       
+    # SiteInfo$CoefPf <- data.frame(CoefAngYaxs = 0, CoefAngXaxs = 0, CoefOfstReg = 0)
+  }
+  
   #Xilingol, Inner Mongolia, China
   if(loc == "IM") {
     #UTC to local time difference (China standard time, CST)
