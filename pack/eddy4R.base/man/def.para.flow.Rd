@@ -51,8 +51,8 @@ Definition function. Function to determine the workflow variables by either read
 def.para.flow(DirFilePara = "test.h5", MethParaFlow = "DfltInp")
 }
 \references{
-License: GNU AFFERO GENERAL PUBLIC LICENSE Version 3, 19 November 2007.
-NEON Algorithm Theoretical Basis Document:Eddy Covariance Turbulent Exchange Subsystem Level 0 to Level 0’ data product conversions and calculations (NEON.DOC.000823)
+License: GNU AFFERO GENERAL PUBLIC LICENSE Version 3, 19 November 2007. \cr
+NEON Algorithm Theoretical Basis Document:Eddy Covariance Turbulent Exchange Subsystem Level 0 to Level 0’ data product conversions and calculations (NEON.DOC.000823) \cr
 NEON Algorithm Theoretical Basis Document:Eddy Covariance Turbulent Exchange Subsystem Level 1 data product calculations (NEON.DOC.000807)
 }
 \seealso{

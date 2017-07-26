@@ -16,4 +16,4 @@ Build additions on the R-side via the [eddy4R installation script](https://www.d
 - eddy4R.base
 - eddy4R.qaqc
 
-For additional information please see [eddy4R: A community-extensible processing, analysis and modeling framework for eddy-covariance data based on R, Git, Docker and HDF5](http://www.geosci-model-dev-discuss.net/gmd-2016-318/).
+For additional information please see Sect. 2.6	"Installation and operation" in [eddy4R: A community-extensible processing, analysis and modeling framework for eddy-covariance data based on R, Git, Docker and HDF5](http://www.geosci-model-dev-discuss.net/gmd-2016-318/).

@@ -2,7 +2,7 @@
 #' @title Definition function: Calculation of total pressure in LI-7200 IRGA cell
 
 #' @author
-#' Stefan Metzger \email{eddy4R.info@gmail.com}
+#' Stefan Metzger \email{eddy4R.info@gmail.com} \cr
 #' Hongyan Luo \email{hluo@battelleecology.org}
 
 #' @description Function definition. Calculation of total pressure from static pressure and differential pressure

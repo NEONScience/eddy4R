@@ -3,7 +3,7 @@
 
 #' @author
 #' Stefan Metzger \email{eddy4R.info@gmail.com} \cr
-#' Hongyan Luo \email{hluo@battelleecology.org}
+#' Hongyan Luo \email{hluo@battelleecology.org} \cr
 #' David Durden \email{ddurden@battelleecology.org}
 
 #' @description Function defintion. Coordinate transformation from CSAT3 body coordinate system to meteorological coordiante system.

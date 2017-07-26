@@ -28,7 +28,7 @@ Function definition. Plots the aggregated quality flags, quality metrics and fin
 Currently none
 }
 \references{
-License: GNU AFFERO GENERAL PUBLIC LICENSE Version 3, 19 November 2007.
+License: GNU AFFERO GENERAL PUBLIC LICENSE Version 3, 19 November 2007. \cr
 NEON Algorithm Theoretical Basis Document: Quality Flags and Quality Metrics for TIS Data Products (NEON.DOC.001113)
 }
 \seealso{

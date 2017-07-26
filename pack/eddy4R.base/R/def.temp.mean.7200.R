@@ -2,7 +2,7 @@
 #' @title Definition function: Calculation of the average temperature in LI-7200 irga cell
 
 #' @author
-#' Stefan Metzger \email{eddy4R.info@gmail.com}
+#' Stefan Metzger \email{eddy4R.info@gmail.com} \cr
 #' Hongyan Luo \email{hluo@battelleecology.org}
 
 #' @description Function definition. Calculation of the average temperature in LI-7200 IRGA cell

@@ -14,8 +14,8 @@
 #' @return A NEON formatted HDF5 file that has parameters from the input file written to the output HDF5 file. 
 
 #' @references
-#' License: GNU AFFERO GENERAL PUBLIC LICENSE Version 3, 19 November 2007.
-#' NEON Algorithm Theoretical Basis Document:Eddy Covariance Turbulent Exchange Subsystem Level 0 to Level 0’ data product conversions and calculations (NEON.DOC.000823)
+#' License: GNU AFFERO GENERAL PUBLIC LICENSE Version 3, 19 November 2007. \cr
+#' NEON Algorithm Theoretical Basis Document:Eddy Covariance Turbulent Exchange Subsystem Level 0 to Level 0’ data product conversions and calculations (NEON.DOC.000823) \cr
 #' NEON Algorithm Theoretical Basis Document:Eddy Covariance Turbulent Exchange Subsystem Level 1 data product calculations (NEON.DOC.000807)
 
 #' @keywords NEON, HDF5, eddy-covariance, ECTE

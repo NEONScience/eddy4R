@@ -18,7 +18,7 @@
 #' \code{qfqm} A dataframe containing alpha and beta quality metric and final qualiy flag. [-] \cr
 
 #' @references 
-#' License: GNU AFFERO GENERAL PUBLIC LICENSE Version 3, 19 November 2007.
+#' License: GNU AFFERO GENERAL PUBLIC LICENSE Version 3, 19 November 2007. \cr
 #' NEON Algorithm Theoretical Basis Document: Quality Flags and Quality Metrics for TIS Data Products (NEON.DOC.001113) \cr
 #' Smith, D.E., Metzger, S., and Taylor, J.R.: A transparent and transferable framework for tracking quality information in large datasets. PLoS ONE, 9(11), e112249.doi:10.1371/journal.pone.0112249, 2014. \cr 
 

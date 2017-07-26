@@ -42,7 +42,7 @@ Function wrapper. Aggregates Level 0' (calibrated raw) data and accompanying qua
 Currently none
 }
 \references{
-License: GNU AFFERO GENERAL PUBLIC LICENSE Version 3, 19 November 2007.
+License: GNU AFFERO GENERAL PUBLIC LICENSE Version 3, 19 November 2007. \cr
 NEON Algorithm Theoretical Basis Document: Quality Flags and Quality Metrics for TIS Data Products (NEON.DOC.001113)
 }
 \seealso{

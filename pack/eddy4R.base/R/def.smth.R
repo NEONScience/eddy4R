@@ -15,7 +15,7 @@
 
 #' @references 
 #' License: GNU AFFERO GENERAL PUBLIC LICENSE Version 3, 19 November 2007. \cr
-#' http://www.stat.rutgers.edu/home/rebecka/Stat565/lab42007.pdf
+#' \url{http://www.stat.rutgers.edu/home/rebecka/Stat565/lab42007.pdf}
 
 #' @keywords Kernel smoother
 

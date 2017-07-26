@@ -34,7 +34,7 @@ License: GNU AFFERO GENERAL PUBLIC LICENSE Version 3, 19 November 2007
 Currently none.
 }
 \author{
-Stefan Metzger \email{eddy4R.info@gmail.com}
+Stefan Metzger \email{eddy4R.info@gmail.com} \cr
 Hongyan Luo \email{hluo@battelleecology.org}
 }
 \keyword{density,}
