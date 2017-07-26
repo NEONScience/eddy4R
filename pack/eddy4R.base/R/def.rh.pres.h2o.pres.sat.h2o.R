@@ -2,7 +2,7 @@
 #' @title Definition function: Calculation of RH from water vapor partial pressure and saturation pressure 
 
 #' @author
-#' Stefan Metzger \email{eddy4R.info@gmail.com}
+#' Stefan Metzger \email{eddy4R.info@gmail.com} \cr
 #' Hongyan Luo \email{hluo@battelleecology.org}
 
 #' @description Function definition. Calculation of RH from water vapor partial pressure and saturation pressure  

@@ -26,7 +26,9 @@ def.plau(data, time = as.POSIXlt(seq.POSIXt(from = Sys.time(), by = "sec",
 
 \item{\code{DiffPersMin}}{Optional. A numeric vector of length equal to number of variables in data containing the minimum absolute change in value over the interval specified in WndwPers to indicate the sensor is not "stuck". Defaults to a vector of zeros (no flags will result).}
 
-\item{\code{WndwPers}}{Optional. A difftime object of length equal to number of variables in data specifying the time interval for each variable over which to test for the minimum absolute change in value specified in DiffPersMin. Defaults to 60 x median observed time difference. Class difftime can be generated using as.difftime.}
+\item{\code{WndwPers}}{Optional. The time window for evaluting the persistence test. This must be a vector of length equal to number of variables in data. If the values are numeric (integer), then WndwPers specifies number of data points over which to test for the minimum absolute change in value specified in DiffPersMin. 
+If the vector is a difftime object (e.g. as.difftime(5,units="secs")), it specifies the time interval over which to test for the minimum absolute change in value specified in DiffPersMin. The results are the same if the time-based window exactly corresponds to an integer number of data points.
+Defaults to a difftime object of 60 x median observed time difference.}
 
 \item{\code{TestNull}}{Optional. Apply the null test? A logical vector of [TRUE or FALSE] of length equal to number of variables in data. Defaults to FALSE (no null values are flagged)}
 
@@ -46,11 +48,23 @@ Each flag is itself a nested list of failed and na (unable to eval) flagged vect
 Function definition. Determines inplausible data indices based on user-specified limits for the data range, step between adjacent values, persistence (similarity of adjacent values), nulls, and gaps.
 }
 \examples{
-Currently none
+data <- data.frame(x=rnorm(1000,mean=0,sd=1)) # Start off with a vector of 1000 random values
+data$x[c(20,50,500,90)] <- 50 # insert some spikes
+data$x[600:699] <- rnorm(100,mean=0,sd=0.001) # Add some "stuck" data
+data$x[800:810] <- NA
+RngMin <- -4
+RngMax <- 4
+DiffStepMax <- 6
+DiffPersMin <- 0.1
+WndwPers <- as.difftime(10,units="secs") # We are using the default time variable, which generates a freq of 1 second
+TestNull <- TRUE
+NumGap <- 11
+Vrbs=TRUE
+qf <- eddy4R.qaqc::def.plau(data=data,RngMin=RngMin,RngMax=RngMax,DiffStepMax=DiffStepMax,DiffPersMin=DiffPersMin,WndwPers=WndwPers,TestNull=TestNull,NumGap=NumGap,Vrbs=Vrbs)
 }
 \references{
+License: GNU AFFERO GENERAL PUBLIC LICENSE Version 3, 19 November 2007 \cr
 NEON Algorithm Theoretical Basis Document QA/QC Plausibility Testing (NEON.DOC.011081)
-License: GNU AFFERO GENERAL PUBLIC LICENSE Version 3, 19 November 2007
 }
 \seealso{
 Currently none

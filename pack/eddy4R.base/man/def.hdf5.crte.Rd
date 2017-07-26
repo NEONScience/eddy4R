@@ -5,7 +5,7 @@
 \title{Definition function: Create the ECTE HDF5 file structure}
 \usage{
 def.hdf5.crte(Date, Site = "SERC", LevlTowr, DirOut, Dom = Dom,
-  MethExpd = TRUE)
+  MethExpd = TRUE, fileNameReadMe = NULL, fileNameObjDesc = NULL)
 }
 \arguments{
 \item{Date}{is the date for the output file being generated.}
@@ -19,6 +19,10 @@ def.hdf5.crte(Date, Site = "SERC", LevlTowr, DirOut, Dom = Dom,
 \item{Dom}{is the NEON domain}
 
 \item{MethExpd}{logical indicating if the output should be expanded or basic}
+
+\item{fileNameReadMe}{character indicating the filename incl. absolute path to the ReadMe file for inclusion in the output HDF5 file. Defaults to \code{NULL}, which downloads the readme file from a web location.}
+
+\item{fileNameObjDesc}{character indicating the filename incl. absolute path to the object description file for inclusion in the output HDF5 file. Defaults to \code{NULL}, which downloads the object description file from a web location.}
 }
 \value{
 A NEON formatted HDF5 file that is output to /code{DirOut} with a readme and object description included.
@@ -41,14 +45,15 @@ DirOut <- getwd()
 def.hdf5.crte(Date = Date, Site = Site, LevlTowr = LevlTowr, DirOut = DirOut, Dom = Dom, MethExpd = MethExpd)
 }
 \references{
-License: GNU AFFERO GENERAL PUBLIC LICENSE Version 3, 19 November 2007.
+License: GNU AFFERO GENERAL PUBLIC LICENSE Version 3, 19 November 2007. \cr
 NEON Algorithm Theoretical Basis Document:Eddy Covariance Turbulent Exchange Subsystem Level 0 to Level 0’ data product conversions and calculations (NEON.DOC.000807)
 }
 \seealso{
 Currently none
 }
 \author{
-David Durden \email{ddurden@battelleecology.org}
+David Durden \email{ddurden@battelleecology.org} \cr
+Stefan Metzger \email{eddy4R.info@gmail.com}
 }
 \keyword{ECTE}
 \keyword{HDF5,}

@@ -36,7 +36,7 @@ License: GNU AFFERO GENERAL PUBLIC LICENSE Version 3, 19 November 2007.
 Currently none.
 }
 \author{
-David Durden \email{eddy4R.info@gmail.com}
+David Durden \email{ddurden@battelleecology.org}
 }
 \keyword{QAQC,}
 \keyword{diagnostic}

@@ -33,7 +33,7 @@ Currently none
 }
 \author{
 Stefan Metzger \email{eddy4R.info@gmail.com} \cr
-Hongyan Luo \email{hluo@battelleecology.org}
+Hongyan Luo \email{hluo@battelleecology.org} \cr
 David Durden \email{ddurden@battelleecology.org}
 }
 \keyword{anemometer,}
