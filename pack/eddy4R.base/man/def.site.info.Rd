@@ -4,7 +4,7 @@
 \alias{def.site.info}
 \title{Definition function: Load pre-defined site specific information into the global environment}
 \usage{
-def.site.info(loc = c("IM", "LOS", "NR", "NS", "PF", "SERC")[6])
+def.site.info(loc = c("IM", "LOS", "NR", "NS", "PF", "SERC", "CPER")[6])
 }
 \arguments{
 \item{\code{loc}}{Parameter of class character. A parameter to choose the site for which site specific information is pulled.}
