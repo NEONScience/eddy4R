@@ -44,6 +44,8 @@
 #     original creation in flow.stor.towr.neon.R
 #   Natchaya Pingintha-Durden (2017-07-26)
 #     generate wrapper function
+#   Natchaya Pingintha-Durden (2017-08-01)
+#     added unit attributes
 ##############################################################################################
 wrap.neon.dp01.ecse <- function(
   dp01 = c("irgaCo2", "irgaH2o", "tempAirLvl", "tempAirTop", "isoCo2", "isoH2o")[1],
@@ -135,6 +137,12 @@ wrap.neon.dp01.ecse <- function(
               #names(wrk$inpMask$data[[dp01]]) #"000_010_02m"
             )
             
+            #units:
+            for (idxVar in names(rpt[[dp01]][[idxLvLPrdAgr]][[1]]$mean)){
+              #idxVar <- names(rpt[[dp01]][[idxLvLPrdAgr]][[1]]$mean)[1]
+              attributes(rpt[[dp01]][[idxLvLPrdAgr]][[1]]$mean[[idxVar]])$unit <- attributes(wrk$data[[idxVar]])$unit
+            }
+            
             #grab and add both time begin and time end to rpt
             
             
@@ -183,7 +191,9 @@ wrap.neon.dp01.ecse <- function(
           wrk$data[-whrSamp, 1:5] <- NaN
           
           #replace frt00 data with NaN when irga got kick out to measure the new measurement level
+          tmpAttr <- attributes(wrk$data$frt00)
           wrk$data$frt00 <- ifelse(wrk$data$lvlIrga == lvlIrga, wrk$data$frt00, NaN)
+          attributes(wrk$data$frt00) <- tmpAttr
         } 
         
         
@@ -208,6 +218,12 @@ wrap.neon.dp01.ecse <- function(
             #idx = 
             #names(wrk$inpMask$data[[dp01]]) #"000_010_02m"
           )
+          
+          #units:
+          for (idxVar in names(rpt[[dp01]][[idxLvLPrdAgr]][[1]]$mean)){
+            #idxVar <- names(rpt[[dp01]][[idxLvLPrdAgr]][[1]]$mean)[1]
+            attributes(rpt[[dp01]][[idxLvLPrdAgr]][[1]]$mean[[idxVar]])$unit <- attributes(wrk$data[[idxVar]])$unit
+          }
           
           #grab and add both time begin and time end to rpt
           rpt[[dp01]][[idxLvLPrdAgr]][[idxAgr]]$timeBgn <- list()
@@ -276,6 +292,12 @@ wrap.neon.dp01.ecse <- function(
               data = wrk$inpMask$data#,
             )
             
+            #units:
+            for (idxVar in names(rpt[[dp01]][[idxLvLPrdAgr]][[1]]$mean)){
+              #idxVar <- names(rpt[[dp01]][[idxLvLPrdAgr]][[1]]$mean)[1]
+              attributes(rpt[[dp01]][[idxLvLPrdAgr]][[1]]$mean[[idxVar]])$unit <- attributes(wrk$data[[idxVar]])$unit
+            }
+            
             #grab and add both time begin and time end to rpt
             rpt[[dp01]][[idxLvLPrdAgr]][[idxAgr]]$timeBgn <- list()
             rpt[[dp01]][[idxLvLPrdAgr]][[idxAgr]]$timeEnd <- list()
@@ -322,7 +344,9 @@ wrap.neon.dp01.ecse <- function(
           }
           wrk$data[-whrSamp, ] <- NaN
         } else {#end of if no measurement data at all in the whole day
+          tmpAttr <- attributes(wrk$data$frt00)$unit
           wrk$data$frt00 <- NaN #assign NaN to frt00 data
+          attributes(wrk$data$frt00)$unit <- tmpAttr; rm(tmpAttr)
         }
         
         for(idxAgr in c(1:length(idxTime[[paste0(PrdAgr, "min")]]$Bgn))) {
@@ -338,6 +362,13 @@ wrap.neon.dp01.ecse <- function(
             # assign data: data.frame or list of type numeric or integer
             data = wrk$inpMask$data
           )
+          
+          #units:
+          for (idxVar in names(rpt[[dp01]][[idxLvLPrdAgr]][[1]]$mean)){
+            #idxVar <- names(rpt[[dp01]][[idxLvLPrdAgr]][[1]]$mean)[1]
+            attributes(rpt[[dp01]][[idxLvLPrdAgr]][[1]]$mean[[idxVar]])$unit <- attributes(wrk$data[[idxVar]])$unit
+          }
+          
           #grab and add both time begin and time end to rpt
           rpt[[dp01]][[idxLvLPrdAgr]][[idxAgr]]$timeBgn <- list()
           rpt[[dp01]][[idxLvLPrdAgr]][[idxAgr]]$timeEnd <- list()
@@ -384,6 +415,12 @@ wrap.neon.dp01.ecse <- function(
         # assign data: data.frame or list of type numeric or integer
         data = wrk$inpMask$data#,
       )
+      
+      #units:
+      for (idxVar in names(rpt[[dp01]][[idxLvLPrdAgr]][[1]]$mean)){
+        #idxVar <- names(rpt[[dp01]][[idxLvLPrdAgr]][[1]]$mean)[1]
+        attributes(rpt[[dp01]][[idxLvLPrdAgr]][[1]]$mean[[idxVar]])$unit <- attributes(wrk$data[[idxVar]])$unit
+      }
       
       #grab and add both time begin and time end to rpt
       rpt[[dp01]][[idxLvLPrdAgr]][[idxAgr]]$timeBgn <- list()
@@ -446,6 +483,13 @@ wrap.neon.dp01.ecse <- function(
               #idx = 
               #names(wrk$inpMask$data[[dp01]]) #"000_010_02m"
             )
+            
+            #units:
+            for (idxVar in names(rpt[[dp01]][[idxLvLPrdAgr]][[1]]$mean)){
+              #idxVar <- names(rpt[[dp01]][[idxLvLPrdAgr]][[1]]$mean)[1]
+              attributes(rpt[[dp01]][[idxLvLPrdAgr]][[1]]$mean[[idxVar]])$unit <- attributes(wrk$data[[idxVar]])$unit
+            }
+            
             #grab and add both time begin and time end to rpt
             rpt[[dp01]][[idxLvLPrdAgr]][[idxAgr]]$timeBgn <- list()
             rpt[[dp01]][[idxLvLPrdAgr]][[idxAgr]]$timeEnd <- list()
@@ -512,6 +556,13 @@ wrap.neon.dp01.ecse <- function(
             #idx = 
             #names(wrk$inpMask$data[[dp01]]) #"000_010_02m"
           )
+          
+          #units:
+          for (idxVar in names(rpt[[dp01]][[idxLvLPrdAgr]][[1]]$mean)){
+            #idxVar <- names(rpt[[dp01]][[idxLvLPrdAgr]][[1]]$mean)[1]
+            attributes(rpt[[dp01]][[idxLvLPrdAgr]][[1]]$mean[[idxVar]])$unit <- attributes(wrk$data[[idxVar]])$unit
+          } 
+          
           #grab and add both time begin and time end to rpt
           rpt[[dp01]][[idxLvLPrdAgr]][[idxAgr]]$timeBgn <- list()
           rpt[[dp01]][[idxLvLPrdAgr]][[idxAgr]]$timeEnd <- list()
@@ -574,6 +625,12 @@ wrap.neon.dp01.ecse <- function(
               #idx = 
               #names(wrk$inpMask$data[[dp01]]) #"000_010_02m"
             )
+            
+            #units:
+            for (idxVar in names(rpt[[dp01]][[idxLvLPrdAgr]][[1]]$mean)){
+              #idxVar <- names(rpt[[dp01]][[idxLvLPrdAgr]][[1]]$mean)[1]
+              attributes(rpt[[dp01]][[idxLvLPrdAgr]][[1]]$mean[[idxVar]])$unit <- attributes(wrk$data[[idxVar]])$unit
+            }
             
             #grab and add both time begin and time end to rpt
             rpt[[dp01]][[idxLvLPrdAgr]][[idxAgr]]$timeBgn <- list()
@@ -639,6 +696,12 @@ wrap.neon.dp01.ecse <- function(
             data = wrk$inpMask$data#,
           )
           
+          #units:
+          for (idxVar in names(rpt[[dp01]][[idxLvLPrdAgr]][[1]]$mean)){
+            #idxVar <- names(rpt[[dp01]][[idxLvLPrdAgr]][[1]]$mean)[1]
+            attributes(rpt[[dp01]][[idxLvLPrdAgr]][[1]]$mean[[idxVar]])$unit <- attributes(wrk$data[[idxVar]])$unit
+          }
+          
           #grab and add both time begin and time end to rpt
           rpt[[dp01]][[idxLvLPrdAgr]][[idxAgr]]$timeBgn <- list()
           rpt[[dp01]][[idxLvLPrdAgr]][[idxAgr]]$timeEnd <- list()
@@ -693,6 +756,12 @@ wrap.neon.dp01.ecse <- function(
               # assign data: data.frame or list of type numeric or integer
               data = wrk$inpMask$data#,
             )
+            
+            #units:
+            for (idxVar in names(rpt[[dp01]][[idxLvLPrdAgr]][[1]]$mean)){
+              #idxVar <- names(rpt[[dp01]][[idxLvLPrdAgr]][[1]]$mean)[1]
+              attributes(rpt[[dp01]][[idxLvLPrdAgr]][[1]]$mean[[idxVar]])$unit <- attributes(wrk$data[[idxVar]])$unit
+            }
             
             #grab and add both time begin and time end to rpt
             rpt[[dp01]][[idxLvLPrdAgr]][[idxAgr]]$timeBgn <- list()
@@ -759,6 +828,12 @@ wrap.neon.dp01.ecse <- function(
             
           )
           
+          #units:
+          for (idxVar in names(rpt[[dp01]][[idxLvLPrdAgr]][[1]]$mean)){
+            #idxVar <- names(rpt[[dp01]][[idxLvLPrdAgr]][[1]]$mean)[1]
+            attributes(rpt[[dp01]][[idxLvLPrdAgr]][[1]]$mean[[idxVar]])$unit <- attributes(wrk$data[[idxVar]])$unit
+          }
+          
           #grab and add both time begin and time end to rpt
           rpt[[dp01]][[idxLvLPrdAgr]][[idxAgr]]$timeBgn <- list()
           rpt[[dp01]][[idxLvLPrdAgr]][[idxAgr]]$timeEnd <- list()
@@ -816,6 +891,12 @@ wrap.neon.dp01.ecse <- function(
               #idx = 
               #names(wrk$inpMask$data[[dp01]]) #"000_010_02m"
             )
+            
+            #units:
+            for (idxVar in names(rpt[[dp01]][[idxLvLPrdAgr]][[1]]$mean)){
+              #idxVar <- names(rpt[[dp01]][[idxLvLPrdAgr]][[1]]$mean)[1]
+              attributes(rpt[[dp01]][[idxLvLPrdAgr]][[1]]$mean[[idxVar]])$unit <- attributes(wrk$data[[idxVar]])$unit
+            }
             
             #grab and add both time begin and time end to rpt
             
@@ -889,6 +970,11 @@ wrap.neon.dp01.ecse <- function(
             #names(wrk$inpMask$data[[dp01]]) #"000_010_02m"
           )
           
+          #units:
+          for (idxVar in names(rpt[[dp01]][[idxLvLPrdAgr]][[1]]$mean)){
+            #idxVar <- names(rpt[[dp01]][[idxLvLPrdAgr]][[1]]$mean)[1]
+            attributes(rpt[[dp01]][[idxLvLPrdAgr]][[1]]$mean[[idxVar]])$unit <- attributes(wrk$data[[idxVar]])$unit
+          }
           
           #grab and add both time begin and time end to rpt
           rpt[[dp01]][[idxLvLPrdAgr]][[idxAgr]]$timeBgn <- list()
