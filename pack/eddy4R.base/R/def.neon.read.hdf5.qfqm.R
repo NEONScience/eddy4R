@@ -12,6 +12,7 @@
 #' @param VarLoca Character: Which instrument to read data from.
 #' @param LevlTowr The tower level that the sensor data is being collected in NEON data product convention (HOR_VER)
 #' @param FreqLoca Integer: Measurement frequency.
+#' @param MethMeas A vector of class "character" containing the name of measurement method (eddy-covariance turbulent exchange or storage exchange), MethMeas = c("ecte", "ecse"). Defaults to "ecte".
 
 #' @return 
 #' Named list \code{qfqm} containing time-series of quality flags.
@@ -31,6 +32,8 @@
 # changelog and author contributions / copyrights
 #   David Durden (2017-04-21)
 #     Original creation
+#   Natchaya Pingintha-Durden (2017-06-21)
+#     adding parameter MethMeas to distinguish different cases for ecte and ecse
 ##############################################################################################
 
 def.neon.read.hdf5.qfqm <- function(
@@ -39,13 +42,21 @@ def.neon.read.hdf5.qfqm <- function(
   DateLoca,
   VarLoca,
   LevlTowr = c("000_040", "000_050", "000_060")[3],
-  FreqLoca
+  FreqLoca,
+  MethMeas = c("ecte", "ecse")[1]
 ){
   
-#Read in the flags from the HDF5 file  
+#Read in the flags from the HDF5 file 
+if (MethMeas == "ecte") {
 qfqm <- rhdf5::h5read(file = base::paste0(DirInpLoca, "/ECTE_dp0p_", SiteLoca, "_", DateLoca, ".h5"),
                       name = base::paste0("/", SiteLoca, "/dp0p/qfqm/", VarLoca, "_001/",LevlTowr), read.attributes = TRUE)
- 
+}
+
+if (MethMeas == "ecse") {
+qfqm <- rhdf5::h5read(file = base::paste0(DirInpLoca, "/ECSE_dp0p_", SiteLoca, "_", DateLoca, ".h5"),
+                      name = base::paste0("/", SiteLoca, "/dp0p/qfqm/", VarLoca, "_001/",LevlTowr), read.attributes = TRUE)
+}
+  
 #Convert each flag to a vector from a 1D array                     
 for(idx in base::names(qfqm)) qfqm[[idx]] <- base::as.vector(qfqm[[idx]]); base::rm(idx)
 
