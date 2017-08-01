@@ -107,8 +107,8 @@ wrap.neon.dp01.ecse <- function(
       if (PrdMeas == PrdAgr) {
         #PrdAgr <- 2
         #2 minutely sampling data
-        idxLvLPrdAgr <- paste0(lvl, "_", sprintf("%02d", PrdAgr), "m")
-        rpt[[dp01]][[idxLvLPrdAgr]] <- list()
+        #idxLvLPrdAgr <- paste0(lvl, "_", sprintf("%02d", PrdAgr), "m")
+        #rpt[[dp01]][[idxLvLPrdAgr]] <- list()
         
         #if there is at least one measurement
         if(length(which(!is.na(wrk$data$temp))) > 0){
@@ -128,7 +128,7 @@ wrap.neon.dp01.ecse <- function(
             #get rid of lvlIrga
             wrk$inpMask$data <- wrk$inpMask$data[,-which(names(wrk$inpMask$data) == "lvlIrga")]
             
-            rpt[[dp01]][[idxLvLPrdAgr]][[idxAgr]] <- eddy4R.base::wrap.neon.dp01(
+            rpt[[idxAgr]] <- eddy4R.base::wrap.neon.dp01(
               # assign data: data.frame or list of type numeric or integer
               data = wrk$inpMask$data#,
               # if data is a list, which list entries should be processed into Level 1 data products?
@@ -138,9 +138,9 @@ wrap.neon.dp01.ecse <- function(
             )
             
             #units:
-            for (idxVar in names(rpt[[dp01]][[idxLvLPrdAgr]][[1]]$mean)){
+            for (idxVar in names(rpt[[1]]$mean)){
               #idxVar <- names(rpt[[dp01]][[idxLvLPrdAgr]][[1]]$mean)[1]
-              attributes(rpt[[dp01]][[idxLvLPrdAgr]][[1]]$mean[[idxVar]])$unit <- attributes(wrk$data[[idxVar]])$unit
+              attributes(rpt[[1]]$mean[[idxVar]])$unit <- attributes(wrk$data[[idxVar]])$unit
             }
             
             #grab and add both time begin and time end to rpt
@@ -148,12 +148,12 @@ wrap.neon.dp01.ecse <- function(
             
             #for (idxLvLPrdAgr in names(wrk$inpMask$data[[dp01]])){
             #idxLvLPrdAgr <- names(wrk$inpMask$data[[dp01]])[1]
-            rpt[[dp01]][[idxLvLPrdAgr]][[idxAgr]]$timeBgn <- list()
-            rpt[[dp01]][[idxLvLPrdAgr]][[idxAgr]]$timeEnd <- list()
+            rpt[[idxAgr]]$timeBgn <- list()
+            rpt[[idxAgr]]$timeEnd <- list()
             
             for(idxVar in names(wrk$data)[which(!(names(wrk$data) %in% c("lvlIrga")))]){
-              rpt[[dp01]][[idxLvLPrdAgr]][[idxAgr]]$timeBgn[[idxVar]] <- wrk$idx$timeBgn[idxAgr]
-              rpt[[dp01]][[idxLvLPrdAgr]][[idxAgr]]$timeEnd[[idxVar]] <- wrk$idx$timeEnd[idxAgr]
+              rpt[[idxAgr]]$timeBgn[[idxVar]] <- wrk$idx$timeBgn[idxAgr]
+              rpt[[idxAgr]]$timeEnd[[idxVar]] <- wrk$idx$timeEnd[idxAgr]
             }
             
             #}# end of there is at least one data
@@ -161,13 +161,13 @@ wrap.neon.dp01.ecse <- function(
           }; rm(idxAgr)
         } else {
           
-          rpt[[dp01]][[idxLvLPrdAgr]][[1]] <- list()
+          rpt[[1]] <- list()
           for(idxStat in NameStat){
-            rpt[[dp01]][[idxLvLPrdAgr]][[1]][[idxStat]] <- list()
+            rpt[[1]][[idxStat]] <- list()
             
             
             for (idxVar in names(wrk$data)[which(!(names(wrk$data) %in% c("lvlIrga")))]){
-              rpt[[dp01]][[idxLvLPrdAgr]][[1]][[idxStat]][[idxVar]] <- list()  
+              rpt[[1]][[idxStat]][[idxVar]] <- list()  
             }; rm(idxVar)
             
           }; rm(idxStat)
@@ -210,7 +210,7 @@ wrap.neon.dp01.ecse <- function(
           #get rid of lvlIrga
           wrk$inpMask$data <- wrk$inpMask$data[,-which(names(wrk$inpMask$data) == "lvlIrga")]
           
-          rpt[[dp01]][[idxLvLPrdAgr]][[idxAgr]] <- eddy4R.base::wrap.neon.dp01(
+          rpt[[idxAgr]] <- eddy4R.base::wrap.neon.dp01(
             # assign data: data.frame or list of type numeric or integer
             data = wrk$inpMask$data#,
             # if data is a list, which list entries should be processed into Level 1 data products?
@@ -220,18 +220,18 @@ wrap.neon.dp01.ecse <- function(
           )
           
           #units:
-          for (idxVar in names(rpt[[dp01]][[idxLvLPrdAgr]][[1]]$mean)){
-            #idxVar <- names(rpt[[dp01]][[idxLvLPrdAgr]][[1]]$mean)[1]
-            attributes(rpt[[dp01]][[idxLvLPrdAgr]][[1]]$mean[[idxVar]])$unit <- attributes(wrk$data[[idxVar]])$unit
+          for (idxVar in names(rpt[[1]]$mean)){
+            #idxVar <- names(rpt[[1]]$mean)[1]
+            attributes(rpt[[1]]$mean[[idxVar]])$unit <- attributes(wrk$data[[idxVar]])$unit
           }
           
           #grab and add both time begin and time end to rpt
-          rpt[[dp01]][[idxLvLPrdAgr]][[idxAgr]]$timeBgn <- list()
-          rpt[[dp01]][[idxLvLPrdAgr]][[idxAgr]]$timeEnd <- list()
+          rpt[[idxAgr]]$timeBgn <- list()
+          rpt[[idxAgr]]$timeEnd <- list()
           
           for(idxVar in names(wrk$data)[which(!(names(wrk$data) %in% c("lvlIrga")))]){
-            rpt[[dp01]][[idxLvLPrdAgr]][[idxAgr]]$timeBgn[[idxVar]] <- data$time[idxTime[[paste0(PrdAgr, "min")]]$Bgn[idxAgr]]
-            rpt[[dp01]][[idxLvLPrdAgr]][[idxAgr]]$timeEnd[[idxVar]] <- data$time[idxTime[[paste0(PrdAgr, "min")]]$End[idxAgr]]
+            rpt[[idxAgr]]$timeBgn[[idxVar]] <- data$time[idxTime[[paste0(PrdAgr, "min")]]$Bgn[idxAgr]]
+            rpt[[idxAgr]]$timeEnd[[idxVar]] <- data$time[idxTime[[paste0(PrdAgr, "min")]]$End[idxAgr]]
           }
           
         }; #rm(idxAgr)
@@ -271,8 +271,8 @@ wrap.neon.dp01.ecse <- function(
       if (PrdMeas == PrdAgr) {
         #PrdAgr <- 2
         #2 minutely sampling data
-        idxLvLPrdAgr <- paste0(lvl, "_", sprintf("%02d", PrdAgr), "m")
-        rpt[[dp01]][[idxLvLPrdAgr]] <- list()
+        #idxLvLPrdAgr <- paste0(lvl, "_", sprintf("%02d", PrdAgr), "m")
+        #rpt[[dp01]][[idxLvLPrdAgr]] <- list()
         
         #if there is at least one measurement
         if(length(which(!is.na(wrk$data$temp))) > 0){
@@ -287,41 +287,41 @@ wrap.neon.dp01.ecse <- function(
             wrk$inpMask$data <- wrk$data[wrk$idx$idxBgn[idxAgr]:wrk$idx$idxEnd[idxAgr],] 
             
             #dp01 processing
-            rpt[[dp01]][[idxLvLPrdAgr]][[idxAgr]] <- eddy4R.base::wrap.neon.dp01(
+            rpt[[idxAgr]] <- eddy4R.base::wrap.neon.dp01(
               # assign data: data.frame or list of type numeric or integer
               data = wrk$inpMask$data#,
             )
             
             #units:
-            for (idxVar in names(rpt[[dp01]][[idxLvLPrdAgr]][[1]]$mean)){
-              #idxVar <- names(rpt[[dp01]][[idxLvLPrdAgr]][[1]]$mean)[1]
-              attributes(rpt[[dp01]][[idxLvLPrdAgr]][[1]]$mean[[idxVar]])$unit <- attributes(wrk$data[[idxVar]])$unit
+            for (idxVar in names(rpt[[1]]$mean)){
+              #idxVar <- names(rpt[[1]]$mean)[1]
+              attributes(rpt[[1]]$mean[[idxVar]])$unit <- attributes(wrk$data[[idxVar]])$unit
             }
             
             #grab and add both time begin and time end to rpt
-            rpt[[dp01]][[idxLvLPrdAgr]][[idxAgr]]$timeBgn <- list()
-            rpt[[dp01]][[idxLvLPrdAgr]][[idxAgr]]$timeEnd <- list()
+            rpt[[idxAgr]]$timeBgn <- list()
+            rpt[[idxAgr]]$timeEnd <- list()
             
             #output time for dp01
             for(idxVar in names(wrk$data)){
-              rpt[[dp01]][[idxLvLPrdAgr]][[idxAgr]]$timeBgn[[idxVar]] <- wrk$idx$timeBgn[idxAgr]
-              rpt[[dp01]][[idxLvLPrdAgr]][[idxAgr]]$timeEnd[[idxVar]] <- wrk$idx$timeEnd[idxAgr]
+              rpt[[idxAgr]]$timeBgn[[idxVar]] <- wrk$idx$timeBgn[idxAgr]
+              rpt[[idxAgr]]$timeEnd[[idxVar]] <- wrk$idx$timeEnd[idxAgr]
             }; rm(idxVar)
           }#; rm(idxAgr)
           
         } else {
           
-          rpt[[dp01]][[idxLvLPrdAgr]][[1]] <- list()
+          rpt[[1]] <- list()
           
           for(idxStat in NameStat){
-            rpt[[dp01]][[idxLvLPrdAgr]][[1]][[idxStat]] <- list()
+            rpt[[1]][[idxStat]] <- list()
             
             for (idxVar in names(wrk$data)){
-              rpt[[dp01]][[idxLvLPrdAgr]][[1]][[idxStat]][[idxVar]] <- list() 
+              rpt[[1]][[idxStat]][[idxVar]] <- list() 
             }; rm(idxVar)
             
             if(dp01 == "irgaCo2"){
-              rpt[[dp01]][[idxLvLPrdAgr]][[1]][[idxStat]]$rtioMoleDryCo2Refe <- list()
+              rpt[[1]][[idxStat]]$rtioMoleDryCo2Refe <- list()
             }
             
           }; rm(idxStat)
@@ -358,25 +358,25 @@ wrap.neon.dp01.ecse <- function(
           wrk$inpMask$data <- wrk$data[idxTime[[paste0(PrdAgr, "min")]]$Bgn[idxAgr]:idxTime[[paste0(PrdAgr, "min")]]$End[idxAgr],]
           
           #dp01 processing
-          rpt[[dp01]][[idxLvLPrdAgr]][[idxAgr]] <- eddy4R.base::wrap.neon.dp01(
+          rpt[[idxAgr]] <- eddy4R.base::wrap.neon.dp01(
             # assign data: data.frame or list of type numeric or integer
             data = wrk$inpMask$data
           )
           
           #units:
-          for (idxVar in names(rpt[[dp01]][[idxLvLPrdAgr]][[1]]$mean)){
-            #idxVar <- names(rpt[[dp01]][[idxLvLPrdAgr]][[1]]$mean)[1]
-            attributes(rpt[[dp01]][[idxLvLPrdAgr]][[1]]$mean[[idxVar]])$unit <- attributes(wrk$data[[idxVar]])$unit
+          for (idxVar in names(rpt[[1]]$mean)){
+            #idxVar <- names(rpt[[1]]$mean)[1]
+            attributes(rpt[[1]]$mean[[idxVar]])$unit <- attributes(wrk$data[[idxVar]])$unit
           }
           
           #grab and add both time begin and time end to rpt
-          rpt[[dp01]][[idxLvLPrdAgr]][[idxAgr]]$timeBgn <- list()
-          rpt[[dp01]][[idxLvLPrdAgr]][[idxAgr]]$timeEnd <- list()
+          rpt[[idxAgr]]$timeBgn <- list()
+          rpt[[idxAgr]]$timeEnd <- list()
           
           #output time for dp01
           for(idxVar in names(wrk$data)){
-            rpt[[dp01]][[idxLvLPrdAgr]][[idxAgr]]$timeBgn[[idxVar]] <- data$time[idxTime[[paste0(PrdAgr, "min")]]$Bgn[idxAgr]]
-            rpt[[dp01]][[idxLvLPrdAgr]][[idxAgr]]$timeEnd[[idxVar]] <- data$time[idxTime[[paste0(PrdAgr, "min")]]$End[idxAgr]]
+            rpt[[idxAgr]]$timeBgn[[idxVar]] <- data$time[idxTime[[paste0(PrdAgr, "min")]]$Bgn[idxAgr]]
+            rpt[[idxAgr]]$timeEnd[[idxVar]] <- data$time[idxTime[[paste0(PrdAgr, "min")]]$End[idxAgr]]
           }; rm(idxVar)
           
         }; #rm(idxAgr)
@@ -411,24 +411,24 @@ wrap.neon.dp01.ecse <- function(
       } 
       
       #call wrap.neon.dp01.R to calculate descriptive statistics       
-      rpt[[dp01]][[idxLvLPrdAgr]][[idxAgr]] <- eddy4R.base::wrap.neon.dp01(
+      rpt[[idxAgr]] <- eddy4R.base::wrap.neon.dp01(
         # assign data: data.frame or list of type numeric or integer
         data = wrk$inpMask$data#,
       )
       
       #units:
-      for (idxVar in names(rpt[[dp01]][[idxLvLPrdAgr]][[1]]$mean)){
-        #idxVar <- names(rpt[[dp01]][[idxLvLPrdAgr]][[1]]$mean)[1]
-        attributes(rpt[[dp01]][[idxLvLPrdAgr]][[1]]$mean[[idxVar]])$unit <- attributes(wrk$data[[idxVar]])$unit
+      for (idxVar in names(rpt[[1]]$mean)){
+        #idxVar <- names(rpt[[1]]$mean)[1]
+        attributes(rpt[[1]]$mean[[idxVar]])$unit <- attributes(wrk$data[[idxVar]])$unit
       }
       
       #grab and add both time begin and time end to rpt
-      rpt[[dp01]][[idxLvLPrdAgr]][[idxAgr]]$timeBgn <- list()
-      rpt[[dp01]][[idxLvLPrdAgr]][[idxAgr]]$timeEnd <- list()
+      rpt[[idxAgr]]$timeBgn <- list()
+      rpt[[idxAgr]]$timeEnd <- list()
       
-      for(idxVar in names(rpt[[dp01]][[idxLvLPrdAgr]][[idxAgr]]$mean)){
-        rpt[[dp01]][[idxLvLPrdAgr]][[idxAgr]]$timeBgn[[idxVar]] <- data$time[idxTime[[paste0(PrdAgr, "min")]]$Bgn[idxAgr]]
-        rpt[[dp01]][[idxLvLPrdAgr]][[idxAgr]]$timeEnd[[idxVar]] <- data$time[idxTime[[paste0(PrdAgr, "min")]]$End[idxAgr]]
+      for(idxVar in names(rpt[[idxAgr]]$mean)){
+        rpt[[idxAgr]]$timeBgn[[idxVar]] <- data$time[idxTime[[paste0(PrdAgr, "min")]]$Bgn[idxAgr]]
+        rpt[[idxAgr]]$timeEnd[[idxVar]] <- data$time[idxTime[[paste0(PrdAgr, "min")]]$End[idxAgr]]
       }
       
     }; #rm(idxAgr)
@@ -458,8 +458,8 @@ wrap.neon.dp01.ecse <- function(
       if (PrdMeas == PrdAgr) {
         #PrdAgr <- 9
         #9 minutely sampling data
-        idxLvLPrdAgr <- paste0(lvl, "_", sprintf("%02d", PrdAgr), "m")
-        rpt[[dp01]][[idxLvLPrdAgr]] <- list()
+        #idxLvLPrdAgr <- paste0(lvl, "_", sprintf("%02d", PrdAgr), "m")
+        #rpt[[dp01]][[idxLvLPrdAgr]] <- list()
         
         #if there is at least one measurement
         if(length(which(!is.na(wrk$data$temp))) > 0){
@@ -475,7 +475,7 @@ wrap.neon.dp01.ecse <- function(
             wrk$inpMask$data <- wrk$data[wrk$idx$idxBgn[idxAgr]:wrk$idx$idxEnd[idxAgr],]
             
             #dp01 processing
-            rpt[[dp01]][[idxLvLPrdAgr]][[idxAgr]] <- eddy4R.base::wrap.neon.dp01(
+            rpt[[idxAgr]] <- eddy4R.base::wrap.neon.dp01(
               # assign data: data.frame or list of type numeric or integer
               data = wrk$inpMask$data#,
               # if data is a list, which list entries should be processed into Level 1 data products?
@@ -485,19 +485,19 @@ wrap.neon.dp01.ecse <- function(
             )
             
             #units:
-            for (idxVar in names(rpt[[dp01]][[idxLvLPrdAgr]][[1]]$mean)){
-              #idxVar <- names(rpt[[dp01]][[idxLvLPrdAgr]][[1]]$mean)[1]
-              attributes(rpt[[dp01]][[idxLvLPrdAgr]][[1]]$mean[[idxVar]])$unit <- attributes(wrk$data[[idxVar]])$unit
+            for (idxVar in names(rpt[[1]]$mean)){
+              #idxVar <- names(rpt[[1]]$mean)[1]
+              attributes(rpt[[1]]$mean[[idxVar]])$unit <- attributes(wrk$data[[idxVar]])$unit
             }
             
             #grab and add both time begin and time end to rpt
-            rpt[[dp01]][[idxLvLPrdAgr]][[idxAgr]]$timeBgn <- list()
-            rpt[[dp01]][[idxLvLPrdAgr]][[idxAgr]]$timeEnd <- list()
+            rpt[[idxAgr]]$timeBgn <- list()
+            rpt[[idxAgr]]$timeEnd <- list()
             
             #output time for dp01
             for(idxVar in names(wrk$data)){
-              rpt[[dp01]][[idxLvLPrdAgr]][[idxAgr]]$timeBgn[[idxVar]] <- wrk$idx$timeBgn[idxAgr]
-              rpt[[dp01]][[idxLvLPrdAgr]][[idxAgr]]$timeEnd[[idxVar]] <- wrk$idx$timeEnd[idxAgr]
+              rpt[[idxAgr]]$timeBgn[[idxVar]] <- wrk$idx$timeBgn[idxAgr]
+              rpt[[idxAgr]]$timeEnd[[idxVar]] <- wrk$idx$timeEnd[idxAgr]
             }; rm(idxVar)
             
             #}# end of there is at least one data
@@ -505,14 +505,14 @@ wrap.neon.dp01.ecse <- function(
           }; rm(idxAgr)
         } else {
           
-          rpt[[dp01]][[idxLvLPrdAgr]][[1]] <- list()
+          rpt[[1]] <- list()
           
           for(idxStat in NameStat){
-            rpt[[dp01]][[idxLvLPrdAgr]][[1]][[idxStat]] <- list()
+            rpt[[1]][[idxStat]] <- list()
             
             
             for (idxVar in names(wrk$data)){
-              rpt[[dp01]][[idxLvLPrdAgr]][[1]][[idxStat]][[idxVar]] <- list()  
+              rpt[[1]][[idxStat]][[idxVar]] <- list()  
             }; rm(idxVar)          
           }; rm(idxStat)
           
@@ -548,7 +548,7 @@ wrap.neon.dp01.ecse <- function(
           wrk$inpMask$data <- wrk$data[idxTime[[paste0(PrdAgr, "min")]]$Bgn[idxAgr]:idxTime[[paste0(PrdAgr, "min")]]$End[idxAgr],]
           
           #call wrap.neon.dp01.R to calculate descriptive statistics 
-          rpt[[dp01]][[idxLvLPrdAgr]][[idxAgr]] <- eddy4R.base::wrap.neon.dp01(
+          rpt[[idxAgr]] <- eddy4R.base::wrap.neon.dp01(
             # assign data: data.frame or list of type numeric or integer
             data = wrk$inpMask$data#,
             # if data is a list, which list entries should be processed into Level 1 data products?
@@ -558,18 +558,18 @@ wrap.neon.dp01.ecse <- function(
           )
           
           #units:
-          for (idxVar in names(rpt[[dp01]][[idxLvLPrdAgr]][[1]]$mean)){
-            #idxVar <- names(rpt[[dp01]][[idxLvLPrdAgr]][[1]]$mean)[1]
-            attributes(rpt[[dp01]][[idxLvLPrdAgr]][[1]]$mean[[idxVar]])$unit <- attributes(wrk$data[[idxVar]])$unit
+          for (idxVar in names(rpt[[1]]$mean)){
+            #idxVar <- names(rpt[[1]]$mean)[1]
+            attributes(rpt[[1]]$mean[[idxVar]])$unit <- attributes(wrk$data[[idxVar]])$unit
           } 
           
           #grab and add both time begin and time end to rpt
-          rpt[[dp01]][[idxLvLPrdAgr]][[idxAgr]]$timeBgn <- list()
-          rpt[[dp01]][[idxLvLPrdAgr]][[idxAgr]]$timeEnd <- list()
+          rpt[[idxAgr]]$timeBgn <- list()
+          rpt[[idxAgr]]$timeEnd <- list()
           
           for(idxVar in names(wrk$data)){
-            rpt[[dp01]][[idxLvLPrdAgr]][[idxAgr]]$timeBgn[[idxVar]] <- data$time[idxTime[[paste0(PrdAgr, "min")]]$Bgn[idxAgr]]
-            rpt[[dp01]][[idxLvLPrdAgr]][[idxAgr]]$timeEnd[[idxVar]] <- data$time[idxTime[[paste0(PrdAgr, "min")]]$End[idxAgr]]
+            rpt[[idxAgr]]$timeBgn[[idxVar]] <- data$time[idxTime[[paste0(PrdAgr, "min")]]$Bgn[idxAgr]]
+            rpt[[idxAgr]]$timeEnd[[idxVar]] <- data$time[idxTime[[paste0(PrdAgr, "min")]]$End[idxAgr]]
           }
           
         }; #rm(idxAgr)
@@ -601,8 +601,8 @@ wrap.neon.dp01.ecse <- function(
       if (PrdMeas == PrdAgr) {
         #PrdAgr <- 9
         #9 minutely sampling data
-        idxLvLPrdAgr <- paste0(lvl, "_", sprintf("%02d", PrdAgr), "m")
-        rpt[[dp01]][[idxLvLPrdAgr]] <- list()
+        #idxLvLPrdAgr <- paste0(lvl, "_", sprintf("%02d", PrdAgr), "m")
+        #rpt[[dp01]][[idxLvLPrdAgr]] <- list()
         
         #if there is at least one measurement
         if(length(which(!is.na(wrk$data$temp))) > 0){
@@ -617,7 +617,7 @@ wrap.neon.dp01.ecse <- function(
             wrk$inpMask$data <- wrk$data[wrk$idx$idxBgn[idxAgr]:wrk$idx$idxEnd[idxAgr],] 
             
             #calculate dp01
-            rpt[[dp01]][[idxLvLPrdAgr]][[idxAgr]] <- eddy4R.base::wrap.neon.dp01(
+            rpt[[idxAgr]] <- eddy4R.base::wrap.neon.dp01(
               # assign data: data.frame or list of type numeric or integer
               data = wrk$inpMask$data#,
               # if data is a list, which list entries should be processed into Level 1 data products?
@@ -627,34 +627,34 @@ wrap.neon.dp01.ecse <- function(
             )
             
             #units:
-            for (idxVar in names(rpt[[dp01]][[idxLvLPrdAgr]][[1]]$mean)){
-              #idxVar <- names(rpt[[dp01]][[idxLvLPrdAgr]][[1]]$mean)[1]
-              attributes(rpt[[dp01]][[idxLvLPrdAgr]][[1]]$mean[[idxVar]])$unit <- attributes(wrk$data[[idxVar]])$unit
+            for (idxVar in names(rpt[[1]]$mean)){
+              #idxVar <- names(rpt[[1]]$mean)[1]
+              attributes(rpt[[1]]$mean[[idxVar]])$unit <- attributes(wrk$data[[idxVar]])$unit
             }
             
             #grab and add both time begin and time end to rpt
-            rpt[[dp01]][[idxLvLPrdAgr]][[idxAgr]]$timeBgn <- list()
-            rpt[[dp01]][[idxLvLPrdAgr]][[idxAgr]]$timeEnd <- list()
+            rpt[[idxAgr]]$timeBgn <- list()
+            rpt[[idxAgr]]$timeEnd <- list()
             
             #output time for dp01
             for(idxVar in names(wrk$data)){
-              # rpt[[dp01]][[idxLvLPrdAgr]][[idxAgr2]]$timeBgn[[idxVar]] <- data$time[(whrEnd[idxAgr] - 20 - 2*60+1)]
-              # rpt[[dp01]][[idxLvLPrdAgr]][[idxAgr2]]$timeEnd[[idxVar]] <- data$time[(whrEnd[idxAgr] - 20)]
-              rpt[[dp01]][[idxLvLPrdAgr]][[idxAgr]]$timeBgn[[idxVar]] <- wrk$idx$timeBgn[idxAgr]
-              rpt[[dp01]][[idxLvLPrdAgr]][[idxAgr]]$timeEnd[[idxVar]] <- wrk$idx$timeEnd[idxAgr]
+              # rpt[[idxAgr2]]$timeBgn[[idxVar]] <- data$time[(whrEnd[idxAgr] - 20 - 2*60+1)]
+              # rpt[[idxAgr2]]$timeEnd[[idxVar]] <- data$time[(whrEnd[idxAgr] - 20)]
+              rpt[[idxAgr]]$timeBgn[[idxVar]] <- wrk$idx$timeBgn[idxAgr]
+              rpt[[idxAgr]]$timeEnd[[idxVar]] <- wrk$idx$timeEnd[idxAgr]
             }; rm(idxVar)
             
           }#; rm(idxAgr)
           
         } else {
           
-          rpt[[dp01]][[idxLvLPrdAgr]][[1]] <- list()
+          rpt[[1]] <- list()
           
           for(idxStat in NameStat){
-            rpt[[dp01]][[idxLvLPrdAgr]][[1]][[idxStat]] <- list()
+            rpt[[1]][[idxStat]] <- list()
             
             for (idxVar in names(wrk$data)){
-              rpt[[dp01]][[idxLvLPrdAgr]][[1]][[idxStat]][[idxVar]] <- list() 
+              rpt[[1]][[idxStat]][[idxVar]] <- list() 
             }; rm(idxVar)
             
             
@@ -691,27 +691,27 @@ wrap.neon.dp01.ecse <- function(
           wrk$inpMask$data <- wrk$data[idxTime[[paste0(PrdAgr, "min")]]$Bgn[idxAgr]:idxTime[[paste0(PrdAgr, "min")]]$End[idxAgr],]
           
           #call wrap.neon.dp01.R to calculate descriptive statistics 
-          rpt[[dp01]][[idxLvLPrdAgr]][[idxAgr]] <- eddy4R.base::wrap.neon.dp01(
+          rpt[[idxAgr]] <- eddy4R.base::wrap.neon.dp01(
             # assign data: data.frame or list of type numeric or integer
             data = wrk$inpMask$data#,
           )
           
           #units:
-          for (idxVar in names(rpt[[dp01]][[idxLvLPrdAgr]][[1]]$mean)){
-            #idxVar <- names(rpt[[dp01]][[idxLvLPrdAgr]][[1]]$mean)[1]
-            attributes(rpt[[dp01]][[idxLvLPrdAgr]][[1]]$mean[[idxVar]])$unit <- attributes(wrk$data[[idxVar]])$unit
+          for (idxVar in names(rpt[[1]]$mean)){
+            #idxVar <- names(rpt[[1]]$mean)[1]
+            attributes(rpt[[1]]$mean[[idxVar]])$unit <- attributes(wrk$data[[idxVar]])$unit
           }
           
           #grab and add both time begin and time end to rpt
-          rpt[[dp01]][[idxLvLPrdAgr]][[idxAgr]]$timeBgn <- list()
-          rpt[[dp01]][[idxLvLPrdAgr]][[idxAgr]]$timeEnd <- list()
+          rpt[[idxAgr]]$timeBgn <- list()
+          rpt[[idxAgr]]$timeEnd <- list()
           
           #output time for dp01
           for(idxVar in names(wrk$data)){
-            # rpt[[dp01]][[idxLvLPrdAgr]][[idxAgr2]]$timeBgn[[idxVar]] <- data$time[(whrEnd[idxAgr] - 20 - 2*60+1)]
-            # rpt[[dp01]][[idxLvLPrdAgr]][[idxAgr2]]$timeEnd[[idxVar]] <- data$time[(whrEnd[idxAgr] - 20)]
-            rpt[[dp01]][[idxLvLPrdAgr]][[idxAgr]]$timeBgn[[idxVar]] <- data$time[idxTime[[paste0(PrdAgr, "min")]]$Bgn[idxAgr]]
-            rpt[[dp01]][[idxLvLPrdAgr]][[idxAgr]]$timeEnd[[idxVar]] <- data$time[idxTime[[paste0(PrdAgr, "min")]]$End[idxAgr]]
+            # rpt[[idxAgr2]]$timeBgn[[idxVar]] <- data$time[(whrEnd[idxAgr] - 20 - 2*60+1)]
+            # rpt[[idxAgr2]]$timeEnd[[idxVar]] <- data$time[(whrEnd[idxAgr] - 20)]
+            rpt[[idxAgr]]$timeBgn[[idxVar]] <- data$time[idxTime[[paste0(PrdAgr, "min")]]$Bgn[idxAgr]]
+            rpt[[idxAgr]]$timeEnd[[idxVar]] <- data$time[idxTime[[paste0(PrdAgr, "min")]]$End[idxAgr]]
           }; rm(idxVar)
           
         }; #rm(idxAgr)
@@ -736,8 +736,8 @@ wrap.neon.dp01.ecse <- function(
       if (PrdMeas == PrdAgr) {
         #PrdAgr <- 9
         #9 minutely sampling data
-        idxLvLPrdAgr <- paste0(lvl, "_", sprintf("%02d", PrdAgr), "m")
-        rpt[[dp01]][[idxLvLPrdAgr]] <- list()
+        #idxLvLPrdAgr <- paste0(lvl, "_", sprintf("%02d", PrdAgr), "m")
+        #rpt[[dp01]][[idxLvLPrdAgr]] <- list()
         
         #if there is at least one measurement
         if(length(which(!is.na(wrk$data$temp))) > 0){
@@ -752,24 +752,24 @@ wrap.neon.dp01.ecse <- function(
             wrk$inpMask$data <- list()
             wrk$inpMask$data <- wrk$data[wrk$idx$idxBgn[idxAgr]:wrk$idx$idxEnd[idxAgr],]  
             #dp01 processing
-            rpt[[dp01]][[idxLvLPrdAgr]][[idxAgr]] <- eddy4R.base::wrap.neon.dp01(
+            rpt[[idxAgr]] <- eddy4R.base::wrap.neon.dp01(
               # assign data: data.frame or list of type numeric or integer
               data = wrk$inpMask$data#,
             )
             
             #units:
-            for (idxVar in names(rpt[[dp01]][[idxLvLPrdAgr]][[1]]$mean)){
-              #idxVar <- names(rpt[[dp01]][[idxLvLPrdAgr]][[1]]$mean)[1]
-              attributes(rpt[[dp01]][[idxLvLPrdAgr]][[1]]$mean[[idxVar]])$unit <- attributes(wrk$data[[idxVar]])$unit
+            for (idxVar in names(rpt[[1]]$mean)){
+              #idxVar <- names(rpt[[1]]$mean)[1]
+              attributes(rpt[[1]]$mean[[idxVar]])$unit <- attributes(wrk$data[[idxVar]])$unit
             }
             
             #grab and add both time begin and time end to rpt
-            rpt[[dp01]][[idxLvLPrdAgr]][[idxAgr]]$timeBgn <- list()
-            rpt[[dp01]][[idxLvLPrdAgr]][[idxAgr]]$timeEnd <- list()
+            rpt[[idxAgr]]$timeBgn <- list()
+            rpt[[idxAgr]]$timeEnd <- list()
             
             for(idxVar in names(wrk$data)){
-              rpt[[dp01]][[idxLvLPrdAgr]][[idxAgr]]$timeBgn[[idxVar]] <- wrk$idx$timeBgn[idxAgr]
-              rpt[[dp01]][[idxLvLPrdAgr]][[idxAgr]]$timeEnd[[idxVar]] <- wrk$idx$timeEnd[idxAgr]
+              rpt[[idxAgr]]$timeBgn[[idxVar]] <- wrk$idx$timeBgn[idxAgr]
+              rpt[[idxAgr]]$timeEnd[[idxVar]] <- wrk$idx$timeEnd[idxAgr]
             }
             
             #}# end of there is at least one data
@@ -778,13 +778,13 @@ wrap.neon.dp01.ecse <- function(
           }; rm(idxAgr)
         } else {
           
-          rpt[[dp01]][[idxLvLPrdAgr]][[1]] <- list()
+          rpt[[1]] <- list()
           for(idxStat in NameStat){
-            rpt[[dp01]][[idxLvLPrdAgr]][[1]][[idxStat]] <- list()
+            rpt[[1]][[idxStat]] <- list()
             
             
             for (idxVar in names(wrk$data)){
-              rpt[[dp01]][[idxLvLPrdAgr]][[1]][[idxStat]][[idxVar]] <- list()  
+              rpt[[1]][[idxStat]][[idxVar]] <- list()  
             }; rm(idxVar)
             
           }; rm(idxStat)
@@ -822,25 +822,25 @@ wrap.neon.dp01.ecse <- function(
           # for qfqm
           #call wrap.neon.dp01.R to calculate descriptive statistics
           
-          rpt[[dp01]][[idxLvLPrdAgr]][[idxAgr]] <- eddy4R.base::wrap.neon.dp01(
+          rpt[[idxAgr]] <- eddy4R.base::wrap.neon.dp01(
             # assign data: data.frame or list of type numeric or integer
             data = wrk$inpMask$data#,
             
           )
           
           #units:
-          for (idxVar in names(rpt[[dp01]][[idxLvLPrdAgr]][[1]]$mean)){
-            #idxVar <- names(rpt[[dp01]][[idxLvLPrdAgr]][[1]]$mean)[1]
-            attributes(rpt[[dp01]][[idxLvLPrdAgr]][[1]]$mean[[idxVar]])$unit <- attributes(wrk$data[[idxVar]])$unit
+          for (idxVar in names(rpt[[1]]$mean)){
+            #idxVar <- names(rpt[[1]]$mean)[1]
+            attributes(rpt[[1]]$mean[[idxVar]])$unit <- attributes(wrk$data[[idxVar]])$unit
           }
           
           #grab and add both time begin and time end to rpt
-          rpt[[dp01]][[idxLvLPrdAgr]][[idxAgr]]$timeBgn <- list()
-          rpt[[dp01]][[idxLvLPrdAgr]][[idxAgr]]$timeEnd <- list()
+          rpt[[idxAgr]]$timeBgn <- list()
+          rpt[[idxAgr]]$timeEnd <- list()
           
           for(idxVar in names(wrk$data)){
-            rpt[[dp01]][[idxLvLPrdAgr]][[idxAgr]]$timeBgn[[idxVar]] <- data$time[idxTime[[paste0(PrdAgr, "min")]]$Bgn[idxAgr]]
-            rpt[[dp01]][[idxLvLPrdAgr]][[idxAgr]]$timeEnd[[idxVar]] <- data$time[idxTime[[paste0(PrdAgr, "min")]]$End[idxAgr]]
+            rpt[[idxAgr]]$timeBgn[[idxVar]] <- data$time[idxTime[[paste0(PrdAgr, "min")]]$Bgn[idxAgr]]
+            rpt[[idxAgr]]$timeEnd[[idxVar]] <- data$time[idxTime[[paste0(PrdAgr, "min")]]$End[idxAgr]]
           }
           
         }; #rm(idxAgr)
@@ -866,8 +866,8 @@ wrap.neon.dp01.ecse <- function(
       #replace injNum to NaN when they are not measured at that period
       wrk$data$injNum <- ifelse(is.na(wrk$data$temp), NaN, wrk$data$injNum)
       if (PrdMeas == PrdAgr) {        
-        idxLvLPrdAgr <- paste0(lvl, "_", sprintf("%02d", PrdAgr), "m")
-        rpt[[dp01]][[idxLvLPrdAgr]] <- list()
+        #idxLvLPrdAgr <- paste0(lvl, "_", sprintf("%02d", PrdAgr), "m")
+        #rpt[[dp01]][[idxLvLPrdAgr]] <- list()
         
         #if there is at least one measurement
         if(length(which(!is.na(wrk$data$temp))) > 0){
@@ -883,7 +883,7 @@ wrap.neon.dp01.ecse <- function(
             #get rid of injNum
             wrk$inpMask$data <- wrk$inpMask$data[,-which(names(wrk$inpMask$data) == "injNum")]
             #calculate dp01
-            rpt[[dp01]][[idxLvLPrdAgr]][[idxAgr]] <- eddy4R.base::wrap.neon.dp01(
+            rpt[[idxAgr]] <- eddy4R.base::wrap.neon.dp01(
               # assign data: data.frame or list of type numeric or integer
               data = wrk$inpMask$data#,
               # if data is a list, which list entries should be processed into Level 1 data products?
@@ -893,36 +893,36 @@ wrap.neon.dp01.ecse <- function(
             )
             
             #units:
-            for (idxVar in names(rpt[[dp01]][[idxLvLPrdAgr]][[1]]$mean)){
-              #idxVar <- names(rpt[[dp01]][[idxLvLPrdAgr]][[1]]$mean)[1]
-              attributes(rpt[[dp01]][[idxLvLPrdAgr]][[1]]$mean[[idxVar]])$unit <- attributes(wrk$data[[idxVar]])$unit
+            for (idxVar in names(rpt[[1]]$mean)){
+              #idxVar <- names(rpt[[1]]$mean)[1]
+              attributes(rpt[[1]]$mean[[idxVar]])$unit <- attributes(wrk$data[[idxVar]])$unit
             }
             
             #grab and add both time begin and time end to rpt
             
             #for (idxLvLPrdAgr in names(wrk$inpMask$data[[dp01]])){
             #idxLvLPrdAgr <- names(wrk$inpMask$data[[dp01]])[1]
-            rpt[[dp01]][[idxLvLPrdAgr]][[idxAgr]]$timeBgn <- list()
-            rpt[[dp01]][[idxLvLPrdAgr]][[idxAgr]]$timeEnd <- list()
+            rpt[[idxAgr]]$timeBgn <- list()
+            rpt[[idxAgr]]$timeEnd <- list()
             
-            for(idxVar in names(rpt[[dp01]][[idxLvLPrdAgr]][[idxAgr]]$mean)){
-              # rpt[[dp01]][[idxLvLPrdAgr]][[idxAgr2]]$timeBgn[[idxVar]] <- data$time[(whrEnd[idxAgr] - 20 - 2*60+1)]
-              # rpt[[dp01]][[idxLvLPrdAgr]][[idxAgr2]]$timeEnd[[idxVar]] <- data$time[(whrEnd[idxAgr] - 20)]
-              rpt[[dp01]][[idxLvLPrdAgr]][[idxAgr]]$timeBgn[[idxVar]] <- wrk$idx$timeBgn[idxAgr]
-              rpt[[dp01]][[idxLvLPrdAgr]][[idxAgr]]$timeEnd[[idxVar]] <- wrk$idx$timeEnd[idxAgr]
+            for(idxVar in names(rpt[[idxAgr]]$mean)){
+              # rpt[[idxAgr2]]$timeBgn[[idxVar]] <- data$time[(whrEnd[idxAgr] - 20 - 2*60+1)]
+              # rpt[[idxAgr2]]$timeEnd[[idxVar]] <- data$time[(whrEnd[idxAgr] - 20)]
+              rpt[[idxAgr]]$timeBgn[[idxVar]] <- wrk$idx$timeBgn[idxAgr]
+              rpt[[idxAgr]]$timeEnd[[idxVar]] <- wrk$idx$timeEnd[idxAgr]
             }
             
           }#; rm(idxAgr)
           
         } else {
           
-          rpt[[dp01]][[idxLvLPrdAgr]][[1]] <- list()
+          rpt[[1]] <- list()
           
           for(idxStat in names(rpt[[dp01]][[1]][[1]])){
-            rpt[[dp01]][[idxLvLPrdAgr]][[1]][[idxStat]] <- list()
+            rpt[[1]][[idxStat]] <- list()
             
             for (idxVar in names(rpt[[dp01]][[1]][[1]]$mean)){
-              rpt[[dp01]][[idxLvLPrdAgr]][[1]][[idxStat]][[idxVar]] <- list() 
+              rpt[[1]][[idxStat]][[idxVar]] <- list() 
             }; rm(idxVar)
             
             
@@ -961,7 +961,7 @@ wrap.neon.dp01.ecse <- function(
           # http://stackoverflow.com/questions/26843861/replace-rbind-in-for-loop-with-lapply-2nd-circle-of-hell
           #call wrap.neon.dp01.R to calculate descriptive statistics
           
-          rpt[[dp01]][[idxLvLPrdAgr]][[idxAgr]] <- eddy4R.base::wrap.neon.dp01(
+          rpt[[idxAgr]] <- eddy4R.base::wrap.neon.dp01(
             # assign data: data.frame or list of type numeric or integer
             data = wrk$inpMask$data#,
             # if data is a list, which list entries should be processed into Level 1 data products?
@@ -971,18 +971,18 @@ wrap.neon.dp01.ecse <- function(
           )
           
           #units:
-          for (idxVar in names(rpt[[dp01]][[idxLvLPrdAgr]][[1]]$mean)){
-            #idxVar <- names(rpt[[dp01]][[idxLvLPrdAgr]][[1]]$mean)[1]
-            attributes(rpt[[dp01]][[idxLvLPrdAgr]][[1]]$mean[[idxVar]])$unit <- attributes(wrk$data[[idxVar]])$unit
+          for (idxVar in names(rpt[[1]]$mean)){
+            #idxVar <- names(rpt[[1]]$mean)[1]
+            attributes(rpt[[1]]$mean[[idxVar]])$unit <- attributes(wrk$data[[idxVar]])$unit
           }
           
           #grab and add both time begin and time end to rpt
-          rpt[[dp01]][[idxLvLPrdAgr]][[idxAgr]]$timeBgn <- list()
-          rpt[[dp01]][[idxLvLPrdAgr]][[idxAgr]]$timeEnd <- list()
+          rpt[[idxAgr]]$timeBgn <- list()
+          rpt[[idxAgr]]$timeEnd <- list()
           
-          for(idxVar in names(rpt[[dp01]][[idxLvLPrdAgr]][[idxAgr]]$mean)){
-            rpt[[dp01]][[idxLvLPrdAgr]][[idxAgr]]$timeBgn[[idxVar]] <- data$time[idxTime[[paste0(PrdAgr, "min")]]$Bgn[idxAgr]]
-            rpt[[dp01]][[idxLvLPrdAgr]][[idxAgr]]$timeEnd[[idxVar]] <- data$time[idxTime[[paste0(PrdAgr, "min")]]$End[idxAgr]]
+          for(idxVar in names(rpt[[idxAgr]]$mean)){
+            rpt[[idxAgr]]$timeBgn[[idxVar]] <- data$time[idxTime[[paste0(PrdAgr, "min")]]$Bgn[idxAgr]]
+            rpt[[idxAgr]]$timeEnd[[idxVar]] <- data$time[idxTime[[paste0(PrdAgr, "min")]]$End[idxAgr]]
           }
           
         }; #rm(idxAgr)
