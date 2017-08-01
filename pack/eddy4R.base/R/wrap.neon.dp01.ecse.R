@@ -12,6 +12,7 @@
 #' @param \code{lvl}  Measurement level of dp01 which descriptive statistics are being calculated. Of type character. [-]
 #' @param \code{lvlIrgaMfcSamp} Measurement level of irgaMfcSamp which apply to only  dp01 equal to "irgaCo2" or "irgaH2o". Defaults to NULL. Of type character. [-]
 #' @param \code{lvlIrgaValvLvl} Measurement level of irgaValvLvl which apply to only  dp01 equal to "irgaCo2" or "irgaH2o". Defaults to NULL. Of type character. [-]
+#' @param \code{lvlCrdH2oValvVali} Measurement level of crdH2oValvVali which apply to only  dp01 equal to "isoH2o". Defaults to NULL. Of type character. [-]
 #' @param \code{data} A list of data frame containing the input dp0p data that related to dp01 which descriptive statistics are being calculated. Of class integer". [User defined] 
 #' @param \code{TypeMeas} A vector of class "character" containing the name of measurement type (sampling or validation), TypeMeas = c("samp", "vali"). Defaults to "samp". [-]
 #' @param \code{PrdMeas} The measurement time period in minute.  [min]
@@ -52,6 +53,7 @@ wrap.neon.dp01.ecse <- function(
   lvl,
   lvlIrgaMfcSamp = NULL,
   lvlIrgaValvLvl = NULL,
+  lvlCrdH2oValvVali = NULL,
   data = list(),
   TypeMeas = c("samp", "vali")[1],
   PrdMeas,
@@ -860,7 +862,7 @@ wrap.neon.dp01.ecse <- function(
                              "pres" = data$crdH2o[[lvl]]$pres,
                              "dlta18OH2oRefe" = data$crdH2o[[lvl]]$dlta18OH2oRefe,
                              "dlta2HH2oRefe" = data$crdH2o[[lvl]]$dlta2HH2oRefe,
-                             "injNum" = data$crdH2oValvVali[[Para$Flow$LevlTowr$crdH2oValvVali]][["injNum"]]
+                             "injNum" = data$crdH2oValvVali[[lvlCrdH2oValvVali]][["injNum"]]
                              
       )
       #replace injNum to NaN when they are not measured at that period
