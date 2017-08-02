@@ -397,7 +397,7 @@ wrap.neon.dp01.ecse <- function(
       # for data
       wrk$inpMask$data <- list()
       
-      idxLvLPrdAgr <- paste0(lvl, "_", sprintf("%02d", PrdAgr), "m")
+      #idxLvLPrdAgr <- paste0(lvl, "_", sprintf("%02d", PrdAgr), "m")
       
       
       if(dp01 == "tempAirLvl") {
@@ -421,7 +421,7 @@ wrap.neon.dp01.ecse <- function(
       #units:
       for (idxVar in names(rpt[[1]]$mean)){
         #idxVar <- names(rpt[[1]]$mean)[1]
-        attributes(rpt[[1]]$mean[[idxVar]])$unit <- attributes(wrk$data[[idxVar]])$unit
+        attributes(rpt[[1]]$mean[[idxVar]])$unit <- attributes(data[[dp01]][[lvl]][[idxVar]])$unit
       }
       
       #grab and add both time begin and time end to rpt
