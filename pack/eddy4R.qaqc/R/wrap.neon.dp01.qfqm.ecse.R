@@ -12,6 +12,7 @@
 #' @param \code{lvl}  Measurement level of dp01 which descriptive statistics are being calculated. Of type character. [-]
 #' @param \code{lvlIrgaMfcSamp} Measurement level of irgaMfcSamp which apply to only  dp01 equal to "irgaCo2" or "irgaH2o". Defaults to NULL. Of type character. [-]
 #' @param \code{lvlIrgaValvLvl} Measurement level of irgaValvLvl which apply to only  dp01 equal to "irgaCo2" or "irgaH2o". Defaults to NULL. Of type character. [-]
+#' @param \code{lvlCrdH2oValvVali} Measurement level of crdH2oValvVali which apply to only  dp01 equal to "isoH2o". Defaults to NULL. Of type character. [-]
 #' @param \code{data} A list of data frame containing the input dp0p data that related to dp01 which qfqm are being calculated. Of class integer". [User defined] 
 #' @param \code{qfInput} A list of data frame containing the input quality flag data that related to dp01 are being grouped. Of class integer". [NA] 
 #' @param \code{TypeMeas} A vector of class "character" containing the name of measurement type (sampling or validation), TypeMeas = c("samp", "vali"). Defaults to "samp". [-]
@@ -49,6 +50,7 @@ wrap.neon.dp01.qfqm.ecse <- function(
   lvl,
   lvlIrgaMfcSamp = NULL,
   lvlIrgaValvLvl = NULL,
+  lvlCrdH2oValvVali = NULL,
   data = list(),
   qfInput = list(),
   TypeMeas = c("samp", "vali")[1],
@@ -109,8 +111,8 @@ wrap.neon.dp01.qfqm.ecse <- function(
       if (PrdMeas == PrdAgr) {
         #PrdAgr <- 2
         #2 minutely sampling data
-        idxLvLPrdAgr <- paste0(lvl, "_", sprintf("%02d", PrdAgr), "m")
-        rpt[[dp01]][[idxLvLPrdAgr]] <- list()
+        #idxLvLPrdAgr <- paste0(lvl, "_", sprintf("%02d", PrdAgr), "m")
+        #rpt[[dp01]][[idxLvLPrdAgr]] <- list()
         
         #if there is at least one measurement
         if(length(which(!is.na(wrk$data$temp))) > 0){
@@ -127,7 +129,7 @@ wrap.neon.dp01.qfqm.ecse <- function(
             lapply(names(wrk$qfqm), function (x) wrk$inpMask$qfqm[[x]] <<- wrk$qfqm[[x]][wrk$idx$idxBgn[idxAgr]:wrk$idx$idxEnd[idxAgr],] )
             
             #qfqm processing
-            rpt[[dp01]][[idxLvLPrdAgr]][[idxAgr]] <- eddy4R.qaqc::wrap.neon.dp01.qfqm(
+            rpt[[idxAgr]] <- eddy4R.qaqc::wrap.neon.dp01.qfqm(
               qfInput = wrk$inpMask$qfqm, 
               MethMeas = "ecse",
               TypeMeas = "samp",
@@ -140,12 +142,12 @@ wrap.neon.dp01.qfqm.ecse <- function(
             
             #for (idxLvLPrdAgr in names(wrk$inpMask$data[[dp01]])){
             #idxLvLPrdAgr <- names(wrk$inpMask$data[[dp01]])[1]
-            rpt[[dp01]][[idxLvLPrdAgr]][[idxAgr]]$timeBgn <- list()
-            rpt[[dp01]][[idxLvLPrdAgr]][[idxAgr]]$timeEnd <- list()
+            rpt[[idxAgr]]$timeBgn <- list()
+            rpt[[idxAgr]]$timeEnd <- list()
             
             for(idxVar in names(wrk$data)[which(!(names(wrk$data) %in% c("lvlIrga")))]){
-              rpt[[dp01]][[idxLvLPrdAgr]][[idxAgr]]$timeBgn[[idxVar]] <- wrk$idx$timeBgn[idxAgr]
-              rpt[[dp01]][[idxLvLPrdAgr]][[idxAgr]]$timeEnd[[idxVar]] <- wrk$idx$timeEnd[idxAgr]
+              rpt[[idxAgr]]$timeBgn[[idxVar]] <- wrk$idx$timeBgn[idxAgr]
+              rpt[[idxAgr]]$timeEnd[[idxVar]] <- wrk$idx$timeEnd[idxAgr]
             }
             
             #}# end of there is at least one data
@@ -153,13 +155,13 @@ wrap.neon.dp01.qfqm.ecse <- function(
           }; rm(idxAgr)
         } else {
           
-          rpt[[dp01]][[idxLvLPrdAgr]][[1]] <- list()
+          rpt[[1]] <- list()
           for(idxQf in NameQf){
-            rpt[[dp01]][[idxLvLPrdAgr]][[1]][[idxStat]] <- list()
+            rpt[[1]][[idxStat]] <- list()
             
             
             for (idxVar in names(wrk$data)[which(!(names(wrk$data) %in% c("lvlIrga")))]){
-              rpt[[dp01]][[idxLvLPrdAgr]][[1]][[idxQf]][[idxVar]] <- list()  
+              rpt[[1]][[idxQf]][[idxVar]] <- list()  
             }; rm(idxVar)
             
           }; rm(idxQf)
@@ -201,7 +203,7 @@ wrap.neon.dp01.qfqm.ecse <- function(
           lapply(names(wrk$qfqm), function (x) wrk$inpMask$qfqm[[x]] <<- wrk$qfqm[[x]][idxTime[[paste0(PrdAgr, "min")]]$Bgn[idxAgr]:idxTime[[paste0(PrdAgr, "min")]]$End[idxAgr],])
           
           #qfqm processing
-          rpt[[dp01]][[idxLvLPrdAgr]][[idxAgr]] <- eddy4R.qaqc::wrap.neon.dp01.qfqm(
+          rpt[[idxAgr]] <- eddy4R.qaqc::wrap.neon.dp01.qfqm(
             qfInput = wrk$inpMask$qfqm, 
             MethMeas = "ecse",
             TypeMeas = "samp",
@@ -210,12 +212,12 @@ wrap.neon.dp01.qfqm.ecse <- function(
           )
           
           #grab and add both time begin and time end to rpt
-          rpt[[dp01]][[idxLvLPrdAgr]][[idxAgr]]$timeBgn <- list()
-          rpt[[dp01]][[idxLvLPrdAgr]][[idxAgr]]$timeEnd <- list()
+          rpt[[idxAgr]]$timeBgn <- list()
+          rpt[[idxAgr]]$timeEnd <- list()
           
           for(idxVar in names(wrk$data)[which(!(names(wrk$data) %in% c("lvlIrga")))]){
-            rpt[[dp01]][[idxLvLPrdAgr]][[idxAgr]]$timeBgn[[idxVar]] <- data$time[idxTime[[paste0(PrdAgr, "min")]]$Bgn[idxAgr]]
-            rpt[[dp01]][[idxLvLPrdAgr]][[idxAgr]]$timeEnd[[idxVar]] <- data$time[idxTime[[paste0(PrdAgr, "min")]]$End[idxAgr]]
+            rpt[[idxAgr]]$timeBgn[[idxVar]] <- data$time[idxTime[[paste0(PrdAgr, "min")]]$Bgn[idxAgr]]
+            rpt[[idxAgr]]$timeEnd[[idxVar]] <- data$time[idxTime[[paste0(PrdAgr, "min")]]$End[idxAgr]]
           }
           
         }; #rm(idxAgr)
@@ -260,8 +262,8 @@ wrap.neon.dp01.qfqm.ecse <- function(
       if (PrdMeas == PrdAgr) {
         #PrdAgr <- 2
         #2 minutely sampling data
-        idxLvLPrdAgr <- paste0(lvl, "_", sprintf("%02d", PrdAgr), "m")
-        rpt[[dp01]][[idxLvLPrdAgr]] <- list()
+        #idxLvLPrdAgr <- paste0(lvl, "_", sprintf("%02d", PrdAgr), "m")
+        #rpt[[dp01]][[idxLvLPrdAgr]] <- list()
         
         #if there is at least one measurement
         if(length(which(!is.na(wrk$data$temp))) > 0){
@@ -276,7 +278,7 @@ wrap.neon.dp01.qfqm.ecse <- function(
             lapply(names(wrk$qfqm), function (x) wrk$inpMask$qfqm[[x]] <<- wrk$qfqm[[x]][wrk$idx$idxBgn[idxAgr]:wrk$idx$idxEnd[idxAgr],] )
             
             #qfqm processing
-            rpt[[dp01]][[idxLvLPrdAgr]][[idxAgr]] <- eddy4R.qaqc::wrap.neon.dp01.qfqm(
+            rpt[[idxAgr]] <- eddy4R.qaqc::wrap.neon.dp01.qfqm(
               qfInput = wrk$inpMask$qfqm, 
               MethMeas = "ecse",
               TypeMeas = "vali",
@@ -285,27 +287,27 @@ wrap.neon.dp01.qfqm.ecse <- function(
             )
             
             #grab and add both time begin and time end to rpt
-            rpt[[dp01]][[idxLvLPrdAgr]][[idxAgr]]$timeBgn <- list()
-            rpt[[dp01]][[idxLvLPrdAgr]][[idxAgr]]$timeEnd <- list()
+            rpt[[idxAgr]]$timeBgn <- list()
+            rpt[[idxAgr]]$timeEnd <- list()
             
             #output time for qf dp01; do not output reference gas
             for(idxVar in names(wrk$data)[which(!(names(wrk$data) %in% c("rtioMoleDryCo2Refe")))]){
-              rpt[[dp01]][[idxLvLPrdAgr]][[idxAgr]]$timeBgn[[idxVar]] <- wrk$idx$timeBgn[idxAgr]
-              rpt[[dp01]][[idxLvLPrdAgr]][[idxAgr]]$timeEnd[[idxVar]] <- wrk$idx$timeEnd[idxAgr]
+              rpt[[idxAgr]]$timeBgn[[idxVar]] <- wrk$idx$timeBgn[idxAgr]
+              rpt[[idxAgr]]$timeEnd[[idxVar]] <- wrk$idx$timeEnd[idxAgr]
             }; rm(idxVar)
           }#; rm(idxAgr)
           
         } else {
           
-          rpt[[dp01]][[idxLvLPrdAgr]][[1]] <- list()
+          rpt[[1]] <- list()
           
           for(idxQf in NameQf){
-            #idxQf in names(rpt[[dp01]][[idxLvLPrdAgr]][[1]])
-            rpt[[dp01]][[idxLvLPrdAgr]][[1]][[idxQf]] <- list()
+            #idxQf in names(rpt[[1]])
+            rpt[[1]][[idxQf]] <- list()
             
             
             for (idxVar in names(wrk$data)[which(!(names(wrk$data) %in% c("rtioMoleDryCo2Refe")))]){
-              rpt[[dp01]][[idxLvLPrdAgr]][[1]][[idxQf]][[idxVar]] <- list()  
+              rpt[[1]][[idxQf]][[idxVar]] <- list()  
             }; rm(idxVar)
             
             
@@ -343,7 +345,7 @@ wrap.neon.dp01.qfqm.ecse <- function(
           lapply(names(wrk$qfqm), function (x) wrk$inpMask$qfqm[[x]] <<- wrk$qfqm[[x]][idxTime[[paste0(PrdAgr, "min")]]$Bgn[idxAgr]:idxTime[[paste0(PrdAgr, "min")]]$End[idxAgr],])
           
           #qfqm processing
-          rpt[[dp01]][[idxLvLPrdAgr]][[idxAgr]] <- eddy4R.qaqc::wrap.neon.dp01.qfqm(
+          rpt[[idxAgr]] <- eddy4R.qaqc::wrap.neon.dp01.qfqm(
             qfInput = wrk$inpMask$qfqm, 
             MethMeas = "ecse",
             TypeMeas = "vali",
@@ -351,13 +353,13 @@ wrap.neon.dp01.qfqm.ecse <- function(
             dp01 = dp01
           )
           #grab and add both time begin and time end to rpt
-          rpt[[dp01]][[idxLvLPrdAgr]][[idxAgr]]$timeBgn <- list()
-          rpt[[dp01]][[idxLvLPrdAgr]][[idxAgr]]$timeEnd <- list()
+          rpt[[idxAgr]]$timeBgn <- list()
+          rpt[[idxAgr]]$timeEnd <- list()
           
           #output time for qf dp01; do not output reference gas
           for(idxVar in names(wrk$data)[which(!(names(wrk$data) %in% c("rtioMoleDryCo2Refe")))]){
-            rpt[[dp01]][[idxLvLPrdAgr]][[idxAgr]]$timeBgn[[idxVar]] <- data$time[idxTime[[paste0(PrdAgr, "min")]]$Bgn[idxAgr]]
-            rpt[[dp01]][[idxLvLPrdAgr]][[idxAgr]]$timeEnd[[idxVar]] <- data$time[idxTime[[paste0(PrdAgr, "min")]]$Bgn[idxAgr]]
+            rpt[[idxAgr]]$timeBgn[[idxVar]] <- data$time[idxTime[[paste0(PrdAgr, "min")]]$Bgn[idxAgr]]
+            rpt[[idxAgr]]$timeEnd[[idxVar]] <- data$time[idxTime[[paste0(PrdAgr, "min")]]$Bgn[idxAgr]]
           }; rm(idxVar)
           
         }; #rm(idxAgr)
@@ -402,7 +404,7 @@ wrap.neon.dp01.qfqm.ecse <- function(
       } 
       
       #qfqm processing
-      rpt[[dp01]][[idxLvLPrdAgr]][[idxAgr]] <- eddy4R.qaqc::wrap.neon.dp01.qfqm(
+      rpt[[idxAgr]] <- eddy4R.qaqc::wrap.neon.dp01.qfqm(
         qfInput = wrk$inpMask$qfqm, 
         MethMeas = "ecse",
         TypeMeas = "samp",
@@ -411,12 +413,12 @@ wrap.neon.dp01.qfqm.ecse <- function(
       )
       
       #grab and add both time begin and time end to rpt
-      rpt[[dp01]][[idxLvLPrdAgr]][[idxAgr]]$timeBgn <- list()
-      rpt[[dp01]][[idxLvLPrdAgr]][[idxAgr]]$timeEnd <- list()
+      rpt[[idxAgr]]$timeBgn <- list()
+      rpt[[idxAgr]]$timeEnd <- list()
       
       for(idxVar in names(wrk$inpMask$data)){
-        rpt[[dp01]][[idxLvLPrdAgr]][[idxAgr]]$timeBgn[[idxVar]] <- data$time[idxTime[[paste0(PrdAgr, "min")]]$Bgn[idxAgr]]
-        rpt[[dp01]][[idxLvLPrdAgr]][[idxAgr]]$timeEnd[[idxVar]] <- data$time[idxTime[[paste0(PrdAgr, "min")]]$End[idxAgr]]
+        rpt[[idxAgr]]$timeBgn[[idxVar]] <- data$time[idxTime[[paste0(PrdAgr, "min")]]$Bgn[idxAgr]]
+        rpt[[idxAgr]]$timeEnd[[idxVar]] <- data$time[idxTime[[paste0(PrdAgr, "min")]]$End[idxAgr]]
       }
       
     }; #rm(idxAgr)
@@ -452,8 +454,8 @@ wrap.neon.dp01.qfqm.ecse <- function(
       if (PrdMeas == PrdAgr) {
         #PrdAgr <- 9
         #9 minutely sampling data
-        idxLvLPrdAgr <- paste0(lvl, "_", sprintf("%02d", PrdAgr), "m")
-        rpt[[dp01]][[idxLvLPrdAgr]] <- list()
+        #idxLvLPrdAgr <- paste0(lvl, "_", sprintf("%02d", PrdAgr), "m")
+        #rpt[[dp01]][[idxLvLPrdAgr]] <- list()
         
         #if there is at least one measurement
         if(length(which(!is.na(wrk$data$temp))) > 0){
@@ -472,7 +474,7 @@ wrap.neon.dp01.qfqm.ecse <- function(
             lapply(names(wrk$qfqm), function (x) wrk$inpMask$qfqm[[x]] <<- wrk$qfqm[[x]][wrk$idx$idxBgn[idxAgr]:wrk$idx$idxEnd[idxAgr],] )
             
             #qfqm processing
-            rpt[[dp01]][[idxLvLPrdAgr]][[idxAgr]] <- eddy4R.qaqc::wrap.neon.dp01.qfqm(
+            rpt[[idxAgr]] <- eddy4R.qaqc::wrap.neon.dp01.qfqm(
               qfInput = wrk$inpMask$qfqm, 
               MethMeas = "ecse",
               TypeMeas = "samp",
@@ -481,13 +483,13 @@ wrap.neon.dp01.qfqm.ecse <- function(
               idGas = wrk$inpMask$data$idGas
             )
             #grab and add both time begin and time end to rpt
-            rpt[[dp01]][[idxLvLPrdAgr]][[idxAgr]]$timeBgn <- list()
-            rpt[[dp01]][[idxLvLPrdAgr]][[idxAgr]]$timeEnd <- list()
+            rpt[[idxAgr]]$timeBgn <- list()
+            rpt[[idxAgr]]$timeEnd <- list()
             
             #output time for dp01
             for(idxVar in names(wrk$data)[which(!(names(wrk$data) %in% c("idGas")))]){
-              rpt[[dp01]][[idxLvLPrdAgr]][[idxAgr]]$timeBgn[[idxVar]] <- wrk$idx$timeBgn[idxAgr]
-              rpt[[dp01]][[idxLvLPrdAgr]][[idxAgr]]$timeEnd[[idxVar]] <- wrk$idx$timeEnd[idxAgr]
+              rpt[[idxAgr]]$timeBgn[[idxVar]] <- wrk$idx$timeBgn[idxAgr]
+              rpt[[idxAgr]]$timeEnd[[idxVar]] <- wrk$idx$timeEnd[idxAgr]
             }; rm(idxVar)
             
             #}# end of there is at least one data
@@ -495,14 +497,14 @@ wrap.neon.dp01.qfqm.ecse <- function(
           }; rm(idxAgr)
         } else {
           
-          rpt[[dp01]][[idxLvLPrdAgr]][[1]] <- list()
+          rpt[[1]] <- list()
           
           for(idxQf in NameQf){
-            rpt[[dp01]][[idxLvLPrdAgr]][[1]][[idxQf]] <- list()
+            rpt[[1]][[idxQf]] <- list()
             
             
             for (idxVar in names(wrk$data)[which(!(names(wrk$data) %in% c("idGas")))]){
-              rpt[[dp01]][[idxLvLPrdAgr]][[1]][[idxQf]][[idxVar]] <- list()  
+              rpt[[1]][[idxQf]][[idxVar]] <- list()  
             }; rm(idxVar)
             
           }; rm(idxQf) 
@@ -540,7 +542,7 @@ wrap.neon.dp01.qfqm.ecse <- function(
           lapply(names(wrk$qfqm), function (x) wrk$inpMask$qfqm[[x]] <<- wrk$qfqm[[x]][idxTime[[paste0(PrdAgr, "min")]]$Bgn[idxAgr]:idxTime[[paste0(PrdAgr, "min")]]$End[idxAgr],])
           
           #qfqm processing
-          rpt[[dp01]][[idxLvLPrdAgr]][[idxAgr]] <- eddy4R.qaqc::wrap.neon.dp01.qfqm(
+          rpt[[idxAgr]] <- eddy4R.qaqc::wrap.neon.dp01.qfqm(
             qfInput = wrk$inpMask$qfqm, 
             MethMeas = "ecse",
             TypeMeas = "samp",
@@ -550,12 +552,12 @@ wrap.neon.dp01.qfqm.ecse <- function(
           )
           
           #grab and add both time begin and time end to rpt
-          rpt[[dp01]][[idxLvLPrdAgr]][[idxAgr]]$timeBgn <- list()
-          rpt[[dp01]][[idxLvLPrdAgr]][[idxAgr]]$timeEnd <- list()
+          rpt[[idxAgr]]$timeBgn <- list()
+          rpt[[idxAgr]]$timeEnd <- list()
           
           for(idxVar in names(wrk$data)[which(!(names(wrk$data) %in% c("idGas")))]){
-            rpt[[dp01]][[idxLvLPrdAgr]][[idxAgr]]$timeBgn[[idxVar]] <- data$time[idxTime[[paste0(PrdAgr, "min")]]$Bgn[idxAgr]]
-            rpt[[dp01]][[idxLvLPrdAgr]][[idxAgr]]$timeEnd[[idxVar]] <- data$time[idxTime[[paste0(PrdAgr, "min")]]$End[idxAgr]]
+            rpt[[idxAgr]]$timeBgn[[idxVar]] <- data$time[idxTime[[paste0(PrdAgr, "min")]]$Bgn[idxAgr]]
+            rpt[[idxAgr]]$timeEnd[[idxVar]] <- data$time[idxTime[[paste0(PrdAgr, "min")]]$End[idxAgr]]
           }
           
         }; #rm(idxAgr)
@@ -590,8 +592,8 @@ wrap.neon.dp01.qfqm.ecse <- function(
       if (PrdMeas == PrdAgr) {
         #PrdAgr <- 9
         #9 minutely sampling data
-        idxLvLPrdAgr <- paste0(lvl, "_", sprintf("%02d", PrdAgr), "m")
-        rpt[[dp01]][[idxLvLPrdAgr]] <- list()
+        #idxLvLPrdAgr <- paste0(lvl, "_", sprintf("%02d", PrdAgr), "m")
+        #rpt[[dp01]][[idxLvLPrdAgr]] <- list()
         
         #if there is at least one measurement
         if(length(which(!is.na(wrk$data$temp))) > 0){
@@ -609,7 +611,7 @@ wrap.neon.dp01.qfqm.ecse <- function(
             lapply(names(wrk$qfqm), function (x) wrk$inpMask$qfqm[[x]] <<- wrk$qfqm[[x]][wrk$idx$idxBgn[idxAgr]:wrk$idx$idxEnd[idxAgr],] )
             
             #qfqm processing
-            rpt[[dp01]][[idxLvLPrdAgr]][[idxAgr]] <- eddy4R.qaqc::wrap.neon.dp01.qfqm(
+            rpt[[idxAgr]] <- eddy4R.qaqc::wrap.neon.dp01.qfqm(
               qfInput = wrk$inpMask$qfqm, 
               MethMeas = "ecse",
               TypeMeas = "vali",
@@ -619,28 +621,28 @@ wrap.neon.dp01.qfqm.ecse <- function(
             )
             
             #grab and add both time begin and time end to rpt
-            rpt[[dp01]][[idxLvLPrdAgr]][[idxAgr]]$timeBgn <- list()
-            rpt[[dp01]][[idxLvLPrdAgr]][[idxAgr]]$timeEnd <- list()
+            rpt[[idxAgr]]$timeBgn <- list()
+            rpt[[idxAgr]]$timeEnd <- list()
             
             #output time for qf dp01; do not output reference gas
             for(idxVar in names(wrk$data)[which(!(names(wrk$data) %in% c("rtioMoleDryCo2Refe", "dlta13CCo2Refe", "idGas")))]){
-              rpt[[dp01]][[idxLvLPrdAgr]][[idxAgr]]$timeBgn[[idxVar]] <- wrk$idx$timeBgn[idxAgr]
-              rpt[[dp01]][[idxLvLPrdAgr]][[idxAgr]]$timeEnd[[idxVar]] <- wrk$idx$timeEnd[idxAgr]
+              rpt[[idxAgr]]$timeBgn[[idxVar]] <- wrk$idx$timeBgn[idxAgr]
+              rpt[[idxAgr]]$timeEnd[[idxVar]] <- wrk$idx$timeEnd[idxAgr]
             }; rm(idxVar)
             
           }#; rm(idxAgr)
           
         } else {
           
-          rpt[[dp01]][[idxLvLPrdAgr]][[1]] <- list()
+          rpt[[1]] <- list()
           
           for(idxQf in NameQf){
-            #idxQf in names(rpt[[dp01]][[idxLvLPrdAgr]][[1]])
-            rpt[[dp01]][[idxLvLPrdAgr]][[1]][[idxQf]] <- list()
+            #idxQf in names(rpt[[1]])
+            rpt[[1]][[idxQf]] <- list()
             
             
             for (idxVar in names(wrk$data)[which(!(names(wrk$data) %in% c("rtioMoleDryCo2Refe", "dlta13CCo2Refe", "idGas")))]){
-              rpt[[dp01]][[idxLvLPrdAgr]][[1]][[idxQf]][[idxVar]] <- list()  
+              rpt[[1]][[idxQf]][[idxVar]] <- list()  
             }; rm(idxVar)
             
             
@@ -680,7 +682,7 @@ wrap.neon.dp01.qfqm.ecse <- function(
           lapply(names(wrk$qfqm), function (x) wrk$inpMask$qfqm[[x]] <<- wrk$qfqm[[x]][idxTime[[paste0(PrdAgr, "min")]]$Bgn[idxAgr]:idxTime[[paste0(PrdAgr, "min")]]$End[idxAgr],])
           
           #qfqm processing
-          rpt[[dp01]][[idxLvLPrdAgr]][[idxAgr]] <- eddy4R.qaqc::wrap.neon.dp01.qfqm(
+          rpt[[idxAgr]] <- eddy4R.qaqc::wrap.neon.dp01.qfqm(
             qfInput = wrk$inpMask$qfqm, 
             MethMeas = "ecse",
             TypeMeas = "vali",
@@ -690,13 +692,13 @@ wrap.neon.dp01.qfqm.ecse <- function(
           )
           
           #grab and add both time begin and time end to rpt
-          rpt[[dp01]][[idxLvLPrdAgr]][[idxAgr]]$timeBgn <- list()
-          rpt[[dp01]][[idxLvLPrdAgr]][[idxAgr]]$timeEnd <- list()
+          rpt[[idxAgr]]$timeBgn <- list()
+          rpt[[idxAgr]]$timeEnd <- list()
           
           #output time for qf dp01; do not output reference gas
           for(idxVar in names(wrk$data)[which(!(names(wrk$data) %in% c("rtioMoleDryCo2Refe", "dlta13CCo2Refe", "idGas")))]){
-            rpt[[dp01]][[idxLvLPrdAgr]][[idxAgr]]$timeBgn[[idxVar]] <- data$time[idxTime[[paste0(PrdAgr, "min")]]$Bgn[idxAgr]]
-            rpt[[dp01]][[idxLvLPrdAgr]][[idxAgr]]$timeEnd[[idxVar]] <- data$time[idxTime[[paste0(PrdAgr, "min")]]$End[idxAgr]]
+            rpt[[idxAgr]]$timeBgn[[idxVar]] <- data$time[idxTime[[paste0(PrdAgr, "min")]]$Bgn[idxAgr]]
+            rpt[[idxAgr]]$timeEnd[[idxVar]] <- data$time[idxTime[[paste0(PrdAgr, "min")]]$End[idxAgr]]
           }; rm(idxVar)
           
         }; #rm(idxAgr)
@@ -725,8 +727,8 @@ wrap.neon.dp01.qfqm.ecse <- function(
       if (PrdMeas == PrdAgr) {
         #PrdAgr <- 9
         #9 minutely sampling data
-        idxLvLPrdAgr <- paste0(lvl, "_", sprintf("%02d", PrdAgr), "m")
-        rpt[[dp01]][[idxLvLPrdAgr]] <- list()
+        #idxLvLPrdAgr <- paste0(lvl, "_", sprintf("%02d", PrdAgr), "m")
+        #rpt[[dp01]][[idxLvLPrdAgr]] <- list()
         
         #if there is at least one measurement
         if(length(which(!is.na(wrk$data$temp))) > 0){
@@ -742,7 +744,7 @@ wrap.neon.dp01.qfqm.ecse <- function(
             lapply(names(wrk$qfqm), function (x) wrk$inpMask$qfqm[[x]] <<- wrk$qfqm[[x]][wrk$idx$idxBgn[idxAgr]:wrk$idx$idxEnd[idxAgr],] )
             
             #qfqm processing
-            rpt[[dp01]][[idxLvLPrdAgr]][[idxAgr]] <- eddy4R.qaqc::wrap.neon.dp01.qfqm(
+            rpt[[idxAgr]] <- eddy4R.qaqc::wrap.neon.dp01.qfqm(
               qfInput = wrk$inpMask$qfqm, 
               MethMeas = "ecse",
               TypeMeas = "samp",
@@ -751,12 +753,12 @@ wrap.neon.dp01.qfqm.ecse <- function(
             )
             
             #grab and add both time begin and time end to rpt
-            rpt[[dp01]][[idxLvLPrdAgr]][[idxAgr]]$timeBgn <- list()
-            rpt[[dp01]][[idxLvLPrdAgr]][[idxAgr]]$timeEnd <- list()
+            rpt[[idxAgr]]$timeBgn <- list()
+            rpt[[idxAgr]]$timeEnd <- list()
             
             for(idxVar in names(wrk$data)){
-              rpt[[dp01]][[idxLvLPrdAgr]][[idxAgr]]$timeBgn[[idxVar]] <- wrk$idx$timeBgn[idxAgr]
-              rpt[[dp01]][[idxLvLPrdAgr]][[idxAgr]]$timeEnd[[idxVar]] <- wrk$idx$timeEnd[idxAgr]
+              rpt[[idxAgr]]$timeBgn[[idxVar]] <- wrk$idx$timeBgn[idxAgr]
+              rpt[[idxAgr]]$timeEnd[[idxVar]] <- wrk$idx$timeEnd[idxAgr]
             }
             
             #}# end of there is at least one data
@@ -765,14 +767,14 @@ wrap.neon.dp01.qfqm.ecse <- function(
           }; rm(idxAgr)
         } else {
           
-          rpt[[dp01]][[idxLvLPrdAgr]][[1]] <- list()
+          rpt[[1]] <- list()
           
           for(idxQf in NameQf){
-            rpt[[dp01]][[idxLvLPrdAgr]][[1]][[idxQf]] <- list()
+            rpt[[1]][[idxQf]] <- list()
             
             
             for (idxVar in names(wrk$data)){
-              rpt[[dp01]][[idxLvLPrdAgr]][[1]][[idxQf]][[idxVar]] <- list()  
+              rpt[[1]][[idxQf]][[idxVar]] <- list()  
             }; rm(idxVar)
             
           }; rm(idxQf) 
@@ -810,7 +812,7 @@ wrap.neon.dp01.qfqm.ecse <- function(
           lapply(names(wrk$qfqm), function (x) wrk$inpMask$qfqm[[x]] <<- wrk$qfqm[[x]][idxTime[[paste0(PrdAgr, "min")]]$Bgn[idxAgr]:idxTime[[paste0(PrdAgr, "min")]]$End[idxAgr],])
           
           #qfqm processing
-          rpt[[dp01]][[idxLvLPrdAgr]][[idxAgr]] <- eddy4R.qaqc::wrap.neon.dp01.qfqm(
+          rpt[[idxAgr]] <- eddy4R.qaqc::wrap.neon.dp01.qfqm(
             qfInput = wrk$inpMask$qfqm, 
             MethMeas = "ecse",
             TypeMeas = "samp",
@@ -819,12 +821,12 @@ wrap.neon.dp01.qfqm.ecse <- function(
           )
           
           #grab and add both time begin and time end to rpt
-          rpt[[dp01]][[idxLvLPrdAgr]][[idxAgr]]$timeBgn <- list()
-          rpt[[dp01]][[idxLvLPrdAgr]][[idxAgr]]$timeEnd <- list()
+          rpt[[idxAgr]]$timeBgn <- list()
+          rpt[[idxAgr]]$timeEnd <- list()
           
           for(idxVar in names(wrk$data)){
-            rpt[[dp01]][[idxLvLPrdAgr]][[idxAgr]]$timeBgn[[idxVar]] <- data$time[idxTime[[paste0(PrdAgr, "min")]]$Bgn[idxAgr]]
-            rpt[[dp01]][[idxLvLPrdAgr]][[idxAgr]]$timeEnd[[idxVar]] <- data$time[idxTime[[paste0(PrdAgr, "min")]]$End[idxAgr]]
+            rpt[[idxAgr]]$timeBgn[[idxVar]] <- data$time[idxTime[[paste0(PrdAgr, "min")]]$Bgn[idxAgr]]
+            rpt[[idxAgr]]$timeEnd[[idxVar]] <- data$time[idxTime[[paste0(PrdAgr, "min")]]$End[idxAgr]]
           }
           
         }; #rm(idxAgr)
@@ -844,14 +846,14 @@ wrap.neon.dp01.qfqm.ecse <- function(
                              "pres" = data$crdH2o[[lvl]]$pres,
                              "dlta18OH2oRefe" = data$crdH2o[[lvl]]$dlta18OH2oRefe,
                              "dlta2HH2oRefe" = data$crdH2o[[lvl]]$dlta2HH2oRefe,
-                             "injNum" = data$crdH2oValvVali[[Para$Flow$LevlTowr$crdH2oValvVali]][["injNum"]]
+                             "injNum" = data$crdH2oValvVali[[lvlCrdH2oValvVali]][["injNum"]]
                              
       )
       #replace injNum to NaN when they are not measured at that period
       wrk$data$injNum <- ifelse(is.na(wrk$data$temp), NaN, wrk$data$injNum)
       if (PrdMeas == PrdAgr) {        
-        idxLvLPrdAgr <- paste0(lvl, "_", sprintf("%02d", PrdAgr), "m")
-        rpt[[dp01]][[idxLvLPrdAgr]] <- list()
+        #idxLvLPrdAgr <- paste0(lvl, "_", sprintf("%02d", PrdAgr), "m")
+        #rpt[[dp01]][[idxLvLPrdAgr]] <- list()
         
         #if there is at least one measurement
         if(length(which(!is.na(wrk$data$temp))) > 0){
@@ -867,7 +869,7 @@ wrap.neon.dp01.qfqm.ecse <- function(
             #get rid of injNum
             wrk$inpMask$data <- wrk$inpMask$data[,-which(names(wrk$inpMask$data) == "injNum")]
             #calculate dp01
-            rpt[[dp01]][[idxLvLPrdAgr]][[idxAgr]] <- eddy4R.base::wrap.neon.dp01(
+            rpt[[idxAgr]] <- eddy4R.base::wrap.neon.dp01(
               # assign data: data.frame or list of type numeric or integer
               data = wrk$inpMask$data#,
               # if data is a list, which list entries should be processed into Level 1 data products?
@@ -880,27 +882,27 @@ wrap.neon.dp01.qfqm.ecse <- function(
             
             #for (idxLvLPrdAgr in names(wrk$inpMask$data[[dp01]])){
             #idxLvLPrdAgr <- names(wrk$inpMask$data[[dp01]])[1]
-            rpt[[dp01]][[idxLvLPrdAgr]][[idxAgr]]$timeBgn <- list()
-            rpt[[dp01]][[idxLvLPrdAgr]][[idxAgr]]$timeEnd <- list()
+            rpt[[idxAgr]]$timeBgn <- list()
+            rpt[[idxAgr]]$timeEnd <- list()
             
-            for(idxVar in names(rpt[[dp01]][[idxLvLPrdAgr]][[idxAgr]]$mean)){
-              # rpt[[dp01]][[idxLvLPrdAgr]][[idxAgr2]]$timeBgn[[idxVar]] <- data$time[(whrEnd[idxAgr] - 20 - 2*60+1)]
-              # rpt[[dp01]][[idxLvLPrdAgr]][[idxAgr2]]$timeEnd[[idxVar]] <- data$time[(whrEnd[idxAgr] - 20)]
-              rpt[[dp01]][[idxLvLPrdAgr]][[idxAgr]]$timeBgn[[idxVar]] <- wrk$idx$timeBgn[idxAgr]
-              rpt[[dp01]][[idxLvLPrdAgr]][[idxAgr]]$timeEnd[[idxVar]] <- wrk$idx$timeEnd[idxAgr]
+            for(idxVar in names(rpt[[idxAgr]]$mean)){
+              # rpt[[idxAgr2]]$timeBgn[[idxVar]] <- data$time[(whrEnd[idxAgr] - 20 - 2*60+1)]
+              # rpt[[idxAgr2]]$timeEnd[[idxVar]] <- data$time[(whrEnd[idxAgr] - 20)]
+              rpt[[idxAgr]]$timeBgn[[idxVar]] <- wrk$idx$timeBgn[idxAgr]
+              rpt[[idxAgr]]$timeEnd[[idxVar]] <- wrk$idx$timeEnd[idxAgr]
             }
             
           }#; rm(idxAgr)
           
         } else {
           
-          rpt[[dp01]][[idxLvLPrdAgr]][[1]] <- list()
+          rpt[[1]] <- list()
           
           for(idxStat in names(rpt[[dp01]][[1]][[1]])){
-            rpt[[dp01]][[idxLvLPrdAgr]][[1]][[idxStat]] <- list()
+            rpt[[1]][[idxStat]] <- list()
             
             for (idxVar in names(rpt[[dp01]][[1]][[1]]$mean)){
-              rpt[[dp01]][[idxLvLPrdAgr]][[1]][[idxStat]][[idxVar]] <- list() 
+              rpt[[1]][[idxStat]][[idxVar]] <- list() 
             }; rm(idxVar)
             
             
@@ -939,7 +941,7 @@ wrap.neon.dp01.qfqm.ecse <- function(
           # http://stackoverflow.com/questions/26843861/replace-rbind-in-for-loop-with-lapply-2nd-circle-of-hell
           #call wrap.neon.dp01.R to calculate descriptive statistics
           
-          rpt[[dp01]][[idxLvLPrdAgr]][[idxAgr]] <- eddy4R.base::wrap.neon.dp01(
+          rpt[[idxAgr]] <- eddy4R.base::wrap.neon.dp01(
             # assign data: data.frame or list of type numeric or integer
             data = wrk$inpMask$data#,
             # if data is a list, which list entries should be processed into Level 1 data products?
@@ -950,12 +952,12 @@ wrap.neon.dp01.qfqm.ecse <- function(
           
           
           #grab and add both time begin and time end to rpt
-          rpt[[dp01]][[idxLvLPrdAgr]][[idxAgr]]$timeBgn <- list()
-          rpt[[dp01]][[idxLvLPrdAgr]][[idxAgr]]$timeEnd <- list()
+          rpt[[idxAgr]]$timeBgn <- list()
+          rpt[[idxAgr]]$timeEnd <- list()
           
-          for(idxVar in names(rpt[[dp01]][[idxLvLPrdAgr]][[idxAgr]]$mean)){
-            rpt[[dp01]][[idxLvLPrdAgr]][[idxAgr]]$timeBgn[[idxVar]] <- data$time[idxTime[[paste0(PrdAgr, "min")]]$Bgn[idxAgr]]
-            rpt[[dp01]][[idxLvLPrdAgr]][[idxAgr]]$timeEnd[[idxVar]] <- data$time[idxTime[[paste0(PrdAgr, "min")]]$End[idxAgr]]
+          for(idxVar in names(rpt[[idxAgr]]$mean)){
+            rpt[[idxAgr]]$timeBgn[[idxVar]] <- data$time[idxTime[[paste0(PrdAgr, "min")]]$Bgn[idxAgr]]
+            rpt[[idxAgr]]$timeEnd[[idxVar]] <- data$time[idxTime[[paste0(PrdAgr, "min")]]$End[idxAgr]]
           }
           
         }; #rm(idxAgr)
