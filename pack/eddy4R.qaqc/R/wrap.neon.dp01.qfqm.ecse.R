@@ -138,8 +138,6 @@ wrap.neon.dp01.qfqm.ecse <- function(
             )
             
             #grab and add both time begin and time end to rpt
-            
-            
             #for (idxLvLPrdAgr in names(wrk$inpMask$data[[dp01]])){
             #idxLvLPrdAgr <- names(wrk$inpMask$data[[dp01]])[1]
             rpt[[idxAgr]]$timeBgn <- list()
