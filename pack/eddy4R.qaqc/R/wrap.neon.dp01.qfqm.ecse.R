@@ -255,7 +255,7 @@ wrap.neon.dp01.qfqm.ecse <- function(
       #input the whole day qfqm 
       wrk$qfqm <- list()
       wrk$qfqm$irga <- qfInput$irga[[lvl]]
-      wrk$qfqm$irgaMfcSamp <- qfInput$irgaMfcSamp[[Para$Flow$LevlTowr$irgaMfcSamp]]
+      wrk$qfqm$irgaMfcSamp <- qfInput$irgaMfcSamp[[lvlIrgaMfcSamp]]
       
       if (PrdMeas == PrdAgr) {
         #PrdAgr <- 2
