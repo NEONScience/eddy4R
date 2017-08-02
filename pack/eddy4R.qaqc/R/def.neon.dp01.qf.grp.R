@@ -55,7 +55,7 @@
 #   David Durden (2017-06-27)
 #     removing qfPersFrt00 flag from processing
 #   Natchaya P-Durden (2017-08-02)
-+#     modified ecse section
+#     modified ecse section
 ##############################################################################################
 
 def.neon.dp01.qf.grp <- function(
