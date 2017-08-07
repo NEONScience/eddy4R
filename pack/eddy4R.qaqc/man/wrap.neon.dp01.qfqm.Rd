@@ -6,8 +6,8 @@
 \usage{
 wrap.neon.dp01.qfqm(qfInput = list(), MethMeas = c("ecte", "ecse")[1],
   TypeMeas = c("samp", "vali")[1], RptExpd = FALSE, dp01 = c("envHut",
-  "irgaCo2", "irgaH2o", "isopCo2", "isopH2o", "soni", "soniAmrs", "tempAirLvl",
-  "tempAirTop")[1])
+  "irgaCo2", "irgaH2o", "isoCo2", "isoH2o", "soni", "soniAmrs", "tempAirLvl",
+  "tempAirTop")[1], idGas = NULL)
 }
 \arguments{
 \item{qfInput}{A list of data frame containing the input quality flag data that related to L1 data products are being grouped. Of class integer". [-]}
@@ -20,6 +20,8 @@ wrap.neon.dp01.qfqm(qfInput = list(), MethMeas = c("ecte", "ecse")[1],
 
 \item{dp01}{A vector of class "character" containing the name of NEON ECTE and ECSE L1 data products which the flags are being grouped, \cr
 c("envHut", "irgaCo2", "irgaH2o", "isoCo2", "isoH2o", "soni", "soniAmrs", "tempAirLvl", "tempAirTop"). Defaults to "irgaCo2". [-]}
+
+\item{\code{idGas}}{A data frame contianing gas ID for isoCo2 measurement. Need to provide when dp01 = "isoCo2". Default to NULL. [-]}
 }
 \value{
 A list of: \cr
