@@ -126,7 +126,18 @@ wrap.neon.dp01.qfqm.ecse <- function(
             
             #wrk$inpMask for qfqm
             wrk$inpMask$qfqm <- list()
+            #wrk$inpMask for data (will use to determine when irga got kick out)
+            wrk$inpMask$data <- list()
+            wrk$inpMask$data <- wrk$data[wrk$idx$idxBgn[idxAgr]:wrk$idx$idxEnd[idxAgr],] 
+            #assign name to wrk$inpMask$qfqm
             lapply(names(wrk$qfqm), function (x) wrk$inpMask$qfqm[[x]] <<- wrk$qfqm[[x]][wrk$idx$idxBgn[idxAgr]:wrk$idx$idxEnd[idxAgr],] )
+            #replace qfqm$irga with -1 when irga got kick out to measure the new measurement level
+            for (tmp in 1:length(wrk$inpMask$qfqm$irga)){
+              wrk$inpMask$qfqm$irga[[tmp]][wrk$inpMask$data$lvlIrga != lvlIrga] <- -1
+            }
+            for (tmp in 1:length(wrk$inpMask$qfqm$irgaMfcSamp)){
+              wrk$inpMask$qfqm$irgaMfcSamp[[tmp]][wrk$inpMask$data$lvlIrga != lvlIrga] <- -1
+            }
             
             #qfqm processing
             rpt[[idxAgr]] <- eddy4R.qaqc::wrap.neon.dp01.qfqm(
@@ -180,11 +191,20 @@ wrap.neon.dp01.qfqm.ecse <- function(
               whrSamp <- c(whrSamp, wrk$idx$idxBgn[ii]:wrk$idx$idxEnd[ii])
             }
           }
+          wrk$data[-whrSamp, 1:5] <- NaN
+          #replace qfqm$irga with -1 when irga got kick out to measure the new measurement level
+          for (tmp in 1:length(wrk$qfqm$irga)){
+            wrk$qfqm$irga[[tmp]][wrk$data$lvlIrga != lvlIrga] <- -1
+          }
+          for (tmp in 1:length(wrk$qfqm$irgaMfcSamp)){
+            wrk$qfqm$irgaMfcSamp[[tmp]][wrk$data$lvlIrga != lvlIrga] <- -1
+          }
+          #replace all qf that not belong to that measurement level by NaN
           wrk$qfqm$irga[-whrSamp, 1:length(wrk$qfqm$irga)] <- NaN
           wrk$qfqm$irgaMfcSamp[-whrSamp, 1:length(wrk$qfqm$irgaMfcSamp)] <- NaN
           
           #replace qf from irgaMfcSamp data with -1 when irga got kick out to measure the new measurement level
-          wrk$qfqm$irgaMfcSamp <- as.data.frame(sapply(wrk$qfqm$irgaMfcSamp, function(x) ifelse(wrk$data$lvlIrga == lvlIrga, x, -1)))
+          #wrk$qfqm$irgaMfcSamp <- as.data.frame(sapply(wrk$qfqm$irgaMfcSamp, function(x) ifelse(wrk$data$lvlIrga == lvlIrga, x, -1)))
         } 
         
         
@@ -194,7 +214,8 @@ wrap.neon.dp01.qfqm.ecse <- function(
           
           ## grab data at the selected mask data
           # for qfqm
-          wrk$inpMask$data <- list()
+          #wrk$inpMask$data <- list()
+          #wrk$inpMask$data <- wrk$data[idxTime[[paste0(PrdAgr, "min")]]$Bgn[idxAgr]:idxTime[[paste0(PrdAgr, "min")]]$End[idxAgr],]
           idxLvLPrdAgr <- paste0(lvl, "_", sprintf("%02d", PrdAgr), "m")
           
           wrk$inpMask$qfqm <- list()
