@@ -1154,43 +1154,43 @@ if (MethMeas == "ecse") {
         rpt$rtioMoleWetCo2 <- na.omit(data.frame(setQf$rtioMoleWetCo2, setQf$dlta13CCo2,
                                                  setQf$rtioMoleWet12CCo2, setQf$presCrdCo2, 
                                                  setQf$tempCrdCo2, setQf$tempWbox,
-                                                 setQf$sensCrdCo2, setQf$heatInlt)[which(idGas == 105),])
+                                                 setQf$sensCrdCo2, setQf$heatInlt)[which(idGas == 105 | (is.na(idGas) & setQf$sensCrdCo2$qfSensStus == -1)),])
         
         rpt$rtioMoleDryCo2 <- na.omit(data.frame(setQf$rtioMoleDryCo2, setQf$dlta13CCo2,
                                                  setQf$rtioMoleWet12CCo2, setQf$presCrdCo2, 
                                                  setQf$tempCrdCo2, setQf$tempWbox,
-                                                 setQf$sensCrdCo2, setQf$heatInlt)[which(idGas == 105),])
+                                                 setQf$sensCrdCo2, setQf$heatInlt)[which(idGas == 105 | (is.na(idGas) & setQf$sensCrdCo2$qfSensStus == -1)),])
         
         rpt$rtioMoleWet12CCo2 <- na.omit(data.frame(setQf$rtioMoleWet12CCo2, setQf$presCrdCo2, 
                                                     setQf$tempCrdCo2, setQf$tempWbox,
-                                                    setQf$sensCrdCo2, setQf$heatInlt)[which(idGas == 105),])
+                                                    setQf$sensCrdCo2, setQf$heatInlt)[which(idGas == 105 | (is.na(idGas) & setQf$sensCrdCo2$qfSensStus == -1)),])
         
         rpt$rtioMoleDry12CCo2 <- na.omit(data.frame(setQf$rtioMoleDry12CCo2, setQf$rtioMoleWet13CCo2,
                                                     setQf$presCrdCo2, setQf$tempCrdCo2, 
                                                     setQf$tempWbox, setQf$sensCrdCo2, 
-                                                    setQf$heatInlt)[which(idGas == 105),])
+                                                    setQf$heatInlt)[which(idGas == 105 | (is.na(idGas) & setQf$sensCrdCo2$qfSensStus == -1)),])
         
         rpt$rtioMoleWet13CCo2 <- na.omit(data.frame(setQf$rtioMoleWet13CCo2, setQf$presCrdCo2, 
                                                     setQf$tempCrdCo2, setQf$tempWbox,
-                                                    setQf$sensCrdCo2, setQf$heatInlt)[which(idGas == 105),])
+                                                    setQf$sensCrdCo2, setQf$heatInlt)[which(idGas == 105 | (is.na(idGas) & setQf$sensCrdCo2$qfSensStus == -1)),])
         
         rpt$rtioMoleDry13CCo2 <- na.omit(data.frame(setQf$rtioMoleDry13CCo2, setQf$rtioMoleWet13CCo2,
                                                     setQf$presCrdCo2, setQf$tempCrdCo2, 
                                                     setQf$tempWbox, setQf$sensCrdCo2, 
-                                                    setQf$heatInlt)[which(idGas == 105),])
+                                                    setQf$heatInlt)[which(idGas == 105 | (is.na(idGas) & setQf$sensCrdCo2$qfSensStus == -1)),])
         
         rpt$dlta13CCo2 <- na.omit(data.frame(setQf$dlta13CCo2, setQf$presCrdCo2,
                                              setQf$tempCrdCo2, setQf$tempWbox,
-                                             setQf$sensCrdCo2, setQf$heatInlt)[which(idGas == 105),])
+                                             setQf$sensCrdCo2, setQf$heatInlt)[which(idGas == 105 | (is.na(idGas) & setQf$sensCrdCo2$qfSensStus == -1)),])
         
         rpt$rtioMoleWetH2o <- na.omit(data.frame(setQf$rtioMoleWetH2o, setQf$presCrdCo2,
                                                  setQf$tempCrdCo2, setQf$tempWbox,
-                                                 setQf$sensCrdCo2, setQf$heatInlt)[which(idGas == 11),])
+                                                 setQf$sensCrdCo2, setQf$heatInlt)[which(idGas == 11 | (is.na(idGas) & setQf$sensCrdCo2$qfSensStus == -1)),])
         
         rpt$rtioMoleDryH2o <- na.omit(data.frame(setQf$rtioMoleDryH2o, setQf$rtioMoleWetH2o, 
                                                  setQf$presCrdCo2, setQf$tempCrdCo2, 
                                                  setQf$tempWbox, setQf$sensCrdCo2, 
-                                                 setQf$heatInlt)[which(idGas == 11),])
+                                                 setQf$heatInlt)[which(idGas == 11 | (is.na(idGas) & setQf$sensCrdCo2$qfSensStus == -1)),])
         
         rpt$temp <- na.omit(data.frame(setQf$tempCrdCo2, setQf$sensCrdCo2))
         
@@ -1255,59 +1255,59 @@ if (MethMeas == "ecse") {
                                                  setQf$tempCrdCo2, setQf$tempWbox,
                                                  setQf$sensCrdCo2, setQf$frt00MfcVali, 
                                                  setQf$frtMfcVali, setQf$presAtmMfcVali, 
-                                                 setQf$tempMfcVali,setQf$sensMfcVali)[which(idGas == 105),])
+                                                 setQf$tempMfcVali,setQf$sensMfcVali)[which(idGas == 105 | (is.na(idGas) & setQf$sensCrdCo2$qfSensStus == -1)),])
         
         rpt$rtioMoleDryCo2 <- na.omit(data.frame(setQf$rtioMoleDryCo2, setQf$dlta13CCo2,
                                                  setQf$rtioMoleWet12CCo2, setQf$presCrdCo2, 
                                                  setQf$tempCrdCo2, setQf$tempWbox,
                                                  setQf$sensCrdCo2, setQf$frt00MfcVali, 
                                                  setQf$frtMfcVali, setQf$presAtmMfcVali, 
-                                                 setQf$tempMfcVali, setQf$sensMfcVali)[which(idGas == 105),])
+                                                 setQf$tempMfcVali, setQf$sensMfcVali)[which(idGas == 105 | (is.na(idGas) & setQf$sensCrdCo2$qfSensStus == -1)),])
         
         rpt$rtioMoleWet12CCo2 <- na.omit(data.frame(setQf$rtioMoleWet12CCo2, setQf$presCrdCo2, 
                                                     setQf$tempCrdCo2, setQf$tempWbox,
                                                     setQf$sensCrdCo2, setQf$frt00MfcVali, 
                                                     setQf$frtMfcVali, setQf$presAtmMfcVali, 
-                                                    setQf$tempMfcVali, setQf$sensMfcVali)[which(idGas == 105),])
+                                                    setQf$tempMfcVali, setQf$sensMfcVali)[which(idGas == 105 | (is.na(idGas) & setQf$sensCrdCo2$qfSensStus == -1)),])
         
         rpt$rtioMoleDry12CCo2 <- na.omit(data.frame(setQf$rtioMoleDry12CCo2, setQf$rtioMoleWet13CCo2,
                                                     setQf$presCrdCo2, setQf$tempCrdCo2, 
                                                     setQf$tempWbox, setQf$sensCrdCo2, 
                                                     setQf$frt00MfcVali, setQf$frtMfcVali, 
                                                     setQf$presAtmMfcVali, setQf$tempMfcVali, 
-                                                    setQf$sensMfcVali)[which(idGas == 105),])
+                                                    setQf$sensMfcVali)[which(idGas == 105 | (is.na(idGas) & setQf$sensCrdCo2$qfSensStus == -1)),])
         
         rpt$rtioMoleWet13CCo2 <- na.omit(data.frame(setQf$rtioMoleWet13CCo2, setQf$presCrdCo2, 
                                                     setQf$tempCrdCo2, setQf$tempWbox,
                                                     setQf$sensCrdCo2, setQf$frt00MfcVali, 
                                                     setQf$frtMfcVali, setQf$presAtmMfcVali, 
-                                                    setQf$tempMfcVali, setQf$sensMfcVali)[which(idGas == 105),])
+                                                    setQf$tempMfcVali, setQf$sensMfcVali)[which(idGas == 105 | (is.na(idGas) & setQf$sensCrdCo2$qfSensStus == -1)),])
         
         rpt$rtioMoleDry13CCo2 <- na.omit(data.frame(setQf$rtioMoleDry13CCo2, setQf$rtioMoleWet13CCo2,
                                                     setQf$presCrdCo2, setQf$tempCrdCo2, 
                                                     setQf$tempWbox, setQf$sensCrdCo2, 
                                                     setQf$frt00MfcVali, setQf$frtMfcVali, 
                                                     setQf$presAtmMfcVali, setQf$tempMfcVali, 
-                                                    setQf$sensMfcVali)[which(idGas == 105),])
+                                                    setQf$sensMfcVali)[which(idGas == 105 | (is.na(idGas) & setQf$sensCrdCo2$qfSensStus == -1)),])
         
         rpt$dlta13CCo2 <- na.omit(data.frame(setQf$dlta13CCo2, setQf$presCrdCo2,
                                              setQf$tempCrdCo2, setQf$tempWbox,
                                              setQf$sensCrdCo2, setQf$frt00MfcVali, 
                                              setQf$frtMfcVali, setQf$presAtmMfcVali, 
-                                             setQf$tempMfcVali, setQf$sensMfcVali)[which(idGas == 105),])
+                                             setQf$tempMfcVali, setQf$sensMfcVali)[which(idGas == 105 | (is.na(idGas) & setQf$sensCrdCo2$qfSensStus == -1)),])
         
         rpt$rtioMoleWetH2o <- na.omit(data.frame(setQf$rtioMoleWetH2o, setQf$presCrdCo2,
                                                  setQf$tempCrdCo2, setQf$tempWbox,
                                                  setQf$sensCrdCo2, setQf$frt00MfcVali, 
                                                  setQf$frtMfcVali, setQf$presAtmMfcVali, 
-                                                 setQf$tempMfcVali, setQf$sensMfcVali)[which(idGas == 11),])
+                                                 setQf$tempMfcVali, setQf$sensMfcVali)[which(idGas == 11 | (is.na(idGas) & setQf$sensCrdCo2$qfSensStus == -1)),])
         
         rpt$rtioMoleDryH2o <- na.omit(data.frame(setQf$rtioMoleDryH2o, setQf$rtioMoleWetH2o, 
                                                  setQf$presCrdCo2, setQf$tempCrdCo2, 
                                                  setQf$tempWbox, setQf$sensCrdCo2, 
                                                  setQf$frt00MfcVali, setQf$frtMfcVali, 
                                                  setQf$presAtmMfcVali, setQf$tempMfcVali, 
-                                                 setQf$sensMfcVali)[which(idGas == 11),])
+                                                 setQf$sensMfcVali)[which(idGas == 11 | (is.na(idGas) & setQf$sensCrdCo2$qfSensStus == -1)),])
         
         rpt$temp <- na.omit(data.frame(setQf$tempCrdCo2, setQf$sensCrdCo2))
         
