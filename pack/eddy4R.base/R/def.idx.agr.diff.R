@@ -20,13 +20,14 @@
 #' @keywords NEON, aggregation, averaging intervals, difference
 
 #' @examples 
-#' FreqLoca <- 20
-#' timeMeas <- base::as.POSIXlt(seq.POSIXt(
-#'   from = base::as.POSIXlt("2016-01-01 00:00:00.001", format="%Y-%m-%d %H:%M:%OS", tz="UTC"),
-#'   to = base::as.POSIXlt("2016-01-01 04:59:59.952", format="%Y-%m-%d %H:%M:%OS", tz="UTC"),
-#'   by = 1/FreqLoca), tz = "UTC")
-#' PrdAgr <- 1800
-#' def.idx.agr(time = timeMeas, PrdAgr = PrdAgr, FreqLoca = FreqLoca)
+#' PrdWndwAgr <- 4 * 60
+#' PrdIncrAgr <- resoTimeDp02[[idxDp]] * 60
+#' numDate <- 1
+#' wrk$whrData <- eddy4R.base::def.idx.diff(
+#'  PrdWndwAgr=PrdWndwAgr,
+#'  PrdIncrAgr=PrdIncrAgr,
+#'  numDate=numDate
+#' )
 
 #' @seealso Currently none
 
