@@ -11,7 +11,7 @@
 #' c("irgaCo2", "irgaH2o", "tempAirLvl", "tempAirTop", "isoCo2", "isoH2o"). Defaults to "irgaCo2". [-] 
 #' @param \code{lvl}  Measurement level of dp01 which descriptive statistics are being calculated. Of type character. [-]
 #' @param \code{lvlIrgaMfcSamp} Measurement level of irgaMfcSamp which apply to only  dp01 equal to "irgaCo2" or "irgaH2o". Defaults to NULL. Of type character. [-]
-#' @param \code{lvlIrgaValvLvl} Measurement level of irgaValvLvl which apply to only  dp01 equal to "irgaCo2" or "irgaH2o". Defaults to NULL. Of type character. [-]
+#' @param \code{valvLvl} Measurement level of irgaValvLvl, crdCo2ValvLvl, or crdH2oValvLvl. Defaults to NULL. Of type character. [-]
 #' @param \code{lvlCrdH2oValvVali} Measurement level of crdH2oValvVali which apply to only  dp01 equal to "isoH2o". Defaults to NULL. Of type character. [-]
 #' @param \code{data} A list of data frame containing the input dp0p data that related to dp01 which descriptive statistics are being calculated. Of class integer". [User defined] 
 #' @param \code{TypeMeas} A vector of class "character" containing the name of measurement type (sampling or validation), TypeMeas = c("samp", "vali"). Defaults to "samp". [-]
@@ -52,7 +52,7 @@ wrap.neon.dp01.ecse <- function(
   dp01 = c("irgaCo2", "irgaH2o", "tempAirLvl", "tempAirTop", "isoCo2", "isoH2o")[1],
   lvl,
   lvlIrgaMfcSamp = NULL,
-  lvlIrgaValvLvl = NULL,
+  valvLvl = NULL,
   lvlCrdH2oValvVali = NULL,
   data = list(),
   TypeMeas = c("samp", "vali")[1],
@@ -88,7 +88,7 @@ wrap.neon.dp01.ecse <- function(
                                "rtioMoleDryCo2" = data$irga[[lvl]]$rtioMoleDryCo2,
                                "rtioMoleWetCo2" = data$irga[[lvl]]$rtioMoleWetCo2,
                                "temp" = data$irga[[lvl]]$temp,
-                               "lvlIrga" = data$irgaValvLvl[[lvlIrgaValvLvl]][["lvlIrga"]]
+                               "lvlIrga" = data$irgaValvLvl[[valvLvl]][["lvlIrga"]]
                                
         )
       }
@@ -101,7 +101,7 @@ wrap.neon.dp01.ecse <- function(
                                "rtioMoleDryH2o" = data$irga[[lvl]]$rtioMoleDryH2o,
                                "rtioMoleWetH2o" = data$irga[[lvl]]$rtioMoleWetH2o,
                                "temp" = data$irga[[lvl]]$temp,
-                               "lvlIrga" = data$irgaValvLvl[[lvlIrgaValvLvl]][["lvlIrga"]]
+                               "lvlIrga" = data$irgaValvLvl[[valvLvl]][["lvlIrga"]]
                                
         )
       }
