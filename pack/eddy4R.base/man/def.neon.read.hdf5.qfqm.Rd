@@ -5,7 +5,8 @@
 \title{Wrapper function: Reading quality flags from NEON HDF5 files}
 \usage{
 def.neon.read.hdf5.qfqm(DirInpLoca, SiteLoca, DateLoca, VarLoca,
-  LevlTowr = c("000_040", "000_050", "000_060")[3], FreqLoca)
+  LevlTowr = c("000_040", "000_050", "000_060")[3], FreqLoca,
+  MethMeas = c("ecte", "ecse")[1])
 }
 \arguments{
 \item{DirInpLoca}{Character: Input directory.}
@@ -19,6 +20,8 @@ def.neon.read.hdf5.qfqm(DirInpLoca, SiteLoca, DateLoca, VarLoca,
 \item{LevlTowr}{The tower level that the sensor data is being collected in NEON data product convention (HOR_VER)}
 
 \item{FreqLoca}{Integer: Measurement frequency.}
+
+\item{MethMeas}{A vector of class "character" containing the name of measurement method (eddy-covariance turbulent exchange or storage exchange), MethMeas = c("ecte", "ecse"). Defaults to "ecte".}
 }
 \value{
 Named list \code{qfqm} containing time-series of quality flags.

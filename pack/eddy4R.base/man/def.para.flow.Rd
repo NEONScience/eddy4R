@@ -7,8 +7,8 @@
 def.para.flow(Deve = TRUE, DirFilePara = NULL, DirInp = NA, DirMnt = NA,
   DirOut = NA, DirTmp = NA, DirWrk = NA, Dom = NA, FileDp0p = NULL,
   Loc = NULL, Read = "hdf5", VersDp = c("001", "004")[1],
-  VersEddy = "latest", MethParaFlow = c("DfltInp", "EnvVar")[1],
-  MethMeas = c("ecte", "ecse")[1], ...)
+  VersEddy = "latest", MethParaFlow = c("DfltInp", "EnvVar")[1], urlInpRefe,
+  urlOutRefe, ...)
 }
 \arguments{
 \item{Deve}{is logical that determines if only a subset of the data should be read in to reduce testing time during development (\code{Deve = TRUE}) or all the input data should be read in (\code{Deve = FALSE})}
@@ -39,7 +39,9 @@ def.para.flow(Deve = TRUE, DirFilePara = NULL, DirInp = NA, DirMnt = NA,
 
 \item{MethParaFlow}{is the method used to specify workflow parameters, "EnvVar" will grab ParaFlow parameters from environmental variable and "DfltInp" will use whatever is specified in the function call.}
 
-\item{MethMeas}{A vector of class "character" containing the name of measurement method (eddy-covariance turbulent exchange or storage exchange), MethMeas = c("ecte", "ecse"). Defaults to "ecte".}
+\item{urlInpRefe}{A single-entry vector of class "character" containing the web address of the reference input data zip file to be downloaded.}
+
+\item{urlOutRefe}{A single-entry vector of class "character" containing the web address of the reference output data zip file to be downloaded.}
 }
 \value{
 \code{ParaFlow} is a list returned that indicates the workflow control parameters, including \code{ParaFlow$DirFilePara},\code{ParaFlow$DirInp}, \code{ParaFlow$DirMnt}, \code{ParaFlow$DirOut}, \code{ParaFlow$DirTmp}, \code{ParaFlow$DirWrk},\code{ParaFlow$Dom}, \code{ParaFlow$FileDp0p}, \code{ParaFlow$Loc},  \code{ParaFlow$Read}, \code{ParaFlow$VersDp}, \code{ParaFlow$VersEddy}.
