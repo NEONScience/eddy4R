@@ -117,7 +117,7 @@ wrap.neon.dp01.ecse <- function(
           #determine the index of each measurement  
           wrk$idx <- eddy4R.base::def.idx.agr(time = data$time, PrdAgr = (PrdMeas*60), FreqLoca = 1, MethIdx = "specBgn", data = wrk$data$temp, CritTime = 60)
           #if last timeEnd is NA, replce that time to the last time value in data$time
-          wrk$idx$timeEnd <- as.POSIXct(ifelse(is.na(wrk$idx$timeEnd), data$time[length(data$time)], wrk$idx$timeEnd), origin = "1960-01-01", tz = "UTC")
+          wrk$idx$timeEnd <- as.POSIXct(ifelse(is.na(wrk$idx$timeEnd), data$time[length(data$time)], wrk$idx$timeEnd), origin = "1970-01-01", tz = "UTC")
           #idxAgr2 <- 0
           for (idxAgr in 1:length(wrk$idx$idxBgn)){
             #idxAgr <- 4
@@ -468,7 +468,7 @@ wrap.neon.dp01.ecse <- function(
           #determine the index of each measurement  
           wrk$idx <- eddy4R.base::def.idx.agr(time = data$time, PrdAgr = (PrdMeas*60), FreqLoca = 1, MethIdx = "specBgn", data = wrk$data$temp, CritTime = 60)
           #if last timeEnd is NA, replce that time to the last time value in data$time
-          wrk$idx$timeEnd <- as.POSIXct(ifelse(is.na(wrk$idx$timeEnd), data$time[length(data$time)], wrk$idx$timeEnd), origin = "1960-01-01", tz = "UTC")
+          wrk$idx$timeEnd <- as.POSIXct(ifelse(is.na(wrk$idx$timeEnd), data$time[length(data$time)], wrk$idx$timeEnd), origin = "1970-01-01", tz = "UTC")
           #idxAgr2 <- 0
           for (idxAgr in 1:length(wrk$idx$idxBgn)){
             #idxAgr <- 25
@@ -746,7 +746,7 @@ wrap.neon.dp01.ecse <- function(
           #determine the index of each measurement  
           wrk$idx <- eddy4R.base::def.idx.agr(time = data$time, PrdAgr = (PrdMeas*60), FreqLoca = 1, MethIdx = "specBgn", data = wrk$data$temp, CritTime = 60)
           #if last timeEnd is NA, replce that time to the last time value in data$time
-          wrk$idx$timeEnd <- as.POSIXct(ifelse(is.na(wrk$idx$timeEnd), data$time[length(data$time)], wrk$idx$timeEnd), origin = "1960-01-01", tz = "UTC")
+          wrk$idx$timeEnd <- as.POSIXct(ifelse(is.na(wrk$idx$timeEnd), data$time[length(data$time)], wrk$idx$timeEnd), origin = "1970-01-01", tz = "UTC")
           #idxAgr2 <- 0
           for (idxAgr in 1:length(wrk$idx$idxBgn)){
             #idxAgr <- 124
