@@ -749,13 +749,24 @@ wrap.neon.dp01.qfqm.ecse <- function(
   if (dp01 %in% c("isoH2o")){
     #during sampling period 
     if (TypeMeas %in% "samp"){ 
+      #assign lvlCrdH2o for each measurement level
+      if (lvl == "000_010") {lvlCrdH2o <- "lvl01"}
+      if (lvl == "000_020") {lvlCrdH2o <- "lvl02"}
+      if (lvl == "000_030") {lvlCrdH2o <- "lvl03"}
+      if (lvl == "000_040") {lvlCrdH2o <- "lvl04"}
+      if (lvl == "000_050") {lvlCrdH2o <- "lvl05"}
+      if (lvl == "000_060") {lvlCrdH2o <- "lvl06"}
+      if (lvl == "000_070") {lvlCrdH2o <- "lvl07"}
+      if (lvl == "000_080") {lvlCrdH2o <- "lvl08"}
+      
       wrk$data <- data.frame(stringsAsFactors = FALSE,
                              "rtioMoleWetH2o" = data$crdH2o[[lvl]]$rtioMoleWetH2o,
                              "rtioMoleDryH2o" = data$crdH2o[[lvl]]$rtioMoleDryH2o,
                              "dlta18OH2o" = data$crdH2o[[lvl]]$dlta18OH2o,
                              "dlta2HH2o" = data$crdH2o[[lvl]]$dlta2HH2o,
                              "temp" = data$crdH2o[[lvl]]$temp,
-                             "pres" = data$crdH2o[[lvl]]$pres
+                             "pres" = data$crdH2o[[lvl]]$pres,
+                             "lvlCrdH2o" = data$crdH2oValvLvl[[valvLvl]][["lvlCrdH2o"]]
                              
       )
       
@@ -781,6 +792,10 @@ wrap.neon.dp01.qfqm.ecse <- function(
             #wrk$inpMask for qfqm
             wrk$inpMask$qfqm <- list()
             lapply(names(wrk$qfqm), function (x) wrk$inpMask$qfqm[[x]] <<- wrk$qfqm[[x]][wrk$idx$idxBgn[idxAgr]:wrk$idx$idxEnd[idxAgr],] )
+            #replace qfqm$crdH2o with -1 when valve switch to measure to next level before schedule time (9 min)
+            for (tmp in 1:length(wrk$inpMask$qfqm$crdH2o)){
+              wrk$inpMask$qfqm$crdH2o[[tmp]][wrk$inpMask$data$lvlCrdH2o != lvlCrdH2o] <- -1
+            }
             
             #qfqm processing
             rpt[[idxAgr]] <- eddy4R.qaqc::wrap.neon.dp01.qfqm(
@@ -795,7 +810,7 @@ wrap.neon.dp01.qfqm.ecse <- function(
             rpt[[idxAgr]]$timeBgn <- list()
             rpt[[idxAgr]]$timeEnd <- list()
             
-            for(idxVar in names(wrk$data)){
+            for(idxVar in names(wrk$data)[which(!(names(wrk$data) %in% c("lvlCrdH2o")))]){
               rpt[[idxAgr]]$timeBgn[[idxVar]] <- wrk$idx$timeBgn[idxAgr]
               rpt[[idxAgr]]$timeEnd[[idxVar]] <- wrk$idx$timeEnd[idxAgr]
             }
@@ -812,7 +827,7 @@ wrap.neon.dp01.qfqm.ecse <- function(
             rpt[[1]][[idxQf]] <- list()
             
             
-            for (idxVar in names(wrk$data)){
+            for (idxVar in names(wrk$data)[which(!(names(wrk$data) %in% c("lvlCrdH2o")))]){
               rpt[[1]][[idxQf]][[idxVar]] <- list()  
             }; rm(idxVar)
             
@@ -833,6 +848,10 @@ wrap.neon.dp01.qfqm.ecse <- function(
             for(ii in 2:length (wrk$idx$idxBgn)){
               whrSamp <- c(whrSamp, wrk$idx$idxBgn[ii]:wrk$idx$idxEnd[ii])
             }
+          }
+          #replace qfqm$crdH2o with -1 when valve switch to measure to next level before schedule time (9 min)
+          for (tmp in 1:length(wrk$qfqm$crdH2o)){
+            wrk$qfqm$crdH2o[[tmp]][wrk$data$lvlCrdH2o != lvlCrdH2o] <- -1
           }
           wrk$qfqm$crdH2o[-whrSamp, 1:length(wrk$qfqm$crdH2o)] <- NaN
         } 
@@ -863,7 +882,7 @@ wrap.neon.dp01.qfqm.ecse <- function(
           rpt[[idxAgr]]$timeBgn <- list()
           rpt[[idxAgr]]$timeEnd <- list()
           
-          for(idxVar in names(wrk$data)){
+          for(idxVar in names(wrk$data)[which(!(names(wrk$data) %in% c("lvlCrdH2o")))]){
             rpt[[idxAgr]]$timeBgn[[idxVar]] <- data$time[idxTime[[paste0(PrdAgr, "min")]]$Bgn[idxAgr]]
             rpt[[idxAgr]]$timeEnd[[idxVar]] <- data$time[idxTime[[paste0(PrdAgr, "min")]]$End[idxAgr]]
           }
