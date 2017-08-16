@@ -1095,7 +1095,7 @@ if (MethMeas == "ecse") {
     
     #define qf which use only sampling period
     if (TypeMeas == "samp") {
-      #if nat all idGas = NA or all qfRngTemp = NA
+      #if not all idGas = NA or all qfRngTemp = NA
       if (length(which(!is.na(qfInput$crdCo2$qfRngTemp))) == 0){
         #grouping qulity flags that related to isoCo2 L1 sub-data product  
         rpt$rtioMoleWetCo2 <- na.omit(data.frame(setQf$rtioMoleWetCo2, setQf$dlta13CCo2,
@@ -1194,7 +1194,7 @@ if (MethMeas == "ecse") {
     
     #define qf which use only validation period
     if (TypeMeas == "vali") { 
-      #if nat all idGas = NA or all qfRngTemp = NA
+      #if not all idGas = NA or all qfRngTemp = NA
       if (length(which(!is.na(qfInput$crdCo2$qfRngTemp))) == 0){
         #grouping qulity flags that related to isoCo2 L1 sub-data product  
         rpt$rtioMoleWetCo2 <- na.omit(data.frame(setQf$rtioMoleWetCo2, setQf$dlta13CCo2,
