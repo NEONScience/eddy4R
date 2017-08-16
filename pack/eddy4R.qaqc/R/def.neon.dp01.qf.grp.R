@@ -798,58 +798,7 @@ if (MethMeas == "ecse") {
     if (length(which(!is.na(qfInput$irga$qfRngTemp))) == 0){
       qfInput$irga[,1:length(qfInput$irga)] <- -1
     }
-    # #get the flag names
-    # qfName <- list()
-    # qfName$irga <- names(qfInput$irga)
-    # qfName$irgaMfcSamp <- names(qfInput$irgaMfcSamp)
-    # qfName$envHut <- names(qfInput$envHut)
-    # qfName$valvAux <- names(qfInput$valvAux)
-    # qfName$heatInlt <- names(qfInput$heatInlt)
-    # qfName$mfcVali <- names(qfInput$mfcVali)
-    # 
-    # #combine qf dataframe and get rid of NA
-    # if (TypeMeas == "samp"){
-    #   qfComb <- na.omit(data.frame(qfInput$irga, qfInput$irgaMfcSamp, 
-    #                                qfInput$envHut, qfInput$valvAux,
-    #                                qfInput$heatInlt))
-    #   #put the data back to its own list
-    #   qfInput$irga <- data.frame(qfComb[,1:length(qfInput$irga)])
-    #   qfInput$irgaMfcSamp <- data.frame(qfComb[,(length(qfInput$irga)+1):(length(qfInput$irga)+length(qfInput$irga))])
-    #   qfInput$envHut <- data.frame(qfComb[,(length(qfInput$irga)+length(qfInput$irga)+1):
-    #                                         (length(qfInput$irga)+length(qfInput$irga)+length(qfInput$envHut))])
-    #   qfInput$valvAux <- data.frame(qfComb[,(length(qfInput$irga)+length(qfInput$irga)+length(qfInput$envHut)+1):
-    #                                         (length(qfInput$irga)+length(qfInput$irga)+length(qfInput$envHut)+length(qfInput$valvAux))])
-    #   qfInput$heatInlt <- data.frame(qfComb[,(length(qfInput$irga)+length(qfInput$irga)+length(qfInput$envHut)+length(qfInput$valvAux)+1):
-    #                                          (length(qfInput$irga)+length(qfInput$irga)+length(qfInput$envHut)+length(qfInput$valvAux)+length(qfInput$heatInlt))])
-    #   #assign names
-    #   names(qfInput$irga) <- qfName$irga
-    #   names(qfInput$irgaMfcSamp) <- qfName$irgaMfcSamp
-    #   names(qfInput$envHut) <- qfName$envHut
-    #   names(qfInput$valvAux) <- qfName$valvAux
-    #   names(qfInput$heatInlt) <- qfName$heatInlt
-    #   
-    # }#close if statement
-    # if (TypeMeas == "vali"){
-    #   qfComb <- na.omit(data.frame(qfInput$irga, qfInput$irgaMfcSamp, 
-    #                                qfInput$envHut, qfInput$valvAux,
-    #                                qfInput$heatInlt))
-    #   #put the data back to its own list
-    #   qfInput$irga <- data.frame(qfComb[,1:length(qfInput$irga)])
-    #   qfInput$irgaMfcSamp <- data.frame(qfComb[,(length(qfInput$irga)+1):(length(qfInput$irga)+length(qfInput$irga))])
-    #   qfInput$envHut <- data.frame(qfComb[,(length(qfInput$irga)+length(qfInput$irga)+1):
-    #                                         (length(qfInput$irga)+length(qfInput$irga)+length(qfInput$envHut))])
-    #   qfInput$valvAux <- data.frame(qfComb[,(length(qfInput$irga)+length(qfInput$irga)+length(qfInput$envHut)+1):
-    #                                          (length(qfInput$irga)+length(qfInput$irga)+length(qfInput$envHut)+length(qfInput$valvAux))])
-    #   qfInput$heatInlt <- data.frame(qfComb[,(length(qfInput$irga)+length(qfInput$irga)+length(qfInput$envHut)+length(qfInput$valvAux)+1):
-    #                                           (length(qfInput$irga)+length(qfInput$irga)+length(qfInput$envHut)+length(qfInput$valvAux)+length(qfInput$heatInlt))])
-    #   #assign names
-    #   names(qfInput$irga) <- qfName$irga
-    #   names(qfInput$irgaMfcSamp) <- qfName$irgaMfcSamp
-    #   names(qfInput$envHut) <- qfName$envHut
-    #   names(qfInput$valvAux) <- qfName$valvAux
-    #   names(qfInput$heatInlt) <- qfName$heatInlt
-    #   
-    # }#close if statement
+    
     #grouping the flags
     
     setQf$asrpCo2 <- data.frame("qfRngAsrpCo2" = qfInput$irga$qfRngAsrpCo2, 
@@ -1120,8 +1069,6 @@ if (MethMeas == "ecse") {
                                  "qfPersTempWbox" = qfInput$crdCo2$qfPersTempWbox, 
                                  "qfCalTempWbox" = qfInput$crdCo2$qfCalTempWbox)
     setQf$sensCrdCo2 <- data.frame("qfSensStus" = qfInput$crdCo2$qfSensStus)
-    # setQf$exisCo2 <- data.frame("qfExisCo2" = qfInput$crdCo2$qfExisCo2)
-    # setQf$exisH2o <- data.frame("qfExisH2o" = qfInput$crdCo2$qfExisH2o)
     
     #setQf from heatInlt
     setQf$heatInlt <- data.frame("qfHeat" = qfInput$heatInlt$qfHeat)
