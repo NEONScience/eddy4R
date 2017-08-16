@@ -13,6 +13,7 @@
 #' @param RptExpd A logical parameter that determines if the full quality metric \code{qm} is output in the returned list (defaults to FALSE).
 #' @param dp01 A vector of class "character" containing the name of NEON ECTE and ECSE L1 data products which the flags are being grouped, \cr
 #' c("envHut", "irgaCo2", "irgaH2o", "isoCo2", "isoH2o", "soni", "soniAmrs", "tempAirLvl", "tempAirTop"). Defaults to "irgaCo2". [-] 
+#' @param \code{idGas} A data frame contianing gas ID for isoCo2 measurement. Need to provide when dp01 = "isoCo2". Default to NULL. [-]
 
 #' @return A list of: \cr
 #' \code{qm}  A list of data frame's containing quality metrics (fractions) of failed, pass, and NA for each of the individual flag which related to L1 sub-data products if RptExpd = TRUE. [fraction] \cr
@@ -58,6 +59,8 @@
 #   Dave Durden (2017-04-24)
 #     Changed output to dataframes, added switch 
 #     for expanded output and updated the output data type.
+#   Natchaya P-Durden (2017-08-02)
+#     added idGas and replaced isopCo2 and isopH2o by isoCo2 and isoH2o
 ##############################################################################################
 
 wrap.neon.dp01.qfqm <- function(
@@ -65,14 +68,15 @@ wrap.neon.dp01.qfqm <- function(
   MethMeas = c("ecte", "ecse")[1],
   TypeMeas = c("samp", "vali")[1], 
   RptExpd = FALSE,
-  dp01 = c("envHut", "irgaCo2", "irgaH2o", "isopCo2", "isopH2o", "soni", "soniAmrs", "tempAirLvl", "tempAirTop")[1]
+  dp01 = c("envHut", "irgaCo2", "irgaH2o", "isoCo2", "isoH2o", "soni", "soniAmrs", "tempAirLvl", "tempAirTop")[1],
+  idGas =NULL
 ) {
 
   #assign list
   rpt <- list()
   tmp <- list()
   #grouping qf
-  inp <- eddy4R.qaqc::def.neon.dp01.qf.grp(qfInput = qfInput, MethMeas = MethMeas, TypeMeas = TypeMeas, dp01=dp01)
+  inp <- eddy4R.qaqc::def.neon.dp01.qf.grp(qfInput = qfInput, MethMeas = MethMeas, TypeMeas = TypeMeas, dp01=dp01, idGas = idGas)
   
   #calculate qmAlpha, qmBeta, qfFinl
   tmp <- lapply(inp, FUN = eddy4R.qaqc::def.qf.finl)
