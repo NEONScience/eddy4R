@@ -11,7 +11,7 @@
 #' c("irgaCo2", "irgaH2o", "tempAirLvl", "tempAirTop", "isoCo2", "isoH2o"). Defaults to "irgaCo2". [-] 
 #' @param \code{lvl}  Measurement level of dp01 which descriptive statistics are being calculated. Of type character. [-]
 #' @param \code{lvlIrgaMfcSamp} Measurement level of irgaMfcSamp which apply to only  dp01 equal to "irgaCo2" or "irgaH2o". Defaults to NULL. Of type character. [-]
-#' @param \code{lvlIrgaValvLvl} Measurement level of irgaValvLvl which apply to only  dp01 equal to "irgaCo2" or "irgaH2o". Defaults to NULL. Of type character. [-]
+#' @param \code{valvLvl} Measurement level of irgaValvLvl, crdCo2ValvLvl, or crdH2oValvLvl. Defaults to NULL. Of type character. [-]
 #' @param \code{lvlCrdH2oValvVali} Measurement level of crdH2oValvVali which apply to only  dp01 equal to "isoH2o". Defaults to NULL. Of type character. [-]
 #' @param \code{data} A list of data frame containing the input dp0p data that related to dp01 which qfqm are being calculated. Of class integer". [User defined] 
 #' @param \code{qfInput} A list of data frame containing the input quality flag data that related to dp01 are being grouped. Of class integer". [NA] 
@@ -49,7 +49,7 @@ wrap.neon.dp01.qfqm.ecse <- function(
   dp01 = c("irgaCo2", "irgaH2o", "tempAirLvl", "tempAirTop", "isoCo2", "isoH2o")[1],
   lvl,
   lvlIrgaMfcSamp = NULL,
-  lvlIrgaValvLvl = NULL,
+  valvLvl = NULL,
   lvlCrdH2oValvVali = NULL,
   data = list(),
   qfInput = list(),
@@ -86,7 +86,7 @@ wrap.neon.dp01.qfqm.ecse <- function(
                                "rtioMoleDryCo2" = data$irga[[lvl]]$rtioMoleDryCo2,
                                "rtioMoleWetCo2" = data$irga[[lvl]]$rtioMoleWetCo2,
                                "temp" = data$irga[[lvl]]$temp,
-                               "lvlIrga" = data$irgaValvLvl[[lvlIrgaValvLvl]][["lvlIrga"]]
+                               "lvlIrga" = data$irgaValvLvl[[valvLvl]][["lvlIrga"]]
                                
         )
       }
@@ -99,7 +99,7 @@ wrap.neon.dp01.qfqm.ecse <- function(
                                "rtioMoleDryH2o" = data$irga[[lvl]]$rtioMoleDryH2o,
                                "rtioMoleWetH2o" = data$irga[[lvl]]$rtioMoleWetH2o,
                                "temp" = data$irga[[lvl]]$temp,
-                               "lvlIrga" = data$irgaValvLvl[[lvlIrgaValvLvl]][["lvlIrga"]]
+                               "lvlIrga" = data$irgaValvLvl[[valvLvl]][["lvlIrga"]]
                                
         )
       }
@@ -448,6 +448,16 @@ wrap.neon.dp01.qfqm.ecse <- function(
   if (dp01 %in% c("isoCo2")){
     #during sampling period 
     if (TypeMeas %in% "samp"){
+      #assign lvlIrga for each measurement level
+      if (lvl == "000_010") {lvlCrdCo2 <- "lvl01"}
+      if (lvl == "000_020") {lvlCrdCo2 <- "lvl02"}
+      if (lvl == "000_030") {lvlCrdCo2 <- "lvl03"}
+      if (lvl == "000_040") {lvlCrdCo2 <- "lvl04"}
+      if (lvl == "000_050") {lvlCrdCo2 <- "lvl05"}
+      if (lvl == "000_060") {lvlCrdCo2 <- "lvl06"}
+      if (lvl == "000_070") {lvlCrdCo2 <- "lvl07"}
+      if (lvl == "000_080") {lvlCrdCo2 <- "lvl08"}
+      
       #input the whole day data
       wrk$data <- data.frame(stringsAsFactors = FALSE,
                              "rtioMoleWetCo2" = data$crdCo2[[lvl]]$rtioMoleWetCo2,
@@ -461,7 +471,8 @@ wrap.neon.dp01.qfqm.ecse <- function(
                              "rtioMoleDryH2o" = data$crdCo2[[lvl]]$rtioMoleDryH2o,
                              "temp" = data$crdCo2[[lvl]]$temp,
                              "pres" = data$crdCo2[[lvl]]$pres,
-                             "idGas" = data$crdCo2[[lvl]]$idGas
+                             "idGas" = data$crdCo2[[lvl]]$idGas,
+                             "lvlCrdCo2" = data$crdCo2ValvLvl[[valvLvl]][["lvlCrdCo2"]]
                              
       )
       
@@ -491,6 +502,10 @@ wrap.neon.dp01.qfqm.ecse <- function(
             #wrk$inpMask for qfqm
             wrk$inpMask$qfqm <- list()
             lapply(names(wrk$qfqm), function (x) wrk$inpMask$qfqm[[x]] <<- wrk$qfqm[[x]][wrk$idx$idxBgn[idxAgr]:wrk$idx$idxEnd[idxAgr],] )
+            #replace qfqm$crdCo2 with -1 when valve switch to measure to next level before schedule time (9 min)
+            for (tmp in 1:length(wrk$inpMask$qfqm$crdCo2)){
+              wrk$inpMask$qfqm$crdCo2[[tmp]][wrk$inpMask$data$lvlCrdCo2 != lvlCrdCo2] <- -1
+            }
             
             #qfqm processing
             rpt[[idxAgr]] <- eddy4R.qaqc::wrap.neon.dp01.qfqm(
@@ -506,7 +521,7 @@ wrap.neon.dp01.qfqm.ecse <- function(
             rpt[[idxAgr]]$timeEnd <- list()
             
             #output time for dp01
-            for(idxVar in names(wrk$data)[which(!(names(wrk$data) %in% c("idGas")))]){
+            for(idxVar in names(wrk$data)[which(!(names(wrk$data) %in% c("idGas", "lvlCrdCo2")))]){
               rpt[[idxAgr]]$timeBgn[[idxVar]] <- wrk$idx$timeBgn[idxAgr]
               rpt[[idxAgr]]$timeEnd[[idxVar]] <- wrk$idx$timeEnd[idxAgr]
             }; rm(idxVar)
@@ -522,7 +537,7 @@ wrap.neon.dp01.qfqm.ecse <- function(
             rpt[[1]][[idxQf]] <- list()
             
             
-            for (idxVar in names(wrk$data)[which(!(names(wrk$data) %in% c("idGas")))]){
+            for (idxVar in names(wrk$data)[which(!(names(wrk$data) %in% c("idGas", "lvlCrdCo2")))]){
               rpt[[1]][[idxQf]][[idxVar]] <- list()  
             }; rm(idxVar)
             
@@ -545,6 +560,11 @@ wrap.neon.dp01.qfqm.ecse <- function(
             }
           }
           wrk$data[-whrSamp, ] <- NaN
+          #replace qfqm$crdCo2 with -1 when valve switch to measure to next level before schedule time (9 min)
+          for (tmp in 1:length(wrk$qfqm$crdCo2)){
+            wrk$qfqm$crdCo2[[tmp]][wrk$data$lvlCrdCo2 != lvlCrdCo2] <- -1
+          }
+          #replace all qf that not belong to that measurement level by NaN
           wrk$qfqm$crdCo2[-whrSamp, 1:length(wrk$qfqm$crdCo2)] <- NaN
         } 
         
@@ -574,7 +594,7 @@ wrap.neon.dp01.qfqm.ecse <- function(
           rpt[[idxAgr]]$timeBgn <- list()
           rpt[[idxAgr]]$timeEnd <- list()
           
-          for(idxVar in names(wrk$data)[which(!(names(wrk$data) %in% c("idGas")))]){
+          for(idxVar in names(wrk$data)[which(!(names(wrk$data) %in% c("idGas", "lvlCrdCo2")))]){
             rpt[[idxAgr]]$timeBgn[[idxVar]] <- data$time[idxTime[[paste0(PrdAgr, "min")]]$Bgn[idxAgr]]
             rpt[[idxAgr]]$timeEnd[[idxVar]] <- data$time[idxTime[[paste0(PrdAgr, "min")]]$End[idxAgr]]
           }
