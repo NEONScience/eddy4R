@@ -8,9 +8,9 @@
 #' Wrapper function. Preprocessing and calculating quality metrics, alpha and beta quality metrics, and final quality flag for the NEON eddy-covariance stroage exchange (ECSE) Level 1 data products (dp01).
 
 #' @param \code{dp01} A vector of class "character" containing the name of NEON ECSE dp01 which descriptive statistics are being calculated, \cr
-#' c("irgaCo2", "irgaH2o", "tempAirLvl", "tempAirTop", "isoCo2", "isoH2o"). Defaults to "irgaCo2". [-] 
+#' c("co2Stor", "h2oStor", "tempAirLvl", "tempAirTop", "isoCo2", "isoH2o"). Defaults to "co2Stor". [-] 
 #' @param \code{lvl}  Measurement level of dp01 which descriptive statistics are being calculated. Of type character. [-]
-#' @param \code{lvlIrgaMfcSamp} Measurement level of irgaMfcSamp which apply to only  dp01 equal to "irgaCo2" or "irgaH2o". Defaults to NULL. Of type character. [-]
+#' @param \code{lvlMfcSampStor} Measurement level of mfcSampStor which apply to only  dp01 equal to "co2Stor" or "h2oStor". Defaults to NULL. Of type character. [-]
 #' @param \code{valvLvl} Measurement level of irgaValvLvl, crdCo2ValvLvl, or crdH2oValvLvl. Defaults to NULL. Of type character. [-]
 #' @param \code{lvlCrdH2oValvVali} Measurement level of crdH2oValvVali which apply to only  dp01 equal to "isoH2o". Defaults to NULL. Of type character. [-]
 #' @param \code{data} A list of data frame containing the input dp0p data that related to dp01 which qfqm are being calculated. Of class integer". [User defined] 
@@ -46,9 +46,9 @@
 #     original creation
 ##############################################################################################
 wrap.neon.dp01.qfqm.ecse <- function(
-  dp01 = c("irgaCo2", "irgaH2o", "tempAirLvl", "tempAirTop", "isoCo2", "isoH2o")[1],
+  dp01 = c("co2Stor", "h2oStor", "tempAirLvl", "tempAirTop", "isoCo2", "isoH2o")[1],
   lvl,
-  lvlIrgaMfcSamp = NULL,
+  lvlMfcSampStor = NULL,
   valvLvl = NULL,
   lvlCrdH2oValvVali = NULL,
   data = list(),
@@ -63,8 +63,8 @@ wrap.neon.dp01.qfqm.ecse <- function(
   rpt <- list()
   #qfqm names
   NameQf <-c("qmAlph", "qmBeta", "qfFinl", "qfSciRevw")
-#calculate qfqm for irgaCo2 and irgaH2o ########################################################################################
-  if (dp01 %in% c("irgaCo2", "irgaH2o")){
+#calculate qfqm for co2Stor and h2oStor ########################################################################################
+  if (dp01 %in% c("co2Stor", "h2oStor")){
     #during sampling period 
     if (TypeMeas %in% "samp"){
       #assign lvlIrga for each measurement level
@@ -78,10 +78,10 @@ wrap.neon.dp01.qfqm.ecse <- function(
       if (lvl == "000_080") {lvlIrga <- "lvl08"}
       
       #input the whole day data
-      if(dp01 == "irgaCo2"){
+      if(dp01 == "co2Stor"){
         wrk$data <- data.frame(stringsAsFactors = FALSE,
-                               "frt00" = data$irgaMfcSamp[[lvlIrgaMfcSamp]][["frt00"]],
-                               #wrk$data$irgaMfcSamp[[paste0(Para$Flow$LevlTowr$irgaMfcSamp, "_", sprintf("%02d", idxPrdAgr), "m")]]$frt00,
+                               "frt00" = data$mfcSampStor[[lvlMfcSampStor]][["frt00"]],
+                               #wrk$data$mfcSampStor[[paste0(Para$Flow$LevlTowr$mfcSampStor, "_", sprintf("%02d", idxPrdAgr), "m")]]$frt00,
                                "pres" = data$irga[[lvl]]$pres,
                                "rtioMoleDryCo2" = data$irga[[lvl]]$rtioMoleDryCo2,
                                "rtioMoleWetCo2" = data$irga[[lvl]]$rtioMoleWetCo2,
@@ -91,10 +91,10 @@ wrap.neon.dp01.qfqm.ecse <- function(
         )
       }
       
-      if(dp01 == "irgaH2o"){
+      if(dp01 == "h2oStor"){
         wrk$data <- data.frame(stringsAsFactors = FALSE,
-                               "frt00" = data$irgaMfcSamp[[lvlIrgaMfcSamp]][["frt00"]],
-                               #wrk$data$irgaMfcSamp[[paste0(Para$Flow$LevlTowr$irgaMfcSamp, "_", sprintf("%02d", idxPrdAgr), "m")]]$frt00,
+                               "frt00" = data$mfcSampStor[[lvlMfcSampStor]][["frt00"]],
+                               #wrk$data$mfcSampStor[[paste0(Para$Flow$LevlTowr$mfcSampStor, "_", sprintf("%02d", idxPrdAgr), "m")]]$frt00,
                                "pres" = data$irga[[lvl]]$pres,
                                "rtioMoleDryH2o" = data$irga[[lvl]]$rtioMoleDryH2o,
                                "rtioMoleWetH2o" = data$irga[[lvl]]$rtioMoleWetH2o,
@@ -106,7 +106,7 @@ wrap.neon.dp01.qfqm.ecse <- function(
       #input the whole day qfqm 
       wrk$qfqm <- list()
       wrk$qfqm$irga <- qfInput$irga[[lvl]]
-      wrk$qfqm$irgaMfcSamp <- qfInput$irgaMfcSamp[[lvlIrgaMfcSamp]]
+      wrk$qfqm$mfcSampStor <- qfInput$mfcSampStor[[lvlMfcSampStor]]
       
       if (PrdMeas == PrdAgr) {
         #PrdAgr <- 2
@@ -135,8 +135,8 @@ wrap.neon.dp01.qfqm.ecse <- function(
             for (tmp in 1:length(wrk$inpMask$qfqm$irga)){
               wrk$inpMask$qfqm$irga[[tmp]][wrk$inpMask$data$lvlIrga != lvlIrga] <- -1
             }
-            for (tmp in 1:length(wrk$inpMask$qfqm$irgaMfcSamp)){
-              wrk$inpMask$qfqm$irgaMfcSamp[[tmp]][wrk$inpMask$data$lvlIrga != lvlIrga] <- -1
+            for (tmp in 1:length(wrk$inpMask$qfqm$mfcSampStor)){
+              wrk$inpMask$qfqm$mfcSampStor[[tmp]][wrk$inpMask$data$lvlIrga != lvlIrga] <- -1
             }
             
             #qfqm processing
@@ -196,15 +196,15 @@ wrap.neon.dp01.qfqm.ecse <- function(
           for (tmp in 1:length(wrk$qfqm$irga)){
             wrk$qfqm$irga[[tmp]][wrk$data$lvlIrga != lvlIrga] <- -1
           }
-          for (tmp in 1:length(wrk$qfqm$irgaMfcSamp)){
-            wrk$qfqm$irgaMfcSamp[[tmp]][wrk$data$lvlIrga != lvlIrga] <- -1
+          for (tmp in 1:length(wrk$qfqm$mfcSampStor)){
+            wrk$qfqm$mfcSampStor[[tmp]][wrk$data$lvlIrga != lvlIrga] <- -1
           }
           #replace all qf that not belong to that measurement level by NaN
           wrk$qfqm$irga[-whrSamp, 1:length(wrk$qfqm$irga)] <- NaN
-          wrk$qfqm$irgaMfcSamp[-whrSamp, 1:length(wrk$qfqm$irgaMfcSamp)] <- NaN
+          wrk$qfqm$mfcSampStor[-whrSamp, 1:length(wrk$qfqm$mfcSampStor)] <- NaN
           
-          #replace qf from irgaMfcSamp data with -1 when irga got kick out to measure the new measurement level
-          #wrk$qfqm$irgaMfcSamp <- as.data.frame(sapply(wrk$qfqm$irgaMfcSamp, function(x) ifelse(wrk$data$lvlIrga == lvlIrga, x, -1)))
+          #replace qf from mfcSampStor data with -1 when irga got kick out to measure the new measurement level
+          #wrk$qfqm$mfcSampStor <- as.data.frame(sapply(wrk$qfqm$mfcSampStor, function(x) ifelse(wrk$data$lvlIrga == lvlIrga, x, -1)))
         } 
         
         
@@ -246,10 +246,10 @@ wrap.neon.dp01.qfqm.ecse <- function(
     
     #during validation period
     if (TypeMeas %in% "vali"){
-      if(dp01 == "irgaCo2"){
+      if(dp01 == "co2Stor"){
         wrk$data <- data.frame(stringsAsFactors = FALSE,
-                               "frt00" = data$irgaMfcSamp[[lvlIrgaMfcSamp]][["frt00"]],
-                               #wrk$data$irgaMfcSamp[[paste0(Para$Flow$LevlTowr$irgaMfcSamp, "_", sprintf("%02d", PrdAgr), "m")]]$frt00,
+                               "frt00" = data$mfcSampStor[[lvlMfcSampStor]][["frt00"]],
+                               #wrk$data$mfcSampStor[[paste0(Para$Flow$LevlTowr$mfcSampStor, "_", sprintf("%02d", PrdAgr), "m")]]$frt00,
                                "pres" = data$irga[[lvl]]$pres,
                                "rtioMoleDryCo2" = data$irga[[lvl]]$rtioMoleDryCo2,
                                "rtioMoleDryCo2Refe" = data$irga[[lvl]]$rtioMoleDryCo2Refe,
@@ -260,10 +260,10 @@ wrap.neon.dp01.qfqm.ecse <- function(
         )
       }
       
-      if(dp01 == "irgaH2o"){
+      if(dp01 == "h2oStor"){
         wrk$data <- data.frame(stringsAsFactors = FALSE,
-                               "frt00" = data$irgaMfcSamp[[lvlIrgaMfcSamp]][["frt00"]],
-                               #wrk$data$irgaMfcSamp[[paste0(Para$Flow$LevlTowr$irgaMfcSamp, "_", sprintf("%02d", PrdAgr), "m")]]$frt00,
+                               "frt00" = data$mfcSampStor[[lvlMfcSampStor]][["frt00"]],
+                               #wrk$data$mfcSampStor[[paste0(Para$Flow$LevlTowr$mfcSampStor, "_", sprintf("%02d", PrdAgr), "m")]]$frt00,
                                "pres" = data$irga[[lvl]]$pres,
                                "rtioMoleDryH2o" = data$irga[[lvl]]$rtioMoleDryH2o,
                                "rtioMoleWetH2o" = data$irga[[lvl]]$rtioMoleWetH2o,
@@ -276,7 +276,7 @@ wrap.neon.dp01.qfqm.ecse <- function(
       #input the whole day qfqm 
       wrk$qfqm <- list()
       wrk$qfqm$irga <- qfInput$irga[[lvl]]
-      wrk$qfqm$irgaMfcSamp <- qfInput$irgaMfcSamp[[lvlIrgaMfcSamp]]
+      wrk$qfqm$mfcSampStor <- qfInput$mfcSampStor[[lvlMfcSampStor]]
       
       if (PrdMeas == PrdAgr) {
         #PrdAgr <- 2
@@ -350,7 +350,7 @@ wrap.neon.dp01.qfqm.ecse <- function(
           }
           #wrk$data[-whrSamp, ] <- NaN
           wrk$qfqm$irga[-whrSamp, 1:length(wrk$qfqm$irga)] <- NaN
-          wrk$qfqm$irgaMfcSamp[-whrSamp, 1:length(wrk$qfqm$irgaMfcSamp)] <- NaN
+          wrk$qfqm$mfcSampStor[-whrSamp, 1:length(wrk$qfqm$mfcSampStor)] <- NaN
         } #else {#end of if no measurement data at all in the whole day
         #   wrk$data$frt00 <- NaN #assign NaN to frt00 data
         # }
