@@ -8,9 +8,9 @@
 #' Wrapper function. Preprocessing and computing NEON eddy-covariance stroage exchange (ECSE) Level 1 data product (dp01) descriptive statistics (mean, minimum, maximum, variance, number of non-NA points). 
 
 #' @param \code{dp01} A vector of class "character" containing the name of NEON ECSE dp01 which descriptive statistics are being calculated, \cr
-#' c("irgaCo2", "irgaH2o", "tempAirLvl", "tempAirTop", "isoCo2", "isoH2o"). Defaults to "irgaCo2". [-] 
+#' c("co2Stor", "h2oStor", "tempAirLvl", "tempAirTop", "isoCo2", "isoH2o"). Defaults to "co2Stor". [-] 
 #' @param \code{lvl}  Measurement level of dp01 which descriptive statistics are being calculated. Of type character. [-]
-#' @param \code{lvlIrgaMfcSamp} Measurement level of irgaMfcSamp which apply to only  dp01 equal to "irgaCo2" or "irgaH2o". Defaults to NULL. Of type character. [-]
+#' @param \code{lvlMfcSampStor} Measurement level of mfcSampStor which apply to only  dp01 equal to "co2Stor" or "h2oStor". Defaults to NULL. Of type character. [-]
 #' @param \code{valvLvl} Measurement level of irgaValvLvl, crdCo2ValvLvl, or crdH2oValvLvl. Defaults to NULL. Of type character. [-]
 #' @param \code{lvlCrdH2oValvVali} Measurement level of crdH2oValvVali which apply to only  dp01 equal to "isoH2o". Defaults to NULL. Of type character. [-]
 #' @param \code{data} A list of data frame containing the input dp0p data that related to dp01 which descriptive statistics are being calculated. Of class integer". [User defined] 
@@ -49,9 +49,9 @@
 #     added unit attributes
 ##############################################################################################
 wrap.neon.dp01.ecse <- function(
-  dp01 = c("irgaCo2", "irgaH2o", "tempAirLvl", "tempAirTop", "isoCo2", "isoH2o")[1],
+  dp01 = c("co2Stor", "h2oStor", "tempAirLvl", "tempAirTop", "isoCo2", "isoH2o")[1],
   lvl,
-  lvlIrgaMfcSamp = NULL,
+  lvlMfcSampStor = NULL,
   valvLvl = NULL,
   lvlCrdH2oValvVali = NULL,
   data = list(),
@@ -65,8 +65,8 @@ wrap.neon.dp01.ecse <- function(
   rpt <- list()
   #statistical names
   NameStat <- c("mean", "min", "max", "vari", "numSamp", "se")
-  #calculate dp01 for irgaCo2 and irgaH2o ########################################################################################
-  if (dp01 %in% c("irgaCo2", "irgaH2o")){
+  #calculate dp01 for co2Stor and h2oStor ########################################################################################
+  if (dp01 %in% c("co2Stor", "h2oStor")){
     #during sampling period 
     if (TypeMeas %in% "samp"){
       #assign lvlIrga for each measurement level
@@ -80,10 +80,10 @@ wrap.neon.dp01.ecse <- function(
       if (lvl == "000_080") {lvlIrga <- "lvl08"}
       
       #input the whole day data
-      if(dp01 == "irgaCo2"){
+      if(dp01 == "co2Stor"){
         wrk$data <- data.frame(stringsAsFactors = FALSE,
-                               "frt00" = data$irgaMfcSamp[[lvlIrgaMfcSamp]][["frt00"]],
-                               #wrk$data$irgaMfcSamp[[paste0(Para$Flow$LevlTowr$irgaMfcSamp, "_", sprintf("%02d", idxPrdAgr), "m")]]$frt00,
+                               "frt00" = data$mfcSampStor[[lvlMfcSampStor]][["frt00"]],
+                               #wrk$data$mfcSampStor[[paste0(Para$Flow$LevlTowr$mfcSampStor, "_", sprintf("%02d", idxPrdAgr), "m")]]$frt00,
                                "pres" = data$irga[[lvl]]$pres,
                                "rtioMoleDryCo2" = data$irga[[lvl]]$rtioMoleDryCo2,
                                "rtioMoleWetCo2" = data$irga[[lvl]]$rtioMoleWetCo2,
@@ -93,10 +93,10 @@ wrap.neon.dp01.ecse <- function(
         )
       }
       
-      if(dp01 == "irgaH2o"){
+      if(dp01 == "h2oStor"){
         wrk$data <- data.frame(stringsAsFactors = FALSE,
-                               "frt00" = data$irgaMfcSamp[[lvlIrgaMfcSamp]][["frt00"]],
-                               #wrk$data$irgaMfcSamp[[paste0(Para$Flow$LevlTowr$irgaMfcSamp, "_", sprintf("%02d", idxPrdAgr), "m")]]$frt00,
+                               "frt00" = data$mfcSampStor[[lvlMfcSampStor]][["frt00"]],
+                               #wrk$data$mfcSampStor[[paste0(Para$Flow$LevlTowr$mfcSampStor, "_", sprintf("%02d", idxPrdAgr), "m")]]$frt00,
                                "pres" = data$irga[[lvl]]$pres,
                                "rtioMoleDryH2o" = data$irga[[lvl]]$rtioMoleDryH2o,
                                "rtioMoleWetH2o" = data$irga[[lvl]]$rtioMoleWetH2o,
@@ -243,10 +243,10 @@ wrap.neon.dp01.ecse <- function(
     
     #during validation period
     if (TypeMeas %in% "vali"){
-      if(dp01 == "irgaCo2"){
+      if(dp01 == "co2Stor"){
         wrk$data <- data.frame(stringsAsFactors = FALSE,
-                               "frt00" = data$irgaMfcSamp[[lvlIrgaMfcSamp]][["frt00"]],
-                               #wrk$data$irgaMfcSamp[[paste0(Para$Flow$LevlTowr$irgaMfcSamp, "_", sprintf("%02d", PrdAgr), "m")]]$frt00,
+                               "frt00" = data$mfcSampStor[[lvlMfcSampStor]][["frt00"]],
+                               #wrk$data$mfcSampStor[[paste0(Para$Flow$LevlTowr$mfcSampStor, "_", sprintf("%02d", PrdAgr), "m")]]$frt00,
                                "pres" = data$irga[[lvl]]$pres,
                                "rtioMoleDryCo2" = data$irga[[lvl]]$rtioMoleDryCo2,
                                "rtioMoleDryCo2Refe" = data$irga[[lvl]]$rtioMoleDryCo2Refe,
@@ -257,10 +257,10 @@ wrap.neon.dp01.ecse <- function(
         )
       }
       
-      if(dp01 == "irgaH2o"){
+      if(dp01 == "h2oStor"){
         wrk$data <- data.frame(stringsAsFactors = FALSE,
-                               "frt00" = data$irgaMfcSamp[[lvlIrgaMfcSamp]][["frt00"]],
-                               #wrk$data$irgaMfcSamp[[paste0(Para$Flow$LevlTowr$irgaMfcSamp, "_", sprintf("%02d", PrdAgr), "m")]]$frt00,
+                               "frt00" = data$mfcSampStor[[lvlMfcSampStor]][["frt00"]],
+                               #wrk$data$mfcSampStor[[paste0(Para$Flow$LevlTowr$mfcSampStor, "_", sprintf("%02d", PrdAgr), "m")]]$frt00,
                                "pres" = data$irga[[lvl]]$pres,
                                "rtioMoleDryH2o" = data$irga[[lvl]]$rtioMoleDryH2o,
                                "rtioMoleWetH2o" = data$irga[[lvl]]$rtioMoleWetH2o,
@@ -322,7 +322,7 @@ wrap.neon.dp01.ecse <- function(
               rpt[[1]][[idxStat]][[idxVar]] <- list() 
             }; rm(idxVar)
             
-            if(dp01 == "irgaCo2"){
+            if(dp01 == "co2Stor"){
               rpt[[1]][[idxStat]]$rtioMoleDryCo2Refe <- list()
             }
             
