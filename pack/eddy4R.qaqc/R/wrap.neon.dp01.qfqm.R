@@ -61,6 +61,8 @@
 #     for expanded output and updated the output data type.
 #   Natchaya P-Durden (2017-08-02)
 #     added idGas and replaced isopCo2 and isopH2o by isoCo2 and isoH2o
+#   Natchaya P-Durden (2017-08-17)
+#     added co2Stor and h2oStor in dp01 name input
 ##############################################################################################
 
 wrap.neon.dp01.qfqm <- function(
@@ -68,7 +70,7 @@ wrap.neon.dp01.qfqm <- function(
   MethMeas = c("ecte", "ecse")[1],
   TypeMeas = c("samp", "vali")[1], 
   RptExpd = FALSE,
-  dp01 = c("envHut", "irgaCo2", "irgaH2o", "isoCo2", "isoH2o", "soni", "soniAmrs", "tempAirLvl", "tempAirTop")[1],
+  dp01 = c("envHut", "irgaCo2", "irgaH2o", "co2Stor", "h2oStor", "isoCo2", "isoH2o", "soni", "soniAmrs", "tempAirLvl", "tempAirTop")[1],
   idGas =NULL
 ) {
 
