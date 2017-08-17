@@ -82,10 +82,10 @@ wrap.neon.dp01.qfqm.ecse <- function(
         wrk$data <- data.frame(stringsAsFactors = FALSE,
                                "frt00" = data$mfcSampStor[[lvlMfcSampStor]][["frt00"]],
                                #wrk$data$mfcSampStor[[paste0(Para$Flow$LevlTowr$mfcSampStor, "_", sprintf("%02d", idxPrdAgr), "m")]]$frt00,
-                               "pres" = data$irga[[lvl]]$pres,
-                               "rtioMoleDryCo2" = data$irga[[lvl]]$rtioMoleDryCo2,
-                               "rtioMoleWetCo2" = data$irga[[lvl]]$rtioMoleWetCo2,
-                               "temp" = data$irga[[lvl]]$temp,
+                               "pres" = data$irgaStor[[lvl]]$pres,
+                               "rtioMoleDryCo2" = data$irgaStor[[lvl]]$rtioMoleDryCo2,
+                               "rtioMoleWetCo2" = data$irgaStor[[lvl]]$rtioMoleWetCo2,
+                               "temp" = data$irgaStor[[lvl]]$temp,
                                "lvlIrga" = data$irgaValvLvl[[valvLvl]][["lvlIrga"]]
                                
         )
@@ -95,17 +95,17 @@ wrap.neon.dp01.qfqm.ecse <- function(
         wrk$data <- data.frame(stringsAsFactors = FALSE,
                                "frt00" = data$mfcSampStor[[lvlMfcSampStor]][["frt00"]],
                                #wrk$data$mfcSampStor[[paste0(Para$Flow$LevlTowr$mfcSampStor, "_", sprintf("%02d", idxPrdAgr), "m")]]$frt00,
-                               "pres" = data$irga[[lvl]]$pres,
-                               "rtioMoleDryH2o" = data$irga[[lvl]]$rtioMoleDryH2o,
-                               "rtioMoleWetH2o" = data$irga[[lvl]]$rtioMoleWetH2o,
-                               "temp" = data$irga[[lvl]]$temp,
+                               "pres" = data$irgaStor[[lvl]]$pres,
+                               "rtioMoleDryH2o" = data$irgaStor[[lvl]]$rtioMoleDryH2o,
+                               "rtioMoleWetH2o" = data$irgaStor[[lvl]]$rtioMoleWetH2o,
+                               "temp" = data$irgaStor[[lvl]]$temp,
                                "lvlIrga" = data$irgaValvLvl[[valvLvl]][["lvlIrga"]]
                                
         )
       }
       #input the whole day qfqm 
       wrk$qfqm <- list()
-      wrk$qfqm$irga <- qfInput$irga[[lvl]]
+      wrk$qfqm$irgaStor <- qfInput$irga[[lvl]]
       wrk$qfqm$mfcSampStor <- qfInput$mfcSampStor[[lvlMfcSampStor]]
       
       if (PrdMeas == PrdAgr) {
@@ -118,6 +118,8 @@ wrap.neon.dp01.qfqm.ecse <- function(
         if(length(which(!is.na(wrk$data$temp))) > 0){
           #determine the index of each measurement  
           wrk$idx <- eddy4R.base::def.idx.agr(time = data$time, PrdAgr = (PrdMeas*60), FreqLoca = 1, MethIdx = "specBgn", data = wrk$data$temp, CritTime = 60)
+          #delete row if last timeBgn and timeEnd is NA
+          wrk$idx <- wrk$idx[rowSums(is.na(wrk$idx)) != 2,]
           #if last timeEnd is NA, replce that time to the last time value in data$time
           wrk$idx$timeEnd <- as.POSIXct(ifelse(is.na(wrk$idx$timeEnd), data$time[length(data$time)], wrk$idx$timeEnd), origin = "1970-01-01", tz = "UTC")
           #idxAgr2 <- 0
@@ -131,9 +133,9 @@ wrap.neon.dp01.qfqm.ecse <- function(
             wrk$inpMask$data <- wrk$data[wrk$idx$idxBgn[idxAgr]:wrk$idx$idxEnd[idxAgr],] 
             #assign name to wrk$inpMask$qfqm
             lapply(names(wrk$qfqm), function (x) wrk$inpMask$qfqm[[x]] <<- wrk$qfqm[[x]][wrk$idx$idxBgn[idxAgr]:wrk$idx$idxEnd[idxAgr],] )
-            #replace qfqm$irga with -1 when irga got kick out to measure the new measurement level
-            for (tmp in 1:length(wrk$inpMask$qfqm$irga)){
-              wrk$inpMask$qfqm$irga[[tmp]][wrk$inpMask$data$lvlIrga != lvlIrga] <- -1
+            #replace qfqm$irgaStor with -1 when irga got kick out to measure the new measurement level
+            for (tmp in 1:length(wrk$inpMask$qfqm$irgaStor)){
+              wrk$inpMask$qfqm$irgaStor[[tmp]][wrk$inpMask$data$lvlIrga != lvlIrga] <- -1
             }
             for (tmp in 1:length(wrk$inpMask$qfqm$mfcSampStor)){
               wrk$inpMask$qfqm$mfcSampStor[[tmp]][wrk$inpMask$data$lvlIrga != lvlIrga] <- -1
@@ -185,6 +187,11 @@ wrap.neon.dp01.qfqm.ecse <- function(
           
           #determine the index of each measurement  
           wrk$idx <- eddy4R.base::def.idx.agr(time = data$time, PrdAgr = (PrdMeas*60), FreqLoca = 1, MethIdx = "specBgn", data = wrk$data$temp, CritTime = 60)
+          #delete row if last timeBgn and timeEnd is NA
+          wrk$idx <- wrk$idx[rowSums(is.na(wrk$idx)) != 2,]
+          #if last timeEnd is NA, replce that time to the last time value in data$time
+          wrk$idx$timeEnd <- as.POSIXct(ifelse(is.na(wrk$idx$timeEnd), data$time[length(data$time)], wrk$idx$timeEnd), origin = "1970-01-01", tz = "UTC")
+          
           whrSamp <- wrk$idx$idxBgn[1]:wrk$idx$idxEnd[1]
           if (length (wrk$idx$idxBgn) > 1 ){
             for(ii in 2:length (wrk$idx$idxBgn)){
@@ -192,15 +199,15 @@ wrap.neon.dp01.qfqm.ecse <- function(
             }
           }
           wrk$data[-whrSamp, 1:5] <- NaN
-          #replace qfqm$irga with -1 when irga got kick out to measure the new measurement level
-          for (tmp in 1:length(wrk$qfqm$irga)){
-            wrk$qfqm$irga[[tmp]][wrk$data$lvlIrga != lvlIrga] <- -1
+          #replace qfqm$irgaStor with -1 when irga got kick out to measure the new measurement level
+          for (tmp in 1:length(wrk$qfqm$irgaStor)){
+            wrk$qfqm$irgaStor[[tmp]][wrk$data$lvlIrga != lvlIrga] <- -1
           }
           for (tmp in 1:length(wrk$qfqm$mfcSampStor)){
             wrk$qfqm$mfcSampStor[[tmp]][wrk$data$lvlIrga != lvlIrga] <- -1
           }
           #replace all qf that not belong to that measurement level by NaN
-          wrk$qfqm$irga[-whrSamp, 1:length(wrk$qfqm$irga)] <- NaN
+          wrk$qfqm$irgaStor[-whrSamp, 1:length(wrk$qfqm$irgaStor)] <- NaN
           wrk$qfqm$mfcSampStor[-whrSamp, 1:length(wrk$qfqm$mfcSampStor)] <- NaN
           
           #replace qf from mfcSampStor data with -1 when irga got kick out to measure the new measurement level
@@ -250,11 +257,11 @@ wrap.neon.dp01.qfqm.ecse <- function(
         wrk$data <- data.frame(stringsAsFactors = FALSE,
                                "frt00" = data$mfcSampStor[[lvlMfcSampStor]][["frt00"]],
                                #wrk$data$mfcSampStor[[paste0(Para$Flow$LevlTowr$mfcSampStor, "_", sprintf("%02d", PrdAgr), "m")]]$frt00,
-                               "pres" = data$irga[[lvl]]$pres,
-                               "rtioMoleDryCo2" = data$irga[[lvl]]$rtioMoleDryCo2,
-                               "rtioMoleDryCo2Refe" = data$irga[[lvl]]$rtioMoleDryCo2Refe,
-                               "rtioMoleWetCo2" = data$irga[[lvl]]$rtioMoleWetCo2,
-                               "temp" = data$irga[[lvl]]$temp
+                               "pres" = data$irgaStor[[lvl]]$pres,
+                               "rtioMoleDryCo2" = data$irgaStor[[lvl]]$rtioMoleDryCo2,
+                               "rtioMoleDryCo2Refe" = data$irgaStor[[lvl]]$rtioMoleDryCo2Refe,
+                               "rtioMoleWetCo2" = data$irgaStor[[lvl]]$rtioMoleWetCo2,
+                               "temp" = data$irgaStor[[lvl]]$temp
                                #data$tempAirLvl$`000_010_01m`$temp
                                
         )
@@ -264,10 +271,10 @@ wrap.neon.dp01.qfqm.ecse <- function(
         wrk$data <- data.frame(stringsAsFactors = FALSE,
                                "frt00" = data$mfcSampStor[[lvlMfcSampStor]][["frt00"]],
                                #wrk$data$mfcSampStor[[paste0(Para$Flow$LevlTowr$mfcSampStor, "_", sprintf("%02d", PrdAgr), "m")]]$frt00,
-                               "pres" = data$irga[[lvl]]$pres,
-                               "rtioMoleDryH2o" = data$irga[[lvl]]$rtioMoleDryH2o,
-                               "rtioMoleWetH2o" = data$irga[[lvl]]$rtioMoleWetH2o,
-                               "temp" = data$irga[[lvl]]$temp
+                               "pres" = data$irgaStor[[lvl]]$pres,
+                               "rtioMoleDryH2o" = data$irgaStor[[lvl]]$rtioMoleDryH2o,
+                               "rtioMoleWetH2o" = data$irgaStor[[lvl]]$rtioMoleWetH2o,
+                               "temp" = data$irgaStor[[lvl]]$temp
                                #data$tempAirLvl$`000_010_01m`$temp
                                
         )
@@ -275,7 +282,7 @@ wrap.neon.dp01.qfqm.ecse <- function(
       
       #input the whole day qfqm 
       wrk$qfqm <- list()
-      wrk$qfqm$irga <- qfInput$irga[[lvl]]
+      wrk$qfqm$irgaStor <- qfInput$irga[[lvl]]
       wrk$qfqm$mfcSampStor <- qfInput$mfcSampStor[[lvlMfcSampStor]]
       
       if (PrdMeas == PrdAgr) {
@@ -288,6 +295,10 @@ wrap.neon.dp01.qfqm.ecse <- function(
         if(length(which(!is.na(wrk$data$temp))) > 0){
           #determine the end time of each measurement
           wrk$idx <- eddy4R.base::def.idx.agr(time = data$time, PrdAgr = (PrdMeas*60), FreqLoca = 1, MethIdx = "specEnd", data = wrk$data$temp, CritTime = 20)
+          #delete row if last timeBgn and timeEnd is NA
+          wrk$idx <- wrk$idx[rowSums(is.na(wrk$idx)) != 2,]
+          #if last timeEnd is NA, replce that time to the last time value in data$time
+          wrk$idx$timeEnd <- as.POSIXct(ifelse(is.na(wrk$idx$timeEnd), data$time[length(data$time)], wrk$idx$timeEnd), origin = "1970-01-01", tz = "UTC")
           
           #idxAgr2 <- 0
           for (idxAgr in 1:length(wrk$idx$idxBgn)){
@@ -342,6 +353,11 @@ wrap.neon.dp01.qfqm.ecse <- function(
         if(length(which(!is.na(wrk$data$temp))) > 0){
           #   #determine the end time of each measurement  
           wrk$idx <- eddy4R.base::def.idx.agr(time = data$time, PrdAgr = (PrdMeas*60), FreqLoca = 1, MethIdx = "specEnd", data = wrk$data$temp, CritTime = 20)
+          #delete row if last timeBgn and timeEnd is NA
+          wrk$idx <- wrk$idx[rowSums(is.na(wrk$idx)) != 2,]
+          #if last timeEnd is NA, replce that time to the last time value in data$time
+          wrk$idx$timeEnd <- as.POSIXct(ifelse(is.na(wrk$idx$timeEnd), data$time[length(data$time)], wrk$idx$timeEnd), origin = "1970-01-01", tz = "UTC")
+          
           whrSamp <- wrk$idx$idxBgn[1]:wrk$idx$idxEnd[1]
           if (length (wrk$idx$idxBgn) > 1 ){
             for(ii in 2:length (wrk$idx$idxBgn)){
@@ -349,7 +365,7 @@ wrap.neon.dp01.qfqm.ecse <- function(
             }
           }
           #wrk$data[-whrSamp, ] <- NaN
-          wrk$qfqm$irga[-whrSamp, 1:length(wrk$qfqm$irga)] <- NaN
+          wrk$qfqm$irgaStor[-whrSamp, 1:length(wrk$qfqm$irgaStor)] <- NaN
           wrk$qfqm$mfcSampStor[-whrSamp, 1:length(wrk$qfqm$mfcSampStor)] <- NaN
         } #else {#end of if no measurement data at all in the whole day
         #   wrk$data$frt00 <- NaN #assign NaN to frt00 data
@@ -491,6 +507,8 @@ wrap.neon.dp01.qfqm.ecse <- function(
         if(length(which(!is.na(wrk$data$temp))) > 0){
           #determine the index of each measurement  
           wrk$idx <- eddy4R.base::def.idx.agr(time = data$time, PrdAgr = (PrdMeas*60), FreqLoca = 1, MethIdx = "specBgn", data = wrk$data$temp, CritTime = 60)
+          #delete row if last timeBgn and timeEnd is NA
+          wrk$idx <- wrk$idx[rowSums(is.na(wrk$idx)) != 2,]
           #if last timeEnd is NA, replce that time to the last time value in data$time
           wrk$idx$timeEnd <- as.POSIXct(ifelse(is.na(wrk$idx$timeEnd), data$time[length(data$time)], wrk$idx$timeEnd), origin = "1970-01-01", tz = "UTC")
           #idxAgr2 <- 0
@@ -553,6 +571,10 @@ wrap.neon.dp01.qfqm.ecse <- function(
           
           #determine the index of each measurement  
           wrk$idx <- eddy4R.base::def.idx.agr(time = data$time, PrdAgr = (PrdMeas*60), FreqLoca = 1, MethIdx = "specBgn", data = wrk$data$temp, CritTime = 60)
+          #delete row if last timeBgn and timeEnd is NA
+          wrk$idx <- wrk$idx[rowSums(is.na(wrk$idx)) != 2,]
+          #if last timeEnd is NA, replce that time to the last time value in data$time
+          wrk$idx$timeEnd <- as.POSIXct(ifelse(is.na(wrk$idx$timeEnd), data$time[length(data$time)], wrk$idx$timeEnd), origin = "1970-01-01", tz = "UTC")
           whrSamp <- wrk$idx$idxBgn[1]:wrk$idx$idxEnd[1]
           if (length (wrk$idx$idxBgn) > 1 ){
             for(ii in 2:length (wrk$idx$idxBgn)){
@@ -638,6 +660,10 @@ wrap.neon.dp01.qfqm.ecse <- function(
         if(length(which(!is.na(wrk$data$temp))) > 0){
           #determine the end time of each measurement
           wrk$idx <- eddy4R.base::def.idx.agr(time = data$time, PrdAgr = (PrdMeas*60), FreqLoca = 1, MethIdx = "specBgn", data = wrk$data$temp, CritTime = 60)
+          #delete row if last timeBgn and timeEnd is NA
+          wrk$idx <- wrk$idx[rowSums(is.na(wrk$idx)) != 2,]
+          #if last timeEnd is NA, replce that time to the last time value in data$time
+          wrk$idx$timeEnd <- as.POSIXct(ifelse(is.na(wrk$idx$timeEnd), data$time[length(data$time)], wrk$idx$timeEnd), origin = "1970-01-01", tz = "UTC")
           
           #idxAgr2 <- 0
           for (idxAgr in 1:length(wrk$idx$idxBgn)){
@@ -697,6 +723,11 @@ wrap.neon.dp01.qfqm.ecse <- function(
         if(length(which(!is.na(wrk$data$temp))) > 0){
           #   #determine the end time of each measurement  
           wrk$idx <- eddy4R.base::def.idx.agr(time = data$time, PrdAgr = (PrdMeas*60), FreqLoca = 1, MethIdx = "specBgn", data = wrk$data$temp, CritTime = 60)
+          #delete row if last timeBgn and timeEnd is NA
+          wrk$idx <- wrk$idx[rowSums(is.na(wrk$idx)) != 2,]
+          #if last timeEnd is NA, replce that time to the last time value in data$time
+          wrk$idx$timeEnd <- as.POSIXct(ifelse(is.na(wrk$idx$timeEnd), data$time[length(data$time)], wrk$idx$timeEnd), origin = "1970-01-01", tz = "UTC")
+          
           whrSamp <- wrk$idx$idxBgn[1]:wrk$idx$idxEnd[1]
           if (length (wrk$idx$idxBgn) > 1 ){
             for(ii in 2:length (wrk$idx$idxBgn)){
@@ -784,6 +815,8 @@ wrap.neon.dp01.qfqm.ecse <- function(
         if(length(which(!is.na(wrk$data$temp))) > 0){
           #determine the index of each measurement  
           wrk$idx <- eddy4R.base::def.idx.agr(time = data$time, PrdAgr = (PrdMeas*60), FreqLoca = 1, MethIdx = "specBgn", data = wrk$data$temp, CritTime = 60)
+          #delete row if last timeBgn and timeEnd is NA
+          wrk$idx <- wrk$idx[rowSums(is.na(wrk$idx)) != 2,]
           #if last timeEnd is NA, replce that time to the last time value in data$time
           wrk$idx$timeEnd <- as.POSIXct(ifelse(is.na(wrk$idx$timeEnd), data$time[length(data$time)], wrk$idx$timeEnd), origin = "1970-01-01", tz = "UTC")
           #idxAgr2 <- 0
@@ -843,6 +876,11 @@ wrap.neon.dp01.qfqm.ecse <- function(
           
           #determine the index of each measurement  
           wrk$idx <- eddy4R.base::def.idx.agr(time = data$time, PrdAgr = (PrdMeas*60), FreqLoca = 1, MethIdx = "specBgn", data = wrk$data$temp, CritTime = 60)
+          #delete row if last timeBgn and timeEnd is NA
+          wrk$idx <- wrk$idx[rowSums(is.na(wrk$idx)) != 2,]
+          #if last timeEnd is NA, replce that time to the last time value in data$time
+          wrk$idx$timeEnd <- as.POSIXct(ifelse(is.na(wrk$idx$timeEnd), data$time[length(data$time)], wrk$idx$timeEnd), origin = "1970-01-01", tz = "UTC")
+          
           whrSamp <- wrk$idx$idxBgn[1]:wrk$idx$idxEnd[1]
           if (length (wrk$idx$idxBgn) > 1 ){
             for(ii in 2:length (wrk$idx$idxBgn)){
@@ -917,6 +955,10 @@ wrap.neon.dp01.qfqm.ecse <- function(
         if(length(which(!is.na(wrk$data$temp))) > 0){
           #determine the end time of each measurement
           wrk$idx <- eddy4R.base::def.idx.agr(time = data$time, PrdAgr = (PrdMeas*60), FreqLoca = 1, MethIdx = "specEnd", crdH2oVali = TRUE, data = wrk$data$injNum, CritTime = 15)
+          #delete row if last timeBgn and timeEnd is NA
+          wrk$idx <- wrk$idx[rowSums(is.na(wrk$idx)) != 2,]
+          #if last timeEnd is NA, replce that time to the last time value in data$time
+          wrk$idx$timeEnd <- as.POSIXct(ifelse(is.na(wrk$idx$timeEnd), data$time[length(data$time)], wrk$idx$timeEnd), origin = "1970-01-01", tz = "UTC")
           
           #idxAgr2 <- 0
           for (idxAgr in 1:length(wrk$idx$idxBgn)){
@@ -973,6 +1015,11 @@ wrap.neon.dp01.qfqm.ecse <- function(
         if(length(which(!is.na(wrk$data$temp))) > 0){
           #   #determine the end time of each measurement  
           wrk$idx <- eddy4R.base::def.idx.agr(time = data$time, PrdAgr = (PrdMeas*60), FreqLoca = 1, MethIdx = "specEnd", crdH2oVali = TRUE, data = wrk$data$injNum, CritTime = 15)
+          #delete row if last timeBgn and timeEnd is NA
+          wrk$idx <- wrk$idx[rowSums(is.na(wrk$idx)) != 2,]
+          #if last timeEnd is NA, replce that time to the last time value in data$time
+          wrk$idx$timeEnd <- as.POSIXct(ifelse(is.na(wrk$idx$timeEnd), data$time[length(data$time)], wrk$idx$timeEnd), origin = "1970-01-01", tz = "UTC")
+          
           whrSamp <- wrk$idx$idxBgn[1]:wrk$idx$idxEnd[1]
           if (length (wrk$idx$idxBgn) > 1 ){
             for(ii in 2:length (wrk$idx$idxBgn)){
