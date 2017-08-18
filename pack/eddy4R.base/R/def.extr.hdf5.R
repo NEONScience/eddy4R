@@ -11,7 +11,7 @@
 #' @param FileOut is the output file nsae HDF5 written to.
 #' @param MethExtrData logical parameter that decides if data from the input file should be extracted and written to the output file.
 #' @param MethExtrAttr logical parameter that decides if attributes (metadata) from the input file should be extracted and written to the output file.
-
+#' @param dp01 A vector of class "character" containing the name of NEON dp01 which data from the input file are not extracted and written to the output file
 
 #' @return A NEON formatted HDF5 file that has parameters from the input file written to the output HDF5 file. 
 
@@ -32,7 +32,8 @@
 # changelog and author contributions / copyrights
 #   Dave Durden (2016-08-08)
 #     original creation
-
+#   Natchaya Pingintha-Durden
+#     added functionality not to include defined dp01 data
 ##############################################################################################################
 #Start of function call to extract data from one file and write to another
 ##############################################################################################################
@@ -41,7 +42,8 @@ def.extr.hdf5 <- function(
   FileIn,
   FileOut,
   MethExtrData = TRUE,
-  MethExtrAttr = TRUE
+  MethExtrAttr = TRUE,
+  dp01 = NULL
 ){
   
   if(!base::file.exists(FileIn)) {
@@ -67,6 +69,18 @@ def.extr.hdf5 <- function(
   #Combining names for grabbing datasets
   listDataName <- base::paste(listDataObj$group, listDataObj$name, sep = "/") # Combining output
   
+  #Ignoring dp0p data
+  listDataName <- listDataName[grep(pattern = "dp0p", x = listDataName, invert = TRUE)]
+  
+  #Ignoring dp01 data as define in dp01GrpName
+  if (!is.null(dp01)){
+    for (idx in dp01){
+    listDataName <- listDataName[grep(paste0("dp01", "/", "data", "/", idx), x = listDataName, invert = TRUE)] 
+    listDataName <- listDataName[grep(paste0("dp01", "/", "qfqm", "/", idx), x = listDataName, invert = TRUE)]
+    listDataName <- listDataName[grep(paste0("dp01", "/", "ucrt", "/", idx), x = listDataName, invert = TRUE)]
+    }
+  } 
+ 
   # Read data from the input file
   listData <- base::lapply(listDataName, rhdf5::h5read, file = FileIn)
   
