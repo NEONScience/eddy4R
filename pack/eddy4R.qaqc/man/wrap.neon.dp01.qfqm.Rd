@@ -6,8 +6,8 @@
 \usage{
 wrap.neon.dp01.qfqm(qfInput = list(), MethMeas = c("ecte", "ecse")[1],
   TypeMeas = c("samp", "vali")[1], RptExpd = FALSE, dp01 = c("envHut",
-  "irgaCo2", "irgaH2o", "isoCo2", "isoH2o", "soni", "soniAmrs", "tempAirLvl",
-  "tempAirTop")[1], idGas = NULL)
+  "irgaCo2", "irgaH2o", "co2Stor", "h2oStor", "isoCo2", "isoH2o", "soni",
+  "soniAmrs", "tempAirLvl", "tempAirTop")[1], idGas = NULL)
 }
 \arguments{
 \item{qfInput}{A list of data frame containing the input quality flag data that related to L1 data products are being grouped. Of class integer". [-]}

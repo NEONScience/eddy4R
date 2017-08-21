@@ -4,7 +4,8 @@
 \alias{def.extr.hdf5}
 \title{Definition function: Extract data and attributes from HDF5 input file to another HDF5 output file}
 \usage{
-def.extr.hdf5(FileIn, FileOut, MethExtrData = TRUE, MethExtrAttr = TRUE)
+def.extr.hdf5(FileIn, FileOut, MethExtrData = TRUE, MethExtrAttr = TRUE,
+  dp01 = NULL)
 }
 \arguments{
 \item{FileIn}{is the input HDF5 file (turb or stor) the data and metadata are being read from.}
@@ -14,6 +15,8 @@ def.extr.hdf5(FileIn, FileOut, MethExtrData = TRUE, MethExtrAttr = TRUE)
 \item{MethExtrData}{logical parameter that decides if data from the input file should be extracted and written to the output file.}
 
 \item{MethExtrAttr}{logical parameter that decides if attributes (metadata) from the input file should be extracted and written to the output file.}
+
+\item{dp01}{A vector of class "character" containing the name of NEON dp01 which data from the input file are not extracted and written to the output file}
 }
 \value{
 A NEON formatted HDF5 file that has parameters from the input file written to the output HDF5 file.

@@ -4,21 +4,21 @@
 \alias{wrap.neon.dp01.qfqm.ecse}
 \title{Wrapper function:  Preprocessing and calculating quality metrics, alpha and beta quality metrics, and final quality flag for the NEON eddy-covariance stroage exchange L1 data products}
 \usage{
-wrap.neon.dp01.qfqm.ecse(dp01 = c("irgaCo2", "irgaH2o", "tempAirLvl",
-  "tempAirTop", "isoCo2", "isoH2o")[1], lvl, lvlIrgaMfcSamp = NULL,
-  lvlIrgaValvLvl = NULL, lvlCrdH2oValvVali = NULL, data = list(),
+wrap.neon.dp01.qfqm.ecse(dp01 = c("co2Stor", "h2oStor", "tempAirLvl",
+  "tempAirTop", "isoCo2", "isoH2o")[1], lvl, lvlMfcSampStor = NULL,
+  valvLvl = NULL, lvlCrdH2oValvVali = NULL, data = list(),
   qfInput = list(), TypeMeas = c("samp", "vali")[1], PrdMeas, PrdAgr,
   idxTime = list())
 }
 \arguments{
 \item{\code{dp01}}{A vector of class "character" containing the name of NEON ECSE dp01 which descriptive statistics are being calculated, \cr
-c("irgaCo2", "irgaH2o", "tempAirLvl", "tempAirTop", "isoCo2", "isoH2o"). Defaults to "irgaCo2". [-]}
+c("co2Stor", "h2oStor", "tempAirLvl", "tempAirTop", "isoCo2", "isoH2o"). Defaults to "co2Stor". [-]}
 
 \item{\code{lvl}}{Measurement level of dp01 which descriptive statistics are being calculated. Of type character. [-]}
 
-\item{\code{lvlIrgaMfcSamp}}{Measurement level of irgaMfcSamp which apply to only  dp01 equal to "irgaCo2" or "irgaH2o". Defaults to NULL. Of type character. [-]}
+\item{\code{lvlMfcSampStor}}{Measurement level of mfcSampStor which apply to only  dp01 equal to "co2Stor" or "h2oStor". Defaults to NULL. Of type character. [-]}
 
-\item{\code{lvlIrgaValvLvl}}{Measurement level of irgaValvLvl which apply to only  dp01 equal to "irgaCo2" or "irgaH2o". Defaults to NULL. Of type character. [-]}
+\item{\code{valvLvl}}{Measurement level of irgaValvLvl, crdCo2ValvLvl, or crdH2oValvLvl. Defaults to NULL. Of type character. [-]}
 
 \item{\code{lvlCrdH2oValvVali}}{Measurement level of crdH2oValvVali which apply to only  dp01 equal to "isoH2o". Defaults to NULL. Of type character. [-]}
 
