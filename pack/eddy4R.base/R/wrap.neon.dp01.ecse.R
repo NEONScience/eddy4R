@@ -197,11 +197,12 @@ wrap.neon.dp01.ecse <- function(
               whrSamp <- c(whrSamp, wrk$idx$idxBgn[ii]:wrk$idx$idxEnd[ii])
             }
           }
+          #defined attributes
+          tmpAttr <- attributes(wrk$data$frt00)
           #replace frt00 data with NaN when irga got kick out to measure the new measurement level
           wrk$data$frt00 <- ifelse(wrk$data$lvlIrga == lvlIrga, wrk$data$frt00, NaN)
           wrk$data[-whrSamp, 1:5] <- NaN
-          #add attributes
-          tmpAttr <- attributes(wrk$data$frt00)
+          #added attributes
           attributes(wrk$data$frt00) <- tmpAttr
         } 
         
