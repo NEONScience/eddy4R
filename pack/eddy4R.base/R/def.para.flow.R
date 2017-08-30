@@ -20,8 +20,9 @@
 #' @param Read determine if the data are read from hdf5 dp0p input data file or other input files 
 #' @param VersDp is the data product level that will be output 
 #' @param VersEddy is the version of the eddy4R docker that is being used to perform the processing
-#' @param MethParaFlow is the method used to specify workflow parameters, "EnvVar" will grab ParaFlow parameters from environmental variable and "DfltInp" will use whatever is specified in the function call. 
-#' @param MethMeas A vector of class "character" containing the name of measurement method (eddy-covariance turbulent exchange or storage exchange), MethMeas = c("ecte", "ecse"). Defaults to "ecte". 
+#' @param MethParaFlow is the method used to specify workflow parameters, "EnvVar" will grab ParaFlow parameters from environmental variable and "DfltInp" will use whatever is specified in the function call.
+#' @param urlInpRefe A single-entry vector of class "character" containing the web address of the reference input data zip file to be downloaded.
+#' @param urlOutRefe A single-entry vector of class "character" containing the web address of the reference output data zip file to be downloaded.
 
 #' @return \code{ParaFlow} is a list returned that indicates the workflow control parameters, including \code{ParaFlow$DirFilePara},\code{ParaFlow$DirInp}, \code{ParaFlow$DirMnt}, \code{ParaFlow$DirOut}, \code{ParaFlow$DirTmp}, \code{ParaFlow$DirWrk},\code{ParaFlow$Dom}, \code{ParaFlow$FileDp0p}, \code{ParaFlow$Loc},  \code{ParaFlow$Read}, \code{ParaFlow$VersDp}, \code{ParaFlow$VersEddy}. 
 
@@ -47,6 +48,8 @@
 #     adding Deve parameter
 #   Ke Xu (2017-05-22)
 #     adding parameter MethMeas to distinguish different cases for ecte and ecse
+#   Stefan Metzger (2017-08-01)
+#     superseed parameter MethMeas with the ability to directly provide reference data urls as arguments urlInpRefe and urlOutRefe
 
 ##############################################################################################################
 #Start of function call to determine workflow parameters
@@ -67,7 +70,8 @@ def.para.flow <- function(
   VersDp  = c("001","004")[1],
   VersEddy  = "latest",
   MethParaFlow = c("DfltInp","EnvVar")[1],
-  MethMeas = c("ecte", "ecse")[1],
+  urlInpRefe,
+  urlOutRefe,
   ...
 ){
   
@@ -76,50 +80,39 @@ def.para.flow <- function(
   if(MethParaFlow == "EnvVar"){
     #Create a list with all the specified function arguments
     
-  #lapply across all specified ParaFlow variables  
+    #lapply across all specified ParaFlow variables  
     lapply(base::names(ParaFlow), function(x) {
       if(base::toupper(x) %in% base::names(base::Sys.getenv())) {
         ParaFlow[[x]] <<- Sys.getenv(base::toupper(x))
-        } else {warning(paste0("The variable ParaFlow$",x," is not specified as ENV variable"))}
-        })
+      } else {warning(paste0("The variable ParaFlow$",x," is not specified as ENV variable"))}
+    })
     
     #Format to grab one variable at a time:
     # if("DIRFILEPARA" %in% base::names(base::Sys.getenv())) {ParaFlow$DirFilePara <- Sys.getenv("DIRFILEPARA")} else {warning("The variable ParaFlow$DirFilePara is not specified as ENV variable")}
-
+    
   }
   
   # Check if the FileDp0p is specified
-    if(is.null(ParaFlow$FileDp0p)|!is.character(ParaFlow$FileDp0p)) {stop("FileDp0p must be defined and a character string.")} else {ParaFlow$FileDp0p <- base::trimws(base::unlist(base::strsplit(x = ParaFlow$FileDp0p, split = ",")))}
-   
+  if(is.null(ParaFlow$FileDp0p)|!is.character(ParaFlow$FileDp0p)) {stop("FileDp0p must be defined and a character string.")} else {ParaFlow$FileDp0p <- base::trimws(base::unlist(base::strsplit(x = ParaFlow$FileDp0p, split = ",")))}
+  
   # Check if the DirFilePara is specified, if not run gold file example, download gold file from dropbox         
-    if(is.null(ParaFlow$DirFilePara)) {
-      # input data
-      
+  if(is.null(ParaFlow$DirFilePara)) {
+    # input data
+    
       # download data
-      if(MethMeas == "ecte") eddy4R.base::def.dld.zip(Inp = list(Url = "https://www.dropbox.com/s/qlp1pyanm5rn2eq/inpRefe_20170308.zip?dl=1",
-                                                                 Dir = tempdir()))
-      
-      
-      if(MethMeas == "ecse") eddy4R.base::def.dld.zip(Inp = list(Url = "https://www.dropbox.com/s/dn3yzcuf032zh2u/inpRefe.zip?dl=1",
-                                                                 Dir = tempdir()))
-     
+      eddy4R.base::def.dld.zip(Inp = list(Url = urlInpRefe, Dir = tempdir()))
       
       # assign corresponding DirFilePara
       ParaFlow$DirFilePara <- paste0(tempdir(), "/inpRefe/", list.files(paste0(tempdir(), "/inpRefe"))[1])
-      
-      # output data
-      if(MethMeas == "ecte") eddy4R.base::def.dld.zip(Inp = list(Url = "https://www.dropbox.com/s/60s78ehk7s5j6rd/outRefe_20170612.zip?dl=1",
-                                          Dir = tempdir()))
-      
-      if(MethMeas == "ecse") eddy4R.base::def.dld.zip(Inp = list(Url = "https://www.dropbox.com/s/nsjqbzi5mcpnynm/outRefe.zip?dl=1",
-                                                                 Dir = tempdir()))
-      
-      
-    }
-    if(is.null(ParaFlow$Loc)) warning("The variable Loc is NULL") 
-    if(is.null(ParaFlow$Dom)) warning("The variable Dom is NULL") 
-  #Grab the 
+    
+    # output data
+    eddy4R.base::def.dld.zip(Inp = list(Url = urlOutRefe, Dir = tempdir()))
 
- return(ParaFlow)
+  }
+  if(is.null(ParaFlow$Loc)) warning("The variable Loc is NULL") 
+  if(is.null(ParaFlow$Dom)) warning("The variable Dom is NULL") 
+  #Grab the 
+  
+  return(ParaFlow)
   
 }
