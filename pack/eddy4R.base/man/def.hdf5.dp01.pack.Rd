@@ -4,7 +4,7 @@
 \alias{def.hdf5.dp01.pack}
 \title{Definition function: to package dp01 dp01 outputs to be written to HDF5 files}
 \usage{
-def.hdf5.dp01.pack(inpList, time, Dp01)
+def.hdf5.dp01.pack(inpList, time, Dp01, MethMeas = c("ecte", "ecse")[1])
 }
 \arguments{
 \item{inpList}{a list of dp01 computed output statistics or dp01 quality flags and quality metrics over multiple aggregations periods that need to be combined and formatted for output to HDF5.}
@@ -12,6 +12,8 @@ def.hdf5.dp01.pack(inpList, time, Dp01)
 \item{time}{a dataframe including the timeBgn and timeEnd for the aggregated periods should be included in the data to be combined.}
 
 \item{Dp01}{which data product is being packaged to be written to the HDF5 file}
+
+\item{MethMeas}{A vector of class "character" containing the name of measurement method (eddy-covariance turbulent exchange or storage exchange), MethMeas = c("ecte", "ecse"). Defaults to "ecse". [-]}
 }
 \value{
 A list of dataframes of for aggregation periods.
