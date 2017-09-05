@@ -1424,6 +1424,7 @@ if (MethMeas == "ecse") {
     
     setQf$sensCrdH2o <- data.frame("qfSensStus" = qfInput$crdH2o$qfSensStus,
                                    "qfStusN2" = qfInput$crdH2o$qfStusN2)
+    setQf$valiCrdH2o <- data.frame("qfValiH2o" = qfInput$crdH2o$qfValiH2o)
     #setQf of envHut
     setQf$envHut <- data.frame("qfRh" = qfInput$envHut$qfRh)
     
@@ -1458,9 +1459,9 @@ if (MethMeas == "ecse") {
                                           #, setQf$heatInlt
                                           ))
       
-      rpt$pres <- na.omit(data.frame(setQf$presCrdH2o, qfSensStus = setQf$sensCrdH2o$qfSensStus))
+      rpt$pres <- na.omit(data.frame(setQf$presCrdH2o, setQf$sensCrdH2o$qfSensStus))
       
-      rpt$temp <- na.omit(data.frame(setQf$tempCrdH2o, qfSensStus = setQf$sensCrdH2o$qfSensStus)) 
+      rpt$temp <- na.omit(data.frame(setQf$tempCrdH2o, setQf$sensCrdH2o$qfSensStus)) 
     }#close if statement of TypeMeas == "samp"
     
     #define qf which use only validation period
@@ -1469,23 +1470,26 @@ if (MethMeas == "ecse") {
       rpt$rtioMoleDryH2o <- na.omit(data.frame(setQf$rtioMoleDryH2o, setQf$rtioMoleWetH2o,
                                                setQf$presCrdH2o, setQf$tempCrdH2o,
                                                setQf$tempWbox,  setQf$sensCrdH2o,
-                                               setQf$envHut))
+                                               setQf$envHut, setQf$valiCrdH2o))
       
       rpt$rtioMoleWetH2o <- na.omit(data.frame(setQf$rtioMoleWetH2o, setQf$presCrdH2o, 
                                                setQf$tempCrdH2o, setQf$tempWbox,  
-                                               setQf$sensCrdH2o, setQf$envHut))
+                                               setQf$sensCrdH2o, setQf$envHut,
+                                               setQf$valiCrdH2o))
       
       rpt$dlta18OH2o <- na.omit(data.frame(setQf$dlta18OH2o, setQf$presCrdH2o, 
                                            setQf$tempCrdH2o, setQf$tempWbox,  
-                                           setQf$sensCrdH2o, setQf$envHut))
+                                           setQf$sensCrdH2o, setQf$envHut,
+                                           setQf$valiCrdH2o))
       
       rpt$dlta2HH2o <- na.omit(data.frame(setQf$dlta2HH2o, setQf$presCrdH2o, 
                                           setQf$tempCrdH2o, setQf$tempWbox,  
-                                          setQf$sensCrdH2o, setQf$envHut))
+                                          setQf$sensCrdH2o, setQf$envHut,
+                                          setQf$valiCrdH2o))
       
-      rpt$pres <- na.omit(data.frame(setQf$presCrdH2o, qfSensStus = setQf$sensCrdH2o$qfSensStus))
+      rpt$pres <- na.omit(data.frame(setQf$presCrdH2o, setQf$sensCrdH2o$qfSensStus, setQf$valiCrdH2o))
       
-      rpt$temp <- na.omit(data.frame(setQf$tempCrdH2o, qfSensStus = setQf$sensCrdH2o$qfSensStus))  
+      rpt$temp <- na.omit(data.frame(setQf$tempCrdH2o, setQf$sensCrdH2o$qfSensStus, setQf$valiCrdH2o))  
     }#close if statement of TypeMeas == "vali"
     
     #remove setQf
