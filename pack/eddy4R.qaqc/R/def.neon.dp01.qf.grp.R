@@ -792,14 +792,14 @@ if (MethMeas == "ecse") {
     #   names(qfInput$heatInlt) <- "qfHeat"}
     #external quality flags from mfcSampStor
     if (!("mfcSampStor" %in% names(qfInput)) || length(which(!is.na(qfInput$irgaStor$qfRngTemp))) == 0){
-      qfInput$mfcSampStor <- as.data.frame(matrix(-1, ncol = 13, nrow = length(qfInput$irgaStor$qfRngAsrpCo2)))
-      names(qfInput$mfcSampStor) <- c("qfRngFrt00", "qfStepFrt00", "qfPersFrt00", "qfRngFrt", "qfStepFrt", "qfPersFrt",
+      qfInput$mfcSampStor <- as.data.frame(matrix(-1, ncol = 12, nrow = length(qfInput$irgaStor$qfRngAsrpCo2)))
+      names(qfInput$mfcSampStor) <- c("qfRngFrt00", "qfStepFrt00", "qfRngFrt", "qfStepFrt", "qfPersFrt",
                                       "qfRngPresAtm", "qfStepPresAtm", "qfPersPresAtm", "qfRngTemp", "qfStepTemp", "qfPersTemp",
                                       "qfFrt00")}
     #external quality flags from mfcValiStor
     if (!("mfcValiStor" %in% names(qfInput)) || length(which(!is.na(qfInput$irgaStor$qfRngTemp))) == 0){
-      qfInput$mfcValiStor <- as.data.frame(matrix(-1, ncol = 13, nrow = length(qfInput$irgaStor$qfRngAsrpCo2)))
-      names(qfInput$mfcValiStor) <- c("qfRngFrt00", "qfStepFrt00", "qfPersFrt00", "qfRngFrt", "qfStepFrt", "qfPersFrt",
+      qfInput$mfcValiStor <- as.data.frame(matrix(-1, ncol = 12, nrow = length(qfInput$irgaStor$qfRngAsrpCo2)))
+      names(qfInput$mfcValiStor) <- c("qfRngFrt00", "qfStepFrt00", "qfRngFrt", "qfStepFrt", "qfPersFrt",
                                   "qfRngPresAtm", "qfStepPresAtm", "qfPersPresAtm", "qfRngTemp", "qfStepTemp", "qfPersTemp",
                                   "qfFrt00")}
     #replace -1 if all qf in irga are NA
@@ -856,8 +856,7 @@ if (MethMeas == "ecse") {
     # setQf$heatInlt <- data.frame("qfHeat" = qfInput$heatInlt$qfHeat)
     #external quality flags from mfcSampStor
     setQf$frt00IrgaMfcSamp <- data.frame("qfRngFrt00" = qfInput$mfcSampStor$qfRngFrt00,
-                                         "qfStepFrt00" = qfInput$mfcSampStor$qfStepFrt00,
-                                         "qfPersFrt00" = qfInput$mfcSampStor$qfPersFrt00)
+                                         "qfStepFrt00" = qfInput$mfcSampStor$qfStepFrt00)
     
     setQf$frtIrgaMfcSamp <- data.frame("qfRngFrt" = qfInput$mfcSampStor$qfRngFrt,
                                        "qfStepFrt" = qfInput$mfcSampStor$qfStepFrt,
@@ -875,8 +874,7 @@ if (MethMeas == "ecse") {
     
     #external quality flags from mfcValiStor
     setQf$frt00MfcVali <- data.frame("qfRngFrt00" = qfInput$mfcValiStor$qfRngFrt00,
-                                     "qfStepFrt00" = qfInput$mfcValiStor$qfStepFrt00,
-                                     "qfPersFrt00" = qfInput$mfcValiStor$qfPersFrt00)
+                                     "qfStepFrt00" = qfInput$mfcValiStor$qfStepFrt00)
     
     setQf$frtMfcVali <- data.frame("qfRngFrt" = qfInput$mfcValiStor$qfRngFrt,
                                    "qfStepFrt" = qfInput$mfcValiStor$qfStepFrt,
@@ -1012,8 +1010,8 @@ if (MethMeas == "ecse") {
     
     #external quality flags from mfcValiStor
     if (!("mfcValiStor" %in% names(qfInput)) || length(which(!is.na(qfInput$crdCo2$qfRngTemp))) == 0){
-      qfInput$mfcValiStor <- as.data.frame(matrix(-1, ncol = 13, nrow = length(qfInput$crdCo2$qfRngRtioMoleDryCo2)))
-      names(qfInput$mfcValiStor) <- c("qfRngFrt00", "qfStepFrt00", "qfPersFrt00", "qfRngFrt", "qfStepFrt", "qfPersFrt",
+      qfInput$mfcValiStor <- as.data.frame(matrix(-1, ncol = 12, nrow = length(qfInput$crdCo2$qfRngRtioMoleDryCo2)))
+      names(qfInput$mfcValiStor) <- c("qfRngFrt00", "qfStepFrt00", "qfRngFrt", "qfStepFrt", "qfPersFrt",
                                   "qfRngPresAtm", "qfStepPresAtm", "qfPersPresAtm", "qfRngTemp", "qfStepTemp", "qfPersTemp",
                                   "qfFrt00")}
     #replace -1 if all qf in crdCo2 are NA
@@ -1087,8 +1085,7 @@ if (MethMeas == "ecse") {
     
     #setQf from mfcValiStor
     setQf$frt00MfcVali <- data.frame("qfRngFrt00" = qfInput$mfcValiStor$qfRngFrt00, 
-                                     "qfStepFrt00" = qfInput$mfcValiStor$qfStepFrt00, 
-                                     "qfPersFrt00" = qfInput$mfcValiStor$qfPersFrt00)
+                                     "qfStepFrt00" = qfInput$mfcValiStor$qfStepFrt00)
     
     setQf$frtMfcVali <- data.frame("qfRngFrt" = qfInput$mfcValiStor$qfRngFrt,
                                    "qfStepFrt" = qfInput$mfcValiStor$qfStepFrt,
