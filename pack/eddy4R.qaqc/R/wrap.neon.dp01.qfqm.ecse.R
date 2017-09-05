@@ -947,6 +947,16 @@ wrap.neon.dp01.qfqm.ecse <- function(
       )
       #replace injNum to NaN when they are not measured at that period
       wrk$data$injNum <- ifelse(is.na(wrk$data$temp), NaN, wrk$data$injNum)
+      
+      #input the whole day qfqm
+      wrk$qfqm <- list()
+      wrk$qfqm$crdH2o <- qfInput$crdH2o[[lvl]]
+      #calculated the qfValiH2o
+      wrk$qfqm$crdH2o$qfValiH2o <- ifelse(is.na(wrk$data$injNum) | is.na(wrk$data$dlta18OH2o) | is.na(wrk$data$dlta2HH2o), -1,
+                                          ifelse((wrk$data$injNum %in% c(1, 2, 3, 7, 8, 9, 13, 14, 15)) | 
+                                                   (wrk$data$injNum %in% c(4, 5, 6, 10, 11, 12, 16, 17, 18) & (wrk$data$dlta18OH2o < (wrk$data$dlta18OH2oRefe + 0.3*wrk$data$dlta18OH2oRefe) | wrk$data$dlta18OH2o > (wrk$data$dlta18OH2oRefe - 0.3*wrk$data$dlta18OH2oRefe))) |
+                                                   (wrk$data$injNum %in% c(4, 5, 6, 10, 11, 12, 16, 17, 18) & (wrk$data$dlta2HH2o < (wrk$data$dlta2HH2oRefe + 0.3*wrk$data$dlta2HH2oRefe) | wrk$data$dlta2HH2o > (wrk$data$dlta2HH2oRefe - 0.3*wrk$data$dlta2HH2oRefe))), 1, 0))
+      
       if (PrdMeas == PrdAgr) {        
         #idxLvLPrdAgr <- paste0(lvl, "_", sprintf("%02d", PrdAgr), "m")
         #rpt[[dp01]][[idxLvLPrdAgr]] <- list()
