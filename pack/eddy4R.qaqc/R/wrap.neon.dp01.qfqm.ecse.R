@@ -951,11 +951,13 @@ wrap.neon.dp01.qfqm.ecse <- function(
       #input the whole day qfqm
       wrk$qfqm <- list()
       wrk$qfqm$crdH2o <- qfInput$crdH2o[[lvl]]
-      #calculated the qfValiH2o
+      #calculated the qfValiH2o: injNum 1, 2, 3, 7, 8, 9, 13, 14, and 15 set to 1
+      #threshold to determine qfValiH2o (default to reference water +/- 30% of reference water)
+      Thsh <- 0.3
       wrk$qfqm$crdH2o$qfValiH2o <- ifelse(is.na(wrk$data$injNum) | is.na(wrk$data$dlta18OH2o) | is.na(wrk$data$dlta2HH2o), -1,
                                           ifelse((wrk$data$injNum %in% c(1, 2, 3, 7, 8, 9, 13, 14, 15)) | 
-                                                   (wrk$data$injNum %in% c(4, 5, 6, 10, 11, 12, 16, 17, 18) & (wrk$data$dlta18OH2o < (wrk$data$dlta18OH2oRefe + 0.3*wrk$data$dlta18OH2oRefe) | wrk$data$dlta18OH2o > (wrk$data$dlta18OH2oRefe - 0.3*wrk$data$dlta18OH2oRefe))) |
-                                                   (wrk$data$injNum %in% c(4, 5, 6, 10, 11, 12, 16, 17, 18) & (wrk$data$dlta2HH2o < (wrk$data$dlta2HH2oRefe + 0.3*wrk$data$dlta2HH2oRefe) | wrk$data$dlta2HH2o > (wrk$data$dlta2HH2oRefe - 0.3*wrk$data$dlta2HH2oRefe))), 1, 0))
+                                                   (wrk$data$injNum %in% c(4, 5, 6, 10, 11, 12, 16, 17, 18) & (wrk$data$dlta18OH2o < (wrk$data$dlta18OH2oRefe + Thsh*wrk$data$dlta18OH2oRefe) | wrk$data$dlta18OH2o > (wrk$data$dlta18OH2oRefe - Thsh*wrk$data$dlta18OH2oRefe))) |
+                                                   (wrk$data$injNum %in% c(4, 5, 6, 10, 11, 12, 16, 17, 18) & (wrk$data$dlta2HH2o < (wrk$data$dlta2HH2oRefe + Thsh*wrk$data$dlta2HH2oRefe) | wrk$data$dlta2HH2o > (wrk$data$dlta2HH2oRefe - Thsh*wrk$data$dlta2HH2oRefe))), 1, 0))
       
       if (PrdMeas == PrdAgr) {        
         #idxLvLPrdAgr <- paste0(lvl, "_", sprintf("%02d", PrdAgr), "m")
