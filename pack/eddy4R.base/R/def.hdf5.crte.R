@@ -171,7 +171,7 @@ def.hdf5.crte <- function(
   #              "irgaPresValiRegOut","irgaPump","irgaSndLeakHeat",
   #              "irgaSndValiHut","irgaSndValiNema",)
   #The DP level, the data product ID and the Rev number
-  grpListDp0p <- base::paste(grpList, "_001", sep = "")
+  grpListDp0p <- base::paste(grpListDp0p, "_001", sep = "")
   
   #Creating level 0p file structures
   lapply(grpListDp0p, function(x) rhdf5::H5Gcreate(idDataLvlDp0p, x))
