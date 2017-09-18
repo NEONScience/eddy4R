@@ -111,10 +111,10 @@ if(MethDp04 == TRUE){
   for(idxDp04 in names(inpList$dp04$data)){
     #Adding time to output dataframe
     rptDp04 <-  cbind(timeBgn = outList$data$soni$veloXaxsErth$timeBgn, timeEnd = outList$data$soni$veloXaxsErth$timeEnd, inpList$dp04$data[[idxDp04]]$turb, stringsAsFactors = FALSE)
-  }
+  
   
   #Writing unit attributes to each variable to the dataframe level
-  attributes(rptDp04)$unit <- sapply(names(inpList$dp04$data[[idxDp04]]$turb), function(x) attributes(inpList$dp04$data[[idxDp04]]$turb)$unit)
+  attributes(rptDp04)$unit <- sapply(names(inpList$dp04$data[[idxDp04]]$turb), function(x) attributes(inpList$dp04$data[[idxDp04]]$turb[[x]])$unit)
 
   #Open connection to dp04 data level
   idDataDp04 <- rhdf5::H5Gopen(fid,paste0("/", SiteLoca, "/dp04/data/",idxDp04))
@@ -123,7 +123,7 @@ if(MethDp04 == TRUE){
   rhdf5::h5writeDataset.data.frame(obj = rptDp04, h5loc = idDataDp04, name = "turb", DataFrameAsCompound = TRUE)
   
   #Output the attributes
-  rhdf5::h5writeAttribute(attributes(inpList$dp04$data[[idxDp04]]$turb)$unit, h5obj = idDataDp04, name = "unit")                                        
+  rhdf5::h5writeAttribute(attributes(rptDp04)$unit, h5obj = idDataDp04, name = "unit")                                        
  
   rhdf5::H5close()                                           
 }                                          
