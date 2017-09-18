@@ -123,7 +123,7 @@ if(MethDp04 == TRUE){
   rhdf5::h5writeDataset.data.frame(obj = rptDp04, h5loc = idDataDp04, name = "turb", DataFrameAsCompound = TRUE)
   
   #Output the attributes
-  rhdf5::h5writeAttribute(attributes(rptDp04)$unit, h5obj = idDataDp04, name = "unit")                                        
+  rhdf5::h5writeAttribute(attributes(rptDp04)$unit, h5obj = idDataDp04, name = "unit")        }                                
  
   rhdf5::H5close()                                           
 }                                          
