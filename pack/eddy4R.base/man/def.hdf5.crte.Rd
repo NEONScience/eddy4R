@@ -5,7 +5,8 @@
 \title{Definition function: Create the ECTE HDF5 file structure}
 \usage{
 def.hdf5.crte(Date, Site = "SERC", LevlTowr, DirOut, Dom = Dom,
-  MethExpd = TRUE, fileNameReadMe = NULL, fileNameObjDesc = NULL)
+  MethExpd = TRUE, MethDp04 = FALSE, fileNameReadMe = NULL,
+  fileNameObjDesc = NULL)
 }
 \arguments{
 \item{Date}{is the date for the output file being generated.}
@@ -16,9 +17,11 @@ def.hdf5.crte(Date, Site = "SERC", LevlTowr, DirOut, Dom = Dom,
 
 \item{DirOut}{is the output directory where the file being generated is stored.}
 
-\item{Dom}{is the NEON domain}
+\item{Dom}{is the NEON domain.}
 
-\item{MethExpd}{logical indicating if the output should be expanded or basic}
+\item{MethExpd}{logical indicating if the output should be expanded or basic.}
+
+\item{MethDp04}{logical indicating if ECTE dp04 HDF5 folder structure should be included.}
 
 \item{fileNameReadMe}{character indicating the filename incl. absolute path to the ReadMe file for inclusion in the output HDF5 file. Defaults to \code{NULL}, which downloads the readme file from a web location.}
 
