@@ -109,6 +109,7 @@ if(MethDp04 == TRUE){
   fid <- rhdf5::H5Fopen(FileOut)
 
   for(idxDp04 in names(inpList$dp04$data)){
+    #idxDp04 <- names(inpList$dp04$data)[1]
     #Adding time to output dataframe
     rptDp04 <-  cbind(timeBgn = outList$data$soni$veloXaxsErth$timeBgn, timeEnd = outList$data$soni$veloXaxsErth$timeEnd, inpList$dp04$data[[idxDp04]]$turb, stringsAsFactors = FALSE)
   
@@ -123,7 +124,7 @@ if(MethDp04 == TRUE){
   rhdf5::h5writeDataset.data.frame(obj = rptDp04, h5loc = idDataDp04, name = "turb", DataFrameAsCompound = TRUE)
   
   #Connection to dataset
-  idDataDp04Df <- rhdf5::H5Gopen(idDataDp04, "turb")
+  idDataDp04Df <- rhdf5::H5Dopen(idDataDp04, "turb")
   #Output the attributes
   rhdf5::h5writeAttribute(attributes(rptDp04)$unit, h5obj = idDataDp04Df, name = "unit")        }                                
  
