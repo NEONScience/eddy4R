@@ -209,7 +209,7 @@ def.hdf5.crte <- function(
     idUcrtLvlDp04 <- rhdf5::H5Gcreate(idDp04,"ucrt")  
     
     #DPs to be used to create levels
-    grpListDp04 <- c("fluxTemp", "fluxMome", "fluxH2o", "fluxCo2", "foot")
+    grpListDp04 <- c("fluxCo2", "fluxH2o", "fluxMome", "fluxTemp", "foot")
     #Create dp01 data product levels in data
     lapply(grpListDp04, function(x) rhdf5::H5Gcreate(idDataLvlDp04, x))
     #Create dp01 data product levels in qfqm
