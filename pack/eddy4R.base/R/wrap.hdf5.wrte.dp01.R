@@ -120,7 +120,7 @@ if(MethDp04 == TRUE){
   idDataDp04 <- rhdf5::H5Gopen(fid,paste0("/", SiteLoca, "/dp04/data/",idxDp04))
   
   #Writing flux data to output HDF5 file
-  rhdf5::h5writeDataset.data.frame(obj = rptDp04, h5loc = idDataDp04, name = "turb", DataFrameAsCompound = TRUE))
+  rhdf5::h5writeDataset.data.frame(obj = rptDp04, h5loc = idDataDp04, name = "turb", DataFrameAsCompound = TRUE)
   
   #Output the attributes
   rhdf5::h5writeAttribute(attributes(inpList$dp04$data[[idxDp04]]$turb)$unit, h5obj = idDataDp04, name = "unit")                                        
