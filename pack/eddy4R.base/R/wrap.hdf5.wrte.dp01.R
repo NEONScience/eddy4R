@@ -124,7 +124,8 @@ if(MethDp04 == TRUE){
   
   #Output the attributes
   rhdf5::h5writeAttribute(attributes(inpList$dp04$data[[idxDp04]]$turb)$unit, h5obj = idDataDp04, name = "unit")                                        
-                                          
+ 
+  rhdf5::H5close()                                           
 }                                          
 #Writing metadata from input dp0p file to output dp01 file
 eddy4R.base::def.para.hdf5.dp01(FileIn = FileIn, FileOut = FileOut)
