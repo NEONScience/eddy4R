@@ -122,8 +122,10 @@ if(MethDp04 == TRUE){
   #Writing flux data to output HDF5 file
   rhdf5::h5writeDataset.data.frame(obj = rptDp04, h5loc = idDataDp04, name = "turb", DataFrameAsCompound = TRUE)
   
+  #Connection to dataset
+  idDataDp04Df <- rhdf5::H5Gopen(idDataDp04, "turb")
   #Output the attributes
-  rhdf5::h5writeAttribute(attributes(rptDp04)$unit, h5obj = idDataDp04, name = "unit")        }                                
+  rhdf5::h5writeAttribute(attributes(rptDp04)$unit, h5obj = idDataDp04Df, name = "unit")        }                                
  
   rhdf5::H5close()                                           
 }                                          
