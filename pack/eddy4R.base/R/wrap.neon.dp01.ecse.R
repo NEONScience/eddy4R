@@ -48,6 +48,8 @@
 #     generate wrapper function
 #   Natchaya Pingintha-Durden (2017-08-01)
 #     added unit attributes
+#   Natchaya Pingintha-Durden (2017-09-19)
+#     added envHut data
 ##############################################################################################
 wrap.neon.dp01.ecse <- function(
   dp01 = c("co2Stor", "h2oStor", "tempAirLvl", "tempAirTop", "isoCo2", "isoH2o")[1],
@@ -101,13 +103,17 @@ wrap.neon.dp01.ecse <- function(
       
       if(dp01 == "h2oStor"){
         wrk$data <- data.frame(stringsAsFactors = FALSE,
-                               "frt00" = data$mfcSampStor[[lvlMfcSampStor]][["frt00"]],
+                               "frt00" = data$mfcSampStor[[lvlMfcSampStor]]$frt00,
                                #wrk$data$mfcSampStor[[paste0(Para$Flow$LevlTowr$mfcSampStor, "_", sprintf("%02d", idxPrdAgr), "m")]]$frt00,
                                "pres" = data$irgaStor[[lvl]]$pres,
+                               "presEnvHut" = data$envHut[[lvlEnvHut]]$pres,
+                               "rhEnvHut" = data$envHut[[lvlEnvHut]]$rh,
                                "rtioMoleDryH2o" = data$irgaStor[[lvl]]$rtioMoleDryH2o,
                                "rtioMoleWetH2o" = data$irgaStor[[lvl]]$rtioMoleWetH2o,
+                               "rtioMoleWetH2oEnvHut" = data$envHut[[lvlEnvHut]]$rtioMoleWetH2o,
                                "temp" = data$irgaStor[[lvl]]$temp,
-                               "lvlIrga" = data$irgaValvLvl[[lvlValv]][["lvlIrga"]]
+                               "tempEnvHut" = data$envHut[[lvlEnvHut]]$temp,
+                               "lvlIrga" = data$irgaValvLvl[[lvlValv]]$lvlIrga
                                
         )
       }
@@ -135,6 +141,10 @@ wrap.neon.dp01.ecse <- function(
             wrk$inpMask$data <- wrk$data[wrk$idx$idxBgn[idxAgr]:wrk$idx$idxEnd[idxAgr],]  
             #replace frt00 data with NaN when irga got kick out to measure the new measurement level
             wrk$inpMask$data$frt00 <- ifelse(wrk$inpMask$data$lvlIrga == lvlIrga, wrk$inpMask$data$frt00, NaN)
+            wrk$inpMask$data$presEnvHut <- ifelse(wrk$inpMask$data$lvlIrga == lvlIrga, wrk$inpMask$data$presEnvHut, NaN)
+            wrk$inpMask$data$rhEnvHut <- ifelse(wrk$inpMask$data$lvlIrga == lvlIrga, wrk$inpMask$data$rhEnvHut, NaN)
+            wrk$inpMask$data$rtioMoleWetH2oEnvHut <- ifelse(wrk$inpMask$data$lvlIrga == lvlIrga, wrk$inpMask$data$rtioMoleWetH2oEnvHut, NaN)
+            wrk$inpMask$data$tempEnvHut <- ifelse(wrk$inpMask$data$lvlIrga == lvlIrga, wrk$inpMask$data$tempEnvHut, NaN)
             #get rid of lvlIrga
             wrk$inpMask$data <- wrk$inpMask$data[,-which(names(wrk$inpMask$data) == "lvlIrga")]
             
@@ -203,13 +213,21 @@ wrap.neon.dp01.ecse <- function(
               whrSamp <- c(whrSamp, wrk$idx$idxBgn[ii]:wrk$idx$idxEnd[ii])
             }
           }
-          #defined attributes
-          tmpAttr <- attributes(wrk$data$frt00)
-          #replace frt00 data with NaN when irga got kick out to measure the new measurement level
-          wrk$data$frt00 <- ifelse(wrk$data$lvlIrga == lvlIrga, wrk$data$frt00, NaN)
+          
+          tmpAttr <- list()
+          for (idxData in c("frt00", "presEnvHut", "rhEnvHut", "rtioMoleWetH2oEnvHut", "tempEnvHut")){
+            #defined attributes 
+            tmpAttr$idxData <- attributes(wrk$data$idxData)
+            #replace idxData data with NaN when irga got kick out to measure the new measurement level
+            wrk$data$idxData <- ifelse(wrk$data$lvlIrga == lvlIrga, wrk$data$idxData, NaN)
+          }
+        
           wrk$data[-whrSamp, 1:5] <- NaN
           #added attributes
-          attributes(wrk$data$frt00) <- tmpAttr
+          for (idxData in c("frt00", "presEnvHut", "rhEnvHut", "rtioMoleWetH2oEnvHut", "tempEnvHut")){
+            attributes(wrk$data$idxData) <- tmpAttr$idxData
+          }
+          
         } 
         
         
