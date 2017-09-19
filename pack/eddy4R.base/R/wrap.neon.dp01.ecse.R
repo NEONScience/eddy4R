@@ -552,7 +552,7 @@ wrap.neon.dp01.ecse <- function(
             wrk$inpMask$data$rtioMoleWetH2oEnvHut <- ifelse(wrk$inpMask$data$lvlCrdCo2 == lvlCrdCo2, wrk$inpMask$data$rtioMoleWetH2oEnvHut, NaN)
             wrk$inpMask$data$tempEnvHut <- ifelse(wrk$inpMask$data$lvlCrdCo2 == lvlCrdCo2, wrk$inpMask$data$tempEnvHut, NaN)
             
-            #get rid of lvlIrga
+            #get rid of lvlCrdCo2
             wrk$inpMask$data <- wrk$inpMask$data[,-which(names(wrk$inpMask$data) == "lvlCrdCo2")]
             
             #dp01 processing
@@ -644,7 +644,7 @@ wrap.neon.dp01.ecse <- function(
           idxLvLPrdAgr <- paste0(lvl, "_", sprintf("%02d", PrdAgr), "m")
           
           wrk$inpMask$data <- wrk$data[idxTime[[paste0(PrdAgr, "min")]]$Bgn[idxAgr]:idxTime[[paste0(PrdAgr, "min")]]$End[idxAgr],]
-          #get rid of lvlIrga
+          #get rid of lvlCrdCo2
           wrk$inpMask$data <- wrk$inpMask$data[,-which(names(wrk$inpMask$data) == "lvlCrdCo2")]
           
           #call wrap.neon.dp01.R to calculate descriptive statistics 
@@ -865,7 +865,7 @@ wrap.neon.dp01.ecse <- function(
                              "rtioMoleWetH2oEnvHut" = data$envHut[[lvlEnvHut]]$rtioMoleWetH2o,
                              "temp" = data$crdH2o[[lvl]]$temp,
                              "tempEnvHut" = data$envHut[[lvlEnvHut]]$temp,
-                             "lvlCrdH2o" = data$crdH2oValvLvl[[valvLvl]]$lvlCrdH2o
+                             "lvlCrdH2o" = data$crdH2oValvLvl[[lvlValv]]$lvlCrdH2o
       )
       
       if (PrdMeas == PrdAgr) {
@@ -893,7 +893,7 @@ wrap.neon.dp01.ecse <- function(
             wrk$inpMask$data$rhEnvHut <- ifelse(wrk$inpMask$data$lvlCrdH2o == lvlCrdH2o, wrk$inpMask$data$rhEnvHut, NaN)
             wrk$inpMask$data$rtioMoleWetH2oEnvHut <- ifelse(wrk$inpMask$data$lvlCrdH2o == lvlCrdH2o, wrk$inpMask$data$rtioMoleWetH2oEnvHut, NaN)
             wrk$inpMask$data$tempEnvHut <- ifelse(wrk$inpMask$data$lvlCrdH2o == lvlCrdH2o, wrk$inpMask$data$tempEnvHut, NaN)
-            #get rid of lvlIrga
+            #get rid of lvlCrdH2o
             wrk$inpMask$data <- wrk$inpMask$data[,-which(names(wrk$inpMask$data) == "lvlCrdH2o")]
             
             #dp01 processing
@@ -961,7 +961,7 @@ wrap.neon.dp01.ecse <- function(
             #defined attributes 
             tmpAttr[[idxData]] <- attributes(wrk$data[[idxData]])
             #replace idxData data with NaN when irga got kick out to measure the new measurement level
-            wrk$data[[idxData]] <- ifelse(wrk$data$lvlIrga == lvlIrga, wrk$data[[idxData]], NaN)
+            wrk$data[[idxData]] <- ifelse(wrk$data$lvlCrdH2o == lvlCrdH2o, wrk$data[[idxData]], NaN)
           }
           
           wrk$data[-whrSamp, 1:10] <- NaN
