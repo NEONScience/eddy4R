@@ -217,15 +217,15 @@ wrap.neon.dp01.ecse <- function(
           tmpAttr <- list()
           for (idxData in c("frt00", "presEnvHut", "rhEnvHut", "rtioMoleWetH2oEnvHut", "tempEnvHut")){
             #defined attributes 
-            tmpAttr$idxData <- attributes(wrk$data$idxData)
+            tmpAttr[[idxData]] <- attributes(wrk$data[[idxData]])
             #replace idxData data with NaN when irga got kick out to measure the new measurement level
-            wrk$data$idxData <- ifelse(wrk$data$lvlIrga == lvlIrga, wrk$data$idxData, NaN)
+            wrk$data[[idxData]] <- ifelse(wrk$data$lvlIrga == lvlIrga, wrk$data[[idxData]], NaN)
           }
         
           wrk$data[-whrSamp, 1:5] <- NaN
           #added attributes
           for (idxData in c("frt00", "presEnvHut", "rhEnvHut", "rtioMoleWetH2oEnvHut", "tempEnvHut")){
-            attributes(wrk$data$idxData) <- tmpAttr$idxData
+            attributes(wrk$data[[idxData]]) <- tmpAttr[[idxData]]
           }
           
         } 
