@@ -287,7 +287,7 @@ wrap.neon.dp01.ecse <- function(
                                "rtioMoleWetCo2" = data$irgaStor[[lvl]]$rtioMoleWetCo2,
                                "rtioMoleWetH2oEnvHut" = data$envHut[[lvlEnvHut]]$rtioMoleWetH2o,
                                "temp" = data$irgaStor[[lvl]]$temp,
-                               "tempEnvHut" = data$envHut[[lvlEnvHut]]$temp,
+                               "tempEnvHut" = data$envHut[[lvlEnvHut]]$temp
                                #data$tempAirLvl$`000_010_01m`$temp
                                
         )
@@ -295,7 +295,7 @@ wrap.neon.dp01.ecse <- function(
       
       if(dp01 == "h2oStor"){
         wrk$data <- data.frame(stringsAsFactors = FALSE,
-                               "frt00" = data$mfcSampStor[[lvlMfcSampStor]][["frt00"]],
+                               "frt00" = data$mfcSampStor[[lvlMfcSampStor]]$frt00,
                                #wrk$data$mfcSampStor[[paste0(Para$Flow$LevlTowr$mfcSampStor, "_", sprintf("%02d", PrdAgr), "m")]]$frt00,
                                "pres" = data$irgaStor[[lvl]]$pres,
                                "presEnvHut" = data$envHut[[lvlEnvHut]]$pres,
@@ -304,7 +304,7 @@ wrap.neon.dp01.ecse <- function(
                                "rtioMoleWetH2o" = data$irgaStor[[lvl]]$rtioMoleWetH2o,
                                "rtioMoleWetH2oEnvHut" = data$envHut[[lvlEnvHut]]$rtioMoleWetH2o,
                                "temp" = data$irgaStor[[lvl]]$temp,
-                               "tempEnvHut" = data$envHut[[lvlEnvHut]]$temp,
+                               "tempEnvHut" = data$envHut[[lvlEnvHut]]$temp
                                #data$tempAirLvl$`000_010_01m`$temp
                                
         )
