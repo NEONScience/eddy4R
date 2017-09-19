@@ -277,13 +277,17 @@ wrap.neon.dp01.ecse <- function(
     if (TypeMeas %in% "vali"){
       if(dp01 == "co2Stor"){
         wrk$data <- data.frame(stringsAsFactors = FALSE,
-                               "frt00" = data$mfcSampStor[[lvlMfcSampStor]][["frt00"]],
+                               "frt00" = data$mfcSampStor[[lvlMfcSampStor]]$frt00,
                                #wrk$data$mfcSampStor[[paste0(Para$Flow$LevlTowr$mfcSampStor, "_", sprintf("%02d", PrdAgr), "m")]]$frt00,
                                "pres" = data$irgaStor[[lvl]]$pres,
+                               "presEnvHut" = data$envHut[[lvlEnvHut]]$pres,
+                               "rhEnvHut" = data$envHut[[lvlEnvHut]]$rh,
                                "rtioMoleDryCo2" = data$irgaStor[[lvl]]$rtioMoleDryCo2,
                                "rtioMoleDryCo2Refe" = data$irgaStor[[lvl]]$rtioMoleDryCo2Refe,
                                "rtioMoleWetCo2" = data$irgaStor[[lvl]]$rtioMoleWetCo2,
-                               "temp" = data$irgaStor[[lvl]]$temp
+                               "rtioMoleWetH2oEnvHut" = data$envHut[[lvlEnvHut]]$rtioMoleWetH2o,
+                               "temp" = data$irgaStor[[lvl]]$temp,
+                               "tempEnvHut" = data$envHut[[lvlEnvHut]]$temp,
                                #data$tempAirLvl$`000_010_01m`$temp
                                
         )
@@ -294,9 +298,13 @@ wrap.neon.dp01.ecse <- function(
                                "frt00" = data$mfcSampStor[[lvlMfcSampStor]][["frt00"]],
                                #wrk$data$mfcSampStor[[paste0(Para$Flow$LevlTowr$mfcSampStor, "_", sprintf("%02d", PrdAgr), "m")]]$frt00,
                                "pres" = data$irgaStor[[lvl]]$pres,
+                               "presEnvHut" = data$envHut[[lvlEnvHut]]$pres,
+                               "rhEnvHut" = data$envHut[[lvlEnvHut]]$rh,
                                "rtioMoleDryH2o" = data$irgaStor[[lvl]]$rtioMoleDryH2o,
                                "rtioMoleWetH2o" = data$irgaStor[[lvl]]$rtioMoleWetH2o,
-                               "temp" = data$irgaStor[[lvl]]$temp
+                               "rtioMoleWetH2oEnvHut" = data$envHut[[lvlEnvHut]]$rtioMoleWetH2o,
+                               "temp" = data$irgaStor[[lvl]]$temp,
+                               "tempEnvHut" = data$envHut[[lvlEnvHut]]$temp,
                                #data$tempAirLvl$`000_010_01m`$temp
                                
         )
