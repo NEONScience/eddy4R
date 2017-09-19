@@ -11,7 +11,8 @@
 #' c("co2Stor", "h2oStor", "tempAirLvl", "tempAirTop", "isoCo2", "isoH2o"). Defaults to "co2Stor". [-] 
 #' @param \code{lvl}  Measurement level of dp01 which descriptive statistics are being calculated. Of type character. [-]
 #' @param \code{lvlMfcSampStor} Measurement level of mfcSampStor which apply to only  dp01 equal to "co2Stor" or "h2oStor". Defaults to NULL. Of type character. [-]
-#' @param \code{valvLvl} Measurement level of irgaValvLvl, crdCo2ValvLvl, or crdH2oValvLvl. Defaults to NULL. Of type character. [-]
+#' @param \code{lvlEnvHut} Measurement level of envHut. Defaults to NULL. Of type character. [-]
+#' @param \code{lvlValv} Measurement level of irgaValvLvl, crdCo2ValvLvl, or crdH2oValvLvl. Defaults to NULL. Of type character. [-]
 #' @param \code{lvlCrdH2oValvVali} Measurement level of crdH2oValvVali which apply to only  dp01 equal to "isoH2o". Defaults to NULL. Of type character. [-]
 #' @param \code{data} A list of data frame containing the input dp0p data that related to dp01 which qfqm are being calculated. Of class integer". [User defined] 
 #' @param \code{qfInput} A list of data frame containing the input quality flag data that related to dp01 are being grouped. Of class integer". [NA] 
@@ -44,12 +45,15 @@
 # changelog and author contributions / copyrights 
 #   Natchaya Pingintha-Durden (2017-07-28)
 #     original creation
+#   Natchaya Pingintha-Durden (2017-09-19)
+#     added envHut data
 ##############################################################################################
 wrap.neon.dp01.qfqm.ecse <- function(
   dp01 = c("co2Stor", "h2oStor", "tempAirLvl", "tempAirTop", "isoCo2", "isoH2o")[1],
   lvl,
   lvlMfcSampStor = NULL,
-  valvLvl = NULL,
+  lvlEnvHut = NULL,
+  lvlValv = NULL,
   lvlCrdH2oValvVali = NULL,
   data = list(),
   qfInput = list(),
@@ -80,26 +84,26 @@ wrap.neon.dp01.qfqm.ecse <- function(
       #input the whole day data
       if(dp01 == "co2Stor"){
         wrk$data <- data.frame(stringsAsFactors = FALSE,
-                               "frt00" = data$mfcSampStor[[lvlMfcSampStor]][["frt00"]],
+                               "frt00" = data$mfcSampStor[[lvlMfcSampStor]]$frt00,
                                #wrk$data$mfcSampStor[[paste0(Para$Flow$LevlTowr$mfcSampStor, "_", sprintf("%02d", idxPrdAgr), "m")]]$frt00,
                                "pres" = data$irgaStor[[lvl]]$pres,
                                "rtioMoleDryCo2" = data$irgaStor[[lvl]]$rtioMoleDryCo2,
                                "rtioMoleWetCo2" = data$irgaStor[[lvl]]$rtioMoleWetCo2,
                                "temp" = data$irgaStor[[lvl]]$temp,
-                               "lvlIrga" = data$irgaValvLvl[[valvLvl]][["lvlIrga"]]
+                               "lvlIrga" = data$irgaValvLvl[[lvlValv]]$lvlIrga
                                
         )
       }
       
       if(dp01 == "h2oStor"){
         wrk$data <- data.frame(stringsAsFactors = FALSE,
-                               "frt00" = data$mfcSampStor[[lvlMfcSampStor]][["frt00"]],
+                               "frt00" = data$mfcSampStor[[lvlMfcSampStor]]$frt00,
                                #wrk$data$mfcSampStor[[paste0(Para$Flow$LevlTowr$mfcSampStor, "_", sprintf("%02d", idxPrdAgr), "m")]]$frt00,
                                "pres" = data$irgaStor[[lvl]]$pres,
                                "rtioMoleDryH2o" = data$irgaStor[[lvl]]$rtioMoleDryH2o,
                                "rtioMoleWetH2o" = data$irgaStor[[lvl]]$rtioMoleWetH2o,
                                "temp" = data$irgaStor[[lvl]]$temp,
-                               "lvlIrga" = data$irgaValvLvl[[valvLvl]][["lvlIrga"]]
+                               "lvlIrga" = data$irgaValvLvl[[lvlValv]]$lvlIrga
                                
         )
       }
@@ -255,7 +259,7 @@ wrap.neon.dp01.qfqm.ecse <- function(
     if (TypeMeas %in% "vali"){
       if(dp01 == "co2Stor"){
         wrk$data <- data.frame(stringsAsFactors = FALSE,
-                               "frt00" = data$mfcSampStor[[lvlMfcSampStor]][["frt00"]],
+                               "frt00" = data$mfcSampStor[[lvlMfcSampStor]]$frt00,
                                #wrk$data$mfcSampStor[[paste0(Para$Flow$LevlTowr$mfcSampStor, "_", sprintf("%02d", PrdAgr), "m")]]$frt00,
                                "pres" = data$irgaStor[[lvl]]$pres,
                                "rtioMoleDryCo2" = data$irgaStor[[lvl]]$rtioMoleDryCo2,
@@ -269,7 +273,7 @@ wrap.neon.dp01.qfqm.ecse <- function(
       
       if(dp01 == "h2oStor"){
         wrk$data <- data.frame(stringsAsFactors = FALSE,
-                               "frt00" = data$mfcSampStor[[lvlMfcSampStor]][["frt00"]],
+                               "frt00" = data$mfcSampStor[[lvlMfcSampStor]]$frt00,
                                #wrk$data$mfcSampStor[[paste0(Para$Flow$LevlTowr$mfcSampStor, "_", sprintf("%02d", PrdAgr), "m")]]$frt00,
                                "pres" = data$irgaStor[[lvl]]$pres,
                                "rtioMoleDryH2o" = data$irgaStor[[lvl]]$rtioMoleDryH2o,
@@ -488,7 +492,7 @@ wrap.neon.dp01.qfqm.ecse <- function(
                              "temp" = data$crdCo2[[lvl]]$temp,
                              "pres" = data$crdCo2[[lvl]]$pres,
                              "idGas" = data$crdCo2[[lvl]]$idGas,
-                             "lvlCrdCo2" = data$crdCo2ValvLvl[[valvLvl]][["lvlCrdCo2"]]
+                             "lvlCrdCo2" = data$crdCo2ValvLvl[[lvlValv]]$lvlCrdCo2
                              
       )
       
@@ -797,7 +801,7 @@ wrap.neon.dp01.qfqm.ecse <- function(
                              "dlta2HH2o" = data$crdH2o[[lvl]]$dlta2HH2o,
                              "temp" = data$crdH2o[[lvl]]$temp,
                              "pres" = data$crdH2o[[lvl]]$pres,
-                             "lvlCrdH2o" = data$crdH2oValvLvl[[valvLvl]][["lvlCrdH2o"]]
+                             "lvlCrdH2o" = data$crdH2oValvLvl[[lvlValv]]$lvlCrdH2o
                              
       )
       
