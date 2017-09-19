@@ -274,10 +274,14 @@ wrap.neon.dp01.qfqm.ecse <- function(
                                "frt00" = data$mfcSampStor[[lvlMfcSampStor]]$frt00,
                                #wrk$data$mfcSampStor[[paste0(Para$Flow$LevlTowr$mfcSampStor, "_", sprintf("%02d", PrdAgr), "m")]]$frt00,
                                "pres" = data$irgaStor[[lvl]]$pres,
+                               "presEnvHut" = data$envHut[[lvlEnvHut]]$pres,
+                               "rhEnvHut" = data$envHut[[lvlEnvHut]]$rh,
                                "rtioMoleDryCo2" = data$irgaStor[[lvl]]$rtioMoleDryCo2,
                                "rtioMoleDryCo2Refe" = data$irgaStor[[lvl]]$rtioMoleDryCo2Refe,
                                "rtioMoleWetCo2" = data$irgaStor[[lvl]]$rtioMoleWetCo2,
-                               "temp" = data$irgaStor[[lvl]]$temp
+                               "rtioMoleWetH2oEnvHut" = data$envHut[[lvlEnvHut]]$rtioMoleWetH2o,
+                               "temp" = data$irgaStor[[lvl]]$temp,
+                               "tempEnvHut" = data$envHut[[lvlEnvHut]]$temp
                                #data$tempAirLvl$`000_010_01m`$temp
                                
         )
@@ -288,9 +292,13 @@ wrap.neon.dp01.qfqm.ecse <- function(
                                "frt00" = data$mfcSampStor[[lvlMfcSampStor]]$frt00,
                                #wrk$data$mfcSampStor[[paste0(Para$Flow$LevlTowr$mfcSampStor, "_", sprintf("%02d", PrdAgr), "m")]]$frt00,
                                "pres" = data$irgaStor[[lvl]]$pres,
+                               "presEnvHut" = data$envHut[[lvlEnvHut]]$pres,
+                               "rhEnvHut" = data$envHut[[lvlEnvHut]]$rh,
                                "rtioMoleDryH2o" = data$irgaStor[[lvl]]$rtioMoleDryH2o,
                                "rtioMoleWetH2o" = data$irgaStor[[lvl]]$rtioMoleWetH2o,
-                               "temp" = data$irgaStor[[lvl]]$temp
+                               "rtioMoleWetH2oEnvHut" = data$envHut[[lvlEnvHut]]$rtioMoleWetH2o,
+                               "temp" = data$irgaStor[[lvl]]$temp,
+                               "tempEnvHut" = data$envHut[[lvlEnvHut]]$temp
                                #data$tempAirLvl$`000_010_01m`$temp
                                
         )
@@ -300,6 +308,7 @@ wrap.neon.dp01.qfqm.ecse <- function(
       wrk$qfqm <- list()
       wrk$qfqm$irgaStor <- qfInput$irga[[lvl]]
       wrk$qfqm$mfcSampStor <- qfInput$mfcSampStor[[lvlMfcSampStor]]
+      wrk$qfqm$envHut <- qfInput$envHut[[lvlEnvHut]]
       
       if (PrdMeas == PrdAgr) {
         #PrdAgr <- 2
@@ -383,6 +392,7 @@ wrap.neon.dp01.qfqm.ecse <- function(
           #wrk$data[-whrSamp, ] <- NaN
           wrk$qfqm$irgaStor[-whrSamp, 1:length(wrk$qfqm$irgaStor)] <- NaN
           wrk$qfqm$mfcSampStor[-whrSamp, 1:length(wrk$qfqm$mfcSampStor)] <- NaN
+          wrk$qfqm$envHut[-whrSamp, 1:length(wrk$qfqm$envHut)] <- NaN
         } #else {#end of if no measurement data at all in the whole day
         #   wrk$data$frt00 <- NaN #assign NaN to frt00 data
         # }
