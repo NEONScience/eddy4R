@@ -395,9 +395,14 @@ wrap.neon.dp01.ecse <- function(
           }
           wrk$data[-whrSamp, ] <- NaN
         } else {#end of if no measurement data at all in the whole day
-          tmpAttr <- attributes(wrk$data$frt00)$unit
-          wrk$data$frt00 <- NaN #assign NaN to frt00 data
-          attributes(wrk$data$frt00)$unit <- tmpAttr; rm(tmpAttr)
+          tmpAttr <- list()
+          for (idxData in c("frt00", "presEnvHut", "rhEnvHut", "rtioMoleWetH2oEnvHut", "tempEnvHut")){
+            #defined attributes 
+            tmpAttr[[idxData]] <- attributes(wrk$data[[idxData]])
+            #replace idxData data with NaN when irga got kick out to measure the new measurement level
+            wrk$data[[idxData]] <- NaN
+            attributes(wrk$data[[idxData]]) <- tmpAttr[[idxData]]
+          }
         }
         
         for(idxAgr in c(1:length(idxTime[[paste0(PrdAgr, "min")]]$Bgn))) {
