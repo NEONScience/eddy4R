@@ -87,9 +87,13 @@ wrap.neon.dp01.qfqm.ecse <- function(
                                "frt00" = data$mfcSampStor[[lvlMfcSampStor]]$frt00,
                                #wrk$data$mfcSampStor[[paste0(Para$Flow$LevlTowr$mfcSampStor, "_", sprintf("%02d", idxPrdAgr), "m")]]$frt00,
                                "pres" = data$irgaStor[[lvl]]$pres,
+                               "presEnvHut" = data$envHut[[lvlEnvHut]]$pres,
+                               "rhEnvHut" = data$envHut[[lvlEnvHut]]$rh,
                                "rtioMoleDryCo2" = data$irgaStor[[lvl]]$rtioMoleDryCo2,
                                "rtioMoleWetCo2" = data$irgaStor[[lvl]]$rtioMoleWetCo2,
+                               "rtioMoleWetH2oEnvHut" = data$envHut[[lvlEnvHut]]$rtioMoleWetH2o,
                                "temp" = data$irgaStor[[lvl]]$temp,
+                               "tempEnvHut" = data$envHut[[lvlEnvHut]]$temp,
                                "lvlIrga" = data$irgaValvLvl[[lvlValv]]$lvlIrga
                                
         )
@@ -100,9 +104,13 @@ wrap.neon.dp01.qfqm.ecse <- function(
                                "frt00" = data$mfcSampStor[[lvlMfcSampStor]]$frt00,
                                #wrk$data$mfcSampStor[[paste0(Para$Flow$LevlTowr$mfcSampStor, "_", sprintf("%02d", idxPrdAgr), "m")]]$frt00,
                                "pres" = data$irgaStor[[lvl]]$pres,
+                               "presEnvHut" = data$envHut[[lvlEnvHut]]$pres,
+                               "rhEnvHut" = data$envHut[[lvlEnvHut]]$rh,
                                "rtioMoleDryH2o" = data$irgaStor[[lvl]]$rtioMoleDryH2o,
                                "rtioMoleWetH2o" = data$irgaStor[[lvl]]$rtioMoleWetH2o,
+                               "rtioMoleWetH2oEnvHut" = data$envHut[[lvlEnvHut]]$rtioMoleWetH2o,
                                "temp" = data$irgaStor[[lvl]]$temp,
+                               "tempEnvHut" = data$envHut[[lvlEnvHut]]$temp,
                                "lvlIrga" = data$irgaValvLvl[[lvlValv]]$lvlIrga
                                
         )
@@ -111,6 +119,7 @@ wrap.neon.dp01.qfqm.ecse <- function(
       wrk$qfqm <- list()
       wrk$qfqm$irgaStor <- qfInput$irga[[lvl]]
       wrk$qfqm$mfcSampStor <- qfInput$mfcSampStor[[lvlMfcSampStor]]
+      wrk$qfqm$envHut <- qfInput$envHut[[lvlEnvHut]]
       
       if (PrdMeas == PrdAgr) {
         #PrdAgr <- 2
@@ -143,6 +152,9 @@ wrap.neon.dp01.qfqm.ecse <- function(
             }
             for (tmp in 1:length(wrk$inpMask$qfqm$mfcSampStor)){
               wrk$inpMask$qfqm$mfcSampStor[[tmp]][wrk$inpMask$data$lvlIrga != lvlIrga] <- -1
+            }
+            for (tmp in 1:length(wrk$inpMask$qfqm$envHut)){
+              wrk$inpMask$qfqm$envHut[[tmp]][wrk$inpMask$data$lvlIrga != lvlIrga] <- -1
             }
             
             #qfqm processing
