@@ -682,20 +682,23 @@ wrap.neon.dp01.ecse <- function(
     if (TypeMeas %in% "vali"){
       #input the whole day data
       wrk$data <- data.frame(stringsAsFactors = FALSE,
-                             "rtioMoleWetCo2" = data$crdCo2[[lvl]]$rtioMoleWetCo2,
-                             "rtioMoleDryCo2" = data$crdCo2[[lvl]]$rtioMoleDryCo2,
-                             "rtioMoleWet12CCo2" = data$crdCo2[[lvl]]$rtioMoleWet12CCo2,
-                             "rtioMoleDry12CCo2" = data$crdCo2[[lvl]]$rtioMoleDry12CCo2,
-                             "rtioMoleWet13CCo2" = data$crdCo2[[lvl]]$rtioMoleWet13CCo2,
-                             "rtioMoleDry13CCo2" = data$crdCo2[[lvl]]$rtioMoleDry13CCo2,
                              "dlta13CCo2" = data$crdCo2[[lvl]]$dlta13CCo2,
-                             "rtioMoleWetH2o" = data$crdCo2[[lvl]]$rtioMoleWetH2o,
-                             "rtioMoleDryH2o" = data$crdCo2[[lvl]]$rtioMoleDryH2o,
-                             "temp" = data$crdCo2[[lvl]]$temp,
+                             "dlta13CCo2Refe" = data$crdCo2[[lvl]]$dlta13CCo2Refe,
                              "pres" = data$crdCo2[[lvl]]$pres,
+                             "presEnvHut" = data$envHut[[lvlEnvHut]]$pres,
+                             "rhEnvHut" = data$envHut[[lvlEnvHut]]$rh,
+                             "rtioMoleDry12CCo2" = data$crdCo2[[lvl]]$rtioMoleDry12CCo2,
+                             "rtioMoleDry13CCo2" = data$crdCo2[[lvl]]$rtioMoleDry13CCo2,
+                             "rtioMoleDryCo2" = data$crdCo2[[lvl]]$rtioMoleDryCo2,
                              "rtioMoleDryCo2Refe" = data$crdCo2[[lvl]]$rtioMoleDryCo2Refe,
-                             "dlta13CCo2Refe" = data$crdCo2[[lvl]]$dlta13CCo2Refe
-                             
+                             "rtioMoleDryH2o" = data$crdCo2[[lvl]]$rtioMoleDryH2o,
+                             "rtioMoleWet12CCo2" = data$crdCo2[[lvl]]$rtioMoleWet12CCo2,
+                             "rtioMoleWet13CCo2" = data$crdCo2[[lvl]]$rtioMoleWet13CCo2,
+                             "rtioMoleWetCo2" = data$crdCo2[[lvl]]$rtioMoleWetCo2,
+                             "rtioMoleWetH2o" = data$crdCo2[[lvl]]$rtioMoleWetH2o,
+                             "rtioMoleWetH2oEnvHut" = data$envHut[[lvlEnvHut]]$rtioMoleWetH2o,
+                             "temp" = data$crdCo2[[lvl]]$temp, 
+                             "tempEnvHut" = data$envHut[[lvlEnvHut]]$temp
       )
       
       if (PrdMeas == PrdAgr) {
@@ -788,7 +791,16 @@ wrap.neon.dp01.ecse <- function(
             }
           }
           wrk$data[-whrSamp, ] <- NaN
-        } 
+        } else {#end of if no measurement data at all in the whole day
+          tmpAttr <- list()
+          for (idxData in c("presEnvHut", "rhEnvHut", "rtioMoleWetH2oEnvHut", "tempEnvHut")){
+            #defined attributes 
+            tmpAttr[[idxData]] <- attributes(wrk$data[[idxData]])
+            #replace idxData data with NaN when irga got kick out to measure the new measurement level
+            wrk$data[[idxData]] <- NaN
+            attributes(wrk$data[[idxData]]) <- tmpAttr[[idxData]]
+          }
+        }
         
         for(idxAgr in c(1:length(idxTime[[paste0(PrdAgr, "min")]]$Bgn))) {
           #idxAgr <- 1
