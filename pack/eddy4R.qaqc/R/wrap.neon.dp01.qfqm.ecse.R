@@ -839,12 +839,16 @@ wrap.neon.dp01.qfqm.ecse <- function(
       if (lvl == "000_080") {lvlCrdH2o <- "lvl08"}
       
       wrk$data <- data.frame(stringsAsFactors = FALSE,
-                             "rtioMoleWetH2o" = data$crdH2o[[lvl]]$rtioMoleWetH2o,
-                             "rtioMoleDryH2o" = data$crdH2o[[lvl]]$rtioMoleDryH2o,
                              "dlta18OH2o" = data$crdH2o[[lvl]]$dlta18OH2o,
                              "dlta2HH2o" = data$crdH2o[[lvl]]$dlta2HH2o,
-                             "temp" = data$crdH2o[[lvl]]$temp,
                              "pres" = data$crdH2o[[lvl]]$pres,
+                             "presEnvHut" = data$envHut[[lvlEnvHut]]$pres,
+                             "rhEnvHut" = data$envHut[[lvlEnvHut]]$rh,
+                             "rtioMoleDryH2o" = data$crdH2o[[lvl]]$rtioMoleDryH2o,
+                             "rtioMoleWetH2o" = data$crdH2o[[lvl]]$rtioMoleWetH2o,
+                             "rtioMoleWetH2oEnvHut" = data$envHut[[lvlEnvHut]]$rtioMoleWetH2o,
+                             "temp" = data$crdH2o[[lvl]]$temp,
+                             "tempEnvHut" = data$envHut[[lvlEnvHut]]$temp,
                              "lvlCrdH2o" = data$crdH2oValvLvl[[lvlValv]]$lvlCrdH2o
                              
       )
@@ -852,6 +856,7 @@ wrap.neon.dp01.qfqm.ecse <- function(
       #input the whole day qfqm
       wrk$qfqm <- list()
       wrk$qfqm$crdH2o <- qfInput$crdH2o[[lvl]]
+      wrk$qfqm$envHut <- qfInput$envHut[[lvlEnvHut]]
       
       if (PrdMeas == PrdAgr) {
         #PrdAgr <- 9
@@ -876,6 +881,9 @@ wrap.neon.dp01.qfqm.ecse <- function(
             #replace qfqm$crdH2o with -1 when valve switch to measure to next level before schedule time (9 min)
             for (tmp in 1:length(wrk$inpMask$qfqm$crdH2o)){
               wrk$inpMask$qfqm$crdH2o[[tmp]][wrk$inpMask$data$lvlCrdH2o != lvlCrdH2o] <- -1
+            }
+            for (tmp in 1:length(wrk$inpMask$qfqm$envHut)){
+              wrk$inpMask$qfqm$envHut[[tmp]][wrk$inpMask$data$lvlCrdH2o != lvlCrdH2o] <- -1
             }
             
             #qfqm processing
@@ -939,7 +947,11 @@ wrap.neon.dp01.qfqm.ecse <- function(
           for (tmp in 1:length(wrk$qfqm$crdH2o)){
             wrk$qfqm$crdH2o[[tmp]][wrk$data$lvlCrdH2o != lvlCrdH2o] <- -1
           }
+          for (tmp in 1:length(wrk$qfqm$envHut)){
+            wrk$qfqm$envHut[[tmp]][wrk$data$lvlCrdH2o != lvlCrdH2o] <- -1
+          }
           wrk$qfqm$crdH2o[-whrSamp, 1:length(wrk$qfqm$crdH2o)] <- NaN
+          wrk$qfqm$envHut[-whrSamp, 1:length(wrk$qfqm$envHut)] <- NaN
         } 
         
         
@@ -982,15 +994,19 @@ wrap.neon.dp01.qfqm.ecse <- function(
     #during validation period 
     if (TypeMeas %in% "vali"){
       wrk$data <- data.frame(stringsAsFactors = FALSE,
-                             "rtioMoleWetH2o" = data$crdH2o[[lvl]]$rtioMoleWetH2o,
-                             "rtioMoleDryH2o" = data$crdH2o[[lvl]]$rtioMoleDryH2o,
                              "dlta18OH2o" = data$crdH2o[[lvl]]$dlta18OH2o,
-                             "dlta2HH2o" = data$crdH2o[[lvl]]$dlta2HH2o,
-                             "temp" = data$crdH2o[[lvl]]$temp,
-                             "pres" = data$crdH2o[[lvl]]$pres,
                              "dlta18OH2oRefe" = data$crdH2o[[lvl]]$dlta18OH2oRefe,
+                             "dlta2HH2o" = data$crdH2o[[lvl]]$dlta2HH2o,
                              "dlta2HH2oRefe" = data$crdH2o[[lvl]]$dlta2HH2oRefe,
-                             "injNum" = data$crdH2oValvVali[[lvlCrdH2oValvVali]][["injNum"]]
+                             "pres" = data$crdH2o[[lvl]]$pres,
+                             "presEnvHut" = data$envHut[[lvlEnvHut]]$pres,
+                             "rhEnvHut" = data$envHut[[lvlEnvHut]]$rh,
+                             "rtioMoleDryH2o" = data$crdH2o[[lvl]]$rtioMoleDryH2o,
+                             "rtioMoleWetH2o" = data$crdH2o[[lvl]]$rtioMoleWetH2o,
+                             "rtioMoleWetH2oEnvHut" = data$envHut[[lvlEnvHut]]$rtioMoleWetH2o,
+                             "temp" = data$crdH2o[[lvl]]$temp,
+                             "tempEnvHut" = data$envHut[[lvlEnvHut]]$temp,
+                             "injNum" = data$crdH2oValvVali[[lvlCrdH2oValvVali]]$injNum
                              
       )
       #replace injNum to NaN when they are not measured at that period
@@ -999,6 +1015,7 @@ wrap.neon.dp01.qfqm.ecse <- function(
       #input the whole day qfqm
       wrk$qfqm <- list()
       wrk$qfqm$crdH2o <- qfInput$crdH2o[[lvl]]
+      wrk$qfqm$envHut <- qfInput$envHut[[lvlEnvHut]]
       #calculated the qfValiH2o: injNum 1, 2, 3, 7, 8, 9, 13, 14, and 15 set to 1
       #threshold to determine qfValiH2o (default to reference water +/- 30% of reference water)
       Thsh <- 0.3
@@ -1093,6 +1110,7 @@ wrap.neon.dp01.qfqm.ecse <- function(
           }
           wrk$data[-whrSamp, ] <- NaN
           wrk$qfqm$crdH2o[-whrSamp, 1:length(wrk$qfqm$crdH2o)] <- NaN
+          wrk$qfqm$envHut[-whrSamp, 1:length(wrk$qfqm$envHut)] <- NaN
         } 
         
         for(idxAgr in c(1:length(idxTime[[paste0(PrdAgr, "min")]]$Bgn))) {
