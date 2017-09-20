@@ -219,7 +219,7 @@ def.unit.conv <- function(
     if((length(coefPoly[[idxVar]]) == 2) && (coefPoly[[idxVar]][1] == 0) && (coefPoly[[idxVar]][2] == 1)) {
       next
     }
-    data[[idxVar]] <- eddy4R.base::def.conv.poly(data=data[[idxVar]],coefPoly=coefPoly[[idxVar]])
+    data[[idxVar]] <- eddy4R.base::def.conv.poly(data=data[[idxVar]],coefPoly=coefPoly[[idxVar]], MethGc = MethG)
     if (MethGc == TRUE) {base::gc(verbose=FALSE)} # Clean up memory
   }
 
@@ -340,7 +340,7 @@ def.unit.conv <- function(
       # Convert "from" unit prefix to no-prefix 
       if(!base::is.na(infoUnitFrom$posPrfx[idxBase])) {
         coefPolyPrfxFrom <- eddy4R.base::IntlConv[[paste0(names(eddy4R.base::IntlUnit$Prfx[infoUnitFrom$posPrfx[idxBase]]),"None")]]
-        data[[idxVar]] <- eddy4R.base::def.conv.poly(data=data[[idxVar]],coefPoly=c(0,coefPolyPrfxFrom[2]^infoUnitFrom$sufx[idxBase])) # Convert data using polynomial function
+        data[[idxVar]] <- eddy4R.base::def.conv.poly(data=data[[idxVar]],coefPoly=c(0,coefPolyPrfxFrom[2]^infoUnitFrom$sufx[idxBase]), MethGc = MethG) # Convert data using polynomial function
         if (MethGc == TRUE) {base::gc(verbose=FALSE)} # Clean up memory
       }
       
@@ -399,13 +399,13 @@ def.unit.conv <- function(
                   
                   nameBaseFrom <- base::names(eddy4R.base::IntlUnit$Base$Symb[infoUnitFrom$posBase[idxBase]])
                   coefPolyBase <- eddy4R.base::IntlConv[[base::paste0(nameBaseFrom,"Gram")]]
-                  data[[idxVar]] <- eddy4R.base::def.conv.poly(data=data[[idxVar]],coefPoly=coefPolyBase) # Convert data using polynomial function
+                  data[[idxVar]] <- eddy4R.base::def.conv.poly(data=data[[idxVar]],coefPoly=coefPolyBase, MethGc = MethG) # Convert data using polynomial function
                   if (MethGc == TRUE) {base::gc(verbose=FALSE)} # Clean up memory
                   
                 }
                 
                 # Now do g to mol conversion
-                data[[idxVar]] <- eddy4R.base::def.conv.poly(data=data[[idxVar]],coefPoly=c(0,molmSpcsFrom^(-infoUnitTo$sufx[idxBase]))) # Convert data using polynomial function
+                data[[idxVar]] <- eddy4R.base::def.conv.poly(data=data[[idxVar]],coefPoly=c(0,molmSpcsFrom^(-infoUnitTo$sufx[idxBase])), MethGc = MethG) # Convert data using polynomial function
                 if (MethGc == TRUE) {base::gc(verbose=FALSE)} # Clean up memory
                 
               } 
@@ -413,7 +413,7 @@ def.unit.conv <- function(
                 # We are going from mol to mass
                 
                 # Convert to g
-                data[[idxVar]] <- eddy4R.base::def.conv.poly(data=data[[idxVar]],coefPoly=c(0,molmSpcsTo^(infoUnitTo$sufx[idxBase]))) # Convert data using polynomial function
+                data[[idxVar]] <- eddy4R.base::def.conv.poly(data=data[[idxVar]],coefPoly=c(0,molmSpcsTo^(infoUnitTo$sufx[idxBase])), MethGc = MethG) # Convert data using polynomial function
                 if (MethGc == TRUE) {base::gc(verbose=FALSE)} # Clean up memory
                 
                 # If we are outputting to a base unit other than g, convert that here
@@ -421,7 +421,7 @@ def.unit.conv <- function(
                   
                   nameBaseTo <- base::names(eddy4R.base::IntlUnit$Base$Symb[infoUnitTo$posBase[idxBase]])
                   coefPolyBase <- eddy4R.base::IntlConv[[paste0("Gram",nameBaseTo)]]
-                  data[[idxVar]] <- eddy4R.base::def.conv.poly(data=data[[idxVar]],coefPoly=c(0,coefPolyBase[2]^(infoUnitTo$sufx[idxBase]))) # Convert data using polynomial function
+                  data[[idxVar]] <- eddy4R.base::def.conv.poly(data=data[[idxVar]],coefPoly=c(0,coefPolyBase[2]^(infoUnitTo$sufx[idxBase])), MethGc = MethG) # Convert data using polynomial function
                   if (MethGc == TRUE) {base::gc(verbose=FALSE)} # Clean up memory
                   
                 }
@@ -478,11 +478,11 @@ def.unit.conv <- function(
           
           # Great, we have good conversion polynomial. Apply.
           if(infoUnitTo$sufx[idxBase] == 1) {
-            data[[idxVar]] <- eddy4R.base::def.conv.poly(data=data[[idxVar]],coefPoly=coefPolyBase^infoUnitTo$sufx[idxBase]) # Convert data using polynomial function
+            data[[idxVar]] <- eddy4R.base::def.conv.poly(data=data[[idxVar]],coefPoly=coefPolyBase^infoUnitTo$sufx[idxBase], MethGc = MethG) # Convert data using polynomial function
             if (MethGc == TRUE) {base::gc(verbose=FALSE)} # Clean up memory
           } 
           else {
-            data[[idxVar]] <- eddy4R.base::def.conv.poly(data=data[[idxVar]],coefPoly=c(0,coefPolyBase[2]^infoUnitTo$sufx[idxBase])) # Convert data using polynomial function
+            data[[idxVar]] <- eddy4R.base::def.conv.poly(data=data[[idxVar]],coefPoly=c(0,coefPolyBase[2]^infoUnitTo$sufx[idxBase]), MethGc = MethG) # Convert data using polynomial function
             if (MethGc == TRUE) {base::gc(verbose=FALSE)} # Clean up memory
           }
 
@@ -493,7 +493,7 @@ def.unit.conv <- function(
             
             # Convert different mass units between different chemical species
             # (no need to account for base unit other than gram, since did it already)
-            data[[idxVar]] <- eddy4R.base::def.conv.poly(data=data[[idxVar]],coefPoly=c(0,(molmSpcsTo/molmSpcsFrom)^infoUnitTo$sufx[idxBase])) # Convert data using polynomial function
+            data[[idxVar]] <- eddy4R.base::def.conv.poly(data=data[[idxVar]],coefPoly=c(0,(molmSpcsTo/molmSpcsFrom)^infoUnitTo$sufx[idxBase]), MethGc = MethG) # Convert data using polynomial function
             if (MethGc == TRUE) {base::gc(verbose=FALSE)} # Clean up memory
             
           }
@@ -506,7 +506,7 @@ def.unit.conv <- function(
                  (infoUnitFrom$posSpcs[idxBase] != infoUnitTo$posSpcs[idxBase])) {
         # Convert same mass units between different chemical species
         # (no need to account for base unit other than gram, since it will cancel)
-        data[[idxVar]] <- eddy4R.base::def.conv.poly(data=data[[idxVar]],coefPoly=c(0,(molmSpcsTo/molmSpcsFrom)^infoUnitTo$sufx[idxBase])) # Convert data using polynomial function
+        data[[idxVar]] <- eddy4R.base::def.conv.poly(data=data[[idxVar]],coefPoly=c(0,(molmSpcsTo/molmSpcsFrom)^infoUnitTo$sufx[idxBase]), MethGc = MethG) # Convert data using polynomial function
         if (MethGc == TRUE) {base::gc(verbose=FALSE)} # Clean up memory
         
       }# End base-unit conversion
@@ -515,7 +515,7 @@ def.unit.conv <- function(
       # Convert to output unit prefix 
       if(!base::is.na(infoUnitTo$posPrfx[idxBase])) {
         coefPolyPrfxTo <- eddy4R.base::IntlConv[[base::paste0("None",base::names(eddy4R.base::IntlUnit$Prfx[infoUnitTo$posPrfx[idxBase]]))]]
-        data[[idxVar]] <- eddy4R.base::def.conv.poly(data=data[[idxVar]],coefPoly=c(0,coefPolyPrfxTo[2]^infoUnitTo$sufx[idxBase])) # Convert data using polynomial function
+        data[[idxVar]] <- eddy4R.base::def.conv.poly(data=data[[idxVar]],coefPoly=c(0,coefPolyPrfxTo[2]^infoUnitTo$sufx[idxBase]), MethGc = MethG) # Convert data using polynomial function
         if (MethGc == TRUE) {base::gc(verbose=FALSE)} # Clean up memory
       }
           
