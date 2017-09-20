@@ -947,6 +947,18 @@ wrap.neon.dp01.qfqm.ecse <- function(
       )
       #replace injNum to NaN when they are not measured at that period
       wrk$data$injNum <- ifelse(is.na(wrk$data$temp), NaN, wrk$data$injNum)
+      
+      #input the whole day qfqm
+      wrk$qfqm <- list()
+      wrk$qfqm$crdH2o <- qfInput$crdH2o[[lvl]]
+      #calculated the qfValiH2o: injNum 1, 2, 3, 7, 8, 9, 13, 14, and 15 set to 1
+      #threshold to determine qfValiH2o (default to reference water +/- 30% of reference water)
+      Thsh <- 0.3
+      wrk$qfqm$crdH2o$qfValiH2o <- ifelse(is.na(wrk$data$injNum) | is.na(wrk$data$dlta18OH2o) | is.na(wrk$data$dlta2HH2o), -1,
+                                          ifelse((wrk$data$injNum %in% c(1, 2, 3, 7, 8, 9, 13, 14, 15)) | 
+                                                   (wrk$data$injNum %in% c(4, 5, 6, 10, 11, 12, 16, 17, 18) & (wrk$data$dlta18OH2o < (wrk$data$dlta18OH2oRefe + Thsh*wrk$data$dlta18OH2oRefe) | wrk$data$dlta18OH2o > (wrk$data$dlta18OH2oRefe - Thsh*wrk$data$dlta18OH2oRefe))) |
+                                                   (wrk$data$injNum %in% c(4, 5, 6, 10, 11, 12, 16, 17, 18) & (wrk$data$dlta2HH2o < (wrk$data$dlta2HH2oRefe + Thsh*wrk$data$dlta2HH2oRefe) | wrk$data$dlta2HH2o > (wrk$data$dlta2HH2oRefe - Thsh*wrk$data$dlta2HH2oRefe))), 1, 0))
+      
       if (PrdMeas == PrdAgr) {        
         #idxLvLPrdAgr <- paste0(lvl, "_", sprintf("%02d", PrdAgr), "m")
         #rpt[[dp01]][[idxLvLPrdAgr]] <- list()
@@ -968,14 +980,17 @@ wrap.neon.dp01.qfqm.ecse <- function(
             wrk$inpMask$data <- wrk$data[wrk$idx$idxBgn[idxAgr]:wrk$idx$idxEnd[idxAgr],] 
             #get rid of injNum
             wrk$inpMask$data <- wrk$inpMask$data[,-which(names(wrk$inpMask$data) == "injNum")]
-            #calculate dp01
-            rpt[[idxAgr]] <- eddy4R.base::wrap.neon.dp01(
-              # assign data: data.frame or list of type numeric or integer
-              data = wrk$inpMask$data#,
-              # if data is a list, which list entries should be processed into Level 1 data products?
-              # defaults to NULL which expects data to be a data.frame
-              #idx = 
-              #names(wrk$inpMask$data[[dp01]]) #"000_010_02m"
+            #wrk$inpMask for qfqm
+            wrk$inpMask$qfqm <- list()
+            lapply(names(wrk$qfqm), function (x) wrk$inpMask$qfqm[[x]] <<- wrk$qfqm[[x]][wrk$idx$idxBgn[idxAgr]:wrk$idx$idxEnd[idxAgr],] )
+            
+            #qfqm processing
+            rpt[[idxAgr]] <- eddy4R.qaqc::wrap.neon.dp01.qfqm(
+              qfInput = wrk$inpMask$qfqm, 
+              MethMeas = "ecse",
+              TypeMeas = "vali",
+              RptExpd = FALSE,
+              dp01 = dp01
             )
             
             #grab and add both time begin and time end to rpt
@@ -985,7 +1000,7 @@ wrap.neon.dp01.qfqm.ecse <- function(
             rpt[[idxAgr]]$timeBgn <- list()
             rpt[[idxAgr]]$timeEnd <- list()
             
-            for(idxVar in names(rpt[[idxAgr]]$mean)){
+            for(idxVar in names(wrk$data)[which(!(names(wrk$data) %in% c("dlta18OH2oRefe", "dlta2HH2oRefe", "injNum")))]){
               # rpt[[idxAgr2]]$timeBgn[[idxVar]] <- data$time[(whrEnd[idxAgr] - 20 - 2*60+1)]
               # rpt[[idxAgr2]]$timeEnd[[idxVar]] <- data$time[(whrEnd[idxAgr] - 20)]
               rpt[[idxAgr]]$timeBgn[[idxVar]] <- wrk$idx$timeBgn[idxAgr]
@@ -998,15 +1013,17 @@ wrap.neon.dp01.qfqm.ecse <- function(
           
           rpt[[1]] <- list()
           
-          for(idxStat in names(rpt[[dp01]][[1]][[1]])){
-            rpt[[1]][[idxStat]] <- list()
+          for(idxQf in NameQf){
+            #idxQf in names(rpt[[1]])
+            rpt[[1]][[idxQf]] <- list()
             
-            for (idxVar in names(rpt[[dp01]][[1]][[1]]$mean)){
-              rpt[[1]][[idxStat]][[idxVar]] <- list() 
+            
+            for (idxVar in names(wrk$data)[which(!(names(wrk$data) %in% c("dlta18OH2oRefe", "dlta2HH2oRefe", "injNum")))]){
+              rpt[[1]][[idxQf]][[idxVar]] <- list()  
             }; rm(idxVar)
             
             
-          }; rm(idxStat)  
+          }; rm(idxQf)
         }#end of if no measurement data at all in the whole day
       }#end of PrdAgr == 3
       
@@ -1027,6 +1044,7 @@ wrap.neon.dp01.qfqm.ecse <- function(
             }
           }
           wrk$data[-whrSamp, ] <- NaN
+          wrk$qfqm$crdH2o[-whrSamp, 1:length(wrk$qfqm$crdH2o)] <- NaN
         } 
         
         for(idxAgr in c(1:length(idxTime[[paste0(PrdAgr, "min")]]$Bgn))) {
@@ -1043,16 +1061,18 @@ wrap.neon.dp01.qfqm.ecse <- function(
           #get rid of injNum
           wrk$inpMask$data <- wrk$inpMask$data[,-which(names(wrk$inpMask$data) == "injNum")]
           
-          # http://stackoverflow.com/questions/26843861/replace-rbind-in-for-loop-with-lapply-2nd-circle-of-hell
-          #call wrap.neon.dp01.R to calculate descriptive statistics
+          # for qfqm
+          wrk$inpMask$qfqm <- list()
+          lapply(names(wrk$qfqm), function (x) wrk$inpMask$qfqm[[x]] <<- wrk$qfqm[[x]][idxTime[[paste0(PrdAgr, "min")]]$Bgn[idxAgr]:idxTime[[paste0(PrdAgr, "min")]]$End[idxAgr],])
           
-          rpt[[idxAgr]] <- eddy4R.base::wrap.neon.dp01(
-            # assign data: data.frame or list of type numeric or integer
-            data = wrk$inpMask$data#,
-            # if data is a list, which list entries should be processed into Level 1 data products?
-            # defaults to NULL which expects data to be a data.frame
-            #idx = 
-            #names(wrk$inpMask$data[[dp01]]) #"000_010_02m"
+          
+          #qfqm processing
+          rpt[[idxAgr]] <- eddy4R.qaqc::wrap.neon.dp01.qfqm(
+            qfInput = wrk$inpMask$qfqm, 
+            MethMeas = "ecse",
+            TypeMeas = "vali",
+            RptExpd = FALSE,
+            dp01 = dp01
           )
           
           
@@ -1060,10 +1080,11 @@ wrap.neon.dp01.qfqm.ecse <- function(
           rpt[[idxAgr]]$timeBgn <- list()
           rpt[[idxAgr]]$timeEnd <- list()
           
-          for(idxVar in names(rpt[[idxAgr]]$mean)){
+          #output time for qf dp01; do not output reference gas
+          for(idxVar in names(wrk$data)[which(!(names(wrk$data) %in% c("dlta18OH2oRefe", "dlta2HH2oRefe", "injNum")))]){
             rpt[[idxAgr]]$timeBgn[[idxVar]] <- data$time[idxTime[[paste0(PrdAgr, "min")]]$Bgn[idxAgr]]
             rpt[[idxAgr]]$timeEnd[[idxVar]] <- data$time[idxTime[[paste0(PrdAgr, "min")]]$End[idxAgr]]
-          }
+          }; rm(idxVar)
           
         }; #rm(idxAgr)
       } #end of PrdAgr == 30
