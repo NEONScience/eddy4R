@@ -1014,11 +1014,22 @@ wrap.neon.dp01.ecse <- function(
     
     #during validation period 
     if (TypeMeas %in% "vali"){
+      #assign name for dlta18OH2oRefe and dlta2HH2oRefe
+      if (lvl == h2oHigh) {
+        tmpDlta18OH2oRefe <- "dlta18OH2oRefeHigh"
+        tmpDlta2HH2oRefe <- "dlta2HH2oRefeHigh"}
+      if (lvl == h2oLow) {
+        tmpDlta18OH2oRefe <- "dlta18OH2oRefeLow"
+        tmpDlta2HH2oRefe <- "dlta2HH2oRefeLow"}
+      if (lvl == h2oMed) {
+        tmpDlta18OH2oRefe <- "dlta18OH2oRefeMed"
+        tmpDlta2HH2oRefe <- "dlta2HH2oRefeMed"}
+      
       wrk$data <- data.frame(stringsAsFactors = FALSE,
                              "dlta18OH2o" = data$crdH2o[[lvl]]$dlta18OH2o,
-                             "dlta18OH2oRefe" = data$crdH2o[[lvl]]$dlta18OH2oRefe,
+                             "dlta18OH2oRefe" = data$crdH2o[[lvl]][[tmpDlta18OH2oRefe]],
                              "dlta2HH2o" = data$crdH2o[[lvl]]$dlta2HH2o,
-                             "dlta2HH2oRefe" = data$crdH2o[[lvl]]$dlta2HH2oRefe,
+                             "dlta2HH2oRefe" = data$crdH2o[[lvl]][[tmpDlta2HH2oRefe]],
                              "pres" = data$crdH2o[[lvl]]$pres,
                              "presEnvHut" = data$envHut[[lvlEnvHut]]$pres,
                              "rhEnvHut" = data$envHut[[lvlEnvHut]]$rh,
