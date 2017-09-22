@@ -11,8 +11,9 @@
 #' @param Site is the site for which the output file is being generated.
 #' @param LevlTowr is the measurement level of the tower top to determine the VER number of the NEON DP naming convention.
 #' @param DirOut is the output directory where the file being generated is stored.
-#' @param Dom is the NEON domain
-#' @param MethExpd logical indicating if the output should be expanded or basic
+#' @param Dom is the NEON domain.
+#' @param MethExpd logical indicating if the output should be expanded or basic.
+#' @param MethDp04 logical indicating if ECTE dp04 HDF5 folder structure should be included.
 #' @param fileNameReadMe character indicating the filename incl. absolute path to the ReadMe file for inclusion in the output HDF5 file. Defaults to \code{NULL}, which downloads the readme file from a web location.
 #' @param fileNameObjDesc character indicating the filename incl. absolute path to the object description file for inclusion in the output HDF5 file. Defaults to \code{NULL}, which downloads the object description file from a web location.
 
@@ -57,6 +58,8 @@
 #     Adding uncertainty level output
 #   Stefan Metzger (2017-07-01)
 #     added switch for readme and object description file
+#   Dave Durden (2017-09-07)
+#     Adding dp04 method switch
 
 ##############################################################################################################
 #Start of function call to generate NEON HDF5 files
@@ -69,6 +72,7 @@ def.hdf5.crte <- function(
   DirOut, 
   Dom = Dom,
   MethExpd = TRUE,
+  MethDp04 = FALSE,
   fileNameReadMe = NULL,
   fileNameObjDesc = NULL
   ) {
@@ -121,15 +125,6 @@ def.hdf5.crte <- function(
   #attrDataList <- metaList[which(metaList$`Data table specific` == "X" & metaList$`Eddy4R-processing-level` == "L1"), c("fieldName","Field Description")]
   
   
-  #Create a list of all the L0 DPs for creation of group hierarchy (fard)
-  grpList <- c("irga","soni","soniAmrs","irgaMfcSamp","irgaSndValiNema")
-  #              ,"irgaGasCyl","irgaMfcVali",
-  #              "irgaPresTrap","irgaPresValiLine","irgaPresValiRegIn",
-  #              "irgaPresValiRegOut","irgaPump","irgaSndLeakHeat",
-  #              "irgaSndValiHut","irgaSndValiNema",)
-  #The DP level, the data product ID and the Rev number
-  grpList <- base::paste(grpList, "_001", sep = "")
-  
   #Output filename - the data product number is the umbrella EC data product number
   fileOut <- base::paste0(DirOut,"/","NEON.",Dom,".", Site, ".DP4.00200.001.ec-flux.", Date,".", MethOut,".", base::strftime(base::Sys.time(), format="%Y%m%dT%H%M%SZ", tz="UTC"),".h5")
   #Create the file, create a class
@@ -149,25 +144,40 @@ def.hdf5.crte <- function(
   #idSite <- H5Gopen(idFile,"SERC")
   idDp0p <- rhdf5::H5Gcreate(idSite,"dp0p")
   idDp01 <- rhdf5::H5Gcreate(idSite,"dp01")
-  
+
+  #Adding structure under dp0p
   idDataLvlDp0p <- rhdf5::H5Gcreate(idDp0p,"data")
-  idDataLvlDp01 <- rhdf5::H5Gcreate(idDp01,"data")
-  
   idQfqmLvlDp0p <- rhdf5::H5Gcreate(idDp0p,"qfqm")
+  
+  #Adding structure under dp01
+  idDataLvlDp01 <- rhdf5::H5Gcreate(idDp01,"data")
   idQfqmLvlDp01 <- rhdf5::H5Gcreate(idDp01,"qfqm")
   idUcrtLvlDp01 <- rhdf5::H5Gcreate(idDp01,"ucrt")
+
   
+
   #Create a function to create group levels for each L0 DP
   #grpCrte <- function(x) H5Gcreate(idSite, x)
   #grpCrte <- function(x) H5Gcreate(dplid, x)
   
   #Apply the function to produce the group levels in the data file
   #lapply(grpList, grpCrte)
+  ########################################################################### 
+  #Creating level 0' file structures########################################
+  #Create a list of all the L0 DPs for creation of group hierarchy (fard)
+  grpListDp0p <- c("irga","soni","soniAmrs","irgaMfcSamp","irgaSndValiNema")
+  #              ,"irgaGasCyl","irgaMfcVali",
+  #              "irgaPresTrap","irgaPresValiLine","irgaPresValiRegIn",
+  #              "irgaPresValiRegOut","irgaPump","irgaSndLeakHeat",
+  #              "irgaSndValiHut","irgaSndValiNema",)
+  #The DP level, the data product ID and the Rev number
+  grpListDp0p <- base::paste(grpListDp0p, "_001", sep = "")
   
   #Creating level 0p file structures
-  lapply(grpList, function(x) rhdf5::H5Gcreate(idDataLvlDp0p, x))
-  lapply(grpList, function(x) rhdf5::H5Gcreate(idQfqmLvlDp0p, x))
-  
+  lapply(grpListDp0p, function(x) rhdf5::H5Gcreate(idDataLvlDp0p, x))
+  lapply(grpListDp0p, function(x) rhdf5::H5Gcreate(idQfqmLvlDp0p, x))
+
+  ###########################################################################     
   #Creating level 1 file structures########################################
   #DPs to be used to create levels
   grpListDp01 <- c("soniAmrs", "irgaCo2", "irgaH2o", "soni")
@@ -186,6 +196,27 @@ def.hdf5.crte <- function(
   #Create HOR_VER_TMI level for each DP under ucrt
   lapply(grpListDp01, function(x) rhdf5::H5Gcreate(idUcrtLvlDp01, paste0(x,"/",LevlTowr,"_30m")))
   lapply(grpListDp01, function(x) rhdf5::H5Gcreate(idUcrtLvlDp01, paste0(x,"/",LevlTowr,"_01m")))
+  
+  ###########################################################################     
+  #Creating level 4 file structures########################################
+  
+  if(MethDp04 == TRUE){
+    #Create dp04 level
+    idDp04 <- rhdf5::H5Gcreate(idSite,"dp04")
+    #Create structure under dp04 level
+    idDataLvlDp04 <- rhdf5::H5Gcreate(idDp04,"data")
+    idQfqmLvlDp04 <- rhdf5::H5Gcreate(idDp04,"qfqm")
+    idUcrtLvlDp04 <- rhdf5::H5Gcreate(idDp04,"ucrt")  
+    
+    #DPs to be used to create levels
+    grpListDp04 <- c("fluxCo2", "fluxH2o", "fluxMome", "fluxTemp", "foot")
+    #Create dp01 data product levels in data
+    lapply(grpListDp04, function(x) rhdf5::H5Gcreate(idDataLvlDp04, x))
+    #Create dp01 data product levels in qfqm
+    lapply(grpListDp04, function(x) rhdf5::H5Gcreate(idQfqmLvlDp04, x))
+    #Create dp01 data product levels in ucrt
+    lapply(grpListDp04, function(x) rhdf5::H5Gcreate(idUcrtLvlDp04, x))
+  }
   
  # idDataLvlDp01HorVer <- H5Gopen(idDataLvlDp01, paste0("irgaCo2/",LevlTowr,"_30m"))
   #sid <- H5Screate_simple(c(0,0,0))
