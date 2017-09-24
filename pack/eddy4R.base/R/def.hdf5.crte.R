@@ -11,7 +11,7 @@
 #' @param Site is the site for which the output file is being generated.
 #' @param LevlTowr is the measurement level of the tower top to determine the VER number of the NEON DP naming convention.
 #' @param DirOut is the output directory where the file being generated is stored.
-#' @param Dom is the NEON domain.
+#' @param FileOut character string indicating the base output filename, to which the date and package information will be appended.
 #' @param MethExpd logical indicating if the output should be expanded or basic.
 #' @param MethDp04 logical indicating if ECTE dp04 HDF5 folder structure should be included.
 #' @param fileNameReadMe character indicating the filename incl. absolute path to the ReadMe file for inclusion in the output HDF5 file. Defaults to \code{NULL}, which downloads the readme file from a web location.
@@ -31,7 +31,7 @@
 #'#Setting Site
 #'Site <- "SERC"
 #'LevlTowr <- "000_060"
-#'Dom <- "D02"
+#'FileOut <- "NEON.D02.SERC.DP4.00200.001.ec-flux."
 #'MethExpd <- TRUE
 
 #'#Setting Date to be processed
@@ -41,7 +41,7 @@
 #'DirOut <- getwd()
 
 #'#Running example
-#'def.hdf5.crte(Date = Date, Site = Site, LevlTowr = LevlTowr, DirOut = DirOut, Dom = Dom, MethExpd = MethExpd)
+#'def.hdf5.crte(Date = Date, Site = Site, LevlTowr = LevlTowr, DirOut = DirOut, FileOut = FileOut, MethExpd = MethExpd)
 
 #' @seealso Currently none
 
@@ -69,8 +69,8 @@ def.hdf5.crte <- function(
   Date, 
   Site = "SERC", 
   LevlTowr, 
-  DirOut, 
-  Dom = Dom,
+  DirOut,
+  FileOut,
   MethExpd = TRUE,
   MethDp04 = FALSE,
   fileNameReadMe = NULL,
@@ -78,11 +78,6 @@ def.hdf5.crte <- function(
   ) {
   
   
-  #fomatting Date for file names
-  dateFileIn <- base::gsub(pattern = "-", replacement = "", x = Date)
-  
-  #Directory where the data is being written, need to change locally to add N:
-  #datDirOut <- paste("/home/ddurden/eddy/data/L0prime_gold/", Site,"/", dateFileIn,"/", sep = "")
   
   #Determine basic vs. expanded
   base::ifelse(MethExpd == TRUE, MethOut <- "expanded", MethOut <- "basic")
