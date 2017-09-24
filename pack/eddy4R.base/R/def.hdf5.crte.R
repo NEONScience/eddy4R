@@ -77,8 +77,6 @@ def.hdf5.crte <- function(
   fileNameObjDesc = NULL
   ) {
   
-  
-  
   #Determine basic vs. expanded
   base::ifelse(MethExpd == TRUE, MethOut <- "expanded", MethOut <- "basic")
   
@@ -89,14 +87,15 @@ def.hdf5.crte <- function(
   # download readme and object description file only if not previously provided
   if(base::is.null(fileNameReadMe) && base::is.null(fileNameObjDesc)) {
 
+    DirTmp <- tempdir()
     #Download file description readme and object list  
     eddy4R.base::def.dld.zip(Inp = list(Url = "https://www.dropbox.com/s/dqq3j7epiy98y29/fileDesc.zip?dl=1",
-                                        Dir = DirOut))
+                                        Dir = DirTmp))
     
     #Store the path to the readme file
-    fileNameReadMe <- base::list.files( path = base::paste0(DirOut,"/fileDesc"), pattern = ".txt", full.names = TRUE)
+    fileNameReadMe <- base::list.files( path = base::paste0(DirTmp,"/fileDesc"), pattern = ".txt", full.names = TRUE)
     #Store the path to the object description file
-    fileNameObjDesc <- base::list.files( path = base::paste0(DirOut,"/fileDesc/"), pattern = ".csv", full.names = TRUE)
+    fileNameObjDesc <- base::list.files( path = base::paste0(DirTmp,"/fileDesc/"), pattern = ".csv", full.names = TRUE)
 
   }
   
