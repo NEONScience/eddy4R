@@ -70,11 +70,11 @@ def.hdf5.crte <- function(
   Site = "SERC", 
   LevlTowr, 
   DirOut,
-  FileOut,
+  FileOutBase = "NEON.D02.SERC.DP4.00200.001.ec-flux.",
   MethExpd = TRUE,
   MethDp04 = FALSE,
-  fileNameReadMe = NULL,
-  fileNameObjDesc = NULL
+  FileNameReadMe = NULL,
+  FileNameObjDesc = NULL
   ) {
   
   #Determine basic vs. expanded
@@ -85,7 +85,7 @@ def.hdf5.crte <- function(
   if (base::dir.exists(DirOut) == FALSE) base::dir.create(DirOut, recursive = TRUE)
 
   # download readme and object description file only if not previously provided
-  if(base::is.null(fileNameReadMe) && base::is.null(fileNameObjDesc)) {
+  if(base::is.null(FileNameReadMe) && base::is.null(FileNameObjDesc)) {
 
     DirTmp <- tempdir()
     #Download file description readme and object list  
@@ -93,16 +93,16 @@ def.hdf5.crte <- function(
                                         Dir = DirTmp))
     
     #Store the path to the readme file
-    fileNameReadMe <- base::list.files( path = base::paste0(DirTmp,"/fileDesc"), pattern = ".txt", full.names = TRUE)
+    FileNameReadMe <- base::list.files( path = base::paste0(DirTmp,"/fileDesc"), pattern = ".txt", full.names = TRUE)
     #Store the path to the object description file
-    fileNameObjDesc <- base::list.files( path = base::paste0(DirTmp,"/fileDesc/"), pattern = ".csv", full.names = TRUE)
+    FileNameObjDesc <- base::list.files( path = base::paste0(DirTmp,"/fileDesc/"), pattern = ".csv", full.names = TRUE)
 
   }
   
   #Read in the readme file
-  readMe <- base::readChar(fileNameReadMe, base::file.info(fileNameReadMe)$size)
+  readMe <- base::readChar(FileNameReadMe, base::file.info(fileNameReadMe)$size)
   #Read in the object description file
-  objDesc <- utils::read.csv(fileNameObjDesc,header = TRUE, stringsAsFactors = FALSE)
+  objDesc <- utils::read.csv(FileNameObjDesc,header = TRUE, stringsAsFactors = FALSE)
   
   
   #Create a connection to the workbook
@@ -120,10 +120,10 @@ def.hdf5.crte <- function(
   
   
   #Output filename - the data product number is the umbrella EC data product number
-  fileOut <- base::paste0(DirOut,"/",FileOut,".", Date,".", MethOut,".h5")
+  FileOut <- base::paste0(DirOut,"/",FileOutBase,".", Date,".", MethOut,".h5")
   #Create the file, create a class
   #Create the file, create a class
-  idFile <- rhdf5::H5Fcreate(fileOut)
+  idFile <- rhdf5::H5Fcreate(FileOut)
   #If the file is already created use:
   #idFile <- H5Fopen("HDF5TIS_L0_prototype.h5")
   
