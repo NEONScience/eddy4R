@@ -120,7 +120,7 @@ def.hdf5.crte <- function(
   
   
   #Output filename - the data product number is the umbrella EC data product number
-  fileOut <- base::paste0(DirOut,"/","NEON.",Dom,".", Site, ".DP4.00200.001.ec-flux.", Date,".", MethOut,".", base::strftime(base::Sys.time(), format="%Y%m%dT%H%M%SZ", tz="UTC"),".h5")
+  fileOut <- base::paste0(DirOut,"/",FileOut,".", Date,".", MethOut,".h5")
   #Create the file, create a class
   #Create the file, create a class
   idFile <- rhdf5::H5Fcreate(fileOut)
