@@ -102,7 +102,7 @@ def.hdf5.crte <- function(
   }
   
   #Read in the readme file
-  readMe <- base::readChar(FileNameReadMe, base::file.info(fileNameReadMe)$size)
+  readMe <- base::readChar(FileNameReadMe, base::file.info(FileNameReadMe)$size)
   #Read in the object description file
   objDesc <- utils::read.csv(FileNameObjDesc,header = TRUE, stringsAsFactors = FALSE)
   
