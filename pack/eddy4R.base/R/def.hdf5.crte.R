@@ -11,11 +11,11 @@
 #' @param Site is the site for which the output file is being generated.
 #' @param LevlTowr is the measurement level of the tower top to determine the VER number of the NEON DP naming convention.
 #' @param DirOut is the output directory where the file being generated is stored.
-#' @param FileOut character string indicating the base output filename, to which the date and package information will be appended.
+#' @param FileOutBase character string indicating the base output filename, to which the date and package information will be appended.
 #' @param MethExpd logical indicating if the output should be expanded or basic.
 #' @param MethDp04 logical indicating if ECTE dp04 HDF5 folder structure should be included.
-#' @param fileNameReadMe character indicating the filename incl. absolute path to the ReadMe file for inclusion in the output HDF5 file. Defaults to \code{NULL}, which downloads the readme file from a web location.
-#' @param fileNameObjDesc character indicating the filename incl. absolute path to the object description file for inclusion in the output HDF5 file. Defaults to \code{NULL}, which downloads the object description file from a web location.
+#' @param FileNameReadMe character indicating the filename incl. absolute path to the ReadMe file for inclusion in the output HDF5 file. Defaults to \code{NULL}, which downloads the readme file from a web location.
+#' @param FileNameObjDesc character indicating the filename incl. absolute path to the object description file for inclusion in the output HDF5 file. Defaults to \code{NULL}, which downloads the object description file from a web location.
 
 #' @return A NEON formatted HDF5 file that is output to /code{DirOut} with a readme and object description included.
 
@@ -31,7 +31,7 @@
 #'#Setting Site
 #'Site <- "SERC"
 #'LevlTowr <- "000_060"
-#'FileOut <- "NEON.D02.SERC.DP4.00200.001.ec-flux."
+#'FileOutBase <- "NEON.D02.SERC.DP4.00200.001.ec-flux."
 #'MethExpd <- TRUE
 
 #'#Setting Date to be processed
@@ -41,7 +41,7 @@
 #'DirOut <- getwd()
 
 #'#Running example
-#'def.hdf5.crte(Date = Date, Site = Site, LevlTowr = LevlTowr, DirOut = DirOut, FileOut = FileOut, MethExpd = MethExpd)
+#'def.hdf5.crte(Date = Date, Site = Site, LevlTowr = LevlTowr, DirOut = DirOut, FileOutBase = FileOutBase, MethExpd = MethExpd)
 
 #' @seealso Currently none
 
@@ -60,6 +60,8 @@
 #     added switch for readme and object description file
 #   Dave Durden (2017-09-07)
 #     Adding dp04 method switch
+#   Dave Durden (2017-09-20)
+#     Changing function to work with new workflow parameters
 
 ##############################################################################################################
 #Start of function call to generate NEON HDF5 files
