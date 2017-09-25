@@ -73,7 +73,7 @@ def.para.flow <- function(
   ...
 ){
   
-  ParaFlow <- list(Deve = Deve, DirFilePara = DirFilePara,DirInp = DirInp,DirMnt = DirMnt,DirOut = DirOut,DirTmp = DirTmp,DirWrk = DirWrk, DateOut = DataOut, FileOutBase = FileOutBase, Loc = Loc,MethParaFlow = MethParaFlow,Read = Read,VersDp = VersDp,VersEddy = VersEddy, ...)
+  ParaFlow <- list(Deve = Deve, DirFilePara = DirFilePara,DirInp = DirInp,DirMnt = DirMnt,DirOut = DirOut,DirTmp = DirTmp,DirWrk = DirWrk, DateOut = DateOut, FileOutBase = FileOutBase, Loc = Loc,MethParaFlow = MethParaFlow,Read = Read,VersDp = VersDp,VersEddy = VersEddy, ...)
   
   if(MethParaFlow == "EnvVar"){
     #Create a list with all the specified function arguments
