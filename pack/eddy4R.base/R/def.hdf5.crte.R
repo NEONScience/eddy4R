@@ -31,7 +31,7 @@
 #'#Setting Site
 #'Site <- "SERC"
 #'LevlTowr <- "000_060"
-#'FileOutBase <- "NEON.D02.SERC.DP4.00200.001.ec-flux."
+#'FileOutBase <- "NEON.D02.SERC.DP4.00200.001.ec-flux"
 #'MethExpd <- TRUE
 
 #'#Setting Date to be processed
@@ -72,7 +72,7 @@ def.hdf5.crte <- function(
   Site = "SERC", 
   LevlTowr, 
   DirOut,
-  FileOutBase = "NEON.D02.SERC.DP4.00200.001.ec-flux.",
+  FileOutBase = "NEON.D02.SERC.DP4.00200.001.ec-flux",
   MethExpd = TRUE,
   MethDp04 = FALSE,
   FileNameReadMe = NULL,
