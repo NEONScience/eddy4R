@@ -72,7 +72,7 @@ def.hdf5.crte <- function(
   Site = "SERC", 
   LevlTowr, 
   DirOut,
-  FileOutBase = "NEON.D02.SERC.DP4.00200.001.ec-flux",
+  FileOutBase = NULL,
   MethExpd = TRUE,
   MethDp04 = FALSE,
   FileNameReadMe = NULL,
