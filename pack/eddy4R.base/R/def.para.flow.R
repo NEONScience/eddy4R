@@ -113,8 +113,7 @@ def.para.flow <- function(
   }
   
   if(is.null(ParaFlow$Loc)) warning("The variable Loc is NULL") 
-  if(is.null(ParaFlow$FileOutBase)) warning("The variable FileOutBase is NULL") 
-  #Grab the 
+  if(is.null(ParaFlow$FileOutBase)) stop("The variable FileOutBase must either be specified as the ENV variable FILEOUTBASE or in the function call to def.para.flow") 
   
   return(ParaFlow)
   
