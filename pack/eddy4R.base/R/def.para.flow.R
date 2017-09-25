@@ -73,7 +73,7 @@ def.para.flow <- function(
   ...
 ){
   
-  ParaFlow <- list(Deve = Deve, DirFilePara = DirFilePara,DirInp = DirInp,DirMnt = DirMnt,DirOut = DirOut,DirTmp = DirTmp,DirWrk = DirWrk, Dom = Dom, DateOut = DataOut, FileOutBase = FileOutBase, Loc = Loc,MethParaFlow = MethParaFlow,Read = Read,VersDp = VersDp,VersEddy = VersEddy, ...)
+  ParaFlow <- list(Deve = Deve, DirFilePara = DirFilePara,DirInp = DirInp,DirMnt = DirMnt,DirOut = DirOut,DirTmp = DirTmp,DirWrk = DirWrk, DateOut = DataOut, FileOutBase = FileOutBase, Loc = Loc,MethParaFlow = MethParaFlow,Read = Read,VersDp = VersDp,VersEddy = VersEddy, ...)
   
   if(MethParaFlow == "EnvVar"){
     #Create a list with all the specified function arguments
@@ -113,7 +113,6 @@ def.para.flow <- function(
   }
   
   if(is.null(ParaFlow$Loc)) warning("The variable Loc is NULL") 
-  if(is.null(ParaFlow$Dom)) warning("The variable Dom is NULL") 
   if(is.null(ParaFlow$FileOutBase)) warning("The variable FileOutBase is NULL") 
   #Grab the 
   
