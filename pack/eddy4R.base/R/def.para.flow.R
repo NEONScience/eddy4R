@@ -15,6 +15,7 @@
 #' @param DirTmp is directory path for temporary storage during processing
 #' @param DirWrk is directory path for working storage during processing
 #' @param DateOut is a character string that lists the dates to produce output data
+#' @param FileOutBase is a character string that denotes the base file name for output
 #' @param Read determine if the data are read from hdf5 dp0p input data file or other input files 
 #' @param VersDp is the data product level that will be output 
 #' @param VersEddy is the version of the eddy4R docker that is being used to perform the processing
@@ -94,13 +95,12 @@ def.para.flow <- function(
   
   
    # Check if the DirFilePara is specified, if not run gold file example, download gold file from dropbox     
-  if(is.null(ParaFlow$DirFilePara)) {  
+  if(is.null(ParaFlow$DirFilePara) && !is.na(ParaFlow$DirInp)) {  
   
   #DirFilePara
     ParaFlow$DirFilePara <- ifelse(any(grepl(pattern = ParaFlow$DateOut, list.files(ParaFlow$DirInp))),grep(pattern = ParaFlow$DateOut, list.files(ParaFlow$DirInp), value = TRUE), NULL)
-  }
+  } else{
   
-  if(is.null(ParaFlow$DirFilePara)) {
       # download data
       eddy4R.base::def.dld.zip(Inp = list(Url = UrlInpRefe, Dir = tempdir()))
       
@@ -111,6 +111,7 @@ def.para.flow <- function(
     eddy4R.base::def.dld.zip(Inp = list(Url = UrlOutRefe, Dir = tempdir()))
 
   }
+  
   if(is.null(ParaFlow$Loc)) warning("The variable Loc is NULL") 
   if(is.null(ParaFlow$Dom)) warning("The variable Dom is NULL") 
   if(is.null(ParaFlow$FileOutBase)) warning("The variable FileOutBase is NULL") 
