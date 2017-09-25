@@ -7,7 +7,7 @@
 #' @description 
 #' Definition function. Function determines tower top measurement level from input dp0p ECTE HDF5 file structure
 
-#' @param FileIn is the input dp0p ECTE HDF5 file where the parameters are being read from.
+#' @param FileInp is the input dp0p ECTE HDF5 file where the parameters are being read from.
 
 #' @return \code{LevlTowr} is returned that indicates the Horizontal and Vertical indices of the tower top measurement level. 
 
@@ -34,15 +34,15 @@
 ##############################################################################################################
 
 def.para.levl.towr <- function(
-  FileIn
+  FileInp
 ){
   
-  if(!base::file.exists(FileIn)) {
+  if(!base::file.exists(FileInp)) {
     stop("Input file does not exist")
   } 
   
   #Grab a list of all the data levels in the HDF5
-  listPara <- rhdf5::h5ls(FileIn, datasetinfo = FALSE)
+  listPara <- rhdf5::h5ls(FileInp, datasetinfo = FALSE)
   
   #Grab the group level with the _30m aggregation, remove that part of the string
   LevlTowr <- sub("_30m","",unique(listPara[grep("_30m",listPara$name),"name"])) #This must be a ECTE dp0p HDF5 file to work
