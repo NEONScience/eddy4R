@@ -11,7 +11,8 @@
 #' c("co2Stor", "h2oStor", "tempAirLvl", "tempAirTop", "isoCo2", "isoH2o"). Defaults to "co2Stor". [-] 
 #' @param \code{lvl}  Measurement level of dp01 which descriptive statistics are being calculated. Of type character. [-]
 #' @param \code{lvlMfcSampStor} Measurement level of mfcSampStor which apply to only  dp01 equal to "co2Stor" or "h2oStor". Defaults to NULL. Of type character. [-]
-#' @param \code{valvLvl} Measurement level of irgaValvLvl, crdCo2ValvLvl, or crdH2oValvLvl. Defaults to NULL. Of type character. [-]
+#' @param \code{lvlEnvHut} Measurement level of envHut. Defaults to NULL. Of type character. [-]
+#' @param \code{lvlValv} Measurement level of irgaValvLvl, crdCo2ValvLvl, or crdH2oValvLvl. Defaults to NULL. Of type character. [-]
 #' @param \code{lvlCrdH2oValvVali} Measurement level of crdH2oValvVali which apply to only  dp01 equal to "isoH2o". Defaults to NULL. Of type character. [-]
 #' @param \code{data} A list of data frame containing the input dp0p data that related to dp01 which qfqm are being calculated. Of class integer". [User defined] 
 #' @param \code{qfInput} A list of data frame containing the input quality flag data that related to dp01 are being grouped. Of class integer". [NA] 
@@ -44,12 +45,15 @@
 # changelog and author contributions / copyrights 
 #   Natchaya Pingintha-Durden (2017-07-28)
 #     original creation
+#   Natchaya Pingintha-Durden (2017-09-19)
+#     added envHut data
 ##############################################################################################
 wrap.neon.dp01.qfqm.ecse <- function(
   dp01 = c("co2Stor", "h2oStor", "tempAirLvl", "tempAirTop", "isoCo2", "isoH2o")[1],
   lvl,
   lvlMfcSampStor = NULL,
-  valvLvl = NULL,
+  lvlEnvHut = NULL,
+  lvlValv = NULL,
   lvlCrdH2oValvVali = NULL,
   data = list(),
   qfInput = list(),
@@ -80,26 +84,34 @@ wrap.neon.dp01.qfqm.ecse <- function(
       #input the whole day data
       if(dp01 == "co2Stor"){
         wrk$data <- data.frame(stringsAsFactors = FALSE,
-                               "frt00" = data$mfcSampStor[[lvlMfcSampStor]][["frt00"]],
+                               "frt00" = data$mfcSampStor[[lvlMfcSampStor]]$frt00,
                                #wrk$data$mfcSampStor[[paste0(Para$Flow$LevlTowr$mfcSampStor, "_", sprintf("%02d", idxPrdAgr), "m")]]$frt00,
                                "pres" = data$irgaStor[[lvl]]$pres,
+                               "presEnvHut" = data$envHut[[lvlEnvHut]]$pres,
+                               "rhEnvHut" = data$envHut[[lvlEnvHut]]$rh,
                                "rtioMoleDryCo2" = data$irgaStor[[lvl]]$rtioMoleDryCo2,
                                "rtioMoleWetCo2" = data$irgaStor[[lvl]]$rtioMoleWetCo2,
+                               "rtioMoleWetH2oEnvHut" = data$envHut[[lvlEnvHut]]$rtioMoleWetH2o,
                                "temp" = data$irgaStor[[lvl]]$temp,
-                               "lvlIrga" = data$irgaValvLvl[[valvLvl]][["lvlIrga"]]
+                               "tempEnvHut" = data$envHut[[lvlEnvHut]]$temp,
+                               "lvlIrga" = data$irgaValvLvl[[lvlValv]]$lvlIrga
                                
         )
       }
       
       if(dp01 == "h2oStor"){
         wrk$data <- data.frame(stringsAsFactors = FALSE,
-                               "frt00" = data$mfcSampStor[[lvlMfcSampStor]][["frt00"]],
+                               "frt00" = data$mfcSampStor[[lvlMfcSampStor]]$frt00,
                                #wrk$data$mfcSampStor[[paste0(Para$Flow$LevlTowr$mfcSampStor, "_", sprintf("%02d", idxPrdAgr), "m")]]$frt00,
                                "pres" = data$irgaStor[[lvl]]$pres,
+                               "presEnvHut" = data$envHut[[lvlEnvHut]]$pres,
+                               "rhEnvHut" = data$envHut[[lvlEnvHut]]$rh,
                                "rtioMoleDryH2o" = data$irgaStor[[lvl]]$rtioMoleDryH2o,
                                "rtioMoleWetH2o" = data$irgaStor[[lvl]]$rtioMoleWetH2o,
+                               "rtioMoleWetH2oEnvHut" = data$envHut[[lvlEnvHut]]$rtioMoleWetH2o,
                                "temp" = data$irgaStor[[lvl]]$temp,
-                               "lvlIrga" = data$irgaValvLvl[[valvLvl]][["lvlIrga"]]
+                               "tempEnvHut" = data$envHut[[lvlEnvHut]]$temp,
+                               "lvlIrga" = data$irgaValvLvl[[lvlValv]]$lvlIrga
                                
         )
       }
@@ -107,6 +119,7 @@ wrap.neon.dp01.qfqm.ecse <- function(
       wrk$qfqm <- list()
       wrk$qfqm$irgaStor <- qfInput$irga[[lvl]]
       wrk$qfqm$mfcSampStor <- qfInput$mfcSampStor[[lvlMfcSampStor]]
+      wrk$qfqm$envHut <- qfInput$envHut[[lvlEnvHut]]
       
       if (PrdMeas == PrdAgr) {
         #PrdAgr <- 2
@@ -139,6 +152,9 @@ wrap.neon.dp01.qfqm.ecse <- function(
             }
             for (tmp in 1:length(wrk$inpMask$qfqm$mfcSampStor)){
               wrk$inpMask$qfqm$mfcSampStor[[tmp]][wrk$inpMask$data$lvlIrga != lvlIrga] <- -1
+            }
+            for (tmp in 1:length(wrk$inpMask$qfqm$envHut)){
+              wrk$inpMask$qfqm$envHut[[tmp]][wrk$inpMask$data$lvlIrga != lvlIrga] <- -1
             }
             
             #qfqm processing
@@ -198,7 +214,7 @@ wrap.neon.dp01.qfqm.ecse <- function(
               whrSamp <- c(whrSamp, wrk$idx$idxBgn[ii]:wrk$idx$idxEnd[ii])
             }
           }
-          wrk$data[-whrSamp, 1:5] <- NaN
+          wrk$data[-whrSamp, 1:9] <- NaN
           #replace qfqm$irgaStor with -1 when irga got kick out to measure the new measurement level
           for (tmp in 1:length(wrk$qfqm$irgaStor)){
             wrk$qfqm$irgaStor[[tmp]][wrk$data$lvlIrga != lvlIrga] <- -1
@@ -206,9 +222,13 @@ wrap.neon.dp01.qfqm.ecse <- function(
           for (tmp in 1:length(wrk$qfqm$mfcSampStor)){
             wrk$qfqm$mfcSampStor[[tmp]][wrk$data$lvlIrga != lvlIrga] <- -1
           }
+          for (tmp in 1:length(wrk$qfqm$envHut)){
+            wrk$qfqm$envHut[[tmp]][wrk$data$lvlIrga != lvlIrga] <- -1
+          }
           #replace all qf that not belong to that measurement level by NaN
           wrk$qfqm$irgaStor[-whrSamp, 1:length(wrk$qfqm$irgaStor)] <- NaN
           wrk$qfqm$mfcSampStor[-whrSamp, 1:length(wrk$qfqm$mfcSampStor)] <- NaN
+          wrk$qfqm$envHut[-whrSamp, 1:length(wrk$qfqm$envHut)] <- NaN
           
           #replace qf from mfcSampStor data with -1 when irga got kick out to measure the new measurement level
           #wrk$qfqm$mfcSampStor <- as.data.frame(sapply(wrk$qfqm$mfcSampStor, function(x) ifelse(wrk$data$lvlIrga == lvlIrga, x, -1)))
@@ -255,13 +275,17 @@ wrap.neon.dp01.qfqm.ecse <- function(
     if (TypeMeas %in% "vali"){
       if(dp01 == "co2Stor"){
         wrk$data <- data.frame(stringsAsFactors = FALSE,
-                               "frt00" = data$mfcSampStor[[lvlMfcSampStor]][["frt00"]],
+                               "frt00" = data$mfcSampStor[[lvlMfcSampStor]]$frt00,
                                #wrk$data$mfcSampStor[[paste0(Para$Flow$LevlTowr$mfcSampStor, "_", sprintf("%02d", PrdAgr), "m")]]$frt00,
                                "pres" = data$irgaStor[[lvl]]$pres,
+                               "presEnvHut" = data$envHut[[lvlEnvHut]]$pres,
+                               "rhEnvHut" = data$envHut[[lvlEnvHut]]$rh,
                                "rtioMoleDryCo2" = data$irgaStor[[lvl]]$rtioMoleDryCo2,
                                "rtioMoleDryCo2Refe" = data$irgaStor[[lvl]]$rtioMoleDryCo2Refe,
                                "rtioMoleWetCo2" = data$irgaStor[[lvl]]$rtioMoleWetCo2,
-                               "temp" = data$irgaStor[[lvl]]$temp
+                               "rtioMoleWetH2oEnvHut" = data$envHut[[lvlEnvHut]]$rtioMoleWetH2o,
+                               "temp" = data$irgaStor[[lvl]]$temp,
+                               "tempEnvHut" = data$envHut[[lvlEnvHut]]$temp
                                #data$tempAirLvl$`000_010_01m`$temp
                                
         )
@@ -269,12 +293,16 @@ wrap.neon.dp01.qfqm.ecse <- function(
       
       if(dp01 == "h2oStor"){
         wrk$data <- data.frame(stringsAsFactors = FALSE,
-                               "frt00" = data$mfcSampStor[[lvlMfcSampStor]][["frt00"]],
+                               "frt00" = data$mfcSampStor[[lvlMfcSampStor]]$frt00,
                                #wrk$data$mfcSampStor[[paste0(Para$Flow$LevlTowr$mfcSampStor, "_", sprintf("%02d", PrdAgr), "m")]]$frt00,
                                "pres" = data$irgaStor[[lvl]]$pres,
+                               "presEnvHut" = data$envHut[[lvlEnvHut]]$pres,
+                               "rhEnvHut" = data$envHut[[lvlEnvHut]]$rh,
                                "rtioMoleDryH2o" = data$irgaStor[[lvl]]$rtioMoleDryH2o,
                                "rtioMoleWetH2o" = data$irgaStor[[lvl]]$rtioMoleWetH2o,
-                               "temp" = data$irgaStor[[lvl]]$temp
+                               "rtioMoleWetH2oEnvHut" = data$envHut[[lvlEnvHut]]$rtioMoleWetH2o,
+                               "temp" = data$irgaStor[[lvl]]$temp,
+                               "tempEnvHut" = data$envHut[[lvlEnvHut]]$temp
                                #data$tempAirLvl$`000_010_01m`$temp
                                
         )
@@ -284,6 +312,7 @@ wrap.neon.dp01.qfqm.ecse <- function(
       wrk$qfqm <- list()
       wrk$qfqm$irgaStor <- qfInput$irga[[lvl]]
       wrk$qfqm$mfcSampStor <- qfInput$mfcSampStor[[lvlMfcSampStor]]
+      wrk$qfqm$envHut <- qfInput$envHut[[lvlEnvHut]]
       
       if (PrdMeas == PrdAgr) {
         #PrdAgr <- 2
@@ -367,6 +396,7 @@ wrap.neon.dp01.qfqm.ecse <- function(
           #wrk$data[-whrSamp, ] <- NaN
           wrk$qfqm$irgaStor[-whrSamp, 1:length(wrk$qfqm$irgaStor)] <- NaN
           wrk$qfqm$mfcSampStor[-whrSamp, 1:length(wrk$qfqm$mfcSampStor)] <- NaN
+          wrk$qfqm$envHut[-whrSamp, 1:length(wrk$qfqm$envHut)] <- NaN
         } #else {#end of if no measurement data at all in the whole day
         #   wrk$data$frt00 <- NaN #assign NaN to frt00 data
         # }
@@ -476,19 +506,23 @@ wrap.neon.dp01.qfqm.ecse <- function(
       
       #input the whole day data
       wrk$data <- data.frame(stringsAsFactors = FALSE,
-                             "rtioMoleWetCo2" = data$crdCo2[[lvl]]$rtioMoleWetCo2,
-                             "rtioMoleDryCo2" = data$crdCo2[[lvl]]$rtioMoleDryCo2,
-                             "rtioMoleWet12CCo2" = data$crdCo2[[lvl]]$rtioMoleWet12CCo2,
-                             "rtioMoleDry12CCo2" = data$crdCo2[[lvl]]$rtioMoleDry12CCo2,
-                             "rtioMoleWet13CCo2" = data$crdCo2[[lvl]]$rtioMoleWet13CCo2,
-                             "rtioMoleDry13CCo2" = data$crdCo2[[lvl]]$rtioMoleDry13CCo2,
                              "dlta13CCo2" = data$crdCo2[[lvl]]$dlta13CCo2,
-                             "rtioMoleWetH2o" = data$crdCo2[[lvl]]$rtioMoleWetH2o,
-                             "rtioMoleDryH2o" = data$crdCo2[[lvl]]$rtioMoleDryH2o,
-                             "temp" = data$crdCo2[[lvl]]$temp,
-                             "pres" = data$crdCo2[[lvl]]$pres,
                              "idGas" = data$crdCo2[[lvl]]$idGas,
-                             "lvlCrdCo2" = data$crdCo2ValvLvl[[valvLvl]][["lvlCrdCo2"]]
+                             "pres" = data$crdCo2[[lvl]]$pres,
+                             "presEnvHut" = data$envHut[[lvlEnvHut]]$pres,
+                             "rhEnvHut" = data$envHut[[lvlEnvHut]]$rh,
+                             "rtioMoleDry12CCo2" = data$crdCo2[[lvl]]$rtioMoleDry12CCo2,
+                             "rtioMoleDry13CCo2" = data$crdCo2[[lvl]]$rtioMoleDry13CCo2,
+                             "rtioMoleDryCo2" = data$crdCo2[[lvl]]$rtioMoleDryCo2,
+                             "rtioMoleDryH2o" = data$crdCo2[[lvl]]$rtioMoleDryH2o,
+                             "rtioMoleWet12CCo2" = data$crdCo2[[lvl]]$rtioMoleWet12CCo2,
+                             "rtioMoleWet13CCo2" = data$crdCo2[[lvl]]$rtioMoleWet13CCo2,
+                             "rtioMoleWetCo2" = data$crdCo2[[lvl]]$rtioMoleWetCo2,
+                             "rtioMoleWetH2o" = data$crdCo2[[lvl]]$rtioMoleWetH2o,
+                             "rtioMoleWetH2oEnvHut" = data$envHut[[lvlEnvHut]]$rtioMoleWetH2o,
+                             "temp" = data$crdCo2[[lvl]]$temp, 
+                             "tempEnvHut" = data$envHut[[lvlEnvHut]]$temp,
+                             "lvlCrdCo2" = data$crdCo2ValvLvl[[lvlValv]]$lvlCrdCo2
                              
       )
       
@@ -496,6 +530,7 @@ wrap.neon.dp01.qfqm.ecse <- function(
       wrk$qfqm <- list()
       #subset only
       wrk$qfqm$crdCo2 <- qfInput$crdCo2[[lvl]]
+      wrk$qfqm$envHut <- qfInput$envHut[[lvlEnvHut]]
       
       if (PrdMeas == PrdAgr) {
         #PrdAgr <- 9
@@ -523,6 +558,9 @@ wrap.neon.dp01.qfqm.ecse <- function(
             #replace qfqm$crdCo2 with -1 when valve switch to measure to next level before schedule time (9 min)
             for (tmp in 1:length(wrk$inpMask$qfqm$crdCo2)){
               wrk$inpMask$qfqm$crdCo2[[tmp]][wrk$inpMask$data$lvlCrdCo2 != lvlCrdCo2] <- -1
+            }
+            for (tmp in 1:length(wrk$inpMask$qfqm$envHut)){
+              wrk$inpMask$qfqm$envHut[[tmp]][wrk$inpMask$data$lvlCrdCo2 != lvlCrdCo2] <- -1
             }
             
             #qfqm processing
@@ -581,13 +619,17 @@ wrap.neon.dp01.qfqm.ecse <- function(
               whrSamp <- c(whrSamp, wrk$idx$idxBgn[ii]:wrk$idx$idxEnd[ii])
             }
           }
-          wrk$data[-whrSamp, ] <- NaN
+          wrk$data[-whrSamp, 1:16] <- NaN
           #replace qfqm$crdCo2 with -1 when valve switch to measure to next level before schedule time (9 min)
           for (tmp in 1:length(wrk$qfqm$crdCo2)){
             wrk$qfqm$crdCo2[[tmp]][wrk$data$lvlCrdCo2 != lvlCrdCo2] <- -1
           }
+          for (tmp in 1:length(wrk$qfqm$envHut)){
+            wrk$qfqm$envHut[[tmp]][wrk$data$lvlCrdCo2 != lvlCrdCo2] <- -1
+          }
           #replace all qf that not belong to that measurement level by NaN
           wrk$qfqm$crdCo2[-whrSamp, 1:length(wrk$qfqm$crdCo2)] <- NaN
+          wrk$qfqm$envHut[-whrSamp, 1:length(wrk$qfqm$envHut)] <- NaN
         } 
         
         
@@ -630,25 +672,30 @@ wrap.neon.dp01.qfqm.ecse <- function(
     if (TypeMeas %in% "vali"){
       #input the whole day data
       wrk$data <- data.frame(stringsAsFactors = FALSE,
-                             "rtioMoleWetCo2" = data$crdCo2[[lvl]]$rtioMoleWetCo2,
-                             "rtioMoleDryCo2" = data$crdCo2[[lvl]]$rtioMoleDryCo2,
-                             "rtioMoleWet12CCo2" = data$crdCo2[[lvl]]$rtioMoleWet12CCo2,
-                             "rtioMoleDry12CCo2" = data$crdCo2[[lvl]]$rtioMoleDry12CCo2,
-                             "rtioMoleWet13CCo2" = data$crdCo2[[lvl]]$rtioMoleWet13CCo2,
-                             "rtioMoleDry13CCo2" = data$crdCo2[[lvl]]$rtioMoleDry13CCo2,
                              "dlta13CCo2" = data$crdCo2[[lvl]]$dlta13CCo2,
-                             "rtioMoleWetH2o" = data$crdCo2[[lvl]]$rtioMoleWetH2o,
-                             "rtioMoleDryH2o" = data$crdCo2[[lvl]]$rtioMoleDryH2o,
-                             "temp" = data$crdCo2[[lvl]]$temp,
-                             "pres" = data$crdCo2[[lvl]]$pres,
-                             "rtioMoleDryCo2Refe" = data$crdCo2[[lvl]]$rtioMoleDryCo2Refe,
                              "dlta13CCo2Refe" = data$crdCo2[[lvl]]$dlta13CCo2Refe,
-                             "idGas" = data$crdCo2[[lvl]]$idGas
+                             "idGas" = data$crdCo2[[lvl]]$idGas,
+                             "pres" = data$crdCo2[[lvl]]$pres,
+                             "presEnvHut" = data$envHut[[lvlEnvHut]]$pres,
+                             "rhEnvHut" = data$envHut[[lvlEnvHut]]$rh,
+                             "rtioMoleDry12CCo2" = data$crdCo2[[lvl]]$rtioMoleDry12CCo2,
+                             "rtioMoleDry13CCo2" = data$crdCo2[[lvl]]$rtioMoleDry13CCo2,
+                             "rtioMoleDryCo2" = data$crdCo2[[lvl]]$rtioMoleDryCo2,
+                             "rtioMoleDryCo2Refe" = data$crdCo2[[lvl]]$rtioMoleDryCo2Refe,
+                             "rtioMoleDryH2o" = data$crdCo2[[lvl]]$rtioMoleDryH2o,
+                             "rtioMoleWet12CCo2" = data$crdCo2[[lvl]]$rtioMoleWet12CCo2,
+                             "rtioMoleWet13CCo2" = data$crdCo2[[lvl]]$rtioMoleWet13CCo2,
+                             "rtioMoleWetCo2" = data$crdCo2[[lvl]]$rtioMoleWetCo2,
+                             "rtioMoleWetH2o" = data$crdCo2[[lvl]]$rtioMoleWetH2o,
+                             "rtioMoleWetH2oEnvHut" = data$envHut[[lvlEnvHut]]$rtioMoleWetH2o,
+                             "temp" = data$crdCo2[[lvl]]$temp, 
+                             "tempEnvHut" = data$envHut[[lvlEnvHut]]$temp
                              
       )
       #input the whole day qfqm 
       wrk$qfqm <- list()
       wrk$qfqm$crdCo2 <- qfInput$crdCo2[[lvl]]
+      wrk$qfqm$envHut <- qfInput$envHut[[lvlEnvHut]]
       
       if (PrdMeas == PrdAgr) {
         #PrdAgr <- 9
@@ -736,6 +783,7 @@ wrap.neon.dp01.qfqm.ecse <- function(
           }
           wrk$data[-whrSamp, ] <- NaN
           wrk$qfqm$crdCo2[-whrSamp, 1:length(wrk$qfqm$crdCo2)] <- NaN
+          wrk$qfqm$envHut[-whrSamp, 1:length(wrk$qfqm$envHut)] <- NaN
         } 
         
         for(idxAgr in c(1:length(idxTime[[paste0(PrdAgr, "min")]]$Bgn))) {
@@ -791,19 +839,24 @@ wrap.neon.dp01.qfqm.ecse <- function(
       if (lvl == "000_080") {lvlCrdH2o <- "lvl08"}
       
       wrk$data <- data.frame(stringsAsFactors = FALSE,
-                             "rtioMoleWetH2o" = data$crdH2o[[lvl]]$rtioMoleWetH2o,
-                             "rtioMoleDryH2o" = data$crdH2o[[lvl]]$rtioMoleDryH2o,
                              "dlta18OH2o" = data$crdH2o[[lvl]]$dlta18OH2o,
                              "dlta2HH2o" = data$crdH2o[[lvl]]$dlta2HH2o,
-                             "temp" = data$crdH2o[[lvl]]$temp,
                              "pres" = data$crdH2o[[lvl]]$pres,
-                             "lvlCrdH2o" = data$crdH2oValvLvl[[valvLvl]][["lvlCrdH2o"]]
+                             "presEnvHut" = data$envHut[[lvlEnvHut]]$pres,
+                             "rhEnvHut" = data$envHut[[lvlEnvHut]]$rh,
+                             "rtioMoleDryH2o" = data$crdH2o[[lvl]]$rtioMoleDryH2o,
+                             "rtioMoleWetH2o" = data$crdH2o[[lvl]]$rtioMoleWetH2o,
+                             "rtioMoleWetH2oEnvHut" = data$envHut[[lvlEnvHut]]$rtioMoleWetH2o,
+                             "temp" = data$crdH2o[[lvl]]$temp,
+                             "tempEnvHut" = data$envHut[[lvlEnvHut]]$temp,
+                             "lvlCrdH2o" = data$crdH2oValvLvl[[lvlValv]]$lvlCrdH2o
                              
       )
       
       #input the whole day qfqm
       wrk$qfqm <- list()
       wrk$qfqm$crdH2o <- qfInput$crdH2o[[lvl]]
+      wrk$qfqm$envHut <- qfInput$envHut[[lvlEnvHut]]
       
       if (PrdMeas == PrdAgr) {
         #PrdAgr <- 9
@@ -828,6 +881,9 @@ wrap.neon.dp01.qfqm.ecse <- function(
             #replace qfqm$crdH2o with -1 when valve switch to measure to next level before schedule time (9 min)
             for (tmp in 1:length(wrk$inpMask$qfqm$crdH2o)){
               wrk$inpMask$qfqm$crdH2o[[tmp]][wrk$inpMask$data$lvlCrdH2o != lvlCrdH2o] <- -1
+            }
+            for (tmp in 1:length(wrk$inpMask$qfqm$envHut)){
+              wrk$inpMask$qfqm$envHut[[tmp]][wrk$inpMask$data$lvlCrdH2o != lvlCrdH2o] <- -1
             }
             
             #qfqm processing
@@ -891,7 +947,11 @@ wrap.neon.dp01.qfqm.ecse <- function(
           for (tmp in 1:length(wrk$qfqm$crdH2o)){
             wrk$qfqm$crdH2o[[tmp]][wrk$data$lvlCrdH2o != lvlCrdH2o] <- -1
           }
+          for (tmp in 1:length(wrk$qfqm$envHut)){
+            wrk$qfqm$envHut[[tmp]][wrk$data$lvlCrdH2o != lvlCrdH2o] <- -1
+          }
           wrk$qfqm$crdH2o[-whrSamp, 1:length(wrk$qfqm$crdH2o)] <- NaN
+          wrk$qfqm$envHut[-whrSamp, 1:length(wrk$qfqm$envHut)] <- NaN
         } 
         
         
@@ -933,16 +993,31 @@ wrap.neon.dp01.qfqm.ecse <- function(
     
     #during validation period 
     if (TypeMeas %in% "vali"){
+      #assign name for dlta18OH2oRefe and dlta2HH2oRefe
+      if (lvl == "h2oHigh") {
+        tmpDlta18OH2oRefe <- "dlta18OH2oRefeHigh"
+        tmpDlta2HH2oRefe <- "dlta2HH2oRefeHigh"}
+      if (lvl == "h2oLow") {
+        tmpDlta18OH2oRefe <- "dlta18OH2oRefeLow"
+        tmpDlta2HH2oRefe <- "dlta2HH2oRefeLow"}
+      if (lvl == "h2oMed") {
+        tmpDlta18OH2oRefe <- "dlta18OH2oRefeMed"
+        tmpDlta2HH2oRefe <- "dlta2HH2oRefeMed"}
+      
       wrk$data <- data.frame(stringsAsFactors = FALSE,
-                             "rtioMoleWetH2o" = data$crdH2o[[lvl]]$rtioMoleWetH2o,
-                             "rtioMoleDryH2o" = data$crdH2o[[lvl]]$rtioMoleDryH2o,
                              "dlta18OH2o" = data$crdH2o[[lvl]]$dlta18OH2o,
+                             "dlta18OH2oRefe" = data$crdH2o[[lvl]][[tmpDlta18OH2oRefe]],
                              "dlta2HH2o" = data$crdH2o[[lvl]]$dlta2HH2o,
-                             "temp" = data$crdH2o[[lvl]]$temp,
+                             "dlta2HH2oRefe" = data$crdH2o[[lvl]][[tmpDlta2HH2oRefe]],
                              "pres" = data$crdH2o[[lvl]]$pres,
-                             "dlta18OH2oRefe" = data$crdH2o[[lvl]]$dlta18OH2oRefe,
-                             "dlta2HH2oRefe" = data$crdH2o[[lvl]]$dlta2HH2oRefe,
-                             "injNum" = data$crdH2oValvVali[[lvlCrdH2oValvVali]][["injNum"]]
+                             "presEnvHut" = data$envHut[[lvlEnvHut]]$pres,
+                             "rhEnvHut" = data$envHut[[lvlEnvHut]]$rh,
+                             "rtioMoleDryH2o" = data$crdH2o[[lvl]]$rtioMoleDryH2o,
+                             "rtioMoleWetH2o" = data$crdH2o[[lvl]]$rtioMoleWetH2o,
+                             "rtioMoleWetH2oEnvHut" = data$envHut[[lvlEnvHut]]$rtioMoleWetH2o,
+                             "temp" = data$crdH2o[[lvl]]$temp,
+                             "tempEnvHut" = data$envHut[[lvlEnvHut]]$temp,
+                             "injNum" = data$crdH2oValvVali[[lvlCrdH2oValvVali]]$injNum
                              
       )
       #replace injNum to NaN when they are not measured at that period
@@ -951,6 +1026,7 @@ wrap.neon.dp01.qfqm.ecse <- function(
       #input the whole day qfqm
       wrk$qfqm <- list()
       wrk$qfqm$crdH2o <- qfInput$crdH2o[[lvl]]
+      wrk$qfqm$envHut <- qfInput$envHut[[lvlEnvHut]]
       #calculated the qfValiH2o: injNum 1, 2, 3, 7, 8, 9, 13, 14, and 15 set to 1
       #threshold to determine qfValiH2o (default to reference water +/- 30% of reference water)
       Thsh <- 0.3
@@ -1045,6 +1121,7 @@ wrap.neon.dp01.qfqm.ecse <- function(
           }
           wrk$data[-whrSamp, ] <- NaN
           wrk$qfqm$crdH2o[-whrSamp, 1:length(wrk$qfqm$crdH2o)] <- NaN
+          wrk$qfqm$envHut[-whrSamp, 1:length(wrk$qfqm$envHut)] <- NaN
         } 
         
         for(idxAgr in c(1:length(idxTime[[paste0(PrdAgr, "min")]]$Bgn))) {
