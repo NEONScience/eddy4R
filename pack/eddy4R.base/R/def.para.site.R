@@ -30,6 +30,8 @@
 #     original creation
 #   Dave Durden (2017-09-22)
 #     adding functionality to grab Loc parameter from file structure
+#   Dave Durden (2017-09-22)
+#     Allow function to grab more than one level
 
 ##############################################################################################################
 #Start of function call to determine tower top level
@@ -51,16 +53,24 @@ def.para.site <- function(
   #Grab site location code parameter (Loc) from the HDF5 file structure 
   rpt$Loc <- listPara[grepl(pattern = "^[[:upper:]]+$",x =  listPara$name), "name"]
   
+  #Grab the group level for tower levels
+  rpt$LevlTowr <- unique(listPara[grep("^000_[0-9][0-9][0-9]$",listPara$name),"name"])
   
   #Grab the group level with the _30m aggregation, remove that part of the string
-  rpt$LevlTowr <- sub("_30m","",unique(listPara[grep("_30m",listPara$name),"name"])) #This must be a ECTE dp0p HDF5 file to work
+  #rpt$LevlTowr <- sub("_30m","",unique(listPara[grep("_30m",listPara$name),"name"])) #This must be a ECTE dp0p HDF5 file to work 
   
   
   #Throw an error if length of the returned value is not 1
-  if(!base::length(rpt$LevlTowr) == 1|!base::length(rpt$Loc) == 1) {
+  if(!base::length(rpt$Loc) == 1) {
     stop("Input file is not standard dp0p HDF5 structure")
     #LevlTowr <- unique(listPara[grep("000_",listPara$name),"name"]) #Second way to determine
   }
+  
+  if(!base::length(rpt$LevlTowr) == 1) {
+    warning("LevlTowr shows more than 1 level.")
+    #LevlTowr <- unique(listPara[grep("000_",listPara$name),"name"]) #Second way to determine
+  }
+    
   
   #Return output
   return(rpt)
