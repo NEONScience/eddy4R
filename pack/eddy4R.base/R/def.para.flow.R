@@ -14,17 +14,16 @@
 #' @param DirOut is directory path for the output data
 #' @param DirTmp is directory path for temporary storage during processing
 #' @param DirWrk is directory path for working storage during processing
-#' @param Dom is the NEON domain the site is located in
-#' @param FileDp0p is a character string that lists the dates to be processed
-#' @param Loc is site where the data was collected (NEON 4 letter code, e.g. SERC)
+#' @param DateOut is a character string that lists the dates to produce output data
+#' @param FileOutBase is a character string that denotes the base file name for output
 #' @param Read determine if the data are read from hdf5 dp0p input data file or other input files 
 #' @param VersDp is the data product level that will be output 
 #' @param VersEddy is the version of the eddy4R docker that is being used to perform the processing
 #' @param MethParaFlow is the method used to specify workflow parameters, "EnvVar" will grab ParaFlow parameters from environmental variable and "DfltInp" will use whatever is specified in the function call.
-#' @param urlInpRefe A single-entry vector of class "character" containing the web address of the reference input data zip file to be downloaded.
-#' @param urlOutRefe A single-entry vector of class "character" containing the web address of the reference output data zip file to be downloaded.
+#' @param UrlInpRefe A single-entry vector of class "character" containing the web address of the reference input data zip file to be downloaded.
+#' @param UrlOutRefe A single-entry vector of class "character" containing the web address of the reference output data zip file to be downloaded.
 
-#' @return \code{ParaFlow} is a list returned that indicates the workflow control parameters, including \code{ParaFlow$DirFilePara},\code{ParaFlow$DirInp}, \code{ParaFlow$DirMnt}, \code{ParaFlow$DirOut}, \code{ParaFlow$DirTmp}, \code{ParaFlow$DirWrk},\code{ParaFlow$Dom}, \code{ParaFlow$FileDp0p}, \code{ParaFlow$Loc},  \code{ParaFlow$Read}, \code{ParaFlow$VersDp}, \code{ParaFlow$VersEddy}. 
+#' @return \code{ParaFlow} is a list returned that indicates the workflow control parameters, including \code{ParaFlow$DirFilePara},\code{ParaFlow$DirInp}, \code{ParaFlow$DirMnt}, \code{ParaFlow$DirOut}, \code{ParaFlow$DirTmp}, \code{ParaFlow$DirWrk}, \code{ParaFlow$DateOut}, \code{ParaFlow$FileOutBase},  \code{ParaFlow$Read}, \code{ParaFlow$VersDp}, \code{ParaFlow$VersEddy}. 
 
 #' @references
 #' License: GNU AFFERO GENERAL PUBLIC LICENSE Version 3, 19 November 2007. \cr
@@ -49,7 +48,9 @@
 #   Ke Xu (2017-05-22)
 #     adding parameter MethMeas to distinguish different cases for ecte and ecse
 #   Stefan Metzger (2017-08-01)
-#     superseed parameter MethMeas with the ability to directly provide reference data urls as arguments urlInpRefe and urlOutRefe
+#     superseed parameter MethMeas with the ability to directly provide reference data urls as arguments UrlInpRefe and UrlOutRefe
+#   Stefan Metzger (2017-09-29)
+#     fixing construction of ParaFlow$DirFilePara for batch-processing (when not using gold file)
 
 ##############################################################################################################
 #Start of function call to determine workflow parameters
@@ -63,19 +64,18 @@ def.para.flow <- function(
   DirOut  = NA,
   DirTmp  = NA,
   DirWrk  = NA,
-  Dom = NA,
-  FileDp0p  = NULL,
-  Loc  = NULL,
+  DateOut  = NULL,
+  FileOutBase = NULL,
   Read  = "hdf5",
   VersDp  = c("001","004")[1],
   VersEddy  = "latest",
   MethParaFlow = c("DfltInp","EnvVar")[1],
-  urlInpRefe,
-  urlOutRefe,
+  UrlInpRefe,
+  UrlOutRefe,
   ...
 ){
   
-  ParaFlow <- list(Deve = Deve, DirFilePara = DirFilePara,DirInp = DirInp,DirMnt = DirMnt,DirOut = DirOut,DirTmp = DirTmp,DirWrk = DirWrk, Dom = Dom, FileDp0p = FileDp0p,Loc = Loc,MethParaFlow = MethParaFlow,Read = Read,VersDp = VersDp,VersEddy = VersEddy, ...)
+  ParaFlow <- list(Deve = Deve, DirFilePara = DirFilePara,DirInp = DirInp,DirMnt = DirMnt,DirOut = DirOut,DirTmp = DirTmp,DirWrk = DirWrk, DateOut = DateOut, FileOutBase = FileOutBase, MethParaFlow = MethParaFlow,Read = Read,VersDp = VersDp,VersEddy = VersEddy, ...)
   
   if(MethParaFlow == "EnvVar"){
     #Create a list with all the specified function arguments
@@ -93,25 +93,32 @@ def.para.flow <- function(
   }
   
   # Check if the FileDp0p is specified
-  if(is.null(ParaFlow$FileDp0p)|!is.character(ParaFlow$FileDp0p)) {stop("FileDp0p must be defined and a character string.")} else {ParaFlow$FileDp0p <- base::trimws(base::unlist(base::strsplit(x = ParaFlow$FileDp0p, split = ",")))}
+  if(is.null(ParaFlow$DateOut)|!is.character(ParaFlow$DateOut)) {stop("DateOut must be defined and a character string.")} else {ParaFlow$DateOut<- base::trimws(base::unlist(base::strsplit(x = ParaFlow$DateOut, split = ",")))}
   
-  # Check if the DirFilePara is specified, if not run gold file example, download gold file from dropbox         
-  if(is.null(ParaFlow$DirFilePara)) {
-    # input data
-    
+  
+   # Check if the DirFilePara is specified, if not run gold file example, download gold file from dropbox     
+  if(is.null(ParaFlow$DirFilePara) && !is.na(ParaFlow$DirInp)) {
+  
+    #DirFilePara
+    ParaFlow$DirFilePara <- ifelse(any(grepl(pattern = ParaFlow$DateOut, list.files(ParaFlow$DirInp))),
+                                   base::file.path(ParaFlow$DirInp, grep(pattern = ParaFlow$DateOut, list.files(ParaFlow$DirInp), value = TRUE)),
+                                   NULL)
+
+  } else{
+  
       # download data
-      eddy4R.base::def.dld.zip(Inp = list(Url = urlInpRefe, Dir = tempdir()))
+      eddy4R.base::def.dld.zip(Inp = list(Url = UrlInpRefe, Dir = tempdir()))
       
       # assign corresponding DirFilePara
       ParaFlow$DirFilePara <- paste0(tempdir(), "/inpRefe/", list.files(paste0(tempdir(), "/inpRefe"))[1])
     
     # output data
-    eddy4R.base::def.dld.zip(Inp = list(Url = urlOutRefe, Dir = tempdir()))
+    eddy4R.base::def.dld.zip(Inp = list(Url = UrlOutRefe, Dir = tempdir()))
 
   }
+  
   if(is.null(ParaFlow$Loc)) warning("The variable Loc is NULL") 
-  if(is.null(ParaFlow$Dom)) warning("The variable Dom is NULL") 
-  #Grab the 
+  if(is.null(ParaFlow$FileOutBase)) stop("The variable FileOutBase must either be specified as the ENV variable FILEOUTBASE or in the function call to def.para.flow") 
   
   return(ParaFlow)
   
