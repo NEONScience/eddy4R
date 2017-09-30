@@ -92,25 +92,28 @@ def.para.flow <- function(
     
   }
   
-  # Check if the FileDp0p is specified
-  if(is.null(ParaFlow$DateOut)|!is.character(ParaFlow$DateOut)) {stop("DateOut must be defined and a character string.")} else {ParaFlow$DateOut<- base::trimws(base::unlist(base::strsplit(x = ParaFlow$DateOut, split = ",")))}
+  # Check if DateOut is specified
+  if(is.null(ParaFlow$DateOut)|!is.character(ParaFlow$DateOut)) {
+    stop("DateOut must be defined and a character string.")
+  } else {
+    ParaFlow$DateOut <- base::trimws(base::unlist(base::strsplit(x = ParaFlow$DateOut, split = ",")))
+  }
   
-  
-   # Check if the DirFilePara is specified, if not run gold file example, download gold file from dropbox     
+  # Check if the DirFilePara is specified, if not run gold file example, download gold file from dropbox     
   if(is.null(ParaFlow$DirFilePara) && !is.na(ParaFlow$DirInp)) {
   
     #DirFilePara
     ParaFlow$DirFilePara <- ifelse(any(grepl(pattern = ParaFlow$DateOut, list.files(ParaFlow$DirInp))),
-                                   base::file.path(ParaFlow$DirInp, grep(pattern = ParaFlow$DateOut, list.files(ParaFlow$DirInp), value = TRUE)),
+                                   grep(pattern = paste0(".*",ParaFlow$DateOut,".*.h5?"), list.files(ParaFlow$DirInp, full.names = TRUE), value = TRUE),
                                    NULL)
 
   } else{
   
-      # download data
-      eddy4R.base::def.dld.zip(Inp = list(Url = UrlInpRefe, Dir = tempdir()))
-      
-      # assign corresponding DirFilePara
-      ParaFlow$DirFilePara <- paste0(tempdir(), "/inpRefe/", list.files(paste0(tempdir(), "/inpRefe"))[1])
+    # download data
+    eddy4R.base::def.dld.zip(Inp = list(Url = UrlInpRefe, Dir = tempdir()))
+    
+    # assign corresponding DirFilePara
+    ParaFlow$DirFilePara <- paste0(tempdir(), "/inpRefe/", list.files(paste0(tempdir(), "/inpRefe"))[1])
     
     # output data
     eddy4R.base::def.dld.zip(Inp = list(Url = UrlOutRefe, Dir = tempdir()))
