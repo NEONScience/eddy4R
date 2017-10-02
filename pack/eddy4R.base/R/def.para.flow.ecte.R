@@ -41,40 +41,35 @@
 #' @export
 
 # changelog and author contributions / copyrights
-#   Dave Durden (2016-03-12)
-#     original creation
-#   Dave Durden (2016-04-05)
-#     adding Deve parameter
-#   Ke Xu (2017-05-22)
-#     adding parameter MethMeas to distinguish different cases for ecte and ecse
-#   Stefan Metzger (2017-08-01)
-#     superseed parameter MethMeas with the ability to directly provide reference data urls as arguments UrlInpRefe and UrlOutRefe
-#   Stefan Metzger (2017-09-29)
-#     fixing construction of ParaFlow$DirFilePara for batch-processing (when not using gold file)
+#   Stefan Metzger (2017-10-01)
+#     original creation re-purposing parts from eddy4R.base::def.para.flow.R
 
 ##############################################################################################################
 #Start of function call to determine workflow parameters
 ##############################################################################################################
 
 
-Para$Flow <- def.para.flow.ecte(ParaFlow = Para$Flow
+Para$Flow <- def.para.flow.ecte(ParaFlow = Para$Flow,
+                                UrlInpRefe = "https://www.dropbox.com/s/qlp1pyanm5rn2eq/inpRefe_20170308.zip?dl=1",
+                                UrlOutRefe = "https://www.dropbox.com/s/j0zhjfolx4k9ugm/outRefe_20170918.zip?dl=1"
                                 )
 
 
 def.para.flow.ecte <- function(
   ParaFlow,
+  UrlInpRefe,
+  UrlOutRefe,
   ...
 ){
 
   
-  # failsafes ensuring that Para$Flow$Meth is present and one of "dflt",  "host", or "slct"
+  # failsafes ensuring that ParaFlow$Meth is present and one of "dflt",  "host", or "slct"
   
     # ParaFlow$Meth present?
-    if(is.null(ParaFlow$Meth)) base::stop('eddy4R.base::def.para.flow.ecte: please provide Para$Flow$Meth.')
+    if(is.null(ParaFlow$Meth)) base::stop('please provide Para$Flow$Meth.')
   
     # ParaFlow$Meth one of "dflt",  "host", or "slct"?
-    if(!ParaFlow$Meth %in% c("dflt",  "host", "slct")) base::stop('eddy4R.base::def.para.flow.ecte: 
-                                                                  please ensure that Para$Flow$Meth is one of "dflt",  "host", or "slct".')
+    if(!ParaFlow$Meth %in% c("dflt",  "host", "slct")) base::stop('please ensure that Para$Flow$Meth is one of "dflt",  "host", or "slct".')
   
   
   # in case of default mode (ParaFlow$Meth == "dflt"), assign default workflow parameters
@@ -101,12 +96,12 @@ def.para.flow.ecte <- function(
     
     # directory for temporary objects in the Docker-internal directory structure [character]
     # if file-backed objects are to be stored outside of the Docker container, DirTmp needs to be a subdirectory of DirMnt
-    # TODO: uses the Docker-internal default temporary directory if set to NA    
+    # uses the Docker-internal default temporary directory if set to NA
     ParaFlow$DirTmp <- base::tempdir()
     
     # working directory in the Docker-internal directory structure [character]
     # the root directory for specifying relative pathes in eddy4R-Docker
-    # TODO: uses the Docker-internal default temporary directory if set to NA
+    # uses the Docker-internal default temporary directory if set to NA
     ParaFlow$DirWrk <- base::tempdir()
     
     # optional: sequence of L0p hdf5 file names that should be considered for processing [character]
@@ -149,6 +144,17 @@ def.para.flow.ecte <- function(
     # software version of eddy4R-Docker, e.g. "0.2.1", "latest"… [character]
     ParaFlow$VersEddy <- "latest"
     
+    # in case of default mode (ParaFlow$Meth == "dflt"), download golden (reference) data
+    if(ParaFlow$Meth == "dflt") {
+    
+      # input data
+      eddy4R.base::def.dld.zip(Inp = list(Url = UrlInpRefe, Dir = ParaFlow$DirWrk))
+      
+      # output data
+      eddy4R.base::def.dld.zip(Inp = list(Url = UrlOutRefe, Dir = ParaFlow$DirWrk))
+      
+    }
+    
   }
   
   
@@ -157,7 +163,7 @@ def.para.flow.ecte <- function(
 
     # determine the entries to search for in the environmental variables
     # these are all entries except for "Meth"
-    namePara <- c(base::names(ParaFlow)[!base::names(ParaFlow) == "Meth"]), ...)
+    namePara <- c(base::names(ParaFlow)[!base::names(ParaFlow) == "Meth"], ...)
   
     # remove all default entries from ParaFlow
     # these are all entries except for "Meth"
@@ -178,77 +184,56 @@ def.para.flow.ecte <- function(
       # in case corresponding environmental variable NOT present
       } else {
         ParaFlow[[x]] <<- NA
-        base::warning(paste0("eddy4R.base::def.para.flow.ecte: the workflow parameter ", x, " is not specified as environmental variable."))
+        base::warning(paste0("the workflow parameter ", x, " is not specified as environmental variable."))
       }
     })
     
     
   }
 
-
-  
-  
   # in case of user selection mode (ParaFlow$Meth == "slct")
   # don't modify ParaFlow -> directories are created / set and unmodified ParaFlow are returned below
   
-    
   
-  # create and set directories
+  # error messages
+  
+    # ParaFlow$DirInp
+    if(is.null(ParaFlow$DirInp) | !is.character(ParaFlow$DirInp)) stop("please specify the workflow parameter DirInp and ensure it is of type character.")
+  
+    if(base::length(base::dir(ParaFlow$DirInp, pattern = "*.h5")) == 0) stop(base::paste0("please provide input files in ", ParaFlow$DirInp, "."))
+  
+    # ParaFlow$DateOut
+    if(is.null(ParaFlow$DateOut) | !is.character(ParaFlow$DateOut)) stop("please specify the workflow parameter DateOut and ensure it is of type character.")
+    
+    # ParaFlow$FileOutBase
+    if(is.null(ParaFlow$FileOutBase) | !is.character(ParaFlow$FileOutBase)) stop("please specify the workflow parameter FileOutBase and ensure it is of type character.")
+  
+    # ParaFlow$FileOutBase
+    if(is.null(ParaFlow$Read) | !is.character(ParaFlow$Read) | !ParaFlow$Read %in% c("hdf5",  "ff")) stop("please specify the workflow parameter Read and ensure it is of type character.")
+  
+  
+  # read input files, create and set directories
   # TODO: consider moving to eddy4R.base::def.env.glob()
 
     # input directory
-    if(!base::dir.exists(ParaFlow$DirInp)) base::dir.create(ParaFlow$DirInp)
+    # if(!base::dir.exists(ParaFlow$DirInp)) base::dir.create(ParaFlow$DirInp)
+    if(is.na(ParaFlow$FileInp[1])) ParaFlow$FileInp <- base::dir(ParaFlow$DirInp, pattern = "*.h5")
 
     # output directory
     if(!base::dir.exists(ParaFlow$DirOut)) base::dir.create(ParaFlow$DirOut)
 
     # temporary directory
+    if(is.na(ParaFlow$DirTmp)) ParaFlow$DirTmp <- base::tempdir()
     if(!base::dir.exists(ParaFlow$DirTmp)) base::dir.create(ParaFlow$DirTmp)
   
     # working directory
+    if(is.na(ParaFlow$DirWrk)) ParaFlow$DirWrk <- base::tempdir()
     if(!base::dir.exists(ParaFlow$DirWrk)) base::dir.create(ParaFlow$DirWrk)
     if(base::getwd() != ParaFlow$DirWrk) base::setwd(ParaFlow$DirWrk)
 
+  
   # return results
   base::return(ParaFlow)
-  
-  
-  
-  
-
-  
-  
-  # Check if DateOut is specified
-  if(is.null(ParaFlow$DateOut)|!is.character(ParaFlow$DateOut)) {
-    stop("DateOut must be defined and a character string.")
-  } else {
-    ParaFlow$DateOut <- base::trimws(base::unlist(base::strsplit(x = ParaFlow$DateOut, split = ",")))
-  }
-  
-  # Check if the DirFilePara is specified, if not run gold file example, download gold file from dropbox     
-  if(is.null(ParaFlow$DirFilePara) && !is.na(ParaFlow$DirInp)) {
-  
-    #DirFilePara
-    ParaFlow$DirFilePara <- ifelse(any(grepl(pattern = ParaFlow$DateOut, list.files(ParaFlow$DirInp))),
-                                   grep(pattern = paste0(".*",ParaFlow$DateOut,".*.h5?"), list.files(ParaFlow$DirInp, full.names = TRUE), value = TRUE),
-                                   NULL)
-
-  } else{
-  
-    # download data
-    eddy4R.base::def.dld.zip(Inp = list(Url = UrlInpRefe, Dir = tempdir()))
-    
-    # assign corresponding DirFilePara
-    ParaFlow$DirFilePara <- paste0(tempdir(), "/inpRefe/", list.files(paste0(tempdir(), "/inpRefe"))[1])
-    
-    # output data
-    eddy4R.base::def.dld.zip(Inp = list(Url = UrlOutRefe, Dir = tempdir()))
-
-  }
-  
-  if(is.null(ParaFlow$Loc)) warning("The variable Loc is NULL") 
-  if(is.null(ParaFlow$FileOutBase)) stop("The variable FileOutBase must either be specified as the ENV variable FILEOUTBASE or in the function call to def.para.flow") 
-  
-  return(ParaFlow)
-  
+ 
+   
 }
