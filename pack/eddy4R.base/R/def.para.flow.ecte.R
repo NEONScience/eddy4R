@@ -62,9 +62,11 @@ Para$Flow <- def.para.flow.ecte(ParaFlow = Para$Flow
 
 
 def.para.flow.ecte <- function(
-  ParaFlow
+  ParaFlow,
+  ...
 ){
 
+  
   # failsafes ensuring that Para$Flow$Meth is present and one of "dflt",  "host", or "slct"
   
     # ParaFlow$Meth present?
@@ -74,9 +76,11 @@ def.para.flow.ecte <- function(
     if(!ParaFlow$Meth %in% c("dflt",  "host", "slct")) base::stop('eddy4R.base::def.para.flow.ecte: 
                                                                   please ensure that Para$Flow$Meth is one of "dflt",  "host", or "slct".')
   
+  
   # in case of default mode (ParaFlow$Meth == "dflt"), assign default workflow parameters
+  # in case of environmental-variables-from-host mode (host), only the list names are used below
   # these settings need to change in case a new / different gold file is being used
-  if(ParaFlow$Meth == "dflt") {
+  if(ParaFlow$Meth %in% c("dflt", "host")) {
     
     # sequence of output dates in ISO date format (YYYY-MM-DD) [character]
     # need to correspond to the central day(s) in PrdWndwCalc based on PrdWndwPfDcmp and PrdIncrPfDcmp == PrdIncrCalc
@@ -147,6 +151,43 @@ def.para.flow.ecte <- function(
     
   }
   
+  
+  # in case of environmental-variables-from-host mode (host), read workflow parameters from environmental variables
+  if(ParaFlow$Meth == "host") {
+
+    # determine the entries to search for in the environmental variables
+    # these are all entries except for "Meth"
+    namePara <- c(base::names(ParaFlow)[!base::names(ParaFlow) == "Meth"]), ...)
+  
+    # remove all default entries from ParaFlow
+    # these are all entries except for "Meth"
+    ParaFlow <- ParaFlow[base::names(ParaFlow) == "Meth"]
+
+    # read entries for ParaFlow from environmental variables
+    lapply(namePara, function(x) {
+      
+      # in case corresponding environmental variable present
+      if(base::toupper(x) %in% base::names(base::Sys.getenv())) {
+        
+        # assign value of corresponding environmental variable
+        ParaFlow[[x]] <<- base::Sys.getenv(base::toupper(x))
+        
+        # split strings by colon (:) to separate multiple multiple values (if present)
+        if(is.character(ParaFlow[[x]])) ParaFlow[[x]] <<- strsplit(x = ParaFlow[[x]], split = ":")[[1]]
+        
+      # in case corresponding environmental variable NOT present
+      } else {
+        ParaFlow[[x]] <<- NA
+        base::warning(paste0("eddy4R.base::def.para.flow.ecte: the workflow parameter ", x, " is not specified as environmental variable."))
+      }
+    })
+    
+    
+  }
+
+
+  
+  
   # in case of user selection mode (ParaFlow$Meth == "slct")
   # don't modify ParaFlow -> directories are created / set and unmodified ParaFlow are returned below
   
@@ -176,20 +217,6 @@ def.para.flow.ecte <- function(
   
 
   
-  if(MethParaFlow == "EnvVar"){
-    #Create a list with all the specified function arguments
-    
-    #lapply across all specified ParaFlow variables  
-    lapply(base::names(ParaFlow), function(x) {
-      if(base::toupper(x) %in% base::names(base::Sys.getenv())) {
-        ParaFlow[[x]] <<- Sys.getenv(base::toupper(x))
-      } else {warning(paste0("The variable ParaFlow$",x," is not specified as ENV variable"))}
-    })
-    
-    #Format to grab one variable at a time:
-    # if("DIRFILEPARA" %in% base::names(base::Sys.getenv())) {ParaFlow$DirFilePara <- Sys.getenv("DIRFILEPARA")} else {warning("The variable ParaFlow$DirFilePara is not specified as ENV variable")}
-    
-  }
   
   # Check if DateOut is specified
   if(is.null(ParaFlow$DateOut)|!is.character(ParaFlow$DateOut)) {
