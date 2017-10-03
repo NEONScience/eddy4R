@@ -217,15 +217,15 @@ def.para.flow.ecte <- function(
   # TODO: consider moving to eddy4R.base::def.env.glob()
     
     # output directory
-    if(!base::dir.exists(ParaFlow$DirOut)) base::dir.create(ParaFlow$DirOut)
+    if(!base::dir.exists(ParaFlow$DirOut)) base::dir.create(ParaFlow$DirOut, recursive = TRUE)
 
     # temporary directory
     if(is.na(ParaFlow$DirTmp)) ParaFlow$DirTmp <- base::tempdir()
-    if(!base::dir.exists(ParaFlow$DirTmp)) base::dir.create(ParaFlow$DirTmp)
+    if(!base::dir.exists(ParaFlow$DirTmp)) base::dir.create(ParaFlow$DirTmp, recursive = TRUE)
   
     # working directory
     if(is.na(ParaFlow$DirWrk)) ParaFlow$DirWrk <- base::tempdir()
-    if(!base::dir.exists(ParaFlow$DirWrk)) base::dir.create(ParaFlow$DirWrk)
+    if(!base::dir.exists(ParaFlow$DirWrk)) base::dir.create(ParaFlow$DirWrk, recursive = TRUE)
     if(base::getwd() != ParaFlow$DirWrk) base::setwd(ParaFlow$DirWrk)
 
   
