@@ -98,7 +98,7 @@ def.para.flow <- function(
   if(is.null(ParaFlow$DirFilePara) && !is.na(ParaFlow$DirInp)) {  
   
   #DirFilePara
-    ParaFlow$DirFilePara <- ifelse(any(grepl(pattern = ParaFlow$DateOut, list.files(ParaFlow$DirInp))),grep(pattern = ParaFlow$DateOut, list.files(ParaFlow$DirInp), value = TRUE), NULL)
+    ParaFlow$DirFilePara <- ifelse(any(grepl(pattern = ParaFlow$DateOut, list.files(ParaFlow$DirInp))),grep(pattern = paste0(".*",ParaFlow$DateOut,".*.h5?"), list.files(ParaFlow$DirInp, full.names = TRUE), value = TRUE), NULL)
   } else{
   
       # download data
