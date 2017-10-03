@@ -37,7 +37,7 @@
 
 def.hdf5.dp.pack <- function(
   inpList,
-  MethMeas = c("ecte", "ecse")[1]
+  MethMeas = c("ecte", "ecse")[1],
   time,
   Dp
 ){
