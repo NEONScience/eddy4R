@@ -1,15 +1,19 @@
 ##############################################################################################
-#' @title Definition function: to package NEON ECSE data product outputs to be written to HDF5 files
+#' @title Definition function: to package NEON eddy-covariance data product outputs to be written to HDF5 files
 
 #' @author 
+#' Natchaya Pingintha-Durden \email{ndurden@battelleecology.org} \cr
 #' Dave Durden \email{ddurden@battelleecology.org} \cr
 
 #' @description 
-#' Definition function to produce a list of dataframes corresponding times for aggregation periods for NEON ECSE data product, and are packaged to be written to the HDF5 file.
+#' Definition function to produce a list of dataframes corresponding times for aggregation periods for NEON eddy-covariance data product, and are packaged to be written to the HDF5 file.
 #'
-#' @param inpList a list of NEON ECSE computed output statistics or quality flags and quality metrics over multiple aggregations periods that need to be combined and formatted for output to HDF5.
-#' @param Dp which level of data product is being packaged to be written to the HDF5 file, Dp = c("Dp01", "Dp02", "Dp03", "Dp04"). Defaults to "Dp01". [-]
-  
+#' @param inpList A list of NEON eddy-covariance computed output statistics or quality flags and quality metrics over multiple aggregations periods that need to be combined and formatted for output to HDF5.
+#' @param MethMeas A vector of class "character" containing the name of measurement method (eddy-covariance turbulent exchange or storage exchange), MethMeas = c("ecte", "ecse"). Defaults to "ecte". 
+#' @param Dp If MethMeas = "ecte", Dp is which data product is being packaged to be written to the HDF5 file. \cr
+#' If MethMeas = "ecse", Dp is which level of data product is being packaged to be written to the HDF5 file, Dp = c("Dp01", "Dp02", "Dp03", "Dp04").
+#' @param time Optional. If MethMeas = "ecte", a dataframe including the timeBgn and timeEnd for the aggregated periods should be included in the data to be combined.
+#'   
 #' @return A list of dataframes of for aggregation periods.
 
 #' @references 
@@ -27,11 +31,15 @@
 # changelog and author contributions / copyrights
 #   Natchaya Pingintha-Durden (2017-09-07)
 #     original creation
+#   Natchaya Pingintha-Durden (2017-09-07)
+#     added MethMeas and rename function to def.hdf5.dp.pack()
 ##############################################################################################
 
-def.hdf5.dp.pack.ecse <- function(
+def.hdf5.dp.pack <- function(
   inpList,
-  Dp = c("Dp01", "Dp02", "Dp03", "Dp04")[1]
+  MethMeas = c("ecte", "ecse")[1]
+  time,
+  Dp
 ){
   
   #Initializing lists
