@@ -1,42 +1,58 @@
 ##############################################################################################
-#' @title Definition function: Determine the workflow variables
+#' @title Definition function: Determine workflow parameters for NEON's eddy-covariance turbulence exchange workflow
 
 #' @author 
-#' David Durden \email{ddurden@battelleecology.org}
+#' Stefan Metzger \email{eddy4R.info@gmail.com}
 
 #' @description 
-#' Definition function. Function to determine the workflow variables by either reading them in from the environmental variables, defining them explicitly, or defining them by default values
+#' Definition function. Collects the workflow parameters for NEON's eddy-covariance turbulence exchange workflow. It also checks for the presence and correctness of the most important workflow parameters (\code{ParaFlow$Meth}, \code{ParaFlow$DirInp}, \code{ParaFlow$DateOut}, \code{ParaFlow$FileOutBase}, \code{ParaFlow$FileOutBase}), and creates and sets the input, output, temporary and working directories. One of three methods needs to be provided via the \code{ParaFlow$Meth} argument: \cr
+#' \enumerate{
+#'   \item \code{ParaFlow$Meth == "dflt"} downloads the web-based reference input and output data files, and returns a list of workflow parameters corresponding to the "default mode" (for use with the reference files). This includes all workflow parameters listed in below overview. The arguments \code{UrlInpRefe} and \code{UrlInpRefe} need to be provided. \cr
+#'   \item \code{ParaFlow$Meth == "host"} returns a list of workflow parameters corresponding to the environmental-variables-from-host mode (for batch-processing from the command line). For each workflow parameter in below overview the corresponding environmental variable (in all CAPS!) is searched. If the corresponding environmental variable is found, its value is assigned to the workflow parameter. If the corresponding environmental variable is not found, \code{NA} is assigned to the workflow parameter. Additional workflow parameters / environmental variables to be included can be specified via the \code{...} argument. If for a single workflow parameter a KEY-value pair is passed, its corresponding environmental variable needs to be constructed with an equals sign (KEY=value). If for a single workflow parameter multiple values or KEY-value pairs are passed, they need to be separated in the environmental variable by a colon (KEY1=value1:KEY2=value2 ...). \cr
+#'   \item \code{ParaFlow$Meth == "slct"} returns a list of workflow parameters corresponding to the user selection mode (for interactive data analysis in Rstudio). The user selection is performed in the workflow file itself (e.g., flow.turb.tow.neon.dp04.r) and merely passed through the def.para.flow.ecte() function (plus some tests and directory settings). \cr
+#' } \cr
 
-#' @param Deve is logical that determines if only a subset of the data should be read in to reduce testing time during development (\code{Deve = TRUE}) or all the input data should be read in (\code{Deve = FALSE})
-#' @param DirFilePara is file path for the hdf5 dp0p input data file 
-#' @param DirInp is directory path for the hdf5 dp0p input data file 
-#' @param DirMnt is the base directory path for where the docker is mounted 
-#' @param DirOut is directory path for the output data
-#' @param DirTmp is directory path for temporary storage during processing
-#' @param DirWrk is directory path for working storage during processing
-#' @param DateOut is a character string that lists the dates to produce output data
-#' @param FileOutBase is a character string that denotes the base file name for output
-#' @param Read determine if the data are read from hdf5 dp0p input data file or other input files 
-#' @param VersDp is the data product level that will be output 
-#' @param VersEddy is the version of the eddy4R docker that is being used to perform the processing
-#' @param MethParaFlow is the method used to specify workflow parameters, "EnvVar" will grab ParaFlow parameters from environmental variable and "DfltInp" will use whatever is specified in the function call.
-#' @param UrlInpRefe A single-entry vector of class "character" containing the web address of the reference input data zip file to be downloaded.
-#' @param UrlOutRefe A single-entry vector of class "character" containing the web address of the reference output data zip file to be downloaded.
+#' \strong{Overview of workflow parameters}
+#' \describe{
+#'   \item{\code{ParaFlow$Meth}}{Deploy workflow file in default mode (\code{"dflt"}, uses web-based reference file), in environmental-variables-from-host mode (\code{"host"}, for batch-processing from command line), or in user selection mode (\code{"slct"}, for interactive data analysis in Rstudio). [character]}
+#'   \item{\code{ParaFlow$DateOut}}{Sequence of output dates in ISO date format (YYYY-MM-DD). Need to correspond to the central day(s) in \code{ParaFlow$PrdWndwCalc} based on \code{ParaFlow$PrdWndwPf}, \code{ParaFlow$PrdIncrPf == ParaFlow$PrdIncrCalc}. [character / value1:value2 ... environmental variable]}
+#'   \item{\code{ParaFlow$DirInp}}{Directory for hdf5 L0p input data files in the Docker-internal directory structure. Needs to be a subdirectory of \code{ParaFlow$DirMnt}; names of L0p files in \code{ParaFlow$DirInp} need to follow the naming pattern per NEON.DOC.000807 (L0p ATBD), e.g., ECTE_dp0p_CPER_2016-06-21.h5, so that SCI can reliably split-out the ISO date corresponding to each file.  [character]}
+#'   \item{\code{ParaFlow$DirMnt}}{Mount point of the host operating file system in the Docker-internal directory structure. Set to \code{NA} in case no host file system is mounted. [character]}
+#'   \item{\code{ParaFlow$DirOut}}{Directory for hdf5 L1 - L4 output data files in the Docker-internal directory structure. Needs to be a subdirectory of \code{ParaFlow$DirMnt}. [character]}
+#'   \item{\code{ParaFlow$DirTmp}}{Directory for temporary objects in the Docker-internal directory structure. If file-backed objects are to be stored outside of the Docker container (required for \code{ParaFlow$PrdWndwPf > 1}!), \code{ParaFlow$DirTmp} needs to be a subdirectory of \code{ParaFlow$DirMnt}. Uses the Docker-internal default temporary directory if set to \code{NA}. [character]}
+#'   \item{\code{ParaFlow$DirWrk}}{Working directory in the Docker-internal directory structure. The root directory for specifying relative pathes in eddy4R-Docker. Uses the Docker-internal default temporary directory if set to \code{NA}. [character]}
+#'   \item{\code{ParaFlow$FileInp}}{Optional: sequence of L0p hdf5 file names that should be considered for processing. This supports having files for various sites in the same \code{ParaFlow$DirInp}. Defaults to \code{NA} / assumed \code{NA} if not provided, in which case all files in \code{ParaFlow$DirInp} are considered for processing. [character / value1:value2 ... environmental variable]}
+#'   \item{\code{ParaFlow$FileOutBase}}{Basename for hdf5 L1 - L4 output data files. On this basis the workflow flow.turb.tow.neon.dp04.r creates the output files as \code{base::file.path(ParaFlow$DirOut, base::paste0(ParaFlow$FileOutBase, "_", ParaFlow$DateOut, "_basic.hdf5"))} and \code{base::file.path(ParaFlow$DirOut, base::paste0(ParaFlow$FileOutBase, "_", ParaFlow$DateOut, "_expanded.hdf5"))}. [character]}
+#'   \item{\code{ParaFlow$NameDataExt}}{Sequence of external data product names incl. repository addresses. Set to NA in case no external data products are used. [named character / KEY1=value1:KEY2=value2 ... environmental variable]}
+#'   \item{\code{ParaFlow$PrdIncrCalc}}{Period increment calculation, step-size by which \code{ParaFlow$PrdWndwCalc} moves through L0p data, currently planned by 1 day. [integer] {days}}
+#'   \item{\code{ParaFlow$PrdIncrPf}}{Period increment planar-fit, step-size by which \code{ParaFlow$PrdWndwPf} moves through "period window calculation", currently planned by 1 day. [integer] {days}}
+#'   \item{\code{ParaFlow$PrdWndwCalc}}{Period window calculation, defining the time-block of data that is to be processed by the single execution of a workflow. Needs to be >= \code{ParaFlow$PrdWndwPf}, currently planned for 9 days. [integer] {days}}
+#'   \item{\code{ParaFlow$PrdWndwPf}}{Period window planar-fit, defining the time-block of data for which fitting of aerodynamic plane is being performed. Needs to be <= \code{ParaFlow$PrdWndwCalc}, currently planned for 9 days. [integer] {days}}
+#'   \item{\code{ParaFlow$Read}}{Read L0p data from hdf5 (\code{"hdf5"}) or attempt to read pre-groomed data from fast file-backed object (\code{"ff"}) if available. [character]}
+#'   \item{\code{ParaFlow$VersDp}}{Data product version; e.g. \code{"provisional"}, \code{"001"} etc. [character]}
+#'   \item{\code{ParaFlow$VersEddy}}{Software version of eddy4R-Docker, e.g. \code{"0.2.1"}, \code{"latest"} etc. [character]}
+#' }
 
-#' @return \code{ParaFlow} is a list returned that indicates the workflow control parameters, including \code{ParaFlow$DirFilePara},\code{ParaFlow$DirInp}, \code{ParaFlow$DirMnt}, \code{ParaFlow$DirOut}, \code{ParaFlow$DirTmp}, \code{ParaFlow$DirWrk}, \code{ParaFlow$DateOut}, \code{ParaFlow$FileOutBase},  \code{ParaFlow$Read}, \code{ParaFlow$VersDp}, \code{ParaFlow$VersEddy}. 
+#' @param ParaFlow A list with at least one entry \code{ParaFlow$Meth}.
+#' @param UrlInpRefe A single-entry vector containing the web address of the reference input data zip file to be downloaded. [character]
+#' @param UrlOutRefe A single-entry vector containing the web address of the reference output data zip file to be downloaded. [character]
+#' @param ... Only for \code{ParaFlow$Meth == "host"}: names of additional workflow parameters / environmental variables to be included. [character]
+
+#' @return A list containing the workflow control parameters. See Description for details. 
 
 #' @references
 #' License: GNU AFFERO GENERAL PUBLIC LICENSE Version 3, 19 November 2007. \cr
-#' NEON Algorithm Theoretical Basis Document:Eddy Covariance Turbulent Exchange Subsystem Level 0 to Level 0’ data product conversions and calculations (NEON.DOC.000823) \cr
-#' NEON Algorithm Theoretical Basis Document:Eddy Covariance Turbulent Exchange Subsystem Level 1 data product calculations (NEON.DOC.000807)
 
 #' @keywords NEON, environment variables, eddy-covariance, ECTE
 
-#' @examples 
-#' def.para.flow(DirFilePara = "test.h5", MethParaFlow = "DfltInp")
+#' @examples
+#' def.para.flow.ecte(ParaFlow = list("Meth" = "dflt"),
+#' UrlInpRefe = "https://www.dropbox.com/s/qlp1pyanm5rn2eq/inpRefe_20170308.zip?dl=1",
+#' UrlOutRefe = "https://www.dropbox.com/s/j0zhjfolx4k9ugm/outRefe_20170918.zip?dl=1")
 
-
-#' @seealso Currently none
+#' @seealso
+#' NEON Algorithm Theoretical Basis Document:Eddy Covariance Turbulent Exchange Subsystem Level 0 to Level 0’ data product conversions and calculations (NEON.DOC.000823) \cr \cr
+#' NEON Algorithm Theoretical Basis Document:Eddy Covariance Turbulent Exchange Subsystem Level 1 data product calculations (NEON.DOC.000807)
 
 #' @export
 
@@ -47,14 +63,6 @@
 ##############################################################################################################
 #Start of function call to determine workflow parameters
 ##############################################################################################################
-
-
-Para$Flow <- def.para.flow.ecte(ParaFlow = Para$Flow,
-                                UrlInpRefe = "https://www.dropbox.com/s/qlp1pyanm5rn2eq/inpRefe_20170308.zip?dl=1",
-                                UrlOutRefe = "https://www.dropbox.com/s/j0zhjfolx4k9ugm/outRefe_20170918.zip?dl=1"
-                                )
-
-
 def.para.flow.ecte <- function(
   ParaFlow,
   UrlInpRefe,
@@ -73,78 +81,30 @@ def.para.flow.ecte <- function(
   
   
   # in case of default mode (ParaFlow$Meth == "dflt"), assign default workflow parameters
-  # in case of environmental-variables-from-host mode (host), only the list names are used below
-  # these settings need to change in case a new / different gold file is being used
+  # in case of environmental-variables-from-host mode (host), only the list names are used further below
+  # these settings need to change in case a new / different reference file is being used
   if(ParaFlow$Meth %in% c("dflt", "host")) {
     
-    # sequence of output dates in ISO date format (YYYY-MM-DD) [character]
-    # need to correspond to the central day(s) in PrdWndwCalc based on PrdWndwPfDcmp and PrdIncrPfDcmp == PrdIncrCalc
+    # assign defaults
+    # for a detailed description of each workflow parameter see ?eddy4R.base::def.para.flow.ecte, section Overview of workflow parameters
     ParaFlow$DateOut <- base::as.character(base::as.Date(base::as.character(20160424), format = "%Y%m%d"))
-    
-    # directory for hdf5 L0p input data files in the Docker-internal directory structure [character]
-    # needs to be a subdirectory of DirMnt; names of dp0p files in DirInp follow the naming pattern per NEON.DOC.000807 (dp0p ATBD),
-    # e.g., ECTE_dp0p_CPER_2016-06-21.h5, so that SCI can reliably split-out the ISO date corresponding to each file
     ParaFlow$DirInp <- base::paste0(base::tempdir(), "/inpRefe")
-    
-    # mount point of the host operating file system in the Docker-internal directory structure [character]
-    # set to NA in case no host file system is mounted
     ParaFlow$DirMnt <- NA
-    
-    # directory for hdf5 L1 - L4 output data files in the Docker-internal directory structure [character]
-    # needs to be a subdirectory of DirMnt
     ParaFlow$DirOut <- base::paste0(base::tempdir(), "/out")
-    
-    # directory for temporary objects in the Docker-internal directory structure [character]
-    # if file-backed objects are to be stored outside of the Docker container, DirTmp needs to be a subdirectory of DirMnt
-    # uses the Docker-internal default temporary directory if set to NA
     ParaFlow$DirTmp <- base::tempdir()
-    
-    # working directory in the Docker-internal directory structure [character]
-    # the root directory for specifying relative pathes in eddy4R-Docker
-    # uses the Docker-internal default temporary directory if set to NA
     ParaFlow$DirWrk <- base::tempdir()
-    
-    # optional: sequence of L0p hdf5 file names that should be considered for processing [character]
-    # which supports having files for various sites in the same DirInp
-    # TODO: defaults to NA / assumed NA if not provided, in which case all files in DirInp are considered for processing
     ParaFlow$FileInp <- NA
-    
-    # basename for hdf5 L1 - L4 output data files [character]
-    # on this basis SCI creates the output files as DirOut/FileOutBase_DateOut_basic.hdf5 and DirOut/FileOutBase_DateOut_expanded.hdf5
     ParaFlow$FileOutBase <- "NEON.D02.SERC.DP4.00200.001.ec-flux"
-    
-    # sequence of external data product names incl. repository addresses [named character]
-    # set to NA in case no external data products are used
     ParaFlow$NameDataExt <- NA
-    
-    # period increment calculation [integer] {days}
-    # step-size by which "period window calculation" moves through L0p data, currently planned by 1 day
     ParaFlow$PrdIncrCalc <- 1
-    
-    # period increment planar-fit [integer] {days}
-    # step-size by which "period window planar-fit" moves through "period window calculation", currently planned by 1 day
     ParaFlow$PrdIncrPf <- 1
-    
-    # period window calculation [integer] {days}
-    # defining the time-block of data that is to be processed by the single execution of a workflow
-    # needs to be geq "period window planar-fit", currently planned for 9 days
     ParaFlow$PrdWndwCalc <- 1
-    
-    # period window planar-fit [integer] {days}
-    # defining the time-block of data for which fitting of aerodynamic plane is being performed
-    # needs to be leq "period window calculation", currently planned for 9 days
     ParaFlow$PrdWndwPf <- 1
-    
-    # read L0p data from hdf5 (hdf5) or attempt to read pre-groomed data from fast file-backed object (ff) if available [character]
     ParaFlow$Read <- c("hdf5", "ff")[1]
-    
-    # data product version; e.g. provisional, 001 etc. [character]
     ParaFlow$VersDp <- "001"
-    
-    # software version of eddy4R-Docker, e.g. "0.2.1", "latest"… [character]
     ParaFlow$VersEddy <- "latest"
     
-    # in case of default mode (ParaFlow$Meth == "dflt"), download golden (reference) data
+    # in case of default mode (ParaFlow$Meth == "dflt"), download reference data
     if(ParaFlow$Meth == "dflt") {
     
       # input data
@@ -188,9 +148,9 @@ def.para.flow.ecte <- function(
       }
     })
     
-    
   }
 
+  
   # in case of user selection mode (ParaFlow$Meth == "slct")
   # don't modify ParaFlow -> directories are created / set and unmodified ParaFlow are returned below
   
@@ -212,7 +172,7 @@ def.para.flow.ecte <- function(
     if(is.null(ParaFlow$Read) | !is.character(ParaFlow$Read) | !ParaFlow$Read %in% c("hdf5",  "ff")) stop("please specify the workflow parameter Read and ensure it is of type character.")
   
   
-  # read input files, create and set directories
+  # create and set directories, read list of files in input directory
   # TODO: consider moving to eddy4R.base::def.env.glob()
 
     # input directory
