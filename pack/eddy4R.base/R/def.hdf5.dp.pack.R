@@ -45,7 +45,45 @@ def.hdf5.dp.pack <- function(
   #Initializing lists
   rpt <- list()
   tmp <- list()
-##Dp01 and Dp02 #############################################################################  
+
+## ECTE #####################################################################################
+if(MethMeas %in% "ecte"){
+  #Looping around variables
+  for(idxVar in names(inpList[[Dp]][[1]])) {
+    #print(idxVar) #For testing
+    #Reformatting data to have data subproducts at a higher hierarchical level than descriptive stats for HDF5 output
+    lapply(names(inpList[[Dp]]), function(x) {
+      tmp[[idxVar]][[x]] <<- inpList[[Dp]][[x]][,idxVar]
+    }) 
+    
+  };rm(idxVar)
+  
+  # Combining list of data into datafram
+  rpt <- lapply(names(tmp), function(x) data.frame(do.call("cbind", tmp[[x]])))
+  
+  #Copying names from input
+  names(rpt) <- names(tmp)
+  
+  #If values come in as Posix, they must first be converted to characters
+  if(!is.character(time[[Dp]]$timeBgn)){time[[Dp]] <- lapply(time[[Dp]], strftime, format="%Y-%m-%dT%H:%M:%OSZ", tz="UTC")} 
+  
+  #Adding time to output dataframe
+  rpt <- lapply(rpt, cbind, timeBgn = time[[Dp]]$timeBgn, timeEnd = time[[Dp]]$timeEnd, stringsAsFactors = FALSE)
+  
+  #Looping around varaibles
+  for(idxVar in base::names(inpList[[Dp]][[1]])) {
+    #Writing unit attributes to each variable 
+    base::attr(x = rpt[[idxVar]], which = "unit") <-
+      base::attr(x = inpList[[Dp]][[1]][,idxVar], which = "unit")
+    
+  }; rm(idxVar)
+  
+}#end of ECTE
+  
+## ECSE ####################################################################################
+if(MethMeas %in% "ecse"){
+
+  ##Dp01 and Dp02 #############################################################################  
   if (Dp %in% c("Dp01", "Dp02")) { 
     
     for(idxDp in names(inpList)) {
@@ -139,6 +177,10 @@ def.hdf5.dp.pack <- function(
     #rpt <- rpt 
     
   }#end of Dp01 and Dp02 #################################################################
+
+}#end of ECSE
+  
   return(rpt)
+
 }
   
