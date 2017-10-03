@@ -34,6 +34,8 @@
 
 #'   \item{\code{ParaFlow$NameDataExt}}{Sequence of external data product names incl. repository addresses. Set to NA in case no external data products are used. [named character / KEY1=value1:KEY2=value2 ... environmental variable]}
 
+#'   \item{\code{Para$Flow$OutMeth}}{Optional: output hdf5 files (\code{Para$Flow$OutMeth = "hdf5"}) and / or diagnostic .csv files and .png plots (\code{Para$Flow$OutMeth = "diag"}). Defaults to \code{NA} / assumed \code{NA} if not provided, in which case only hdf5 files are produced. [character / value1:value2 ... environmental variable]}
+
 #'   \item{\code{Para$Flow$OutSub}}{Optional: for each day, should all output periods be produced (e.g., 48 half-hours, \code{Para$Flow$OutSub = NA}), or only a subset (e.g., half-hours 5 through 15, \code{Para$Flow$OutSub = 5:15}). This supports shorter test runs irrespective of the choice of \code{Para$Flow$Meth}. Defaults to \code{NA} / assumed \code{NA} if not provided, in which case all output periods are produced. [integer]}
 
 #'   \item{\code{ParaFlow$PrdIncrCalc}}{Period increment calculation, step-size by which \code{ParaFlow$PrdWndwCalc} moves through L0p data, currently planned by 1 day. [integer] {days}}
@@ -114,6 +116,7 @@ def.para.flow.ecte <- function(
     ParaFlow$FileInp <- NA
     ParaFlow$FileOutBase <- "NEON.D02.SERC.DP4.00200.001.ec-flux"
     ParaFlow$NameDataExt <- NA
+    ParaFlow$OutMeth <- c("hdf5", "diag")
     ParaFlow$OutSub <- 1:10
     ParaFlow$PrdIncrCalc <- 1
     ParaFlow$PrdIncrPf <- 1
@@ -192,9 +195,20 @@ def.para.flow.ecte <- function(
     
   # assign defaults for optional workflow parameters
 
-    # input files
-    if(is.null(ParaFlow$FileInp) | base::any(base::is.na(ParaFlow$FileInp))) ParaFlow$FileInp <- base::dir(ParaFlow$DirInp, pattern = "*.h5")
-    
+    # input files: if null or NA, read file names from ParaFlow$DirInp
+    if(is.null(ParaFlow$FileInp)) {
+      ParaFlow$FileInp <- base::dir(ParaFlow$DirInp, pattern = "*.h5")
+    } else if(base::any(base::is.na(ParaFlow$FileInp))) {
+      ParaFlow$FileInp <- base::dir(ParaFlow$DirInp, pattern = "*.h5")
+    }
+
+    # output method; if null or NA, assign "hdf5"
+    if(is.null(ParaFlow$OutMeth)) {
+      ParaFlow$OutMeth <- "hdf5"
+    } else if(base::any(base::is.na(ParaFlow$OutMeth))) {
+      ParaFlow$OutMeth <- "hdf5"
+    }
+
     # output subset
     if(is.null(ParaFlow$OutSub)) ParaFlow$OutSub <- NA
 
@@ -215,6 +229,10 @@ def.para.flow.ecte <- function(
     if(base::getwd() != ParaFlow$DirWrk) base::setwd(ParaFlow$DirWrk)
 
   
+  # sort results alphabetically for easier navigation
+  ParaFlow <- ParaFlow[base::sort(base::names(ParaFlow))]
+    
+    
   # return results
   base::return(ParaFlow)
  
