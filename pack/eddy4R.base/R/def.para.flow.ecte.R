@@ -15,21 +15,39 @@
 #' \strong{Overview of workflow parameters}
 #' \describe{
 #'   \item{\code{ParaFlow$Meth}}{Deploy workflow file in default mode (\code{"dflt"}, uses web-based reference file), in environmental-variables-from-host mode (\code{"host"}, for batch-processing from command line), or in user selection mode (\code{"slct"}, for interactive data analysis in Rstudio). [character]}
+
 #'   \item{\code{ParaFlow$DateOut}}{Sequence of output dates in ISO date format (YYYY-MM-DD). Need to correspond to the central day(s) in \code{ParaFlow$PrdWndwCalc} based on \code{ParaFlow$PrdWndwPf}, \code{ParaFlow$PrdIncrPf == ParaFlow$PrdIncrCalc}. [character / value1:value2 ... environmental variable]}
+
 #'   \item{\code{ParaFlow$DirInp}}{Directory for hdf5 L0p input data files in the Docker-internal directory structure. Needs to be a subdirectory of \code{ParaFlow$DirMnt}; names of L0p files in \code{ParaFlow$DirInp} need to follow the naming pattern per NEON.DOC.000807 (L0p ATBD), e.g., ECTE_dp0p_CPER_2016-06-21.h5, so that SCI can reliably split-out the ISO date corresponding to each file.  [character]}
+
 #'   \item{\code{ParaFlow$DirMnt}}{Mount point of the host operating file system in the Docker-internal directory structure. Set to \code{NA} in case no host file system is mounted. [character]}
+
 #'   \item{\code{ParaFlow$DirOut}}{Directory for hdf5 L1 - L4 output data files in the Docker-internal directory structure. Needs to be a subdirectory of \code{ParaFlow$DirMnt}. [character]}
+
 #'   \item{\code{ParaFlow$DirTmp}}{Directory for temporary objects in the Docker-internal directory structure. If file-backed objects are to be stored outside of the Docker container (required for \code{ParaFlow$PrdWndwPf > 1}!), \code{ParaFlow$DirTmp} needs to be a subdirectory of \code{ParaFlow$DirMnt}. Uses the Docker-internal default temporary directory if set to \code{NA}. [character]}
+
 #'   \item{\code{ParaFlow$DirWrk}}{Working directory in the Docker-internal directory structure. The root directory for specifying relative pathes in eddy4R-Docker. Uses the Docker-internal default temporary directory if set to \code{NA}. [character]}
+
 #'   \item{\code{ParaFlow$FileInp}}{Optional: sequence of L0p hdf5 file names that should be considered for processing. This supports having files for various sites in the same \code{ParaFlow$DirInp}. Defaults to \code{NA} / assumed \code{NA} if not provided, in which case all files in \code{ParaFlow$DirInp} are considered for processing. [character / value1:value2 ... environmental variable]}
+
 #'   \item{\code{ParaFlow$FileOutBase}}{Basename for hdf5 L1 - L4 output data files. On this basis the workflow flow.turb.tow.neon.dp04.r creates the output files as \code{base::file.path(ParaFlow$DirOut, base::paste0(ParaFlow$FileOutBase, "_", ParaFlow$DateOut, "_basic.hdf5"))} and \code{base::file.path(ParaFlow$DirOut, base::paste0(ParaFlow$FileOutBase, "_", ParaFlow$DateOut, "_expanded.hdf5"))}. [character]}
+
 #'   \item{\code{ParaFlow$NameDataExt}}{Sequence of external data product names incl. repository addresses. Set to NA in case no external data products are used. [named character / KEY1=value1:KEY2=value2 ... environmental variable]}
+
+#'   \item{\code{Para$Flow$OutSub}}{Optional: for each day, should all output periods be produced (e.g., 48 half-hours, \code{Para$Flow$OutSub = NA}), or only a subset (e.g., half-hours 5 through 15, \code{Para$Flow$OutSub = 5:15}). This supports shorter test runs irrespective of the choice of \code{Para$Flow$Meth}. Defaults to \code{NA} / assumed \code{NA} if not provided, in which case all output periods are produced. [integer]}
+
 #'   \item{\code{ParaFlow$PrdIncrCalc}}{Period increment calculation, step-size by which \code{ParaFlow$PrdWndwCalc} moves through L0p data, currently planned by 1 day. [integer] {days}}
+
 #'   \item{\code{ParaFlow$PrdIncrPf}}{Period increment planar-fit, step-size by which \code{ParaFlow$PrdWndwPf} moves through "period window calculation", currently planned by 1 day. [integer] {days}}
+
 #'   \item{\code{ParaFlow$PrdWndwCalc}}{Period window calculation, defining the time-block of data that is to be processed by the single execution of a workflow. Needs to be >= \code{ParaFlow$PrdWndwPf}, currently planned for 9 days. [integer] {days}}
+
 #'   \item{\code{ParaFlow$PrdWndwPf}}{Period window planar-fit, defining the time-block of data for which fitting of aerodynamic plane is being performed. Needs to be <= \code{ParaFlow$PrdWndwCalc}, currently planned for 9 days. [integer] {days}}
+
 #'   \item{\code{ParaFlow$Read}}{Read L0p data from hdf5 (\code{"hdf5"}) or attempt to read pre-groomed data from fast file-backed object (\code{"ff"}) if available. [character]}
+
 #'   \item{\code{ParaFlow$VersDp}}{Data product version; e.g. \code{"provisional"}, \code{"001"} etc. [character]}
+
 #'   \item{\code{ParaFlow$VersEddy}}{Software version of eddy4R-Docker, e.g. \code{"0.2.1"}, \code{"latest"} etc. [character]}
 #' }
 
@@ -71,7 +89,7 @@ def.para.flow.ecte <- function(
 ){
 
   
-  # failsafes ensuring that ParaFlow$Meth is present and one of "dflt",  "host", or "slct"
+  # error messages ensuring that ParaFlow$Meth is present and one of "dflt",  "host", or "slct"
   
     # ParaFlow$Meth present?
     if(is.null(ParaFlow$Meth)) base::stop('please provide Para$Flow$Meth.')
@@ -96,6 +114,7 @@ def.para.flow.ecte <- function(
     ParaFlow$FileInp <- NA
     ParaFlow$FileOutBase <- "NEON.D02.SERC.DP4.00200.001.ec-flux"
     ParaFlow$NameDataExt <- NA
+    ParaFlow$OutSub <- 1:10
     ParaFlow$PrdIncrCalc <- 1
     ParaFlow$PrdIncrPf <- 1
     ParaFlow$PrdWndwCalc <- 1
@@ -159,7 +178,6 @@ def.para.flow.ecte <- function(
   
     # ParaFlow$DirInp
     if(is.null(ParaFlow$DirInp) | !is.character(ParaFlow$DirInp)) stop("please specify the workflow parameter DirInp and ensure it is of type character.")
-  
     if(base::length(base::dir(ParaFlow$DirInp, pattern = "*.h5")) == 0) stop(base::paste0("please provide input files in ", ParaFlow$DirInp, "."))
   
     # ParaFlow$DateOut
@@ -170,15 +188,20 @@ def.para.flow.ecte <- function(
   
     # ParaFlow$FileOutBase
     if(is.null(ParaFlow$Read) | !is.character(ParaFlow$Read) | !ParaFlow$Read %in% c("hdf5",  "ff")) stop("please specify the workflow parameter Read and ensure it is of type character.")
-  
-  
+
+    
+  # assign defaults for optional workflow parameters
+
+    # input files
+    if(is.null(ParaFlow$FileInp) | base::any(base::is.na(ParaFlow$FileInp))) ParaFlow$FileInp <- base::dir(ParaFlow$DirInp, pattern = "*.h5")
+    
+    # output subset
+    if(is.null(ParaFlow$OutSub)) ParaFlow$OutSub <- NA
+
+    
   # create and set directories, read list of files in input directory
   # TODO: consider moving to eddy4R.base::def.env.glob()
-
-    # input directory
-    # if(!base::dir.exists(ParaFlow$DirInp)) base::dir.create(ParaFlow$DirInp)
-    if(is.na(ParaFlow$FileInp[1])) ParaFlow$FileInp <- base::dir(ParaFlow$DirInp, pattern = "*.h5")
-
+    
     # output directory
     if(!base::dir.exists(ParaFlow$DirOut)) base::dir.create(ParaFlow$DirOut)
 
