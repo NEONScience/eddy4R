@@ -4,8 +4,9 @@
 \alias{def.hdf5.crte}
 \title{Definition function: Create the ECTE HDF5 file structure}
 \usage{
-def.hdf5.crte(Date, Site = "SERC", LevlTowr, DirOut, Dom = Dom,
-  MethExpd = TRUE, fileNameReadMe = NULL, fileNameObjDesc = NULL)
+def.hdf5.crte(Date, Site = "SERC", LevlTowr, DirOut, FileOutBase = NULL,
+  MethExpd = TRUE, MethDp04 = FALSE, FileNameReadMe = NULL,
+  FileNameObjDesc = NULL)
 }
 \arguments{
 \item{Date}{is the date for the output file being generated.}
@@ -16,13 +17,15 @@ def.hdf5.crte(Date, Site = "SERC", LevlTowr, DirOut, Dom = Dom,
 
 \item{DirOut}{is the output directory where the file being generated is stored.}
 
-\item{Dom}{is the NEON domain}
+\item{FileOutBase}{character string indicating the base output filename, to which the date and package information will be appended.}
 
-\item{MethExpd}{logical indicating if the output should be expanded or basic}
+\item{MethExpd}{logical indicating if the output should be expanded or basic.}
 
-\item{fileNameReadMe}{character indicating the filename incl. absolute path to the ReadMe file for inclusion in the output HDF5 file. Defaults to \code{NULL}, which downloads the readme file from a web location.}
+\item{MethDp04}{logical indicating if ECTE dp04 HDF5 folder structure should be included.}
 
-\item{fileNameObjDesc}{character indicating the filename incl. absolute path to the object description file for inclusion in the output HDF5 file. Defaults to \code{NULL}, which downloads the object description file from a web location.}
+\item{FileNameReadMe}{character indicating the filename incl. absolute path to the ReadMe file for inclusion in the output HDF5 file. Defaults to \code{NULL}, which downloads the readme file from a web location.}
+
+\item{FileNameObjDesc}{character indicating the filename incl. absolute path to the object description file for inclusion in the output HDF5 file. Defaults to \code{NULL}, which downloads the object description file from a web location.}
 }
 \value{
 A NEON formatted HDF5 file that is output to /code{DirOut} with a readme and object description included.
@@ -35,14 +38,14 @@ Definition function. Function creates the standard NEON HDF5 file structure for 
 #Setting Site
 Site <- "SERC"
 LevlTowr <- "000_060"
-Dom <- "D02"
+FileOutBase <- "NEON.D02.SERC.DP4.00200.001.ec-flux"
 MethExpd <- TRUE
 #Setting Date to be processed
 Date <- "2016-04-24"
 #Set directory for example output to working directory
 DirOut <- getwd()
 #Running example
-def.hdf5.crte(Date = Date, Site = Site, LevlTowr = LevlTowr, DirOut = DirOut, Dom = Dom, MethExpd = MethExpd)
+def.hdf5.crte(Date = Date, Site = Site, LevlTowr = LevlTowr, DirOut = DirOut, FileOutBase = FileOutBase, MethExpd = MethExpd)
 }
 \references{
 License: GNU AFFERO GENERAL PUBLIC LICENSE Version 3, 19 November 2007. \cr

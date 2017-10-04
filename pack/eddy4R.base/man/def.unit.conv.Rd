@@ -6,7 +6,7 @@
 \usage{
 def.unit.conv(data, unitFrom = "arb", unitTo = "arb",
   coefPoly = base::lapply(base::as.data.frame(data), function(x) c(0, 1)),
-  vrbs = FALSE)
+  vrbs = FALSE, MethGc = TRUE)
 }
 \arguments{
 \item{\code{data}}{Required. A named data frame of type numeric, containing the data to be converted. 
@@ -79,7 +79,10 @@ Each entry in the named list contains a numerical vector of [a0 a1 a2 a3 ...] si
 coeficients of the equation a0 + a1*x + a2*x^2 + a3*x^3 ... , where x is the input data.
 Default is c(0,1) for each variable in \code{data}. Note: If unitFrom and unitTo are input along
 with coefPoly, coefPoly is applied first. Then the unit transformation from \code{unitFrom} to
-\code{unitTo} is performed.}
+\code{unitTo} is performed.
+\cr}
+
+\item{\code{MethGc}}{is set to \code{TRUE} (default), to run garbage collection function.}
 }
 \value{
 Function output format depends on input parameter \code{vrbs}. \cr

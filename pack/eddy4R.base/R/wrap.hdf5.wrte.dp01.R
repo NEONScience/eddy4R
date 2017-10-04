@@ -13,6 +13,7 @@
 #' @param SiteLoca Character: Site location.
 #' @param LevlTowr The tower level that the sensor data is being collected in NEON data product convention (HOR_VER)
 #' @param MethUcrt Logical: Determines if uncertainty information is available for output.
+#' @param MethDp04 logical indicating if ECTE dp04 HDF5 data should be included.
 #' @param MethSubAgr Logical: Determines if 1-minute data is available for output.
 
 #' 
@@ -36,7 +37,9 @@
 #   David Durden (2017-06-06)
 #     Adding uncertaitny HDF5 packaging calls
 #   David Durden (2017-06-29)
-#     Adding switches for writing output
+#     Adding switches for writing 1-min and ucrt output
+#   David Durden (2017-09-10)
+#     Adding switches for writing dp04 output
 ##############################################################################################
 
 
@@ -49,6 +52,7 @@ wrap.hdf5.wrte.dp01 <- function(
   SiteLoca,
   LevlTowr,
   MethUcrt = TRUE,
+  MethDp04 = FALSE,
   MethSubAgr = TRUE
 ){
 
@@ -99,6 +103,33 @@ if(MethSubAgr == TRUE){
 #Applying the HDF5 write output function across all DPs
 lapply(names(outList$data), function(x) eddy4R.base::def.hdf5.wrte.dp01(inpList = outList, FileOut = FileOut, SiteLoca = SiteLoca, LevlTowr = LevlTowr, Dp01 = x, MethUcrt = MethUcrt, MethSubAgr = MethSubAgr))
 
+if(MethDp04 == TRUE){
+  
+  #Create HDF5 connection to the output file  
+  fid <- rhdf5::H5Fopen(FileOut)
+
+  for(idxDp04 in names(inpList$dp04$data)){
+    #idxDp04 <- names(inpList$dp04$data)[1]
+    #Adding time to output dataframe
+    rptDp04 <-  cbind(timeBgn = outList$data$soni$veloXaxsErth$timeBgn, timeEnd = outList$data$soni$veloXaxsErth$timeEnd, inpList$dp04$data[[idxDp04]]$turb, stringsAsFactors = FALSE)
+  
+  
+  #Writing unit attributes to each variable to the dataframe level
+  attributes(rptDp04)$unit <- sapply(names(inpList$dp04$data[[idxDp04]]$turb), function(x) attributes(inpList$dp04$data[[idxDp04]]$turb[[x]])$unit)
+
+  #Open connection to dp04 data level
+  idDataDp04 <- rhdf5::H5Gopen(fid,paste0("/", SiteLoca, "/dp04/data/",idxDp04))
+  
+  #Writing flux data to output HDF5 file
+  rhdf5::h5writeDataset.data.frame(obj = rptDp04, h5loc = idDataDp04, name = "turb", DataFrameAsCompound = TRUE)
+  
+  #Connection to dataset
+  idDataDp04Df <- rhdf5::H5Dopen(idDataDp04, "turb")
+  #Output the attributes
+  rhdf5::h5writeAttribute(attributes(rptDp04)$unit, h5obj = idDataDp04Df, name = "unit")        }                                
+ 
+  rhdf5::H5close()                                           
+}                                          
 #Writing metadata from input dp0p file to output dp01 file
 eddy4R.base::def.para.hdf5.dp01(FileIn = FileIn, FileOut = FileOut)
 
