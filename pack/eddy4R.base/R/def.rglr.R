@@ -314,13 +314,19 @@ def.rglr <- function(
     posRglr <- base::subset(posRglr,!base::is.na(posRglr))
     dupl <- base::duplicated(posRglr) # which fall into an already occupied bin?
     
+    # intialize regularized timeseries
+    if(base::is.character(dataMeas$data) || base::is.factor(dataMeas$data)){
+      dataRglr <- base::matrix(data="NA",nrow=length(timeRglrNumc)-1,ncol=numVar) # initialize
+    } else {
+      dataRglr <- base::matrix(data=NA*1.5,nrow=length(timeRglrNumc)-1,ncol=numVar) # initialize
+    }
+    
     # Pull the first value that falls within each bin
-    dataRglr <- base::matrix(data=NA*1.5,nrow=length(timeRglrNumc)-1,ncol=numVar) # initialize
     for(idxVar in 1:numVar){
       # place the first value falling into each bin
       dataRglr[posRglr[!dupl],idxVar] <- dataMeas[which(!dupl),idxVar]
     }
-    dataRglr <- base::as.data.frame(dataRglr) # Make data frame
+    dataRglr <- base::as.data.frame(dataRglr,stringsAsFactors=FALSE) # Make data frame
     base::names(dataRglr) <- nameVar # Assign names same as dataMeas
     
     # Report output
