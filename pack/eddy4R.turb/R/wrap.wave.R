@@ -59,7 +59,6 @@ rpt$qfMiss <- lapply(rpt$qfMiss, as.integer)
 # NAs at start and end are removed by setting na.rm = TRUE
 dfInp <- zoo::na.approx(dfInp, na.rm = TRUE, rule = 2) #Rule 2 allows extropolating end values using the nearest value or explicitly using zoo::na.locf, could be replaced with zeros using na.fill with any value: see https://stackoverflow.com/questions/7317607/interpolate-na-values-in-a-data-frame-with-na-approx
 
-
 #time series
 dfInp <- as.data.frame(ts(
   dfInp,                   #discard rows with bogus w
@@ -76,7 +75,6 @@ for (c in colnames(dfInp)) {
     cat(" done.\n")
   }
 
-
 #normalization factor specific to the choice of Wavelet parameters
 rpt$coefNorm <- rpt$wave[["w_met"]]@dj * rpt$wave[["w_met"]]@dt / rpt$wave[["w_met"]]@wavelet@cdelta / length(rpt$wave[["w_met"]]@series)
 
@@ -84,9 +82,9 @@ rpt$coefNorm <- rpt$wave[["w_met"]]@dj * rpt$wave[["w_met"]]@dt / rpt$wave[["w_m
 rpt$cov <- data.frame(sapply(names(rpt$wave), function(var)
   def.vari.wave(
     #complex Wavelet coefficients variable 1
-    spec1 = rpt$wave[[var]]@spectrum,
+    spec1 = rpt$wave[["w_met"]]@spectrum,
     #complex Wavelet coefficients variable 2
-    spec2 = rpt$wave[[var]]@spectrum,
+    # spec2 = rpt$wave[[var]]@spectrum,
     #width of the wavelet [s]
     scal = rpt$wave[["w_met"]]@scale,
     #approximate Fourier period [d]

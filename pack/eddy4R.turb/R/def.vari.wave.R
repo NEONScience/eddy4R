@@ -76,37 +76,170 @@ def.vari.wave <- function(
     
   }
   
+  
+  
+  
+    # some testing
+    # TODO: only perform if < 10 % NA
+    # why is the spectral peak for unweighted coefficients too high?
+      # it is not too high, instead the model SPEmod() internally works with the peak of the frequency-weighted spectrum
+      # hence, the resulting peak when using SPEmod() in optim() is the peak of the frequency-weighted spectrum
+    # why is the wavelet scalogram being weighted when calculating the covariance; this appears different from summing cospectra?
+      # part of variance / covariance estimate, see Torrenco and Compo (1998) Eq (14) or Metzger et al. (2013) Eq. (7)
+  
+    # rows from first obs to last obs
+    # columns from high-frequency to low-frequency
+    # str(cwt_vc1)
+  
+    # variance contribution of each scale [unit^2]
+    # sum results in total variance for dataset, e.g. 30 min
+    # then normalize to unity
+    spec <- colSums(cwt_vc1)
+    spec <- spec / sum(spec, na.rm=TRUE)
+    
+    # frequency [Hz]
+    freq <- 1/(peri/20)
+
+    #determine spectral peak empirically
+    # TODO: import stability parameter
+    # TODO: distinguish spectrum and co-spectrum
+    fx_out <- optim(
+      par = 0.1,
+      fn = eddy4R.turb::find_FX_og,
+      #independent variable, preferabley f, but n is possible
+      IDE = rev(freq),
+      #dependent variable, spectra or cospectra
+      # DEP = rev(tst * scal),
+      DEP = rev(spec),
+      #spectrum or cospectrum?
+      SC = c("spe", "cos")[1],
+      #stability parameter
+      SI = wrk$reyn$mn$sigma,
+      #use frequency-weighted (co)spectrum?
+      WEIGHT = FALSE,
+      #frequency range for determining optimiality criterion
+      WHR_CRIT = c(0.01, 1),
+      #cumulative flux contribution for which measured (co)-spectrum is scaled to model (co)-spectrum
+      crit_cum = 0.6,
+      #generate plot?
+      plot_path = NULL,
+      #determine peak frequency or output spectral correction factor?
+      meth = c("peak", "corfac")[1],
+      method = c("Nelder-Mead", "BFGS", "CG", "L-BFGS-B", "SANN", "Brent")[4],
+      lower = 0.001, upper = 1
+    )
+    
+    # peak index and frequency
+    idxPeak <- GenKern::nearest(x = freq, xval = fx_out$value)
+    # freq[idxPeak]
+    idx1Hz <- GenKern::nearest(x = freq, xval = 1)
+
+    # linear model to determine regression slope between peak frequency and 1 Hz
+    LM <- robustbase::lmrob(log10(spec[idx1Hz:idxPeak]) ~ log10(freq[idx1Hz:idxPeak]))
+    # plot(log10(tst[idx1Hz:idxPeak]) ~ log10(freq[idx1Hz:idxPeak]))
+    # points(LM$fitted.values ~ log10(freq[idx1Hz:idxPeak]), col = 2)
+
+    # if the regression slope (power law coefficient) exceeds the bounds −1.8 ... −1.3, the conventional −5/3 slope is used as alternative
+    if(!(LM$coefficients[2] > -1.8 & LM$coefficients[2] < -1.3)) {
+      LM$coefficients[1] <- mean(log10(spec[idx1Hz:idxPeak]) - (-5/3 * log10(freq[idx1Hz:idxPeak])), na.rm = TRUE)
+      LM$coefficients[2] <- -5/3
+    }
+
+    # calculate the reference spectral coefficients following the power slope
+    spec2 <- 10^(LM$coefficients[1] + LM$coefficients[2] * log10(freq))
+
+    # calculate transfer function
+    # apply only to frequencies > 1 Hz
+    tf <- spec / spec2
+    tf[which(freq < 1)] <- 1
+    # tf[idxPeak:length(tf)] <- 1
+    # plot(tf ~ freq, log = "x")
+    
+    # # plotting
+    # 
+    #   #generate spectral model for range of frequencies
+    #   spemod <- SPEmod(
+    #     #independent variable, preferabley f, but n is possible
+    #     ide = freq,
+    #     #spectrum or cospectrum?
+    #     sc = c("spe", "cos")[1],
+    #     #stability parameter
+    #     si = wrk$reyn$mn$sigma,
+    #     #frequency f at which fCO(f) reaches its maximum value
+    #     fx=freq[idxPeak],
+    #     #output frequency-weighted (co)spectrum?
+    #     # weight=TRUE
+    #     weight=FALSE
+    #   )
+    # 
+    #   # actual plotting
+    #   plot(spec ~ freq, log="xy")
+    #   lines(spemod ~ freq)
+    #   points(spec[idx1Hz:idxPeak] ~ freq[idx1Hz:idxPeak], pch=21, col=4, bg=4)
+    #   points(spec[idxPeak] ~ freq[idxPeak], pch=21, col=2, bg=2)
+    #   lines(spec2[1:idxPeak] ~ freq[1:idxPeak], col=2)
+    
+    
+    # apply transfer function
+    cwt_vc1t <- t(sapply(1:nrow(cwt_vc1), function(x) cwt_vc1[x,] / tf ))
+
+        
   #weighted wavelet scalogram
-  cwt_vc2 <- t(sapply(1:nrow(cwt_vc1), function(x) cwt_vc1[x,] / scal ))
-  
-  #spectral correction using sigmoidal transfer function
-  #http://paos.colorado.edu/research/wavelets/faq.html#scale
-  # The scale refers to the width of the wavelet.
-  # The period (or inverse frequency) is the approximate Fourier period that corresponds to the oscillations within the wavelet.
-  # mycwt[["w_met"]]@scale / mycwt[["w_met"]]@period
-  
-  #perform only if half-power frequency is defined for variable
-  if(!is.na(freq_0)) {
     
-    #transfer function
-    fun_tsig <- fun_TSIG(freq_0 = freq_0, freq = 1/peri)
-    cwt_vc3 <- t(sapply(1:nrow(cwt_vc2), function(x) cwt_vc2[x,] / fun_tsig ))
+    # uncorrected
+    cwt_vc2 <- t(sapply(1:nrow(cwt_vc1), function(x) cwt_vc1[x,] / scal ))
     
-  } else {
+    # corrected
+    cwt_vc2t <- t(sapply(1:nrow(cwt_vc1t), function(x) cwt_vc1t[x,] / scal ))
     
-    cwt_vc3 <- cwt_vc2
     
-  }
+  # #spectral correction using sigmoidal transfer function
+  # #http://paos.colorado.edu/research/wavelets/faq.html#scale
+  # # The scale refers to the width of the wavelet.
+  # # The period (or inverse frequency) is the approximate Fourier period that corresponds to the oscillations within the wavelet.
+  # # mycwt[["w_met"]]@scale / mycwt[["w_met"]]@period
+  #   
+  # #perform only if half-power frequency is defined for variable
+  # if(!is.na(freq_0)) {
+  #   
+  #   #transfer function
+  #   fun_tsig <- fun_TSIG(freq_0 = freq_0, freq = 1/peri)
+  #   cwt_vc3 <- t(sapply(1:nrow(cwt_vc2), function(x) cwt_vc2[x,] / fun_tsig ))
+  #   
+  # } else {
+  #   
+  #   cwt_vc3 <- cwt_vc2
+  #   
+  # }
   
   #time/space series of variance at native resolution
   if(is.null(whr_peri)) whr_peri <- 1:ncol(cwt_vc2)
   myvc2 <- fac_norm * base:::rowSums(cwt_vc2[,whr_peri])
-  myvc3 <- fac_norm * base:::rowSums(cwt_vc3[,whr_peri])
+  myvc2t <- fac_norm * base:::rowSums(cwt_vc2t[,whr_peri])
   
   #conversion from variance fraction to total local variance
   myvc2 <- myvc2 * length(myvc2)
-  myvc3 <- myvc3 * length(myvc3)
+  myvc2t <- myvc2t * length(myvc2t)
+
   
+  # prepare outputs
+  rpt <- list()
+  
+  rpt$mean <- mean(myvc2)
+  rpt$corr <- mean(myvc2t)
+  rpt$trans <- mean(myvc2t)
+  
+  mean(myvc2t) / mean(myvc2)
+  
+  
+  
+    # # some testing
+    # rng <- range(c(sqrt(myvc2), sqrt(dfInp$w_met^2)))
+    # plot(sqrt(myvc2) ~ sqrt(dfInp$w_met^2), xlim = rng, ylim = rng, asp=1)
+    # lines(sqrt(myvc2), col=2)
+  
+  
+    
   #plot change in variance
   #between 0% and 10% along flight line for H2O
   #between 0% and 1% along flight line for T
