@@ -8,7 +8,11 @@
 #' Wrapper function. Calculate Wavelet spectrum/cospectrum using the Waves package. The frequency response correction using Wavelet techniques described in Norbo and Katul, 2012 (NK12)
 
 #' @param dfInp data.frame, consisting of the input data to perform the wavelet transformation
-
+#' @param DiffScale numeric, determining the step difference in scales for the wavelet transformation
+#' @param FuncWave Waves package function, denoting the type of mother wavelet function to be used in the transformation
+#' @param FreqSamp numeric, that determines the time series objects points
+#' @param ThshMiss numeric, dimensionless fraction of missing values in each column of data allowed before the quality flag is tripped. Defaults to 0.1 or 10 percent.
+#' 
 
 #' 
 #' @return An list constaining wavelet spectra, quality flags if data was available to perform correction, and frequency reponse correction parameters if activated.
@@ -38,7 +42,7 @@ dfInp,
 DiffScal = 1/8,
 FuncWave = Waves::morlet(),
 FreqSamp = 20, #Defaults to 20Hz
-ThshMiss = .1,
+ThshMiss = .1
 ){
 
 #Create output list
@@ -96,6 +100,7 @@ rpt$cov <- data.frame(sapply(names(rpt$wave), function(var)
   )
 ))
 
-
+#return all output from the wave function
+return(rpt)
 }
 

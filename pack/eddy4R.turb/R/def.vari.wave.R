@@ -9,8 +9,13 @@
 #' Wrapper function. funtion to determine the temporally resolved variance/covariance from continuous wavelet transform including high-frequency spectral correction and selectable low-frequency cutoff The frequency response correction using Wavelet techniques described in Norbo and Katul, 2012 (NK12)
 
 #' @param dfInp data.frame, consisting of the input data to perform the wavelet transformation
-
-
+#' @param spec1 Waves package output object spectrum, continuous wavelet transform output object complex spectrum for the first variable (typically w')denoted as \code{object1@spectrum}.
+#' @param spec2 Waves package output object spectrum, continuous wavelet transform output object complex spectrum for the second variable for cospectra denoted as \code{object2@spectrum}.
+#' @param scal Waves package output object scale, width of the wavelet at each scale [s] denoted as \code{object1@scale}
+#' @param peri Waves package output object period, approximate corresponding Fourier period [s] denoted as \code{object1@period}
+#' @param freq_0 vector, half-power frequencies for individual variables [Hz] for determining transfer function to correct frequency response
+#' @param whr_peri numeric, which wavelengths/spatial scales to consider if you want to only consider high frequency values
+#' @param fac_norm numeric, normalization factor specific to the choice of Wavelet parameters.
 #' 
 #' @return A vector constaining temporally resolved variance/covariance from the continuous wavelet transform.
 #' 
