@@ -103,9 +103,13 @@ if(flag == 0) {
     # str(cwt_vc1)
   
     # variance contribution of each scale [unit^2]
+    # use absolute value for determining power-law decay and transfer function only
+      # important to take the absolute value of the Wavelet coefficients (not scale integrated "Fourier" coefficients)
+      # the "Fourier" coefficients are already attenuated through summing over positive and negative Wavelet coefficients, such don't express teh total variance on that scale anymore
+    # the transfer function then still needs to be applied over the cross-scalogram with positive an negative Wavelet coefficients
     # sum results in total variance for dataset, e.g. 30 min
     # then normalize to sum of unity
-    spec <- colSums(cwt_vc1)
+    spec <- colSums(abs(cwt_vc1))
     spec <- spec / sum(spec, na.rm=TRUE)
     
     # frequency [Hz]
@@ -174,29 +178,29 @@ if(flag == 0) {
       # tf[idxPeak:length(tf)] <- 1
       # plot(tf ~ freq, log = "x")
       
-      # # plotting
-      # 
-      #   #generate spectral model for range of frequencies
-      #   spemod <- SPEmod(
-      #     #independent variable, preferabley f, but n is possible
-      #     ide = freq,
-      #     #spectrum or cospectrum?
-      #     sc = SC,
-      #     #stability parameter
-      #     si = wrk$reyn$mn$sigma,
-      #     #frequency f at which fCO(f) reaches its maximum value
-      #     fx=freq[idxPeak],
-      #     #output frequency-weighted (co)spectrum?
-      #     # weight=TRUE
-      #     weight=FALSE
-      #   )
-      # 
-      #   # actual plotting
-      #   plot(spec ~ freq, log="xy")
-      #   lines(spemod ~ freq)
-      #   points(spec[idxFreqMax:idxPeak] ~ freq[idxFreqMax:idxPeak], pch=21, col=4, bg=4)
-      #   points(spec[idxPeak] ~ freq[idxPeak], pch=21, col=2, bg=2)
-      #   lines(specRefe[1:idxPeak] ~ freq[1:idxPeak], col=2)
+      # plotting
+
+        #generate spectral model for range of frequencies
+        spemod <- SPEmod(
+          #independent variable, preferabley f, but n is possible
+          ide = freq,
+          #spectrum or cospectrum?
+          sc = SC,
+          #stability parameter
+          si = wrk$reyn$mn$sigma,
+          #frequency f at which fCO(f) reaches its maximum value
+          fx=freq[idxPeak],
+          #output frequency-weighted (co)spectrum?
+          # weight=TRUE
+          weight=FALSE
+        )
+
+        # actual plotting
+        plot(spec ~ freq, log="xy")
+        lines(spemod ~ freq)
+        points(spec[idxFreqMax:idxPeak] ~ freq[idxFreqMax:idxPeak], pch=21, col=4, bg=4)
+        points(spec[idxPeak] ~ freq[idxPeak], pch=21, col=2, bg=2)
+        lines(specRefe[1:idxPeak] ~ freq[1:idxPeak], col=2)
       
       # apply transfer function
       cwt_vc1t <- t(sapply(1:nrow(cwt_vc1), function(x) cwt_vc1[x,] / tf ))
