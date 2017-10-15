@@ -34,6 +34,8 @@
 #     original creation
 #   Stefan Metzger (2017-10-14)
 #     complete initial Wavelet correction
+#   Stefan Metzger (2017-10-15)
+#     MVP candidate incl. efficiency improvements
 ##############################################################################################
 
 
@@ -70,7 +72,8 @@ dfInp <- as.data.frame(ts(
 ))
 
 
-#Perform CWT
+# perform CWT
+# in the future, can consider package "wmtsa" could enable transition to R 3.x (http://cran.at.r-project.org/web/packages/wmtsa/wmtsa.pdf)
 rpt$wave <- list()
 for (c in colnames(dfInp)) {
     cat(paste(c, "..."))
@@ -81,34 +84,35 @@ for (c in colnames(dfInp)) {
 #normalization factor specific to the choice of Wavelet parameters
 rpt$coefNorm <- rpt$wave[["w_hor"]]@dj * rpt$wave[["w_hor"]]@dt / rpt$wave[["w_hor"]]@wavelet@cdelta / length(rpt$wave[["w_hor"]]@series)
 
-# var <- names(rpt$wave)[3]
 
-# standard deviation for all wavelengths
-rpt$sd <- lapply(names(rpt$wave), function(var)
-  eddy4R.turb::def.vari.wave(
-  # def.vari.wave(
-    #complex Wavelet coefficients variable 1
-    spec1 = rpt$wave[[var]]@spectrum,
-    #complex Wavelet coefficients variable 2
-    # spec2 = rpt$wave[[var]]@spectrum,
-    #width of the wavelet [s]
-    scal = rpt$wave[[var]]@scale,
-    #approximate Fourier period [d]
-    peri = rpt$wave[[var]]@period,
-    #half-power frequencies for individual variables [Hz]
-    freq_0 = NA,
-    #which wavelengths/spatial scales to consider
-    whr_peri = NULL,
-    #normalization factor specific to the choice of Wavelet parameters
-    fac_norm = rpt$coefNorm,
-    # Wavelet flag: process (0) or not
-    flag=rpt$qfMiss[[var]],
-    #stability parameter
-    SI = wrk$reyn$mn$sigma,
-    #spectrum or cospectrum?
-    SC = c("spe", "cos")[1]
-  )
-); names(rpt$sd) <- names(rpt$wave)
+# # variance for all wavelengths
+# # not currently used; commented out to conserve computation time
+# # var <- names(rpt$wave)[3]
+# rpt$var <- lapply(names(rpt$wave), function(var)
+#   eddy4R.turb::def.vari.wave(
+#   # def.vari.wave(
+#     #complex Wavelet coefficients variable 1
+#     spec1 = rpt$wave[[var]]@spectrum,
+#     #complex Wavelet coefficients variable 2
+#     # spec2 = rpt$wave[[var]]@spectrum,
+#     #width of the wavelet [s]
+#     scal = rpt$wave[[var]]@scale,
+#     #approximate Fourier period [d]
+#     peri = rpt$wave[[var]]@period,
+#     #half-power frequencies for individual variables [Hz]
+#     freq_0 = NA,
+#     #which wavelengths/spatial scales to consider
+#     whr_peri = NULL,
+#     #normalization factor specific to the choice of Wavelet parameters
+#     fac_norm = rpt$coefNorm,
+#     # Wavelet flag: process (0) or not
+#     flag=rpt$qfMiss[[var]],
+#     #stability parameter
+#     SI = wrk$reyn$mn$sigma,
+#     #spectrum or cospectrum?
+#     SC = c("spe", "cos")[1]
+#   )
+# ); names(rpt$var) <- names(rpt$wave)
 
 
 # covariance for all wavelengths

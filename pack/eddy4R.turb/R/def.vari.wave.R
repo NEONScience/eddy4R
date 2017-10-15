@@ -38,6 +38,8 @@
 #     original creation
 #   Stefan Metzger (2017-10-14)
 #     complete initial Wavelet correction
+#   Stefan Metzger (2017-10-15)
+#     MVP candidate incl. efficiency improvements
 ##############################################################################################
 
 
@@ -265,10 +267,10 @@ if(flag == 0) {
       rpt$freqPeak <- freq[idxPeak]
       
       # uncorrected
-      rpt$mean <- ifelse(SC == "spe", sqrt(mean(myvc2, na.rm = TRUE)), mean(myvc2, na.rm = TRUE))
+      rpt$mean <- mean(myvc2, na.rm = TRUE)
       
       # corrected
-      rpt$corr <- ifelse(SC == "spe", sqrt(mean(myvc2t, na.rm = TRUE)), mean(myvc2t, na.rm = TRUE))
+      rpt$corr <- mean(myvc2t, na.rm = TRUE)
       
       # ratio
       rpt$fac <- rpt$corr / rpt$mean
