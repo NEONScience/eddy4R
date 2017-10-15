@@ -86,7 +86,7 @@ rpt$coefNorm <- rpt$wave[["w_hor"]]@dj * rpt$wave[["w_hor"]]@dt / rpt$wave[["w_h
 
 # standard deviation for all wavelengths
 rpt$sd <- lapply(names(rpt$wave), function(var)
-  def.vari.wave(
+  eddy4R.turb::def.vari.wave(
     #complex Wavelet coefficients variable 1
     spec1 = rpt$wave[[var]]@spectrum,
     #complex Wavelet coefficients variable 2
@@ -114,7 +114,7 @@ rpt$sd <- lapply(names(rpt$wave), function(var)
 # covariance for all wavelengths
 # not currently implemented for friction velocity as approach to negative 
 rpt$cov <- lapply(names(rpt$wave)[-which(names(rpt$wave) == "w_hor")], function(var)
-  def.vari.wave(
+  eddy4R.turb::def.vari.wave(
     #complex Wavelet coefficients variable 1
     spec1 = rpt$wave[[var]]@spectrum,
     #complex Wavelet coefficients variable 2
