@@ -32,6 +32,8 @@
 # changelog and author contributions / copyrights 
 #   David Durden (2017-10-07)
 #     original creation
+#   Stefan Metzger (2017-10-14)
+#     complete initial Wavelet correction
 ##############################################################################################
 
 
@@ -42,11 +44,13 @@ dfInp,
 DiffScal = 1/8,
 FuncWave = Waves::morlet(),
 FreqSamp = 20, #Defaults to 20Hz
-ThshMiss = .1
+ThshMiss = .1,
+#stability parameter
+SI
 ){
 
 #Create output list
-  rpt <- list()
+rpt <- list()
   
 ####Check quality of data###########################################
 #Create a logical flag if more data is missing than the threshold   
@@ -76,27 +80,63 @@ for (c in colnames(dfInp)) {
   }
 
 #normalization factor specific to the choice of Wavelet parameters
-rpt$coefNorm <- rpt$wave[["w_met"]]@dj * rpt$wave[["w_met"]]@dt / rpt$wave[["w_met"]]@wavelet@cdelta / length(rpt$wave[["w_met"]]@series)
+rpt$coefNorm <- rpt$wave[["w_hor"]]@dj * rpt$wave[["w_hor"]]@dt / rpt$wave[["w_hor"]]@wavelet@cdelta / length(rpt$wave[["w_hor"]]@series)
 
-#covariance for all wavelengths
-rpt$cov <- data.frame(sapply(names(rpt$wave), function(var)
+# var <- names(rpt$wave)[8]
+
+# standard deviation for all wavelengths
+rpt$sd <- lapply(names(rpt$wave), function(var)
   def.vari.wave(
     #complex Wavelet coefficients variable 1
-    spec1 = rpt$wave[["w_met"]]@spectrum,
+    spec1 = rpt$wave[[var]]@spectrum,
     #complex Wavelet coefficients variable 2
     # spec2 = rpt$wave[[var]]@spectrum,
     #width of the wavelet [s]
-    scal = rpt$wave[["w_met"]]@scale,
+    scal = rpt$wave[[var]]@scale,
     #approximate Fourier period [d]
-    peri = rpt$wave[["w_met"]]@period,
+    peri = rpt$wave[[var]]@period,
     #half-power frequencies for individual variables [Hz]
     freq_0 = NA,
     #which wavelengths/spatial scales to consider
     whr_peri = NULL,
     #normalization factor specific to the choice of Wavelet parameters
-    fac_norm = rpt$coefNorm
+    fac_norm = rpt$coefNorm,
+    # Wavelet flag: process (0) or not
+    flag=rpt$qfMiss[[var]],
+    #stability parameter
+    SI = wrk$reyn$mn$sigma,
+    #spectrum or cospectrum?
+    SC = c("spe", "cos")[1]
   )
-))
+); names(rpt$sd) <- names(rpt$wave)
+
+
+# covariance for all wavelengths
+# not currently implemented for friction velocity as approach to negative 
+rpt$cov <- lapply(names(rpt$wave)[-which(names(rpt$wave) == "w_hor")], function(var)
+  def.vari.wave(
+    #complex Wavelet coefficients variable 1
+    spec1 = rpt$wave[[var]]@spectrum,
+    #complex Wavelet coefficients variable 2
+    spec2 = rpt$wave[["w_hor"]]@spectrum,
+    #width of the wavelet [s]
+    scal = rpt$wave[[var]]@scale,
+    #approximate Fourier period [d]
+    peri = rpt$wave[[var]]@period,
+    #half-power frequencies for individual variables [Hz]
+    freq_0 = NA,
+    #which wavelengths/spatial scales to consider
+    whr_peri = NULL,
+    #normalization factor specific to the choice of Wavelet parameters
+    fac_norm = rpt$coefNorm,
+    # Wavelet flag: process (0) or not
+    flag=rpt$qfMiss[[var]],
+    #stability parameter
+    SI = SI,
+    #spectrum or cospectrum?
+    SC = c("spe", "cos")[2]
+  )
+); names(rpt$cov) <- names(rpt$wave)[-which(names(rpt$wave) == "w_hor")]
 
 #return all output from the wave function
 return(rpt)
