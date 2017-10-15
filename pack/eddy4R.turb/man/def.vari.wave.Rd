@@ -23,13 +23,17 @@ def.vari.wave(spec1 = mycwt[["w_met"]]@spectrum, spec2 = NULL,
 
 \item{fac_norm}{numeric, normalization factor specific to the choice of Wavelet parameters.}
 
-\item{dfInp}{data.frame, consisting of the input data to perform the wavelet transformation}
+\item{flag}{Wavelet flag: process (0) or not (1)}
+
+\item{SI}{stability parameter (numeric)}
+
+\item{SC}{spectrum or cospectrum  c("spe", "cos")?}
 }
 \value{
 A vector constaining temporally resolved variance/covariance from the continuous wavelet transform.
 }
 \description{
-Wrapper function. funtion to determine the temporally resolved variance/covariance from continuous wavelet transform including high-frequency spectral correction and selectable low-frequency cutoff The frequency response correction using Wavelet techniques described in Norbo and Katul, 2012 (NK12)
+Definition function. Function to determine the temporally resolved variance/covariance from continuous wavelet transform including high-frequency spectral correction and selectable low-frequency cutoff The frequency response correction using Wavelet techniques described in Norbo and Katul, 2012 (NK12)
 }
 \examples{
 Currently none.

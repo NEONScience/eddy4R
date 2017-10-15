@@ -6,9 +6,8 @@
 #' Stefan Metzger
 
 #' @description 
-#' Wrapper function. funtion to determine the temporally resolved variance/covariance from continuous wavelet transform including high-frequency spectral correction and selectable low-frequency cutoff The frequency response correction using Wavelet techniques described in Norbo and Katul, 2012 (NK12)
+#' Definition function. Function to determine the temporally resolved variance/covariance from continuous wavelet transform including high-frequency spectral correction and selectable low-frequency cutoff The frequency response correction using Wavelet techniques described in Norbo and Katul, 2012 (NK12)
 
-#' @param dfInp data.frame, consisting of the input data to perform the wavelet transformation
 #' @param spec1 Waves package output object spectrum, continuous wavelet transform output object complex spectrum for the first variable (typically w')denoted as \code{object1@spectrum}.
 #' @param spec2 Waves package output object spectrum, continuous wavelet transform output object complex spectrum for the second variable for cospectra denoted as \code{object2@spectrum}.
 #' @param scal Waves package output object scale, width of the wavelet at each scale [s] denoted as \code{object1@scale}
@@ -16,6 +15,9 @@
 #' @param freq_0 vector, half-power frequencies for individual variables [Hz] for determining transfer function to correct frequency response
 #' @param whr_peri numeric, which wavelengths/spatial scales to consider if you want to only consider high frequency values
 #' @param fac_norm numeric, normalization factor specific to the choice of Wavelet parameters.
+#' @param flag Wavelet flag: process (0) or not (1)
+#' @param SI stability parameter (numeric)
+#' @param SC spectrum or cospectrum  c("spe", "cos")?
 #' 
 #' @return A vector constaining temporally resolved variance/covariance from the continuous wavelet transform.
 #' 
@@ -61,7 +63,7 @@ def.vari.wave <- function(
   #        whr_peri = whr_peri_20,
   #normalization factor specific to the choice of Wavelet parameters
   fac_norm = rpt$coefNorm,
-  # Wavelet flag: process (0) or not
+  # Wavelet flag: process (0) or not (1)
   flag,
   #stability parameter
   SI,
@@ -158,7 +160,12 @@ if(flag == 0) {
     if(idxPeak > idxFreqMax) {
 
       # linear model to determine regression slope between peak frequency and 1 Hz
-      LM <- robustbase::lmrob(log10(spec[idxFreqMax:idxPeak]) ~ log10(freq[idxFreqMax:idxPeak]))
+      # robust::lmRob() is doing a similar MM-estimation as robustbase::lmrob(), but appears to be less error-prone
+      # for overview page 18 of http://use-r-carlvogt.github.io/PDFs/2017Avril_Cantoni_Rlunch.pdf
+      LM <-
+        # robustbase::lmrob(log10(spec[idxFreqMax:idxPeak]) ~ log10(freq[idxFreqMax:idxPeak]))
+        robust::lmRob(log10(spec[idxFreqMax:idxPeak]) ~ log10(freq[idxFreqMax:idxPeak]))
+      
       # plot(log10(tst[idxFreqMax:idxPeak]) ~ log10(freq[idxFreqMax:idxPeak]))
       # points(LM$fitted.values ~ log10(freq[idxFreqMax:idxPeak]), col = 2)
   
@@ -178,41 +185,46 @@ if(flag == 0) {
       # tf[idxPeak:length(tf)] <- 1
       # plot(tf ~ freq, log = "x")
       
-      # plotting
-
-        #generate spectral model for range of frequencies
-        spemod <- SPEmod(
-          #independent variable, preferabley f, but n is possible
-          ide = freq,
-          #spectrum or cospectrum?
-          sc = SC,
-          #stability parameter
-          si = wrk$reyn$mn$sigma,
-          #frequency f at which fCO(f) reaches its maximum value
-          fx=freq[idxPeak],
-          #output frequency-weighted (co)spectrum?
-          # weight=TRUE
-          weight=FALSE
-        )
-
-        # actual plotting
-        plot(spec ~ freq, log="xy")
-        lines(spemod ~ freq)
-        points(spec[idxFreqMax:idxPeak] ~ freq[idxFreqMax:idxPeak], pch=21, col=4, bg=4)
-        points(spec[idxPeak] ~ freq[idxPeak], pch=21, col=2, bg=2)
-        lines(specRefe[1:idxPeak] ~ freq[1:idxPeak], col=2)
-      
+      # # plotting
+      # 
+      #   #generate spectral model for range of frequencies
+      #   spemod <- SPEmod(
+      #     #independent variable, preferabley f, but n is possible
+      #     ide = freq,
+      #     #spectrum or cospectrum?
+      #     sc = SC,
+      #     #stability parameter
+      #     si = wrk$reyn$mn$sigma,
+      #     #frequency f at which fCO(f) reaches its maximum value
+      #     fx=freq[idxPeak],
+      #     #output frequency-weighted (co)spectrum?
+      #     # weight=TRUE
+      #     weight=FALSE
+      #   )
+      # 
+      #   # actual plotting
+      #   plot(spec ~ freq, log="xy")
+      #   lines(spemod ~ freq)
+      #   points(spec[idxFreqMax:idxPeak] ~ freq[idxFreqMax:idxPeak], pch=21, col=4, bg=4)
+      #   points(spec[idxPeak] ~ freq[idxPeak], pch=21, col=2, bg=2)
+      #   lines(specRefe[1:idxPeak] ~ freq[1:idxPeak], col=2)
+         
       # apply transfer function
-      cwt_vc1t <- t(sapply(1:nrow(cwt_vc1), function(x) cwt_vc1[x,] / tf ))
-  
-          
+      cwt_vc1t <- 
+          sapply(1:ncol(cwt_vc1), function(x) cwt_vc1[,x] / tf[x] )
+          # t(sapply(1:nrow(cwt_vc1), function(x) cwt_vc1[x,] / tf ))
+      
     #weighted wavelet scalogram
       
       # uncorrected
-      cwt_vc2 <- t(sapply(1:nrow(cwt_vc1), function(x) cwt_vc1[x,] / scal ))
+      cwt_vc2 <-
+        sapply(1:ncol(cwt_vc1), function(x) cwt_vc1[,x] / scal[x] )
+        # t(sapply(1:nrow(cwt_vc1), function(x) cwt_vc1[x,] / scal ))
       
       # corrected
-      cwt_vc2t <- t(sapply(1:nrow(cwt_vc1t), function(x) cwt_vc1t[x,] / scal ))
+      cwt_vc2t <-
+        sapply(1:ncol(cwt_vc1t), function(x) cwt_vc1t[,x] / scal[x] )
+        # t(sapply(1:nrow(cwt_vc1t), function(x) cwt_vc1t[x,] / scal ))
       
       
     # #spectral correction using sigmoidal transfer function

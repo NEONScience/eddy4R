@@ -12,7 +12,7 @@
 #' @param FuncWave Waves package function, denoting the type of mother wavelet function to be used in the transformation
 #' @param FreqSamp numeric, that determines the time series objects points
 #' @param ThshMiss numeric, dimensionless fraction of missing values in each column of data allowed before the quality flag is tripped. Defaults to 0.1 or 10 percent.
-#' 
+#' @param SI stability parameter (numeric)
 
 #' 
 #' @return An list constaining wavelet spectra, quality flags if data was available to perform correction, and frequency reponse correction parameters if activated.
@@ -45,7 +45,6 @@ DiffScal = 1/8,
 FuncWave = Waves::morlet(),
 FreqSamp = 20, #Defaults to 20Hz
 ThshMiss = .1,
-#stability parameter
 SI
 ){
 
@@ -86,8 +85,8 @@ rpt$coefNorm <- rpt$wave[["w_hor"]]@dj * rpt$wave[["w_hor"]]@dt / rpt$wave[["w_h
 
 # standard deviation for all wavelengths
 rpt$sd <- lapply(names(rpt$wave), function(var)
-  # eddy4R.turb::def.vari.wave(
-  def.vari.wave(
+  eddy4R.turb::def.vari.wave(
+  # def.vari.wave(
     #complex Wavelet coefficients variable 1
     spec1 = rpt$wave[[var]]@spectrum,
     #complex Wavelet coefficients variable 2
@@ -115,8 +114,8 @@ rpt$sd <- lapply(names(rpt$wave), function(var)
 # covariance for all wavelengths
 # not currently implemented for friction velocity as approach to negative 
 rpt$cov <- lapply(names(rpt$wave)[-which(names(rpt$wave) == "w_hor")], function(var)
-  # eddy4R.turb::def.vari.wave(
-  def.vari.wave(
+  eddy4R.turb::def.vari.wave(
+  # def.vari.wave(
     #complex Wavelet coefficients variable 1
     spec1 = rpt$wave[[var]]@spectrum,
     #complex Wavelet coefficients variable 2

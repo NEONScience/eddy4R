@@ -16,6 +16,8 @@ wrap.wave(dfInp, DiffScal = 1/8, FuncWave = Waves::morlet(),
 
 \item{ThshMiss}{numeric, dimensionless fraction of missing values in each column of data allowed before the quality flag is tripped. Defaults to 0.1 or 10 percent.}
 
+\item{SI}{stability parameter (numeric)}
+
 \item{DiffScale}{numeric, determining the step difference in scales for the wavelet transformation}
 }
 \value{
