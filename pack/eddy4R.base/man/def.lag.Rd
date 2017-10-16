@@ -7,7 +7,7 @@
 def.lag(refe, meas, freq, dataRefe = refe, dataMeas = meas,
   measVar = NULL, lagMax = 2 * freq, lagCnst = TRUE,
   lagNgtvPstv = c("n", "p", "np")[3], lagAll = TRUE, hpf = TRUE,
-  fracMin = 0.1)
+  fracMin = 1e-01)
 }
 \arguments{
 \item{\code{refe}}{A vector with variable in reference time frame. Of class numeric. [-]}
