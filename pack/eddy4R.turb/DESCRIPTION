@@ -10,7 +10,8 @@ Imports:
     EBImage (>= 4.16.0),
     GenKern (>= 1.2-60),
     matlab (>= 1.0.2),
-    robustbase (>= 0.92-6),
+    robust (>= 0.4-18),
+    robustbase (>= 0.92-7),
     sfsmisc (>= 1.1-0),
     splus2R (>= 1.2-2)
 Suggests:
