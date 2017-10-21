@@ -316,6 +316,7 @@ footK04 <- function(
   zmeas,
   z0,
   h=1000,	#boundary layer height
+  thsh = 0.8 # threshold for cumulative footprint extent
   Psi=0
 ){
 
@@ -585,7 +586,7 @@ footK04 <- function(
     #PHIcpr <- EBImage::rotate(PHIcp, 180-0)@.Data
     f80 <- cumsum(rev(rowSums(PHIcpr)))
     f80 <- f80/max(f80, na.rm=TRUE)
-    f80 <- (which(f80 > 0.8)[1] - (length(f80) - 1) / 2 + 1) *   Csize
+    f80 <- (which(f80 > thsh)[1] - (length(f80) - 1) / 2 + 1) *   Csize
     names(f80) <- ("f80")
 
   #rotate image clockwise (align footprint in mean wind)
