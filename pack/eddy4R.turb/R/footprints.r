@@ -581,7 +581,7 @@ footK04 <- function(
     #YcenLRp <- XcenUD
     #contour(YcenLRp, XcenUD, matlab::rot90(PHIcp,1), levels=NIVo, col=colorRampPalette(c("black", "red"))(length(NIVo)), asp=1)
 
-  #along-wind distance of 80% cumulative flux footprint
+  # along-wind distance of 80% cumulative flux footprint
     PHIcpr <- matlab::flipud(PHIcp)
     #PHIcpr <- EBImage::rotate(PHIcp, 180-0)@.Data
     f80 <- rev(rowSums(PHIcpr))
@@ -595,6 +595,15 @@ footK04 <- function(
     f80 <- (which(f80 > thsh)[1] - (length(f80) - 1) / 2 + 1) *   Csize
     names(f80) <- ("f80")
 
+  # cross-wind distance of 80% cumulative flux footprint
+    fy <- rev(colSums(PHIcpr))
+    fy <- fy[((length(fy) - 1) / 2 + 1):length(fy)]
+    fy <- cumsum(fy)
+    fy <- fy/max(fy, na.rm=TRUE)
+    fy <- which(fy > thsh)[1] * Csize
+    names(fy) <- ("fy")
+
+    
   #rotate image clockwise (align footprint in mean wind)
     PHIcpr <- EBImage::rotate(PHIcp, 180-angle)@.Data
     PHIcpr <- PHIcpr / sum(sum(PHIcpr))
@@ -633,6 +642,8 @@ footK04 <- function(
       PHI=PHIcpr, 
       cover=cover,
       f80=f80
+      fx=fx
+      fy=fy
     )
 
   #return list
