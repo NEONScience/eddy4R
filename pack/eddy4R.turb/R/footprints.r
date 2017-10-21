@@ -584,7 +584,13 @@ footK04 <- function(
   #along-wind distance of 80% cumulative flux footprint
     PHIcpr <- matlab::flipud(PHIcp)
     #PHIcpr <- EBImage::rotate(PHIcp, 180-0)@.Data
-    f80 <- cumsum(rev(rowSums(PHIcpr)))
+    f80 <- rev(rowSums(PHIcpr))
+
+      # distance of peak
+      fx <- (which(f80 == max(f80)) - (length(f80) - 1) / 2 + 1) *   Csize
+      names(fx) <- ("fx")
+
+    f80 <- cumsum(f80)
     f80 <- f80/max(f80, na.rm=TRUE)
     f80 <- (which(f80 > thsh)[1] - (length(f80) - 1) / 2 + 1) *   Csize
     names(f80) <- ("f80")
