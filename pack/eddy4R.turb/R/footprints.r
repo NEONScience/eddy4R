@@ -564,18 +564,18 @@ footK04 <- function(
       PHIcp <- PHIc
     } else {
       if(nrow(PHIc) > ncol(PHIc)) {
-	PHIcp <- cbind(
-	  matrix(nrow=nrow(PHIc), ncol=(nrow(PHIc)-ncol(PHIc)) / 2, 0),
-	  PHIc,
-	  matrix(nrow=nrow(PHIc), ncol=(nrow(PHIc)-ncol(PHIc)) / 2, 0)
-	)
+      	PHIcp <- cbind(
+      	  matrix(nrow=nrow(PHIc), ncol=(nrow(PHIc)-ncol(PHIc)) / 2, 0),
+      	  PHIc,
+      	  matrix(nrow=nrow(PHIc), ncol=(nrow(PHIc)-ncol(PHIc)) / 2, 0)
+      	)
       }
       if(nrow(PHIc) < ncol(PHIc)) {
-	PHIcp <- rbind(
-	  matrix(ncol=ncol(PHIc), nrow=(ncol(PHIc)-nrow(PHIc)) / 2, 0),
-	  PHIc,
-	  matrix(ncol=ncol(PHIc), nrow=(ncol(PHIc)-nrow(PHIc)) / 2, 0)
-	)
+      	PHIcp <- rbind(
+      	  matrix(ncol=ncol(PHIc), nrow=(ncol(PHIc)-nrow(PHIc)) / 2, 0),
+      	  PHIc,
+      	  matrix(ncol=ncol(PHIc), nrow=(ncol(PHIc)-nrow(PHIc)) / 2, 0)
+      	)
       }
     }
     #YcenLRp <- XcenUD
@@ -603,10 +603,23 @@ footK04 <- function(
     fy <- which(fy > thsh)[1] * Csize
     names(fy) <- ("fy")
     
-  #rotate image clockwise (align footprint in mean wind)
-    PHIcpr <- EBImage::rotate(PHIcp, 180-angle)@.Data
+  # rotate image clockwise (align footprint in mean wind)
+  # specify output.dim, so that dimensions remain odd-numbered, and the tower at the center
+  # explicitly specifying output.origin for some reason leads to a shift, hence commented out
+    PHIcpr <- EBImage::rotate(x = PHIcp,
+                              angle = 180 - angle,
+                              output.dim = base::rep(nrow(PHIcp),2),
+                              # output.origin = base::rep(((nrow(PHIcp) - 1) / 2 + 1), 2)
+                              )@.Data
     PHIcpr <- PHIcpr / sum(sum(PHIcpr))
 
+    # contour(
+    #   x = 1:nrow(PHIcp),
+    #   y = 1:nrow(PHIcp),
+    #   z = PHIcpr)
+    # points(x = ((nrow(PHIcp) - 1) / 2 + 1), y = ((nrow(PHIcp) - 1) / 2 + 1), col=2)
+    # nrow(PHIcp)
+    
 #     #attempted workaround for cell shifts of rotate() function in Windows
 #     #for some reason rotate shifts 1 cell back and 1 cell right in Windows
 #       if(.Platform$OS.type == "windows") {
