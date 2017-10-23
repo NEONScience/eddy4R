@@ -30,7 +30,8 @@ wrap.time.rglr.dp00.ecse <- function(
   site = "CPER",
   dom = "D10",
   timeReg,
-  idDp00
+  idDp00,
+  horVer,
 ){
 
 #call Library
@@ -76,14 +77,14 @@ if (idDp00 %in% c("DP0.00105")){
   dataIn[[subDp00[2]]]$rtioMoleDryH2o <- ((dataIn[[subDp00[2]]]$data)/10^3)/(1-(dataIn[[subDp00[2]]]$data/10^3))
   
   #combine regularize data for irga
-  dataTmp <- data.frame(dataIn$NEON.D10.CPER.DP0.00105.001.02189.700.000.000$data,
-                        dataIn$NEON.D10.CPER.DP0.00105.001.02184.700.000.000$data,
-                        dataIn$NEON.D10.CPER.DP0.00105.001.02316.700.000.000$data,
-                        dataIn$NEON.D10.CPER.DP0.00105.001.02316.700.000.000$rtioMoleDryCo2,
-                        dataIn$NEON.D10.CPER.DP0.00105.001.02348.700.000.000$data,
-                        dataIn$NEON.D10.CPER.DP0.00105.001.02348.700.000.000$rtioMoleDryH2o,
-                        dataIn$NEON.D10.CPER.DP0.00105.001.02349.700.000.000$data,
-                        dataIn$NEON.D10.CPER.DP0.00105.001.02350.700.000.000$data)
+  dataTmp <- data.frame(dataIn[[subDp00[5]]]$data,
+                        dataIn[[subDp00[6]]]$data,
+                        dataIn[[subDp00[1]]]$data,
+                        dataIn[[subDp00[1]]]$rtioMoleDryCo2,
+                        dataIn[[subDp00[2]]]$data,
+                        dataIn[[subDp00[2]]]$rtioMoleDryH2o,
+                        dataIn[[subDp00[3]]]$data,
+                        dataIn[[subDp00[4]]]$data)
   
   #assign eddy4R name style to the output variables
   colnames(dataTmp) <- c("asrpCo2","asrpH2o", "rtioMoleWetCo2", "rtioMoleDryCo2", "rtioMoleWetH2o", 
@@ -114,14 +115,14 @@ if (idDp00 %in% c("DP0.00105")){
   #combine regularize time and data
   dataTmp <- cbind(dataTmp, time = strftime(timeReg, format="%Y-%m-%dT%H:%M:%OSZ", tz="UTC"), stringsAsFactors = F)
   
-  #output file
-  write.csv(dataTmp,paste0(DirOut00, "/", "irga", ".csv"),row.names=F,sep=",")   
+  #report output
+  rpt <- dataTmp   
   #remove dataframe
   rm(dataTmp)
-}
+}#end of DP0.00105
 
 #perform time regularize for profSnd ########################################################################
-if (idxDp00 %in% c("NEON.D10.CPER.DP0.00113")){
+if (idxDp00 %in% c("DP0.00113")){
   convTime <- list()
   diffTime <-list()
   qfDiffTime <- list()
@@ -143,206 +144,30 @@ if (idxDp00 %in% c("NEON.D10.CPER.DP0.00113")){
   #replace valve data that have qfDiffTime equal to -1 to -1
   lapply(names(dataList), function(x) dataList[[x]]$data <<- ifelse (is.na(dataList[[x]]$qfDiffTime), dataList[[x]]$data, -1))
   
-  #if dataList is not exist, create an empty data frame for irgaValvLvl
-  #valvCmd1
-  if (!("NEON.D10.CPER.DP0.00113.001.02360.701.000.000" %in% names(dataList))) {
-    dataList$NEON.D10.CPER.DP0.00113.001.02360.701.000.000 <- data.frame(matrix(data = 0, ncol = 4, nrow = length(timeReg)))
-    names(dataList$NEON.D10.CPER.DP0.00113.001.02360.701.000.000) <- c("time", "data", "exst", "timeNew")
-    dataList$NEON.D10.CPER.DP0.00113.001.02360.701.000.000$timeNew <- timeReg
-  }
-  #valvCmd2
-  if (!("NEON.D10.CPER.DP0.00113.001.02361.701.000.000" %in% names(dataList))) {
-    dataList$NEON.D10.CPER.DP0.00113.001.02361.701.000.000 <- data.frame(matrix(data = 0, ncol = 4, nrow = length(timeReg)))
-    names(dataList$NEON.D10.CPER.DP0.00113.001.02361.701.000.000) <- c("time", "data", "exst", "timeNew")
-    dataList$NEON.D10.CPER.DP0.00113.001.02361.701.000.000$timeNew <- timeReg
-  }
-  #valvCmd3
-  if (!("NEON.D10.CPER.DP0.00113.001.02362.701.000.000" %in% names(dataList))) {
-    dataList$NEON.D10.CPER.DP0.00113.001.02362.701.000.000 <- data.frame(matrix(data = 0, ncol = 4, nrow = length(timeReg)))
-    names(dataList$NEON.D10.CPER.DP0.00113.001.02362.701.000.000) <- c("time", "data", "exst", "timeNew")
-    dataList$NEON.D10.CPER.DP0.00113.001.02362.701.000.000$timeNew <- timeReg
-  }
-  #valvCmd4
-  if (!("NEON.D10.CPER.DP0.00113.001.02364.701.000.000" %in% names(dataList))) {
-    dataList$NEON.D10.CPER.DP0.00113.001.02364.701.000.000 <- data.frame(matrix(data = 0, ncol = 4, nrow = length(timeReg)))
-    names(dataList$NEON.D10.CPER.DP0.00113.001.02364.701.000.000) <- c("time", "data", "exst", "timeNew")
-    dataList$NEON.D10.CPER.DP0.00113.001.02364.701.000.000$timeNew <- timeReg
-  }
-  #valvCmd5
-  if (!("NEON.D10.CPER.DP0.00113.001.02365.701.000.000" %in% names(dataList))) {
-    dataList$NEON.D10.CPER.DP0.00113.001.02365.701.000.000 <- data.frame(matrix(data = 0, ncol = 4, nrow = length(timeReg)))
-    names(dataList$NEON.D10.CPER.DP0.00113.001.02365.701.000.000) <- c("time", "data", "exst", "timeNew")
-    dataList$NEON.D10.CPER.DP0.00113.001.02365.701.000.000$timeNew <- timeReg
-  }
-  #valvCmd6
-  if (!("NEON.D10.CPER.DP0.00113.001.02366.701.000.000" %in% names(dataList))) {
-    dataList$NEON.D10.CPER.DP0.00113.001.02366.701.000.000 <- data.frame(matrix(data = 0, ncol = 4, nrow = length(timeReg)))
-    names(dataList$NEON.D10.CPER.DP0.00113.001.02366.701.000.000) <- c("time", "data", "exst", "timeNew")
-    dataList$NEON.D10.CPER.DP0.00113.001.02366.701.000.000$timeNew <- timeReg
-  }
-  #valvCmd7
-  if (!("NEON.D10.CPER.DP0.00113.001.02367.701.000.000" %in% names(dataList))) {
-    dataList$NEON.D10.CPER.DP0.00113.001.02367.701.000.000 <- data.frame(matrix(data = 0, ncol = 4, nrow = length(timeReg)))
-    names(dataList$NEON.D10.CPER.DP0.00113.001.02367.701.000.000) <- c("time", "data", "exst", "timeNew")
-    dataList$NEON.D10.CPER.DP0.00113.001.02367.701.000.000$timeNew <- timeReg
-  }
-  #valvCmd8
-  if (!("NEON.D10.CPER.DP0.00113.001.02368.701.000.000" %in% names(dataList))) {
-    dataList$NEON.D10.CPER.DP0.00113.001.02368.701.000.000 <- data.frame(matrix(data = 0, ncol = 4, nrow = length(timeReg)))
-    names(dataList$NEON.D10.CPER.DP0.00113.001.02368.701.000.000) <- c("time", "data", "exst", "timeNew")
-    dataList$NEON.D10.CPER.DP0.00113.001.02368.701.000.000$timeNew <- timeReg
-  }
+  #if dataList is not exist, create an empty data frame irgaValvLvl
+  if (horVer %in% c("701.000")){
+  subDp00 <- c("001.02360.701.000.000", #valvCmd1 
+               "001.02361.701.000.000", #valvCmd2
+               "001.02362.701.000.000", #valvCmd3
+               "001.02364.701.000.000", #valvCmd4
+               "001.02365.701.000.000", #valvCmd5
+               "001.02366.701.000.000", #valvCmd6 
+               "001.02367.701.000.000", #valvCmd7
+               "001.02368.701.000.000") #valvCmd8
+               
   
-  #if dataList is not exist, create an empty data frame for valvVali
-  #valvCmd1
-  if (!("NEON.D10.CPER.DP0.00113.001.02360.703.000.000" %in% names(dataList))) {
-    dataList$NEON.D10.CPER.DP0.00113.001.02360.703.000.000 <- data.frame(matrix(data = 0, ncol = 4, nrow = length(timeReg)))
-    names(dataList$NEON.D10.CPER.DP0.00113.001.02360.703.000.000) <- c("time", "data", "exst", "timeNew")
-    dataList$NEON.D10.CPER.DP0.00113.001.02360.703.000.000$timeNew <- timeReg
-  }
-  #valvCmd2
-  if (!("NEON.D10.CPER.DP0.00113.001.02361.703.000.000" %in% names(dataList))) {
-    dataList$NEON.D10.CPER.DP0.00113.001.02361.703.000.000 <- data.frame(matrix(data = 0, ncol = 4, nrow = length(timeReg)))
-    names(dataList$NEON.D10.CPER.DP0.00113.001.02361.703.000.000) <- c("time", "data", "exst", "timeNew")
-    dataList$NEON.D10.CPER.DP0.00113.001.02361.703.000.000$timeNew <- timeReg
-  }
-  #valvCmd3
-  if (!("NEON.D10.CPER.DP0.00113.001.02362.703.000.000" %in% names(dataList))) {
-    dataList$NEON.D10.CPER.DP0.00113.001.02362.703.000.000 <- data.frame(matrix(data = 0, ncol = 4, nrow = length(timeReg)))
-    names(dataList$NEON.D10.CPER.DP0.00113.001.02362.703.000.000) <- c("time", "data", "exst", "timeNew")
-    dataList$NEON.D10.CPER.DP0.00113.001.02362.703.000.000$timeNew <- timeReg
-  }
-  #valvCmd4
-  if (!("NEON.D10.CPER.DP0.00113.001.02364.703.000.000" %in% names(dataList))) {
-    dataList$NEON.D10.CPER.DP0.00113.001.02364.703.000.000 <- data.frame(matrix(data = 0, ncol = 4, nrow = length(timeReg)))
-    names(dataList$NEON.D10.CPER.DP0.00113.001.02364.703.000.000) <- c("time", "data", "exst", "timeNew")
-    dataList$NEON.D10.CPER.DP0.00113.001.02364.703.000.000$timeNew <- timeReg
-  }
-  #valvCmd5
-  if (!("NEON.D10.CPER.DP0.00113.001.02365.703.000.000" %in% names(dataList))) {
-    dataList$NEON.D10.CPER.DP0.00113.001.02365.703.000.000 <- data.frame(matrix(data = 0, ncol = 4, nrow = length(timeReg)))
-    names(dataList$NEON.D10.CPER.DP0.00113.001.02365.703.000.000) <- c("time", "data", "exst", "timeNew")
-    dataList$NEON.D10.CPER.DP0.00113.001.02365.703.000.000$timeNew <- timeReg
-  }
-  #valvCmd6
-  if (!("NEON.D10.CPER.DP0.00113.001.02366.703.000.000" %in% names(dataList))) {
-    dataList$NEON.D10.CPER.DP0.00113.001.02366.703.000.000 <- data.frame(matrix(data = 0, ncol = 4, nrow = length(timeReg)))
-    names(dataList$NEON.D10.CPER.DP0.00113.001.02366.703.000.000) <- c("time", "data", "exst", "timeNew")
-    dataList$NEON.D10.CPER.DP0.00113.001.02366.703.000.000$timeNew <- timeReg
-  }
-  #valvCmd7
-  if (!("NEON.D10.CPER.DP0.00113.001.02367.703.000.000" %in% names(dataList))) {
-    dataList$NEON.D10.CPER.DP0.00113.001.02367.703.000.000 <- data.frame(matrix(data = 0, ncol = 4, nrow = length(timeReg)))
-    names(dataList$NEON.D10.CPER.DP0.00113.001.02367.703.000.000) <- c("time", "data", "exst", "timeNew")
-    dataList$NEON.D10.CPER.DP0.00113.001.02367.703.000.000$timeNew <- timeReg
-  }
-  #valvCmd8
-  if (!("NEON.D10.CPER.DP0.00113.001.02368.703.000.000" %in% names(dataList))) {
-    dataList$NEON.D10.CPER.DP0.00113.001.02368.703.000.000 <- data.frame(matrix(data = 0, ncol = 4, nrow = length(timeReg)))
-    names(dataList$NEON.D10.CPER.DP0.00113.001.02368.703.000.000) <- c("time", "data", "exst", "timeNew")
-    dataList$NEON.D10.CPER.DP0.00113.001.02368.703.000.000$timeNew <- timeReg
-  }
-  
-  #if dataList is not exist, create an empty data frame for crdCo2ValvLvl
-  #valvCmd1
-  if (!("NEON.D10.CPER.DP0.00113.001.02360.702.000.000" %in% names(dataList))) {
-    dataList$NEON.D10.CPER.DP0.00113.001.02360.702.000.000 <- data.frame(matrix(data = 0, ncol = 4, nrow = length(timeReg)))
-    names(dataList$NEON.D10.CPER.DP0.00113.001.02360.702.000.000) <- c("time", "data", "exst", "timeNew")
-    dataList$NEON.D10.CPER.DP0.00113.001.02360.702.000.000$timeNew <- timeReg
-  }
-  #valvCmd2
-  if (!("NEON.D10.CPER.DP0.00113.001.02361.702.000.000" %in% names(dataList))) {
-    dataList$NEON.D10.CPER.DP0.00113.001.02361.702.000.000 <- data.frame(matrix(data = 0, ncol = 4, nrow = length(timeReg)))
-    names(dataList$NEON.D10.CPER.DP0.00113.001.02361.702.000.000) <- c("time", "data", "exst", "timeNew")
-    dataList$NEON.D10.CPER.DP0.00113.001.02361.702.000.000$timeNew <- timeReg
-  }
-  #valvCmd3
-  if (!("NEON.D10.CPER.DP0.00113.001.02362.702.000.000" %in% names(dataList))) {
-    dataList$NEON.D10.CPER.DP0.00113.001.02362.702.000.000 <- data.frame(matrix(data = 0, ncol = 4, nrow = length(timeReg)))
-    names(dataList$NEON.D10.CPER.DP0.00113.001.02362.702.000.000) <- c("time", "data", "exst", "timeNew")
-    dataList$NEON.D10.CPER.DP0.00113.001.02362.702.000.000$timeNew <- timeReg
-  }
-  #valvCmd4
-  if (!("NEON.D10.CPER.DP0.00113.001.02364.702.000.000" %in% names(dataList))) {
-    dataList$NEON.D10.CPER.DP0.00113.001.02364.702.000.000 <- data.frame(matrix(data = 0, ncol = 4, nrow = length(timeReg)))
-    names(dataList$NEON.D10.CPER.DP0.00113.001.02364.702.000.000) <- c("time", "data", "exst", "timeNew")
-    dataList$NEON.D10.CPER.DP0.00113.001.02364.702.000.000$timeNew <- timeReg
-  }
-  #valvCmd5
-  if (!("NEON.D10.CPER.DP0.00113.001.02365.702.000.000" %in% names(dataList))) {
-    dataList$NEON.D10.CPER.DP0.00113.001.02365.702.000.000 <- data.frame(matrix(data = 0, ncol = 4, nrow = length(timeReg)))
-    names(dataList$NEON.D10.CPER.DP0.00113.001.02365.702.000.000) <- c("time", "data", "exst", "timeNew")
-    dataList$NEON.D10.CPER.DP0.00113.001.02365.702.000.000$timeNew <- timeReg
-  }
-  #valvCmd6
-  if (!("NEON.D10.CPER.DP0.00113.001.02366.702.000.000" %in% names(dataList))) {
-    dataList$NEON.D10.CPER.DP0.00113.001.02366.702.000.000 <- data.frame(matrix(data = 0, ncol = 4, nrow = length(timeReg)))
-    names(dataList$NEON.D10.CPER.DP0.00113.001.02366.702.000.000) <- c("time", "data", "exst", "timeNew")
-    dataList$NEON.D10.CPER.DP0.00113.001.02366.702.000.000$timeNew <- timeReg
-  }
-  #valvCmd7
-  if (!("NEON.D10.CPER.DP0.00113.001.02367.702.000.000" %in% names(dataList))) {
-    dataList$NEON.D10.CPER.DP0.00113.001.02367.702.000.000 <- data.frame(matrix(data = 0, ncol = 4, nrow = length(timeReg)))
-    names(dataList$NEON.D10.CPER.DP0.00113.001.02367.702.000.000) <- c("time", "data", "exst", "timeNew")
-    dataList$NEON.D10.CPER.DP0.00113.001.02367.702.000.000$timeNew <- timeReg
-  }
-  #valvCmd8
-  if (!("NEON.D10.CPER.DP0.00113.001.02368.702.000.000" %in% names(dataList))) {
-    dataList$NEON.D10.CPER.DP0.00113.001.02368.702.000.000 <- data.frame(matrix(data = 0, ncol = 4, nrow = length(timeReg)))
-    names(dataList$NEON.D10.CPER.DP0.00113.001.02368.702.000.000) <- c("time", "data", "exst", "timeNew")
-    dataList$NEON.D10.CPER.DP0.00113.001.02368.702.000.000$timeNew <- timeReg
-  }
-  
-  #if dataList is not exist, create an empty data frame for crdH2oValvLvl
-  #valvCmd1
-  if (!("NEON.D10.CPER.DP0.00113.001.02360.704.000.000" %in% names(dataList))) {
-    dataList$NEON.D10.CPER.DP0.00113.001.02360.704.000.000 <- data.frame(matrix(data = 0, ncol = 4, nrow = length(timeReg)))
-    names(dataList$NEON.D10.CPER.DP0.00113.001.02360.704.000.000) <- c("time", "data", "exst", "timeNew")
-    dataList$NEON.D10.CPER.DP0.00113.001.02360.704.000.000$timeNew <- timeReg
-  }
-  #valvCmd2
-  if (!("NEON.D10.CPER.DP0.00113.001.02361.704.000.000" %in% names(dataList))) {
-    dataList$NEON.D10.CPER.DP0.00113.001.02361.704.000.000 <- data.frame(matrix(data = 0, ncol = 4, nrow = length(timeReg)))
-    names(dataList$NEON.D10.CPER.DP0.00113.001.02361.704.000.000) <- c("time", "data", "exst", "timeNew")
-    dataList$NEON.D10.CPER.DP0.00113.001.02361.704.000.000$timeNew <- timeReg
-  }
-  #valvCmd3
-  if (!("NEON.D10.CPER.DP0.00113.001.02362.704.000.000" %in% names(dataList))) {
-    dataList$NEON.D10.CPER.DP0.00113.001.02362.704.000.000 <- data.frame(matrix(data = 0, ncol = 4, nrow = length(timeReg)))
-    names(dataList$NEON.D10.CPER.DP0.00113.001.02362.704.000.000) <- c("time", "data", "exst", "timeNew")
-    dataList$NEON.D10.CPER.DP0.00113.001.02362.704.000.000$timeNew <- timeReg
-  }
-  #valvCmd4
-  if (!("NEON.D10.CPER.DP0.00113.001.02364.704.000.000" %in% names(dataList))) {
-    dataList$NEON.D10.CPER.DP0.00113.001.02364.704.000.000 <- data.frame(matrix(data = 0, ncol = 4, nrow = length(timeReg)))
-    names(dataList$NEON.D10.CPER.DP0.00113.001.02364.704.000.000) <- c("time", "data", "exst", "timeNew")
-    dataList$NEON.D10.CPER.DP0.00113.001.02364.704.000.000$timeNew <- timeReg
-  }
-  #valvCmd5
-  if (!("NEON.D10.CPER.DP0.00113.001.02365.704.000.000" %in% names(dataList))) {
-    dataList$NEON.D10.CPER.DP0.00113.001.02365.704.000.000 <- data.frame(matrix(data = 0, ncol = 4, nrow = length(timeReg)))
-    names(dataList$NEON.D10.CPER.DP0.00113.001.02365.704.000.000) <- c("time", "data", "exst", "timeNew")
-    dataList$NEON.D10.CPER.DP0.00113.001.02365.704.000.000$timeNew <- timeReg
-  }
-  #valvCmd6
-  if (!("NEON.D10.CPER.DP0.00113.001.02366.704.000.000" %in% names(dataList))) {
-    dataList$NEON.D10.CPER.DP0.00113.001.02366.704.000.000 <- data.frame(matrix(data = 0, ncol = 4, nrow = length(timeReg)))
-    names(dataList$NEON.D10.CPER.DP0.00113.001.02366.704.000.000) <- c("time", "data", "exst", "timeNew")
-    dataList$NEON.D10.CPER.DP0.00113.001.02366.704.000.000$timeNew <- timeReg
-  }
-  #valvCmd7
-  if (!("NEON.D10.CPER.DP0.00113.001.02367.704.000.000" %in% names(dataList))) {
-    dataList$NEON.D10.CPER.DP0.00113.001.02367.704.000.000 <- data.frame(matrix(data = 0, ncol = 4, nrow = length(timeReg)))
-    names(dataList$NEON.D10.CPER.DP0.00113.001.02367.704.000.000) <- c("time", "data", "exst", "timeNew")
-    dataList$NEON.D10.CPER.DP0.00113.001.02367.704.000.000$timeNew <- timeReg
-  }
-  #valvCmd8
-  if (!("NEON.D10.CPER.DP0.00113.001.02368.704.000.000" %in% names(dataList))) {
-    dataList$NEON.D10.CPER.DP0.00113.001.02368.704.000.000 <- data.frame(matrix(data = 0, ncol = 4, nrow = length(timeReg)))
-    names(dataList$NEON.D10.CPER.DP0.00113.001.02368.704.000.000) <- c("time", "data", "exst", "timeNew")
-    dataList$NEON.D10.CPER.DP0.00113.001.02368.704.000.000$timeNew <- timeReg
-  }
-  
+  #create full name for subDp00
+  subDp00 <- paste0(numDp00,".",subDp00, sep="")
+  #if dataList is not exist, create an empty data frame
+  for (idxSubDp00 in subDp00){
+    #idxSubDp00 <- subDp00[1]
+    if (!(idxSubDp00 %in% names(dataList))) {
+      dataList[[idxSubDp00]] <- data.frame(matrix(data = 0, ncol = 4, nrow = length(timeReg)))
+      names(dataList[[idxSubDp00]]) <- c("time", "data", "exst", "timeNew")
+      dataList[[idxSubDp00]]$timeNew <- timeReg 
+    }
+  }#end of for loop in subDp00
+               
   lapply(names(dataList), function(x) dataIn[[x]] <<- def.rglr(timeMeas = base::as.POSIXlt(dataList[[x]][,"timeNew"], format="%Y-%m-%dT%H:%M:%OSZ", tz="UTC"),
                                                                dataMeas = dataList[[x]],
                                                                BgnRglr = as.POSIXlt(min(timeReg)),
@@ -355,14 +180,14 @@ if (idxDp00 %in% c("NEON.D10.CPER.DP0.00113")){
   #dataIn$valv <- as.integer (0)
   
   #combine regularize time and data for irgaValvLvl
-  dataTmp <- data.frame(dataIn$NEON.D10.CPER.DP0.00113.001.02360.701.000.000$data,
-                        dataIn$NEON.D10.CPER.DP0.00113.001.02361.701.000.000$data,
-                        dataIn$NEON.D10.CPER.DP0.00113.001.02362.701.000.000$data,
-                        dataIn$NEON.D10.CPER.DP0.00113.001.02364.701.000.000$data,
-                        dataIn$NEON.D10.CPER.DP0.00113.001.02365.701.000.000$data,
-                        dataIn$NEON.D10.CPER.DP0.00113.001.02366.701.000.000$data,
-                        dataIn$NEON.D10.CPER.DP0.00113.001.02367.701.000.000$data,
-                        dataIn$NEON.D10.CPER.DP0.00113.001.02368.701.000.000$data)
+  dataTmp <- data.frame(dataIn[[subDp00[1]]]$data,
+                        dataIn[[subDp00[2]]]$data,
+                        dataIn[[subDp00[3]]]$data,
+                        dataIn[[subDp00[4]]]$data,
+                        dataIn[[subDp00[5]]]$data,
+                        dataIn[[subDp00[6]]]$data,
+                        dataIn[[subDp00[7]]]$data,
+                        dataIn[[subDp00[8]]]$data)
   
   #assign eddy4R name style to the output variables
   colnames(dataTmp) <- c("valv01", "valv02", "valv03", "valv04", "valv05", "valv06", "valv07", "valv08")
@@ -386,21 +211,54 @@ if (idxDp00 %in% c("NEON.D10.CPER.DP0.00113")){
   dataTmp <- cbind(dataTmp, time = strftime(timeReg, format="%Y-%m-%dT%H:%M:%OSZ", tz="UTC"), stringsAsFactors = F)
   #filled NA with previous value
   dataTmp[,1:8] <- zoo::na.locf(dataTmp[,1:8], na.rm = FALSE)
-  #output file
-  write.csv(dataTmp,paste0(DirOut00, "/", "irgaValvLvl", ".csv"),row.names=F,sep=",")   
+  #report output
+  rpt <- dataTmp      
   #remove dataframe
   rm(dataTmp)
+  }#end of horVer == 701.000
   
-  
-  #combine regularize data for valvVali
-  dataTmp <- data.frame(dataIn$NEON.D10.CPER.DP0.00113.001.02360.703.000.000$data,
-                        dataIn$NEON.D10.CPER.DP0.00113.001.02361.703.000.000$data,
-                        dataIn$NEON.D10.CPER.DP0.00113.001.02362.703.000.000$data,
-                        dataIn$NEON.D10.CPER.DP0.00113.001.02364.703.000.000$data,
-                        dataIn$NEON.D10.CPER.DP0.00113.001.02365.703.000.000$data,
-                        dataIn$NEON.D10.CPER.DP0.00113.001.02366.703.000.000$data,
-                        dataIn$NEON.D10.CPER.DP0.00113.001.02367.703.000.000$data,
-                        dataIn$NEON.D10.CPER.DP0.00113.001.02368.703.000.000$data)
+  #if dataList is not exist, create an empty data frame valvVali
+  if (horVer %in% c("703.000")){
+    subDp00 <- c("001.02360.703.000.000", #valvCmd1 
+                 "001.02361.703.000.000", #valvCmd2
+                 "001.02362.703.000.000", #valvCmd3
+                 "001.02364.703.000.000", #valvCmd4
+                 "001.02365.703.000.000", #valvCmd5
+                 "001.02366.703.000.000", #valvCmd6 
+                 "001.02367.703.000.000", #valvCmd7
+                 "001.02368.703.000.000") #valvCmd8
+    #create full name for subDp00
+    subDp00 <- paste0(numDp00,".",subDp00, sep="")
+    #if dataList is not exist, create an empty data frame
+    for (idxSubDp00 in subDp00){
+      #idxSubDp00 <- subDp00[1]
+      if (!(idxSubDp00 %in% names(dataList))) {
+        dataList[[idxSubDp00]] <- data.frame(matrix(data = 0, ncol = 4, nrow = length(timeReg)))
+        names(dataList[[idxSubDp00]]) <- c("time", "data", "exst", "timeNew")
+        dataList[[idxSubDp00]]$timeNew <- timeReg 
+      }
+    }#end of for loop in subDp00
+    
+    lapply(names(dataList), function(x) dataIn[[x]] <<- def.rglr(timeMeas = base::as.POSIXlt(dataList[[x]][,"timeNew"], format="%Y-%m-%dT%H:%M:%OSZ", tz="UTC"),
+                                                                 dataMeas = dataList[[x]],
+                                                                 BgnRglr = as.POSIXlt(min(timeReg)),
+                                                                 EndRglr = as.POSIXlt(max(timeReg)),
+                                                                 FreqRglr = Freq,
+                                                                 MethRglr = "CybiEc",
+                                                                 PosWndw = "PosWndwMax"
+    )$dataRglr)  
+    #generate 0 value for unused valve
+    #dataIn$valv <- as.integer (0)
+    
+    #combine regularize time and data for valvVali
+    dataTmp <- data.frame(dataIn[[subDp00[1]]]$data,
+                          dataIn[[subDp00[2]]]$data,
+                          dataIn[[subDp00[3]]]$data,
+                          dataIn[[subDp00[4]]]$data,
+                          dataIn[[subDp00[5]]]$data,
+                          dataIn[[subDp00[6]]]$data,
+                          dataIn[[subDp00[7]]]$data,
+                          dataIn[[subDp00[8]]]$data)
   
   #assign eddy4R name style to the output variables
   colnames(dataTmp) <- c("valv01", "valv02", "valv03", "valv04", "valv05", "valv06", "valv07", "valv08")
@@ -424,20 +282,55 @@ if (idxDp00 %in% c("NEON.D10.CPER.DP0.00113")){
   dataTmp <- cbind(dataTmp, time = strftime(timeReg, format="%Y-%m-%dT%H:%M:%OSZ", tz="UTC"), stringsAsFactors = F)
   #filled NA with previous value
   dataTmp[,1:8] <- zoo::na.locf(dataTmp[,1:8], na.rm = FALSE)
-  #output file
-  write.csv(dataTmp,paste0(DirOut00, "/", "valvVali", ".csv"),row.names=F,sep=",")   
+  #report output
+  rpt <- dataTmp  
   #remove dataframe
   rm(dataTmp)
+  }#end of horVer == 703.000
   
-  #combine regularize data for crdCo2ValvLvl
-  dataTmp <- data.frame(dataIn$NEON.D10.CPER.DP0.00113.001.02360.702.000.000$data,
-                        dataIn$NEON.D10.CPER.DP0.00113.001.02361.702.000.000$data,
-                        dataIn$NEON.D10.CPER.DP0.00113.001.02362.702.000.000$data,
-                        dataIn$NEON.D10.CPER.DP0.00113.001.02364.702.000.000$data,
-                        dataIn$NEON.D10.CPER.DP0.00113.001.02365.702.000.000$data,
-                        dataIn$NEON.D10.CPER.DP0.00113.001.02366.702.000.000$data,
-                        dataIn$NEON.D10.CPER.DP0.00113.001.02367.702.000.000$data,
-                        dataIn$NEON.D10.CPER.DP0.00113.001.02368.702.000.000$data)
+  #if dataList is not exist, create an empty data frame crdCo2ValvLvl
+  if (horVer %in% c("702.000")){
+    subDp00 <- c("001.02360.702.000.000", #valvCmd1
+                 "001.02361.702.000.000", #valvCmd2
+                 "001.02362.702.000.000", #valvCmd3
+                 "001.02364.702.000.000", #valvCmd4
+                 "001.02365.702.000.000", #valvCmd5
+                 "001.02366.702.000.000", #valvCmd6 
+                 "001.02367.702.000.000", #valvCmd7
+                 "001.02368.702.000.000") #valvCmd8
+    
+    #create full name for subDp00
+    subDp00 <- paste0(numDp00,".",subDp00, sep="")
+    #if dataList is not exist, create an empty data frame
+    for (idxSubDp00 in subDp00){
+      #idxSubDp00 <- subDp00[1]
+      if (!(idxSubDp00 %in% names(dataList))) {
+        dataList[[idxSubDp00]] <- data.frame(matrix(data = 0, ncol = 4, nrow = length(timeReg)))
+        names(dataList[[idxSubDp00]]) <- c("time", "data", "exst", "timeNew")
+        dataList[[idxSubDp00]]$timeNew <- timeReg 
+      }
+    }#end of for loop in subDp00
+    
+    lapply(names(dataList), function(x) dataIn[[x]] <<- def.rglr(timeMeas = base::as.POSIXlt(dataList[[x]][,"timeNew"], format="%Y-%m-%dT%H:%M:%OSZ", tz="UTC"),
+                                                                 dataMeas = dataList[[x]],
+                                                                 BgnRglr = as.POSIXlt(min(timeReg)),
+                                                                 EndRglr = as.POSIXlt(max(timeReg)),
+                                                                 FreqRglr = Freq,
+                                                                 MethRglr = "CybiEc",
+                                                                 PosWndw = "PosWndwMax"
+    )$dataRglr)  
+    #generate 0 value for unused valve
+    #dataIn$valv <- as.integer (0)
+    
+    #combine regularize time and data for crdCo2ValvLvl
+    dataTmp <- data.frame(dataIn[[subDp00[1]]]$data,
+                          dataIn[[subDp00[2]]]$data,
+                          dataIn[[subDp00[3]]]$data,
+                          dataIn[[subDp00[4]]]$data,
+                          dataIn[[subDp00[5]]]$data,
+                          dataIn[[subDp00[6]]]$data,
+                          dataIn[[subDp00[7]]]$data,
+                          dataIn[[subDp00[8]]]$data)
   
   #assign eddy4R name style to the output variables
   colnames(dataTmp) <- c("valv01", "valv02", "valv03", "valv04", "valv05", "valv06", "valv07", "valv08")
@@ -461,20 +354,56 @@ if (idxDp00 %in% c("NEON.D10.CPER.DP0.00113")){
   dataTmp <- cbind(dataTmp, time = strftime(timeReg, format="%Y-%m-%dT%H:%M:%OSZ", tz="UTC"), stringsAsFactors = F)
   #filled NA with previous value
   dataTmp[,1:8] <- zoo::na.locf(dataTmp[,1:8], na.rm = FALSE)
-  #output file
-  write.csv(dataTmp,paste0(DirOut00, "/", "crdCo2ValvLvl", ".csv"),row.names=F,sep=",")   
+  #report output
+  rpt <- dataTmp    
   #remove dataframe
   rm(dataTmp)
+  }#end of horVer == 702.000
   
-  #combine regularize data for crdH2oValvLvl
-  dataTmp <- data.frame(dataIn$NEON.D10.CPER.DP0.00113.001.02360.704.000.000$data,
-                        dataIn$NEON.D10.CPER.DP0.00113.001.02361.704.000.000$data,
-                        dataIn$NEON.D10.CPER.DP0.00113.001.02362.704.000.000$data,
-                        dataIn$NEON.D10.CPER.DP0.00113.001.02364.704.000.000$data,
-                        dataIn$NEON.D10.CPER.DP0.00113.001.02365.704.000.000$data,
-                        dataIn$NEON.D10.CPER.DP0.00113.001.02366.704.000.000$data,
-                        dataIn$NEON.D10.CPER.DP0.00113.001.02367.704.000.000$data,
-                        dataIn$NEON.D10.CPER.DP0.00113.001.02368.704.000.000$data)
+  #if dataList is not exist, create an empty data frame crdH2oValvLvl
+  if (horVer %in% c("704.000")){
+    subDp00 <- c("001.02360.704.000.000", #valvCmd1 
+                 "001.02361.704.000.000", #valvCmd2
+                 "001.02362.704.000.000", #valvCmd3
+                 "001.02364.704.000.000", #valvCmd4
+                 "001.02365.704.000.000", #valvCmd5
+                 "001.02366.704.000.000", #valvCmd6 
+                 "001.02367.704.000.000", #valvCmd7
+                 "001.02368.704.000.000") #valvCmd8
+    
+    
+    #create full name for subDp00
+    subDp00 <- paste0(numDp00,".",subDp00, sep="")
+    #if dataList is not exist, create an empty data frame
+    for (idxSubDp00 in subDp00){
+      #idxSubDp00 <- subDp00[1]
+      if (!(idxSubDp00 %in% names(dataList))) {
+        dataList[[idxSubDp00]] <- data.frame(matrix(data = 0, ncol = 4, nrow = length(timeReg)))
+        names(dataList[[idxSubDp00]]) <- c("time", "data", "exst", "timeNew")
+        dataList[[idxSubDp00]]$timeNew <- timeReg 
+      }
+    }#end of for loop in subDp00
+    
+    lapply(names(dataList), function(x) dataIn[[x]] <<- def.rglr(timeMeas = base::as.POSIXlt(dataList[[x]][,"timeNew"], format="%Y-%m-%dT%H:%M:%OSZ", tz="UTC"),
+                                                                 dataMeas = dataList[[x]],
+                                                                 BgnRglr = as.POSIXlt(min(timeReg)),
+                                                                 EndRglr = as.POSIXlt(max(timeReg)),
+                                                                 FreqRglr = Freq,
+                                                                 MethRglr = "CybiEc",
+                                                                 PosWndw = "PosWndwMax"
+    )$dataRglr)  
+    #generate 0 value for unused valve
+    #dataIn$valv <- as.integer (0)
+    
+    #combine regularize time and data for crdH2oValvLvl
+    dataTmp <- data.frame(dataIn[[subDp00[1]]]$data,
+                          dataIn[[subDp00[2]]]$data,
+                          dataIn[[subDp00[3]]]$data,
+                          dataIn[[subDp00[4]]]$data,
+                          dataIn[[subDp00[5]]]$data,
+                          dataIn[[subDp00[6]]]$data,
+                          dataIn[[subDp00[7]]]$data,
+                          dataIn[[subDp00[8]]]$data)
   
   #assign eddy4R name style to the output variables
   colnames(dataTmp) <- c("valv01", "valv02", "valv03", "valv04", "valv05", "valv06", "valv07", "valv08")
@@ -498,11 +427,12 @@ if (idxDp00 %in% c("NEON.D10.CPER.DP0.00113")){
   dataTmp <- cbind(dataTmp, time = strftime(timeReg, format="%Y-%m-%dT%H:%M:%OSZ", tz="UTC"), stringsAsFactors = F)
   #filled NA with previous value
   dataTmp[,1:8] <- zoo::na.locf(dataTmp[,1:8], na.rm = FALSE)
-  #output file
-  write.csv(dataTmp,paste0(DirOut00, "/", "crdH2oValvLvl", ".csv"),row.names=F,sep=",")   
+  #report output
+  rpt <- dataTmp  
   #remove dataframe
   rm(dataTmp)
-}
+  }#end of horVer == 704.000
+}#end of DP0.00113
 
 #perform time regularize for profSndAux ########################################################################
 if (idxDp00 %in% c("NEON.D10.CPER.DP0.00114")){
