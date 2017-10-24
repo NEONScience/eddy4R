@@ -31,7 +31,7 @@ wrap.time.rglr.dp00.ecse <- function(
   dom = "D10",
   timeReg,
   idDp00,
-  horVer,
+  horVer
 ){
 
 #call Library
@@ -1189,90 +1189,35 @@ if (idxDp00 %in% c("DP0.00115")){
 }# clsed loop for dp
 
 #CO2Iso#################################################################################################
-if (idxDp00 %in% c("NEON.D10.CPER.DP0.00102")){
+if (idxDp00 %in% c("DP0.00102")){
+  subDp00 <- c("001.02306.700.000.000",#instStat
+               "001.02307.700.000.000",#presCavi
+               "001.02308.700.000.000",#tempCavi
+               "001.02311.700.000.000",#tempWarmBox
+               "001.02315.700.000.000",#specID
+               "001.02316.700.000.000",#fwMoleCO2
+               "001.02191.700.000.000",#fdMoleCO2
+               "001.02317.700.000.000", #fwMole12CO2
+               "001.02318.700.000.000",#fdMole12CO2
+               "001.02319.700.000.000",#fwMole13CO2
+               "001.02320.700.000.000", #fdMole13CO2
+               "001.02324.700.000.000",#d13CO2
+               "001.02325.700.000.000") #percentFwMoleH2O
+  #create full name for subDp00
+  subDp00 <- paste0(numDp00,".",subDp00, sep="")
   #if dataList is not exist, create an empty data frame
-  #instStat
-  if (!("NEON.D10.CPER.DP0.00102.001.02306.700.000.000" %in% names(dataList))) {
-    dataList$NEON.D10.CPER.DP0.00102.001.02306.700.000.000 <- data.frame(matrix(data = NaN, ncol = 4, nrow = length(timeReg)))
-    names(dataList$NEON.D10.CPER.DP0.00102.001.02306.700.000.000) <- c("time", "data", "exst", "timeNew")
-    dataList$NEON.D10.CPER.DP0.00102.001.02306.700.000.000$timeNew <- timeReg
-  }
-  #presCavi
-  if (!("NEON.D10.CPER.DP0.00102.001.02307.700.000.000" %in% names(dataList))) {
-    dataList$NEON.D10.CPER.DP0.00102.001.02307.700.000.000 <- data.frame(matrix(data = NaN, ncol = 4, nrow = length(timeReg)))
-    names(dataList$NEON.D10.CPER.DP0.00102.001.02307.700.000.000) <- c("time", "data", "exst", "timeNew")
-    dataList$NEON.D10.CPER.DP0.00102.001.02307.700.000.000$timeNew <- timeReg
-  }
-  #tempCavi
-  if (!("NEON.D10.CPER.DP0.00102.001.02308.700.000.000" %in% names(dataList))) {
-    dataList$NEON.D10.CPER.DP0.00102.001.02308.700.000.000 <- data.frame(matrix(data = NaN, ncol = 4, nrow = length(timeReg)))
-    names(dataList$NEON.D10.CPER.DP0.00102.001.02308.700.000.000) <- c("time", "data", "exst", "timeNew")
-    dataList$NEON.D10.CPER.DP0.00102.001.02308.700.000.000$timeNew <- timeReg
-  }
-  #tempWarmBox
-  if (!("NEON.D10.CPER.DP0.00102.001.02311.700.000.000" %in% names(dataList))) {
-    dataList$NEON.D10.CPER.DP0.00102.001.02311.700.000.000 <- data.frame(matrix(data = NaN, ncol = 4, nrow = length(timeReg)))
-    names(dataList$NEON.D10.CPER.DP0.00102.001.02311.700.000.000) <- c("time", "data", "exst", "timeNew")
-    dataList$NEON.D10.CPER.DP0.00102.001.02311.700.000.000$timeNew <- timeReg
-  }
-  #specID
-  if (!("NEON.D10.CPER.DP0.00102.001.02315.700.000.000" %in% names(dataList))) {
-    dataList$NEON.D10.CPER.DP0.00102.001.02315.700.000.000 <- data.frame(matrix(data = NaN, ncol = 4, nrow = length(timeReg)))
-    names(dataList$NEON.D10.CPER.DP0.00102.001.02315.700.000.000) <- c("time", "data", "exst", "timeNew")
-    dataList$NEON.D10.CPER.DP0.00102.001.02315.700.000.000$timeNew <- timeReg
-  }
-  #fwMoleCO2
-  if (!("NEON.D10.CPER.DP0.00102.001.02316.700.000.000" %in% names(dataList))) {
-    dataList$NEON.D10.CPER.DP0.00102.001.02316.700.000.000 <- data.frame(matrix(data = NaN, ncol = 4, nrow = length(timeReg)))
-    names(dataList$NEON.D10.CPER.DP0.00102.001.02316.700.000.000) <- c("time", "data", "exst", "timeNew")
-    dataList$NEON.D10.CPER.DP0.00102.001.02316.700.000.000$timeNew <- timeReg
-  }
-  #fdMoleCO2
-  if (!("NEON.D10.CPER.DP0.00102.001.02191.700.000.000" %in% names(dataList))) {
-    dataList$NEON.D10.CPER.DP0.00102.001.02191.700.000.000 <- data.frame(matrix(data = NaN, ncol = 4, nrow = length(timeReg)))
-    names(dataList$NEON.D10.CPER.DP0.00102.001.02191.700.000.000) <- c("time", "data", "exst", "timeNew")
-    dataList$NEON.D10.CPER.DP0.00102.001.02191.700.000.000$timeNew <- timeReg
-  }
-  #fwMole12CO2
-  if (!("NEON.D10.CPER.DP0.00102.001.02317.700.000.000" %in% names(dataList))) {
-    dataList$NEON.D10.CPER.DP0.00102.001.02317.700.000.000 <- data.frame(matrix(data = NaN, ncol = 4, nrow = length(timeReg)))
-    names(dataList$NEON.D10.CPER.DP0.00102.001.02317.700.000.000) <- c("time", "data", "exst", "timeNew")
-    dataList$NEON.D10.CPER.DP0.00102.001.02317.700.000.000$timeNew <- timeReg
-  }
-  #fdMole12CO2
-  if (!("NEON.D10.CPER.DP0.00102.001.02318.700.000.000" %in% names(dataList))) {
-    dataList$NEON.D10.CPER.DP0.00102.001.02318.700.000.000 <- data.frame(matrix(data = NaN, ncol = 4, nrow = length(timeReg)))
-    names(dataList$NEON.D10.CPER.DP0.00102.001.02318.700.000.000) <- c("time", "data", "exst", "timeNew")
-    dataList$NEON.D10.CPER.DP0.00102.001.02318.700.000.000$timeNew <- timeReg
-  }
-  #fwMole13CO2
-  if (!("NEON.D10.CPER.DP0.00102.001.02319.700.000.000" %in% names(dataList))) {
-    dataList$NEON.D10.CPER.DP0.00102.001.02319.700.000.000 <- data.frame(matrix(data = NaN, ncol = 4, nrow = length(timeReg)))
-    names(dataList$NEON.D10.CPER.DP0.00102.001.02319.700.000.000) <- c("time", "data", "exst", "timeNew")
-    dataList$NEON.D10.CPER.DP0.00102.001.02319.700.000.000$timeNew <- timeReg
-  }
-  #fdMole13CO2
-  if (!("NEON.D10.CPER.DP0.00102.001.02320.700.000.000" %in% names(dataList))) {
-    dataList$NEON.D10.CPER.DP0.00102.001.02320.700.000.000 <- data.frame(matrix(data = NaN, ncol = 4, nrow = length(timeReg)))
-    names(dataList$NEON.D10.CPER.DP0.00102.001.02320.700.000.000) <- c("time", "data", "exst", "timeNew")
-    dataList$NEON.D10.CPER.DP0.00102.001.02320.700.000.000$timeNew <- timeReg
-  }
-  #d13CO2
-  if (!("NEON.D10.CPER.DP0.00102.001.02324.700.000.000" %in% names(dataList))) {
-    dataList$NEON.D10.CPER.DP0.00102.001.02324.700.000.000 <- data.frame(matrix(data = NaN, ncol = 4, nrow = length(timeReg)))
-    names(dataList$NEON.D10.CPER.DP0.00102.001.02324.700.000.000) <- c("time", "data", "exst", "timeNew")
-    dataList$NEON.D10.CPER.DP0.00102.001.02324.700.000.000$timeNew <- timeReg
-  }
-  #percentFwMoleH2O
-  if (!("NEON.D10.CPER.DP0.00102.001.02325.700.000.000" %in% names(dataList))) {
-    dataList$NEON.D10.CPER.DP0.00102.001.02325.700.000.000 <- data.frame(matrix(data = NaN, ncol = 4, nrow = length(timeReg)))
-    names(dataList$NEON.D10.CPER.DP0.00102.001.02325.700.000.000) <- c("time", "data", "exst", "timeNew")
-    dataList$NEON.D10.CPER.DP0.00102.001.02325.700.000.000$timeNew <- timeReg
-  }
+  for (idxSubDp00 in subDp00){
+    #idxSubDp00 <- subDp00[1]
+    if (!(idxSubDp00 %in% names(dataList))) {
+      dataList[[idxSubDp00]] <- data.frame(matrix(data = NaN, ncol = 4, nrow = length(timeReg)))
+      names(dataList[[idxSubDp00]]) <- c("time", "data", "exst", "timeNew")
+      dataList[[idxSubDp00]]$timeNew <- timeReg 
+    }
+  }#end of for loop in subDp00
   #determine qfSensStus
-  dataList$NEON.D10.CPER.DP0.00102.001.02306.700.000.000$qfSensStus <- ifelse(dataList$NEON.D10.CPER.DP0.00102.001.02306.700.000.000$data %in% 963, 0, 1)
+  dataList[[subDp00[1]]]$qfSensStus <- ifelse(dataList[[subDp00[1]]]$data %in% 963, 0, 1)
   #convert time
-  convTime <- base::as.POSIXlt(dataList$NEON.D10.CPER.DP0.00102.001.02306.700.000.000$timeNew, format="%Y-%m-%dT%H:%M:%OSZ", tz="UTC")
+  convTime <- base::as.POSIXlt(dataList[[subDp00[1]]]$timeNew, format="%Y-%m-%dT%H:%M:%OSZ", tz="UTC")
   #calculate time difference
   diffTime <- abs(difftime(convTime[1:(length(convTime)-1)], convTime[2:length(convTime)]))
   #add the first qfDiffTime row with NA
@@ -1281,12 +1226,12 @@ if (idxDp00 %in% c("NEON.D10.CPER.DP0.00102")){
   #per ATBD generate the flag (-1) if time different is more than 3 s
   qfDiffTime <- ifelse (diffTime > 3, -1, NA)
   
-  qfDiffTime[length(dataList$NEON.D10.CPER.DP0.00102.001.02306.700.000.000$timeNew)] <- NA
+  qfDiffTime[length(dataList[[subDp00[1]]]$timeNew)] <- NA
   
-  dataList$NEON.D10.CPER.DP0.00102.001.02306.700.000.000$qfDiffTime <- qfDiffTime  
+  dataList[[subDp00[1]]]$qfDiffTime <- qfDiffTime  
   
   #replace qfSensStus that have qfDiffTime equal to -1 to -1
-  dataList$NEON.D10.CPER.DP0.00102.001.02306.700.000.000$qfSensStus <- ifelse(is.na(dataList$NEON.D10.CPER.DP0.00102.001.02306.700.000.000$qfDiffTime), dataList$NEON.D10.CPER.DP0.00102.001.02306.700.000.000$qfSensStus, -1)
+  dataList[[subDp00[1]]]$qfSensStus <- ifelse(is.na(dataList[[subDp00[1]]]$qfDiffTime), dataList[[subDp00[1]]]$qfSensStus, -1)
   #empty dataIn for time regularization
   dataIn <- list()
   lapply(names(dataList), function(x) dataIn[[x]] <<- def.rglr(timeMeas = base::as.POSIXlt(dataList[[x]][,"timeNew"], format="%Y-%m-%dT%H:%M:%OSZ", tz="UTC"),
@@ -1298,25 +1243,25 @@ if (idxDp00 %in% c("NEON.D10.CPER.DP0.00102")){
   )$dataRglr)
   
   #calculate H2o dry mole fraction in mol mol-1
-  dataIn$NEON.D10.CPER.DP0.00102.001.02325.700.000.000$rtioMoleDryH2o <- ((dataIn$NEON.D10.CPER.DP0.00102.001.02325.700.000.000$data)/10^2)/(1-(dataIn$NEON.D10.CPER.DP0.00102.001.02325.700.000.000$data/10^2))
+  dataIn[[subDp00[13]]]$rtioMoleDryH2o <- ((dataIn[[subDp00[13]]]$data)/10^2)/(1-(dataIn[[subDp00[13]]]$data/10^2))
   
   #combine regularize data for crdCo2
-  dataTmp <- data.frame(dataIn$NEON.D10.CPER.DP0.00102.001.02306.700.000.000$data,#sensStus
-                        dataIn$NEON.D10.CPER.DP0.00102.001.02307.700.000.000$data,#pres
-                        dataIn$NEON.D10.CPER.DP0.00102.001.02308.700.000.000$data,#temp
-                        dataIn$NEON.D10.CPER.DP0.00102.001.02311.700.000.000$data,#tempWbox
-                        dataIn$NEON.D10.CPER.DP0.00102.001.02315.700.000.000$data,#idGas
-                        dataIn$NEON.D10.CPER.DP0.00102.001.02316.700.000.000$data,#rtioMoleWetCo2
-                        dataIn$NEON.D10.CPER.DP0.00102.001.02191.700.000.000$data,#rtioMoleDryCo2
-                        dataIn$NEON.D10.CPER.DP0.00102.001.02317.700.000.000$data,#rtioMoleWet12CCo2
-                        dataIn$NEON.D10.CPER.DP0.00102.001.02318.700.000.000$data,#rtioMoleDry12CCo2
-                        dataIn$NEON.D10.CPER.DP0.00102.001.02319.700.000.000$data,#rtioMoleWet13CCo2
-                        dataIn$NEON.D10.CPER.DP0.00102.001.02320.700.000.000$data,#rtioMoleDry13CCo2
-                        dataIn$NEON.D10.CPER.DP0.00102.001.02324.700.000.000$data,#dlta13CCo2
-                        dataIn$NEON.D10.CPER.DP0.00102.001.02325.700.000.000$data,#rtioMoleWetH2o
-                        dataIn$NEON.D10.CPER.DP0.00102.001.02325.700.000.000$rtioMoleDryH2o,#rtioMoleDryH2o
-                        dataIn$NEON.D10.CPER.DP0.00102.001.02306.700.000.000$qfSensStus)#qfSensStus
-  
+  dataTmp <- data.frame(dataIn[[subDp00[1]]]$data,#sensStus
+                        dataIn[[subDp00[2]]]$data,#pres
+                        dataIn[[subDp00[3]]]$data,#temp
+                        dataIn[[subDp00[4]]]$data,#tempWbox
+                        dataIn[[subDp00[5]]]$data,#idGas
+                        dataIn[[subDp00[6]]]$data,#rtioMoleWetCo2
+                        dataIn[[subDp00[7]]]$data,#rtioMoleDryCo2
+                        dataIn[[subDp00[8]]]$data,#rtioMoleWet12CCo2
+                        dataIn[[subDp00[9]]]$data,#rtioMoleDry12CCo2
+                        dataIn[[subDp00[10]]]$data,#rtioMoleWet13CCo2
+                        dataIn[[subDp00[11]]]$data,#rtioMoleDry13CCo2
+                        dataIn[[subDp00[12]]]$data,#dlta13CCo2
+                        dataIn[[subDp00[13]]]$data,#rtioMoleWetH2o
+                        dataIn[[subDp00[13]]]$rtioMoleDryH2o,#rtioMoleDryH2o
+                        dataIn[[subDp00[1]]]$qfSensStus)#qfSensStus
+
   #assign eddy4R name style to the output variables
   colnames(dataTmp) <- c("sensStus", "pres", "temp", "tempWbox", "idGas", "rtioMoleWetCo2",
                          "rtioMoleDryCo2", "rtioMoleWet12CCo2", "rtioMoleDry12CCo2", "rtioMoleWet13CCo2",
@@ -1365,70 +1310,34 @@ if (idxDp00 %in% c("NEON.D10.CPER.DP0.00102")){
   #combine regularize time and data
   dataTmp <- cbind(dataTmp, time = strftime(timeReg, format="%Y-%m-%dT%H:%M:%OSZ", tz="UTC"), stringsAsFactors = F)
   
-  #output file
-  write.csv(dataTmp,paste0(DirOut00, "/", "crdCo2", ".csv"),row.names=F,sep=",")   
+  #report output
+  rpt <- dataTmp    
   #remove dataframe
   rm(dataTmp)
 }
 
 #H2OIso#################################################################################################
-if (idxDp00 %in% c("NEON.D10.CPER.DP0.00103")){
+if (idxDp00 %in% c("DP0.00103")){
+  subDp00 <- c("001.02306.700.000.000",#instStat
+               "001.02307.700.000.000",#presCavi
+               "001.02308.700.000.000",#tempCavi
+               "001.02311.700.000.000",#tempWarmBox
+               "001.02338.700.000.000",#valvMask
+               "001.02339.700.000.000",#ppmvFwMoleH2O
+               "001.02369.700.000.000",#d18OWater
+               "001.02370.700.000.000",#d2HWater
+               "001.02340.700.000.000") #N2Flag
+  #create full name for subDp00
+  subDp00 <- paste0(numDp00,".",subDp00, sep="")
   #if dataList is not exist, create an empty data frame
-  #instStat
-  if (!("NEON.D10.CPER.DP0.00103.001.02306.700.000.000" %in% names(dataList))) {
-    dataList$NEON.D10.CPER.DP0.00103.001.02306.700.000.000 <- data.frame(matrix(data = NaN, ncol = 4, nrow = length(timeReg)))
-    names(dataList$NEON.D10.CPER.DP0.00103.001.02306.700.000.000) <- c("time", "data", "exst", "timeNew")
-    dataList$NEON.D10.CPER.DP0.00103.001.02306.700.000.000$timeNew <- timeReg
-  }
-  #presCavi
-  
-  if (!("NEON.D10.CPER.DP0.00103.001.02307.700.000.000" %in% names(dataList))) {
-    dataList$NEON.D10.CPER.DP0.00103.001.02307.700.000.000 <- data.frame(matrix(data = NaN, ncol = 4, nrow = length(timeReg)))
-    names(dataList$NEON.D10.CPER.DP0.00103.001.02307.700.000.000) <- c("time", "data", "exst", "timeNew")
-    dataList$NEON.D10.CPER.DP0.00103.001.02307.700.000.000$timeNew <- timeReg
-  }
-  #tempCavi
-  if (!("NEON.D10.CPER.DP0.00103.001.02308.700.000.000" %in% names(dataList))) {
-    dataList$NEON.D10.CPER.DP0.00103.001.02308.700.000.000 <- data.frame(matrix(data = NaN, ncol = 4, nrow = length(timeReg)))
-    names(dataList$NEON.D10.CPER.DP0.00103.001.02308.700.000.000) <- c("time", "data", "exst", "timeNew")
-    dataList$NEON.D10.CPER.DP0.00103.001.02308.700.000.000$timeNew <- timeReg
-  }
-  #tempWarmBox
-  if (!("NEON.D10.CPER.DP0.00103.001.02311.700.000.000" %in% names(dataList))) {
-    dataList$NEON.D10.CPER.DP0.00103.001.02311.700.000.000 <- data.frame(matrix(data = NaN, ncol = 4, nrow = length(timeReg)))
-    names(dataList$NEON.D10.CPER.DP0.00103.001.02311.700.000.000) <- c("time", "data", "exst", "timeNew")
-    dataList$NEON.D10.CPER.DP0.00103.001.02311.700.000.000$timeNew <- timeReg
-  }
-  #valvMask
-  if (!("NEON.D10.CPER.DP0.00103.001.02338.700.000.000" %in% names(dataList))) {
-    dataList$NEON.D10.CPER.DP0.00103.001.02338.700.000.000 <- data.frame(matrix(data = NaN, ncol = 4, nrow = length(timeReg)))
-    names(dataList$NEON.D10.CPER.DP0.00103.001.02338.700.000.000) <- c("time", "data", "exst", "timeNew")
-    dataList$NEON.D10.CPER.DP0.00103.001.02338.700.000.000$timeNew <- timeReg
-  }
-  #ppmvFwMoleH2O
-  if (!("NEON.D10.CPER.DP0.00103.001.02339.700.000.000" %in% names(dataList))) {
-    dataList$NEON.D10.CPER.DP0.00103.001.02339.700.000.000 <- data.frame(matrix(data = NaN, ncol = 4, nrow = length(timeReg)))
-    names(dataList$NEON.D10.CPER.DP0.00103.001.02339.700.000.000) <- c("time", "data", "exst", "timeNew")
-    dataList$NEON.D10.CPER.DP0.00103.001.02339.700.000.000$timeNew <- timeReg
-  }
-  #d18OWater
-  if (!("NEON.D10.CPER.DP0.00103.001.02369.700.000.000" %in% names(dataList))) {
-    dataList$NEON.D10.CPER.DP0.00103.001.02369.700.000.000 <- data.frame(matrix(data = NaN, ncol = 4, nrow = length(timeReg)))
-    names(dataList$NEON.D10.CPER.DP0.00103.001.02369.700.000.000) <- c("time", "data", "exst", "timeNew")
-    dataList$NEON.D10.CPER.DP0.00103.001.02369.700.000.000$timeNew <- timeReg
-  }
-  #d2HWater
-  if (!("NEON.D10.CPER.DP0.00103.001.02370.700.000.000" %in% names(dataList))) {
-    dataList$NEON.D10.CPER.DP0.00103.001.02370.700.000.000 <- data.frame(matrix(data = NaN, ncol = 4, nrow = length(timeReg)))
-    names(dataList$NEON.D10.CPER.DP0.00103.001.02370.700.000.000) <- c("time", "data", "exst", "timeNew")
-    dataList$NEON.D10.CPER.DP0.00103.001.02370.700.000.000$timeNew <- timeReg
-  }
-  #N2Flag
-  if (!("NEON.D10.CPER.DP0.00103.001.02340.700.000.000" %in% names(dataList))) {
-    dataList$NEON.D10.CPER.DP0.00103.001.02340.700.000.000 <- data.frame(matrix(data = NaN, ncol = 4, nrow = length(timeReg)))
-    names(dataList$NEON.D10.CPER.DP0.00103.001.02340.700.000.000) <- c("time", "data", "exst", "timeNew")
-    dataList$NEON.D10.CPER.DP0.00103.001.02340.700.000.000$timeNew <- timeReg
-  }
+  for (idxSubDp00 in subDp00){
+    #idxSubDp00 <- subDp00[1]
+    if (!(idxSubDp00 %in% names(dataList))) {
+      dataList[[idxSubDp00]] <- data.frame(matrix(data = NaN, ncol = 4, nrow = length(timeReg)))
+      names(dataList[[idxSubDp00]]) <- c("time", "data", "exst", "timeNew")
+      dataList[[idxSubDp00]]$timeNew <- timeReg 
+    }
+  }#end of for loop in subDp00
   
   convTime <- list()
   diffTime <-list()
@@ -1448,18 +1357,18 @@ if (idxDp00 %in% c("NEON.D10.CPER.DP0.00103")){
   lapply(names(dataList), function(x) dataList[[x]]$qfDiffTime <<- qfDiffTime[[x]])
   
   #determine qfSensStus
-  dataList$NEON.D10.CPER.DP0.00103.001.02306.700.000.000$qfSensStus <- ifelse(dataList$NEON.D10.CPER.DP0.00103.001.02306.700.000.000$data %in% 963, 0, 1)
+  dataList[[subDp00[1]]]$qfSensStus <- ifelse(dataList[[subDp00[1]]]$data %in% 963, 0, 1)
   #determine qfStusN2
-  dataList$NEON.D10.CPER.DP0.00103.001.02340.700.000.000$qfStusN2 <- ifelse(dataList$NEON.D10.CPER.DP0.00103.001.02340.700.000.000$data %in% 0, 0, 1)
+  dataList[[subDp00[9]]]$qfStusN2 <- ifelse(dataList[[subDp00[9]]]$data %in% 0, 0, 1)
   #determine qfLowRtioMoleWetH2o
-  dataList$NEON.D10.CPER.DP0.00103.001.02339.700.000.000$qfLowRtioMoleWetH2o <- ifelse(dataList$NEON.D10.CPER.DP0.00103.001.02339.700.000.000$data > 5000, 0, 1)
+  dataList[[subDp00[6]]]$qfLowRtioMoleWetH2o <- ifelse(dataList[[subDp00[6]]]$data > 5000, 0, 1)
   #calculate H2o dry mole fraction in mol mol-1
-  dataList$NEON.D10.CPER.DP0.00103.001.02339.700.000.000$rtioMoleDryH2o <- ((dataList$NEON.D10.CPER.DP0.00103.001.02339.700.000.000$data)/10^6)/(1-(dataList$NEON.D10.CPER.DP0.00103.001.02339.700.000.000$data/10^6)/1000)
+  dataList[[subDp00[6]]]$rtioMoleDryH2o <- ((dataList[[subDp00[6]]]$data)/10^6)/(1-(dataList[[subDp00[6]]]$data/10^6)/1000)
   
   #replace qfSensStus, qfStusN2 and qfLowRtioMoleWetH2o that have qfDiffTime equal to -1 to -1
-  dataList$NEON.D10.CPER.DP0.00103.001.02306.700.000.000$qfSensStus <- ifelse(is.na(dataList$NEON.D10.CPER.DP0.00103.001.02306.700.000.000$qfDiffTime), dataList$NEON.D10.CPER.DP0.00103.001.02306.700.000.000$qfSensStus, -1)
-  dataList$NEON.D10.CPER.DP0.00103.001.02340.700.000.000$qfStusN2 <- ifelse(is.na(dataList$NEON.D10.CPER.DP0.00103.001.02340.700.000.000$qfDiffTime), dataList$NEON.D10.CPER.DP0.00103.001.02340.700.000.000$qfStusN2, -1)
-  dataList$NEON.D10.CPER.DP0.00103.001.02339.700.000.000$qfLowRtioMoleWetH2o <- ifelse(is.na(dataList$NEON.D10.CPER.DP0.00103.001.02339.700.000.000$qfDiffTime), dataList$NEON.D10.CPER.DP0.00103.001.02339.700.000.000$qfLowRtioMoleWetH2o, -1)
+  dataList[[subDp00[1]]]$qfSensStus <- ifelse(is.na(dataList[[subDp00[1]]]$qfDiffTime), dataList[[subDp00[1]]]$qfSensStus, -1)
+  dataList[[subDp00[9]]]$qfStusN2 <- ifelse(is.na(dataList[[subDp00[9]]]$qfDiffTime), dataList[[subDp00[9]]]$qfStusN2, -1)
+  dataList[[subDp00[6]]]$qfLowRtioMoleWetH2o <- ifelse(is.na(dataList[[subDp00[6]]]$qfDiffTime), dataList[[subDp00[6]]]$qfLowRtioMoleWetH2o, -1)
   
   #empty dataIn for time regularization
   dataIn <- list()
@@ -1472,19 +1381,19 @@ if (idxDp00 %in% c("NEON.D10.CPER.DP0.00103")){
   )$dataRglr)
   
   #combine regularize data for crdH20
-  dataTmp <- data.frame(dataIn$NEON.D10.CPER.DP0.00103.001.02306.700.000.000$data,#sensStus
-                        dataIn$NEON.D10.CPER.DP0.00103.001.02307.700.000.000$data,#pres
-                        dataIn$NEON.D10.CPER.DP0.00103.001.02308.700.000.000$data,#temp
-                        dataIn$NEON.D10.CPER.DP0.00103.001.02311.700.000.000$data,#tempWbox
-                        dataIn$NEON.D10.CPER.DP0.00103.001.02338.700.000.000$data,#valvCrdH2o
-                        dataIn$NEON.D10.CPER.DP0.00103.001.02339.700.000.000$data,#rtioMoleWetH2o
-                        dataIn$NEON.D10.CPER.DP0.00103.001.02369.700.000.000$data,#dlta18OH2o
-                        dataIn$NEON.D10.CPER.DP0.00103.001.02370.700.000.000$data,#dlta2HH2o
-                        dataIn$NEON.D10.CPER.DP0.00103.001.02340.700.000.000$data,#stusN2
-                        dataIn$NEON.D10.CPER.DP0.00103.001.02339.700.000.000$rtioMoleDryH2o,#rtioMoleDryH2o
-                        dataIn$NEON.D10.CPER.DP0.00103.001.02306.700.000.000$qfSensStus,#qfSensStus
-                        dataIn$NEON.D10.CPER.DP0.00103.001.02340.700.000.000$qfStusN2,#qfStusN2
-                        dataIn$NEON.D10.CPER.DP0.00103.001.02339.700.000.000$qfLowRtioMoleWetH2o)#qfLowRtioMoleWetH2o
+  dataTmp <- data.frame(dataIn[[subDp00[1]]]$data,#sensStus
+                        dataIn[[subDp00[2]]]$data,#pres
+                        dataIn[[subDp00[3]]]$data,#temp
+                        dataIn[[subDp00[4]]]$data,#tempWbox
+                        dataIn[[subDp00[5]]]$data,#valvCrdH2o
+                        dataIn[[subDp00[6]]]$data,#rtioMoleWetH2o
+                        dataIn[[subDp00[7]]]$data,#dlta18OH2o
+                        dataIn[[subDp00[8]]]$data,#dlta2HH2o
+                        dataIn[[subDp00[9]]]$data,#stusN2
+                        dataIn[[subDp00[6]]]$rtioMoleDryH2o,#rtioMoleDryH2o
+                        dataIn[[subDp00[1]]]$qfSensStus,#qfSensStus
+                        dataIn[[subDp00[9]]]$qfStusN2,#qfStusN2
+                        dataIn[[subDp00[6]]]$qfLowRtioMoleWetH2o)#qfLowRtioMoleWetH2o
   
   #assign eddy4R name style to the output variables
   colnames(dataTmp) <- c("sensStus", "pres", "temp", "tempWbox", "valvCrdH2o" , "rtioMoleWetH2o",
@@ -1518,64 +1427,49 @@ if (idxDp00 %in% c("NEON.D10.CPER.DP0.00103")){
   #combine regularize time and data
   dataTmp <- cbind(dataTmp, time = strftime(timeReg, format="%Y-%m-%dT%H:%M:%OSZ", tz="UTC"), stringsAsFactors = F)
   
-  #output file
-  write.csv(dataTmp,paste0(DirOut00, "/", "crdH2o", ".csv"),row.names=F,sep=",")   
+  #report output
+  rpt <- dataTmp     
   #remove dataframe
   rm(dataTmp)
 }
 
 #HMP155 tower top and soil plot####################################################################################################    
-if (idxDp00 %in% c("NEON.D10.CPER.DP0.00098")){
-  #if dataList is not exist, create an empty data frame 
-  #rh tower top
-  if (!("NEON.D10.CPER.DP0.00098.001.01357.000.040.000" %in% names(dataList))) {
-    dataList$NEON.D10.CPER.DP0.00098.001.01357.000.040.000 <- data.frame(matrix(data = NaN, ncol = 4, nrow = length(timeReg)))
-    names(dataList$NEON.D10.CPER.DP0.00098.001.01357.000.040.000) <- c("time", "data", "exst", "timeNew")
-    dataList$NEON.D10.CPER.DP0.00098.001.01357.000.040.000$timeNew <- timeReg
-  }
-  #temp tower top
-  if (!("NEON.D10.CPER.DP0.00098.001.01309.000.040.000" %in% names(dataList))) {
-    dataList$NEON.D10.CPER.DP0.00098.001.01309.000.040.000 <- data.frame(matrix(data = NaN, ncol = 4, nrow = length(timeReg)))
-    names(dataList$NEON.D10.CPER.DP0.00098.001.01309.000.040.000) <- c("time", "data", "exst", "timeNew")
-    dataList$NEON.D10.CPER.DP0.00098.001.01309.000.040.000$timeNew <- timeReg
-  }
-  #tempDew tower top
-  if (!("NEON.D10.CPER.DP0.00098.001.01358.000.040.000" %in% names(dataList))) {
-    dataList$NEON.D10.CPER.DP0.00098.001.01358.000.040.000 <- data.frame(matrix(data = NaN, ncol = 4, nrow = length(timeReg)))
-    names(dataList$NEON.D10.CPER.DP0.00098.001.01358.000.040.000) <- c("time", "data", "exst", "timeNew")
-    dataList$NEON.D10.CPER.DP0.00098.001.01358.000.040.000$timeNew <- timeReg
-  }
-  #qfSens tower top
-  if (!("NEON.D10.CPER.DP0.00098.001.01359.000.040.000" %in% names(dataList))) {
-    dataList$NEON.D10.CPER.DP0.00098.001.01359.000.040.000 <- data.frame(matrix(data = 0, ncol = 4, nrow = length(timeReg)))
-    names(dataList$NEON.D10.CPER.DP0.00098.001.01359.000.040.000) <- c("time", "data", "exst", "timeNew")
-    dataList$NEON.D10.CPER.DP0.00098.001.01359.000.040.000$timeNew <- timeReg
-  }
-  
-  #rh soil plot
-  if (!("NEON.D10.CPER.DP0.00098.001.01357.003.000.000" %in% names(dataList))) {
-    dataList$NEON.D10.CPER.DP0.00098.001.01357.003.000.000 <- data.frame(matrix(data = NaN, ncol = 4, nrow = length(timeReg)))
-    names(dataList$NEON.D10.CPER.DP0.00098.001.01357.003.000.000) <- c("time", "data", "exst", "timeNew")
-    dataList$NEON.D10.CPER.DP0.00098.001.01357.003.000.000$timeNew <- timeReg
-  }
-  #temp soil plot
-  if (!("NEON.D10.CPER.DP0.00098.001.01309.003.000.000" %in% names(dataList))) {
-    dataList$NEON.D10.CPER.DP0.00098.001.01309.003.000.000 <- data.frame(matrix(data = NaN, ncol = 4, nrow = length(timeReg)))
-    names(dataList$NEON.D10.CPER.DP0.00098.001.01309.003.000.000) <- c("time", "data", "exst", "timeNew")
-    dataList$NEON.D10.CPER.DP0.00098.001.01309.003.000.000$timeNew <- timeReg
-  }
-  #tempDew soil plot
-  if (!("NEON.D10.CPER.DP0.00098.001.01358.000.040.000" %in% names(dataList))) {
-    dataList$NEON.D10.CPER.DP0.00098.001.01358.003.000.000 <- data.frame(matrix(data = NaN, ncol = 4, nrow = length(timeReg)))
-    names(dataList$NEON.D10.CPER.DP0.00098.001.01358.003.000.000) <- c("time", "data", "exst", "timeNew")
-    dataList$NEON.D10.CPER.DP0.00098.001.01358.003.000.000$timeNew <- timeReg
-  }
-  #qfSens soil plot
-  if (!("NEON.D10.CPER.DP0.00098.001.01359.000.040.000" %in% names(dataList))) {
-    dataList$NEON.D10.CPER.DP0.00098.001.01359.003.000.000 <- data.frame(matrix(data = 0, ncol = 4, nrow = length(timeReg)))
-    names(dataList$NEON.D10.CPER.DP0.00098.001.01359.003.000.000) <- c("time", "data", "exst", "timeNew")
-    dataList$NEON.D10.CPER.DP0.00098.001.01359.003.000.000$timeNew <- timeReg
-  }
+if (idxDp00 %in% c("DP0.00098")){
+  subDp00 <- c("001.01357.000.040.000",#rh tower top
+               "001.01309.000.040.000",#temp tower top
+               "001.01358.000.040.000",#tempDew tower top
+               "001.01359.000.040.000",#qfSens tower top
+               "001.01357.000.050.000",#rh tower top
+               "001.01309.000.050.000",#temp tower top
+               "001.01358.000.050.000",#tempDew tower top
+               "001.01359.000.050.000",#qfSens tower top
+               "001.01357.000.060.000",#rh tower top
+               "001.01309.000.060.000",#temp tower top
+               "001.01358.000.060.000",#tempDew tower top
+               "001.01359.000.060.000",#qfSens tower top
+               "001.01357.000.070.000",#rh tower top
+               "001.01309.000.070.000",#temp tower top
+               "001.01358.000.070.000",#tempDew tower top
+               "001.01359.000.070.000",#qfSens tower top
+               "001.01357.000.080.000",#rh tower top
+               "001.01309.000.080.000",#temp tower top
+               "001.01358.000.080.000",#tempDew tower top
+               "001.01359.000.080.000",#qfSens tower top
+               "001.01357.003.000.000",#rh soil plot
+               "001.01309.003.000.000",#temp soil plot
+               "001.01358.003.000.000",#tempDew soil plot
+               "001.01359.003.000.000") #qfSens soil plot
+  #create full name for subDp00
+  subDp00 <- paste0(numDp00,".",subDp00, sep="")
+  #if dataList is not exist, create an empty data frame
+  for (idxSubDp00 in subDp00){
+    #idxSubDp00 <- subDp00[1]
+    if (!(idxSubDp00 %in% names(dataList))) {
+      dataList[[idxSubDp00]] <- data.frame(matrix(data = NaN, ncol = 4, nrow = length(timeReg)))
+      names(dataList[[idxSubDp00]]) <- c("time", "data", "exst", "timeNew")
+      dataList[[idxSubDp00]]$timeNew <- timeReg 
+    }
+  }#end of for loop in subDp00
   
   dataIn <- list()
   lapply(names(dataList), function(x) dataIn[[x]] <<- def.rglr(timeMeas = base::as.POSIXlt(dataList[[x]][,"timeNew"], format="%Y-%m-%dT%H:%M:%OSZ", tz="UTC"),
@@ -1586,88 +1480,77 @@ if (idxDp00 %in% c("NEON.D10.CPER.DP0.00098")){
                                                                MethRglr = "CybiEc"
   )$dataRglr)
   
-  #combine regularize data for hmp_000_040 (tower top)
-  dataTmp01 <- data.frame(dataIn$NEON.D10.CPER.DP0.00098.001.01357.000.040.000$data,#rh
-                          dataIn$NEON.D10.CPER.DP0.00098.001.01309.000.040.000$data,#temp
-                          dataIn$NEON.D10.CPER.DP0.00098.001.01358.000.040.000$data,#tempDew
-                          dataIn$NEON.D10.CPER.DP0.00098.001.01359.000.040.000$data)#qfSens
-  #combine regularize data for hmp_003_000 (soil plot)
-  dataTmp02 <- data.frame(dataIn$NEON.D10.CPER.DP0.00098.001.01357.003.000.000$data,#rh
-                          dataIn$NEON.D10.CPER.DP0.00098.001.01309.003.000.000$data,#temp
-                          dataIn$NEON.D10.CPER.DP0.00098.001.01358.003.000.000$data,#tempDew
-                          dataIn$NEON.D10.CPER.DP0.00098.001.01359.003.000.000$data)#qfSens
+  if (horVer %in% "000.040") {
+    dataTmp <- data.frame(data.frame(dataIn[[subDp00[1]]]$data,#rh
+                                     dataIn[[subDp00[2]]]$data,#temp
+                                     dataIn[[subDp00[3]]]$data,#tempDew
+                                     dataIn[[subDp00[4]]]$data)#qfSens
+  }
+  if (horVer %in% "000.050") {
+    dataTmp <- data.frame(data.frame(dataIn[[subDp00[5]]]$data,#rh
+                                     dataIn[[subDp00[6]]]$data,#temp
+                                     dataIn[[subDp00[7]]]$data,#tempDew
+                                     dataIn[[subDp00[8]]]$data)#qfSens
+  }
+  if (horVer %in% "000.060") {
+    dataTmp <- data.frame(data.frame(dataIn[[subDp00[9]]]$data,#rh
+                                     dataIn[[subDp00[10]]]$data,#temp
+                                     dataIn[[subDp00[11]]]$data,#tempDew
+                                     dataIn[[subDp00[12]]]$data)#qfSens
+  }
+  if (horVer %in% "000.070") {
+    dataTmp <- data.frame(data.frame(dataIn[[subDp00[13]]]$data,#rh
+                                     dataIn[[subDp00[14]]]$data,#temp
+                                     dataIn[[subDp00[15]]]$data,#tempDew
+                                     dataIn[[subDp00[16]]]$data)#qfSens
+  }
+  if (horVer %in% "000.080") {
+    dataTmp <- data.frame(data.frame(dataIn[[subDp00[17]]]$data,#rh
+                                     dataIn[[subDp00[18]]]$data,#temp
+                                     dataIn[[subDp00[19]]]$data,#tempDew
+                                     dataIn[[subDp00[20]]]$data)#qfSens
+  }
+  if (horVer %in% "003.000") {
+    dataTmp <- data.frame(data.frame(dataIn[[subDp00[21]]]$data,#rh
+                                     dataIn[[subDp00[22]]]$data,#temp
+                                     dataIn[[subDp00[23]]]$data,#tempDew
+                                     dataIn[[subDp00[24]]]$data)#qfSens
+  }
   
   #assign eddy4R name style to the output variables
-  colnames(dataTmp01) <- c("rh", "temp", "tempDew", "qfSens")
-  colnames(dataTmp02) <- c("rh", "temp", "tempDew", "qfSens")
-  
-  #calculate qfHeatTop
-  qfHeatTop <- ifelse(is.na(dataTmp01$temp) | is.na(dataTmp01$tempDew), -1,
-                      ifelse(((dataTmp01$temp < dataTmp01$tempDew+2) & dataTmp01$temp <= 0),1,0))
-  tmpTop <- c()
-  for(ii in 2:length(qfHeatTop)){
-    tmpTop[ii] <- ifelse(is.na(dataTmp01$temp[ii]) | is.na(dataTmp01$tempDew[ii]), -1,
-                         ifelse(((dataTmp01$temp[ii] < dataTmp01$tempDew[ii]+5) & qfHeatTop[ii-1] == 1),1,0))
-  }
-  tmpTop[1]<- qfHeatTop[1] #replace first element of tmpTop with qfHeatTop
-  qfHeatTop <- tmpTop
-  
-  #calculate qfHeatTop
-  qfHeatSoil <- ifelse(is.na(dataTmp02$temp) | is.na(dataTmp02$tempDew), -1,
-                       ifelse(((dataTmp02$temp < dataTmp02$tempDew+2) & dataTmp02$temp <= 0),1,0))
-  tmpSoil <- c()
-  for(ii in 2:length(qfHeatSoil)){
-    tmpSoil[ii] <- ifelse(is.na(dataTmp02$temp[ii]) | is.na(dataTmp02$tempDew[ii]), -1,
-                          ifelse(((dataTmp02$temp[ii] < dataTmp02$tempDew[ii]+5) & qfHeatSoil[ii-1] == 1),1,0))
-  }
-  tmpSoil[1]<- qfHeatSoil[1] #replace first element of tmpTop with qfHeatTop
-  qfHeatSoil <- tmpSoil
-  
-  #calculate qfHeat
-  qfHeat <- ifelse(qfHeatTop == 1 | qfHeatSoil == 1, 1,
-                   ifelse((qfHeatTop == 0 & qfHeatSoil == 0) | (qfHeatTop == 0 & qfHeatSoil == -1) | (qfHeatTop == -1 & qfHeatSoil == 0),0,-1))
+  colnames(dataTmp) <- c("rh", "temp", "tempDew", "qfSens")
+ 
   #Creating the index to organize the variables in alphabetical order
-  idxOrd01 <- order(colnames(dataTmp01))
-  idxOrd02 <- order(colnames(dataTmp02))
+  idxOrd <- order(colnames(dataTmp))
   
   #Changing the order of the variables to alphabetical order using the index
-  dataTmp01 <- dataTmp01[idxOrd01]
-  dataTmp02 <- dataTmp02[idxOrd02]
+  dataTmp <- dataTmp01[idxOrd]
   
   #provide in original order
-  attr(dataTmp01, which = "unit") <- c("%", #rh
-                                       "C", #temp
-                                       "C", #tempDew
-                                       "NA") #qfSens
-  
-  attr(dataTmp02, which = "unit") <- c("%", #rh
+  attr(dataTmp, which = "unit") <- c("%", #rh
                                        "C", #temp
                                        "C", #tempDew
                                        "NA") #qfSens
   
   #Sorting the order of units to match the colnames
-  attributes(dataTmp01)$unit <- attributes(dataTmp01)$unit[idxOrd01]
-  attributes(dataTmp02)$unit <- attributes(dataTmp02)$unit[idxOrd02]
+  attributes(dataTmp)$unit <- attributes(dataTmp)$unit[idxOrd]
   
   #unit conversion using eddy4R internal unit
-  dataTmp01 <- base::suppressWarnings(eddy4R.base::def.unit.conv(data = dataTmp01,
+  dataTmp <- base::suppressWarnings(eddy4R.base::def.unit.conv(data = dataTmp,
                                                                  unitFrom = attributes(dataTmp01)$unit,
                                                                  unitTo = "intl"))
-  dataTmp02 <- base::suppressWarnings(eddy4R.base::def.unit.conv(data = dataTmp02,
-                                                                 unitFrom = attributes(dataTmp02)$unit,
-                                                                 unitTo = "intl"))
+  
   #combine regularize time and data
-  dataTmp01 <- cbind(dataTmp01, time = strftime(timeReg, format="%Y-%m-%dT%H:%M:%OSZ", tz="UTC"), stringsAsFactors = F)
-  dataTmp02 <- cbind(dataTmp02, time = strftime(timeReg, format="%Y-%m-%dT%H:%M:%OSZ", tz="UTC"), stringsAsFactors = F)
-  dataTmp03 <- cbind(qfHeat = data.frame(qfHeat), time = strftime(timeReg, format="%Y-%m-%dT%H:%M:%OSZ", tz="UTC"), stringsAsFactors = F)
-  #output file
-  write.csv(dataTmp01,paste0(DirOut00, "/", "rhSens_000_040", ".csv"),row.names=F,sep=",")
-  write.csv(dataTmp02,paste0(DirOut00, "/", "rhSens_003_000", ".csv"),row.names=F,sep=",") 
-  write.csv(dataTmp03,paste0(DirOut00, "/", "qfHeatInlt", ".csv"),row.names=F,sep=",")
+  dataTmp <- cbind(dataTmp, time = strftime(timeReg, format="%Y-%m-%dT%H:%M:%OSZ", tz="UTC"), stringsAsFactors = F)
+
+  #report output
+  rpt <- dataTmp  
   #remove dataframe
-  rm(dataTmp01, dataTmp02, dataTmp03)
+  rm(dataTmp)
   
 }# clsed loop for dp  
 
-} #close loop through each DP
+#return results
+return(rpt)
+
 } # function end
