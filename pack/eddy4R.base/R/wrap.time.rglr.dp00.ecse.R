@@ -462,7 +462,17 @@ if (idxDp00 %in% c("DP0.00114")){
                "001.02361.700.000.000", #valvCmd2
                "001.02362.700.000.000", #valvCmd3
                "001.02364.700.000.000") #valvCmd4
-               
+  #create full name for subDp00
+  subDp00 <- paste0(numDp00,".",subDp00, sep="")
+  #if dataList is not exist, create an empty data frame
+  for (idxSubDp00 in subDp00){
+    #idxSubDp00 <- subDp00[1]
+    if (!(idxSubDp00 %in% names(dataList))) {
+      dataList[[idxSubDp00]] <- data.frame(matrix(data = 0, ncol = 4, nrow = length(timeReg)))
+      names(dataList[[idxSubDp00]]) <- c("time", "data", "exst", "timeNew")
+      dataList[[idxSubDp00]]$timeNew <- timeReg 
+    }
+  }#end of for loop in subDp00
   
   lapply(names(dataList), function(x) dataIn[[x]] <<- def.rglr(timeMeas = base::as.POSIXlt(dataList[[x]][,"timeNew"], format="%Y-%m-%dT%H:%M:%OSZ", tz="UTC"),
                                                                dataMeas = dataList[[x]],
@@ -507,388 +517,25 @@ if (idxDp00 %in% c("DP0.00114")){
   rm(dataTmp)
 }
 
-#perform time regularize for saats#######################################
-if (idxDp00 %in% c("NEON.D10.CPER.DP0.00002")){
-  #if dataList is not exist, create an empty data frame 
-  #PRTResistance lvl01
-  if (!("NEON.D10.CPER.DP0.00002.001.01325.000.010.000" %in% names(dataList))) {
-    dataList$NEON.D10.CPER.DP0.00002.001.01325.000.010.000 <- data.frame(matrix(data = NaN, ncol = 4, nrow = length(timeReg)))
-    names(dataList$NEON.D10.CPER.DP0.00002.001.01325.000.010.000) <- c("time", "data", "exst", "timeNew")
-    dataList$NEON.D10.CPER.DP0.00002.001.01325.000.010.000$timeNew <- timeReg
-  }
-  #PRTResistance lvl02
-  if (!("NEON.D10.CPER.DP0.00002.001.01325.000.020.000" %in% names(dataList))) {
-    dataList$NEON.D10.CPER.DP0.00002.001.01325.000.020.000 <- data.frame(matrix(data = NaN, ncol = 4, nrow = length(timeReg)))
-    names(dataList$NEON.D10.CPER.DP0.00002.001.01325.000.020.000) <- c("time", "data", "exst", "timeNew")
-    dataList$NEON.D10.CPER.DP0.00002.001.01325.000.020.000$timeNew <- timeReg
-  }
-  #PRTResistance lvl03
-  if (!("NEON.D10.CPER.DP0.00002.001.01325.000.030.000" %in% names(dataList))) {
-    dataList$NEON.D10.CPER.DP0.00002.001.01325.000.030.000 <- data.frame(matrix(data = NaN, ncol = 4, nrow = length(timeReg)))
-    names(dataList$NEON.D10.CPER.DP0.00002.001.01325.000.030.000) <- c("time", "data", "exst", "timeNew")
-    dataList$NEON.D10.CPER.DP0.00002.001.01325.000.030.000$timeNew <- timeReg
-  }
-  #heater flag lvl01
-  if (!("NEON.D10.CPER.DP0.00002.001.01319.000.010.000" %in% names(dataList))) {
-    dataList$NEON.D10.CPER.DP0.00002.001.01319.000.010.000 <- data.frame(matrix(data = 0, ncol = 4, nrow = length(timeReg)))
-    names(dataList$NEON.D10.CPER.DP0.00002.001.01319.000.010.000) <- c("time", "data", "exst", "timeNew")
-    dataList$NEON.D10.CPER.DP0.00002.001.01319.000.010.000$timeNew <- timeReg
-  }
-  #heater flag lvl02
-  if (!("NEON.D10.CPER.DP0.00002.001.01319.000.020.000" %in% names(dataList))) {
-    dataList$NEON.D10.CPER.DP0.00002.001.01319.000.020.000 <- data.frame(matrix(data = 0, ncol = 4, nrow = length(timeReg)))
-    names(dataList$NEON.D10.CPER.DP0.00002.001.01319.000.020.000) <- c("time", "data", "exst", "timeNew")
-    dataList$NEON.D10.CPER.DP0.00002.001.01319.000.020.000$timeNew <- timeReg
-  }
-  #heater flag lvl03
-  if (!("NEON.D10.CPER.DP0.00002.001.01319.000.030.000" %in% names(dataList))) {
-    dataList$NEON.D10.CPER.DP0.00002.001.01319.000.030.000 <- data.frame(matrix(data = 0, ncol = 4, nrow = length(timeReg)))
-    names(dataList$NEON.D10.CPER.DP0.00002.001.01319.000.030.000) <- c("time", "data", "exst", "timeNew")
-    dataList$NEON.D10.CPER.DP0.00002.001.01319.000.030.000$timeNew <- timeReg
-  }
-  #turbine speed lvl01
-  if (!("NEON.D10.CPER.DP0.00002.001.01330.000.010.000" %in% names(dataList))) {
-    dataList$NEON.D10.CPER.DP0.00002.001.01330.000.010.000 <- data.frame(matrix(data = NaN, ncol = 4, nrow = length(timeReg)))
-    names(dataList$NEON.D10.CPER.DP0.00002.001.01330.000.010.000) <- c("time", "data", "exst", "timeNew")
-    dataList$NEON.D10.CPER.DP0.00002.001.01330.000.010.000$timeNew <- timeReg
-  }
-  #turbine speed lvl02
-  if (!("NEON.D10.CPER.DP0.00002.001.01330.000.020.000" %in% names(dataList))) {
-    dataList$NEON.D10.CPER.DP0.00002.001.01330.000.020.000 <- data.frame(matrix(data = NaN, ncol = 4, nrow = length(timeReg)))
-    names(dataList$NEON.D10.CPER.DP0.00002.001.01330.000.020.000) <- c("time", "data", "exst", "timeNew")
-    dataList$NEON.D10.CPER.DP0.00002.001.01330.000.020.000$timeNew <- timeReg
-  }
-  #turbine speed lvl03
-  if (!("NEON.D10.CPER.DP0.00002.001.01330.000.030.000" %in% names(dataList))) {
-    dataList$NEON.D10.CPER.DP0.00002.001.01330.000.030.000 <- data.frame(matrix(data = NaN, ncol = 4, nrow = length(timeReg)))
-    names(dataList$NEON.D10.CPER.DP0.00002.001.01330.000.030.000) <- c("time", "data", "exst", "timeNew")
-    dataList$NEON.D10.CPER.DP0.00002.001.01330.000.030.000$timeNew <- timeReg
-  }
-  dataIn <- list()
-  lapply(names(dataList), function(x) dataIn[[x]] <<- def.rglr(timeMeas = base::as.POSIXlt(dataList[[x]][,"timeNew"], format="%Y-%m-%dT%H:%M:%OSZ", tz="UTC"),
-                                                               dataMeas = dataList[[x]],
-                                                               BgnRglr = as.POSIXlt(min(timeReg)),
-                                                               EndRglr = as.POSIXlt(max(timeReg)),
-                                                               FreqRglr = Freq,
-                                                               MethRglr = "CybiEc"
-  )$dataRglr)
-  
-  #calibration coef for each PRT
-  coef01 <- c(-245.31623344989833, 2.351431055563405, 0.001003529381714)
-  coef02 <- c(-245.32321420778322, 2.350003716265209, 0.0010154164998)
-  coef03 <- c(-245.4094386941628, 2.348269836919454, 0.001009909428565)
-  
-  #calculate temp for each ml
-  dataIn$NEON.D10.CPER.DP0.00002.001.01325.000.010.000$temp <- coef01[1]+(coef01[2]*dataIn$NEON.D10.CPER.DP0.00002.001.01325.000.010.000$data)+(coef01[3]*(dataIn$NEON.D10.CPER.DP0.00002.001.01325.000.010.000$data)^2)
-  dataIn$NEON.D10.CPER.DP0.00002.001.01325.000.020.000$temp <- coef02[1]+(coef02[2]*dataIn$NEON.D10.CPER.DP0.00002.001.01325.000.020.000$data)+(coef02[3]*(dataIn$NEON.D10.CPER.DP0.00002.001.01325.000.020.000$data)^2)
-  dataIn$NEON.D10.CPER.DP0.00002.001.01325.000.030.000$temp <- coef03[1]+(coef03[2]*dataIn$NEON.D10.CPER.DP0.00002.001.01325.000.030.000$data)+(coef03[3]*(dataIn$NEON.D10.CPER.DP0.00002.001.01325.000.030.000$data)^2)
-  
-  #regularize data for each location
-  tmpName <- c("tempAirLvl_000_010", "tempAirLvl_000_020", 
-               "tempAirLvl_000_030")
-  
-  for (idxName in tmpName) {
-    if (idxName == "tempAirLvl_000_010") {
-      dataTmp <- data.frame(dataIn$NEON.D10.CPER.DP0.00002.001.01325.000.010.000$temp,
-                            dataIn$NEON.D10.CPER.DP0.00002.001.01330.000.010.000$data,
-                            dataIn$NEON.D10.CPER.DP0.00002.001.01319.000.010.000$data)}
-    if (idxName == "tempAirLvl_000_020") {
-      dataTmp <- data.frame(dataIn$NEON.D10.CPER.DP0.00002.001.01325.000.020.000$temp,
-                            dataIn$NEON.D10.CPER.DP0.00002.001.01330.000.020.000$data,
-                            dataIn$NEON.D10.CPER.DP0.00002.001.01319.000.020.000$data)}
-    if (idxName == "tempAirLvl_000_030") {
-      dataTmp <- data.frame(dataIn$NEON.D10.CPER.DP0.00002.001.01325.000.030.000$temp,
-                            dataIn$NEON.D10.CPER.DP0.00002.001.01330.000.030.000$data,
-                            dataIn$NEON.D10.CPER.DP0.00002.001.01319.000.030.000$data)}
-    
-    
-    #assign eddy4R name style to the output variables
-    colnames(dataTmp) <- c("temp", "veloFlow", "qfHeat")
-    
-    #Creating the index to organize the variables in alphabetical order
-    idxOrd <- order(colnames(dataTmp))
-    #Changing the order of the variables to alphabetical order using the index
-    dataTmp <- dataTmp[idxOrd]
-    
-    #provide in original order
-    attr(dataTmp, which = "unit") <- c("C", "rpm", "NA")
-    
-    #Sorting the order of units to match the colnames
-    attributes(dataTmp)$unit <- attributes(dataTmp)$unit[idxOrd]
-    
-    #unit conversion using eddy4R internal unit
-    dataTmp <- base::suppressWarnings(eddy4R.base::def.unit.conv(data = dataTmp,
-                                                                 unitFrom = attributes(dataTmp)$unit,
-                                                                 unitTo = "intl"))
-    #combine regularize time and data
-    dataTmp <- cbind(dataTmp, time = strftime(timeReg, format="%Y-%m-%dT%H:%M:%OSZ", tz="UTC"), stringsAsFactors = F)
-    
-    #output file
-    write.csv(dataTmp,paste0(DirOut00, "/", idxName, ".csv"),row.names=F,sep=",")   
-    #remove dataframe
-    rm(dataTmp)
-  }# closed loop dataTmp for each location
-  
-}# clsed loop for dp
-
-#perform time regularize for traat#######################################
-if (idxDp00 %in% c("NEON.D10.CPER.DP0.00003")){
-  #if dataList is not exist, create an empty data frame 
-  #PRTResistance01
-  if (!("NEON.D10.CPER.DP0.00003.001.01325.000.040.101" %in% names(dataList))) {
-    dataList$NEON.D10.CPER.DP0.00003.001.01325.000.040.101 <- data.frame(matrix(data = NaN, ncol = 4, nrow = length(timeReg)))
-    names(dataList$NEON.D10.CPER.DP0.00003.001.01325.000.040.101) <- c("time", "data", "exst", "timeNew")
-    dataList$NEON.D10.CPER.DP0.00003.001.01325.000.040.101$timeNew <- timeReg
-  }
-  #PRTResistance02
-  if (!("NEON.D10.CPER.DP0.00003.001.01325.000.040.102" %in% names(dataList))) {
-    dataList$NEON.D10.CPER.DP0.00003.001.01325.000.040.102 <- data.frame(matrix(data = NaN, ncol = 4, nrow = length(timeReg)))
-    names(dataList$NEON.D10.CPER.DP0.00003.001.01325.000.040.102) <- c("time", "data", "exst", "timeNew")
-    dataList$NEON.D10.CPER.DP0.00003.001.01325.000.040.102$timeNew <- timeReg
-  }
-  #PRTResistance03
-  if (!("NEON.D10.CPER.DP0.00003.001.01325.000.040.103" %in% names(dataList))) {
-    dataList$NEON.D10.CPER.DP0.00003.001.01325.000.040.103 <- data.frame(matrix(data = NaN, ncol = 4, nrow = length(timeReg)))
-    names(dataList$NEON.D10.CPER.DP0.00003.001.01325.000.040.103) <- c("time", "data", "exst", "timeNew")
-    dataList$NEON.D10.CPER.DP0.00003.001.01325.000.040.103$timeNew <- timeReg
-  }
-  #hearter flag
-  if (!("NEON.D10.CPER.DP0.00003.001.01319.000.040.000" %in% names(dataList))) {
-    dataList$NEON.D10.CPER.DP0.00003.001.01319.000.040.000 <- data.frame(matrix(data = 0, ncol = 4, nrow = length(timeReg)))
-    names(dataList$NEON.D10.CPER.DP0.00003.001.01319.000.040.000) <- c("time", "data", "exst", "timeNew")
-    dataList$NEON.D10.CPER.DP0.00003.001.01319.000.040.000$timeNew <- timeReg
-  }
-  #turbine speed
-  if (!("NEON.D10.CPER.DP0.00003.001.01330.000.040.000" %in% names(dataList))) {
-    dataList$NEON.D10.CPER.DP0.00003.001.01330.000.040.000 <- data.frame(matrix(data = NaN, ncol = 4, nrow = length(timeReg)))
-    names(dataList$NEON.D10.CPER.DP0.00003.001.01330.000.040.000) <- c("time", "data", "exst", "timeNew")
-    dataList$NEON.D10.CPER.DP0.00003.001.01330.000.040.000$timeNew <- timeReg
-  }
-  dataIn <- list()
-  lapply(names(dataList), function(x) dataIn[[x]] <<- def.rglr(timeMeas = base::as.POSIXlt(dataList[[x]][,"timeNew"], format="%Y-%m-%dT%H:%M:%OSZ", tz="UTC"),
-                                                               dataMeas = dataList[[x]],
-                                                               BgnRglr = as.POSIXlt(min(timeReg)),
-                                                               EndRglr = as.POSIXlt(max(timeReg)),
-                                                               FreqRglr = Freq,
-                                                               MethRglr = "CybiEc"
-  )$dataRglr)
-  
-  #calibration coef for each PRT
-  coef01 <- c(-245.31623344989833, 2.351431055563405, 0.001003529381714)
-  coef02 <- c(-245.32321420778322, 2.350003716265209, 0.0010154164998)
-  coef03 <- c(-245.4094386941628, 2.348269836919454, 0.001009909428565)
-  
-  #calculate temp for each ml
-  dataIn$NEON.D10.CPER.DP0.00003.001.01325.000.040.101$temp <- coef01[1]+(coef01[2]*dataIn$NEON.D10.CPER.DP0.00003.001.01325.000.040.101$data)+(coef01[3]*(dataIn$NEON.D10.CPER.DP0.00003.001.01325.000.040.101$data)^2)
-  dataIn$NEON.D10.CPER.DP0.00003.001.01325.000.040.102$temp <- coef02[1]+(coef02[2]*dataIn$NEON.D10.CPER.DP0.00003.001.01325.000.040.102$data)+(coef02[3]*(dataIn$NEON.D10.CPER.DP0.00003.001.01325.000.040.102$data)^2)
-  dataIn$NEON.D10.CPER.DP0.00003.001.01325.000.040.103$temp <- coef03[1]+(coef03[2]*dataIn$NEON.D10.CPER.DP0.00003.001.01325.000.040.103$data)+(coef03[3]*(dataIn$NEON.D10.CPER.DP0.00003.001.01325.000.040.103$data)^2)
-  
-  #combine regularize data for tempAirTop
-  dataTmp <- data.frame(dataIn$NEON.D10.CPER.DP0.00003.001.01325.000.040.101$temp,
-                        dataIn$NEON.D10.CPER.DP0.00003.001.01325.000.040.102$temp,
-                        dataIn$NEON.D10.CPER.DP0.00003.001.01325.000.040.103$temp,
-                        dataIn$NEON.D10.CPER.DP0.00003.001.01330.000.040.000$data,
-                        dataIn$NEON.D10.CPER.DP0.00003.001.01319.000.040.000$data)
-  
-  #assign eddy4R name style to the output variables
-  colnames(dataTmp) <- c("temp01", "temp02", "temp03", "veloFlow", "qfHeat")
-  
-  #Creating the index to organize the variables in alphabetical order
-  idxOrd <- order(colnames(dataTmp))
-  #Changing the order of the variables to alphabetical order using the index
-  dataTmp <- dataTmp[idxOrd]
-  
-  #provide in original order
-  attr(dataTmp, which = "unit") <- c("C", "C", "C", "rmp", "NA")
-  
-  #Sorting the order of units to match the colnames
-  attributes(dataTmp)$unit <- attributes(dataTmp)$unit[idxOrd]
-  
-  #unit conversion using eddy4R internal unit
-  dataTmp <- base::suppressWarnings(eddy4R.base::def.unit.conv(data = dataTmp,
-                                                               unitFrom = attributes(dataTmp)$unit,
-                                                               unitTo = "intl"))
-  #combine regularize time and data
-  dataTmp <- cbind(dataTmp, time = strftime(timeReg, format="%Y-%m-%dT%H:%M:%OSZ", tz="UTC"), stringsAsFactors = F)
-  
-  #output file
-  write.csv(dataTmp,paste0(DirOut00, "/", "tempAirTop", ".csv"),row.names=F,sep=",")   
-  #remove dataframe
-  rm(dataTmp)
-  
-}# clsed loop for dp  
-
-#perform time regularize for 2D wind #######################################
-if (idxDp00 %in% c("NEON.D10.CPER.DP0.00001")){
-  #if dataList is not exist, create an empty data frame
-  #u lvl01
-  if (!("NEON.D10.CPER.DP0.00001.001.01306.000.010.000" %in% names(dataList))) {
-    dataList$NEON.D10.CPER.DP0.00001.001.01306.000.010.000 <- data.frame(matrix(data = NaN, ncol = 4, nrow = length(timeReg)))
-    names(dataList$NEON.D10.CPER.DP0.00001.001.01306.000.010.000) <- c("time", "data", "exst", "timeNew")
-    dataList$NEON.D10.CPER.DP0.00001.001.01306.000.010.000$timeNew <- timeReg
-  }
-  #u lvl02
-  if (!("NEON.D10.CPER.DP0.00001.001.01306.000.020.000" %in% names(dataList))) {
-    dataList$NEON.D10.CPER.DP0.00001.001.01306.000.020.000 <- data.frame(matrix(data = NaN, ncol = 4, nrow = length(timeReg)))
-    names(dataList$NEON.D10.CPER.DP0.00001.001.01306.000.020.000) <- c("time", "data", "exst", "timeNew")
-    dataList$NEON.D10.CPER.DP0.00001.001.01306.000.020.000$timeNew <- timeReg
-  }
-  #u lvl01
-  if (!("NEON.D10.CPER.DP0.00001.001.01306.000.030.000" %in% names(dataList))) {
-    dataList$NEON.D10.CPER.DP0.00001.001.01306.000.030.000 <- data.frame(matrix(data = NaN, ncol = 4, nrow = length(timeReg)))
-    names(dataList$NEON.D10.CPER.DP0.00001.001.01306.000.030.000) <- c("time", "data", "exst", "timeNew")
-    dataList$NEON.D10.CPER.DP0.00001.001.01306.000.030.000$timeNew <- timeReg
-  }
-  #v lvl01
-  if (!("NEON.D10.CPER.DP0.00001.001.01307.000.010.000" %in% names(dataList))) {
-    dataList$NEON.D10.CPER.DP0.00001.001.01307.000.010.000 <- data.frame(matrix(data = NaN, ncol = 4, nrow = length(timeReg)))
-    names(dataList$NEON.D10.CPER.DP0.00001.001.01307.000.010.000) <- c("time", "data", "exst", "timeNew")
-    dataList$NEON.D10.CPER.DP0.00001.001.01307.000.010.000$timeNew <- timeReg
-  }
-  #v lvl02
-  if (!("NEON.D10.CPER.DP0.00001.001.01307.000.020.000" %in% names(dataList))) {
-    dataList$NEON.D10.CPER.DP0.00001.001.01307.000.020.000 <- data.frame(matrix(data = NaN, ncol = 4, nrow = length(timeReg)))
-    names(dataList$NEON.D10.CPER.DP0.00001.001.01307.000.020.000) <- c("time", "data", "exst", "timeNew")
-    dataList$NEON.D10.CPER.DP0.00001.001.01307.000.020.000$timeNew <- timeReg
-  }
-  #v lvl01
-  if (!("NEON.D10.CPER.DP0.00001.001.01307.000.030.000" %in% names(dataList))) {
-    dataList$NEON.D10.CPER.DP0.00001.001.01307.000.030.000 <- data.frame(matrix(data = NaN, ncol = 4, nrow = length(timeReg)))
-    names(dataList$NEON.D10.CPER.DP0.00001.001.01307.000.030.000) <- c("time", "data", "exst", "timeNew")
-    dataList$NEON.D10.CPER.DP0.00001.001.01307.000.030.000$timeNew <- timeReg
-  }
-  dataIn <- list()
-  lapply(names(dataList), function(x) dataIn[[x]] <<- def.rglr(timeMeas = base::as.POSIXlt(dataList[[x]][,"timeNew"], format="%Y-%m-%dT%H:%M:%OSZ", tz="UTC"),
-                                                               dataMeas = dataList[[x]],
-                                                               BgnRglr = as.POSIXlt(min(timeReg)),
-                                                               EndRglr = as.POSIXlt(max(timeReg)),
-                                                               FreqRglr = Freq,
-                                                               MethRglr = "CybiEc"
-  )$dataRglr)
-  
-  #calculate wind speed for each location (u^2 + v^2)^0.5
-  velo_000_010 <- ((dataIn$NEON.D10.CPER.DP0.00001.001.01306.000.010.000$data)^2+(dataIn$NEON.D10.CPER.DP0.00001.001.01307.000.010.000$data)^2)^(0.5)
-  velo_000_020 <- ((dataIn$NEON.D10.CPER.DP0.00001.001.01306.000.020.000$data)^2+(dataIn$NEON.D10.CPER.DP0.00001.001.01307.000.020.000$data)^2)^(0.5)
-  velo_000_030 <- ((dataIn$NEON.D10.CPER.DP0.00001.001.01306.000.030.000$data)^2+(dataIn$NEON.D10.CPER.DP0.00001.001.01307.000.030.000$data)^2)^(0.5)
-  
-  
-  #regularize data for each location
-  tmpName <- c("velo_000_010", "velo_000_020", 
-               "velo_000_030")
-  
-  for (idxName in tmpName) {
-    if (idxName == "velo_000_010") {
-      dataTmp <- data.frame(velo_000_010)}
-    if (idxName == "velo_000_020") {
-      dataTmp <- data.frame(velo_000_020)}
-    if (idxName == "velo_000_030") {
-      dataTmp <- data.frame(velo_000_030)}
-    
-    
-    #assign eddy4R name style to the output variables
-    colnames(dataTmp) <- c("velo")
-    
-    #Creating the index to organize the variables in alphabetical order
-    #idxOrd <- order(colnames(dataTmp))
-    #Changing the order of the variables to alphabetical order using the index
-    #dataTmp <- dataTmp[idxOrd]
-    
-    #provide in original order
-    attr(dataTmp, which = "unit") <- c("m s-1")
-    
-    #Sorting the order of units to match the colnames
-    #attributes(dataTmp)$unit <- attributes(dataTmp)$unit[idxOrd]
-    
-    #unit conversion using eddy4R internal unit
-    dataTmp <- base::suppressWarnings(eddy4R.base::def.unit.conv(data = dataTmp,
-                                                                 unitFrom = attributes(dataTmp)$unit,
-                                                                 unitTo = "intl"))
-    #combine regularize time and data
-    dataTmp <- cbind(dataTmp, time = strftime(timeReg, format="%Y-%m-%dT%H:%M:%OSZ", tz="UTC"), stringsAsFactors = F)
-    
-    #output file
-    write.csv(dataTmp,paste0(DirOut00, "/", idxName, ".csv"),row.names=F,sep=",")   
-    #remove dataframe
-    rm(dataTmp)
-  }# closed loop dataTmp for each location
-}#close loop for this DP
-
-#perform time regularize for 3D wind #######################################
-if (idxDp00 %in% c("NEON.D10.CPER.DP0.00007")){
-  #if dataList is not exist, create an empty data frame
-  #u
-  if (!("NEON.D10.CPER.DP0.00007.001.01927.000.040.000" %in% names(dataList))) {
-    dataList$NEON.D10.CPER.DP0.00007.001.01927.000.040.000 <- data.frame(matrix(data = NaN, ncol = 4, nrow = length(timeReg)))
-    names(dataList$NEON.D10.CPER.DP0.00007.001.01927.000.040.000) <- c("time", "data", "exst", "timeNew")
-    dataList$NEON.D10.CPER.DP0.00007.001.01927.000.040.000$timeNew <- timeReg20
-  }
-  #v
-  if (!("NEON.D10.CPER.DP0.00007.001.01928.000.040.000" %in% names(dataList))) {
-    dataList$NEON.D10.CPER.DP0.00007.001.01928.000.040.000 <- data.frame(matrix(data = NaN, ncol = 4, nrow = length(timeReg)))
-    names(dataList$NEON.D10.CPER.DP0.00007.001.01928.000.040.000) <- c("time", "data", "exst", "timeNew")
-    dataList$NEON.D10.CPER.DP0.00007.001.01928.000.040.000$timeNew <- timeReg20
-  }
-  dataIn <- list()
-  
-  lapply(names(dataList), function(x) dataIn[[x]] <<- def.rglr(timeMeas = base::as.POSIXlt(dataList[[x]][,"timeNew"], format="%Y-%m-%dT%H:%M:%OSZ", tz="UTC"),
-                                                               dataMeas = dataList[[x]],
-                                                               BgnRglr = as.POSIXlt(min(timeReg20)),
-                                                               EndRglr = as.POSIXlt(max(timeReg20)),
-                                                               FreqRglr = Freq20,
-                                                               MethRglr = "CybiEc"
-  )$dataRglr)
-  
-  
-  #calculate wind speed for each location (u^2 + v^2)^0.5
-  velo_000_040 <- ((dataIn$NEON.D10.CPER.DP0.00007.001.01927.000.040.000$data)^2+(dataIn$NEON.D10.CPER.DP0.00007.001.01928.000.040.000$data)^2)^(0.5)
-  #calculate mean of 20 Hz to 1 Hz
-  dataTmp <- data.frame(velo = rollapply(velo_000_040, width = 20, mean, by = 20, align = "center"))
-  #assign eddy4R name style to the output variables
-  colnames(dataTmp) <- c("velo")
-  
-  #provide in original order
-  attr(dataTmp, which = "unit") <- c("m s-1")
-  
-  #unit conversion using eddy4R internal unit
-  dataTmp <- base::suppressWarnings(eddy4R.base::def.unit.conv(data = dataTmp,
-                                                               unitFrom = attributes(dataTmp)$unit,
-                                                               unitTo = "intl"))
-  #combine regularize time and data
-  dataTmp <- cbind(dataTmp, time = strftime(timeReg, format="%Y-%m-%dT%H:%M:%OSZ", tz="UTC"), stringsAsFactors = F)
-  
-  #output file
-  write.csv(dataTmp,paste0(DirOut00, "/", "velo_000_040", ".csv"),row.names=F,sep=",")   
-  #remove dataframe
-  rm(dataTmp)
-}#close loop for this DP
-
 #HutEnv####################################################################################################    
-if (idxDp00 %in% c("NEON.D10.CPER.DP0.00104")){
+if (idxDp00 %in% c("DP0.00104")){
+  subDp00 <- c("001.02344.700.000.000",#tempHut
+               "001.02345.700.000.000",#RHHut
+               "001.02346.700.000.000",#baroPresHut
+               "001.02347.700.000.000") #H2OMixRatioHut
+               
   #if dataList is not exist, create an empty data frame 
-  #tempHut
-  if (!("NEON.D10.CPER.DP0.00104.001.02344.700.000.000" %in% names(dataList))) {
-    dataList$NEON.D10.CPER.DP0.00104.001.02344.700.000.000 <- data.frame(matrix(data = NaN, ncol = 4, nrow = length(timeReg)))
-    names(dataList$NEON.D10.CPER.DP0.00104.001.02344.700.000.000) <- c("time", "data", "exst", "timeNew")
-    dataList$NEON.D10.CPER.DP0.00104.001.02344.700.000.000$timeNew <- timeReg
-  }
-  #RHHut
-  if (!("NEON.D10.CPER.DP0.00104.001.02345.700.000.000" %in% names(dataList))) {
-    dataList$NEON.D10.CPER.DP0.00104.001.02345.700.000.000 <- data.frame(matrix(data = NaN, ncol = 4, nrow = length(timeReg)))
-    names(dataList$NEON.D10.CPER.DP0.00104.001.02345.700.000.000) <- c("time", "data", "exst", "timeNew")
-    dataList$NEON.D10.CPER.DP0.00104.001.02345.700.000.000$timeNew <- timeReg
-  }
-  #baroPresHut
-  if (!("NEON.D10.CPER.DP0.00104.001.02346.700.000.000" %in% names(dataList))) {
-    dataList$NEON.D10.CPER.DP0.00104.001.02346.700.000.000 <- data.frame(matrix(data = NaN, ncol = 4, nrow = length(timeReg)))
-    names(dataList$NEON.D10.CPER.DP0.00104.001.02346.700.000.000) <- c("time", "data", "exst", "timeNew")
-    dataList$NEON.D10.CPER.DP0.00104.001.02346.700.000.000$timeNew <- timeReg
-  }
-  #H2OMixRatioHut
-  if (!("NEON.D10.CPER.DP0.00104.001.02347.700.000.000" %in% names(dataList))) {
-    dataList$NEON.D10.CPER.DP0.00104.001.02347.700.000.000 <- data.frame(matrix(data = 0, ncol = 4, nrow = length(timeReg)))
-    names(dataList$NEON.D10.CPER.DP0.00104.001.02347.700.000.000) <- c("time", "data", "exst", "timeNew")
-    dataList$NEON.D10.CPER.DP0.00104.001.02347.700.000.000$timeNew <- timeReg
-  }
+  #create full name for subDp00
+  subDp00 <- paste0(numDp00,".",subDp00, sep="")
+  #if dataList is not exist, create an empty data frame
+  for (idxSubDp00 in subDp00){
+    #idxSubDp00 <- subDp00[1]
+    if (!(idxSubDp00 %in% names(dataList))) {
+      dataList[[idxSubDp00]] <- data.frame(matrix(data = NaN, ncol = 4, nrow = length(timeReg)))
+      names(dataList[[idxSubDp00]]) <- c("time", "data", "exst", "timeNew")
+      dataList[[idxSubDp00]]$timeNew <- timeReg 
+    }
+  }#end of for loop in subDp00
   
   dataIn <- list()
   lapply(names(dataList), function(x) dataIn[[x]] <<- def.rglr(timeMeas = base::as.POSIXlt(dataList[[x]][,"timeNew"], format="%Y-%m-%dT%H:%M:%OSZ", tz="UTC"),
@@ -900,13 +547,13 @@ if (idxDp00 %in% c("NEON.D10.CPER.DP0.00104")){
   )$dataRglr)
   
   #calculate rtioMoleWetH2o from H2OMixRatioHut
-  dataIn$NEON.D10.CPER.DP0.00104.001.02347.700.000.000$rtioMoleWetH2o <- (dataIn$NEON.D10.CPER.DP0.00104.001.02347.700.000.000$data)*(eddy4R.base::IntlNatu$RtioMolmDryH2o)*(dataIn$NEON.D10.CPER.DP0.00104.001.02346.700.000.000$data/eddy4R.base::IntlNatu$Pres00)
+  dataIn[[subDp00[4]]]$rtioMoleWetH2o <- (dataIn[[subDp00[4]]]$data)*(eddy4R.base::IntlNatu$RtioMolmDryH2o)*(dataIn[[subDp00[3]]]$data/eddy4R.base::IntlNatu$Pres00)
   
   #combine regularize data for envHut
-  dataTmp <- data.frame(dataIn$NEON.D10.CPER.DP0.00104.001.02344.700.000.000$data,
-                        dataIn$NEON.D10.CPER.DP0.00104.001.02345.700.000.000$data,
-                        dataIn$NEON.D10.CPER.DP0.00104.001.02346.700.000.000$data,
-                        dataIn$NEON.D10.CPER.DP0.00104.001.02347.700.000.000$rtioMoleWetH2o)
+  dataTmp <- data.frame(dataIn[[subDp00[1]]]$data,
+                        dataIn[[subDp00[2]]]$data,
+                        dataIn[[subDp00[3]]]$data,
+                        dataIn[[subDp00[4]]]$rtioMoleWetH2o)
   
   #assign eddy4R name style to the output variables
   colnames(dataTmp) <- c("temp", "rh", "pres", "rtioMoleWetH2o")
@@ -932,8 +579,8 @@ if (idxDp00 %in% c("NEON.D10.CPER.DP0.00104")){
   #combine regularize time and data
   dataTmp <- cbind(dataTmp, time = strftime(timeReg, format="%Y-%m-%dT%H:%M:%OSZ", tz="UTC"), stringsAsFactors = F)
   
-  #output file
-  write.csv(dataTmp,paste0(DirOut00, "/", "envHut", ".csv"),row.names=F,sep=",")   
+  #report output
+  rpt <- dataTmp    
   #remove dataframe
   rm(dataTmp)
   
