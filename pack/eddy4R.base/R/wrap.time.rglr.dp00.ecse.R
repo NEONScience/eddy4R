@@ -20,11 +20,11 @@
 
 #' @keywords eddy-covariance, NEON, storage flux, L0, dp00, ECSE
 
-#' @examples Currently none
+#' @examples Currently none.
 
-#' @seealso Currently none
+#' @seealso Currently none.
 
-#' @export Currently none
+#' @export
 
 # changelog and author contributions / copyrights
 #   Natchaya P-Durden (2017-10-20)
