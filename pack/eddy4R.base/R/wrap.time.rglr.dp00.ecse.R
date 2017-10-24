@@ -1001,10 +1001,10 @@ if (idxDp00 %in% c("DP0.00108")){
   )$dataRglr)
   
   if (horVer %in% "700.010") {
-      dataTmp <- data.frame(dataIn[[subDp00[1]]]$data,
-                            dataIn[[subDp00[2]]]$data,
-                            dataIn[[subDp00[3]]]$data,
-                            dataIn[[subDp00[4]]]$data)}
+    dataTmp <- data.frame(dataIn[[subDp00[1]]]$data,
+                          dataIn[[subDp00[2]]]$data,
+                          dataIn[[subDp00[3]]]$data,
+                          dataIn[[subDp00[4]]]$data)}
   if (horVer %in% "700.020") {
     dataTmp <- data.frame(dataIn[[subDp00[5]]]$data,
                           dataIn[[subDp00[6]]]$data,
@@ -1073,38 +1073,16 @@ if (idxDp00 %in% c("DP0.00108")){
 }# clsed loop for dp
 
 #profPumpSmp###############################################################################  
-if (idxDp00 %in% c("NEON.D10.CPER.DP0.00112")){
-  #if dataList is not exist, create an empty data frame 
-  #irga pumpVoltage 
-  if (!("NEON.D10.CPER.DP0.00112.001.02351.700.000.000" %in% names(dataList))) {
-    dataList$NEON.D10.CPER.DP0.00112.001.02351.700.000.000 <- data.frame(matrix(data = 0, ncol = 4, nrow = length(timeReg)))
-    names(dataList$NEON.D10.CPER.DP0.00112.001.02351.700.000.000) <- c("time", "data", "exst", "timeNew")
-    dataList$NEON.D10.CPER.DP0.00112.001.02351.700.000.000$timeNew <- timeReg
-  }
-  #pumpVoltage at ML1
-  if (!("NEON.D10.CPER.DP0.00112.001.02351.700.010.000" %in% names(dataList))) {
-    dataList$NEON.D10.CPER.DP0.00112.001.02351.700.010.000 <- data.frame(matrix(data = NaN, ncol = 4, nrow = length(timeReg)))
-    names(dataList$NEON.D10.CPER.DP0.00112.001.02351.700.010.000) <- c("time", "data", "exst", "timeNew")
-    dataList$NEON.D10.CPER.DP0.00112.001.02351.700.010.000$timeNew <- timeReg
-  }
-  #pumpVoltage at ML2
-  if (!("NEON.D10.CPER.DP0.00112.001.02351.700.020.000" %in% names(dataList))) {
-    dataList$NEON.D10.CPER.DP0.00112.001.02351.700.020.000 <- data.frame(matrix(data = NaN, ncol = 4, nrow = length(timeReg)))
-    names(dataList$NEON.D10.CPER.DP0.00112.001.02351.700.020.000) <- c("time", "data", "exst", "timeNew")
-    dataList$NEON.D10.CPER.DP0.00112.001.02351.700.020.000$timeNew <- timeReg
-  }
-  #pumpVoltage at ML3
-  if (!("NEON.D10.CPER.DP0.00112.001.02351.700.030.000" %in% names(dataList))) {
-    dataList$NEON.D10.CPER.DP0.00112.001.02351.700.030.000 <- data.frame(matrix(data = NaN, ncol = 4, nrow = length(timeReg)))
-    names(dataList$NEON.D10.CPER.DP0.00112.001.02351.700.030.000) <- c("time", "data", "exst", "timeNew")
-    dataList$NEON.D10.CPER.DP0.00112.001.02351.700.030.000$timeNew <- timeReg
-  }
-  #pumpVoltage at ML4
-  if (!("NEON.D10.CPER.DP0.00112.001.02351.700.040.000" %in% names(dataList))) {
-    dataList$NEON.D10.CPER.DP0.00112.001.02351.700.040.000 <- data.frame(matrix(data = 0, ncol = 4, nrow = length(timeReg)))
-    names(dataList$NEON.D10.CPER.DP0.00112.001.02351.700.040.000) <- c("time", "data", "exst", "timeNew")
-    dataList$NEON.D10.CPER.DP0.00112.001.02351.700.040.000$timeNew <- timeReg
-  }
+if (idxDp00 %in% c("DP0.00112")){
+  subDp00 <- c("001.02351.700.000.000",#irga pumpVoltage
+               "001.02351.700.010.000",#pumpVoltage at ML1
+               "001.02351.700.020.000",#pumpVoltage at ML2
+               "001.02351.700.030.000",#pumpVoltage at ML3
+               "001.02351.700.040.000",#pumpVoltage at ML4
+               "001.02351.700.050.000",#pumpVoltage at ML5
+               "001.02351.700.060.000",#pumpVoltage at ML6
+               "001.02351.700.070.000",#pumpVoltage at ML7
+               "001.02351.700.080.000")#pumpVoltage at ML8
   
   dataIn <- list()
   lapply(names(dataList), function(x) dataIn[[x]] <<- def.rglr(timeMeas = base::as.POSIXlt(dataList[[x]][,"timeNew"], format="%Y-%m-%dT%H:%M:%OSZ", tz="UTC"),
@@ -1115,21 +1093,24 @@ if (idxDp00 %in% c("NEON.D10.CPER.DP0.00112")){
                                                                MethRglr = "CybiEc"
   )$dataRglr)
   
-  #regularize data for each location
-  tmpName <- c("pump_700_000", "pump_700_010", "pump_700_020", "pump_700_030", "pump_700_040")
-  
-  for (idxName in tmpName) {
-    if (idxName == "pump_700_000") {
-      dataTmp <- data.frame(dataIn$NEON.D10.CPER.DP0.00112.001.02351.700.000.000$data)}
-    if (idxName == "pump_700_010") {
-      dataTmp <- data.frame(dataIn$NEON.D10.CPER.DP0.00112.001.02351.700.010.000$data)}
-    if (idxName == "pump_700_020") {
-      dataTmp <- data.frame(dataIn$NEON.D10.CPER.DP0.00112.001.02351.700.020.000$data)}
-    if (idxName == "pump_700_030") {
-      dataTmp <- data.frame(dataIn$NEON.D10.CPER.DP0.00112.001.02351.700.030.000$data)}
-    if (idxName == "pump_700_040") {
-      dataTmp <- data.frame(dataIn$NEON.D10.CPER.DP0.00112.001.02351.700.040.000$data)}
-    
+  if (horVer %in% "700.000") {
+    dataTmp <- data.frame(dataIn[[subDp00[1]]]$data)}
+  if (horVer %in% "700.010") {
+    dataTmp <- data.frame(dataIn[[subDp00[2]]]$data)}
+  if (horVer %in% "700.020") {
+    dataTmp <- data.frame(dataIn[[subDp00[3]]]$data)}
+  if (horVer %in% "700.030") {
+    dataTmp <- data.frame(dataIn[[subDp00[4]]]$data)}
+  if (horVer %in% "700.040") {
+    dataTmp <- data.frame(dataIn[[subDp00[5]]]$data)}
+  if (horVer %in% "700.050") {
+    dataTmp <- data.frame(dataIn[[subDp00[6]]]$data)}
+  if (horVer %in% "700.060") {
+    dataTmp <- data.frame(dataIn[[subDp00[7]]]$data)}
+  if (horVer %in% "700.070") {
+    dataTmp <- data.frame(dataIn[[subDp00[8]]]$data)}
+  if (horVer %in% "700.080") {
+    dataTmp <- data.frame(dataIn[[subDp00[9]]]$data)}
     
     #assign eddy4R name style to the output variables
     colnames(dataTmp) <- c("pumpVolt")
@@ -1153,23 +1134,27 @@ if (idxDp00 %in% c("NEON.D10.CPER.DP0.00112")){
     dataTmp <- cbind(dataTmp, time = strftime(timeReg, format="%Y-%m-%dT%H:%M:%OSZ", tz="UTC"), stringsAsFactors = F)
     #filled NA with previous value
     dataTmp[,1] <- zoo::na.locf(dataTmp[,1], na.rm = FALSE)
-    #output file
-    write.csv(dataTmp,paste0(DirOut00, "/", idxName, ".csv"),row.names=F,sep=",")   
+    #report output
+    rpt <- dataTmp      
     #remove dataframe
     rm(dataTmp)
-  }# closed loop dataTmp for each location
   
 }# clsed loop for dp
 
 #profSndVapor###################################################  
-if (idxDp00 %in% c("NEON.D10.CPER.DP0.00115")){
+if (idxDp00 %in% c("DP0.00115")){
+  subDp00 <- c("001.02352.700.000.000")#valvStat1
+  #create full name for subDp00
+  subDp00 <- paste0(numDp00,".",subDp00, sep="")
   #if dataList is not exist, create an empty data frame
-  #valvStat1
-  if (!("NEON.D10.CPER.DP0.00115.001.02352.700.000.000" %in% names(dataList))) {
-    dataList$NEON.D10.CPER.DP0.00115.001.02352.700.000.000 <- data.frame(matrix(data = NaN, ncol = 4, nrow = length(timeReg)))
-    names(dataList$NEON.D10.CPER.DP0.00115.001.02352.700.000.000) <- c("time", "data", "exst", "timeNew")
-    dataList$NEON.D10.CPER.DP0.00115.001.02352.700.000.000$timeNew <- timeReg
-  }
+  for (idxSubDp00 in subDp00){
+    #idxSubDp00 <- subDp00[1]
+    if (!(idxSubDp00 %in% names(dataList))) {
+      dataList[[idxSubDp00]] <- data.frame(matrix(data = NaN, ncol = 4, nrow = length(timeReg)))
+      names(dataList[[idxSubDp00]]) <- c("time", "data", "exst", "timeNew")
+      dataList[[idxSubDp00]]$timeNew <- timeReg 
+    }
+  }#end of for loop in subDp00
   
   dataIn <- list()
   
@@ -1182,7 +1167,7 @@ if (idxDp00 %in% c("NEON.D10.CPER.DP0.00115")){
                                                                PosWndw = "PosWndwMax"
   )$dataRglr)
   
-  dataTmp <- data.frame(dataIn$NEON.D10.CPER.DP0.00115.001.02352.700.000.000$data)
+  dataTmp <- data.frame(dataIn[[subDp00[1]]]$data)
   #assign eddy4R name style to the output variables
   colnames(dataTmp) <- c("valv")
   
@@ -1197,8 +1182,8 @@ if (idxDp00 %in% c("NEON.D10.CPER.DP0.00115")){
   dataTmp <- cbind(dataTmp, time = strftime(timeReg, format="%Y-%m-%dT%H:%M:%OSZ", tz="UTC"), stringsAsFactors = F)
   #filled NA with previous value
   dataTmp[,1] <- zoo::na.locf(dataTmp[,1], na.rm = FALSE)
-  #output file
-  write.csv(dataTmp,paste0(DirOut00, "/", "crdH2oValvVali", ".csv"),row.names=F,sep=",")   
+  #report output
+  rpt <- dataTmp   
   #remove dataframe
   rm(dataTmp)
 }# clsed loop for dp
