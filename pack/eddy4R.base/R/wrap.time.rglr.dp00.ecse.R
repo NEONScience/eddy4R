@@ -6,20 +6,25 @@
 #' @description  
 #'  Wrapper function. Time regularization for ECSE dp00
 
-#' @param \code
+#' @param \code{dataList} A list of data frame containing the input dp00 data. [User-defined]
+#' @param \code{site} Character: Site location. [-]
+#' @param \code{dom} Character: Domain. [-]
+#' @param \code{timeReg} A dataframe including the desired frequency of the regularized times. Of class "POSIXlt". [-] 
+#' @param \code{idDp00} Character: dp00 data product number. [-]
+#' @param \code{horVer} Character: Horizontal and vertical location of dp00. [-]
 
-#' @return
+#' @return  A dataframe including the regularized dp00. [User-defined]
 
 #' @references
+#' License: Terms of use of the NEON FIU algorithm repository dated 2015-01-16. \cr
 
+#' @keywords eddy-covariance, NEON, storage flux, L0, dp00, ECSE
 
-#' @keywords 
-
-#' @examples
+#' @examples Currently none
 
 #' @seealso Currently none
 
-#' @export
+#' @export Currently none
 
 # changelog and author contributions / copyrights
 #   Natchaya P-Durden (2017-10-20)
@@ -1481,40 +1486,40 @@ if (idxDp00 %in% c("DP0.00098")){
   )$dataRglr)
   
   if (horVer %in% "000.040") {
-    dataTmp <- data.frame(data.frame(dataIn[[subDp00[1]]]$data,#rh
-                                     dataIn[[subDp00[2]]]$data,#temp
-                                     dataIn[[subDp00[3]]]$data,#tempDew
-                                     dataIn[[subDp00[4]]]$data)#qfSens
+    dataTmp <- data.frame(dataIn[[subDp00[1]]]$data,#rh
+                          dataIn[[subDp00[2]]]$data,#temp
+                          dataIn[[subDp00[3]]]$data,#tempDew
+                          dataIn[[subDp00[4]]]$data)#qfSens
   }
   if (horVer %in% "000.050") {
-    dataTmp <- data.frame(data.frame(dataIn[[subDp00[5]]]$data,#rh
-                                     dataIn[[subDp00[6]]]$data,#temp
-                                     dataIn[[subDp00[7]]]$data,#tempDew
-                                     dataIn[[subDp00[8]]]$data)#qfSens
+    dataTmp <- data.frame(dataIn[[subDp00[5]]]$data,#rh
+                         dataIn[[subDp00[6]]]$data,#temp
+                         dataIn[[subDp00[7]]]$data,#tempDew
+                         dataIn[[subDp00[8]]]$data)#qfSens
   }
   if (horVer %in% "000.060") {
-    dataTmp <- data.frame(data.frame(dataIn[[subDp00[9]]]$data,#rh
-                                     dataIn[[subDp00[10]]]$data,#temp
-                                     dataIn[[subDp00[11]]]$data,#tempDew
-                                     dataIn[[subDp00[12]]]$data)#qfSens
+    dataTmp <- data.frame(dataIn[[subDp00[9]]]$data,#rh
+                         dataIn[[subDp00[10]]]$data,#temp
+                         dataIn[[subDp00[11]]]$data,#tempDew
+                         dataIn[[subDp00[12]]]$data)#qfSens
   }
   if (horVer %in% "000.070") {
-    dataTmp <- data.frame(data.frame(dataIn[[subDp00[13]]]$data,#rh
-                                     dataIn[[subDp00[14]]]$data,#temp
-                                     dataIn[[subDp00[15]]]$data,#tempDew
-                                     dataIn[[subDp00[16]]]$data)#qfSens
+    dataTmp <- data.frame(dataIn[[subDp00[13]]]$data,#rh
+                         dataIn[[subDp00[14]]]$data,#temp
+                         dataIn[[subDp00[15]]]$data,#tempDew
+                         dataIn[[subDp00[16]]]$data)#qfSens
   }
   if (horVer %in% "000.080") {
-    dataTmp <- data.frame(data.frame(dataIn[[subDp00[17]]]$data,#rh
-                                     dataIn[[subDp00[18]]]$data,#temp
-                                     dataIn[[subDp00[19]]]$data,#tempDew
-                                     dataIn[[subDp00[20]]]$data)#qfSens
+    dataTmp <- data.frame(dataIn[[subDp00[17]]]$data,#rh
+                         dataIn[[subDp00[18]]]$data,#temp
+                         dataIn[[subDp00[19]]]$data,#tempDew
+                         dataIn[[subDp00[20]]]$data)#qfSens
   }
   if (horVer %in% "003.000") {
-    dataTmp <- data.frame(data.frame(dataIn[[subDp00[21]]]$data,#rh
-                                     dataIn[[subDp00[22]]]$data,#temp
-                                     dataIn[[subDp00[23]]]$data,#tempDew
-                                     dataIn[[subDp00[24]]]$data)#qfSens
+    dataTmp <- data.frame(dataIn[[subDp00[21]]]$data,#rh
+                         dataIn[[subDp00[22]]]$data,#temp
+                         dataIn[[subDp00[23]]]$data,#tempDew
+                         dataIn[[subDp00[24]]]$data)#qfSens
   }
   
   #assign eddy4R name style to the output variables
@@ -1537,7 +1542,7 @@ if (idxDp00 %in% c("DP0.00098")){
   
   #unit conversion using eddy4R internal unit
   dataTmp <- base::suppressWarnings(eddy4R.base::def.unit.conv(data = dataTmp,
-                                                                 unitFrom = attributes(dataTmp01)$unit,
+                                                                 unitFrom = attributes(dataTmp)$unit,
                                                                  unitTo = "intl"))
   
   #combine regularize time and data
