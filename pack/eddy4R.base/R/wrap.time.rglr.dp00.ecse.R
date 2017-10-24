@@ -946,104 +946,50 @@ if (idxDp00 %in% c("DP0.00107")){
 }# clsed loop for dp   
 
 #profMfm ########################################################################################
-if (idxDp00 %in% c("NEON.D10.CPER.DP0.00108")){
-  #if dataList is not exist, create an empty data frame 
-  #frt0 at ML1
-  if (!("NEON.D10.CPER.DP0.00108.001.01951.700.010.000" %in% names(dataList))) {
-    dataList$NEON.D10.CPER.DP0.00108.001.01951.700.010.000 <- data.frame(matrix(data = NaN, ncol = 4, nrow = length(timeReg)))
-    names(dataList$NEON.D10.CPER.DP0.00108.001.01951.700.010.000) <- c("time", "data", "exst", "timeNew")
-    dataList$NEON.D10.CPER.DP0.00108.001.01951.700.010.000$timeNew <- timeReg
-  }
-  #frt at ML1
-  if (!("NEON.D10.CPER.DP0.00108.001.01950.700.010.000" %in% names(dataList))) {
-    dataList$NEON.D10.CPER.DP0.00108.001.01950.700.010.000 <- data.frame(matrix(data = NaN, ncol = 4, nrow = length(timeReg)))
-    names(dataList$NEON.D10.CPER.DP0.00108.001.01950.700.010.000) <- c("time", "data", "exst", "timeNew")
-    dataList$NEON.D10.CPER.DP0.00108.001.01950.700.010.000$timeNew <- timeReg
-  }    
-  #temp at ML1
-  if (!("NEON.D10.CPER.DP0.00108.001.01949.700.010.000" %in% names(dataList))) {
-    dataList$NEON.D10.CPER.DP0.00108.001.01949.700.010.000 <- data.frame(matrix(data = 0, ncol = 4, nrow = length(timeReg)))
-    names(dataList$NEON.D10.CPER.DP0.00108.001.01949.700.010.000) <- c("time", "data", "exst", "timeNew")
-    dataList$NEON.D10.CPER.DP0.00108.001.01949.700.010.000$timeNew <- timeReg
-  }
-  #presAtm at ML1
-  if (!("NEON.D10.CPER.DP0.00108.001.01948.700.010.000" %in% names(dataList))) {
-    dataList$NEON.D10.CPER.DP0.00108.001.01948.700.010.000 <- data.frame(matrix(data = 0, ncol = 4, nrow = length(timeReg)))
-    names(dataList$NEON.D10.CPER.DP0.00108.001.01948.700.010.000) <- c("time", "data", "exst", "timeNew")
-    dataList$NEON.D10.CPER.DP0.00108.001.01948.700.010.000$timeNew <- timeReg
-  }
-  #frt0 at ML2
-  if (!("NEON.D10.CPER.DP0.00108.001.01951.700.020.000" %in% names(dataList))) {
-    dataList$NEON.D10.CPER.DP0.00108.001.01951.700.020.000 <- data.frame(matrix(data = NaN, ncol = 4, nrow = length(timeReg)))
-    names(dataList$NEON.D10.CPER.DP0.00108.001.01951.700.020.000) <- c("time", "data", "exst", "timeNew")
-    dataList$NEON.D10.CPER.DP0.00108.001.01951.700.020.000$timeNew <- timeReg
-  }
-  #frt at ML2
-  if (!("NEON.D10.CPER.DP0.00108.001.01950.700.020.000" %in% names(dataList))) {
-    dataList$NEON.D10.CPER.DP0.00108.001.01950.700.020.000 <- data.frame(matrix(data = NaN, ncol = 4, nrow = length(timeReg)))
-    names(dataList$NEON.D10.CPER.DP0.00108.001.01950.700.020.000) <- c("time", "data", "exst", "timeNew")
-    dataList$NEON.D10.CPER.DP0.00108.001.01950.700.020.000$timeNew <- timeReg
-  }    
-  #temp at ML2
-  if (!("NEON.D10.CPER.DP0.00108.001.01949.700.020.000" %in% names(dataList))) {
-    dataList$NEON.D10.CPER.DP0.00108.001.01949.700.020.000 <- data.frame(matrix(data = 0, ncol = 4, nrow = length(timeReg)))
-    names(dataList$NEON.D10.CPER.DP0.00108.001.01949.700.020.000) <- c("time", "data", "exst", "timeNew")
-    dataList$NEON.D10.CPER.DP0.00108.001.01949.700.020.000$timeNew <- timeReg
-  }
-  #presAtm at ML2
-  if (!("NEON.D10.CPER.DP0.00108.001.01948.700.020.000" %in% names(dataList))) {
-    dataList$NEON.D10.CPER.DP0.00108.001.01948.700.020.000 <- data.frame(matrix(data = 0, ncol = 4, nrow = length(timeReg)))
-    names(dataList$NEON.D10.CPER.DP0.00108.001.01948.700.020.000) <- c("time", "data", "exst", "timeNew")
-    dataList$NEON.D10.CPER.DP0.00108.001.01948.700.020.000$timeNew <- timeReg
-  }
-  #frt0 at ML3
-  if (!("NEON.D10.CPER.DP0.00108.001.01951.700.030.000" %in% names(dataList))) {
-    dataList$NEON.D10.CPER.DP0.00108.001.01951.700.030.000 <- data.frame(matrix(data = NaN, ncol = 4, nrow = length(timeReg)))
-    names(dataList$NEON.D10.CPER.DP0.00108.001.01951.700.030.000) <- c("time", "data", "exst", "timeNew")
-    dataList$NEON.D10.CPER.DP0.00108.001.01951.700.030.000$timeNew <- timeReg
-  }
-  #frt at ML3
-  if (!("NEON.D10.CPER.DP0.00108.001.01950.700.030.000" %in% names(dataList))) {
-    dataList$NEON.D10.CPER.DP0.00108.001.01950.700.030.000 <- data.frame(matrix(data = NaN, ncol = 4, nrow = length(timeReg)))
-    names(dataList$NEON.D10.CPER.DP0.00108.001.01950.700.030.000) <- c("time", "data", "exst", "timeNew")
-    dataList$NEON.D10.CPER.DP0.00108.001.01950.700.030.000$timeNew <- timeReg
-  }    
-  #temp at ML3
-  if (!("NEON.D10.CPER.DP0.00108.001.01949.700.030.000" %in% names(dataList))) {
-    dataList$NEON.D10.CPER.DP0.00108.001.01949.700.030.000 <- data.frame(matrix(data = 0, ncol = 4, nrow = length(timeReg)))
-    names(dataList$NEON.D10.CPER.DP0.00108.001.01949.700.030.000) <- c("time", "data", "exst", "timeNew")
-    dataList$NEON.D10.CPER.DP0.00108.001.01949.700.030.000$timeNew <- timeReg
-  }
-  #presAtm at ML3
-  if (!("NEON.D10.CPER.DP0.00108.001.01948.700.030.000" %in% names(dataList))) {
-    dataList$NEON.D10.CPER.DP0.00108.001.01948.700.030.000 <- data.frame(matrix(data = 0, ncol = 4, nrow = length(timeReg)))
-    names(dataList$NEON.D10.CPER.DP0.00108.001.01948.700.030.000) <- c("time", "data", "exst", "timeNew")
-    dataList$NEON.D10.CPER.DP0.00108.001.01948.700.030.000$timeNew <- timeReg
-  }
-  #frt0 at ML1
-  if (!("NEON.D10.CPER.DP0.00108.001.01951.700.040.000" %in% names(dataList))) {
-    dataList$NEON.D10.CPER.DP0.00108.001.01951.700.040.000 <- data.frame(matrix(data = NaN, ncol = 4, nrow = length(timeReg)))
-    names(dataList$NEON.D10.CPER.DP0.00108.001.01951.700.040.000) <- c("time", "data", "exst", "timeNew")
-    dataList$NEON.D10.CPER.DP0.00108.001.01951.700.040.000$timeNew <- timeReg
-  }
-  #frt at ML1
-  if (!("NEON.D10.CPER.DP0.00108.001.01950.700.040.000" %in% names(dataList))) {
-    dataList$NEON.D10.CPER.DP0.00108.001.01950.700.040.000 <- data.frame(matrix(data = NaN, ncol = 4, nrow = length(timeReg)))
-    names(dataList$NEON.D10.CPER.DP0.00108.001.01950.700.040.000) <- c("time", "data", "exst", "timeNew")
-    dataList$NEON.D10.CPER.DP0.00108.001.01950.700.040.000$timeNew <- timeReg
-  }    
-  #temp at ML1
-  if (!("NEON.D10.CPER.DP0.00108.001.01949.700.040.000" %in% names(dataList))) {
-    dataList$NEON.D10.CPER.DP0.00108.001.01949.700.040.000 <- data.frame(matrix(data = 0, ncol = 4, nrow = length(timeReg)))
-    names(dataList$NEON.D10.CPER.DP0.00108.001.01949.700.040.000) <- c("time", "data", "exst", "timeNew")
-    dataList$NEON.D10.CPER.DP0.00108.001.01949.700.040.000$timeNew <- timeReg
-  }
-  #presAtm at ML1
-  if (!("NEON.D10.CPER.DP0.00108.001.01948.700.040.000" %in% names(dataList))) {
-    dataList$NEON.D10.CPER.DP0.00108.001.01948.700.040.000 <- data.frame(matrix(data = 0, ncol = 4, nrow = length(timeReg)))
-    names(dataList$NEON.D10.CPER.DP0.00108.001.01948.700.040.000) <- c("time", "data", "exst", "timeNew")
-    dataList$NEON.D10.CPER.DP0.00108.001.01948.700.040.000$timeNew <- timeReg
-  }
+if (idxDp00 %in% c("DP0.00108")){
+  subDp00 <- c("001.01951.700.010.000",#frt0 at ML1
+               "001.01950.700.010.000",#frt at ML1
+               "001.01949.700.010.000",#temp at ML1
+               "001.01948.700.010.000",#presAtm at ML1
+               "001.01951.700.020.000",#frt0 at ML2
+               "001.01950.700.020.000",#frt at ML2
+               "001.01949.700.020.000",#temp at ML2
+               "001.01948.700.020.000",#presAtm at ML2
+               "001.01951.700.030.000",#frt0 at ML3
+               "001.01950.700.030.000",#frt at ML3
+               "001.01949.700.030.000",#temp at ML3
+               "001.01948.700.030.000",#presAtm at ML3
+               "001.01951.700.040.000",#frt0 at ML4
+               "001.01950.700.040.000",#frt at ML4
+               "001.01949.700.040.000",#temp at ML4
+               "001.01948.700.040.000",#presAtm at ML4
+               "001.01951.700.050.000",#frt0 at ML5
+               "001.01950.700.050.000",#frt at ML5
+               "001.01949.700.050.000",#temp at ML5
+               "001.01948.700.050.000",#presAtm at ML5
+               "001.01951.700.060.000",#frt0 at ML6
+               "001.01950.700.060.000",#frt at ML6
+               "001.01949.700.060.000",#temp at ML6
+               "001.01948.700.060.000",#presAtm at ML6
+               "001.01951.700.070.000",#frt0 at ML7
+               "001.01950.700.070.000",#frt at ML7
+               "001.01949.700.070.000",#temp at ML7
+               "001.01948.700.070.000",#presAtm at ML7
+               "001.01951.700.080.000",#frt0 at ML8
+               "001.01950.700.080.000",#frt at ML8
+               "001.01949.700.080.000",#temp at ML8
+               "001.01948.700.080.000")#presAtm at ML8
+  #create full name for subDp00
+  subDp00 <- paste0(numDp00,".",subDp00, sep="")
+  #if dataList is not exist, create an empty data frame
+  for (idxSubDp00 in subDp00){
+    #idxSubDp00 <- subDp00[1]
+    if (!(idxSubDp00 %in% names(dataList))) {
+      dataList[[idxSubDp00]] <- data.frame(matrix(data = NaN, ncol = 4, nrow = length(timeReg)))
+      names(dataList[[idxSubDp00]]) <- c("time", "data", "exst", "timeNew")
+      dataList[[idxSubDp00]]$timeNew <- timeReg 
+    }
+  }#end of for loop in subDp00
   
   dataIn <- list()
   lapply(names(dataList), function(x) dataIn[[x]] <<- def.rglr(timeMeas = base::as.POSIXlt(dataList[[x]][,"timeNew"], format="%Y-%m-%dT%H:%M:%OSZ", tz="UTC"),
@@ -1054,32 +1000,46 @@ if (idxDp00 %in% c("NEON.D10.CPER.DP0.00108")){
                                                                MethRglr = "CybiEc"
   )$dataRglr)
   
-  #regularize data for each location
-  tmpName <- c("mfm_700_010", "mfm_700_020", "mfm_700_030", "mfm_700_040")
-  
-  for (idxName in tmpName) {
-    if (idxName == "mfm_700_010") {
-      dataTmp <- data.frame(dataIn$NEON.D10.CPER.DP0.00108.001.01951.700.010.000$data,
-                            dataIn$NEON.D10.CPER.DP0.00108.001.01950.700.010.000$data,
-                            dataIn$NEON.D10.CPER.DP0.00108.001.01949.700.010.000$data,
-                            dataIn$NEON.D10.CPER.DP0.00108.001.01948.700.010.000$data)}
-    if (idxName == "mfm_700_020") {
-      dataTmp <- data.frame(dataIn$NEON.D10.CPER.DP0.00108.001.01951.700.020.000$data,
-                            dataIn$NEON.D10.CPER.DP0.00108.001.01950.700.020.000$data,
-                            dataIn$NEON.D10.CPER.DP0.00108.001.01949.700.020.000$data,
-                            dataIn$NEON.D10.CPER.DP0.00108.001.01948.700.020.000$data)}
-    if (idxName == "mfm_700_030") {
-      dataTmp <- data.frame(dataIn$NEON.D10.CPER.DP0.00108.001.01951.700.030.000$data,
-                            dataIn$NEON.D10.CPER.DP0.00108.001.01950.700.030.000$data,
-                            dataIn$NEON.D10.CPER.DP0.00108.001.01949.700.030.000$data,
-                            dataIn$NEON.D10.CPER.DP0.00108.001.01948.700.030.000$data)}
-    if (idxName == "mfm_700_040") {
-      dataTmp <- data.frame(dataIn$NEON.D10.CPER.DP0.00108.001.01951.700.040.000$data,
-                            dataIn$NEON.D10.CPER.DP0.00108.001.01950.700.040.000$data,
-                            dataIn$NEON.D10.CPER.DP0.00108.001.01949.700.040.000$data,
-                            dataIn$NEON.D10.CPER.DP0.00108.001.01948.700.040.000$data)}
-    
-    
+  if (horVer %in% "700.010") {
+      dataTmp <- data.frame(dataIn[[subDp00[1]]]$data,
+                            dataIn[[subDp00[2]]]$data,
+                            dataIn[[subDp00[3]]]$data,
+                            dataIn[[subDp00[4]]]$data)}
+  if (horVer %in% "700.020") {
+    dataTmp <- data.frame(dataIn[[subDp00[5]]]$data,
+                          dataIn[[subDp00[6]]]$data,
+                          dataIn[[subDp00[7]]]$data,
+                          dataIn[[subDp00[8]]]$data)}
+  if (horVer %in% "700.030") {
+    dataTmp <- data.frame(dataIn[[subDp00[9]]]$data,
+                          dataIn[[subDp00[10]]]$data,
+                          dataIn[[subDp00[11]]]$data,
+                          dataIn[[subDp00[12]]]$data)}
+  if (horVer %in% "700.040") {
+    dataTmp <- data.frame(dataIn[[subDp00[13]]]$data,
+                          dataIn[[subDp00[14]]]$data,
+                          dataIn[[subDp00[15]]]$data,
+                          dataIn[[subDp00[16]]]$data)}
+  if (horVer %in% "700.050") {
+    dataTmp <- data.frame(dataIn[[subDp00[17]]]$data,
+                          dataIn[[subDp00[18]]]$data,
+                          dataIn[[subDp00[19]]]$data,
+                          dataIn[[subDp00[20]]]$data)}
+  if (horVer %in% "700.060") {
+    dataTmp <- data.frame(dataIn[[subDp00[21]]]$data,
+                          dataIn[[subDp00[22]]]$data,
+                          dataIn[[subDp00[23]]]$data,
+                          dataIn[[subDp00[24]]]$data)}
+  if (horVer %in% "700.070") {
+    dataTmp <- data.frame(dataIn[[subDp00[25]]]$data,
+                          dataIn[[subDp00[26]]]$data,
+                          dataIn[[subDp00[27]]]$data,
+                          dataIn[[subDp00[28]]]$data)}
+  if (horVer %in% "700.080") {
+    dataTmp <- data.frame(dataIn[[subDp00[29]]]$data,
+                          dataIn[[subDp00[30]]]$data,
+                          dataIn[[subDp00[31]]]$data,
+                          dataIn[[subDp00[32]]]$data)}
     
     #assign eddy4R name style to the output variables
     colnames(dataTmp) <- c("frt00", "frt", "temp", "presAtm")
@@ -1105,11 +1065,10 @@ if (idxDp00 %in% c("NEON.D10.CPER.DP0.00108")){
     #combine regularize time and data
     dataTmp <- cbind(dataTmp, time = strftime(timeReg, format="%Y-%m-%dT%H:%M:%OSZ", tz="UTC"), stringsAsFactors = F)
     
-    #output file
-    write.csv(dataTmp,paste0(DirOut00, "/", idxName, ".csv"),row.names=F,sep=",")   
+    #report output
+    rpt <- dataTmp     
     #remove dataframe
     rm(dataTmp)
-  }# closed loop dataTmp for each location
   
 }# clsed loop for dp
 
