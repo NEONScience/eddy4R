@@ -732,32 +732,28 @@ if (idxDp00 %in% c("DP0.00111")){
 }# clsed loop for dp
 
 #profPresInlet########################################################################################
-if (idxDp00 %in% c("NEON.D10.CPER.DP0.00109")){
-  #if dataList is not exist, create an empty data frame 
-  #presGage at ML1
-  if (!("NEON.D10.CPER.DP0.00109.001.02196.000.010.000" %in% names(dataList))) {
-    dataList$NEON.D10.CPER.DP0.00109.001.02196.000.010.000 <- data.frame(matrix(data = NaN, ncol = 4, nrow = length(timeReg)))
-    names(dataList$NEON.D10.CPER.DP0.00109.001.02196.000.010.000) <- c("time", "data", "exst", "timeNew")
-    dataList$NEON.D10.CPER.DP0.00109.001.02196.000.010.000$timeNew <- timeReg
-  }
-  #presGage at ML2
-  if (!("NEON.D10.CPER.DP0.00109.001.02196.000.020.000" %in% names(dataList))) {
-    dataList$NEON.D10.CPER.DP0.00109.001.02196.000.020.000 <- data.frame(matrix(data = NaN, ncol = 4, nrow = length(timeReg)))
-    names(dataList$NEON.D10.CPER.DP0.00109.001.02196.000.020.000) <- c("time", "data", "exst", "timeNew")
-    dataList$NEON.D10.CPER.DP0.00109.001.02196.000.020.000$timeNew <- timeReg
-  }
-  #presGage at ML3
-  if (!("NEON.D10.CPER.DP0.00109.001.02196.000.030.000" %in% names(dataList))) {
-    dataList$NEON.D10.CPER.DP0.00109.001.02196.000.030.000 <- data.frame(matrix(data = NaN, ncol = 4, nrow = length(timeReg)))
-    names(dataList$NEON.D10.CPER.DP0.00109.001.02196.000.030.000) <- c("time", "data", "exst", "timeNew")
-    dataList$NEON.D10.CPER.DP0.00109.001.02196.000.030.000$timeNew <- timeReg
-  }
-  #presGage at ML4
-  if (!("NEON.D10.CPER.DP0.00109.001.02196.000.040.000" %in% names(dataList))) {
-    dataList$NEON.D10.CPER.DP0.00109.001.02196.000.040.000 <- data.frame(matrix(data = 0, ncol = 4, nrow = length(timeReg)))
-    names(dataList$NEON.D10.CPER.DP0.00109.001.02196.000.040.000) <- c("time", "data", "exst", "timeNew")
-    dataList$NEON.D10.CPER.DP0.00109.001.02196.000.040.000$timeNew <- timeReg
-  }
+if (idxDp00 %in% c("DP0.00109")){
+  subDp00 <- c("001.02196.000.010.000", #presGage at ML1
+               "001.02196.000.020.000", #presGage at ML2
+               "001.02196.000.030.000", #presGage at ML3
+               "001.02196.000.040.000", #presGage at ML4
+               "001.02196.000.050.000", #presGage at ML5
+               "001.02196.000.060.000", #presGage at ML6
+               "001.02196.000.070.000", #presGage at ML7
+               "001.02196.000.080.000") #presGage at ML8
+  
+  #create full name for subDp00
+  subDp00 <- paste0(numDp00,".",subDp00, sep="")
+  #if dataList is not exist, create an empty data frame
+  for (idxSubDp00 in subDp00){
+    #idxSubDp00 <- subDp00[1]
+    if (!(idxSubDp00 %in% names(dataList))) {
+      dataList[[idxSubDp00]] <- data.frame(matrix(data = NaN, ncol = 4, nrow = length(timeReg)))
+      names(dataList[[idxSubDp00]]) <- c("time", "data", "exst", "timeNew")
+      dataList[[idxSubDp00]]$timeNew <- timeReg 
+    }
+  }#end of for loop in subDp00
+  
   
   dataIn <- list()
   lapply(names(dataList), function(x) dataIn[[x]] <<- def.rglr(timeMeas = base::as.POSIXlt(dataList[[x]][,"timeNew"], format="%Y-%m-%dT%H:%M:%OSZ", tz="UTC"),
@@ -768,20 +764,23 @@ if (idxDp00 %in% c("NEON.D10.CPER.DP0.00109")){
                                                                MethRglr = "CybiEc"
   )$dataRglr)
   
-  #regularize data for each location
-  tmpName <- c("presInlt_000_010", "presInlt_000_020", "presInlt_000_030", "presInlt_000_040")
   
-  for (idxName in tmpName) {
-    if (idxName == "presInlt_000_010") {
-      dataTmp <- data.frame(dataIn$NEON.D10.CPER.DP0.00109.001.02196.000.010.000$data)}
-    if (idxName == "presInlt_000_020") {
-      dataTmp <- data.frame(dataIn$NEON.D10.CPER.DP0.00109.001.02196.000.020.000$data)}
-    if (idxName == "presInlt_000_030") {
-      dataTmp <- data.frame(dataIn$NEON.D10.CPER.DP0.00109.001.02196.000.030.000$data)}
-    if (idxName == "presInlt_000_040") {
-      dataTmp <- data.frame(dataIn$NEON.D10.CPER.DP0.00109.001.02196.000.040.000$data)}
-    
-    
+  if (horVer %in% "010.000") {
+    dataTmp <- data.frame(dataIn[[subDp00[1]]]$data)}
+  if (horVer %in% "020.000") {
+    dataTmp <- data.frame(dataIn[[subDp00[2]]]$data)}
+  if (horVer %in% "030.000") {
+    dataTmp <- data.frame(dataIn[[subDp00[3]]]$data)}
+  if (horVer %in% "040.000") {
+    dataTmp <- data.frame(dataIn[[subDp00[4]]]$data)}
+  if (horVer %in% "050.000") {
+    dataTmp <- data.frame(dataIn[[subDp00[5]]]$data)}
+  if (horVer %in% "060.000") {
+    dataTmp <- data.frame(dataIn[[subDp00[6]]]$data)}
+  if (horVer %in% "070.000") {
+    dataTmp <- data.frame(dataIn[[subDp00[7]]]$data)}
+  if (horVer %in% "080.000") {
+    dataTmp <- data.frame(dataIn[[subDp00[8]]]$data)}
     
     #assign eddy4R name style to the output variables
     colnames(dataTmp) <- c("presDiff")
@@ -804,11 +803,10 @@ if (idxDp00 %in% c("NEON.D10.CPER.DP0.00109")){
     #combine regularize time and data
     dataTmp <- cbind(dataTmp, time = strftime(timeReg, format="%Y-%m-%dT%H:%M:%OSZ", tz="UTC"), stringsAsFactors = F)
     
-    #output file
-    write.csv(dataTmp,paste0(DirOut00, "/", idxName, ".csv"),row.names=F,sep=",")   
+    #report output
+    rpt <- dataTmp    
     #remove dataframe
     rm(dataTmp)
-  }# closed loop dataTmp for each location
   
 }# clsed loop for dp
 
