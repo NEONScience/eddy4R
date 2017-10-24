@@ -435,7 +435,7 @@ if (idxDp00 %in% c("DP0.00113")){
 }#end of DP0.00113
 
 #perform time regularize for profSndAux ########################################################################
-if (idxDp00 %in% c("NEON.D10.CPER.DP0.00114")){
+if (idxDp00 %in% c("DP0.00114")){
   convTime <- list()
   diffTime <-list()
   qfDiffTime <- list()
@@ -458,30 +458,12 @@ if (idxDp00 %in% c("NEON.D10.CPER.DP0.00114")){
   lapply(names(dataList), function(x) dataList[[x]]$data <<- ifelse (is.na(dataList[[x]]$qfDiffTime), dataList[[x]]$data, -1))
   
   #if dataList is not exist, create an empty data frame for valvAux
-  #valvCmd1
-  if (!("NEON.D10.CPER.DP0.00114.001.02360.700.000.000" %in% names(dataList))) {
-    dataList$NEON.D10.CPER.DP0.00114.001.02360.700.000.000 <- data.frame(matrix(data = 0, ncol = 4, nrow = length(timeReg)))
-    names(dataList$NEON.D10.CPER.DP0.00114.001.02360.700.000.000) <- c("time", "data", "exst", "timeNew")
-    dataList$NEON.D10.CPER.DP0.00114.001.02360.700.000.000$timeNew <- timeReg
-  }
-  #valvCmd2
-  if (!("NEON.D10.CPER.DP0.00114.001.02361.700.000.000" %in% names(dataList))) {
-    dataList$NEON.D10.CPER.DP0.00114.001.02361.700.000.000 <- data.frame(matrix(data = 0, ncol = 4, nrow = length(timeReg)))
-    names(dataList$NEON.D10.CPER.DP0.00114.001.02361.700.000.000) <- c("time", "data", "exst", "timeNew")
-    dataList$NEON.D10.CPER.DP0.00114.001.02361.700.000.000$timeNew <- timeReg
-  }
-  #valvCmd3
-  if (!("NEON.D10.CPER.DP0.00114.001.02362.700.000.000" %in% names(dataList))) {
-    dataList$NEON.D10.CPER.DP0.00114.001.02362.700.000.000 <- data.frame(matrix(data = 0, ncol = 4, nrow = length(timeReg)))
-    names(dataList$NEON.D10.CPER.DP0.00114.001.02362.700.000.000) <- c("time", "data", "exst", "timeNew")
-    dataList$NEON.D10.CPER.DP0.00114.001.02362.700.000.000$timeNew <- timeReg
-  }
-  #valvCmd4
-  if (!("NEON.D10.CPER.DP0.00114.001.02364.700.000.000" %in% names(dataList))) {
-    dataList$NEON.D10.CPER.DP0.00114.001.02364.700.000.000 <- data.frame(matrix(data = 0, ncol = 4, nrow = length(timeReg)))
-    names(dataList$NEON.D10.CPER.DP0.00114.001.02364.700.000.000) <- c("time", "data", "exst", "timeNew")
-    dataList$NEON.D10.CPER.DP0.00114.001.02364.700.000.000$timeNew <- timeReg
-  }
+  subDp00 <- c("001.02360.700.000.000", #valvCmd1 
+               "001.02361.700.000.000", #valvCmd2
+               "001.02362.700.000.000", #valvCmd3
+               "001.02364.700.000.000") #valvCmd4
+               
+  
   lapply(names(dataList), function(x) dataIn[[x]] <<- def.rglr(timeMeas = base::as.POSIXlt(dataList[[x]][,"timeNew"], format="%Y-%m-%dT%H:%M:%OSZ", tz="UTC"),
                                                                dataMeas = dataList[[x]],
                                                                BgnRglr = as.POSIXlt(min(timeReg)),
@@ -492,10 +474,10 @@ if (idxDp00 %in% c("NEON.D10.CPER.DP0.00114")){
   )$dataRglr) 
   
   #combine regularize data for irgaValvLvl
-  dataTmp <- data.frame(dataIn$NEON.D10.CPER.DP0.00114.001.02360.700.000.000$data,
-                        dataIn$NEON.D10.CPER.DP0.00114.001.02361.700.000.000$data,
-                        dataIn$NEON.D10.CPER.DP0.00114.001.02362.700.000.000$data,
-                        dataIn$NEON.D10.CPER.DP0.00114.001.02364.700.000.000$data)
+  dataTmp <- data.frame(dataIn[[subDp00[1]]]$data,
+                        dataIn[[subDp00[2]]]$data,
+                        dataIn[[subDp00[3]]]$data,
+                        dataIn[[subDp00[4]]]$data)
   
   #assign eddy4R name style to the output variables
   colnames(dataTmp) <- c("valv01", "valv02", "valv03", "valv04")
@@ -519,8 +501,8 @@ if (idxDp00 %in% c("NEON.D10.CPER.DP0.00114")){
   dataTmp <- cbind(dataTmp, time = strftime(timeReg, format="%Y-%m-%dT%H:%M:%OSZ", tz="UTC"), stringsAsFactors = F)
   #filled NA with previous value
   dataTmp[,1:4] <- zoo::na.locf(dataTmp[,1:4], na.rm = FALSE)
-  #output file
-  write.csv(dataTmp,paste0(DirOut00, "/", "valvAux", ".csv"),row.names=F,sep=",")   
+  #report output
+  rpt <- dataTmp    
   #remove dataframe
   rm(dataTmp)
 }
