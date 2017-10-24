@@ -811,39 +811,23 @@ if (idxDp00 %in% c("DP0.00109")){
 }# clsed loop for dp
 
 #profMfcSamp ###############################################################################  
-if (idxDp00 %in% c("NEON.D10.CPER.DP0.00106")){
-  #if dataList is not exist, create an empty data frame 
-  #frtSet0
-  if (!("NEON.D10.CPER.DP0.00106.001.01952.700.000.000" %in% names(dataList))) {
-    dataList$NEON.D10.CPER.DP0.00106.001.01952.700.000.000 <- data.frame(matrix(data = NaN, ncol = 4, nrow = length(timeReg)))
-    names(dataList$NEON.D10.CPER.DP0.00106.001.01952.700.000.000) <- c("time", "data", "exst", "timeNew")
-    dataList$NEON.D10.CPER.DP0.00106.001.01952.700.000.000$timeNew <- timeReg
-  }
-  #frt0
-  if (!("NEON.D10.CPER.DP0.00106.001.01951.700.000.000" %in% names(dataList))) {
-    dataList$NEON.D10.CPER.DP0.00106.001.01951.700.000.000 <- data.frame(matrix(data = NaN, ncol = 4, nrow = length(timeReg)))
-    names(dataList$NEON.D10.CPER.DP0.00106.001.01951.700.000.000) <- c("time", "data", "exst", "timeNew")
-    dataList$NEON.D10.CPER.DP0.00106.001.01951.700.000.000$timeNew <- timeReg
-  }
-  #frt
-  if (!("NEON.D10.CPER.DP0.00106.001.01950.700.000.000" %in% names(dataList))) {
-    dataList$NEON.D10.CPER.DP0.00106.001.01950.700.000.000 <- data.frame(matrix(data = NaN, ncol = 4, nrow = length(timeReg)))
-    names(dataList$NEON.D10.CPER.DP0.00106.001.01950.700.000.000) <- c("time", "data", "exst", "timeNew")
-    dataList$NEON.D10.CPER.DP0.00106.001.01950.700.000.000$timeNew <- timeReg
-  }    
-  #temp
-  if (!("NEON.D10.CPER.DP0.00106.001.01949.700.000.000" %in% names(dataList))) {
-    dataList$NEON.D10.CPER.DP0.00106.001.01949.700.000.000 <- data.frame(matrix(data = 0, ncol = 4, nrow = length(timeReg)))
-    names(dataList$NEON.D10.CPER.DP0.00106.001.01949.700.000.000) <- c("time", "data", "exst", "timeNew")
-    dataList$NEON.D10.CPER.DP0.00106.001.01949.700.000.000$timeNew <- timeReg
-  }
-  #presAtm
-  if (!("NEON.D10.CPER.DP0.00106.001.01948.700.000.000" %in% names(dataList))) {
-    dataList$NEON.D10.CPER.DP0.00106.001.01948.700.000.000 <- data.frame(matrix(data = 0, ncol = 4, nrow = length(timeReg)))
-    names(dataList$NEON.D10.CPER.DP0.00106.001.01948.700.000.000) <- c("time", "data", "exst", "timeNew")
-    dataList$NEON.D10.CPER.DP0.00106.001.01948.700.000.000$timeNew <- timeReg
-  }
-  
+if (idxDp00 %in% c("DP0.00106")){
+  subDp00 <- c("001.01952.700.000.000",#frtSet0
+               "001.01951.700.000.000",#frt0
+               "001.01950.700.000.000",#frt
+               "001.01949.700.000.000",#temp
+               "001.01948.700.000.000")#presAtm
+  #create full name for subDp00
+  subDp00 <- paste0(numDp00,".",subDp00, sep="")
+  #if dataList is not exist, create an empty data frame
+  for (idxSubDp00 in subDp00){
+    #idxSubDp00 <- subDp00[1]
+    if (!(idxSubDp00 %in% names(dataList))) {
+      dataList[[idxSubDp00]] <- data.frame(matrix(data = NaN, ncol = 4, nrow = length(timeReg)))
+      names(dataList[[idxSubDp00]]) <- c("time", "data", "exst", "timeNew")
+      dataList[[idxSubDp00]]$timeNew <- timeReg 
+    }
+  }#end of for loop in subDp00
   
   dataIn <- list()
   lapply(names(dataList), function(x) dataIn[[x]] <<- def.rglr(timeMeas = base::as.POSIXlt(dataList[[x]][,"timeNew"], format="%Y-%m-%dT%H:%M:%OSZ", tz="UTC"),
@@ -855,11 +839,11 @@ if (idxDp00 %in% c("NEON.D10.CPER.DP0.00106")){
   )$dataRglr)
   
   #combine regularize data for envHut
-  dataTmp <- data.frame(dataIn$NEON.D10.CPER.DP0.00106.001.01952.700.000.000$data,
-                        dataIn$NEON.D10.CPER.DP0.00106.001.01951.700.000.000$data,
-                        dataIn$NEON.D10.CPER.DP0.00106.001.01950.700.000.000$data,
-                        dataIn$NEON.D10.CPER.DP0.00106.001.01949.700.000.000$data,
-                        dataIn$NEON.D10.CPER.DP0.00106.001.01948.700.000.000$data)
+  dataTmp <- data.frame(dataIn[[subDp00[1]]]$data,
+                        dataIn[[subDp00[2]]]$data,
+                        dataIn[[subDp00[3]]]$data,
+                        dataIn[[subDp00[4]]]$data,
+                        dataIn[[subDp00[5]]]$data)
   
   #assign eddy4R name style to the output variables
   colnames(dataTmp) <- c("frtSet00", "frt00", "frt", "temp", "presAtm")
@@ -886,8 +870,8 @@ if (idxDp00 %in% c("NEON.D10.CPER.DP0.00106")){
   #combine regularize time and data
   dataTmp <- cbind(dataTmp, time = strftime(timeReg, format="%Y-%m-%dT%H:%M:%OSZ", tz="UTC"), stringsAsFactors = F)
   
-  #output file
-  write.csv(dataTmp,paste0(DirOut00, "/", "irgaMfcSamp", ".csv"),row.names=F,sep=",")   
+  #report output
+  rpt <- dataTmp   
   #remove dataframe
   rm(dataTmp)
   
