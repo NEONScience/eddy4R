@@ -316,6 +316,7 @@ footK04 <- function(
   zmeas,
   z0,
   h=1000,	#boundary layer height
+  thsh = 0.8, # threshold for cumulative footprint extent
   Psi=0
 ){
 
@@ -563,35 +564,62 @@ footK04 <- function(
       PHIcp <- PHIc
     } else {
       if(nrow(PHIc) > ncol(PHIc)) {
-	PHIcp <- cbind(
-	  matrix(nrow=nrow(PHIc), ncol=(nrow(PHIc)-ncol(PHIc)) / 2, 0),
-	  PHIc,
-	  matrix(nrow=nrow(PHIc), ncol=(nrow(PHIc)-ncol(PHIc)) / 2, 0)
-	)
+      	PHIcp <- cbind(
+      	  matrix(nrow=nrow(PHIc), ncol=(nrow(PHIc)-ncol(PHIc)) / 2, 0),
+      	  PHIc,
+      	  matrix(nrow=nrow(PHIc), ncol=(nrow(PHIc)-ncol(PHIc)) / 2, 0)
+      	)
       }
       if(nrow(PHIc) < ncol(PHIc)) {
-	PHIcp <- rbind(
-	  matrix(ncol=ncol(PHIc), nrow=(ncol(PHIc)-nrow(PHIc)) / 2, 0),
-	  PHIc,
-	  matrix(ncol=ncol(PHIc), nrow=(ncol(PHIc)-nrow(PHIc)) / 2, 0)
-	)
+      	PHIcp <- rbind(
+      	  matrix(ncol=ncol(PHIc), nrow=(ncol(PHIc)-nrow(PHIc)) / 2, 0),
+      	  PHIc,
+      	  matrix(ncol=ncol(PHIc), nrow=(ncol(PHIc)-nrow(PHIc)) / 2, 0)
+      	)
       }
     }
     #YcenLRp <- XcenUD
     #contour(YcenLRp, XcenUD, matlab::rot90(PHIcp,1), levels=NIVo, col=colorRampPalette(c("black", "red"))(length(NIVo)), asp=1)
 
-  #along-wind distance of 80% cumulative flux footprint
+  # upwind distance of 80% cumulative flux footprint
     PHIcpr <- matlab::flipud(PHIcp)
     #PHIcpr <- EBImage::rotate(PHIcp, 180-0)@.Data
-    f80 <- cumsum(rev(rowSums(PHIcpr)))
+    f80 <- rev(rowSums(PHIcpr))
+
+      # upwind distance of peak
+      fx <- (which(f80 == max(f80)) - (length(f80) - 1) / 2 + 1) *   Csize
+      names(fx) <- ("fx")
+
+    f80 <- cumsum(f80)
     f80 <- f80/max(f80, na.rm=TRUE)
-    f80 <- (which(f80 > 0.8)[1] - (length(f80) - 1) / 2 + 1) *   Csize
+    f80 <- (which(f80 > thsh)[1] - (length(f80) - 1) / 2 + 1) *   Csize
     names(f80) <- ("f80")
 
-  #rotate image clockwise (align footprint in mean wind)
-    PHIcpr <- EBImage::rotate(PHIcp, 180-angle)@.Data
+  # one-sided cross-wind distance of 80% cumulative flux footprint
+    fy <- rev(colSums(PHIcpr))
+    fy <- fy[((length(fy) - 1) / 2 + 1):length(fy)]
+    fy <- cumsum(fy)
+    fy <- fy/max(fy, na.rm=TRUE)
+    fy <- which(fy > thsh)[1] * Csize
+    names(fy) <- ("fy")
+    
+  # rotate image clockwise (align footprint in mean wind)
+  # specify output.dim, so that dimensions remain odd-numbered, and the tower at the center
+  # explicitly specifying output.origin for some reason leads to a shift, hence commented out
+    PHIcpr <- EBImage::rotate(x = PHIcp,
+                              angle = 180 - angle,
+                              output.dim = base::rep(nrow(PHIcp),2),
+                              # output.origin = base::rep(((nrow(PHIcp) - 1) / 2 + 1), 2)
+                              )@.Data
     PHIcpr <- PHIcpr / sum(sum(PHIcpr))
 
+    # contour(
+    #   x = 1:nrow(PHIcp),
+    #   y = 1:nrow(PHIcp),
+    #   z = PHIcpr)
+    # points(x = ((nrow(PHIcp) - 1) / 2 + 1), y = ((nrow(PHIcp) - 1) / 2 + 1), col=2)
+    # nrow(PHIcp)
+    
 #     #attempted workaround for cell shifts of rotate() function in Windows
 #     #for some reason rotate shifts 1 cell back and 1 cell right in Windows
 #       if(.Platform$OS.type == "windows") {
@@ -625,7 +653,9 @@ footK04 <- function(
     export<-list(
       PHI=PHIcpr, 
       cover=cover,
-      f80=f80
+      f80=f80,
+      fx=fx,
+      fy=fy
     )
 
   #return list
