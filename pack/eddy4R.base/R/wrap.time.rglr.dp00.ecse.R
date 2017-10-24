@@ -40,7 +40,6 @@ wrap.time.rglr.dp00.ecse <- function(
 ){
 
 #call Library
-library(eddy4R.base)
 require(zoo)
 
 #add domain and site into idDp00
@@ -68,7 +67,7 @@ if (idDp00 %in% c("DP0.00105")){
   
   #empty dataIn for time regularization
   dataIn <- list()
-  lapply(names(dataList), function(x) dataIn[[x]] <<- def.rglr(timeMeas = base::as.POSIXlt(dataList[[x]][,"timeNew"], format="%Y-%m-%dT%H:%M:%OSZ", tz="UTC"),
+  lapply(names(dataList), function(x) dataIn[[x]] <<- eddy4R.base::def.rglr(timeMeas = base::as.POSIXlt(dataList[[x]][,"timeNew"], format="%Y-%m-%dT%H:%M:%OSZ", tz="UTC"),
                                                                dataMeas = dataList[[x]],
                                                                BgnRglr = as.POSIXlt(min(timeReg)),
                                                                EndRglr = as.POSIXlt(max(timeReg)),
@@ -173,7 +172,7 @@ if (idxDp00 %in% c("DP0.00113")){
     }
   }#end of for loop in subDp00
                
-  lapply(names(dataList), function(x) dataIn[[x]] <<- def.rglr(timeMeas = base::as.POSIXlt(dataList[[x]][,"timeNew"], format="%Y-%m-%dT%H:%M:%OSZ", tz="UTC"),
+  lapply(names(dataList), function(x) dataIn[[x]] <<- eddy4R.base::def.rglr(timeMeas = base::as.POSIXlt(dataList[[x]][,"timeNew"], format="%Y-%m-%dT%H:%M:%OSZ", tz="UTC"),
                                                                dataMeas = dataList[[x]],
                                                                BgnRglr = as.POSIXlt(min(timeReg)),
                                                                EndRglr = as.POSIXlt(max(timeReg)),
@@ -244,7 +243,7 @@ if (idxDp00 %in% c("DP0.00113")){
       }
     }#end of for loop in subDp00
     
-    lapply(names(dataList), function(x) dataIn[[x]] <<- def.rglr(timeMeas = base::as.POSIXlt(dataList[[x]][,"timeNew"], format="%Y-%m-%dT%H:%M:%OSZ", tz="UTC"),
+    lapply(names(dataList), function(x) dataIn[[x]] <<- eddy4R.base::def.rglr(timeMeas = base::as.POSIXlt(dataList[[x]][,"timeNew"], format="%Y-%m-%dT%H:%M:%OSZ", tz="UTC"),
                                                                  dataMeas = dataList[[x]],
                                                                  BgnRglr = as.POSIXlt(min(timeReg)),
                                                                  EndRglr = as.POSIXlt(max(timeReg)),
@@ -316,7 +315,7 @@ if (idxDp00 %in% c("DP0.00113")){
       }
     }#end of for loop in subDp00
     
-    lapply(names(dataList), function(x) dataIn[[x]] <<- def.rglr(timeMeas = base::as.POSIXlt(dataList[[x]][,"timeNew"], format="%Y-%m-%dT%H:%M:%OSZ", tz="UTC"),
+    lapply(names(dataList), function(x) dataIn[[x]] <<- eddy4R.base::def.rglr(timeMeas = base::as.POSIXlt(dataList[[x]][,"timeNew"], format="%Y-%m-%dT%H:%M:%OSZ", tz="UTC"),
                                                                  dataMeas = dataList[[x]],
                                                                  BgnRglr = as.POSIXlt(min(timeReg)),
                                                                  EndRglr = as.POSIXlt(max(timeReg)),
@@ -389,7 +388,7 @@ if (idxDp00 %in% c("DP0.00113")){
       }
     }#end of for loop in subDp00
     
-    lapply(names(dataList), function(x) dataIn[[x]] <<- def.rglr(timeMeas = base::as.POSIXlt(dataList[[x]][,"timeNew"], format="%Y-%m-%dT%H:%M:%OSZ", tz="UTC"),
+    lapply(names(dataList), function(x) dataIn[[x]] <<- eddy4R.base::def.rglr(timeMeas = base::as.POSIXlt(dataList[[x]][,"timeNew"], format="%Y-%m-%dT%H:%M:%OSZ", tz="UTC"),
                                                                  dataMeas = dataList[[x]],
                                                                  BgnRglr = as.POSIXlt(min(timeReg)),
                                                                  EndRglr = as.POSIXlt(max(timeReg)),
@@ -479,7 +478,7 @@ if (idxDp00 %in% c("DP0.00114")){
     }
   }#end of for loop in subDp00
   
-  lapply(names(dataList), function(x) dataIn[[x]] <<- def.rglr(timeMeas = base::as.POSIXlt(dataList[[x]][,"timeNew"], format="%Y-%m-%dT%H:%M:%OSZ", tz="UTC"),
+  lapply(names(dataList), function(x) dataIn[[x]] <<- eddy4R.base::def.rglr(timeMeas = base::as.POSIXlt(dataList[[x]][,"timeNew"], format="%Y-%m-%dT%H:%M:%OSZ", tz="UTC"),
                                                                dataMeas = dataList[[x]],
                                                                BgnRglr = as.POSIXlt(min(timeReg)),
                                                                EndRglr = as.POSIXlt(max(timeReg)),
@@ -543,7 +542,7 @@ if (idxDp00 %in% c("DP0.00104")){
   }#end of for loop in subDp00
   
   dataIn <- list()
-  lapply(names(dataList), function(x) dataIn[[x]] <<- def.rglr(timeMeas = base::as.POSIXlt(dataList[[x]][,"timeNew"], format="%Y-%m-%dT%H:%M:%OSZ", tz="UTC"),
+  lapply(names(dataList), function(x) dataIn[[x]] <<- eddy4R.base::def.rglr(timeMeas = base::as.POSIXlt(dataList[[x]][,"timeNew"], format="%Y-%m-%dT%H:%M:%OSZ", tz="UTC"),
                                                                dataMeas = dataList[[x]],
                                                                BgnRglr = as.POSIXlt(min(timeReg)),
                                                                EndRglr = as.POSIXlt(max(timeReg)),
@@ -614,7 +613,7 @@ if (idxDp00 %in% c("DP0.00110")){
   }#end of for loop in subDp00
   
   dataIn <- list()
-  lapply(names(dataList), function(x) dataIn[[x]] <<- def.rglr(timeMeas = base::as.POSIXlt(dataList[[x]][,"timeNew"], format="%Y-%m-%dT%H:%M:%OSZ", tz="UTC"),
+  lapply(names(dataList), function(x) dataIn[[x]] <<- eddy4R.base::def.rglr(timeMeas = base::as.POSIXlt(dataList[[x]][,"timeNew"], format="%Y-%m-%dT%H:%M:%OSZ", tz="UTC"),
                                                                dataMeas = dataList[[x]],
                                                                BgnRglr = as.POSIXlt(min(timeReg)),
                                                                EndRglr = as.POSIXlt(max(timeReg)),
@@ -686,7 +685,7 @@ if (idxDp00 %in% c("DP0.00111")){
   }#end of for loop in subDp00
   
   dataIn <- list()
-  lapply(names(dataList), function(x) dataIn[[x]] <<- def.rglr(timeMeas = base::as.POSIXlt(dataList[[x]][,"timeNew"], format="%Y-%m-%dT%H:%M:%OSZ", tz="UTC"),
+  lapply(names(dataList), function(x) dataIn[[x]] <<- eddy4R.base::def.rglr(timeMeas = base::as.POSIXlt(dataList[[x]][,"timeNew"], format="%Y-%m-%dT%H:%M:%OSZ", tz="UTC"),
                                                                dataMeas = dataList[[x]],
                                                                BgnRglr = as.POSIXlt(min(timeReg)),
                                                                EndRglr = as.POSIXlt(max(timeReg)),
@@ -761,7 +760,7 @@ if (idxDp00 %in% c("DP0.00109")){
   
   
   dataIn <- list()
-  lapply(names(dataList), function(x) dataIn[[x]] <<- def.rglr(timeMeas = base::as.POSIXlt(dataList[[x]][,"timeNew"], format="%Y-%m-%dT%H:%M:%OSZ", tz="UTC"),
+  lapply(names(dataList), function(x) dataIn[[x]] <<- eddy4R.base::def.rglr(timeMeas = base::as.POSIXlt(dataList[[x]][,"timeNew"], format="%Y-%m-%dT%H:%M:%OSZ", tz="UTC"),
                                                                dataMeas = dataList[[x]],
                                                                BgnRglr = as.POSIXlt(min(timeReg)),
                                                                EndRglr = as.POSIXlt(max(timeReg)),
@@ -835,7 +834,7 @@ if (idxDp00 %in% c("DP0.00106")){
   }#end of for loop in subDp00
   
   dataIn <- list()
-  lapply(names(dataList), function(x) dataIn[[x]] <<- def.rglr(timeMeas = base::as.POSIXlt(dataList[[x]][,"timeNew"], format="%Y-%m-%dT%H:%M:%OSZ", tz="UTC"),
+  lapply(names(dataList), function(x) dataIn[[x]] <<- eddy4R.base::def.rglr(timeMeas = base::as.POSIXlt(dataList[[x]][,"timeNew"], format="%Y-%m-%dT%H:%M:%OSZ", tz="UTC"),
                                                                dataMeas = dataList[[x]],
                                                                BgnRglr = as.POSIXlt(min(timeReg)),
                                                                EndRglr = as.POSIXlt(max(timeReg)),
@@ -903,7 +902,7 @@ if (idxDp00 %in% c("DP0.00107")){
   
   
   dataIn <- list()
-  lapply(names(dataList), function(x) dataIn[[x]] <<- def.rglr(timeMeas = base::as.POSIXlt(dataList[[x]][,"timeNew"], format="%Y-%m-%dT%H:%M:%OSZ", tz="UTC"),
+  lapply(names(dataList), function(x) dataIn[[x]] <<- eddy4R.base::def.rglr(timeMeas = base::as.POSIXlt(dataList[[x]][,"timeNew"], format="%Y-%m-%dT%H:%M:%OSZ", tz="UTC"),
                                                                dataMeas = dataList[[x]],
                                                                BgnRglr = as.POSIXlt(min(timeReg)),
                                                                EndRglr = as.POSIXlt(max(timeReg)),
@@ -997,7 +996,7 @@ if (idxDp00 %in% c("DP0.00108")){
   }#end of for loop in subDp00
   
   dataIn <- list()
-  lapply(names(dataList), function(x) dataIn[[x]] <<- def.rglr(timeMeas = base::as.POSIXlt(dataList[[x]][,"timeNew"], format="%Y-%m-%dT%H:%M:%OSZ", tz="UTC"),
+  lapply(names(dataList), function(x) dataIn[[x]] <<- eddy4R.base::def.rglr(timeMeas = base::as.POSIXlt(dataList[[x]][,"timeNew"], format="%Y-%m-%dT%H:%M:%OSZ", tz="UTC"),
                                                                dataMeas = dataList[[x]],
                                                                BgnRglr = as.POSIXlt(min(timeReg)),
                                                                EndRglr = as.POSIXlt(max(timeReg)),
@@ -1090,7 +1089,7 @@ if (idxDp00 %in% c("DP0.00112")){
                "001.02351.700.080.000")#pumpVoltage at ML8
   
   dataIn <- list()
-  lapply(names(dataList), function(x) dataIn[[x]] <<- def.rglr(timeMeas = base::as.POSIXlt(dataList[[x]][,"timeNew"], format="%Y-%m-%dT%H:%M:%OSZ", tz="UTC"),
+  lapply(names(dataList), function(x) dataIn[[x]] <<- eddy4R.base::def.rglr(timeMeas = base::as.POSIXlt(dataList[[x]][,"timeNew"], format="%Y-%m-%dT%H:%M:%OSZ", tz="UTC"),
                                                                dataMeas = dataList[[x]],
                                                                BgnRglr = as.POSIXlt(min(timeReg)),
                                                                EndRglr = as.POSIXlt(max(timeReg)),
@@ -1163,7 +1162,7 @@ if (idxDp00 %in% c("DP0.00115")){
   
   dataIn <- list()
   
-  lapply(names(dataList), function(x) dataIn[[x]] <<- def.rglr(timeMeas = base::as.POSIXlt(dataList[[x]][,"timeNew"], format="%Y-%m-%dT%H:%M:%OSZ", tz="UTC"),
+  lapply(names(dataList), function(x) dataIn[[x]] <<- eddy4R.base::def.rglr(timeMeas = base::as.POSIXlt(dataList[[x]][,"timeNew"], format="%Y-%m-%dT%H:%M:%OSZ", tz="UTC"),
                                                                dataMeas = dataList[[x]],
                                                                BgnRglr = as.POSIXlt(min(timeReg)),
                                                                EndRglr = as.POSIXlt(max(timeReg)),
@@ -1239,7 +1238,7 @@ if (idxDp00 %in% c("DP0.00102")){
   dataList[[subDp00[1]]]$qfSensStus <- ifelse(is.na(dataList[[subDp00[1]]]$qfDiffTime), dataList[[subDp00[1]]]$qfSensStus, -1)
   #empty dataIn for time regularization
   dataIn <- list()
-  lapply(names(dataList), function(x) dataIn[[x]] <<- def.rglr(timeMeas = base::as.POSIXlt(dataList[[x]][,"timeNew"], format="%Y-%m-%dT%H:%M:%OSZ", tz="UTC"),
+  lapply(names(dataList), function(x) dataIn[[x]] <<- eddy4R.base::def.rglr(timeMeas = base::as.POSIXlt(dataList[[x]][,"timeNew"], format="%Y-%m-%dT%H:%M:%OSZ", tz="UTC"),
                                                                dataMeas = dataList[[x]],
                                                                BgnRglr = as.POSIXlt(min(timeReg)),
                                                                EndRglr = as.POSIXlt(max(timeReg)),
@@ -1377,7 +1376,7 @@ if (idxDp00 %in% c("DP0.00103")){
   
   #empty dataIn for time regularization
   dataIn <- list()
-  lapply(names(dataList), function(x) dataIn[[x]] <<- def.rglr(timeMeas = base::as.POSIXlt(dataList[[x]][,"timeNew"], format="%Y-%m-%dT%H:%M:%OSZ", tz="UTC"),
+  lapply(names(dataList), function(x) dataIn[[x]] <<- eddy4R.base::def.rglr(timeMeas = base::as.POSIXlt(dataList[[x]][,"timeNew"], format="%Y-%m-%dT%H:%M:%OSZ", tz="UTC"),
                                                                dataMeas = dataList[[x]],
                                                                BgnRglr = as.POSIXlt(min(timeReg)),
                                                                EndRglr = as.POSIXlt(max(timeReg)),
@@ -1477,7 +1476,7 @@ if (idxDp00 %in% c("DP0.00098")){
   }#end of for loop in subDp00
   
   dataIn <- list()
-  lapply(names(dataList), function(x) dataIn[[x]] <<- def.rglr(timeMeas = base::as.POSIXlt(dataList[[x]][,"timeNew"], format="%Y-%m-%dT%H:%M:%OSZ", tz="UTC"),
+  lapply(names(dataList), function(x) dataIn[[x]] <<- eddy4R.base::def.rglr(timeMeas = base::as.POSIXlt(dataList[[x]][,"timeNew"], format="%Y-%m-%dT%H:%M:%OSZ", tz="UTC"),
                                                                dataMeas = dataList[[x]],
                                                                BgnRglr = as.POSIXlt(min(timeReg)),
                                                                EndRglr = as.POSIXlt(max(timeReg)),
