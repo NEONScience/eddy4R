@@ -6,10 +6,12 @@
 #' @description  
 #'  Wrapper function. Time regularization for ECSE dp00
 
+#' @param \code{DirIn} Character: Input directory. [-]
+#' @param \code{Date} Character: Processing date e.g. "20170521". [-]
 #' @param \code{dataList} A list of data frame containing the input dp00 data. [User-defined]
-#' @param \code{site} Character: Site location. [-]
-#' @param \code{dom} Character: Domain. [-]
-#' @param \code{timeReg} A dataframe including the desired frequency of the regularized times. Of class "POSIXlt". [-] 
+#' @param \code{Site} Character: Site location. [-]
+#' @param \code{Dom} Character: Domain. [-]
+#' @param \code{Freq} Desired frequency of  the regularized dataset. Of class "numeric" or "integer". [Hz]
 #' @param \code{idDp00} Character: dp00 data product number. [-]
 #' @param \code{horVer} Character: Horizontal and vertical location of dp00. [-]
 
@@ -31,11 +33,13 @@
 #     original creation
 ##############################################################################################
 wrap.time.rglr.dp00.ecse <- function(
+  DirIn,
+  Date,
   dataList,
-  site = "CPER",
-  dom = "D10",
-  timeReg,
-  idDp00,
+  Site = "CPER",
+  Dom = "D10",
+  Freq,
+  IdDp00,
   horVer
 ){
 
@@ -43,8 +47,37 @@ wrap.time.rglr.dp00.ecse <- function(
 require(zoo)
 
 #add domain and site into idDp00
-numDp00 <- paste0("NEON.",dom,".",site,".",idDp00, sep="")
+numDp00 <- paste0("NEON.",Dom,".",Site,".",idDp00, sep="")
 
+#read in data ##################################################################
+DirIn00 <- paste0(DirIn,"/",Date, "/", idDp00)
+#read in all file list in DirIn
+fileList00 <- list.files(path = DirIn00, pattern = ".csv")
+#reating full path filenames
+fileList01 <- paste(DirIn00,fileList00, sep = "/")
+#create a vector of variable names from the filenames
+varName <- gsub(".csv","",fileList00)
+#read in the data into a list of dataframes
+dataList <- lapply(fileList01, read.table, header = T, 
+                   stringsAsFactors = F, sep = ",", row.names = NULL)
+#using the data names provided with the data to name the lists
+names(dataList) <- varName
+
+
+options(digits.secs=3) 
+
+#Function to create timestamp, have to use the <<- to apply in global not just in function environment
+lapply(names(dataList), function(x) dataList[[x]][,"timeNew"] <<-  as.POSIXct(dataList[[x]][,"time"] , format= "%Y-%m-%d %H:%M:%OS", tz="UTC"))
+lapply(names(dataList), function(x) dataList[[x]][,"timeNew"] <<-  format(as.POSIXct(dataList[[x]][,"timeNew"], format= "%Y-%m-%d %H:%M:%OS"), "%Y-%m-%dT%H:%M:%OSZ"))
+
+outDate <- gsub("(\\d{4})(\\d{2})(\\d{2})$","\\1-\\2-\\3",Date)
+
+#generate time according to frequency
+timeReg <- seq.POSIXt(
+  from = base::as.POSIXlt(paste(outDate, " ", "00:00:00.0001", sep=""), format="%Y-%m-%d %H:%M:%OS", tz="UTC"),
+  to = base::as.POSIXlt(paste(outDate, " ", "23:59:59.9502", sep=""), format="%Y-%m-%d %H:%M:%OS", tz="UTC"),
+  by = 1/Freq
+)
 #perform time regularize for irga #######################################
 if (idDp00 %in% c("DP0.00105")){
   subDp00 <- c("001.02316.700.000.000",#fwMoleCO2
