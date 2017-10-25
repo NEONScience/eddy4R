@@ -12,7 +12,7 @@
 #' @param \code{Site} Character: Site location. [-]
 #' @param \code{Dom} Character: Domain. [-]
 #' @param \code{Freq} Desired frequency of  the regularized dataset. Of class "numeric" or "integer". [Hz]
-#' @param \code{idDp00} Character: dp00 data product number. [-]
+#' @param \code{IdDp00} Character: dp00 data product number. [-]
 #' @param \code{horVer} Character: Horizontal and vertical location of dp00. [-]
 
 #' @return  A dataframe including the regularized dp00. [User-defined]
@@ -46,11 +46,11 @@ wrap.time.rglr.dp00.ecse <- function(
 #call Library
 require(zoo)
 
-#add domain and site into idDp00
-numDp00 <- paste0("NEON.",Dom,".",Site,".",idDp00, sep="")
+#add domain and site into IdDp00
+numDp00 <- paste0("NEON.",Dom,".",Site,".",IdDp00, sep="")
 
 #read in data ##################################################################
-DirIn00 <- paste0(DirIn,"/",Date, "/", idDp00)
+DirIn00 <- paste0(DirIn,"/",Date, "/", numDp00)
 #read in all file list in DirIn
 fileList00 <- list.files(path = DirIn00, pattern = ".csv")
 #reating full path filenames
@@ -79,7 +79,7 @@ timeReg <- seq.POSIXt(
   by = 1/Freq
 )
 #perform time regularize for irga #######################################
-if (idDp00 %in% c("DP0.00105")){
+if (IdDp00 %in% c("DP0.00105")){
   subDp00 <- c("001.02316.700.000.000",#fwMoleCO2
                "001.02348.700.000.000",#fwMoleH2O
                "001.02349.700.000.000",#tempCell
@@ -159,7 +159,7 @@ if (idDp00 %in% c("DP0.00105")){
 }#end of DP0.00105
 
 #perform time regularize for profSnd ########################################################################
-if (idxDp00 %in% c("DP0.00113")){
+if (IdDp00 %in% c("DP0.00113")){
   convTime <- list()
   diffTime <-list()
   qfDiffTime <- list()
@@ -472,7 +472,7 @@ if (idxDp00 %in% c("DP0.00113")){
 }#end of DP0.00113
 
 #perform time regularize for profSndAux ########################################################################
-if (idxDp00 %in% c("DP0.00114")){
+if (IdDp00 %in% c("DP0.00114")){
   convTime <- list()
   diffTime <-list()
   qfDiffTime <- list()
@@ -555,7 +555,7 @@ if (idxDp00 %in% c("DP0.00114")){
 }
 
 #HutEnv####################################################################################################    
-if (idxDp00 %in% c("DP0.00104")){
+if (IdDp00 %in% c("DP0.00104")){
   subDp00 <- c("001.02344.700.000.000",#tempHut
                "001.02345.700.000.000",#RHHut
                "001.02346.700.000.000",#baroPresHut
@@ -624,7 +624,7 @@ if (idxDp00 %in% c("DP0.00104")){
 }# clsed loop for dp  
 
 #profPresValiRegDel########################################################################################
-if (idxDp00 %in% c("DP0.00110")){
+if (IdDp00 %in% c("DP0.00110")){
   subDp00 <- c("001.02196.709.000.000",#presGage at cylinder 1
                "001.02196.710.000.000",#presGage at cylinder 2
                "001.02196.711.000.000",#presGage at cylinder 3
@@ -697,7 +697,7 @@ if (idxDp00 %in% c("DP0.00110")){
 }# clsed loop for dp
 
 #profPresValiRegTank########################################################################################
-if (idxDp00 %in% c("DP0.00111")){
+if (IdDp00 %in% c("DP0.00111")){
   subDp00 <- c("001.02196.709.000.000",#presGage at cylinder 1
                "001.02196.710.000.000",#presGage at cylinder 2
                "001.02196.711.000.000",#presGage at cylinder 3
@@ -769,7 +769,7 @@ if (idxDp00 %in% c("DP0.00111")){
 }# clsed loop for dp
 
 #profPresInlet########################################################################################
-if (idxDp00 %in% c("DP0.00109")){
+if (IdDp00 %in% c("DP0.00109")){
   subDp00 <- c("001.02196.000.010.000", #presGage at ML1
                "001.02196.000.020.000", #presGage at ML2
                "001.02196.000.030.000", #presGage at ML3
@@ -848,7 +848,7 @@ if (idxDp00 %in% c("DP0.00109")){
 }# clsed loop for dp
 
 #profMfcSamp ###############################################################################  
-if (idxDp00 %in% c("DP0.00106")){
+if (IdDp00 %in% c("DP0.00106")){
   subDp00 <- c("001.01952.700.000.000",#frtSet0
                "001.01951.700.000.000",#frt0
                "001.01950.700.000.000",#frt
@@ -915,7 +915,7 @@ if (idxDp00 %in% c("DP0.00106")){
 }# clsed loop for dp   
 
 #profMfcVali############################################################################### 
-if (idxDp00 %in% c("DP0.00107")){
+if (IdDp00 %in% c("DP0.00107")){
   subDp00 <- c("001.01952.700.000.000",#frtSet0
                "001.01951.700.000.000",#frt0
                "001.01950.700.000.000",#frt
@@ -983,7 +983,7 @@ if (idxDp00 %in% c("DP0.00107")){
 }# clsed loop for dp   
 
 #profMfm ########################################################################################
-if (idxDp00 %in% c("DP0.00108")){
+if (IdDp00 %in% c("DP0.00108")){
   subDp00 <- c("001.01951.700.010.000",#frt0 at ML1
                "001.01950.700.010.000",#frt at ML1
                "001.01949.700.010.000",#temp at ML1
@@ -1110,7 +1110,7 @@ if (idxDp00 %in% c("DP0.00108")){
 }# clsed loop for dp
 
 #profPumpSmp###############################################################################  
-if (idxDp00 %in% c("DP0.00112")){
+if (IdDp00 %in% c("DP0.00112")){
   subDp00 <- c("001.02351.700.000.000",#irga pumpVoltage
                "001.02351.700.010.000",#pumpVoltage at ML1
                "001.02351.700.020.000",#pumpVoltage at ML2
@@ -1179,7 +1179,7 @@ if (idxDp00 %in% c("DP0.00112")){
 }# clsed loop for dp
 
 #profSndVapor###################################################  
-if (idxDp00 %in% c("DP0.00115")){
+if (IdDp00 %in% c("DP0.00115")){
   subDp00 <- c("001.02352.700.000.000")#valvStat1
   #create full name for subDp00
   subDp00 <- paste0(numDp00,".",subDp00, sep="")
@@ -1226,7 +1226,7 @@ if (idxDp00 %in% c("DP0.00115")){
 }# clsed loop for dp
 
 #CO2Iso#################################################################################################
-if (idxDp00 %in% c("DP0.00102")){
+if (IdDp00 %in% c("DP0.00102")){
   subDp00 <- c("001.02306.700.000.000",#instStat
                "001.02307.700.000.000",#presCavi
                "001.02308.700.000.000",#tempCavi
@@ -1354,7 +1354,7 @@ if (idxDp00 %in% c("DP0.00102")){
 }
 
 #H2OIso#################################################################################################
-if (idxDp00 %in% c("DP0.00103")){
+if (IdDp00 %in% c("DP0.00103")){
   subDp00 <- c("001.02306.700.000.000",#instStat
                "001.02307.700.000.000",#presCavi
                "001.02308.700.000.000",#tempCavi
@@ -1471,7 +1471,7 @@ if (idxDp00 %in% c("DP0.00103")){
 }
 
 #HMP155 tower top and soil plot####################################################################################################    
-if (idxDp00 %in% c("DP0.00098")){
+if (IdDp00 %in% c("DP0.00098")){
   subDp00 <- c("001.01357.000.040.000",#rh tower top
                "001.01309.000.040.000",#temp tower top
                "001.01358.000.040.000",#tempDew tower top
