@@ -8,7 +8,6 @@
 
 #' @param \code{DirIn} Character: Input directory. [-]
 #' @param \code{Date} Character: Processing date e.g. "20170521". [-]
-#' @param \code{dataList} A list of data frame containing the input dp00 data. [User-defined]
 #' @param \code{Site} Character: Site location. [-]
 #' @param \code{Dom} Character: Domain. [-]
 #' @param \code{Freq} Desired frequency of  the regularized dataset. Of class "numeric" or "integer". [Hz]
@@ -35,7 +34,6 @@
 wrap.time.rglr.dp00.ecse <- function(
   DirIn,
   Date,
-  dataList,
   Site = "CPER",
   Dom = "D10",
   Freq,
@@ -802,21 +800,21 @@ if (IdDp00 %in% c("DP0.00109")){
   )$dataRglr)
   
   
-  if (horVer %in% "010.000") {
+  if (horVer %in% "000.010") {
     dataTmp <- data.frame(dataIn[[subDp00[1]]]$data)}
-  if (horVer %in% "020.000") {
+  if (horVer %in% "000.020") {
     dataTmp <- data.frame(dataIn[[subDp00[2]]]$data)}
-  if (horVer %in% "030.000") {
+  if (horVer %in% "000.030") {
     dataTmp <- data.frame(dataIn[[subDp00[3]]]$data)}
-  if (horVer %in% "040.000") {
+  if (horVer %in% "000.040") {
     dataTmp <- data.frame(dataIn[[subDp00[4]]]$data)}
-  if (horVer %in% "050.000") {
+  if (horVer %in% "000.050") {
     dataTmp <- data.frame(dataIn[[subDp00[5]]]$data)}
-  if (horVer %in% "060.000") {
+  if (horVer %in% "000.060") {
     dataTmp <- data.frame(dataIn[[subDp00[6]]]$data)}
-  if (horVer %in% "070.000") {
+  if (horVer %in% "000.070") {
     dataTmp <- data.frame(dataIn[[subDp00[7]]]$data)}
-  if (horVer %in% "080.000") {
+  if (horVer %in% "000.080") {
     dataTmp <- data.frame(dataIn[[subDp00[8]]]$data)}
     
     #assign eddy4R name style to the output variables
@@ -1120,6 +1118,18 @@ if (IdDp00 %in% c("DP0.00112")){
                "001.02351.700.060.000",#pumpVoltage at ML6
                "001.02351.700.070.000",#pumpVoltage at ML7
                "001.02351.700.080.000")#pumpVoltage at ML8
+  
+  #create full name for subDp00
+  subDp00 <- paste0(numDp00,".",subDp00, sep="")
+  #if dataList is not exist, create an empty data frame
+  for (idxSubDp00 in subDp00){
+    #idxSubDp00 <- subDp00[1]
+    if (!(idxSubDp00 %in% names(dataList))) {
+      dataList[[idxSubDp00]] <- data.frame(matrix(data = NaN, ncol = 4, nrow = length(timeReg)))
+      names(dataList[[idxSubDp00]]) <- c("time", "data", "exst", "timeNew")
+      dataList[[idxSubDp00]]$timeNew <- timeReg 
+    }
+  }#end of for loop in subDp00
   
   dataIn <- list()
   lapply(names(dataList), function(x) dataIn[[x]] <<- eddy4R.base::def.rglr(timeMeas = base::as.POSIXlt(dataList[[x]][,"timeNew"], format="%Y-%m-%dT%H:%M:%OSZ", tz="UTC"),
@@ -1561,7 +1571,7 @@ if (IdDp00 %in% c("DP0.00098")){
   idxOrd <- order(colnames(dataTmp))
   
   #Changing the order of the variables to alphabetical order using the index
-  dataTmp <- dataTmp01[idxOrd]
+  dataTmp <- dataTmp[idxOrd]
   
   #provide in original order
   attr(dataTmp, which = "unit") <- c("%", #rh
