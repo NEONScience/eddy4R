@@ -148,8 +148,8 @@ if (IdDp00 %in% c("DP0.00105")){
                                                                unitFrom = attributes(dataTmp)$unit,
                                                                unitTo = "intl"))
   #combine regularize time and data
-  dataTmp <- cbind(dataTmp, time = strftime(timeReg, format="%Y-%m-%dT%H:%M:%OSZ", tz="UTC"), stringsAsFactors = F)
-  
+  #dataTmp <- cbind(dataTmp, time = strftime(timeReg, format="%Y-%m-%dT%H:%M:%OSZ", tz="UTC"), stringsAsFactors = F)
+  dataTmp <- cbind(dataTmp, time = timeReg, stringsAsFactors = F)
   #report output
   rpt <- dataTmp   
   #remove dataframe
@@ -243,7 +243,8 @@ if (IdDp00 %in% c("DP0.00113")){
                                                                unitFrom = attributes(dataTmp)$unit,
                                                                unitTo = "intl"))
   #combine regularize time and data
-  dataTmp <- cbind(dataTmp, time = strftime(timeReg, format="%Y-%m-%dT%H:%M:%OSZ", tz="UTC"), stringsAsFactors = F)
+  #dataTmp <- cbind(dataTmp, time = strftime(timeReg, format="%Y-%m-%dT%H:%M:%OSZ", tz="UTC"), stringsAsFactors = F)
+  dataTmp <- cbind(dataTmp, time = timeReg, stringsAsFactors = F)
   #filled NA with previous value
   dataTmp[,1:8] <- zoo::na.locf(dataTmp[,1:8], na.rm = FALSE)
   #report output
@@ -314,7 +315,8 @@ if (IdDp00 %in% c("DP0.00113")){
                                                                unitFrom = attributes(dataTmp)$unit,
                                                                unitTo = "intl"))
   #combine regularize time and data
-  dataTmp <- cbind(dataTmp, time = strftime(timeReg, format="%Y-%m-%dT%H:%M:%OSZ", tz="UTC"), stringsAsFactors = F)
+  #dataTmp <- cbind(dataTmp, time = strftime(timeReg, format="%Y-%m-%dT%H:%M:%OSZ", tz="UTC"), stringsAsFactors = F)
+  dataTmp <- cbind(dataTmp, time = timeReg, stringsAsFactors = F)
   #filled NA with previous value
   dataTmp[,1:8] <- zoo::na.locf(dataTmp[,1:8], na.rm = FALSE)
   #report output
@@ -386,7 +388,8 @@ if (IdDp00 %in% c("DP0.00113")){
                                                                unitFrom = attributes(dataTmp)$unit,
                                                                unitTo = "intl"))
   #combine regularize time and data
-  dataTmp <- cbind(dataTmp, time = strftime(timeReg, format="%Y-%m-%dT%H:%M:%OSZ", tz="UTC"), stringsAsFactors = F)
+  #dataTmp <- cbind(dataTmp, time = strftime(timeReg, format="%Y-%m-%dT%H:%M:%OSZ", tz="UTC"), stringsAsFactors = F)
+  dataTmp <- cbind(dataTmp, time = timeReg, stringsAsFactors = F)
   #filled NA with previous value
   dataTmp[,1:8] <- zoo::na.locf(dataTmp[,1:8], na.rm = FALSE)
   #report output
@@ -459,7 +462,8 @@ if (IdDp00 %in% c("DP0.00113")){
                                                                unitFrom = attributes(dataTmp)$unit,
                                                                unitTo = "intl"))
   #combine regularize time and data
-  dataTmp <- cbind(dataTmp, time = strftime(timeReg, format="%Y-%m-%dT%H:%M:%OSZ", tz="UTC"), stringsAsFactors = F)
+  #dataTmp <- cbind(dataTmp, time = strftime(timeReg, format="%Y-%m-%dT%H:%M:%OSZ", tz="UTC"), stringsAsFactors = F)
+  dataTmp <- cbind(dataTmp, time = timeReg, stringsAsFactors = F)
   #filled NA with previous value
   dataTmp[,1:8] <- zoo::na.locf(dataTmp[,1:8], na.rm = FALSE)
   #report output
@@ -543,7 +547,8 @@ if (IdDp00 %in% c("DP0.00114")){
                                                                unitFrom = attributes(dataTmp)$unit,
                                                                unitTo = "intl"))
   #combine regularize time and data
-  dataTmp <- cbind(dataTmp, time = strftime(timeReg, format="%Y-%m-%dT%H:%M:%OSZ", tz="UTC"), stringsAsFactors = F)
+  #dataTmp <- cbind(dataTmp, time = strftime(timeReg, format="%Y-%m-%dT%H:%M:%OSZ", tz="UTC"), stringsAsFactors = F)
+  dataTmp <- cbind(dataTmp, time = timeReg, stringsAsFactors = F)
   #filled NA with previous value
   dataTmp[,1:4] <- zoo::na.locf(dataTmp[,1:4], na.rm = FALSE)
   #report output
@@ -612,8 +617,8 @@ if (IdDp00 %in% c("DP0.00104")){
                                                                unitFrom = attributes(dataTmp)$unit,
                                                                unitTo = "intl"))
   #combine regularize time and data
-  dataTmp <- cbind(dataTmp, time = strftime(timeReg, format="%Y-%m-%dT%H:%M:%OSZ", tz="UTC"), stringsAsFactors = F)
-  
+  #dataTmp <- cbind(dataTmp, time = strftime(timeReg, format="%Y-%m-%dT%H:%M:%OSZ", tz="UTC"), stringsAsFactors = F)
+  dataTmp <- cbind(dataTmp, time = timeReg, stringsAsFactors = F)
   #report output
   rpt <- dataTmp    
   #remove dataframe
@@ -685,7 +690,8 @@ if (IdDp00 %in% c("DP0.00110")){
                                                                  unitFrom = attributes(dataTmp)$unit,
                                                                  unitTo = "intl"))
     #combine regularize time and data
-    dataTmp <- cbind(dataTmp, time = strftime(timeReg, format="%Y-%m-%dT%H:%M:%OSZ", tz="UTC"), stringsAsFactors = F)
+    #dataTmp <- cbind(dataTmp, time = strftime(timeReg, format="%Y-%m-%dT%H:%M:%OSZ", tz="UTC"), stringsAsFactors = F)
+    dataTmp <- cbind(dataTmp, time = timeReg, stringsAsFactors = F)
     
     #report output
     rpt <- dataTmp   
@@ -757,8 +763,8 @@ if (IdDp00 %in% c("DP0.00111")){
                                                                  unitFrom = attributes(dataTmp)$unit,
                                                                  unitTo = "intl"))
     #combine regularize time and data
-    dataTmp <- cbind(dataTmp, time = strftime(timeReg, format="%Y-%m-%dT%H:%M:%OSZ", tz="UTC"), stringsAsFactors = F)
-    
+    #dataTmp <- cbind(dataTmp, time = strftime(timeReg, format="%Y-%m-%dT%H:%M:%OSZ", tz="UTC"), stringsAsFactors = F)
+    dataTmp <- cbind(dataTmp, time = timeReg, stringsAsFactors = F)
     #report output
     rpt <- dataTmp   
     #remove dataframe
@@ -836,7 +842,8 @@ if (IdDp00 %in% c("DP0.00109")){
                                                                  unitFrom = attributes(dataTmp)$unit,
                                                                  unitTo = "intl"))
     #combine regularize time and data
-    dataTmp <- cbind(dataTmp, time = strftime(timeReg, format="%Y-%m-%dT%H:%M:%OSZ", tz="UTC"), stringsAsFactors = F)
+    #dataTmp <- cbind(dataTmp, time = strftime(timeReg, format="%Y-%m-%dT%H:%M:%OSZ", tz="UTC"), stringsAsFactors = F)
+    dataTmp <- cbind(dataTmp, time = timeReg, stringsAsFactors = F)
     
     #report output
     rpt <- dataTmp    
@@ -903,7 +910,8 @@ if (IdDp00 %in% c("DP0.00106")){
                                                                unitFrom = attributes(dataTmp)$unit,
                                                                unitTo = "intl"))
   #combine regularize time and data
-  dataTmp <- cbind(dataTmp, time = strftime(timeReg, format="%Y-%m-%dT%H:%M:%OSZ", tz="UTC"), stringsAsFactors = F)
+  #dataTmp <- cbind(dataTmp, time = strftime(timeReg, format="%Y-%m-%dT%H:%M:%OSZ", tz="UTC"), stringsAsFactors = F)
+  dataTmp <- cbind(dataTmp, time = timeReg, stringsAsFactors = F)
   
   #report output
   rpt <- dataTmp   
@@ -971,7 +979,8 @@ if (IdDp00 %in% c("DP0.00107")){
                                                                unitFrom = attributes(dataTmp)$unit,
                                                                unitTo = "intl"))
   #combine regularize time and data
-  dataTmp <- cbind(dataTmp, time = strftime(timeReg, format="%Y-%m-%dT%H:%M:%OSZ", tz="UTC"), stringsAsFactors = F)
+  #dataTmp <- cbind(dataTmp, time = strftime(timeReg, format="%Y-%m-%dT%H:%M:%OSZ", tz="UTC"), stringsAsFactors = F)
+  dataTmp <- cbind(dataTmp, time = timeReg, stringsAsFactors = F)
   
   #report output
   rpt <- dataTmp 
@@ -1098,7 +1107,8 @@ if (IdDp00 %in% c("DP0.00108")){
                                                                  unitFrom = attributes(dataTmp)$unit,
                                                                  unitTo = "intl"))
     #combine regularize time and data
-    dataTmp <- cbind(dataTmp, time = strftime(timeReg, format="%Y-%m-%dT%H:%M:%OSZ", tz="UTC"), stringsAsFactors = F)
+    #dataTmp <- cbind(dataTmp, time = strftime(timeReg, format="%Y-%m-%dT%H:%M:%OSZ", tz="UTC"), stringsAsFactors = F)
+    dataTmp <- cbind(dataTmp, time = timeReg, stringsAsFactors = F)
     
     #report output
     rpt <- dataTmp     
@@ -1178,7 +1188,9 @@ if (IdDp00 %in% c("DP0.00112")){
                                                                  unitFrom = attributes(dataTmp)$unit,
                                                                  unitTo = "intl"))
     #combine regularize time and data
-    dataTmp <- cbind(dataTmp, time = strftime(timeReg, format="%Y-%m-%dT%H:%M:%OSZ", tz="UTC"), stringsAsFactors = F)
+    #dataTmp <- cbind(dataTmp, time = strftime(timeReg, format="%Y-%m-%dT%H:%M:%OSZ", tz="UTC"), stringsAsFactors = F)
+    dataTmp <- cbind(dataTmp, time = timeReg, stringsAsFactors = F)
+    
     #filled NA with previous value
     dataTmp[,1] <- zoo::na.locf(dataTmp[,1], na.rm = FALSE)
     #report output
@@ -1226,7 +1238,9 @@ if (IdDp00 %in% c("DP0.00115")){
                                                                unitFrom = attributes(dataTmp)$unit,
                                                                unitTo = "intl"))
   #combine regularize time and data
-  dataTmp <- cbind(dataTmp, time = strftime(timeReg, format="%Y-%m-%dT%H:%M:%OSZ", tz="UTC"), stringsAsFactors = F)
+  #dataTmp <- cbind(dataTmp, time = strftime(timeReg, format="%Y-%m-%dT%H:%M:%OSZ", tz="UTC"), stringsAsFactors = F)
+  dataTmp <- cbind(dataTmp, time = timeReg, stringsAsFactors = F)
+  
   #filled NA with previous value
   dataTmp[,1] <- zoo::na.locf(dataTmp[,1], na.rm = FALSE)
   #report output
@@ -1355,7 +1369,8 @@ if (IdDp00 %in% c("DP0.00102")){
                                                                unitFrom = attributes(dataTmp)$unit,
                                                                unitTo = "intl"))
   #combine regularize time and data
-  dataTmp <- cbind(dataTmp, time = strftime(timeReg, format="%Y-%m-%dT%H:%M:%OSZ", tz="UTC"), stringsAsFactors = F)
+  #dataTmp <- cbind(dataTmp, time = strftime(timeReg, format="%Y-%m-%dT%H:%M:%OSZ", tz="UTC"), stringsAsFactors = F)
+  dataTmp <- cbind(dataTmp, time = timeReg, stringsAsFactors = F)
   
   #report output
   rpt <- dataTmp    
@@ -1472,7 +1487,8 @@ if (IdDp00 %in% c("DP0.00103")){
                                                                unitFrom = attributes(dataTmp)$unit,
                                                                unitTo = "intl"))
   #combine regularize time and data
-  dataTmp <- cbind(dataTmp, time = strftime(timeReg, format="%Y-%m-%dT%H:%M:%OSZ", tz="UTC"), stringsAsFactors = F)
+  #dataTmp <- cbind(dataTmp, time = strftime(timeReg, format="%Y-%m-%dT%H:%M:%OSZ", tz="UTC"), stringsAsFactors = F)
+  dataTmp <- cbind(dataTmp, time = timeReg, stringsAsFactors = F)
   
   #report output
   rpt <- dataTmp     
@@ -1588,8 +1604,9 @@ if (IdDp00 %in% c("DP0.00098")){
                                                                  unitTo = "intl"))
   
   #combine regularize time and data
-  dataTmp <- cbind(dataTmp, time = strftime(timeReg, format="%Y-%m-%dT%H:%M:%OSZ", tz="UTC"), stringsAsFactors = F)
-
+  #dataTmp <- cbind(dataTmp, time = strftime(timeReg, format="%Y-%m-%dT%H:%M:%OSZ", tz="UTC"), stringsAsFactors = F)
+  dataTmp <- cbind(dataTmp, time = timeReg, stringsAsFactors = F)
+  
   #report output
   rpt <- dataTmp  
   #remove dataframe
