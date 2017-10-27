@@ -38,16 +38,17 @@ def.repl.na <- function(
 mergFile <- rbind(dataBgnDate, dataProcDate) 
 #replace NA with previous value
 mergFile[,numCol] <- zoo::na.locf(mergFile[,numCol], na.rm = FALSE)
-mergFile$timeNew <- as.POSIXct(strptime(mergFile$time, format="%Y-%m-%dT%H:%M:%OSZ", tz="UTC"))
-
+#mergFile$timeNew <- as.POSIXct(strptime(mergFile$time, format="%Y-%m-%dT%H:%M:%OSZ", tz="UTC"))
+ 
 #add hyphen between date
 Date <- gsub("(\\d{4})(\\d{2})(\\d{2})$","\\1-\\2-\\3",Date)
 
 #devide mergeFile into daily file
-dateBgn <- strptime(paste(Date, " ", "00:00:00", sep=""),format=("%Y-%m-%d %H:%M:%OS"), tz="UTC")
-dateEnd <- strptime(paste(Date, " ", "23:59:59", sep=""),format=("%Y-%m-%d %H:%M:%OS"), tz="UTC")
-subFile <- subset(mergFile, mergFile$timeNew >= dateBgn & mergFile$timeNew <= dateEnd)
-subFile <- subFile[, !(names(subFile) %in% c("timeNew"))]
+dateBgn <- strptime(paste0(Date, " ", "00:00:00", sep=""),format=("%Y-%m-%d %H:%M:%OS"), tz="UTC")
+dateEnd <- strptime(paste0(Date, " ", "23:59:59.595", sep=""),format=("%Y-%m-%d %H:%M:%OS"), tz="UTC")
+
+subFile <- subset(mergFile, mergFile$time >= dateBgn & mergFile$time <= dateEnd)
+#subFile <- subFile[, !(names(subFile) %in% c("timeNew"))]
 
 #report output
 rpt <- subFile
