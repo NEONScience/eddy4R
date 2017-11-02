@@ -9,13 +9,13 @@
 #' @param dfData Input data.frame for data to be removed from based on quality flags
 #' @param dfQf Input data.frame of quality flags
 #' Switch for quality flag determination for the LI7200, diag01 provides ones for passing quality by default the equals "lico". The "qfqm" method changes the ones to zeros to match the NEON QFQM logic.
+#' @param Sens Character string indicating the sensor the high frequency data come from to check for sensor specific flags
 #' 
-#' @return A dataframe (\code{qfIrga}) of sensor specific irga quality flags as described in NEON.DOC.000807.
+#' @return A list (\code{rpt}) containing a dataframe (\code{rpt$dfData}) of the data with bad data replaced by NaN's, a vector of data variables to assess (\code{rpt$listVar}),  a list containing vectors of flag names used for each variable (\code{rpt$listFlag}), a list containing vectors of flagged data points for each variable (\code{rpt$posBad}), a list containing total number of flagged data points for each variable (\code{rpt$numBad}).
 
 #' @references 
 #' License: GNU AFFERO GENERAL PUBLIC LICENSE Version 3, 19 November 2007. \cr
 #' NEON Algorithm Theoretical Basis Document:Eddy Covariance Turbulent Exchange Subsystem Level 0 to Level 0’ data product conversions and calculations (NEON.DOC.000807) \cr
-#' Licor LI7200 reference manual
 
 #' @keywords NEON, qfqm, quality
 
@@ -32,7 +32,10 @@
 ##############################################################################################
 
 
-def.qf.rmv.data <- function(dfData, dfQf, Sens = NULL){
+def.qf.rmv.data <- function(
+  dfData,
+  dfQf,
+  Sens = NULL){
   
   #Create a list to hold all the output
   rpt <- list()
@@ -72,11 +75,11 @@ def.qf.rmv.data <- function(dfData, dfQf, Sens = NULL){
     #Subset the set of flags to be used
     tmp <- dfQf[,grep(pattern = paste(x,qfSens, sep ="|"), x = qfName, ignore.case = TRUE, value = TRUE)]
     #Record the row positions for each variable where at least 1 flag is raised
-    rpt$pos[[x]] <<-  which(rowSums(tmp == 1) > 0)
+    rpt$posBad[[x]] <<-  which(rowSums(tmp == 1) > 0)
     #Remove the data for each variable according to the position vector identified
-    rpt$dfData[[x]][rpt$pos[[x]]] <<- NaN 
+    rpt$dfData[[x]][rpt$posBad[[x]]] <<- NaN 
     #Calculate the total number of bad data to be removed for each variable
-    length(rpt$pos[[x]])
+    length(rpt$posBad[[x]])
   })
   
   #Add list names
