@@ -43,7 +43,7 @@ wrap.qf.rmv.data <- function(inpList, Vrbs = FALSE){
   
   #test <- def.qf.rmv.data(dfData = inpList$data[[var[2]]], dfQf = inpList$qfqm[[var[2]]], Sens = var[2])
   # Determine quality flags to apply to each stream, quantify flags, and remove bad data across all sensors
-  outList <- lapply(sens, function(x){ def.qf.rmv.data(dfData = inpList$data[[x]][], inpList$qfqm[[x]], Sens = x, Vrbs = Vrbs)
+  outList <- lapply(sens, function(x){ eddy4R.qaqc::def.qf.rmv.data(dfData = inpList$data[[x]][], inpList$qfqm[[x]], Sens = x, Vrbs = Vrbs)
   })
   
   #Apply names to the output list
