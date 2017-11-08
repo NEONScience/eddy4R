@@ -40,11 +40,16 @@ wrap.qf.rmv.data <- function(inpList){
   
   #test <- def.qf.rmv.data(dfData = inpList$data[[var[2]]], dfQf = inpList$qfqm[[var[2]]], Sens = var[2])
   # Determine quality flags to apply to each stream, quantify flags, and remove bad data across all sensors
-  outList <- lapply(sens, function(x){ def.qf.rmv.data(dfData = inpList$data[[x]], inpList$qfqm[[x]], Sens = x)
+  outList <- lapply(sens, function(x){ def.qf.rmv.data(dfData = inpList$data[[x]][], inpList$qfqm[[x]], Sens = x)
   })
   
   #Apply names to the output list
   names(outList) <- sens
+  
+  #Applying the bad quality flags to the reported output
+  lapply(names(outList), function(x) {
+    rpt$data[[x]] <<- as.ffdf(outList[[x]]$dfData) 
+  })
   
   #Return the list of information with bad data removed
   return(rpt)
