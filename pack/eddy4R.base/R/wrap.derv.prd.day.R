@@ -33,6 +33,8 @@
 #     original creation
 #   David Durden (2017-05-14)
 #     adapting to include derived flags
+#   David Durden (2017-11-08)
+#     removing high frequency data that have failed high frequency quality flags
 ##############################################################################################
     
     
@@ -65,6 +67,21 @@ wrap.derv.prd.day <- function(
 
   # clean up
   rm(tmp)
+  
+  #Additional QAQC tests and removing high frequency flagged data
+  ###############################################################
+  #Run the test to determine the irgaAgc flag
+  inpList$qfqm$irga$qfIrgaAgc <- ff::as.ff(eddy4R.qaqc::def.qf.irga.agc(qfIrgaAgc = inpList$qfqm$irga$qfIrgaAgc))
+  
+  #Applying the bad quality flags to the reported output data
+  inpList <- wrap.qf.rmv.data(inpList = inpList, Vrbs = FALSE)
+  
+  #Run the test to output Validation flag
+  inpList$qfqm$irga$qfIrgaVali <- ff::as.ff(eddy4R.qaqc::def.qf.irga.vali(data = inpList$data$irgaMfcSamp))#Use this one for MFC set point
+  
+  #  inpList$qfqm$irga$qfIrgaVali <- eddy4R.qaqc::def.qf.irga.vali(data = inpList$data$irgaSndValiNema, Sens = "irgaSndValiNema")
+  
+  ###############################################################     
 
 #irga
 
@@ -130,19 +147,6 @@ wrap.derv.prd.day <- function(
   # sonic temperature [K] from speed of sound [m s-1] (Campbell Scientific, Eq. (9))
   inpList$data$soni$tempSoni <- eddy4R.base::def.temp.soni(veloSoni = inpList$data$soni$veloSoni)
   
-  #Additional QAQC tests
-  ###########################################################
-  #Run the test to output Validation flag
-  inpList$qfqm$irga$qfIrgaVali <- ff::as.ff(eddy4R.qaqc::def.qf.irga.vali(data = inpList$data$irgaMfcSamp))#Use this one for MFC set point
-
-#  inpList$qfqm$irga$qfIrgaVali <- eddy4R.qaqc::def.qf.irga.vali(data = inpList$data$irgaSndValiNema, Sens = "irgaSndValiNema")
-  
-  
-  #Run the test to determine the irgaAgc flag
-  inpList$qfqm$irga$qfIrgaAgc <- ff::as.ff(eddy4R.qaqc::def.qf.irga.agc(qfIrgaAgc = inpList$qfqm$irga$qfIrgaAgc))
-  
-  
-  ###########################################################   
   
   
   # sort object levels alphabetically
