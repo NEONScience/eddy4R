@@ -74,7 +74,7 @@ wrap.derv.prd.day <- function(
   inpList$qfqm$irga$qfIrgaAgc <- ff::as.ff(eddy4R.qaqc::def.qf.irga.agc(qfIrgaAgc = inpList$qfqm$irga$qfIrgaAgc))
   
   #Applying the bad quality flags to the reported output data
-  inpList <- wrap.qf.rmv.data(inpList = inpList, Vrbs = FALSE)
+  inpList <- eddy4R.qaqc::wrap.qf.rmv.data(inpList = inpList, Vrbs = FALSE)
   
   #Run the test to output Validation flag
   inpList$qfqm$irga$qfIrgaVali <- ff::as.ff(eddy4R.qaqc::def.qf.irga.vali(data = inpList$data$irgaMfcSamp))#Use this one for MFC set point
