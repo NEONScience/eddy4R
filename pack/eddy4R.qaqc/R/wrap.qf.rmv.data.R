@@ -6,11 +6,9 @@
 
 #' @description 
 #' Definition function  to remove high frequency data points that have failed quality flags from a data.frame
-#' @param dfData Input data.frame for data to be removed from based on quality flags
-#' @param dfQf Input data.frame of quality flags
-#' Switch for quality flag determination for the LI7200, diag01 provides ones for passing quality by default the equals "lico". The "qfqm" method changes the ones to zeros to match the NEON QFQM logic.
+#' @param inpList List consisting of \code{ff::ffdf} file-backed objects, in the format provided by function \code{eddy4R.base::wrap.neon.read.hdf5.eddy()}. Of types numeric and integer.
 #' 
-#' @return A dataframe (\code{qfIrga}) of sensor specific irga quality flags as described in NEON.DOC.000807.
+#' @return The returned object consistes of \code{inpList}, with the bad high frequency quality flagged data replaced with NaN's.
 
 #' @references 
 #' License: GNU AFFERO GENERAL PUBLIC LICENSE Version 3, 19 November 2007. \cr
@@ -35,17 +33,19 @@
 wrap.qf.rmv.data <- function(inpList){
   
   #Initialize reporting list
-  rpt <- list()
+  rpt <- inpList
   
   #Determine the sensors that have data and quality flags
   sens <- intersect(names(inpList$data), names(inpList$qfqm))
   
   #test <- def.qf.rmv.data(dfData = inpList$data[[var[2]]], dfQf = inpList$qfqm[[var[2]]], Sens = var[2])
   # Determine quality flags to apply to each stream, quantify flags, and remove bad data across all sensors
-  rpt <- lapply(sens, function(x){ def.qf.rmv.data(dfData = inpList$data[[x]], inpList$qfqm[[x]], Sens = x)
+  outList <- lapply(sens, function(x){ def.qf.rmv.data(dfData = inpList$data[[x]], inpList$qfqm[[x]], Sens = x)
   })
   
   #Apply names to the output list
-  names(rpt) <- sens
+  names(outList) <- sens
   
+  #Return the list of information with bad data removed
+  return(rpt)
 }
