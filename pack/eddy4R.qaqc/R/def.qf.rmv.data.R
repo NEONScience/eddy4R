@@ -10,6 +10,9 @@
 #' @param dfQf Input data.frame of quality flags
 #' Switch for quality flag determination for the LI7200, diag01 provides ones for passing quality by default the equals "lico". The "qfqm" method changes the ones to zeros to match the NEON QFQM logic.
 #' @param Sens Character string indicating the sensor the high frequency data come from to check for sensor specific flags
+#' @param \code{Vrbs} Optional. A logical {FALSE/TRUE} value indicating whether to:\cr
+#' \code{Vrbs = FALSE}: (Default) cleaned data set, list of variables assessed, list of quality flags for each variable assessed, and the total number of bad data per variable, or \cr
+#' \code{Vrbs = TRUE}: cleaned data set, list of variables assessed, list of quality flags for each variable assessed, the number of each quality flag tripped for each variable and the total number of bad data per variable
 #' 
 #' @return A list (\code{rpt}) containing a dataframe (\code{rpt$dfData}) of the data with bad data replaced by NaN's, a vector of data variables to assess (\code{rpt$listVar}),  a list containing vectors of flag names used for each variable (\code{rpt$listQf}),  a list containing vectors of the number of quality flags set high for each variable (\code{rpt$numQfBad}), a list containing vectors of flagged data points for each variable (\code{rpt$posBad}), a list containing total number of flagged data points for each variable (\code{rpt$numBadSum}).
 
@@ -35,7 +38,8 @@
 def.qf.rmv.data <- function(
   dfData,
   dfQf,
-  Sens = NULL){
+  Sens = NULL,
+  Vrbs = FALSE){
   
   #Create a list to hold all the output
   rpt <- list()
@@ -79,7 +83,7 @@ def.qf.rmv.data <- function(
     #Subset the set of flags to be used
     tmp <- dfQf[,grep(pattern = paste(x,qfSens, sep ="|"), x = qfName, ignore.case = TRUE, value = TRUE)]
     #Calculate the number of times each quality flag was set high (qf..= 1)
-    rpt$numQfBad[[x]] <<- apply(X = tmp, MARGIN = 2, FUN = function(x) length(which(x == 1)))
+    if(Vrbs == TRUE) {rpt$numQfBad[[x]] <<- apply(X = tmp, MARGIN = 2, FUN = function(x) length(which(x == 1)))}
     #Record the row positions for each variable where at least 1 flag is raised
     rpt$posBad[[x]] <<-  which(rowSums(tmp == 1) > 0)
     #Remove the data for each variable according to the position vector identified
