@@ -49,7 +49,7 @@ wrap.qf.rmv.data <- function(inpList, Vrbs = FALSE){
   #Apply names to the output list
   names(outList) <- sens
   
-  #Applying the bad quality flags to the reported output
+  #Applying the bad quality flags to the reported output data
   lapply(names(outList), function(x) {
     rpt$data[[x]] <<- as.ffdf(outList[[x]]$dfData) 
   })
