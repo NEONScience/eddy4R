@@ -10,7 +10,7 @@
 #' @param dfQf Input data.frame of quality flags
 #' Switch for quality flag determination for the LI7200, diag01 provides ones for passing quality by default the equals "lico". The "qfqm" method changes the ones to zeros to match the NEON QFQM logic.
 #' @param Sens Character string indicating the sensor the high frequency data come from to check for sensor specific flags
-#' @param \code{Vrbs} Optional. A logical {FALSE/TRUE} value indicating whether to:\cr
+#' @param Vrbs Optional. A logical {FALSE/TRUE} value indicating whether to:\cr
 #' \code{Vrbs = FALSE}: (Default) cleaned data set, list of variables assessed, list of quality flags for each variable assessed, and the total number of bad data per variable, or \cr
 #' \code{Vrbs = TRUE}: cleaned data set, list of variables assessed, list of quality flags for each variable assessed, the number of each quality flag tripped for each variable and the total number of bad data per variable
 #' 
