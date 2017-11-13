@@ -50,6 +50,9 @@ def.extr.hdf5 <- function(
     stop("Input file does not exist")
   } 
   
+  #Create a list to report data and attributes
+  rpt <- list()
+  
   #list of everything written within the input file
   listObj <- rhdf5::h5ls(FileIn, datasetinfo = FALSE)
   
@@ -82,20 +85,20 @@ def.extr.hdf5 <- function(
   } 
  
   # Read data from the input file
-  listData <- base::lapply(listDataName, rhdf5::h5read, file = FileIn)
+  rpt$listData <- base::lapply(listDataName, rhdf5::h5read, file = FileIn)
   
   #Apply group names to the attributes list
-  base::names(listData) <- listDataName
+  base::names(rpt$listData) <- listDataName
 
 #Attributes for writing to the output HDF5 file    
   # read attributes from input file
-  listAttr <- base::lapply(listObjName, rhdf5::h5readAttributes, file = FileIn)
+  rpt$listAttr <- base::lapply(listObjName, rhdf5::h5readAttributes, file = FileIn)
   
   #Apply group names to the attributes list
-  base::names(listAttr) <- listObjName
+  base::names(rpt$listAttr) <- listObjName
   
   #Remove all empty lists
-  listAttr <- listAttr[!base::sapply(listAttr, function(x) base::length(x) == 0)]
+  rpt$listAttr <- rpt$listAttr[!base::sapply(rpt$listAttr, function(x) base::length(x) == 0)]
   
 ##Write to the output HDF5 file  
   #Create connection to HDF5 file if FileOut already exists, or create new file
@@ -113,23 +116,26 @@ def.extr.hdf5 <- function(
   #Determine if data should be written to output HDF5
   if(MethExtrData == TRUE){
   #Write the data to the output file
-  lapply(names(listData), function(x){
-   rhdf5::h5write(obj = listData[[x]], file = fid, name = x)
+  lapply(names(rpt$listData), function(x){
+   rhdf5::h5write(obj = rpt$listData[[x]], file = fid, name = x)
   })
   }  
   
   #Determine if attributes should be written to output HDF5
   if(MethExtrAttr == TRUE){
     #Write attributes to the output HDF5 file
-    lapply(names(listAttr), function(x){
+    lapply(names(rpt$listAttr), function(x){
       gid <- rhdf5::H5Oopen(fid, x)
-      base::lapply(names(listAttr[[x]]), function(y){
-        #y <- names(listAttr[[x]])[1]
-        rhdf5::h5writeAttribute(attr = listAttr[[x]][[y]], h5obj = gid, name = y)})
+      base::lapply(names(rpt$listAttr[[x]]), function(y){
+        #y <- names(rpt$listAttr[[x]])[1]
+        rhdf5::h5writeAttribute(attr = rpt$listAttr[[x]][[y]], h5obj = gid, name = y)})
     })
   }
   
   #Close the HDF5 file connection
   H5close()
+  
+  #Return the data and attributes
+  return(rpt)
   
 }
