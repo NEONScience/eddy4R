@@ -30,10 +30,12 @@
 #' @export
 
 # changelog and author contributions / copyrights
-#   Dave Durden (2016-08-08)
+#   Dave Durden (2017-08-08)
 #     original creation
 #   Natchaya Pingintha-Durden
 #     added functionality not to include defined dp01 data
+#   Dave Durden (2017-11-08)
+#     Update function to report data and attributes
 ##############################################################################################################
 #Start of function call to extract data from one file and write to another
 ##############################################################################################################
