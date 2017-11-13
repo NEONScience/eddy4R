@@ -49,6 +49,8 @@
 #     adding parameter MethMeas to distinguish different cases for ecte and ecse
 #   Stefan Metzger (2017-08-01)
 #     superseed parameter MethMeas with the ability to directly provide reference data urls as arguments UrlInpRefe and UrlOutRefe
+#   Stefan Metzger (2017-09-29)
+#     fixing construction of ParaFlow$DirFilePara for batch-processing (when not using gold file)
 
 ##############################################################################################################
 #Start of function call to determine workflow parameters
@@ -90,22 +92,28 @@ def.para.flow <- function(
     
   }
   
-  # Check if the FileDp0p is specified
-  if(is.null(ParaFlow$DateOut)|!is.character(ParaFlow$DateOut)) {stop("DateOut must be defined and a character string.")} else {ParaFlow$DateOut<- base::trimws(base::unlist(base::strsplit(x = ParaFlow$DateOut, split = ",")))}
+  # Check if DateOut is specified
+  if(is.null(ParaFlow$DateOut)|!is.character(ParaFlow$DateOut)) {
+    stop("DateOut must be defined and a character string.")
+  } else {
+    ParaFlow$DateOut <- base::trimws(base::unlist(base::strsplit(x = ParaFlow$DateOut, split = ",")))
+  }
   
+  # Check if the DirFilePara is specified, if not run gold file example, download gold file from dropbox     
+  if(is.null(ParaFlow$DirFilePara) && !is.na(ParaFlow$DirInp)) {
   
-   # Check if the DirFilePara is specified, if not run gold file example, download gold file from dropbox     
-  if(is.null(ParaFlow$DirFilePara) && !is.na(ParaFlow$DirInp)) {  
-  
-  #DirFilePara
-    ParaFlow$DirFilePara <- ifelse(any(grepl(pattern = ParaFlow$DateOut, list.files(ParaFlow$DirInp))),grep(pattern = paste0(".*",ParaFlow$DateOut,".*.h5?"), list.files(ParaFlow$DirInp, full.names = TRUE), value = TRUE), NULL)
+    #DirFilePara
+    ParaFlow$DirFilePara <- ifelse(any(grepl(pattern = ParaFlow$DateOut, list.files(ParaFlow$DirInp))),
+                                   grep(pattern = paste0(".*",ParaFlow$DateOut,".*.h5?"), list.files(ParaFlow$DirInp, full.names = TRUE), value = TRUE),
+                                   NULL)
+
   } else{
   
-      # download data
-      eddy4R.base::def.dld.zip(Inp = list(Url = UrlInpRefe, Dir = tempdir()))
-      
-      # assign corresponding DirFilePara
-      ParaFlow$DirFilePara <- paste0(tempdir(), "/inpRefe/", list.files(paste0(tempdir(), "/inpRefe"))[1])
+    # download data
+    eddy4R.base::def.dld.zip(Inp = list(Url = UrlInpRefe, Dir = tempdir()))
+    
+    # assign corresponding DirFilePara
+    ParaFlow$DirFilePara <- paste0(tempdir(), "/inpRefe/", list.files(paste0(tempdir(), "/inpRefe"))[1])
     
     # output data
     eddy4R.base::def.dld.zip(Inp = list(Url = UrlOutRefe, Dir = tempdir()))
