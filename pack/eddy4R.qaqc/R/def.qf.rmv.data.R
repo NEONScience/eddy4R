@@ -14,7 +14,7 @@
 #' \code{Vrbs = FALSE}: (Default) cleaned data set, list of variables assessed, list of quality flags for each variable assessed, and the total number of bad data per variable, or \cr
 #' \code{Vrbs = TRUE}: cleaned data set, list of variables assessed, list of quality flags for each variable assessed, the number of each quality flag tripped for each variable and the total number of bad data per variable
 #' 
-#' @return A list (\code{rpt}) containing a dataframe (\code{rpt$dfData}) of the data with bad data replaced by NaN's, a vector of data variables to assess (\code{rpt$listVar}),  a list containing vectors of flag names used for each variable (\code{rpt$listQf}),  a list containing vectors of the number of quality flags set high for each variable (\code{rpt$numQfBad}), a list containing vectors of flagged data points for each variable (\code{rpt$posBad}), a list containing total number of flagged data points for each variable (\code{rpt$numBadSum}).
+#' @return A list (\code{rpt}) containing a dataframe (\code{rpt$dfData}) of the data with bad data replaced by NaN's, a vector of data variables to assess (\code{rpt$listVar}),  a list containing vectors of flag names used for each variable (\code{rpt$listQf}),  a list containing vectors of the number of quality flags set high for each variable (\code{rpt$fracQfBad}), a list containing vectors of flagged data points for each variable (\code{rpt$posBad}), a list containing total number of flagged data points for each variable (\code{rpt$numBadSum}).
 
 #' @references 
 #' License: GNU AFFERO GENERAL PUBLIC LICENSE Version 3, 19 November 2007. \cr
@@ -83,7 +83,7 @@ def.qf.rmv.data <- function(
     #Subset the set of flags to be used
     tmp <- dfQf[,grep(pattern = paste(x,qfSens, sep ="|"), x = qfName, ignore.case = TRUE, value = TRUE)]
     #Calculate the number of times each quality flag was set high (qf..= 1)
-    if(Vrbs == TRUE) {rpt$numQfBad[[x]] <<- apply(X = tmp, MARGIN = 2, FUN = function(x) length(which(x == 1)))}
+    if(Vrbs == TRUE) {rpt$fracQfBad[[x]] <<- apply(X = tmp, MARGIN = 2, FUN = function(x) length(which(x == 1))/length(x))}
     #Record the row positions for each variable where at least 1 flag is raised
     rpt$posBad[[x]] <<-  which(rowSums(tmp == 1) > 0)
     #Remove the data for each variable according to the position vector identified
@@ -94,7 +94,7 @@ def.qf.rmv.data <- function(
       # Report NA for output if no quality flags applied to a data stream
       rpt$posBad[[x]] <<- NA
       rpt$numBadSum[[x]] <<- NA
-      rpt$numQfBad[[x]] <<- NA
+      rpt$fracQfBad[[x]] <<- NA
     }
   })
   
