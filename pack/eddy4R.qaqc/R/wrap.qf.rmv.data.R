@@ -1,11 +1,11 @@
 ##############################################################################################
-#' @title Definition function: to remove high frequency data points that have failed quality flags
+#' @title Wrapper function: to remove high frequency data points that have failed quality flags
 
 #' @author 
 #' Dave Durden \email{ddurden@battelleecology.org}
 
 #' @description 
-#' Definition function  to remove high frequency data points that have failed quality flags from a data.frame
+#' Wrapper function  to remove high frequency data points that have failed quality flags from a data.frame
 #' @param inpList List consisting of \code{ff::ffdf} file-backed objects, in the format provided by function \code{eddy4R.base::wrap.neon.read.hdf5.eddy()}. Of types numeric and integer.
 #' @param Vrbs Optional. A logical {FALSE/TRUE} value indicating whether to:\cr
 #' \code{Vrbs = FALSE}: (Default) cleaned data set with the bad high frequency quality flagged data replaced with NaN's as part of the \code{inpList} in the same format., or \cr
