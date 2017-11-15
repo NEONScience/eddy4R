@@ -62,33 +62,33 @@ def.qf.rmv.data <- function(
   }
   
   # Grab only qf that are integers  
-  if(is.ffdf(dfQf)){
-    qfName <-  names(dfQf[vmode(dfQf) == "integer"]) #method for ffdf objects
+  if(ff::is.ffdf(dfQf)){
+    qfName <-  base::names(dfQf[ff::vmode(dfQf) == "integer"]) #method for ffdf objects
   }else{
-    qfName <-  names(Filter(is.integer, dfQf))  #method for normal data.frame objects
+    qfName <-  base::names(base::Filter(base::is.integer, dfQf))  #method for normal data.frame objects
   }
   
   # A list of all the flags to be included in the data removal  
-  rpt$listQf  <- lapply(rpt$listVar, function(x){ subset(x = names(dfQf), subset = grepl(pattern = paste(x,qfSens, sep ="|"),x = qfName, ignore.case = TRUE))
+  rpt$listQf  <- base::lapply(rpt$listVar, function(x){ base::subset(x = names(dfQf), subset = base::grepl(pattern = base::paste(x,qfSens, sep ="|"),x = qfName, ignore.case = TRUE))
   })
   
   #Add list names
-  names(rpt$listQf) <- rpt$listVar
+  base::names(rpt$listQf) <- rpt$listVar
   
   # Replace the flagged data with NaN, and calculate the total number of bad data points
-   lapply(rpt$listVar, function(x){
-    if(length(rpt$listQf[[x]]) > 0 ) {
+  base::lapply(rpt$listVar, function(x){
+    if(base::length(rpt$listQf[[x]]) > 0 ) {
     
     #Subset the set of flags to be used
-    tmp <- dfQf[,grep(pattern = paste(x,qfSens, sep ="|"), x = qfName, ignore.case = TRUE, value = TRUE)]
+    tmp <- dfQf[,base::grep(pattern = base::paste(x,qfSens, sep ="|"), x = qfName, ignore.case = TRUE, value = TRUE)]
     #Calculate the number of times each quality flag was set high (qf..= 1)
-    if(Vrbs == TRUE) {rpt$fracQfBad[[x]] <<- apply(X = tmp, MARGIN = 2, FUN = function(x) length(which(x == 1))/length(x))}
+    if(Vrbs == TRUE) {rpt$fracQfBad[[x]] <<- base::apply(X = tmp, MARGIN = 2, FUN = function(x) base::length(which(x == 1))/base::length(x))}
     #Record the row positions for each variable where at least 1 flag is raised
-    rpt$posBad[[x]] <<-  which(rowSums(tmp == 1) > 0)
+    rpt$posBad[[x]] <<-  base::which(base::rowSums(tmp == 1) > 0)
     #Remove the data for each variable according to the position vector identified
     rpt$dfData[[x]][rpt$posBad[[x]]] <<- NaN 
     #Calculate the total number of bad data to be removed for each variable
-    rpt$numBadSum[[x]] <<- length(rpt$posBad[[x]])
+    rpt$numBadSum[[x]] <<- base::length(rpt$posBad[[x]])
     } else {
       # Report NA for output if no quality flags applied to a data stream
       rpt$posBad[[x]] <<- NA
