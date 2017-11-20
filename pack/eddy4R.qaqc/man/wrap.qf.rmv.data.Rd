@@ -2,7 +2,7 @@
 % Please edit documentation in R/wrap.qf.rmv.data.R
 \name{wrap.qf.rmv.data}
 \alias{wrap.qf.rmv.data}
-\title{Definition function: to remove high frequency data points that have failed quality flags}
+\title{Wrapper function: to remove high frequency data points that have failed quality flags}
 \usage{
 wrap.qf.rmv.data(inpList, Vrbs = FALSE)
 }
@@ -17,7 +17,7 @@ wrap.qf.rmv.data(inpList, Vrbs = FALSE)
 The returned object consistes of \code{inpList}, with the bad high frequency quality flagged data replaced with NaN's. Optionally, (\code{Vrbs = TRUE}) a separate list \code{qfqmAnal} will be added to the output list \code{rpt} with a list of variables assessed, a list of quality flags for each variable assessed, the number of each quality flag tripped for each variable and the total number of bad data per variable.
 }
 \description{
-Definition function  to remove high frequency data points that have failed quality flags from a data.frame
+Wrapper function  to remove high frequency data points that have failed quality flags from a data.frame
 }
 \examples{
 Currently none

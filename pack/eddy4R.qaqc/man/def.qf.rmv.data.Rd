@@ -9,8 +9,7 @@ def.qf.rmv.data(dfData, dfQf, Sens = NULL, Vrbs = FALSE)
 \arguments{
 \item{dfData}{Input data.frame for data to be removed from based on quality flags}
 
-\item{dfQf}{Input data.frame of quality flags
-Switch for quality flag determination for the LI7200, diag01 provides ones for passing quality by default the equals "lico". The "qfqm" method changes the ones to zeros to match the NEON QFQM logic.}
+\item{dfQf}{Input data.frame of quality flags (must be of class integer to be included in the processing)}
 
 \item{Sens}{Character string indicating the sensor the high frequency data come from to check for sensor specific flags}
 
