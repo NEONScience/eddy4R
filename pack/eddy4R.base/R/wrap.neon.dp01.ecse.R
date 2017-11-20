@@ -228,6 +228,8 @@ wrap.neon.dp01.ecse <- function(
             attributes(wrk$data[[idxData]]) <- tmpAttr[[idxData]]
           }
           
+        } else {#if there are no data at all in wrk$data$temp
+          wrk$data[,1:9] <- NaN
         } 
         
         
@@ -630,6 +632,8 @@ wrap.neon.dp01.ecse <- function(
           for (idxData in c("presEnvHut", "rhEnvHut", "rtioMoleWetH2oEnvHut", "tempEnvHut")){
             attributes(wrk$data[[idxData]]) <- tmpAttr[[idxData]]
           }
+        } else {#if there are no data at all in wrk$data$temp
+          wrk$data[,1:15] <- NaN
         } 
         
         
@@ -967,6 +971,8 @@ wrap.neon.dp01.ecse <- function(
           for (idxData in c("presEnvHut", "rhEnvHut", "rtioMoleWetH2oEnvHut", "tempEnvHut")){
             attributes(wrk$data[[idxData]]) <- tmpAttr[[idxData]]
           }
+        } else {#if there are no data at all in wrk$data$temp
+          wrk$data[,1:10] <- NaN
         } 
         
         

@@ -184,7 +184,7 @@ wrap.neon.dp01.qfqm.ecse <- function(
           
           rpt[[1]] <- list()
           for(idxQf in NameQf){
-            rpt[[1]][[idxStat]] <- list()
+            rpt[[1]][[idxQf]] <- list()
             
             
             for (idxVar in names(wrk$data)[which(!(names(wrk$data) %in% c("lvlIrga")))]){
