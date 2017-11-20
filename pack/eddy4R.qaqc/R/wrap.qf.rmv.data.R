@@ -1,11 +1,11 @@
 ##############################################################################################
-#' @title Definition function: to remove high frequency data points that have failed quality flags
+#' @title Wrapper function: to remove high frequency data points that have failed quality flags
 
 #' @author 
 #' Dave Durden \email{ddurden@battelleecology.org}
 
 #' @description 
-#' Definition function  to remove high frequency data points that have failed quality flags from a data.frame
+#' Wrapper function  to remove high frequency data points that have failed quality flags from a data.frame
 #' @param inpList List consisting of \code{ff::ffdf} file-backed objects, in the format provided by function \code{eddy4R.base::wrap.neon.read.hdf5.eddy()}. Of types numeric and integer.
 #' @param Vrbs Optional. A logical {FALSE/TRUE} value indicating whether to:\cr
 #' \code{Vrbs = FALSE}: (Default) cleaned data set with the bad high frequency quality flagged data replaced with NaN's as part of the \code{inpList} in the same format., or \cr
@@ -39,26 +39,26 @@ wrap.qf.rmv.data <- function(inpList, Vrbs = FALSE){
   rpt <- inpList
   
   #Determine the sensors that have data and quality flags
-  sens <- intersect(names(inpList$data), names(inpList$qfqm))
+  sens <- base::intersect(base::names(inpList$data), base::names(inpList$qfqm))
   
   # Determine quality flags to apply to each stream, quantify flags, and remove bad data across all sensors
-  outList <- lapply(sens, function(x){ 
+  outList <- base::lapply(sens, function(x){ 
     eddy4R.qaqc::def.qf.rmv.data(dfData = inpList$data[[x]][], inpList$qfqm[[x]], Sens = x, Vrbs = Vrbs) #Remove high frequency data that is flagged by sensor specific flags or plausibility tests flags
   })
   
   #Apply names to the output list
-  names(outList) <- sens
+  base::names(outList) <- sens
   
   #Applying the bad quality flags to the reported output data
-  lapply(names(outList), function(x) {
+  base::lapply(base::names(outList), function(x) {
     #Outputting the data ffdf's
-    rpt$data[[x]] <<- as.ffdf(outList[[x]]$dfData) 
+    rpt$data[[x]] <<- ff::as.ffdf(outList[[x]]$dfData) 
     rpt$data[[x]] <<- eddy4R.base::def.unit.var(samp = rpt$data[[x]], refe = inpList$data[[x]]) #Copy units
   })
   
   #If verbose is true write out all the information about the quality flags applied to the raw data
   if(Vrbs == TRUE){
-    lapply(names(outList), function(x) {
+    base::lapply(base::names(outList), function(x) {
       #Write out qfqm analytics as a separate list to the output
     rpt$qfqmAnal[[x]] <<- outList[[x]][!names(outList[[x]]) %in% "dfData"] 
   })}
