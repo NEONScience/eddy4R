@@ -1,10 +1,10 @@
-#' @title Definition Function to read threshold table from CI-Parameter-Repo
+#' @title Definition function to read threshold table from CI-Parameter-Repo
 
 #' @author 
 #' Natchaya Pingintha-Durden \email{ndurden@battelleecology.org}
 #' David Durden \email{ddurden@battelleecology.org}
 
-#' @description Defination Function to read ECSE threshold table from CI-Parameter-Repo
+#' @description Definition function to read threshold table from CI-Parameter-Repo
 
 #' @param dataIn data.frame containing the threshold data from the CI-Parameter-Repo
 #' @param site The site for which the parameters are being pulled
