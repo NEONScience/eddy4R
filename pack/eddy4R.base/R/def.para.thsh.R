@@ -30,7 +30,7 @@
 #   Dave Durden (2017-11-23)
 #     modularizing the code to grab all thresholds passed in the data.frame
 ##############################################################################################
-def.para.thrs <- function(
+def.para.thsh <- function(
   
   dataIn, #input threshold data table
   site # site name
