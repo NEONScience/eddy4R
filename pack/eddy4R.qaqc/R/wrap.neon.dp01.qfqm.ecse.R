@@ -47,6 +47,8 @@
 #     original creation
 #   Natchaya Pingintha-Durden (2017-09-19)
 #     added envHut data
+#   Natchaya Pingintha-Durden (2017-12-04)
+#     modified the logic to not output the empty list when there is no data for a whole day
 ##############################################################################################
 wrap.neon.dp01.qfqm.ecse <- function(
   dp01 = c("co2Stor", "h2oStor", "tempAirLvl", "tempAirTop", "isoCo2", "isoH2o")[1],
@@ -183,15 +185,37 @@ wrap.neon.dp01.qfqm.ecse <- function(
         } else {
           
           rpt[[1]] <- list()
+          #idxStat <- NameQf[1]
+          rpt[[1]]$qmAlph <- as.data.frame(matrix(0, nrow = 1, ncol = ncol(wrk$data)))
+          rpt[[1]]$qmBeta <- as.data.frame(matrix(1, nrow = 1, ncol = ncol(wrk$data)))
+          rpt[[1]]$qfFinl <- as.data.frame(matrix(1, nrow = 1, ncol = ncol(wrk$data)))
+          rpt[[1]]$qfSciRevw <- as.data.frame(matrix(0, nrow = 1, ncol = ncol(wrk$data)))
+          #change data type
+          rpt[[1]]$qfFinl[,1:ncol(wrk$data)] <- sapply(rpt[[1]]$qfFinl[,1:ncol(wrk$data)], as.integer)
+          rpt[[1]]$qfSciRevw[,1:ncol(wrk$data)] <- sapply(rpt[[1]]$qfSciRevw[,1:ncol(wrk$data)], as.integer)
+          
           for(idxQf in NameQf){
-            rpt[[1]][[idxQf]] <- list()
+            #assign name to each column
+            names(rpt[[1]][[idxQf]]) <- names(wrk$data)
+            #not report lvlIrga
+            rpt[[1]][[idxQf]] <- rpt[[1]][[idxQf]][which(!(names(rpt[[1]][[idxQf]]) %in% c("lvlIrga")))]
+            }; rm(idxQf)
+          
+          #add both time begin and time end to rpt
+          rpt[[1]]$timeBgn <- list()
+          rpt[[1]]$timeEnd <- list()
+          
+          #output time for dp01
+          for(idxVar in names(wrk$data)[which(!(names(wrk$data) %in% c("lvlIrga")))]){
+            rpt[[1]]$timeBgn[[idxVar]] <- data$time[1]
+            rpt[[1]]$timeEnd[[idxVar]] <- data$time[length(data$time)]
+            #unit
+            attributes(rpt[[1]]$qmAlph[[idxVar]])$unit <- "-"
+            attributes(rpt[[1]]$qmBeta[[idxVar]])$unit <- "-"
+            attributes(rpt[[1]]$qfFinl[[idxVar]])$unit <- "NA"
+            attributes(rpt[[1]]$qfSciRevw[[idxVar]])$unit <- "NA"
             
-            
-            for (idxVar in names(wrk$data)[which(!(names(wrk$data) %in% c("lvlIrga")))]){
-              rpt[[1]][[idxQf]][[idxVar]] <- list()  
-            }; rm(idxVar)
-            
-          }; rm(idxQf)
+          }; rm(idxVar)
           
         }#end of if no measurement data at all in the whole day
       } #end of PrdAgr == 2
@@ -359,18 +383,45 @@ wrap.neon.dp01.qfqm.ecse <- function(
         } else {
           
           rpt[[1]] <- list()
+          #idxStat <- NameQf[1]
+          if(lvl %in% c("co2Arch")){
+          rpt[[1]]$qmAlph <- as.data.frame(matrix(NaN, nrow = 1, ncol = ncol(wrk$data)))
+          rpt[[1]]$qmBeta <- as.data.frame(matrix(NaN, nrow = 1, ncol = ncol(wrk$data)))
+          rpt[[1]]$qfFinl <- as.data.frame(matrix(NaN, nrow = 1, ncol = ncol(wrk$data)))
+          rpt[[1]]$qfSciRevw <- as.data.frame(matrix(0, nrow = 1, ncol = ncol(wrk$data)))
+          #change data type
+          rpt[[1]]$qfSciRevw[,1:ncol(wrk$data)] <- sapply(rpt[[1]]$qfSciRevw[,1:ncol(wrk$data)], as.integer)
+          }else{
+            rpt[[1]]$qmAlph <- as.data.frame(matrix(0, nrow = 1, ncol = ncol(wrk$data)))
+            rpt[[1]]$qmBeta <- as.data.frame(matrix(1, nrow = 1, ncol = ncol(wrk$data)))
+            rpt[[1]]$qfFinl <- as.data.frame(matrix(1, nrow = 1, ncol = ncol(wrk$data)))
+            rpt[[1]]$qfSciRevw <- as.data.frame(matrix(0, nrow = 1, ncol = ncol(wrk$data)))
+            #change data type
+            rpt[[1]]$qfFinl[,1:ncol(wrk$data)] <- sapply(rpt[[1]]$qfFinl[,1:ncol(wrk$data)], as.integer)
+            rpt[[1]]$qfSciRevw[,1:ncol(wrk$data)] <- sapply(rpt[[1]]$qfSciRevw[,1:ncol(wrk$data)], as.integer)
+          }
           
           for(idxQf in NameQf){
-            #idxQf in names(rpt[[1]])
-            rpt[[1]][[idxQf]] <- list()
-            
-            
-            for (idxVar in names(wrk$data)[which(!(names(wrk$data) %in% c("rtioMoleDryCo2Refe")))]){
-              rpt[[1]][[idxQf]][[idxVar]] <- list()  
-            }; rm(idxVar)
-            
-            
+            #assign name to each column
+            names(rpt[[1]][[idxQf]]) <- names(wrk$data)
+            #not report lvlIrga
+            rpt[[1]][[idxQf]] <- rpt[[1]][[idxQf]][which(!(names(rpt[[1]][[idxQf]]) %in% c("rtioMoleDryCo2Refe")))]
           }; rm(idxQf)
+          
+          #add both time begin and time end to rpt
+          rpt[[1]]$timeBgn <- list()
+          rpt[[1]]$timeEnd <- list()
+          
+          #output time for dp01
+          for(idxVar in names(wrk$data)[which(!(names(wrk$data) %in% c("rtioMoleDryCo2Refe")))]){
+            rpt[[1]]$timeBgn[[idxVar]] <- data$time[1]
+            rpt[[1]]$timeEnd[[idxVar]] <- data$time[length(data$time)]
+            #unit
+            attributes(rpt[[1]]$qmAlph[[idxVar]])$unit <- "-"
+            attributes(rpt[[1]]$qmBeta[[idxVar]])$unit <- "-"
+            attributes(rpt[[1]]$qfFinl[[idxVar]])$unit <- "NA"
+            attributes(rpt[[1]]$qfSciRevw[[idxVar]])$unit <- "NA"
+          }; rm(idxVar)
           
         }#end of if no measurement data at all in the whole day
         
@@ -588,16 +639,36 @@ wrap.neon.dp01.qfqm.ecse <- function(
         } else {
           
           rpt[[1]] <- list()
+          #idxStat <- NameQf[1]
+          rpt[[1]]$qmAlph <- as.data.frame(matrix(0, nrow = 1, ncol = ncol(wrk$data)))
+          rpt[[1]]$qmBeta <- as.data.frame(matrix(1, nrow = 1, ncol = ncol(wrk$data)))
+          rpt[[1]]$qfFinl <- as.data.frame(matrix(1, nrow = 1, ncol = ncol(wrk$data)))
+          rpt[[1]]$qfSciRevw <- as.data.frame(matrix(0, nrow = 1, ncol = ncol(wrk$data)))
+          #change data type
+          rpt[[1]]$qfFinl[,1:ncol(wrk$data)] <- sapply(rpt[[1]]$qfFinl[,1:ncol(wrk$data)], as.integer)
+          rpt[[1]]$qfSciRevw[,1:ncol(wrk$data)] <- sapply(rpt[[1]]$qfSciRevw[,1:ncol(wrk$data)], as.integer)
           
           for(idxQf in NameQf){
-            rpt[[1]][[idxQf]] <- list()
-            
-            
-            for (idxVar in names(wrk$data)[which(!(names(wrk$data) %in% c("idGas", "lvlCrdCo2")))]){
-              rpt[[1]][[idxQf]][[idxVar]] <- list()  
-            }; rm(idxVar)
-            
-          }; rm(idxQf) 
+            #assign name to each column
+            names(rpt[[1]][[idxQf]]) <- names(wrk$data)
+            #not report lvlIrga
+            rpt[[1]][[idxQf]] <- rpt[[1]][[idxQf]][which(!(names(rpt[[1]][[idxQf]]) %in% c("idGas", "lvlCrdCo2")))]
+          }; rm(idxQf)
+          
+          #add both time begin and time end to rpt
+          rpt[[1]]$timeBgn <- list()
+          rpt[[1]]$timeEnd <- list()
+          
+          #output time for dp01
+          for(idxVar in names(wrk$data)[which(!(names(wrk$data) %in% c("idGas", "lvlCrdCo2")))]){
+            rpt[[1]]$timeBgn[[idxVar]] <- data$time[1]
+            rpt[[1]]$timeEnd[[idxVar]] <- data$time[length(data$time)]
+            #unit
+            attributes(rpt[[1]]$qmAlph[[idxVar]])$unit <- "-"
+            attributes(rpt[[1]]$qmBeta[[idxVar]])$unit <- "-"
+            attributes(rpt[[1]]$qfFinl[[idxVar]])$unit <- "NA"
+            attributes(rpt[[1]]$qfSciRevw[[idxVar]])$unit <- "NA"
+          }; rm(idxVar)
           
         }#end of if no measurement data at all in the whole day
       } #end of PrdAgr
@@ -748,17 +819,44 @@ wrap.neon.dp01.qfqm.ecse <- function(
           
           rpt[[1]] <- list()
           
+          if(lvl %in% c("co2Arch")){
+            rpt[[1]]$qmAlph <- as.data.frame(matrix(NaN, nrow = 1, ncol = ncol(wrk$data)))
+            rpt[[1]]$qmBeta <- as.data.frame(matrix(NaN, nrow = 1, ncol = ncol(wrk$data)))
+            rpt[[1]]$qfFinl <- as.data.frame(matrix(NaN, nrow = 1, ncol = ncol(wrk$data)))
+            rpt[[1]]$qfSciRevw <- as.data.frame(matrix(0, nrow = 1, ncol = ncol(wrk$data)))
+            #change data type
+            rpt[[1]]$qfSciRevw[,1:ncol(wrk$data)] <- sapply(rpt[[1]]$qfSciRevw[,1:ncol(wrk$data)], as.integer)
+          }else{
+            rpt[[1]]$qmAlph <- as.data.frame(matrix(0, nrow = 1, ncol = ncol(wrk$data)))
+            rpt[[1]]$qmBeta <- as.data.frame(matrix(1, nrow = 1, ncol = ncol(wrk$data)))
+            rpt[[1]]$qfFinl <- as.data.frame(matrix(1, nrow = 1, ncol = ncol(wrk$data)))
+            rpt[[1]]$qfSciRevw <- as.data.frame(matrix(0, nrow = 1, ncol = ncol(wrk$data)))
+            #change data type
+            rpt[[1]]$qfFinl[,1:ncol(wrk$data)] <- sapply(rpt[[1]]$qfFinl[,1:ncol(wrk$data)], as.integer)
+            rpt[[1]]$qfSciRevw[,1:ncol(wrk$data)] <- sapply(rpt[[1]]$qfSciRevw[,1:ncol(wrk$data)], as.integer)
+          }
+          
           for(idxQf in NameQf){
-            #idxQf in names(rpt[[1]])
-            rpt[[1]][[idxQf]] <- list()
-            
-            
-            for (idxVar in names(wrk$data)[which(!(names(wrk$data) %in% c("rtioMoleDryCo2Refe", "dlta13CCo2Refe", "idGas")))]){
-              rpt[[1]][[idxQf]][[idxVar]] <- list()  
-            }; rm(idxVar)
-            
-            
+            #assign name to each column
+            names(rpt[[1]][[idxQf]]) <- names(wrk$data)
+            #not report lvlIrga
+            rpt[[1]][[idxQf]] <- rpt[[1]][[idxQf]][which(!(names(rpt[[1]][[idxQf]]) %in% c("rtioMoleDryCo2Refe", "dlta13CCo2Refe", "idGas")))]
           }; rm(idxQf)
+          
+          #add both time begin and time end to rpt
+          rpt[[1]]$timeBgn <- list()
+          rpt[[1]]$timeEnd <- list()
+          
+          #output time for dp01
+          for(idxVar in names(wrk$data)[which(!(names(wrk$data) %in% c("rtioMoleDryCo2Refe", "dlta13CCo2Refe", "idGas")))]){
+            rpt[[1]]$timeBgn[[idxVar]] <- data$time[1]
+            rpt[[1]]$timeEnd[[idxVar]] <- data$time[length(data$time)]
+            #unit
+            attributes(rpt[[1]]$qmAlph[[idxVar]])$unit <- "-"
+            attributes(rpt[[1]]$qmBeta[[idxVar]])$unit <- "-"
+            attributes(rpt[[1]]$qfFinl[[idxVar]])$unit <- "NA"
+            attributes(rpt[[1]]$qfSciRevw[[idxVar]])$unit <- "NA"
+          }; rm(idxVar)
           
         }#end of if no measurement data at all in the whole day
         
@@ -911,16 +1009,36 @@ wrap.neon.dp01.qfqm.ecse <- function(
         } else {
           
           rpt[[1]] <- list()
+          #idxStat <- NameQf[1]
+          rpt[[1]]$qmAlph <- as.data.frame(matrix(0, nrow = 1, ncol = ncol(wrk$data)))
+          rpt[[1]]$qmBeta <- as.data.frame(matrix(1, nrow = 1, ncol = ncol(wrk$data)))
+          rpt[[1]]$qfFinl <- as.data.frame(matrix(1, nrow = 1, ncol = ncol(wrk$data)))
+          rpt[[1]]$qfSciRevw <- as.data.frame(matrix(0, nrow = 1, ncol = ncol(wrk$data)))
+          #change data type
+          rpt[[1]]$qfFinl[,1:ncol(wrk$data)] <- sapply(rpt[[1]]$qfFinl[,1:ncol(wrk$data)], as.integer)
+          rpt[[1]]$qfSciRevw[,1:ncol(wrk$data)] <- sapply(rpt[[1]]$qfSciRevw[,1:ncol(wrk$data)], as.integer)
           
           for(idxQf in NameQf){
-            rpt[[1]][[idxQf]] <- list()
-            
-            
-            for (idxVar in names(wrk$data)[which(!(names(wrk$data) %in% c("lvlCrdH2o")))]){
-              rpt[[1]][[idxQf]][[idxVar]] <- list()  
-            }; rm(idxVar)
-            
-          }; rm(idxQf) 
+            #assign name to each column
+            names(rpt[[1]][[idxQf]]) <- names(wrk$data)
+            #not report lvlIrga
+            rpt[[1]][[idxQf]] <- rpt[[1]][[idxQf]][which(!(names(rpt[[1]][[idxQf]]) %in% c("lvlCrdH2o")))]
+          }; rm(idxQf)
+          
+          #add both time begin and time end to rpt
+          rpt[[1]]$timeBgn <- list()
+          rpt[[1]]$timeEnd <- list()
+          
+          #output time for dp01
+          for(idxVar in names(wrk$data)[which(!(names(wrk$data) %in% c("lvlCrdH2o")))]){
+            rpt[[1]]$timeBgn[[idxVar]] <- data$time[1]
+            rpt[[1]]$timeEnd[[idxVar]] <- data$time[length(data$time)]
+            #unit
+            attributes(rpt[[1]]$qmAlph[[idxVar]])$unit <- "-"
+            attributes(rpt[[1]]$qmBeta[[idxVar]])$unit <- "-"
+            attributes(rpt[[1]]$qfFinl[[idxVar]])$unit <- "NA"
+            attributes(rpt[[1]]$qfSciRevw[[idxVar]])$unit <- "NA"
+          }; rm(idxVar)
           
         }#end of if no measurement data at all in the whole day
       } #end of PrdAgr == 9
@@ -1088,18 +1206,36 @@ wrap.neon.dp01.qfqm.ecse <- function(
         } else {
           
           rpt[[1]] <- list()
+          #idxStat <- NameQf[1]
+          rpt[[1]]$qmAlph <- as.data.frame(matrix(0, nrow = 1, ncol = ncol(wrk$data)))
+          rpt[[1]]$qmBeta <- as.data.frame(matrix(1, nrow = 1, ncol = ncol(wrk$data)))
+          rpt[[1]]$qfFinl <- as.data.frame(matrix(1, nrow = 1, ncol = ncol(wrk$data)))
+          rpt[[1]]$qfSciRevw <- as.data.frame(matrix(0, nrow = 1, ncol = ncol(wrk$data)))
+          #change data type
+          rpt[[1]]$qfFinl[,1:ncol(wrk$data)] <- sapply(rpt[[1]]$qfFinl[,1:ncol(wrk$data)], as.integer)
+          rpt[[1]]$qfSciRevw[,1:ncol(wrk$data)] <- sapply(rpt[[1]]$qfSciRevw[,1:ncol(wrk$data)], as.integer)
           
           for(idxQf in NameQf){
-            #idxQf in names(rpt[[1]])
-            rpt[[1]][[idxQf]] <- list()
-            
-            
-            for (idxVar in names(wrk$data)[which(!(names(wrk$data) %in% c("dlta18OH2oRefe", "dlta2HH2oRefe", "injNum")))]){
-              rpt[[1]][[idxQf]][[idxVar]] <- list()  
-            }; rm(idxVar)
-            
-            
+            #assign name to each column
+            names(rpt[[1]][[idxQf]]) <- names(wrk$data)
+            #not report lvlIrga
+            rpt[[1]][[idxQf]] <- rpt[[1]][[idxQf]][which(!(names(rpt[[1]][[idxQf]]) %in% c("dlta18OH2oRefe", "dlta2HH2oRefe", "injNum")))]
           }; rm(idxQf)
+          
+          #add both time begin and time end to rpt
+          rpt[[1]]$timeBgn <- list()
+          rpt[[1]]$timeEnd <- list()
+          
+          #output time for dp01
+          for(idxVar in names(wrk$data)[which(!(names(wrk$data) %in% c("dlta18OH2oRefe", "dlta2HH2oRefe", "injNum")))]){
+            rpt[[1]]$timeBgn[[idxVar]] <- data$time[1]
+            rpt[[1]]$timeEnd[[idxVar]] <- data$time[length(data$time)]
+            #unit
+            attributes(rpt[[1]]$qmAlph[[idxVar]])$unit <- "-"
+            attributes(rpt[[1]]$qmBeta[[idxVar]])$unit <- "-"
+            attributes(rpt[[1]]$qfFinl[[idxVar]])$unit <- "NA"
+            attributes(rpt[[1]]$qfSciRevw[[idxVar]])$unit <- "NA"
+          }; rm(idxVar)
         }#end of if no measurement data at all in the whole day
       }#end of PrdAgr == 3
       
