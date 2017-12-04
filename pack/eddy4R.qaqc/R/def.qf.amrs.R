@@ -25,6 +25,7 @@
 #' 
 #' pos <- runif(15,1, 72000) # inserting error positions for other flags
 #' diag32[pos] <- as.integer(c(262279,524423, 1048710)) # filling with numbers that would indicate flags for qfAmrsVal, qfAmrsVelo, and qfAmrsRng
+#' eddy4R.qaqc::def.qf.amrs(diag32 = diag32)
 
 #' @seealso Currently none
 
@@ -45,6 +46,9 @@ def.qf.amrs <- function(diag32, MethQf = c("qfqm","xsen")[1]){
   if(!(base::is.integer(diag32)|is.numeric(diag32))) {
   stop("Input 'diag32' is required as an integer or numeric")
   } 
+  
+  #Grab position of NA's
+  posNa <- which(is.na(diag32))
  
 # Turn the diag32 into a matrix of 32 bits separated into columns for the timeseries of diagnostic values  
 qfAmrs <- t(base::sapply(diag32,function(x){ base::as.integer(base::intToBits(x))}))
