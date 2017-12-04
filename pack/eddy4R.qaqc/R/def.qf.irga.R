@@ -29,6 +29,8 @@
 # changelog and author contributions / copyrights
 #   Dave Durden (2017-01-15)
 #     original creation
+#   Dave Durden (2017-12-02)
+#     fixing issues with missing diag data and order bits are analyzed for qfIrgaAgc
 ##############################################################################################
 
 
