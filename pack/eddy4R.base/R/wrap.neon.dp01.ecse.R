@@ -182,12 +182,22 @@ wrap.neon.dp01.ecse <- function(
         } else {
           
           rpt[[1]] <- list()
+          
           for(idxStat in NameStat){
-            rpt[[1]][[idxStat]] <- list()
+            #idxStat <- NameStat[1]
+            rpt[[1]][[idxStat]] <- as.data.frame(matrix(NaN, nrow = 1, ncol = ncol(wrk$data)))
+            #assign name to each column
+            names(rpt[[1]][[idxStat]]) <- names(wrk$data)
+            #not report lvlIrga
+            rpt[[1]][[idxStat]] <- rpt[[1]][[idxStat]][which(!(names(rpt[[1]][[idxStat]]) %in% c("lvlIrga")))]
+            #add both time begin and time end to rpt
+            rpt[[1]]$timeBgn <- list()
+            rpt[[1]]$timeEnd <- list()
             
-            
-            for (idxVar in names(wrk$data)[which(!(names(wrk$data) %in% c("lvlIrga")))]){
-              rpt[[1]][[idxStat]][[idxVar]] <- list()  
+            #output time for dp01
+            for(idxVar in names(wrk$data)[which(!(names(wrk$data) %in% c("lvlIrga")))]){
+              rpt[[1]]$timeBgn[[idxVar]] <- data$time[1]
+              rpt[[1]]$timeEnd[[idxVar]] <- data$time[length(data$time)]
             }; rm(idxVar)
             
           }; rm(idxStat)
@@ -362,15 +372,20 @@ wrap.neon.dp01.ecse <- function(
           rpt[[1]] <- list()
           
           for(idxStat in NameStat){
-            rpt[[1]][[idxStat]] <- list()
+            #idxStat <- NameStat[1]
+            rpt[[1]][[idxStat]] <- as.data.frame(matrix(NaN, nrow = 1, ncol = ncol(wrk$data)))
+            #assign name to each column
+            names(rpt[[1]][[idxStat]]) <- names(wrk$data)
             
-            for (idxVar in names(wrk$data)){
-              rpt[[1]][[idxStat]][[idxVar]] <- list() 
+            #add both time begin and time end to rpt
+            rpt[[1]]$timeBgn <- list()
+            rpt[[1]]$timeEnd <- list()
+            
+            #output time for dp01
+            for(idxVar in names(wrk$data)){
+              rpt[[1]]$timeBgn[[idxVar]] <- data$time[1]
+              rpt[[1]]$timeEnd[[idxVar]] <- data$time[length(data$time)]
             }; rm(idxVar)
-            
-            if(dp01 == "co2Stor"){
-              rpt[[1]][[idxStat]]$rtioMoleDryCo2Refe <- list()
-            }
             
           }; rm(idxStat)
           
@@ -590,12 +605,22 @@ wrap.neon.dp01.ecse <- function(
           rpt[[1]] <- list()
           
           for(idxStat in NameStat){
-            rpt[[1]][[idxStat]] <- list()
+            #idxStat <- NameStat[1]
+            rpt[[1]][[idxStat]] <- as.data.frame(matrix(NaN, nrow = 1, ncol = ncol(wrk$data)))
+            #assign name to each column
+            names(rpt[[1]][[idxStat]]) <- names(wrk$data)
+            #not report lvlCrdCo2
+            rpt[[1]][[idxStat]] <- rpt[[1]][[idxStat]][which(!(names(rpt[[1]][[idxStat]]) %in% c("lvlCrdCo2")))]
+            #add both time begin and time end to rpt
+            rpt[[1]]$timeBgn <- list()
+            rpt[[1]]$timeEnd <- list()
             
+            #output time for dp01
+            for(idxVar in names(wrk$data)[which(!(names(wrk$data) %in% c("lvlCrdCo2")))]){
+              rpt[[1]]$timeBgn[[idxVar]] <- data$time[1]
+              rpt[[1]]$timeEnd[[idxVar]] <- data$time[length(data$time)]
+            }; rm(idxVar)
             
-            for (idxVar in names(wrk$data)[which(!(names(wrk$data) %in% c("lvlCrdCo2")))]){
-              rpt[[1]][[idxStat]][[idxVar]] <- list()  
-            }; rm(idxVar)          
           }; rm(idxStat)
           
         }#end of if no measurement data at all in the whole day
@@ -761,12 +786,20 @@ wrap.neon.dp01.ecse <- function(
           rpt[[1]] <- list()
           
           for(idxStat in NameStat){
-            rpt[[1]][[idxStat]] <- list()
+            #idxStat <- NameStat[1]
+            rpt[[1]][[idxStat]] <- as.data.frame(matrix(NaN, nrow = 1, ncol = ncol(wrk$data)))
+            #assign name to each column
+            names(rpt[[1]][[idxStat]]) <- names(wrk$data)
             
-            for (idxVar in names(wrk$data)){
-              rpt[[1]][[idxStat]][[idxVar]] <- list() 
+            #add both time begin and time end to rpt
+            rpt[[1]]$timeBgn <- list()
+            rpt[[1]]$timeEnd <- list()
+            
+            #output time for dp01
+            for(idxVar in names(wrk$data)){
+              rpt[[1]]$timeBgn[[idxVar]] <- data$time[1]
+              rpt[[1]]$timeEnd[[idxVar]] <- data$time[length(data$time)]
             }; rm(idxVar)
-            
             
           }; rm(idxStat)
           
@@ -925,13 +958,21 @@ wrap.neon.dp01.ecse <- function(
           }; rm(idxAgr)
         } else {
           
-          rpt[[1]] <- list()
           for(idxStat in NameStat){
-            rpt[[1]][[idxStat]] <- list()
+            #idxStat <- NameStat[1]
+            rpt[[1]][[idxStat]] <- as.data.frame(matrix(NaN, nrow = 1, ncol = ncol(wrk$data)))
+            #assign name to each column
+            names(rpt[[1]][[idxStat]]) <- names(wrk$data)
+            #not report lvlCrdH2o
+            rpt[[1]][[idxStat]] <- rpt[[1]][[idxStat]][which(!(names(rpt[[1]][[idxStat]]) %in% c("lvlCrdH2o")))]
+            #add both time begin and time end to rpt
+            rpt[[1]]$timeBgn <- list()
+            rpt[[1]]$timeEnd <- list()
             
-            
-            for (idxVar in names(wrk$data)[which(!(names(wrk$data) %in% c("lvlCrdH2o")))]){
-              rpt[[1]][[idxStat]][[idxVar]] <- list()  
+            #output time for dp01
+            for(idxVar in names(wrk$data)[which(!(names(wrk$data) %in% c("lvlCrdH2o")))]){
+              rpt[[1]]$timeBgn[[idxVar]] <- data$time[1]
+              rpt[[1]]$timeEnd[[idxVar]] <- data$time[length(data$time)]
             }; rm(idxVar)
             
           }; rm(idxStat)
@@ -1106,15 +1147,24 @@ wrap.neon.dp01.ecse <- function(
           
           rpt[[1]] <- list()
           
-          for(idxStat in names(rpt[[dp01]][[1]][[1]])){
-            rpt[[1]][[idxStat]] <- list()
+          for(idxStat in NameStat){
+            #idxStat <- NameStat[1]
+            rpt[[1]][[idxStat]] <- as.data.frame(matrix(NaN, nrow = 1, ncol = ncol(wrk$data)))
+            #assign name to each column
+            names(rpt[[1]][[idxStat]]) <- names(wrk$data)
+            #not report injNum
+            rpt[[1]][[idxStat]] <- rpt[[1]][[idxStat]][which(!(names(rpt[[1]][[idxStat]]) %in% c("injNum")))]
+            #add both time begin and time end to rpt
+            rpt[[1]]$timeBgn <- list()
+            rpt[[1]]$timeEnd <- list()
             
-            for (idxVar in names(rpt[[dp01]][[1]][[1]]$mean)){
-              rpt[[1]][[idxStat]][[idxVar]] <- list() 
+            #output time for dp01
+            for(idxVar in names(wrk$data)[which(!(names(wrk$data) %in% c("injNum")))]){
+              rpt[[1]]$timeBgn[[idxVar]] <- data$time[1]
+              rpt[[1]]$timeEnd[[idxVar]] <- data$time[length(data$time)]
             }; rm(idxVar)
             
-            
-          }; rm(idxStat)  
+          }; rm(idxStat) 
         }#end of if no measurement data at all in the whole day
       }#end of PrdAgr == 3
       
