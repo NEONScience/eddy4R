@@ -57,7 +57,7 @@ bitsToInt<-function(x) {
 }
 
 #Calculate the IRGA AGC value based on the first 4 bits (0-3) of the binary
-qfIrgaAgc <- base::sapply(seq_len(nrow(qfIrga)), function(x) ((bitsToInt(qfIrga[x,1:4])*6.25)+ 6.25)/100)
+qfIrgaAgc <- base::sapply(seq_len(nrow(qfIrga)), function(x) ((bitsToInt(qfIrga[x,4:1])*6.25)+ 6.25)/100)
 
 #Create outpu dataframe
 qfIrga <- base::data.frame(qfIrgaAgc, qfIrga[,5:13])
