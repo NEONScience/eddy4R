@@ -42,7 +42,7 @@
 
 def.extr.hdf5 <- function(
   FileIn,
-  FileOut,
+  FileOut = NULL,
   MethExtrData = TRUE,
   MethExtrAttr = TRUE,
   dp01 = NULL
@@ -102,7 +102,8 @@ def.extr.hdf5 <- function(
   #Remove all empty lists
   rpt$listAttr <- rpt$listAttr[!base::sapply(rpt$listAttr, function(x) base::length(x) == 0)]
   
-##Write to the output HDF5 file  
+##Write to the output HDF5 file, if FileOut provided
+  if(!is.null(FileOut)){
   #Create connection to HDF5 file if FileOut already exists, or create new file
   if(file.exists(FileOut) == TRUE){
     fid <- rhdf5::H5Fopen(name = FileOut) #Open connection
@@ -135,7 +136,8 @@ def.extr.hdf5 <- function(
   }
   
   #Close the HDF5 file connection
-  H5close()
+  rhdf5::H5close()
+  }
   
   #Return the data and attributes
   return(rpt)
