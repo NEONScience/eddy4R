@@ -74,9 +74,15 @@ dataOut <- do.call("rbind", dataOutList)
 idxOrd <- order(row.names(dataOut))
 #Changing the order of the variables to alphabetical order using the index
 dataOut <- dataOut[idxOrd,]
+
 #replace first row names charecter to lowercase
-row.names(dataOut) <- paste(tolower(substr(row.names(dataOut), 1, 1)), substr(row.names(dataOut), 2, nchar(row.names(dataOut))), sep="")
-dataOut <- cbind(varName=row.names(dataOut), dataOut)
+varName <- paste(tolower(substr(row.names(dataOut), 1, 1)), substr(row.names(dataOut), 2, nchar(row.names(dataOut))), sep="")
+
+#Convert data types
+dataOut <- as.data.frame(sapply(dataOut, type.convert), stringsAsFactors = FALSE)
+
+#Column bind the variable names
+dataOut <- cbind(varName=varName, dataOut)
 #replace first idxDp charecter to lowercase
 idxDp00 <- paste(tolower(substr(idxDp, 1, 1)), substr(idxDp, 2, nchar(idxDp)), sep="")
 
@@ -88,6 +94,7 @@ if (dir.exists(DirOut00) == FALSE) dir.create(DirOut00, recursive = TRUE)
 #output file
 write.csv(dataOut,paste0(DirOut00, "/", idxDp00, ".csv"),row.names=F,sep=",")
 }
+
 #Prepare reporting list
 rpt[[idxDp00]] <- dataOut
 
