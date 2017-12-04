@@ -75,7 +75,7 @@ qfSoni <- base::data.frame( qfSoniUnrs,qfSoniData,qfSoniTrig,qfSoniComm, qfSoniC
 base::names(qfSoni) <- c("qfSoniUnrs", "qfSoniData", "qfSoniTrig", "qfSoniComm", "qfSoniCode", "qfSoniSgnlLow", "qfSoniSgnlHigh", "qfSoniSgnlPoor", "qfSoniTemp")
 
 #Replace positions without diag data with -1
-qfSonia[posNa,] <- -1L
+qfSoni[posNa,] <- -1L
 
 #return dataframe
 return(qfSoni)
