@@ -34,6 +34,8 @@
 #     original creation
 #   Dave Durden (2017-05-12)
 #     fixing bug in order of qfSoni flags
+#   Dave Durden (2017-05-12)
+#     fixing bug in dealing with missing diag values
 ##############################################################################################
 
 
@@ -47,7 +49,10 @@ def.qf.soni <- function(diag16){
   stop("Input 'diag16' is required as an integer or numeric")
   } 
  
-  diag16[base::is.na(diag16)] <- -99999 # Convert NAs or NaNs to -99999
+  #Grab position of NA's
+  posNa <- which(is.na(diag16))
+  
+  #diag16[base::is.na(diag16)] <- -99999 # Convert NAs or NaNs to -99999
   
 # Turn the diag16 into a matrix of 32 bits separated into columns for the timeseries of diagnostic values  
 qfSoni <- t(base::sapply(diag16,function(x){ base::as.integer(base::intToBits(x))}))
@@ -69,6 +74,8 @@ qfSoni <- base::data.frame( qfSoniUnrs,qfSoniData,qfSoniTrig,qfSoniComm, qfSoniC
 #Provide column names to the output
 base::names(qfSoni) <- c("qfSoniUnrs", "qfSoniData", "qfSoniTrig", "qfSoniComm", "qfSoniCode", "qfSoniSgnlLow", "qfSoniSgnlHigh", "qfSoniSgnlPoor", "qfSoniTemp")
 
+#Replace positions without diag data with -1
+qfSonia[posNa,] <- -1L
 
 #return dataframe
 return(qfSoni)
