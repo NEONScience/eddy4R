@@ -36,6 +36,8 @@
 #     added functionality not to include defined dp01 data
 #   Dave Durden (2017-11-08)
 #     Update function to report data and attributes
+#   Dave Durden (2017-11-08)
+#     Update function to prevent output to another file if FileOut = NULL
 ##############################################################################################################
 #Start of function call to extract data from one file and write to another
 ##############################################################################################################
