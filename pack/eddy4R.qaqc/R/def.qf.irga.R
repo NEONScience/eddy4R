@@ -74,6 +74,7 @@ base::lapply(base::names(qfIrga[!names(qfIrga) == "qfIrgaAgc"]), function(x) {
   qfIrga[,x] <<- base::as.integer(qfIrga[,x])
 })}
 
+#Replace positions without diag data with -1
 qfIrga[posNa,] <- -1L
 
 qfIrga$qfIrgaAgc[posNa] <- NaN
