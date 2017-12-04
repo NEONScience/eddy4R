@@ -34,6 +34,8 @@
 # changelog and author contributions / copyrights
 #   Dave Durden (2017-02-08)
 #     original creation
+#   Dave Durden (2017-12-02)
+#     fixing with how function deals with NA's in diag data
 ##############################################################################################
 
 
@@ -76,7 +78,10 @@ base::lapply(base::names(qfAmrs[,names(qfAmrs) %in% c("qfAmrsVal", "qfAmrsFilt")
   qfAmrs[pos,x] <<- base::as.integer(0)
   qfAmrs[-pos,x] <<- base::as.integer(1)
   qfAmrs[,x] <<- base::as.integer(qfAmrs[,x])
-  })}
+})}
+
+#Replace positions without diag data with -1
+qfAmrs[posNa,] <- -1L
 
 #return dataframe
 return(qfAmrs)
