@@ -50,6 +50,8 @@
 #     added unit attributes
 #   Natchaya Pingintha-Durden (2017-09-19)
 #     added envHut data
+#   Natchaya Pingintha-Durden (2017-12-04)
+#     modified the logic to not output the empty list when there is no data for a whole day
 ##############################################################################################
 wrap.neon.dp01.ecse <- function(
   dp01 = c("co2Stor", "h2oStor", "tempAirLvl", "tempAirTop", "isoCo2", "isoH2o")[1],
@@ -200,6 +202,8 @@ wrap.neon.dp01.ecse <- function(
           for(idxVar in names(wrk$data)[which(!(names(wrk$data) %in% c("lvlIrga")))]){
             rpt[[1]]$timeBgn[[idxVar]] <- data$time[1]
             rpt[[1]]$timeEnd[[idxVar]] <- data$time[length(data$time)]
+            #unit
+            attributes(rpt[[1]]$mean[[idxVar]])$unit <- attributes(wrk$data[[idxVar]])$unit
             
           }; rm(idxVar)
           
@@ -387,6 +391,8 @@ wrap.neon.dp01.ecse <- function(
           for(idxVar in names(wrk$data)){
             rpt[[1]]$timeBgn[[idxVar]] <- data$time[1]
             rpt[[1]]$timeEnd[[idxVar]] <- data$time[length(data$time)]
+            #unit
+            attributes(rpt[[1]]$mean[[idxVar]])$unit <- attributes(wrk$data[[idxVar]])$unit
             
           }; rm(idxVar) 
           
@@ -622,6 +628,8 @@ wrap.neon.dp01.ecse <- function(
           for(idxVar in names(wrk$data)[which(!(names(wrk$data) %in% c("lvlCrdCo2")))]){
             rpt[[1]]$timeBgn[[idxVar]] <- data$time[1]
             rpt[[1]]$timeEnd[[idxVar]] <- data$time[length(data$time)]
+            #unit
+            attributes(rpt[[1]]$mean[[idxVar]])$unit <- attributes(wrk$data[[idxVar]])$unit
             
           }; rm(idxVar)
           
@@ -802,6 +810,8 @@ wrap.neon.dp01.ecse <- function(
           for(idxVar in names(wrk$data)){
             rpt[[1]]$timeBgn[[idxVar]] <- data$time[1]
             rpt[[1]]$timeEnd[[idxVar]] <- data$time[length(data$time)]
+            #unit
+            attributes(rpt[[1]]$mean[[idxVar]])$unit <- attributes(wrk$data[[idxVar]])$unit
             
           }; rm(idxVar)
           
@@ -977,6 +987,8 @@ wrap.neon.dp01.ecse <- function(
           for(idxVar in names(wrk$data)[which(!(names(wrk$data) %in% c("lvlCrdH2o")))]){
             rpt[[1]]$timeBgn[[idxVar]] <- data$time[1]
             rpt[[1]]$timeEnd[[idxVar]] <- data$time[length(data$time)]
+            #unit
+            attributes(rpt[[1]]$mean[[idxVar]])$unit <- attributes(wrk$data[[idxVar]])$unit
             
           }; rm(idxVar)
           
@@ -1167,6 +1179,8 @@ wrap.neon.dp01.ecse <- function(
           for(idxVar in names(wrk$data)[which(!(names(wrk$data) %in% c("injNum")))]){
             rpt[[1]]$timeBgn[[idxVar]] <- data$time[1]
             rpt[[1]]$timeEnd[[idxVar]] <- data$time[length(data$time)]
+            #unit
+            attributes(rpt[[1]]$mean[[idxVar]])$unit <- attributes(wrk$data[[idxVar]])$unit
             
           };  rm(idxVar)
         }#end of if no measurement data at all in the whole day
