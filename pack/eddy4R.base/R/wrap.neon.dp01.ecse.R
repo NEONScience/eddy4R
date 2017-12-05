@@ -970,6 +970,7 @@ wrap.neon.dp01.ecse <- function(
           }; rm(idxAgr)
         } else {
           
+          rpt[[1]] <- list()
           for(idxStat in NameStat){
             #idxStat <- NameStat[1]
             rpt[[1]][[idxStat]] <- as.data.frame(matrix(NaN, nrow = 1, ncol = ncol(wrk$data)))
