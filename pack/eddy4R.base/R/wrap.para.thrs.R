@@ -62,7 +62,7 @@ dataList <- lapply(fileList01, read.table, header = T,
 #using the data names provided with the data to name the lists
 names(dataList) <- varName
 dataOutList <- list()
-lapply(names(dataList), function(x) dataOutList[[x]] <<- def.para.thsh(dataIn=dataList[[x]], site="Neon"))
+lapply(names(dataList), function(x) dataOutList[[x]] <<- eddy4R.base::def.para.thsh(dataIn=dataList[[x]], site="Neon"))
 #assign name of data list
 names(dataOutList) <- varName
 
