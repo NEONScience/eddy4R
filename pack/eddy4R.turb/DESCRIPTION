@@ -3,7 +3,7 @@ Title: Eddy-covariance calculation for R: Turbulent flux
 Version: 0.0.15
 Authors@R: c( person("Stefan", "Metzger", email = "eddy4R.info@gmail.com", role = c("aut", "cre")),
               person("Ke", "Xu", email = "xuke2012abroad@gmail.com", role = c("aut")))
-Description: Eddy-covariance calculation for R: Turbulent flux. Currently removed from Imports because devtools::install_github() ignores and attempts to re-install previously installed packages, but without passing GITHUB_PAT (starting 2016-06-26, only affets packages hosted on private Github repos with access token, such as NEONInc/NEON-FIU-algorithm): eddy4R.base (>= 0.2.15).
+Description: Eddy-covariance calculation for R: Turbulent flux. Currently removed from Imports because devtools::install_github() ignores and attempts to re-install previously installed packages, but without passing GITHUB_PAT (starting 2016-06-26, only affets packages hosted on private Github repos with access token, such as NEONInc/NEON-FIU-algorithm): eddy4R.base (>= 0.2.16).
 Depends:
     R (>= 3.3.2)
 Imports:
