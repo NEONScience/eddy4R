@@ -150,7 +150,7 @@ wrap.neon.dp01.qfqm.ecse <- function(
             wrk$inpMask$data <- list()
             wrk$inpMask$data <- wrk$data[wrk$idx$idxBgn[idxAgr]:wrk$idx$idxEnd[idxAgr],] 
             #assign name to wrk$inpMask$qfqm
-            lapply(names(wrk$qfqm), function (x) wrk$inpMask$qfqm[[x]] <<- wrk$qfqm[[x]][wrk$idx$idxBgn[idxAgr]:wrk$idx$idxEnd[idxAgr],] )
+            lapply(names(wrk$qfqm), function (x) wrk$inpMask$qfqm[[x]] <<- wrk$qfqm[[x]][wrk$idx$idxBgn[idxAgr]:wrk$idx$idxEnd[idxAgr], ,drop=FALSE] )
             #replace qfqm$irgaStor with -1 when irga got kick out to measure the new measurement level
             for (tmp in 1:length(wrk$inpMask$qfqm$irgaStor)){
               wrk$inpMask$qfqm$irgaStor[[tmp]][wrk$inpMask$data$lvlIrga != lvlIrga] <- -1
@@ -160,6 +160,9 @@ wrap.neon.dp01.qfqm.ecse <- function(
             }
             for (tmp in 1:length(wrk$inpMask$qfqm$envHut)){
               wrk$inpMask$qfqm$envHut[[tmp]][wrk$inpMask$data$lvlIrga != lvlIrga] <- -1
+            }
+            for (tmp in 1:length(wrk$inpMask$qfqm$valvAux)){
+              wrk$inpMask$qfqm$valvAux[[tmp]][wrk$inpMask$data$lvlIrga != lvlIrga] <- -1
             }
             
             #qfqm processing
@@ -252,10 +255,14 @@ wrap.neon.dp01.qfqm.ecse <- function(
           for (tmp in 1:length(wrk$qfqm$envHut)){
             wrk$qfqm$envHut[[tmp]][wrk$data$lvlIrga != lvlIrga] <- -1
           }
+          for (tmp in 1:length(wrk$qfqm$valvAux)){
+            wrk$qfqm$valvAux[[tmp]][wrk$data$lvlIrga != lvlIrga] <- -1
+          }
           #replace all qf that not belong to that measurement level by NaN
           wrk$qfqm$irgaStor[-whrSamp, 1:length(wrk$qfqm$irgaStor)] <- NaN
           wrk$qfqm$mfcSampStor[-whrSamp, 1:length(wrk$qfqm$mfcSampStor)] <- NaN
           wrk$qfqm$envHut[-whrSamp, 1:length(wrk$qfqm$envHut)] <- NaN
+          wrk$qfqm$valvAux[-whrSamp, 1:length(wrk$qfqm$valvAux)] <- NaN
           
           #replace qf from mfcSampStor data with -1 when irga got kick out to measure the new measurement level
           #wrk$qfqm$mfcSampStor <- as.data.frame(sapply(wrk$qfqm$mfcSampStor, function(x) ifelse(wrk$data$lvlIrga == lvlIrga, x, -1)))
@@ -273,7 +280,7 @@ wrap.neon.dp01.qfqm.ecse <- function(
           idxLvLPrdAgr <- paste0(lvl, "_", sprintf("%02d", PrdAgr), "m")
           
           wrk$inpMask$qfqm <- list()
-          lapply(names(wrk$qfqm), function (x) wrk$inpMask$qfqm[[x]] <<- wrk$qfqm[[x]][idxTime[[paste0(PrdAgr, "min")]]$Bgn[idxAgr]:idxTime[[paste0(PrdAgr, "min")]]$End[idxAgr],])
+          lapply(names(wrk$qfqm), function (x) wrk$inpMask$qfqm[[x]] <<- wrk$qfqm[[x]][idxTime[[paste0(PrdAgr, "min")]]$Bgn[idxAgr]:idxTime[[paste0(PrdAgr, "min")]]$End[idxAgr], , drop=FALSE])
           
           #qfqm processing
           rpt[[idxAgr]] <- eddy4R.qaqc::wrap.neon.dp01.qfqm(
@@ -362,7 +369,7 @@ wrap.neon.dp01.qfqm.ecse <- function(
             #idxAgr <- 1
             #wrk$inpMask for qfqm
             wrk$inpMask$qfqm <- list()
-            lapply(names(wrk$qfqm), function (x) wrk$inpMask$qfqm[[x]] <<- wrk$qfqm[[x]][wrk$idx$idxBgn[idxAgr]:wrk$idx$idxEnd[idxAgr],] )
+            lapply(names(wrk$qfqm), function (x) wrk$inpMask$qfqm[[x]] <<- wrk$qfqm[[x]][wrk$idx$idxBgn[idxAgr]:wrk$idx$idxEnd[idxAgr], ,drop = FALSE] )
             
             #qfqm processing
             rpt[[idxAgr]] <- eddy4R.qaqc::wrap.neon.dp01.qfqm(
@@ -452,6 +459,7 @@ wrap.neon.dp01.qfqm.ecse <- function(
           wrk$qfqm$irgaStor[-whrSamp, 1:length(wrk$qfqm$irgaStor)] <- NaN
           wrk$qfqm$mfcSampStor[-whrSamp, 1:length(wrk$qfqm$mfcSampStor)] <- NaN
           wrk$qfqm$envHut[-whrSamp, 1:length(wrk$qfqm$envHut)] <- NaN
+          wrk$qfqm$valvAux[-whrSamp, 1:length(wrk$qfqm$valvAux)] <- NaN
         } #else {#end of if no measurement data at all in the whole day
         #   wrk$data$frt00 <- NaN #assign NaN to frt00 data
         # }
@@ -462,7 +470,7 @@ wrap.neon.dp01.qfqm.ecse <- function(
           #for qfqm
           wrk$inpMask$qfqm <- list()
           idxLvLPrdAgr <- paste0(lvl, "_", sprintf("%02d", PrdAgr), "m")
-          lapply(names(wrk$qfqm), function (x) wrk$inpMask$qfqm[[x]] <<- wrk$qfqm[[x]][idxTime[[paste0(PrdAgr, "min")]]$Bgn[idxAgr]:idxTime[[paste0(PrdAgr, "min")]]$End[idxAgr],])
+          lapply(names(wrk$qfqm), function (x) wrk$inpMask$qfqm[[x]] <<- wrk$qfqm[[x]][idxTime[[paste0(PrdAgr, "min")]]$Bgn[idxAgr]:idxTime[[paste0(PrdAgr, "min")]]$End[idxAgr], , drop = FALSE])
           
           #qfqm processing
           rpt[[idxAgr]] <- eddy4R.qaqc::wrap.neon.dp01.qfqm(
