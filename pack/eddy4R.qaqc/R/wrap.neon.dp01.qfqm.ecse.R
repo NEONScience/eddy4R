@@ -13,6 +13,7 @@
 #' @param \code{lvlMfcSampStor} Measurement level of mfcSampStor which apply to only  dp01 equal to "co2Stor" or "h2oStor". Defaults to NULL. Of type character. [-]
 #' @param \code{lvlEnvHut} Measurement level of envHut. Defaults to NULL. Of type character. [-]
 #' @param \code{lvlValv} Measurement level of irgaValvLvl, crdCo2ValvLvl, or crdH2oValvLvl. Defaults to NULL. Of type character. [-]
+#' @param \code{lvlValvAux} Location of valvAux which apply to only  dp01 equal to "co2Stor" or "h2oStor". Defaults to NULL. Of type character. [-]
 #' @param \code{lvlCrdH2oValvVali} Measurement level of crdH2oValvVali which apply to only  dp01 equal to "isoH2o". Defaults to NULL. Of type character. [-]
 #' @param \code{data} A list of data frame containing the input dp0p data that related to dp01 which qfqm are being calculated. Of class integer". [User defined] 
 #' @param \code{qfInput} A list of data frame containing the input quality flag data that related to dp01 are being grouped. Of class integer". [NA] 
@@ -56,6 +57,7 @@ wrap.neon.dp01.qfqm.ecse <- function(
   lvlMfcSampStor = NULL,
   lvlEnvHut = NULL,
   lvlValv = NULL,
+  lvlValvAux = NULL,
   lvlCrdH2oValvVali = NULL,
   data = list(),
   qfInput = list(),
@@ -122,6 +124,7 @@ wrap.neon.dp01.qfqm.ecse <- function(
       wrk$qfqm$irgaStor <- qfInput$irga[[lvl]]
       wrk$qfqm$mfcSampStor <- qfInput$mfcSampStor[[lvlMfcSampStor]]
       wrk$qfqm$envHut <- qfInput$envHut[[lvlEnvHut]]
+      wrk$qfqm$valvAux <- qfInput$valvAux[[lvlValvAux]]
       
       if (PrdMeas == PrdAgr) {
         #PrdAgr <- 2
@@ -337,6 +340,7 @@ wrap.neon.dp01.qfqm.ecse <- function(
       wrk$qfqm$irgaStor <- qfInput$irga[[lvl]]
       wrk$qfqm$mfcSampStor <- qfInput$mfcSampStor[[lvlMfcSampStor]]
       wrk$qfqm$envHut <- qfInput$envHut[[lvlEnvHut]]
+      wrk$qfqm$valvAux <- qfInput$valvAux[[lvlValvAux]]
       
       if (PrdMeas == PrdAgr) {
         #PrdAgr <- 2
