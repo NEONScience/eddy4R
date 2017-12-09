@@ -31,6 +31,8 @@
 #     original creation
 #   Dave Durden (2017-12-02)
 #     fixing issues with missing diag data and order bits are analyzed for qfIrgaTurbAgc
+#   Dave Durden (2017-12-03)
+#     Changing output naming convention to qfIrgaTurb
 ##############################################################################################
 
 
