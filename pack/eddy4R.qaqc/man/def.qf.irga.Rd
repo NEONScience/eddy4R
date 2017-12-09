@@ -12,7 +12,7 @@ def.qf.irga(diag01, MethQf = c("qfqm", "lico")[1])
 \item{\code{MethQf}}{Switch for quality flag determination for the LI7200, diag01 provides ones for passing quality by default the equals "lico". The "qfqm" method changes the ones to zeros to match the NEON QFQM logic.}
 }
 \value{
-A dataframe (\code{qfIrga}) of sensor specific irga quality flags as described in NEON.DOC.000807.
+A dataframe (\code{qfIrgaTurb}) of sensor specific irga quality flags as described in NEON.DOC.000807.
 }
 \description{
 Definition function to interpret the irga sensor flags from \code{diag01}.
