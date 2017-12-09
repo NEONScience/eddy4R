@@ -1,12 +1,12 @@
 Package: eddy4R.qaqc
 Title: Eddy-covariance calculation for R: Quality assurance and quality control
-Version: 0.2.4
+Version: 0.2.5
 Authors@R: c( person("Cove", "Sturtevant", email = "eddy4R.info@gmail.com", role = c("aut", "cre")),
               person("Stefan", "Metzger", email = "eddy4R.info@gmail.com", role = c("aut")),
               person("Natchaya", "Pingintha-Durden", email = "ndurden@battelleecology.org", role = c("aut")),
               person("David", "Durden", email = "ddurden@battelleecology.org", role = c("aut"))
             )
-Description: Eddy-covariance calculation for R: Quality assurance and quality. Currently removed from Imports because devtools::install_github() ignores and attempts to re-install previously installed packages, but without passing GITHUB_PAT (starting 2016-06-26, only affets packages hosted on private Github repos with access token, such as NEONInc/NEON-FIU-algorithm): eddy4R.base (>= 0.2.14).
+Description: Eddy-covariance calculation for R: Quality assurance and quality. Currently removed from Imports because devtools::install_github() ignores and attempts to re-install previously installed packages, but without passing GITHUB_PAT (starting 2016-06-26, only affets packages hosted on private Github repos with access token, such as NEONInc/NEON-FIU-algorithm): eddy4R.base (>= 0.2.16).
 Depends:
     R (>= 3.4.0)
 Imports:
