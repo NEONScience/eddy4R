@@ -93,8 +93,8 @@ time <- seq.POSIXt(
 if(!(DateLoca %in% file)) {
 ###
 
-  # irga
-  if(VarLoca == "irga") {
+  # irgaTurb
+  if(VarLoca == "irgaTurb") {
     
     data <- data.frame(matrix(data = NaN, ncol = 19, nrow = length(time)))
     names(data) <- c("asrpCo2", "asrpH2o", "densMoleCo2", "densMoleH2o", "potCool", "powrCo2Refe", "powrCo2Samp", "powrH2oRefe",
@@ -107,8 +107,8 @@ if(!(DateLoca %in% file)) {
   
   }
 
-  # irga MFC
-  if(VarLoca == "irgaMfcSamp") {
+  # irgaTurb MFC
+  if(VarLoca == "mfcSampTurb") {
     
     data <- data.frame(matrix(data = NaN, ncol = 6, nrow = length(time)))
     names(data) <- c("frt", "frt00", "frtSet00", "presAtm", "temp", "time")
@@ -118,8 +118,8 @@ if(!(DateLoca %in% file)) {
     
   }
 
-  # irga Solenoids in NEMA enclosure
-  if(VarLoca == "irgaSndValiNema") {
+  # irgaTurb Solenoids in NEMA enclosure
+  if(VarLoca == "valvValiNemaTurb") {
     
     data <- data.frame(matrix(data = NaN, ncol = 6, nrow = length(time)))
     names(data) <- c("qfGas01", "qfGas02", "qfGas03", "qfGas04", "qfGas05", "time")
@@ -139,8 +139,8 @@ if(!(DateLoca %in% file)) {
     
   }
 
-  # soniAmrs
-  if(VarLoca == "soniAmrs") {
+  # amrs
+  if(VarLoca == "amrs") {
     
     data <- data.frame(matrix(data = NaN, ncol = 14, nrow = length(time)))
     names(data) <- c("accXaxs", "accXaxsDiff", "accYaxs", "accYaxsDiff", "accZaxs", "accZaxsDiff", "angXaxs", "angYaxs", "angZaxs", 
@@ -278,8 +278,8 @@ if(!(DateLoca %in% file)) {
     # for selected sensors
     if(VarLoca %in% base::names(RngLoca)) {
 
-      # irga
-      if(VarLoca == "irga") {
+      # irgaTurb
+      if(VarLoca == "irgaTurb") {
 
         # simple implementation based on decimal representation
         whr <- which(data$dataRglr$diag != 8191)
