@@ -27,6 +27,8 @@
 # changelog and author contributions / copyrights
 #   Dave Durden (2017-04-30)
 #     original creation
+#   Dave Durden (2017-12-12)
+#     Updating to new naming conventions
 ##############################################################################################
 
 def.agr.ecte.dp01 <- function(
