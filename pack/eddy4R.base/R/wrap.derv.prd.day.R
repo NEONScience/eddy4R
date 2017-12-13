@@ -73,7 +73,7 @@ wrap.derv.prd.day <- function(
   #Additional QAQC tests and removing high frequency flagged data
   ###############################################################
   #Run the test to determine the irgaTurbAgc flag
-  inpList$qfqm$irgaTurb$qfIrgaTurbAgc <- ff::as.ff(eddy4R.qaqc::def.qf.irgaTurb.agc(qfIrgaTurbAgc = inpList$qfqm$irga$qfIrgaTurbAgc))
+  inpList$qfqm$irgaTurb$qfIrgaTurbAgc <- ff::as.ff(eddy4R.qaqc::def.qf.irga.agc(qfIrgaTurbAgc = inpList$qfqm$irga$qfIrgaTurbAgc))
   
   #Applying the bad quality flags to the reported output data
   inpList <- eddy4R.qaqc::wrap.qf.rmv.data(inpList = inpList, Vrbs = FALSE)
