@@ -35,6 +35,8 @@
 #     adapting to include derived flags
 #   David Durden (2017-11-08)
 #     removing high frequency data that have failed high frequency quality flags
+#   David Durden (2017-12-12)
+#     updating naming conventions
 ##############################################################################################
     
     
