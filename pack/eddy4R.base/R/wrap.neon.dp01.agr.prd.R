@@ -39,6 +39,8 @@
 # changelog and author contributions / copyrights 
 #   David Durden (2017-05-05)
 #     original creation
+#   David Durden (2017-12-12)
+#     updating naming conventions
 ##############################################################################################
 
 
@@ -52,8 +54,8 @@ tmp <- list()
 
 
 invisible(lapply(union(names(inpList$tmp$data), names(inpList$qfqm)), function(x) {
-  if(x == "soniAmrs") {
-  tmp$idx[[x]] <<- eddy4R.base::def.idx.agr(time = inpList$data$soniAmrs$time, PrdAgr = 60, FreqLoca = 40)
+  if(x == "amrs") {
+  tmp$idx[[x]] <<- eddy4R.base::def.idx.agr(time = inpList$data$amrs$time, PrdAgr = 60, FreqLoca = 40)
 #} else if (x == "soni") {
   
   #tmp$idx[[x]] <<- eddy4R.base::def.idx.agr(time = inpList$data$time$UTC, PrdAgr = 120, FreqLoca = 20)
