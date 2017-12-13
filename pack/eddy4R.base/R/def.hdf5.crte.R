@@ -161,11 +161,11 @@ def.hdf5.crte <- function(
   ########################################################################### 
   #Creating level 0' file structures########################################
   #Create a list of all the L0 DPs for creation of group hierarchy (fard)
-  grpListDp0p <- c("irga","soni","soniAmrs","irgaMfcSamp","irgaSndValiNema")
-  #              ,"irgaGasCyl","irgaMfcVali",
-  #              "irgaPresTrap","irgaPresValiLine","irgaPresValiRegIn",
-  #              "irgaPresValiRegOut","irgaPump","irgaSndLeakHeat",
-  #              "irgaSndValiHut","irgaSndValiNema",)
+  grpListDp0p <- c("irgaTurb","soni","amrs","mfcSampTurb","valvValiNemaTurb")
+  #              ,"irgaGasCyl","mfcValiTurb",
+  #              "presTrap","presValiLineTurb","presValiRegInTurb",
+  #              "presValiRegOutTurb","pumpTurb","valvLeakHeatTurb",
+  #              "valvValiHutTurb","valvValiNemaTurb",)
   #The DP level, the data product ID and the Rev number
   grpListDp0p <- base::paste(grpListDp0p, "_001", sep = "")
   
@@ -176,7 +176,7 @@ def.hdf5.crte <- function(
   ###########################################################################     
   #Creating level 1 file structures########################################
   #DPs to be used to create levels
-  grpListDp01 <- c("soniAmrs", "irgaCo2", "irgaH2o", "soni")
+  grpListDp01 <- c("amrs", "co2Turb", "h2oTurb", "soni")
   #Create dp01 data product levels in data
   lapply(grpListDp01, function(x) rhdf5::H5Gcreate(idDataLvlDp01, x))
   #Create dp01 data product levels in qfqm
@@ -214,11 +214,11 @@ def.hdf5.crte <- function(
     lapply(grpListDp04, function(x) rhdf5::H5Gcreate(idUcrtLvlDp04, x))
   }
   
- # idDataLvlDp01HorVer <- H5Gopen(idDataLvlDp01, paste0("irgaCo2/",LevlTowr,"_30m"))
+ # idDataLvlDp01HorVer <- H5Gopen(idDataLvlDp01, paste0("co2Turb/",LevlTowr,"_30m"))
   #sid <- H5Screate_simple(c(0,0,0))
   #idDp01DataTbl <- H5Dcreate(idDataLvlDp01HorVer, "rtioMoleDryCo2","H5T_NATIVE_DOUBLE", sid)
  
- # idDataLvlDp01HorVer <- H5Gopen(idDataLvlDp01, paste0("irgaH2o/",LevlTowr,"_30m"))
+ # idDataLvlDp01HorVer <- H5Gopen(idDataLvlDp01, paste0("h2oTurb/",LevlTowr,"_30m"))
  # sid <- H5Screate_simple(c(0,0,0))
   #idDp01DataTbl <- H5Dcreate(idDataLvlDp01HorVer, "rtioMoleDryH2o","H5T_NATIVE_DOUBLE", sid) #Used for metadata attribution, but it causes problem to write to later.
   #lapply(seq_len(nrow(attrSiteList)), function(x) h5writeAttribute(attrSiteList[x,"Field Description"], h5obj = idSite, name = attrSiteList[x,"fieldName"]))
@@ -235,41 +235,41 @@ def.hdf5.crte <- function(
   #H5Gclose(idData)
   
   #Writing Data for SoniAmrs############################################################
-  idData <- rhdf5::H5Oopen(idDataLvlDp0p,"soniAmrs_001")
-  idQfqm <- rhdf5::H5Oopen(idQfqmLvlDp0p,"soniAmrs_001")
-  #h5writeAttribute(attributes(dataList$soniAmrs)$unit, h5obj = idData, name = "unit")
-  #h5writeAttribute(attributes(dataList$soniAmrs)$names, h5obj = idData, name = "names")
+  idData <- rhdf5::H5Oopen(idDataLvlDp0p,"amrs_001")
+  idQfqm <- rhdf5::H5Oopen(idQfqmLvlDp0p,"amrs_001")
+  #h5writeAttribute(attributes(dataList$amrs)$unit, h5obj = idData, name = "unit")
+  #h5writeAttribute(attributes(dataList$amrs)$names, h5obj = idData, name = "names")
   #lapply(seq_along(nrow(attrDpNameList)), function(x) h5writeAttribute(attrDpNameList[x,"Field Description"], h5obj = idData, name = attrDpNameList[x,"fieldName"]))
   idDataHorVer <- rhdf5::H5Gcreate(idData,LevlTowr)
   idQfqmHorVer <- rhdf5::H5Gcreate(idQfqm,LevlTowr)
   #lapply(seq_len(nrow(attrDataList)), function(x) h5writeAttribute(attrDataList[x,"Field Description"], h5obj = idDataHorVer, name = attrDataList[x,"fieldName"]))
   
   #Writing IRGA data####################################################################
-  idData <- rhdf5::H5Oopen(idDataLvlDp0p,"irga_001") #Open H5 connection
-  idQfqm <- rhdf5::H5Oopen(idQfqmLvlDp0p,"irga_001")
-  #h5writeAttribute(attributes(dataList$irga)$unit, h5obj = idData, name = "unit")
-  #h5writeAttribute(attributes(dataList$irga)$names, h5obj = idData, name = "names")
+  idData <- rhdf5::H5Oopen(idDataLvlDp0p,"irgaTurb_001") #Open H5 connection
+  idQfqm <- rhdf5::H5Oopen(idQfqmLvlDp0p,"irgaTurb_001")
+  #h5writeAttribute(attributes(dataList$irgaTurb)$unit, h5obj = idData, name = "unit")
+  #h5writeAttribute(attributes(dataList$irgaTurb)$names, h5obj = idData, name = "names")
   #lapply(seq_along(nrow(attrDpNameList)), function(x) h5writeAttribute(attrDpNameList[x,"Field Description"], h5obj = idData, name = attrDpNameList[x,"fieldName"]))
   idDataHorVer <- rhdf5::H5Gcreate(idData,LevlTowr)
   idQfqmHorVer <- rhdf5::H5Gcreate(idQfqm,LevlTowr)
   #lapply(seq_len(nrow(attrDataList)), function(x) h5writeAttribute(attrDataList[x,"Field Description"], h5obj = idDataHorVer, name = attrDataList[x,"fieldName"]))
   
   #Used to write the datasets into the groups with attributes attached.
-  idData <- rhdf5::H5Oopen(idDataLvlDp0p,"irgaMfcSamp_001")
-  idQfqm <- rhdf5::H5Oopen(idQfqmLvlDp0p,"irgaMfcSamp_001")
+  idData <- rhdf5::H5Oopen(idDataLvlDp0p,"mfcSampTurb_001")
+  idQfqm <- rhdf5::H5Oopen(idQfqmLvlDp0p,"mfcSampTurb_001")
   #h5writeDataset.data.frame(obj = qfIrgaMfcSampOut, h5loc = idQfqm, name = LevlTowr, DataFrameAsCompound = FALSE)
-  #h5writeAttribute(attributes(dataList$irgaMfcSamp)$unit, h5obj = idData, name = "unit")
-  #h5writeAttribute(attributes(dataList$irgaMfcSamp)$names, h5obj = idData, name = "names")
+  #h5writeAttribute(attributes(dataList$mfcSampTurb)$unit, h5obj = idData, name = "unit")
+  #h5writeAttribute(attributes(dataList$mfcSampTurb)$names, h5obj = idData, name = "names")
   #lapply(seq_along(nrow(attrDpNameList)), function(x) h5writeAttribute(attrDpNameList[x,"Field Description"], h5obj = idData, name = attrDpNameList[x,"fieldName"]))
   idDataHorVer <- rhdf5::H5Gcreate(idData,LevlTowr)
   idQfqmHorVer <- rhdf5::H5Gcreate(idQfqm,LevlTowr)
   #lapply(seq_len(nrow(attrDataList)), function(x) h5writeAttribute(attrDataList[x,"Field Description"], h5obj = idDataHorVer, name = attrDataList[x,"fieldName"]))
   
   
-  idData <- rhdf5::H5Oopen(idDataLvlDp0p,"irgaSndValiNema_001") #Open H5 connection
-  idQfqm <- rhdf5::H5Oopen(idQfqmLvlDp0p,"irgaSndValiNema_001")
-  #h5writeAttribute(attributes(dataList$irga)$unit, h5obj = idData, name = "unit")
-  #h5writeAttribute(attributes(dataList$irga)$names, h5obj = idData, name = "names")
+  idData <- rhdf5::H5Oopen(idDataLvlDp0p,"valvValiNemaTurb_001") #Open H5 connection
+  idQfqm <- rhdf5::H5Oopen(idQfqmLvlDp0p,"valvValiNemaTurb_001")
+  #h5writeAttribute(attributes(dataList$irgaTurb)$unit, h5obj = idData, name = "unit")
+  #h5writeAttribute(attributes(dataList$irgaTurb)$names, h5obj = idData, name = "names")
   #lapply(seq_along(nrow(attrDpNameList)), function(x) h5writeAttribute(attrDpNameList[x,"Field Description"], h5obj = idData, name = attrDpNameList[x,"fieldName"]))
   idDataHorVer <- rhdf5::H5Gcreate(idData,LevlTowr)
   idQfqmHorVer <- rhdf5::H5Gcreate(idQfqm,LevlTowr)
