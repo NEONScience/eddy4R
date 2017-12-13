@@ -39,13 +39,13 @@ RptExpd = FALSE
   # concatenate results
   rpt <- list()
   # timestamps
-  names(inpList$idx)[which(names(inpList$idx) == "irga")] <- "irgaCo2"
-  names(inpList$idx)[which(names(inpList$idx) == "irgaMfcSamp")] <- "irgaH2o"
+  names(inpList$idx)[which(names(inpList$idx) == "irgaTurb")] <- "co2Turb"
+  names(inpList$idx)[which(names(inpList$idx) == "mfcSampTurb")] <- "h2oTurb"
   
-  # #Use irga as the standard time for outputs
+  # #Use irgaTurb as the standard time for outputs
   # rpt$time <- data.frame(
-  #   timeBgn = inpList$idx$irgaH2o$timeBgn,
-  #   timeEnd = inpList$idx$irgaH2o$timeEnd
+  #   timeBgn = inpList$idx$h2oTurb$timeBgn,
+  #   timeEnd = inpList$idx$h2oTurb$timeEnd
   # )[1:length(inpList$dp01),]
   
   # loop around data products
