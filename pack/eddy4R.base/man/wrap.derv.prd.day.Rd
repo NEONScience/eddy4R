@@ -19,7 +19,7 @@ The returned object consistes of \code{inpList}, with the derived variables adde
 \description{
 Wrapper function. Reads the list \code{inpList} in the format provided by function \code{eddy4R.base::wrap.neon.read.hdf5.eddy()}. For the list entries in \code{inpList} the following derived quantities are calculated, each through the call to a separate definition function: \cr
 \code{inpList$data$time}: fractional UTC time, fractional day of year, local standard time;  \cr
-\code{inpList$data$irga}: average signal strength, delta signal strength, total pressure, average temperature, water vapor partial pressure, water vapor saturation pressure, relative humidity, molar density of air (dry air and water vapor), molar density of dry air, wet mass fraction (specific humidity);  \cr
+\code{inpList$data$irgaTurb}: average signal strength, delta signal strength, total pressure, average temperature, water vapor partial pressure, water vapor saturation pressure, relative humidity, molar density of air (dry air and water vapor), molar density of dry air, wet mass fraction (specific humidity);  \cr
 \code{inpList$data$soni}: sonic temperature.
 }
 \examples{
@@ -36,7 +36,7 @@ Stefan Metzger \email{eddy4R.info@gmail.com}
 }
 \keyword{derived,}
 \keyword{high-frequency,}
-\keyword{irga,}
+\keyword{irgaTurb,}
 \keyword{post-processing,}
 \keyword{pre-processing,}
 \keyword{qfqm}
