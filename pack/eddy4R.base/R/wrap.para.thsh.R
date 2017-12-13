@@ -1,4 +1,4 @@
-#' @title Definition Function to read threshold table from CI-Parameter-Repo
+#' @title Wrapper Function to read threshold table from CI-Parameter-Repo
 
 #' @author 
 #' Natchaya Pingintha-Durden \email{ndurden@battelleecology.org}
