@@ -44,6 +44,8 @@
 #     Updating to new L0p HDF5 file, the unit are now on data table level
 #   Ke Xu (2017-05-22)
 #     adding parameter MethMeas to distinguish different cases for ecte and ecse
+#   David Durden (2017-12-12)
+#     Updating to remove rev numbers from ECTE dp0p HDF5 data product group levels 
 ##############################################################################################
         
 wrap.neon.read.hdf5.eddy <- function(
@@ -168,7 +170,7 @@ if(!(DateLoca %in% file)) {
   
    
   if(MethMeas == "ecte")  data <- rhdf5::h5read(file = base::paste0(DirInpLoca, "/ECTE_dp0p_", SiteLoca, "_", DateLoca, ".h5"),
-                                                name = base::paste0("/", SiteLoca, "/dp0p/data/", VarLoca, "_001/",LevlTowr),
+                                                name = base::paste0("/", SiteLoca, "/dp0p/data/", VarLoca, "/",LevlTowr),
                                                 read.attributes = TRUE)
   
   
@@ -196,7 +198,7 @@ if(!(DateLoca %in% file)) {
     # read attributes
   
   if(MethMeas == "ecte") attr <- rhdf5::h5readAttributes(file = base::paste0(DirInpLoca, "/ECTE_dp0p_", SiteLoca, "_", DateLoca, ".h5"),
-                                                         name = base::paste0("/", SiteLoca, "/dp0p/data/", VarLoca, "_001/", LevlTowr))
+                                                         name = base::paste0("/", SiteLoca, "/dp0p/data/", VarLoca, "/", LevlTowr))
   
   
    if(MethMeas == "ecse") attr <- rhdf5::h5readAttributes(file = base::paste0(DirInpLoca, "/ECSE_dp0p_", SiteLoca, "_", DateLoca, ".h5"),
