@@ -62,6 +62,8 @@
 #     Adding dp04 method switch
 #   Dave Durden (2017-09-20)
 #     Changing function to work with new workflow parameters
+#   Dave Durden (2017-12-13)
+#     Updating naming conventions for ECTE and removing dp0p rev numbers
 
 ##############################################################################################################
 #Start of function call to generate NEON HDF5 files
