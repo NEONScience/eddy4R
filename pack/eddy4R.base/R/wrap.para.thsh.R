@@ -11,9 +11,9 @@
 #' @references
 
 
-#' @keywords 
+#' @keywords thresholds, QAQC, plausibility
 
-#' @examples
+#' @examples Currently none
 
 #' @seealso Currently none
 
