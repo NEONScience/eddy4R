@@ -34,6 +34,8 @@
 #     Original creation
 #   Natchaya Pingintha-Durden (2017-06-21)
 #     adding parameter MethMeas to distinguish different cases for ecte and ecse
+#   David Durden (2017-12-12)
+#     Removing rev number from dp0p data product HDF5 group levels 
 ##############################################################################################
 
 def.neon.read.hdf5.qfqm <- function(
@@ -49,7 +51,7 @@ def.neon.read.hdf5.qfqm <- function(
 #Read in the flags from the HDF5 file 
 if (MethMeas == "ecte") {
 qfqm <- rhdf5::h5read(file = base::paste0(DirInpLoca, "/ECTE_dp0p_", SiteLoca, "_", DateLoca, ".h5"),
-                      name = base::paste0("/", SiteLoca, "/dp0p/qfqm/", VarLoca, "_001/",LevlTowr), read.attributes = TRUE)
+                      name = base::paste0("/", SiteLoca, "/dp0p/qfqm/", VarLoca, "/",LevlTowr), read.attributes = TRUE)
 }
 
 if (MethMeas == "ecse") {
