@@ -58,6 +58,8 @@
 #     modified ecse section
 #   Natchaya P-Durden (2017-08-17)
 #     updated ECSE dp01 term names
+#   David Durden (2017-12-12)
+#     updated ECTE term names
 ##############################################################################################
 
 def.neon.dp01.qf.grp <- function(
