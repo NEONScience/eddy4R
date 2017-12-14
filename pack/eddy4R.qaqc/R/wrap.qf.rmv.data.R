@@ -43,7 +43,7 @@ wrap.qf.rmv.data <- function(inpList, Vrbs = FALSE){
   
   # Determine quality flags to apply to each stream, quantify flags, and remove bad data across all sensors
   outList <- base::lapply(sens, function(x){ 
-    eddy4R.qaqc::def.qf.rmv.data(dfData = inpList$data[[x]][], inpList$qfqm[[x]], Sens = x, Vrbs = Vrbs) #Remove high frequency data that is flagged by sensor specific flags or plausibility tests flags
+    eddy4R.qaqc::def.qf.rmv.data(dfData = inpList$data[[x]][], dfQf = inpList$qfqm[[x]], Sens = x, Vrbs = Vrbs) #Remove high frequency data that is flagged by sensor specific flags or plausibility tests flags
   })
   
   #Apply names to the output list
