@@ -92,7 +92,7 @@ def.neon.read.hdf5.para <- function(
   # convert character NA to logical numeric provided the result does not yield NA, and there are no leading zeroes in any entry
   rpt <- lapply(rpt, function(x) {
     
-    if(length(which(as.character(x) %in% c("-Inf", "Inf", "NA", "NaN"))) > 0){
+    if(length(which(as.character(x) %in% c("-Inf", "Inf", "NA"))) > 0){
       as.logical(as.character(x))
     } else {
       x
