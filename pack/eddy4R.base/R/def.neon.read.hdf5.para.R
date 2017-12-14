@@ -35,6 +35,8 @@
 #     initial transition to external parameter repo
 #   Hongyan Luo (2017-03-17)
 #     add header to the function
+##   David Durden (2017-12-12)
+#     Remove NaN from the list of output that will cause a conversion to logical
 ###############################################################################################
 
 # definition function for parameter extraction
