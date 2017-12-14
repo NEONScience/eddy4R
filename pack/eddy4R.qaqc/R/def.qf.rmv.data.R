@@ -80,9 +80,11 @@ def.qf.rmv.data <- function(
     if(base::length(rpt$listQf[[x]]) > 0 ) {
     
     #Subset the set of flags to be used
-    tmp <- dfQf[,base::grep(pattern = base::paste(x,qfSens, sep ="|"), x = qfName, ignore.case = TRUE, value = TRUE)]
+    tmp <- dfQf[,base::grep(pattern = base::paste(x,qfSens, sep ="|"), x = qfName, ignore.case = TRUE, value = TRUE), drop = FALSE]
     #Calculate the number of times each quality flag was set high (qf..= 1)
-    if(Vrbs == TRUE) {rpt$fracQfBad[[x]] <<- base::apply(X = tmp, MARGIN = 2, FUN = function(x) base::length(which(x == 1))/base::length(x))}
+    if(Vrbs == TRUE) {if(ncol(tmp) > 1){rpt$fracQfBad[[x]] <<- base::apply(X = tmp, MARGIN = 2, FUN = function(x) base::length(which(x == 1))/base::length(x))}
+      else{rpt$fracQfBad[[x]] <<- base::sum(tmp)/base::nrow(tmp)
+      names(rpt$fracQfBad[[x]]) <<- names(tmp)}}
     #Record the row positions for each variable where at least 1 flag is raised
     rpt$posBad[[x]] <<-  base::which(base::rowSums(tmp == 1) > 0)
     #Remove the data for each variable according to the position vector identified
