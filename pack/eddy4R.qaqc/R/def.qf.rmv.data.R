@@ -31,6 +31,8 @@
 # changelog and author contributions / copyrights
 #   Dave Durden (2017-10-27)
 #     original creation
+#   Dave Durden (2017-12-12)
+#     bug fixes when only one qf is used to determine qf analysis
 ##############################################################################################
 
 
