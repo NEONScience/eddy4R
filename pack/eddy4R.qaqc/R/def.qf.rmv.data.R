@@ -71,7 +71,10 @@ def.qf.rmv.data <- function(
   }
   
   # A list of all the flags to be included in the data removal  
-  rpt$listQf  <- base::lapply(rpt$listVar, function(x){ base::subset(x = names(dfQf), subset = base::grepl(pattern = base::paste(x,qfSens, sep ="|"),x = qfName, ignore.case = TRUE))
+  rpt$listQf  <- base::lapply(rpt$listVar, function(x){ 
+    tmp <- base::subset(x = names(dfQf), subset = base::grepl(pattern = base::paste(x,qfSens, sep ="|"),x = qfName, ignore.case = TRUE))
+    #qfCal flags from consideration
+    tmp[base::grep(pattern = "qfCal", x = tmp, invert = TRUE), drop = FALSE]
   })
   
   #Add list names
@@ -83,6 +86,8 @@ def.qf.rmv.data <- function(
     
     #Subset the set of flags to be used
     tmp <- dfQf[,base::grep(pattern = base::paste(x,qfSens, sep ="|"), x = qfName, ignore.case = TRUE, value = TRUE), drop = FALSE]
+    #Remove qfCal flags
+    tmp <- tmp[,base::grep(pattern = "qfCal", x = names(tmp), invert = TRUE), drop = FALSE]
     #Calculate the number of times each quality flag was set high (qf..= 1)
     if(Vrbs == TRUE) {if(ncol(tmp) > 1){rpt$fracQfBad[[x]] <<- base::apply(X = tmp, MARGIN = 2, FUN = function(x) base::length(which(x == 1))/base::length(x))}
       else{rpt$fracQfBad[[x]] <<- base::sum(tmp)/base::nrow(tmp)
