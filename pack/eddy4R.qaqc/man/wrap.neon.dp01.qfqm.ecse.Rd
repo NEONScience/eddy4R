@@ -6,9 +6,9 @@
 \usage{
 wrap.neon.dp01.qfqm.ecse(dp01 = c("co2Stor", "h2oStor", "tempAirLvl",
   "tempAirTop", "isoCo2", "isoH2o")[1], lvl, lvlMfcSampStor = NULL,
-  lvlEnvHut = NULL, lvlValv = NULL, lvlCrdH2oValvVali = NULL,
-  data = list(), qfInput = list(), TypeMeas = c("samp", "vali")[1],
-  PrdMeas, PrdAgr, idxTime = list())
+  lvlEnvHut = NULL, lvlValv = NULL, lvlValvAux = NULL,
+  lvlCrdH2oValvVali = NULL, data = list(), qfInput = list(),
+  TypeMeas = c("samp", "vali")[1], PrdMeas, PrdAgr, idxTime = list())
 }
 \arguments{
 \item{\code{dp01}}{A vector of class "character" containing the name of NEON ECSE dp01 which descriptive statistics are being calculated, \cr
@@ -21,6 +21,8 @@ c("co2Stor", "h2oStor", "tempAirLvl", "tempAirTop", "isoCo2", "isoH2o"). Default
 \item{\code{lvlEnvHut}}{Measurement level of envHut. Defaults to NULL. Of type character. [-]}
 
 \item{\code{lvlValv}}{Measurement level of irgaValvLvl, crdCo2ValvLvl, or crdH2oValvLvl. Defaults to NULL. Of type character. [-]}
+
+\item{\code{lvlValvAux}}{Location of valvAux which apply to only  dp01 equal to "co2Stor" or "h2oStor". Defaults to NULL. Of type character. [-]}
 
 \item{\code{lvlCrdH2oValvVali}}{Measurement level of crdH2oValvVali which apply to only  dp01 equal to "isoH2o". Defaults to NULL. Of type character. [-]}
 
