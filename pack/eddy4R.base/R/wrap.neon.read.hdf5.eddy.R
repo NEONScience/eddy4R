@@ -98,7 +98,7 @@ if(!(DateLoca %in% file)) {
   # irgaTurb
   if(VarLoca == "irgaTurb") {
     
-    data <- data.frame(matrix(data = NaN, ncol = 19, nrow = length(time)))
+    data <- data.frame(matrix(data = NaN, ncol = 21, nrow = length(time)))
     names(data) <- c("asrpCo2", "asrpH2o", "densMoleCo2", "densMoleH2o", "potCool", "powrCo2Refe", "powrCo2Samp", "powrH2oRefe",
                      "powrH2oSamp", "presAtm", "presDiff","presSum", "rtioMoleDryCo2", "rtioMoleDryH2o", "ssiCo2", "ssiH2o", "tempIn", "tempMean",
                      "tempOut", "tempRefe", "time")
@@ -133,7 +133,7 @@ if(!(DateLoca %in% file)) {
   # soni
   if(VarLoca == "soni") {
     
-    data <- data.frame(matrix(data = NaN, ncol = 6, nrow = length(time)))
+    data <- data.frame(matrix(data = NaN, ncol = 7, nrow = length(time)))
     names(data) <- c("idx", "tempSoni", "time", "veloSoni", "veloXaxs", "veloYaxs", "veloZaxs")
     data$time <- time
     attributes(data)$unit <- c("NA", "K", "YYYY-MM-DD hh:mm:ss.sss", "m s-1", "m s-1", "m s-1", "m s-1")
