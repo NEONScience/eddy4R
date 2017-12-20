@@ -35,6 +35,8 @@
 #     Adding ucrt to dp01 output HDF5
 #   David Durden (2017-06-29)
 #     Adding switches for writing output
+#   David Durden (2017-12-18)
+#     bug fix to write unit attribute to 30 min basic output for qfqm's
 ##############################################################################################
 
 
