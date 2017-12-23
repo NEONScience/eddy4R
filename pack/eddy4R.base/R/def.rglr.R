@@ -96,10 +96,12 @@
 #       in the preprocessing ATBD (NEON.DOC.001069); 75% faster compared to method "zoo"
 #   Stefan Metzger (2016-11-02)
 #     method "CybiEc": fixed equidistant time vector, dropped character variables
-#   Cove Sturtevant (2016-09-27)
+#   Cove Sturtevant (2017-09-27)
 #     code overhaul to use numeric-based time representation within the code to allow micro-second time precision
 #     this allowed removal of the small fraction of a second added to time vectors in the CybiEc and zoo regularization methods
 #     added more complete error checking
+#   Cove Sturtevant (2017-12-22)
+#     Added error checking for empty data when using cybiDflt method
 ##############################################################################################
 
 def.rglr <- function(
@@ -209,6 +211,13 @@ def.rglr <- function(
   # Zoo method cannot handle seconds precision greater than 3 (returns NA for all values...)
   if(MethRglr == 'zoo' && PrcsSec > 3){
     PrcsSec <- 3
+  }
+  
+  # Quit if there is no data and we are using cybiDflt method, since the cybiDflt method 
+  # relies on the first data point to generate the time seq
+  if(base::length(timeMeas) == 0 && MethRglr == 'cybiDflt'){
+    rpt <- base::list(TzRglr=NULL,FreqRglr=FreqRglr,MethRglr=MethRglr,timeRglr=timeMeas,dataRglr=dataMeas)
+    return(rpt)
   }
   
   # POSIX time has some issues with sub-second precision, often rounding down to a lower value without an 
