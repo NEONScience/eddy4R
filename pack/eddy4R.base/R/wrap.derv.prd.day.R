@@ -6,7 +6,7 @@
 
 #' @description Wrapper function. Reads the list \code{inpList} in the format provided by function \code{eddy4R.base::wrap.neon.read.hdf5.eddy()}. For the list entries in \code{inpList} the following derived quantities are calculated, each through the call to a separate definition function: \cr
 #' \code{inpList$data$time}: fractional UTC time, fractional day of year, local standard time;  \cr
-#' \code{inpList$data$irga}: average signal strength, delta signal strength, total pressure, average temperature, water vapor partial pressure, water vapor saturation pressure, relative humidity, molar density of air (dry air and water vapor), molar density of dry air, wet mass fraction (specific humidity);  \cr
+#' \code{inpList$data$irgaTurb}: average signal strength, delta signal strength, total pressure, average temperature, water vapor partial pressure, water vapor saturation pressure, relative humidity, molar density of air (dry air and water vapor), molar density of dry air, wet mass fraction (specific humidity);  \cr
 #' \code{inpList$data$soni}: sonic temperature.
 
 #' @param inpList List consisting of \code{ff::ffdf} file-backed objects, in the format provided by function \code{eddy4R.base::wrap.neon.read.hdf5.eddy()}. Of types numeric and integer.
@@ -19,7 +19,7 @@
 #' @references
 #' License: GNU AFFERO GENERAL PUBLIC LICENSE Version 3, 19 November 2007.
 
-#' @keywords derived, high-frequency, irga, post-processing, pre-processing, sonic, time, qfqm
+#' @keywords derived, high-frequency, irgaTurb, post-processing, pre-processing, sonic, time, qfqm
 
 #' @examples
 #' Currently none.
@@ -33,6 +33,10 @@
 #     original creation
 #   David Durden (2017-05-14)
 #     adapting to include derived flags
+#   David Durden (2017-11-08)
+#     removing high frequency data that have failed high frequency quality flags
+#   David Durden (2017-12-12)
+#     updating naming conventions
 ##############################################################################################
     
     
@@ -65,47 +69,62 @@ wrap.derv.prd.day <- function(
 
   # clean up
   rm(tmp)
+  
+  #Additional QAQC tests and removing high frequency flagged data
+  ###############################################################
+  #Run the test to determine the irgaTurbAgc flag
+  inpList$qfqm$irgaTurb$qfIrgaTurbAgc <- ff::as.ff(eddy4R.qaqc::def.qf.irga.agc(qfIrgaAgc = inpList$qfqm$irga$qfIrgaTurbAgc))
+  
+  #Applying the bad quality flags to the reported output data
+  inpList <- eddy4R.qaqc::wrap.qf.rmv.data(inpList = inpList, Vrbs = FALSE)
+  
+  #Run the test to output Validation flag
+  inpList$qfqm$irgaTurb$qfIrgaTurbVali <- ff::as.ff(eddy4R.qaqc::def.qf.irga.vali(data = inpList$data$mfcSampTurb))#Use this one for MFC set point
+  
+  #  inpList$qfqm$irgaTurb$qfIrgaTurbVali <- eddy4R.qaqc::def.qf.irga.vali(data = inpList$data$valvValiNemaTurb, Sens = "valvValiNemaTurb")
+  
+  ###############################################################     
 
 #irga
 
   # average signal strength
-  inpList$data$irga$ssiMean <- ff::as.ff(def.ssi.mean(ssiCo2 = inpList$data$irga$ssiCo2, ssiH2o = inpList$data$irga$ssiH2o))
+  inpList$data$irgaTurb$ssiMean <- ff::as.ff(def.ssi.mean(ssiCo2 = inpList$data$irgaTurb$ssiCo2, ssiH2o = inpList$data$irgaTurb$ssiH2o))
 
   # delta signal strength
-  inpList$data$irga$ssiDiff <- def.ssi.diff(ssiCo2 = inpList$data$irga$ssiCo2, ssiH2o = inpList$data$irga$ssiH2o)
+  inpList$data$irgaTurb$ssiDiff <- def.ssi.diff(ssiCo2 = inpList$data$irgaTurb$ssiCo2, ssiH2o = inpList$data$irgaTurb$ssiH2o)
  
-  # total pressure in irga cell
-  inpList$data$irga$presSum <- def.pres.sum(presAtm = inpList$data$irga$presAtm, presDiff = inpList$data$irga$presDiff)
+  # total pressure in irgaTurb cell
+  inpList$data$irgaTurb$presSum <- def.pres.sum(presAtm = inpList$data$irgaTurb$presAtm, presDiff = inpList$data$irgaTurb$presDiff)
 
-  # average temperature in irga cell 
-  inpList$data$irga$tempMean <- def.temp.mean.7200(tempIn = inpList$data$irga$tempIn, tempOut = inpList$data$irga$tempOut)
+  # average temperature in irgaTurb cell 
+  inpList$data$irgaTurb$tempMean <- def.temp.mean.7200(tempIn = inpList$data$irgaTurb$tempIn, tempOut = inpList$data$irgaTurb$tempOut)
  
   # RH in cell
 
     # water vapor partial pressure
-    inpList$data$irga$presH2o <- ff::as.ff(def.pres.h2o.rtio.mole.h2o.dry.pres(rtioMoleDryH2o = inpList$data$irga$rtioMoleDryH2o, pres = inpList$data$irga$presSum))
-    base::attr(x = inpList$data$irga$presH2o, which = "unit") <- "Pa"
+    inpList$data$irgaTurb$presH2o <- ff::as.ff(def.pres.h2o.rtio.mole.h2o.dry.pres(rtioMoleDryH2o = inpList$data$irgaTurb$rtioMoleDryH2o, pres = inpList$data$irgaTurb$presSum))
+    base::attr(x = inpList$data$irgaTurb$presH2o, which = "unit") <- "Pa"
 
     # water vapor saturation pressure
-    if(!is.na(mean(inpList$data$irga$tempMean, na.rm=TRUE))) {
-      inpList$data$irga$presH2oSat <- ff::as.ff(as.vector(def.pres.h2o.sat.temp.mag(temp = inpList$data$irga$tempMean[])))
+    if(!is.na(mean(inpList$data$irgaTurb$tempMean, na.rm=TRUE))) {
+      inpList$data$irgaTurb$presH2oSat <- ff::as.ff(as.vector(def.pres.h2o.sat.temp.mag(temp = inpList$data$irgaTurb$tempMean[])))
     } else {
-      inpList$data$irga$presH2oSat <- ff::as.ff(rep(NaN, length(inpList$data$irga$tempMean)))
+      inpList$data$irgaTurb$presH2oSat <- ff::as.ff(rep(NaN, length(inpList$data$irgaTurb$tempMean)))
     }
-    base::attr(x = inpList$data$irga$presH2oSat, which = "unit") <- "Pa"
+    base::attr(x = inpList$data$irgaTurb$presH2oSat, which = "unit") <- "Pa"
     
     # calcuate RH
-    inpList$data$irga$rh <- def.rh.pres.h2o.pres.sat.h2o(presH2o = inpList$data$irga$presH2o, presH2oSat = inpList$data$irga$presH2oSat)
+    inpList$data$irgaTurb$rh <- def.rh.pres.h2o.pres.sat.h2o(presH2o = inpList$data$irgaTurb$presH2o, presH2oSat = inpList$data$irgaTurb$presH2oSat)
     
 
   # molar density of dry air and water vapor
-  inpList$data$irga$densMoleAir <- def.dens.mole.air(presSum = inpList$data$irga$presSum, tempMean = inpList$data$irga$tempMean)
+  inpList$data$irgaTurb$densMoleAir <- def.dens.mole.air(presSum = inpList$data$irgaTurb$presSum, tempMean = inpList$data$irgaTurb$tempMean)
   
   # molar density of dry air alone
-  inpList$data$irga$densMoleAirDry <- def.dens.mole.air.dry(densMoleAir = inpList$data$irga$densMoleAir, densMoleH2o = inpList$data$irga$densMoleH2o)
+  inpList$data$irgaTurb$densMoleAirDry <- def.dens.mole.air.dry(densMoleAir = inpList$data$irgaTurb$densMoleAir, densMoleH2o = inpList$data$irgaTurb$densMoleH2o)
 
   # wet mass fraction (specific humidity)
-  inpList$data$irga$rtioMassH2o <- def.rtio.mass.h2o.dens.mole(densMoleH2o = inpList$data$irga$densMoleH2o, densMoleAirDry = inpList$data$irga$densMoleAirDry)
+  inpList$data$irgaTurb$rtioMassH2o <- def.rtio.mass.h2o.dens.mole(densMoleH2o = inpList$data$irgaTurb$densMoleH2o, densMoleAirDry = inpList$data$irgaTurb$densMoleAirDry)
 
 # soni
   
@@ -130,19 +149,6 @@ wrap.derv.prd.day <- function(
   # sonic temperature [K] from speed of sound [m s-1] (Campbell Scientific, Eq. (9))
   inpList$data$soni$tempSoni <- eddy4R.base::def.temp.soni(veloSoni = inpList$data$soni$veloSoni)
   
-  #Additional QAQC tests
-  ###########################################################
-  #Run the test to output Validation flag
-  inpList$qfqm$irga$qfIrgaVali <- ff::as.ff(eddy4R.qaqc::def.qf.irga.vali(data = inpList$data$irgaMfcSamp))#Use this one for MFC set point
-
-#  inpList$qfqm$irga$qfIrgaVali <- eddy4R.qaqc::def.qf.irga.vali(data = inpList$data$irgaSndValiNema, Sens = "irgaSndValiNema")
-  
-  
-  #Run the test to determine the irgaAgc flag
-  inpList$qfqm$irga$qfIrgaAgc <- ff::as.ff(eddy4R.qaqc::def.qf.irga.agc(qfIrgaAgc = inpList$qfqm$irga$qfIrgaAgc))
-  
-  
-  ###########################################################   
   
   
   # sort object levels alphabetically
@@ -153,20 +159,20 @@ wrap.derv.prd.day <- function(
   # inpList$data
   inpList$data <- inpList$data[names(inpList$data)[order(tolower(names(inpList$data)))]]
 
-  # inpList$data$irga
-  inpList$data$irga <- inpList$data$irga[names(inpList$data$irga)[order(tolower(names(inpList$data$irga)))]]
+  # inpList$data$irgaTurb
+  inpList$data$irgaTurb <- inpList$data$irgaTurb[names(inpList$data$irgaTurb)[order(tolower(names(inpList$data$irgaTurb)))]]
   
-  # inpList$data$irga MFC
-  inpList$data$irgaMfcSamp <- inpList$data$irgaMfcSamp[names(inpList$data$irgaMfcSamp)[order(tolower(names(inpList$data$irgaMfcSamp)))]]
+  # inpList$data$irgaTurb MFC
+  inpList$data$mfcSampTurb <- inpList$data$mfcSampTurb[names(inpList$data$mfcSampTurb)[order(tolower(names(inpList$data$mfcSampTurb)))]]
   
-  # inpList$data$irga Solenoids
-  inpList$data$irgaSndValiNema <- inpList$data$irgaSndValiNema[names(inpList$data$irgaSndValiNema)[order(tolower(names(inpList$data$irgaSndValiNema)))]]
+  # inpList$data$irgaTurb Solenoids
+  inpList$data$valvValiNemaTurb <- inpList$data$valvValiNemaTurb[names(inpList$data$valvValiNemaTurb)[order(tolower(names(inpList$data$valvValiNemaTurb)))]]
   
   # inpList$data$soni
   inpList$data$soni <- inpList$data$soni[names(inpList$data$soni)[order(tolower(names(inpList$data$soni)))]]
   
-  # inpList$data$soniAmrs
-  inpList$data$soniAmrs <- inpList$data$soniAmrs[names(inpList$data$soniAmrs)[order(tolower(names(inpList$data$soniAmrs)))]]
+  # inpList$data$amrs
+  inpList$data$amrs <- inpList$data$amrs[names(inpList$data$amrs)[order(tolower(names(inpList$data$amrs)))]]
 
 # return results
 return(inpList)

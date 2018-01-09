@@ -5,8 +5,8 @@
 \title{Definition function: Grouping the quality flags for each of NEON ECTE and ECSE L1 data product}
 \usage{
 def.neon.dp01.qf.grp(qfInput = list(), MethMeas = c("ecte", "ecse")[1],
-  TypeMeas = c("samp", "vali")[1], dp01 = c("envHut", "irgaCo2", "irgaH2o",
-  "co2Stor", "h2oStor", "isoCo2", "isoH2o", "soni", "soniAmrs", "tempAirLvl",
+  TypeMeas = c("samp", "vali")[1], dp01 = c("envHut", "co2Turb", "h2oTurb",
+  "co2Stor", "h2oStor", "isoCo2", "isoH2o", "soni", "amrs", "tempAirLvl",
   "tempAirTop")[1], idGas = NULL)
 }
 \arguments{
@@ -17,7 +17,7 @@ def.neon.dp01.qf.grp(qfInput = list(), MethMeas = c("ecte", "ecse")[1],
 \item{\code{TypeMeas}}{A vector of class "character" containing the name of measurement type (sampling or validation), TypeMeas = c("samp", "ecse"). Defaults to "samp". [-]}
 
 \item{\code{dp01}}{A vector of class "character" containing the name of NEON ECTE and ECSE L1 data products which the flags are being grouped, \cr
-c("envHut", "irgaCo2", "irgaH2o", "isoCo2", "isoH2o", "soni", "soniAmrs", "tempAirLvl", "tempAirTop"). Defaults to "irgaCo2". [-]}
+c("envHut", "co2Turb", "h2oTurb", "isoCo2", "isoH2o", "soni", "amrs", "tempAirLvl", "tempAirTop"). Defaults to "co2Turb". [-]}
 
 \item{\code{idGas}}{A data frame contianing gas ID for isoCo2 measurement. Need to provide when dp01 = "isoCo2". Default to NULL. [-]}
 }
@@ -32,15 +32,15 @@ Function definition. Grouping the quality flags of each NEON ECTE and ECSE L1 da
 TimeBgn <- "2016-04-24 02:00:00.000"
 TimeEnd <- "2016-04-24 02:29:59.950"
 qf <- list()
-qf$irga <- eddy4R.qaqc::def.qf.ecte(TimeBgn = TimeBgn, TimeEnd = TimeEnd, Freq = 20, Sens = "irga", PcntQf = 0.05)
-#add qfIrgavali
-qf$irga$qfIrgaVali <- rep(0, 86000)
-qf$irgaMfcSamp <- eddy4R.qaqc::def.qf.ecte(TimeBgn = TimeBgn, TimeEnd = TimeEnd, Freq = 20, Sens = "irgaMfcSamp", PcntQf = 0.05)
+qf$irgaTurb <- eddy4R.qaqc::def.qf.ecte(TimeBgn = TimeBgn, TimeEnd = TimeEnd, Freq = 20, Sens = "irgaTurb", PcntQf = 0.05)
+#add qfIrgaTurbvali
+qf$irgaTurb$qfIrgaTurbVali <- rep(0, 86000)
+qf$mfcSampTurb <- eddy4R.qaqc::def.qf.ecte(TimeBgn = TimeBgn, TimeEnd = TimeEnd, Freq = 20, Sens = "mfcSampTurb", PcntQf = 0.05)
 qf$soni <- eddy4R.qaqc::def.qf.ecte(TimeBgn = TimeBgn, TimeEnd = TimeEnd, Freq = 20, Sens = "soni", PcntQf = 0.05)
-qf$soniAmrs <- eddy4R.qaqc::def.qf.ecte(TimeBgn = TimeBgn, TimeEnd = TimeEnd, Freq = 40, Sens = "soniAmrs", PcntQf = 0.05)
+qf$amrs <- eddy4R.qaqc::def.qf.ecte(TimeBgn = TimeBgn, TimeEnd = TimeEnd, Freq = 40, Sens = "amrs", PcntQf = 0.05)
 
 #grouping the set of the flags
-qfGrpIrgaCo2 <- eddy4R.qaqc::def.neon.dp01.qf.grp(qfInput = qf, MethMeas = "ecte", TypeMeas = "vali", dp01="irgaCo2")
+qfGrpCo2Turb <- eddy4R.qaqc::def.neon.dp01.qf.grp(qfInput = qf, MethMeas = "ecte", TypeMeas = "vali", dp01="co2Turb")
 qfGrpSoni <- eddy4R.qaqc::def.neon.dp01.qf.grp(qfInput = qf, MethMeas = "ecte", TypeMeas = "samp", dp01="soni")
 }
 \references{
