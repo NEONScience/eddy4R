@@ -236,7 +236,7 @@ def.plau <- function (
       qf[[idxVar]]$qfStep[posQf[[idxVar]]$posQfStep$na] <- -1
     }  
   }
-  
+
   # Do persistence test with time-based windowing approach
   if(class(WndwPers) == "difftime"){
     

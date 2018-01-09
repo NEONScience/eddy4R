@@ -107,14 +107,14 @@ def.para.flow.ecte <- function(
     
     # assign defaults
     # for a detailed description of each workflow parameter see ?eddy4R.base::def.para.flow.ecte, section Overview of workflow parameters
-    ParaFlow$DateOut <- base::as.character(base::as.Date(base::as.character(20160424), format = "%Y%m%d"))
+    ParaFlow$DateOut <- base::as.character(base::as.Date(base::as.character(20170925), format = "%Y%m%d"))
     ParaFlow$DirInp <- base::paste0(base::tempdir(), "/inpRefe")
     ParaFlow$DirMnt <- NA
     ParaFlow$DirOut <- base::paste0(base::tempdir(), "/out")
     ParaFlow$DirTmp <- base::tempdir()
     ParaFlow$DirWrk <- base::tempdir()
     ParaFlow$FileInp <- NA
-    ParaFlow$FileOutBase <- "NEON.D02.SERC.DP4.00200.001.ec-flux"
+    ParaFlow$FileOutBase <- "NEON.D10.CPER.DP4.00200.001.ec-flux"
     ParaFlow$NameDataExt <- NA
     ParaFlow$OutMeth <- c("hdf5", "diag")
     ParaFlow$OutSub <- 1:10

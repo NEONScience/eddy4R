@@ -4,8 +4,8 @@
 \alias{def.extr.hdf5}
 \title{Definition function: Extract data and attributes from HDF5 input file to another HDF5 output file}
 \usage{
-def.extr.hdf5(FileIn, FileOut, MethExtrData = TRUE, MethExtrAttr = TRUE,
-  dp01 = NULL)
+def.extr.hdf5(FileIn, FileOut = NULL, MethExtrData = TRUE,
+  MethExtrAttr = TRUE, dp01 = NULL)
 }
 \arguments{
 \item{FileIn}{is the input HDF5 file (turb or stor) the data and metadata are being read from.}

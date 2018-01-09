@@ -36,13 +36,15 @@
 #     added functionality not to include defined dp01 data
 #   Dave Durden (2017-11-08)
 #     Update function to report data and attributes
+#   Dave Durden (2017-11-08)
+#     Update function to prevent output to another file if FileOut = NULL
 ##############################################################################################################
 #Start of function call to extract data from one file and write to another
 ##############################################################################################################
 
 def.extr.hdf5 <- function(
   FileIn,
-  FileOut,
+  FileOut = NULL,
   MethExtrData = TRUE,
   MethExtrAttr = TRUE,
   dp01 = NULL
@@ -102,7 +104,8 @@ def.extr.hdf5 <- function(
   #Remove all empty lists
   rpt$listAttr <- rpt$listAttr[!base::sapply(rpt$listAttr, function(x) base::length(x) == 0)]
   
-##Write to the output HDF5 file  
+##Write to the output HDF5 file, if FileOut provided
+  if(!is.null(FileOut)){
   #Create connection to HDF5 file if FileOut already exists, or create new file
   if(file.exists(FileOut) == TRUE){
     fid <- rhdf5::H5Fopen(name = FileOut) #Open connection
@@ -135,7 +138,8 @@ def.extr.hdf5 <- function(
   }
   
   #Close the HDF5 file connection
-  H5close()
+  rhdf5::H5close()
+  }
   
   #Return the data and attributes
   return(rpt)

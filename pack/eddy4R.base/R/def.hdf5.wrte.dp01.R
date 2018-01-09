@@ -35,6 +35,8 @@
 #     Adding ucrt to dp01 output HDF5
 #   David Durden (2017-06-29)
 #     Adding switches for writing output
+#   David Durden (2017-12-18)
+#     bug fix to write unit attribute to 30 min basic output for qfqm's
 ##############################################################################################
 
 
@@ -134,13 +136,6 @@ lapply(names(inpList$dp01AgrSub$qfqm[[Dp01]]), function(x)  {
     inpList$qfqm[[Dp01]][[x]]$qfSciRevw <<- as.integer(inpList$qfqm[[Dp01]][[x]]$qfSciRevw)
     #Write 30-min qfqm output to HDF5
     rhdf5::h5writeDataset.data.frame(obj = inpList$qfqm[[Dp01]][[x]], h5loc = idQfqm30, name = x, DataFrameAsCompound = TRUE)})
-  
-  #Writing 30-min qfqm unit attributes to output HDF5 file
-  lapply(names(inpList$qfqm[[Dp01]]), function(x) {
-    if (!is.null(attributes(inpList$qfqm[[Dp01]][[x]])$unit) == TRUE){
-      dgid <- rhdf5::H5Dopen(idQfqm30, x)
-      rhdf5::h5writeAttribute(attributes(inpList$qfqm[[Dp01]][[x]])$unit, h5obj = dgid, name = "unit")
-    }})
 
 #Write 1-min qfqm
 if(MethSubAgr == TRUE){  
@@ -154,6 +149,13 @@ if(MethSubAgr == TRUE){
     rhdf5::h5writeDataset.data.frame(obj = inpList$dp01AgrSub$qfqm[[Dp01]][[x]], h5loc = idQfqm01, name = x, DataFrameAsCompound = TRUE)})
   }
 }
+
+#Writing 30-min qfqm unit attributes to output HDF5 file
+lapply(names(inpList$qfqm[[Dp01]]), function(x) {
+  if (!is.null(attributes(inpList$qfqm[[Dp01]][[x]])$unit) == TRUE){
+    dgid <- rhdf5::H5Dopen(idQfqm30, x)
+    rhdf5::h5writeAttribute(attributes(inpList$qfqm[[Dp01]][[x]])$unit, h5obj = dgid, name = "unit")
+  }})
 
 if(MethSubAgr == TRUE){
 #Writing sub-aggregated (e.g.1-min) qfqm unit attributes to output HDF5 file
