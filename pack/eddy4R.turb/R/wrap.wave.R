@@ -36,6 +36,8 @@
 #     complete initial Wavelet correction
 #   Stefan Metzger (2017-10-15)
 #     MVP candidate incl. efficiency improvements
+#   David Durden (2018-01-12)
+#     Added failsafe for ts object creation in case all dfInp values are NaN's
 ##############################################################################################
 
 
