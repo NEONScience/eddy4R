@@ -62,7 +62,10 @@ rpt$qfMiss <- lapply(rpt$qfMiss, as.integer)
 
 # fill missing values through linear interpolation
 # NAs at start and end are removed by setting na.rm = TRUE
-dfInp <- zoo::na.approx(dfInp, na.rm = TRUE, rule = 2) #Rule 2 allows extropolating end values using the nearest value or explicitly using zoo::na.locf, could be replaced with zeros using na.fill with any value: see https://stackoverflow.com/questions/7317607/interpolate-na-values-in-a-data-frame-with-na-approx
+tmp <- zoo::na.approx(dfInp, rule = 2) #Rule 2 allows extropolating end values using the nearest value or explicitly using zoo::na.locf, could be replaced with zeros using na.fill with any value: see https://stackoverflow.com/questions/7317607/interpolate-na-values-in-a-data-frame-with-na-approx
+
+#Failsafe in case all values are NaN
+if(nrow(tmp) > 1) dfInp <- tmp
 
 #time series
 dfInp <- as.data.frame(ts(
