@@ -33,6 +33,8 @@
 #     original creation
 #   Dave Durden (2017-12-12)
 #     bug fixes when only one qf is used to determine qf analysis
+#   Dave Durden (2017-01-15)
+#     bug fixes when only one qf is set high in first element of list
 ##############################################################################################
 
 
