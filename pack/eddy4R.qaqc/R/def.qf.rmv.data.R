@@ -80,6 +80,9 @@ def.qf.rmv.data <- function(
   #Add list names
   base::names(rpt$listQf) <- rpt$listVar
   
+  #Initialize list to prevent simplifying
+  rpt$posBad <- list()
+  
   # Replace the flagged data with NaN, and calculate the total number of bad data points
   base::lapply(rpt$listVar, function(x){
     if(base::length(rpt$listQf[[x]]) > 0 ) {
