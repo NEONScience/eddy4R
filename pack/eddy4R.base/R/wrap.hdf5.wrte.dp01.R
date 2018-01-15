@@ -56,6 +56,9 @@ wrap.hdf5.wrte.dp01 <- function(
   MethSubAgr = TRUE
 ){
 
+#Determine if the output file should be expanded or basic by creating a logical determined from the filename
+MethExpd <- grepl(pattern = "expanded", x = FileOut)  
+  
 #Initializing output list
 outList <- list()
 
@@ -110,6 +113,34 @@ if(MethDp04 == TRUE){
 
   for(idxDp04 in names(inpList$dp04$data)){
     #idxDp04 <- names(inpList$dp04$data)[1]
+    if(idxDp04 == "foot") {
+      #Adding time to output dataframe
+      rptDp04 <-  cbind(timeBgn = outList$data$soni$veloXaxsErth$timeBgn, timeEnd = outList$data$soni$veloXaxsErth$timeEnd, inpList$dp04$data[[idxDp04]]$stat, stringsAsFactors = FALSE)
+      
+      #Writing unit attributes to each variable to the dataframe level
+      attributes(rptDp04)$unit <- attributes(inpList$dp04$data[[idxDp04]]$stat)$unit)
+
+      #Open connection to dp04 data level
+      idDataDp04 <- rhdf5::H5Gopen(fid,paste0("/", SiteLoca, "/dp04/data/",idxDp04))
+      
+      #Writing flux data to output HDF5 file
+      rhdf5::h5writeDataset.data.frame(obj = rptDp04, h5loc = idDataDp04, name = "stat", DataFrameAsCompound = TRUE)
+      
+      #Connection to dataset
+      idDataDp04Df <- rhdf5::H5Dopen(idDataDp04, "stat")
+      #Output the attributes
+      rhdf5::h5writeAttribute(attributes(rptDp04)$unit, h5obj = idDataDp04Df, name = "unit")
+      
+      if(MethExpd == TRUE) {
+        # Create group level for the turbulence footprint grids
+        idDataDp04Expd <- rhdf5::H5Gcreate(idDataDp04, "grid/turb")
+        
+        #Write the gridded matrixes to output
+        lapply(base::names(inpList$dp04$data[[idxDp04]]$grid$turb), function(x) {rhdf5::h5writeDataset.matrix(obj = inpList$dp04$data[[idxDp04]]$grid$turb[[x]], h5obj = idDataDp04Expd, name = x)})
+        
+      }
+      
+    } else {
     #Adding time to output dataframe
     rptDp04 <-  cbind(timeBgn = outList$data$soni$veloXaxsErth$timeBgn, timeEnd = outList$data$soni$veloXaxsErth$timeEnd, inpList$dp04$data[[idxDp04]]$turb, stringsAsFactors = FALSE)
   
