@@ -60,6 +60,8 @@
 #     updated ECSE dp01 term names
 #   David Durden (2017-12-12)
 #     updated ECTE term names
+#   Natchaya P-Durden (2018-01-12)
+#     bugs fixed on determination qf for presEnvHut
 ##############################################################################################
 
 def.neon.dp01.qf.grp <- function(
@@ -962,7 +964,7 @@ if (MethMeas == "ecse") {
                                        setQf$presAtmMfcSampTurb, setQf$tempMfcSampTurb,
                                        setQf$sensMfcSampTurb))
       rpt$temp <- na.omit(data.frame (setQf$tempIrga))
-      rpt$presEnvHut <- na.omit(data.frame(setQf$rhEnvHut))
+      rpt$presEnvHut <- na.omit(data.frame(setQf$presEnvHut))
       rpt$rhEnvHut <- na.omit(data.frame (setQf$rhEnvHut))
       rpt$tempEnvHut <- na.omit(data.frame (setQf$tempEnvHut))
       rpt$rtioMoleWetH2oEnvHut <- na.omit(data.frame (setQf$rtioMoleWetH2oEnvHut))
@@ -1015,7 +1017,7 @@ if (MethMeas == "ecse") {
                                       setQf$presAtmMfcSampTurb, setQf$tempMfcSampTurb, 
                                       setQf$sensMfcSampTurb)) 
       rpt$temp <- na.omit(data.frame(setQf$tempIrga))
-      rpt$presEnvHut <- na.omit(data.frame(setQf$rhEnvHut))
+      rpt$presEnvHut <- na.omit(data.frame(setQf$presEnvHut))
       rpt$rhEnvHut <- na.omit(data.frame (setQf$rhEnvHut))
       rpt$tempEnvHut <- na.omit(data.frame (setQf$tempEnvHut))
       rpt$rtioMoleWetH2oEnvHut <- na.omit(data.frame (setQf$rtioMoleWetH2oEnvHut))
@@ -1212,7 +1214,7 @@ if (MethMeas == "ecse") {
         
         rpt$temp <- na.omit(data.frame(setQf$tempCrdCo2, setQf$sensCrdCo2))
         rpt$pres <- na.omit(data.frame(setQf$presCrdCo2, setQf$sensCrdCo2))
-        rpt$presEnvHut <- na.omit(data.frame(setQf$rhEnvHut))
+        rpt$presEnvHut <- na.omit(data.frame(setQf$presEnvHut))
         rpt$rhEnvHut <- na.omit(data.frame (setQf$rhEnvHut))
         rpt$tempEnvHut <- na.omit(data.frame (setQf$tempEnvHut))
         rpt$rtioMoleWetH2oEnvHut <- na.omit(data.frame (setQf$rtioMoleWetH2oEnvHut))
@@ -1276,7 +1278,7 @@ if (MethMeas == "ecse") {
         
         rpt$temp <- na.omit(data.frame(setQf$tempCrdCo2, setQf$sensCrdCo2))
         rpt$pres <- na.omit(data.frame(setQf$presCrdCo2, setQf$sensCrdCo2)) 
-        rpt$presEnvHut <- na.omit(data.frame(setQf$rhEnvHut))
+        rpt$presEnvHut <- na.omit(data.frame(setQf$presEnvHut))
         rpt$rhEnvHut <- na.omit(data.frame (setQf$rhEnvHut))
         rpt$tempEnvHut <- na.omit(data.frame (setQf$tempEnvHut))
         rpt$rtioMoleWetH2oEnvHut <- na.omit(data.frame (setQf$rtioMoleWetH2oEnvHut))
@@ -1351,7 +1353,7 @@ if (MethMeas == "ecse") {
         rpt$temp <- na.omit(data.frame(setQf$tempCrdCo2, setQf$sensCrdCo2))
         
         rpt$pres <- na.omit(data.frame(setQf$presCrdCo2, setQf$sensCrdCo2))
-        rpt$presEnvHut <- na.omit(data.frame(setQf$rhEnvHut))
+        rpt$presEnvHut <- na.omit(data.frame(setQf$presEnvHut))
         rpt$rhEnvHut <- na.omit(data.frame (setQf$rhEnvHut))
         rpt$tempEnvHut <- na.omit(data.frame (setQf$tempEnvHut))
         rpt$rtioMoleWetH2oEnvHut <- na.omit(data.frame (setQf$rtioMoleWetH2oEnvHut))
@@ -1419,7 +1421,7 @@ if (MethMeas == "ecse") {
         rpt$temp <- na.omit(data.frame(setQf$tempCrdCo2, setQf$sensCrdCo2))
         
         rpt$pres <- na.omit(data.frame(setQf$presCrdCo2, setQf$sensCrdCo2))  
-        rpt$presEnvHut <- na.omit(data.frame(setQf$rhEnvHut))
+        rpt$presEnvHut <- na.omit(data.frame(setQf$presEnvHut))
         rpt$rhEnvHut <- na.omit(data.frame (setQf$rhEnvHut))
         rpt$tempEnvHut <- na.omit(data.frame (setQf$tempEnvHut))
         rpt$rtioMoleWetH2oEnvHut <- na.omit(data.frame (setQf$rtioMoleWetH2oEnvHut))
@@ -1539,7 +1541,7 @@ if (MethMeas == "ecse") {
       
       rpt$pres <- na.omit(data.frame(setQf$presCrdH2o, setQf$sensCrdH2o$qfSensStus))
       rpt$temp <- na.omit(data.frame(setQf$tempCrdH2o, setQf$sensCrdH2o$qfSensStus)) 
-      rpt$presEnvHut <- na.omit(data.frame(setQf$rhEnvHut))
+      rpt$presEnvHut <- na.omit(data.frame(setQf$presEnvHut))
       rpt$rhEnvHut <- na.omit(data.frame (setQf$rhEnvHut))
       rpt$tempEnvHut <- na.omit(data.frame (setQf$tempEnvHut))
       rpt$rtioMoleWetH2oEnvHut <- na.omit(data.frame (setQf$rtioMoleWetH2oEnvHut))
@@ -1570,7 +1572,7 @@ if (MethMeas == "ecse") {
       
       rpt$pres <- na.omit(data.frame(setQf$presCrdH2o, setQf$sensCrdH2o$qfSensStus, setQf$valiCrdH2o))
       rpt$temp <- na.omit(data.frame(setQf$tempCrdH2o, setQf$sensCrdH2o$qfSensStus, setQf$valiCrdH2o))  
-      rpt$presEnvHut <- na.omit(data.frame(setQf$rhEnvHut))
+      rpt$presEnvHut <- na.omit(data.frame(setQf$presEnvHut))
       rpt$rhEnvHut <- na.omit(data.frame (setQf$rhEnvHut))
       rpt$tempEnvHut <- na.omit(data.frame (setQf$tempEnvHut))
       rpt$rtioMoleWetH2oEnvHut <- na.omit(data.frame (setQf$rtioMoleWetH2oEnvHut))
