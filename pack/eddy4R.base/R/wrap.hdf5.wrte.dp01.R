@@ -118,7 +118,7 @@ if(MethDp04 == TRUE){
       rptDp04 <-  cbind(timeBgn = outList$data$soni$veloXaxsErth$timeBgn, timeEnd = outList$data$soni$veloXaxsErth$timeEnd, inpList$dp04$data[[idxDp04]]$stat, stringsAsFactors = FALSE)
       
       #Writing unit attributes to each variable to the dataframe level
-      attributes(rptDp04)$unit <- attributes(inpList$dp04$data[[idxDp04]]$stat)$unit)
+      attributes(rptDp04)$unit <- attributes(inpList$dp04$data[[idxDp04]]$stat)$unit
 
       #Open connection to dp04 data level
       idDataDp04 <- rhdf5::H5Gopen(fid,paste0("/", SiteLoca, "/dp04/data/",idxDp04))
@@ -157,8 +157,9 @@ if(MethDp04 == TRUE){
   #Connection to dataset
   idDataDp04Df <- rhdf5::H5Dopen(idDataDp04, "turb")
   #Output the attributes
-  rhdf5::h5writeAttribute(attributes(rptDp04)$unit, h5obj = idDataDp04Df, name = "unit")        }                                
- 
+  rhdf5::h5writeAttribute(attributes(rptDp04)$unit, h5obj = idDataDp04Df, name = "unit")
+    }                                
+  } 
   rhdf5::H5close()                                           
 }                                          
 #Writing metadata from input dp0p file to output dp01 file
