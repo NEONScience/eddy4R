@@ -112,7 +112,7 @@ if(MethDp04 == TRUE){
   fid <- rhdf5::H5Fopen(FileOut)
 
   for(idxDp04 in names(inpList$dp04$data)){
-    #idxDp04 <- names(inpList$dp04$data)[1]
+    #idxDp04 <- names(inpList$dp04$data)[5]
     if(idxDp04 == "foot") {
       #Adding time to output dataframe
       rptDp04 <-  cbind(timeBgn = outList$data$soni$veloXaxsErth$timeBgn, timeEnd = outList$data$soni$veloXaxsErth$timeEnd, inpList$dp04$data[[idxDp04]]$stat, stringsAsFactors = FALSE)
@@ -133,10 +133,12 @@ if(MethDp04 == TRUE){
       
       if(MethExpd == TRUE) {
         # Create group level for the turbulence footprint grids
-        idDataDp04Expd <- rhdf5::H5Gcreate(idDataDp04, "grid/turb")
+        idDataDp04Expd <- rhdf5::H5Gcreate(idDataDp04, "grid")
+        #Create group for output
+        idDataDp04ExpdGrid <- rhdf5::H5Gcreate(idDataDp04Expd, "turb")
         
         #Write the gridded matrixes to output
-        lapply(base::names(inpList$dp04$data[[idxDp04]]$grid$turb), function(x) {rhdf5::h5writeDataset.matrix(obj = inpList$dp04$data[[idxDp04]]$grid$turb[[x]], h5obj = idDataDp04Expd, name = x)})
+        lapply(base::names(inpList$dp04$data[[idxDp04]]$grid$turb), function(x) {rhdf5::h5writeDataset.matrix(obj = inpList$dp04$data[[idxDp04]]$grid$turb[[x]], h5loc= idDataDp04ExpdGrid, name = x)})
         
       }
       
