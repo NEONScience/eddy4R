@@ -40,6 +40,8 @@
 #     Adding switches for writing 1-min and ucrt output
 #   David Durden (2017-09-10)
 #     Adding switches for writing dp04 output
+#   David Durden (2018-01-10)
+#     Altering the dp04 output to allow footprint output
 ##############################################################################################
 
 
