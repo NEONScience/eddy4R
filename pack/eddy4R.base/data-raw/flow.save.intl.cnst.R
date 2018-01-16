@@ -75,6 +75,9 @@
 #     Added units to natural constants
 #   Cove Sturtevant (2016-12-21)
 #     Added prefix "Intl." to internal data, for logical grouping in file directories and environment
+#   Cove Sturtevant (2018-01-15)
+#     Fixed some minor differences in pressure conversion factors to match the National Physical 
+#        Laboratory (http://www.npl.co.uk/reference/faqs/pressure-units)
 ##############################################################################################
 
 library(devtools)
@@ -324,23 +327,23 @@ IntlNatu <- list() # Natural constants
     IntlConv$PascBar <- c(0,1e-5) # [a0 a1] convert Pascal to bar [bar Pa-1]
     IntlConv$BarPasc <- c(0,1e5) # [a0 a1] convert bar to Pascal [Pa bar-1]
     IntlConv$PascAtm <- c(0,9.8692e-6) # [a0 a1] convert Pascal to atm [atm Pa-1]
-    IntlConv$AtmPasc <- c(0,101324.6646142) # [a0 a1] convert atm to Pascal [Pa atm-1]
-    IntlConv$PascTorr <- c(0,0.0075005920011807008727) # [a0 a1] convert Pascal to Torr [Torr Pa-1]
-    IntlConv$TorrPasc <- c(0,133.3219271028947901) # [a0 a1] convert torr to Pascal [Pa Torr-1]
-    IntlConv$PascPsi <- c(0,0.00014503725765876738303) # [a0 a1] convert Pascal to psi [psi Pa-1]
-    IntlConv$PsiPasc <- c(0,6894.734471349956948) # [a0 a1] convert psi to Pascal [Pa psi-1]
+    IntlConv$AtmPasc <- c(0,101325) # [a0 a1] convert atm to Pascal [Pa atm-1]
+    IntlConv$PascTorr <- c(0,760/101325) # [a0 a1] convert Pascal to Torr [Torr Pa-1]
+    IntlConv$TorrPasc <- c(0,101325/760) # [a0 a1] convert torr to Pascal [Pa Torr-1]
+    IntlConv$PascPsi <- c(0,0.0001450377) # [a0 a1] convert Pascal to psi [psi Pa-1]
+    IntlConv$PsiPasc <- c(0,6894.8) # [a0 a1] convert psi to Pascal [Pa psi-1]
     IntlConv$BarAtm <- c(0,0.98692) # [a0 a1] convert bar to atm [atm bar-1]
-    IntlConv$AtmBar <- c(0,1.013246646142) # [a0 a1] convert atm to bar [bar atm-1]
-    IntlConv$BarTorr <- c(0,750.05920011807006631) # [a0 a1] convert bar to Torr [Torr bar-1]
-    IntlConv$TorrBar <- c(0,0.0013332192710289478364) # [a0 a1] convert Torr to bar [bar Torr-1]
-    IntlConv$BarPsi <- c(0,14.503725765876739118) # [a0 a1] convert bar to psi [psi bar-1]
-    IntlConv$PsiBar <- c(0,0.06894734471349957261) # [a0 a1] convert psi to bar [bar psi-1]
-    IntlConv$AtmTorr <- c(0,759.99748451963432672) # [a0 a1] convert atm to Torr [Torr atm-1]
-    IntlConv$TorrAtm <- c(0,0.001315785118212630311) # [a0 a1] convert Torr to atm [atm Torr-1]
-    IntlConv$AtmPsi <- c(0,14.695900132274603678) # [a0 a1] convert atm to psi [psi atm-1]
-    IntlConv$PsiAtm <- c(0,0.068045738676042008541) # [a0 a1] convert psi to atm [atm psi-1]
-    IntlConv$TorrPsi <- c(0,0.019336710697307905871) # [a0 a1] convert Torr to psi [psi Torr-1]
-    IntlConv$PsiTorr <- c(0,51.714761401958099896) # [a0 a1] convert psi to Torr [Torr psi-1]
+    IntlConv$AtmBar <- c(0,1.01325) # [a0 a1] convert atm to bar [bar atm-1]
+    IntlConv$BarTorr <- c(0,750.06) # [a0 a1] convert bar to Torr [Torr bar-1]
+    IntlConv$TorrBar <- c(0,0.001333224) # [a0 a1] convert Torr to bar [bar Torr-1]
+    IntlConv$BarPsi <- c(0,14.50377) # [a0 a1] convert bar to psi [psi bar-1]
+    IntlConv$PsiBar <- c(0,0.068948) # [a0 a1] convert psi to bar [bar psi-1]
+    IntlConv$AtmTorr <- c(0,760) # [a0 a1] convert atm to Torr [Torr atm-1]
+    IntlConv$TorrAtm <- c(0,1/760) # [a0 a1] convert Torr to atm [atm Torr-1]
+    IntlConv$AtmPsi <- c(0,14.69595) # [a0 a1] convert atm to psi [psi atm-1]
+    IntlConv$PsiAtm <- c(0,0.068046) # [a0 a1] convert psi to atm [atm psi-1]
+    IntlConv$TorrPsi <- c(0,0.01933678) # [a0 a1] convert Torr to psi [psi Torr-1]
+    IntlConv$PsiTorr <- c(0,51.71493) # [a0 a1] convert psi to Torr [Torr psi-1]
 
 # Angles
     IntlConv$RadDeg <- c(0,180/pi)		# [a0 a1] convert radians to degree [deg rad-1]
