@@ -33,6 +33,8 @@
 #     original creation
 #   Dave Durden (2017-12-12)
 #     bug fixes when only one qf is used to determine qf analysis
+#   Dave Durden (2017-01-15)
+#     bug fixes when only one qf is set high in first element of list
 ##############################################################################################
 
 
@@ -79,6 +81,9 @@ def.qf.rmv.data <- function(
   
   #Add list names
   base::names(rpt$listQf) <- rpt$listVar
+  
+  #Initialize list to prevent simplifying
+  rpt$posBad <- list()
   
   # Replace the flagged data with NaN, and calculate the total number of bad data points
   base::lapply(rpt$listVar, function(x){
