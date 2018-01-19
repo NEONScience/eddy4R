@@ -46,6 +46,8 @@
 #     adding parameter MethMeas to distinguish different cases for ecte and ecse
 #   David Durden (2017-12-12)
 #     Updating to remove rev numbers from ECTE dp0p HDF5 data product group levels 
+#   Natchaya P-Durden (2018-01-19)
+#     Updating to remove rev numbers from ECSE dp0p HDF5 data product group levels 
 ##############################################################################################
         
 wrap.neon.read.hdf5.eddy <- function(
@@ -175,7 +177,7 @@ if(!(DateLoca %in% file)) {
   
   
   if(MethMeas == "ecse")  data <- rhdf5::h5read(file = base::paste0(DirInpLoca, "/ECSE_dp0p_", SiteLoca, "_", DateLoca, ".h5"),
-                                                name = base::paste0("/", SiteLoca, "/dp0p/data/", VarLoca, "_001/",LevlTowr),
+                                                name = base::paste0("/", SiteLoca, "/dp0p/data/", VarLoca, "/",LevlTowr),
                                                 read.attributes = TRUE)
   
 
@@ -202,7 +204,7 @@ if(!(DateLoca %in% file)) {
   
   
    if(MethMeas == "ecse") attr <- rhdf5::h5readAttributes(file = base::paste0(DirInpLoca, "/ECSE_dp0p_", SiteLoca, "_", DateLoca, ".h5"),
-                                    name = base::paste0("/", SiteLoca, "/dp0p/data/", VarLoca, "_001/", LevlTowr))
+                                    name = base::paste0("/", SiteLoca, "/dp0p/data/", VarLoca, "/", LevlTowr))
     
     #########This section not needed after moving the names and units to the data table level###########################
     # which attributes are of type character? 
