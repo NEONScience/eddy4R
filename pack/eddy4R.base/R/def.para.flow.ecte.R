@@ -174,6 +174,9 @@ def.para.flow.ecte <- function(
         base::warning(paste0("the workflow parameter ", x, " is not specified as environmental variable."))
       }
     })
+    
+    # convert from character (default for environmental variable) to integer
+    lapply(c("OutSub", "PrdIncrCalc", "PrdIncrPf", "PrdWndwCalc", "PrdWndwPf"), function(x) ParaFlow[[x]] <<- base::as.integer(ParaFlow[[x]]))
 
   }
 
