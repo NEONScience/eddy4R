@@ -163,13 +163,18 @@ def.para.flow.ecte <- function(
         # split strings by colon (:) to separate multiple multiple values (if present)
         if(is.character(ParaFlow[[x]])) ParaFlow[[x]] <<- strsplit(x = ParaFlow[[x]], split = ":")[[1]]
         
+        # convert character NAs ("NA") to R-recognized missing values (NA)
+        idxNa <- base::which(ParaFlow[[x]] == "NA")
+        if(base::length(idxNa) > 0) ParaFlow[[x]][idxNa] <<- NA
+        rm(idxNa)
+        
       # in case corresponding environmental variable NOT present
       } else {
         ParaFlow[[x]] <<- NA
         base::warning(paste0("the workflow parameter ", x, " is not specified as environmental variable."))
       }
     })
-    
+
   }
 
   
