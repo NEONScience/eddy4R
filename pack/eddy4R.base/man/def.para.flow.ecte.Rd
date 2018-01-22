@@ -61,7 +61,8 @@ NEON Algorithm Theoretical Basis Document:Eddy Covariance Turbulent Exchange Sub
 NEON Algorithm Theoretical Basis Document:Eddy Covariance Turbulent Exchange Subsystem Level 1 data product calculations (NEON.DOC.000807)
 }
 \author{
-Stefan Metzger \email{eddy4R.info@gmail.com}
+Stefan Metzger \email{eddy4R.info@gmail.com} \cr
+David Durden \email{eddy4R.info@gmail.com}
 }
 \keyword{ECTE}
 \keyword{NEON,}
