@@ -36,11 +36,11 @@
 wrap.qf.rmv.data <- function(
   inpList, 
   Vrbs = FALSE, 
-  MethMeas = c("ecte",  "ecse")[1]
-  {
+  MethMeas = c("ecte",  "ecse")[1]){
   
   #Initialize reporting list
   rpt <- inpList
+  outList <- list()
   
   #Determine the sensors that have data and quality flags
   sens <- base::intersect(base::names(inpList$data), base::names(inpList$qfqm))
@@ -50,18 +50,7 @@ wrap.qf.rmv.data <- function(
   outList <- base::lapply(sens, function(x){ 
     eddy4R.qaqc::def.qf.rmv.data(dfData = inpList$data[[x]][], dfQf = inpList$qfqm[[x]], Sens = x, Vrbs = Vrbs) #Remove high frequency data that is flagged by sensor specific flags or plausibility tests flags
   })
-  }
   
-  if(MethMeas == "ecse"){
-    # Determine quality flags to apply to each stream, quantify flags, and remove bad data across all sensors
-    # start loop around instruments
-    for(idxSens in sens){
-    #for each measurement level
-    outList[[idxSens]] <- base::lapply(base::names(inpList$data[[idxSens]]), function(x){ 
-      eddy4R.qaqc::def.qf.rmv.data(dfData = inpList$data[[idxSens]][[x]], dfQf = inpList$qfqm[[idxSens]][[x]], Sens = idxSens, Vrbs = Vrbs) #Remove high frequency data that is flagged by sensor specific flags or plausibility tests flags
-    })
-  }
-  }
   #Apply names to the output list
   base::names(outList) <- sens
   
@@ -76,8 +65,37 @@ wrap.qf.rmv.data <- function(
   if(Vrbs == TRUE){
     base::lapply(base::names(outList), function(x) {
       #Write out qfqm analytics as a separate list to the output
-    rpt$qfqmAnal[[x]] <<- outList[[x]][!names(outList[[x]]) %in% "dfData"] 
-  })}
+      rpt$qfqmAnal[[x]] <<- outList[[x]][!names(outList[[x]]) %in% "dfData"] 
+    })}
+  }#end of MethMeas == "ecte"
+  
+  if(MethMeas == "ecse"){
+    # Determine quality flags to apply to each stream, quantify flags, and remove bad data across all sensors
+    # start loop around instruments
+    for(idxSens in sens){
+    #for each measurement level
+    outList[[idxSens]] <- base::lapply(base::names(inpList$data[[idxSens]]), function(x){ 
+      eddy4R.qaqc::def.qf.rmv.data(dfData = inpList$data[[idxSens]][[x]], dfQf = inpList$qfqm[[idxSens]][[x]], Sens = idxSens, Vrbs = Vrbs , TypeData = "real") #Remove high frequency data that is flagged by sensor specific flags or plausibility tests flags
+      })
+    #Apply names to the each mesurement level
+    base::names(outList[[idxSens]]) <- base::names(inpList$data[[idxSens]])
+    
+    #Applying the bad quality flags to the reported output data
+    base::lapply(base::names(inpList$data[[idxSens]]), function(x) {
+      #Outputting the data ffdf's
+      rpt$data[[idxSens]][[x]] <<- outList[[idxSens]][[x]]$dfData
+      rpt$data[[idxSens]][[x]] <<- eddy4R.base::def.unit.var(samp = rpt$data[[idxSens]][[x]], refe = inpList$data[[idxSens]][[x]]) #Copy units
+    })
+    
+    #If verbose is true write out all the information about the quality flags applied to the raw data
+    if(Vrbs == TRUE){
+      base::lapply(base::names(inpList$data[[idxSens]]), function(x) {
+        #Write out qfqm analytics as a separate list to the output
+        rpt$qfqmAnal[[idxSens]][[x]] <<- outList[[idxSens]][[x]][!names(outList[[idxSens]][[x]]) %in% "dfData"] 
+      })}
+    }#end of each sensor
+  }#end of MethMeas == "ecse"
+  
   
   #Return the list of information with bad data removed
   return(rpt)
