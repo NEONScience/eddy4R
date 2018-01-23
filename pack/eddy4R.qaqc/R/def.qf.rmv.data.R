@@ -42,7 +42,8 @@ def.qf.rmv.data <- function(
   dfData,
   dfQf,
   Sens = NULL,
-  Vrbs = FALSE){
+  Vrbs = FALSE,
+  TypeData = c("integer", "real")[1]){
   
   #Create a list to hold all the output
   rpt <- list()
@@ -65,11 +66,15 @@ def.qf.rmv.data <- function(
     qfSens <- NULL  
   }
   
-  # Grab only qf that are integers  
+  # Grab only qf that are integers 
+  if(TypeData == "integer"){
   if(ff::is.ffdf(dfQf)){
     qfName <-  base::names(dfQf[ff::vmode(dfQf) == "integer"]) #method for ffdf objects
   }else{
     qfName <-  base::names(base::Filter(base::is.integer, dfQf))  #method for normal data.frame objects
+  }
+  }else{
+    qfName <-  base::names(dfQf)
   }
   
   # A list of all the flags to be included in the data removal  
