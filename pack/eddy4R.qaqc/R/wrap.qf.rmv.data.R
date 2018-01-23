@@ -10,6 +10,8 @@
 #' @param Vrbs Optional. A logical {FALSE/TRUE} value indicating whether to:\cr
 #' \code{Vrbs = FALSE}: (Default) cleaned data set with the bad high frequency quality flagged data replaced with NaN's as part of the \code{inpList} in the same format., or \cr
 #' \code{Vrbs = TRUE}: cleaned data set with the bad high frequency quality flagged data replaced with NaN's as part of the \code{inpList} in the same format. In addition, a separate list  \code{qfqmAnal} will be added to the output list \code{rpt} with a list of variables assessed, a list of quality flags for each variable assessed, the number of each quality flag tripped for each variable and the total number of bad data per variable.
+#' @param MethMeas A vector of class "character" containing the name of measurement method (eddy-covariance turbulent exchange or storage exchange), MethMeas = c("ecte", "ecse"). Defaults to "ecte". [-]
+
 #' 
 #' @return The returned object consistes of \code{inpList}, with the bad high frequency quality flagged data replaced with NaN's. Optionally, (\code{Vrbs = TRUE}) a separate list \code{qfqmAnal} will be added to the output list \code{rpt} with a list of variables assessed, a list of quality flags for each variable assessed, the number of each quality flag tripped for each variable and the total number of bad data per variable.
 
@@ -30,6 +32,8 @@
 # changelog and author contributions / copyrights
 #   Dave Durden (2017-10-27)
 #     original creation
+#   Natchaya Pingintha-Durden (2018-01-23)
+#     added MethMeas to paramerter and modified original function to work with ECSE
 ##############################################################################################
 
 
