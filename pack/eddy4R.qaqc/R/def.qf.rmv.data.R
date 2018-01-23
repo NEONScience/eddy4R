@@ -99,8 +99,8 @@ def.qf.rmv.data <- function(
     #Remove qfCal flags
     tmp <- tmp[,base::grep(pattern = "qfCal", x = names(tmp), invert = TRUE), drop = FALSE]
     #Calculate the number of times each quality flag was set high (qf..= 1)
-    if(Vrbs == TRUE) {if(ncol(tmp) > 1){rpt$fracQfBad[[x]] <<- base::apply(X = tmp, MARGIN = 2, FUN = function(x) base::length(which(x == 1))/base::length(x))}
-      else{rpt$fracQfBad[[x]] <<- base::sum(tmp)/base::nrow(tmp)
+    if(Vrbs == TRUE) {if(ncol(tmp) > 1){rpt$fracQfBad[[x]] <<- base::apply(X = tmp, MARGIN = 2, FUN = function(x) base::length(which(x == 1))/base::length(which(!is.na(x))))}
+      else{rpt$fracQfBad[[x]] <<- base::sum(tmp == 1, na.rm = TRUE)/base::sum(!is.na(tmp))
       names(rpt$fracQfBad[[x]]) <<- names(tmp)}}
     #Record the row positions for each variable where at least 1 flag is raised
     rpt$posBad[[x]] <<-  base::which(base::rowSums(tmp == 1) > 0)
