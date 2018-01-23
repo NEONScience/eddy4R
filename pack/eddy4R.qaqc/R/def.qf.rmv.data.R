@@ -12,6 +12,7 @@
 #' @param Vrbs Optional. A logical {FALSE/TRUE} value indicating whether to:\cr
 #' \code{Vrbs = FALSE}: (Default) cleaned data set, list of variables assessed, list of quality flags for each variable assessed, and the total number of bad data per variable, or \cr
 #' \code{Vrbs = TRUE}: cleaned data set, list of variables assessed, list of quality flags for each variable assessed, the number of each quality flag tripped for each variable and the total number of bad data per variable
+#' @param TypeData Type of input data, TypeData = c("integer", "real"). Defaults to "integer". [-]. 
 #' 
 #' @return A list (\code{rpt}) containing a dataframe (\code{rpt$dfData}) of the data with bad data replaced by NaN's, a vector of data variables to assess (\code{rpt$listVar}),  a list containing vectors of flag names used for each variable (\code{rpt$listQf}),  a list containing vectors of the number of quality flags set high for each variable (\code{rpt$fracQfBad}), a list containing vectors of flagged data points for each variable (\code{rpt$posBad}), a list containing total number of flagged data points for each variable (\code{rpt$numBadSum}).
 
@@ -35,6 +36,10 @@
 #     bug fixes when only one qf is used to determine qf analysis
 #   Dave Durden (2017-01-15)
 #     bug fixes when only one qf is set high in first element of list
+#   Natchaya Pingintha-Durden (2018-01-23)
+#     added TypeData to paramerter
+#   Dave Durden (2018-01-23)
+#     bug fixes to not include NaN values when calculating the fracQfBad
 ##############################################################################################
 
 
