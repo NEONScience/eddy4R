@@ -33,7 +33,11 @@
 ##############################################################################################
 
 
-wrap.qf.rmv.data <- function(inpList, Vrbs = FALSE){
+wrap.qf.rmv.data <- function(
+  inpList, 
+  Vrbs = FALSE, 
+  MethMeas = c("ecte",  "ecse")[1]
+  {
   
   #Initialize reporting list
   rpt <- inpList
@@ -41,11 +45,23 @@ wrap.qf.rmv.data <- function(inpList, Vrbs = FALSE){
   #Determine the sensors that have data and quality flags
   sens <- base::intersect(base::names(inpList$data), base::names(inpList$qfqm))
   
+  if(MethMeas == "ecte"){
   # Determine quality flags to apply to each stream, quantify flags, and remove bad data across all sensors
   outList <- base::lapply(sens, function(x){ 
     eddy4R.qaqc::def.qf.rmv.data(dfData = inpList$data[[x]][], dfQf = inpList$qfqm[[x]], Sens = x, Vrbs = Vrbs) #Remove high frequency data that is flagged by sensor specific flags or plausibility tests flags
   })
+  }
   
+  if(MethMeas == "ecse"){
+    # Determine quality flags to apply to each stream, quantify flags, and remove bad data across all sensors
+    # start loop around instruments
+    for(idxSens in sens){
+    #for each measurement level
+    outList[[idxSens]] <- base::lapply(base::names(inpList$data[[idxSens]]), function(x){ 
+      eddy4R.qaqc::def.qf.rmv.data(dfData = inpList$data[[idxSens]][[x]], dfQf = inpList$qfqm[[idxSens]][[x]], Sens = idxSens, Vrbs = Vrbs) #Remove high frequency data that is flagged by sensor specific flags or plausibility tests flags
+    })
+  }
+  }
   #Apply names to the output list
   base::names(outList) <- sens
   
