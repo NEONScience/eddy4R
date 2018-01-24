@@ -87,6 +87,9 @@ def.qf.rmv.data <- function(
     tmp <- base::subset(x = names(dfQf), subset = base::grepl(pattern = base::paste(x,qfSens, sep ="|"),x = qfName, ignore.case = TRUE))
     #qfCal flags from consideration
     tmp[base::grep(pattern = "qfCal", x = tmp, invert = TRUE), drop = FALSE]
+    #take flag that generate for using in the other sensors out (i.e., qfRh and qfTemp in envHut)
+    tmpFlag <- paste0("qf",paste(toupper(substr(x, 1, 1)), substr(x, 2, nchar(x)), sep =""), sep = "")
+    tmp[base::grep(pattern = tmpFlag, x = tmp, invert = TRUE), drop = FALSE]
   })
   
   #Add list names
