@@ -118,23 +118,23 @@ quantity to be converted to.\cr
   \item{PascBar}{pressure conversion, Pascal to bar = c(0,1e-5) [bar Pa-1]}
   \item{BarPasc}{pressure conversion, bar to Pascal = c(0,1e5) [Pa bar-1]}
   \item{PascAtm}{pressure conversion, Pascal to atm = c(0,9.8692e-6) [atm Pa-1]}
-  \item{AtmPasc}{pressure conversion, atm to Pascal = c(0,101324.6646142) [Pa atm-1]}
-  \item{PascTorr}{pressure conversion, Pascal to Torr = c(0,0.0075005920011807008727) [Torr Pa-1]}
-  \item{TorrPasc}{pressure conversion, torr to Pascal = c(0,133.3219271028947901) [Pa Torr-1]}
-  \item{PascPsi}{pressure conversion, Pascal to psi = c(0,0.00014503725765876738303) [psi Pa-1]}
-  \item{PsiPasc}{pressure conversion, psi to Pascal = c(0,6894.734471349956948) [Pa psi-1]}
+  \item{AtmPasc}{pressure conversion, atm to Pascal = c(0,101325) [Pa atm-1]}
+  \item{PascTorr}{pressure conversion, Pascal to Torr = c(0,760/101325) [Torr Pa-1]}
+  \item{TorrPasc}{pressure conversion, torr to Pascal = c(0,101325/760) [Pa Torr-1]}
+  \item{PascPsi}{pressure conversion, Pascal to psi = c(0,0.0001450377) [psi Pa-1]}
+  \item{PsiPasc}{pressure conversion, psi to Pascal = c(0,6894.8) [Pa psi-1]}
   \item{BarAtm}{pressure conversion, bar to atm = c(0,0.98692) [atm bar-1]}
-  \item{AtmBar}{pressure conversion, atm to bar = c(0,1.013246646142) [bar atm-1]}
-  \item{BarTorr}{pressure conversion, bar to Torr = c(0,750.05920011807006631) [Torr bar-1]}
-  \item{TorrBar}{pressure conversion, Torr to bar = c(0,0.0013332192710289478364) [bar Torr-1]}
-  \item{BarPsi}{pressure conversion, bar to psi = c(0,14.503725765876739118) [psi bar-1]}
-  \item{PsiBar}{pressure conversion, psi to bar = c(0,0.06894734471349957261) [bar psi-1]}
-  \item{AtmTorr}{pressure conversion, atm to Torr = c(0,759.99748451963432672) [Torr atm-1]}
-  \item{TorrAtm}{pressure conversion, Torr to atm = c(0,0.001315785118212630311) [atm Torr-1]}
-  \item{AtmPsi}{pressure conversion, atm to psi = c(0,14.695900132274603678) [psi atm-1]}
-  \item{PsiAtm}{pressure conversion, psi to atm = c(0,0.068045738676042008541) [atm psi-1]}
-  \item{TorrPsi}{pressure conversion, Torr to psi = c(0,0.019336710697307905871) [psi Torr-1]}
-  \item{PsiTorr}{pressure conversion, psi to Torr = c(0,51.714761401958099896) [Torr psi-1]}
+  \item{AtmBar}{pressure conversion, atm to bar = c(0,1.01325) [bar atm-1]}
+  \item{BarTorr}{pressure conversion, bar to Torr = c(0,750.06) [Torr bar-1]}
+  \item{TorrBar}{pressure conversion, Torr to bar = c(0,0.001333224) [bar Torr-1]}
+  \item{BarPsi}{pressure conversion, bar to psi = c(0,14.50377) [psi bar-1]}
+  \item{PsiBar}{pressure conversion, psi to bar = c(0,0.068948) [bar psi-1]}
+  \item{AtmTorr}{pressure conversion, atm to Torr = c(0,760) [Torr atm-1]}
+  \item{TorrAtm}{pressure conversion, Torr to atm = c(0,1/760) [atm Torr-1]}
+  \item{AtmPsi}{pressure conversion, atm to psi = c(0,14.69595) [psi atm-1]}
+  \item{PsiAtm}{pressure conversion, psi to atm = c(0,0.068046) [atm psi-1]}
+  \item{TorrPsi}{pressure conversion, Torr to psi = c(0,0.01933678) [psi Torr-1]}
+  \item{PsiTorr}{pressure conversion, psi to Torr = c(0,51.71493) [Torr psi-1]}
   }
 \cr
 \cr
