@@ -375,6 +375,9 @@ if(!(DateLoca %in% file)) {
   }
   
   # de-spiking
+  # for ECSE, do not perform here; already migrated to eddy4R.base::wrap.prd.day.ecse()
+  # TODO: similarly adjust for ECTE
+  if(!(MethMeas == "ecse")) {
 
     # perform range test
     if(VarLoca %in% base::names(RngLoca)) {
@@ -408,6 +411,8 @@ if(!(DateLoca %in% file)) {
       print(paste0(format(Sys.time(), "%F %T"), ": dataset ", DateLoca, ": ", VarLoca, " de-spiking not performed"))
       
     }
+     
+  }
 
 ###
 }
