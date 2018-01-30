@@ -4,10 +4,12 @@
 \alias{wrap.prd.day.ecse}
 \title{Wrapper function: To perform daily ECSE processing in native resolution}
 \usage{
-wrap.prd.day.ecse(inpList)
+wrap.prd.day.ecse(inpList, Desp)
 }
 \arguments{
-\item{inpList}{List consisting of input data in the format provided by function \code{eddy4R.base::wrap.neon.read.hdf5.eddy()}. Of types numeric and integer.}
+\item{inpList}{List consisting of input data in the format provided by function \code{eddy4R.base::wrap.neon.read.hdf5.eddy()}. Of types numeric, integer,  character and POSIXct.}
+
+\item{Desp}{De-spiking parameters as mixed list of types integer and character with the following list entries: \code{widt} de-spiking median filter window width (single integer); \code{nbin} de-spiking histogram bins initial number/step size (single integer); \code{rest} de-spiking resolution threshold (single integer); \code{var} sub-list of sensors in \code{inpList}, with each list entry containing the variable names for which to perform de-spiking (character). See \code{?eddy4R.qaqc::def.dspk.br86} for details.}
 }
 \value{
 The returned object consistes of \code{rpt} after applying the daily processing.
@@ -25,7 +27,8 @@ License: GNU AFFERO GENERAL PUBLIC LICENSE Version 3, 19 November 2007.
 Currently none.
 }
 \author{
-Natchaya Pingintha-Durden \email{eddy4R.info@gmail.com}
+Natchaya Pingintha-Durden \email{eddy4R.info@gmail.com} \cr
+Stefan Metzger \email{eddy4R.info@gmail.com}
 }
 \keyword{ECSE,}
 \keyword{daily}
