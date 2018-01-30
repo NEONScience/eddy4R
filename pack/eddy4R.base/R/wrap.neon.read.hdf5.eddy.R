@@ -45,7 +45,9 @@
 #   Ke Xu (2017-05-22)
 #     adding parameter MethMeas to distinguish different cases for ecte and ecse
 #   David Durden (2017-12-12)
-#     Updating to remove rev numbers from ECTE dp0p HDF5 data product group levels 
+#     Updating to remove rev numbers from ECTE dp0p HDF5 data product group levels
+#   Stefan Metzger (2018-01-30)
+#     move ECSE de-spiking from wrap.neon.read.hdf5.eddy() to wrap.prd.day.ecse()
 ##############################################################################################
         
 wrap.neon.read.hdf5.eddy <- function(
