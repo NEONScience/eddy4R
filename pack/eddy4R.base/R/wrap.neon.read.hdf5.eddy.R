@@ -48,6 +48,9 @@
 #     Updating to remove rev numbers from ECTE dp0p HDF5 data product group levels 
 #   Natchaya P-Durden (2018-01-19)
 #     Updating to remove rev numbers from ECSE dp0p HDF5 data product group levels 
+#    Updating to remove rev numbers from ECTE dp0p HDF5 data product group levels
+#   Stefan Metzger (2018-01-30)
+#     move ECSE de-spiking from wrap.neon.read.hdf5.eddy() to wrap.prd.day.ecse()
 ##############################################################################################
         
 wrap.neon.read.hdf5.eddy <- function(
@@ -377,6 +380,9 @@ if(!(DateLoca %in% file)) {
   }
   
   # de-spiking
+  # for ECSE, do not perform here; already migrated to eddy4R.base::wrap.prd.day.ecse()
+  # TODO: similarly adjust for ECTE
+  if(!(MethMeas == "ecse")) {
 
     # perform range test
     if(VarLoca %in% base::names(RngLoca)) {
@@ -410,6 +416,8 @@ if(!(DateLoca %in% file)) {
       print(paste0(format(Sys.time(), "%F %T"), ": dataset ", DateLoca, ": ", VarLoca, " de-spiking not performed"))
       
     }
+     
+  }
 
 ###
 }
