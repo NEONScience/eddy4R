@@ -99,17 +99,20 @@ outAttr$h2oTurb <- list("rtioMoleDryCo2"= c("mean" = "mmolCo2 mol-1Dry", "min" =
 
 wrkAttr <- list()
 for(idxDp in names(outList$data)){
-lapply(names(outList$data[[idxDp]]), function(x){
-  baseAttr <- attributes(outList$data[[idxDp]][[x]])$unit
-  wrkAttr[[idxDp]][[x]] <<- unlist(list("mean"= baseAttr, "min" = baseAttr, "max" = baseAttr, "vari" = baseAttr, "numSamp" = "NA", "timeBgn" = "NA", "timeEnd" = "NA"))
- attributes(outList$data[[idxDp]][[x]])$unit <<- wrkAttr[[idxDp]][[x]]
+lapply(names(outList$data[[idxDp]]), function(idxVar){
+  baseAttr <- attributes(outList$data[[idxDp]][[idxVar]])$unit
+  wrkAttr[[idxDp]][[idxVar]] <<- unlist(list("mean"= baseAttr, "min" = baseAttr, "max" = baseAttr, "vari" = baseAttr, "numSamp" = "NA", "timeBgn" = "NA", "timeEnd" = "NA"))
+  outList$data[[idxDp]][[idxVar]]$vari <<- sqrt(outList$data[[idxDp]][[idxVar]]$vari)
+ attributes(outList$data[[idxDp]][[idxVar]])$unit <<- wrkAttr[[idxDp]][[idxVar]]
+ #Applying unit conversion#
+ base::suppressWarnings(eddy4R.base::def.unit.conv(data = outList$data[[idxDp]][[idxVar]], unitFrom = attributes(outList$data[[idxDp]][[idxLvl]][[idxVar]])$unit, unitTo = outAttr[[idxDp]][[idxVar]], MethGc = FALSE))
 })
 }
 for(idxDp in names(outList$dp01AgrSub$data)){
-  lapply(names(outList$dp01AgrSub$data[[idxDp]]), function(x){
-    baseAttr <- attributes(outList$dp01AgrSub$data[[idxDp]][[x]])$unit
-    wrkAttr[[idxDp]][[x]] <<- unlist(list("mean"= baseAttr, "min" = baseAttr, "max" = baseAttr, "vari" = baseAttr, "numSamp" = "NA", "timeBgn" = "NA", "timeEnd" = "NA"))
-    attributes(outList$dp01AgrSub$data[[idxDp]][[x]])$unit <<- wrkAttr[[idxDp]][[x]]
+  lapply(names(outList$dp01AgrSub$data[[idxDp]]), function(idxVar){
+    baseAttr <- attributes(outList$dp01AgrSub$data[[idxDp]][[idxVar]])$unit
+    wrkAttr[[idxDp]][[idxVar]] <<- unlist(list("mean"= baseAttr, "min" = baseAttr, "max" = baseAttr, "vari" = baseAttr, "numSamp" = "NA", "timeBgn" = "NA", "timeEnd" = "NA"))
+    attributes(outList$dp01AgrSub$data[[idxDp]][[idxVar]])$unit <<- wrkAttr[[idxDp]][[idxVar]]
   })
 }
 outList$data$soni$angZaxsErth[,which(names(outList$data$soni$angZaxsErth) %in% c("mean","min","max","vari"))] <- def.unit.conv(outList$data$soni$angZaxsErth[,which(names(outList$data$soni$angZaxsErth) %in% c("mean","min","max","vari"))], unitFrom = "rad", unitTo = "deg")
