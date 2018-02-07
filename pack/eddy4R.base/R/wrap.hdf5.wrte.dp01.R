@@ -84,6 +84,11 @@ if(MethSubAgr == TRUE){
   }
 }
 
+######################################################################
+#End of packing output into proper structure format; begin unit conversion
+######################################################################
+
+
 outList$data$soni$angZaxsErth[,which(names(outList$data$soni$angZaxsErth) %in% c("mean","min","max","vari"))] <- def.unit.conv(outList$data$soni$angZaxsErth[,which(names(outList$data$soni$angZaxsErth) %in% c("mean","min","max","vari"))], unitFrom = "rad", unitTo = "deg")
 attr(x = outList$data$soni$angZaxsErth, which = "unit") <- "deg"
 
@@ -103,6 +108,9 @@ if(MethSubAgr == TRUE){
 #Applying the HDF5 write output function across all DPs
 lapply(names(outList$data), function(x) eddy4R.base::def.hdf5.wrte.dp01(inpList = outList, FileOut = FileOut, SiteLoca = SiteLoca, LevlTowr = LevlTowr, Dp01 = x, MethUcrt = MethUcrt, MethSubAgr = MethSubAgr))
 
+######################################################################
+#dp04 formatting and output
+######################################################################
 if(MethDp04 == TRUE){
   
   #Create HDF5 connection to the output file  
@@ -129,8 +137,11 @@ if(MethDp04 == TRUE){
   rhdf5::h5writeAttribute(attributes(rptDp04)$unit, h5obj = idDataDp04Df, name = "unit")        }                                
  
   rhdf5::H5close()                                           
-}                                          
+}
+
+######################################################################
 #Writing metadata from input dp0p file to output dp01 file
+######################################################################
 eddy4R.base::def.para.hdf5.dp01(FileIn = FileIn, FileOut = FileOut)
 
 }
