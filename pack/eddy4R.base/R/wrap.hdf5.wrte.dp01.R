@@ -96,7 +96,7 @@ outAttr$co2Turb <- list("rtioMoleDryCo2"= c("mean" = "umolCo2 mol-1Dry", "min" =
 
 outAttr$h2oTurb <- list("rtioMoleDryCo2"= c("mean" = "mmolCo2 mol-1Dry", "min" = "mmolCo2 mol-1Dry", "max" = "mmolCo2 mol-1Dry", "vari" = "mmolCo2 mol-1Dry", "numSamp" = "NA", "timeBgn" = "NA", "timeEnd" = "NA"), "densMoleCo2"= c("mean" = "mmolCo2 m-3", "min" = "mmolCo2 m-3", "max" = "mmolCo2 m-3", "vari" = "mmolCo2 m-3", "numSamp" = "NA", "timeBgn" = "NA", "timeEnd" = "NA"), "presAtm"= c("mean" = "kPa", "min" = "kPa", "max" = "kPa", "vari" = "kPa", "numSamp" = "NA", "timeBgn" = "NA", "timeEnd" = "NA"), "presSum"= c("mean" = "kPa", "min" = "kPa", "max" = "kPa", "vari" = "kPa", "numSamp" = "NA", "timeBgn" = "NA", "timeEnd" = "NA"), "frt00Samp"= c("mean" = "dm3 min-1", "min" = "dm3 min-1", "max" = "dm3 min-1", "vari" = "dm3 min-1", "numSamp" = "NA", "timeBgn" = "NA", "timeEnd" = "NA"), "tempAve"= c("mean" = "C", "min" = "C", "max" = "C", "vari" = "C", "numSamp" = "NA", "timeBgn" = "NA", "timeEnd" = "NA"))
 
-
+test <- outList
 wrkAttr <- list()
 for(idxDp in names(outList$data)){
 lapply(names(outList$data[[idxDp]]), function(idxVar){
@@ -105,9 +105,10 @@ lapply(names(outList$data[[idxDp]]), function(idxVar){
   outList$data[[idxDp]][[idxVar]]$vari <<- sqrt(outList$data[[idxDp]][[idxVar]]$vari)
  attributes(outList$data[[idxDp]][[idxVar]])$unit <<- wrkAttr[[idxDp]][[idxVar]]
  #Applying unit conversion#
- base::suppressWarnings(eddy4R.base::def.unit.conv(data = outList$data[[idxDp]][[idxVar]], unitFrom = attributes(outList$data[[idxDp]][[idxLvl]][[idxVar]])$unit, unitTo = outAttr[[idxDp]][[idxVar]], MethGc = FALSE))
+ outList$data[[idxDp]][[idxVar]] <<- base::suppressWarnings(eddy4R.base::def.unit.conv(data = outList$data[[idxDp]][[idxVar]], unitFrom = attributes(outList$data[[idxDp]][[idxVar]])$unit, unitTo = outAttr[[idxDp]][[idxVar]], MethGc = FALSE))
 })
 }
+
 for(idxDp in names(outList$dp01AgrSub$data)){
   lapply(names(outList$dp01AgrSub$data[[idxDp]]), function(idxVar){
     baseAttr <- attributes(outList$dp01AgrSub$data[[idxDp]][[idxVar]])$unit
