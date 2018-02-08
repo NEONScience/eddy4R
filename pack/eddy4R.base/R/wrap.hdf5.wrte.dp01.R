@@ -99,14 +99,14 @@ outAttr$h2oTurb <- list("rtioMoleDryCo2"= c("mean" = "mmolCo2 mol-1Dry", "min" =
 test <- outList
 wrkAttr <- list()
 for(idxDp in names(outList$data)){
-lapply(names(outList$data[[idxDp]]), function(idxVar){
+for(idxVar in names(outList$data[[idxDp]])){
   baseAttr <- attributes(outList$data[[idxDp]][[idxVar]])$unit
   wrkAttr[[idxDp]][[idxVar]] <<- unlist(list("mean"= baseAttr, "min" = baseAttr, "max" = baseAttr, "vari" = baseAttr, "numSamp" = "NA", "timeBgn" = "NA", "timeEnd" = "NA"))
   outList$data[[idxDp]][[idxVar]]$vari <<- sqrt(outList$data[[idxDp]][[idxVar]]$vari)
  attributes(outList$data[[idxDp]][[idxVar]])$unit <<- wrkAttr[[idxDp]][[idxVar]]
  #Applying unit conversion#
  outList$data[[idxDp]][[idxVar]] <<- base::suppressWarnings(eddy4R.base::def.unit.conv(data = outList$data[[idxDp]][[idxVar]], unitFrom = attributes(outList$data[[idxDp]][[idxVar]])$unit, unitTo = outAttr[[idxDp]][[idxVar]], MethGc = FALSE))
-})
+}
 }
 
 for(idxDp in names(outList$dp01AgrSub$data)){
