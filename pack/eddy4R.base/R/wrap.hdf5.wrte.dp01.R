@@ -96,16 +96,19 @@ outAttr$co2Turb <- list("rtioMoleDryCo2"= c("mean" = "umolCo2 mol-1Dry", "min" =
 
 outAttr$h2oTurb <- list("rtioMoleDryCo2"= c("mean" = "mmolCo2 mol-1Dry", "min" = "mmolCo2 mol-1Dry", "max" = "mmolCo2 mol-1Dry", "vari" = "mmolCo2 mol-1Dry", "numSamp" = "NA", "timeBgn" = "NA", "timeEnd" = "NA"), "densMoleCo2"= c("mean" = "mmolCo2 m-3", "min" = "mmolCo2 m-3", "max" = "mmolCo2 m-3", "vari" = "mmolCo2 m-3", "numSamp" = "NA", "timeBgn" = "NA", "timeEnd" = "NA"), "presAtm"= c("mean" = "kPa", "min" = "kPa", "max" = "kPa", "vari" = "kPa", "numSamp" = "NA", "timeBgn" = "NA", "timeEnd" = "NA"), "presSum"= c("mean" = "kPa", "min" = "kPa", "max" = "kPa", "vari" = "kPa", "numSamp" = "NA", "timeBgn" = "NA", "timeEnd" = "NA"), "frt00Samp"= c("mean" = "dm3 min-1", "min" = "dm3 min-1", "max" = "dm3 min-1", "vari" = "dm3 min-1", "numSamp" = "NA", "timeBgn" = "NA", "timeEnd" = "NA"), "tempAve"= c("mean" = "C", "min" = "C", "max" = "C", "vari" = "C", "numSamp" = "NA", "timeBgn" = "NA", "timeEnd" = "NA"))
 
-test <- outList
+#test <- outList
+
 wrkAttr <- list()
 for(idxDp in names(outList$data)){
+  #idxDp <- names(outList$data)[1] #for testing
 for(idxVar in names(outList$data[[idxDp]])){
+  #idxVar <- names(outList$data[[idxDp]])[7] #for testing
   baseAttr <- attributes(outList$data[[idxDp]][[idxVar]])$unit
-  wrkAttr[[idxDp]][[idxVar]] <<- unlist(list("mean"= baseAttr, "min" = baseAttr, "max" = baseAttr, "vari" = baseAttr, "numSamp" = "NA", "timeBgn" = "NA", "timeEnd" = "NA"))
-  outList$data[[idxDp]][[idxVar]]$vari <<- sqrt(outList$data[[idxDp]][[idxVar]]$vari)
- attributes(outList$data[[idxDp]][[idxVar]])$unit <<- wrkAttr[[idxDp]][[idxVar]]
+  wrkAttr[[idxDp]][[idxVar]] <- unlist(list("mean"= baseAttr, "min" = baseAttr, "max" = baseAttr, "vari" = baseAttr, "numSamp" = "NA", "timeBgn" = "NA", "timeEnd" = "NA"))
+  outList$data[[idxDp]][[idxVar]]$vari <- sqrt(outList$data[[idxDp]][[idxVar]]$vari)
+ attributes(outList$data[[idxDp]][[idxVar]])$unit <- wrkAttr[[idxDp]][[idxVar]]
  #Applying unit conversion#
- outList$data[[idxDp]][[idxVar]] <<- base::suppressWarnings(eddy4R.base::def.unit.conv(data = outList$data[[idxDp]][[idxVar]], unitFrom = attributes(outList$data[[idxDp]][[idxVar]])$unit, unitTo = outAttr[[idxDp]][[idxVar]], MethGc = FALSE))
+ outList$data[[idxDp]][[idxVar]] <- base::suppressWarnings(eddy4R.base::def.unit.conv(data = outList$data[[idxDp]][[idxVar]], unitFrom = attributes(outList$data[[idxDp]][[idxVar]])$unit, unitTo = outAttr[[idxDp]][[idxVar]], MethGc = FALSE))
 }
 }
 
@@ -116,22 +119,7 @@ for(idxDp in names(outList$dp01AgrSub$data)){
     attributes(outList$dp01AgrSub$data[[idxDp]][[idxVar]])$unit <<- wrkAttr[[idxDp]][[idxVar]]
   })
 }
-outList$data$soni$angZaxsErth[,which(names(outList$data$soni$angZaxsErth) %in% c("mean","min","max","vari"))] <- def.unit.conv(outList$data$soni$angZaxsErth[,which(names(outList$data$soni$angZaxsErth) %in% c("mean","min","max","vari"))], unitFrom = "rad", unitTo = "deg")
-attr(x = outList$data$soni$angZaxsErth, which = "unit") <- "deg"
 
-if(MethSubAgr == TRUE){
-  outList$dp01AgrSub$data$soni$angZaxsErth[,which(names(outList$dp01AgrSub$data$soni$angZaxsErth) %in% c("mean","min","max","vari"))] <- def.unit.conv(outList$dp01AgrSub$data$soni$angZaxsErth[,which(names(outList$dp01AgrSub$data$soni$angZaxsErth) %in% c("mean","min","max","vari"))], unitFrom = "rad", unitTo = "deg")
-  attr(x = outList$dp01AgrSub$data$soni$angZaxsErth, which = "unit") <- "deg"
-}
-  if(MethUcrt == TRUE){
-  outList$ucrt$soni$angZaxsErth[,which(names(outList$ucrt$soni$angZaxsErth) %in% c("mean","vari","se"))] <- def.unit.conv(outList$ucrt$soni$angZaxsErth[,which(names(outList$ucrt$soni$angZaxsErth) %in% c("mean","vari","se"))], unitFrom = "rad", unitTo = "deg")
-  attr(x = outList$ucrt$soni$angZaxsErth, which = "unit") <- "deg"
-
-  if(MethSubAgr == TRUE){
-  outList$dp01AgrSub$ucrt$soni$angZaxsErth[,which(names(outList$dp01AgrSub$ucrt$soni$angZaxsErth) %in% c("mean","vari","se"))] <- def.unit.conv(outList$dp01AgrSub$ucrt$soni$angZaxsErth[,which(names(outList$dp01AgrSub$ucrt$soni$angZaxsErth) %in% c("mean","vari","se"))], unitFrom = "rad", unitTo = "deg")
-  attr(x = outList$dp01AgrSub$ucrt$soni$angZaxsErth, which = "unit") <- "deg"
-  }
-}
 #Applying the HDF5 write output function across all DPs
 lapply(names(outList$data), function(x) eddy4R.base::def.hdf5.wrte.dp01(inpList = outList, FileOut = FileOut, SiteLoca = SiteLoca, LevlTowr = LevlTowr, Dp01 = x, MethUcrt = MethUcrt, MethSubAgr = MethSubAgr))
 
