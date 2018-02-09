@@ -88,13 +88,35 @@ if(MethSubAgr == TRUE){
 #End of packing output into proper structure format; begin unit conversion
 ######################################################################
 outAttr <- list()
-outAttr$soni <- list("veloXaxsErth"= c("mean" = "m s-1", "min" = "m s-1", "max" = "m s-1", "vari" = "m s-1", "numSamp" = "NA", "timeBgn" = "NA", "timeEnd" = "NA"), "veloYaxsErth"= c("mean" = "m s-1", "min" = "m s-1", "max" = "m s-1", "vari" = "m s-1", "numSamp" = "NA", "timeBgn" = "NA", "timeEnd" = "NA"), "veloZaxsErth"= c("mean" = "m s-1", "min" = "m s-1", "max" = "m s-1", "vari" = "m s-1", "numSamp" = "NA", "timeBgn" = "NA", "timeEnd" = "NA"), "veloXaxsYaxsErth"= c("mean" = "m s-1", "min" = "m s-1", "max" = "m s-1", "vari" = "m s-1", "numSamp" = "NA", "timeBgn" = "NA", "timeEnd" = "NA"), "angZaxsErth"= c("mean" = "deg", "min" = "deg", "max" = "deg", "vari" = "deg", "numSamp" = "NA", "timeBgn" = "NA", "timeEnd" = "NA"), "tempSoni"= c("mean" = "C", "min" = "C", "max" = "C", "vari" = "C", "numSamp" = "NA", "timeBgn" = "NA", "timeEnd" = "NA"), "tempAir"= c("mean" = "C", "min" = "C", "max" = "C", "vari" = "C", "numSamp" = "NA", "timeBgn" = "NA", "timeEnd" = "NA"))
+outAttr$soni <- list(
+  "veloXaxsErth"= c("mean" = "m s-1", "min" = "m s-1", "max" = "m s-1", "vari" = "m s-1", "numSamp" = "NA", "timeBgn" = "NA", "timeEnd" = "NA"), 
+  "veloYaxsErth"= c("mean" = "m s-1", "min" = "m s-1", "max" = "m s-1", "vari" = "m s-1", "numSamp" = "NA", "timeBgn" = "NA", "timeEnd" = "NA"), 
+  "veloZaxsErth"= c("mean" = "m s-1", "min" = "m s-1", "max" = "m s-1", "vari" = "m s-1", "numSamp" = "NA", "timeBgn" = "NA", "timeEnd" = "NA"), 
+  "veloXaxsYaxsErth"= c("mean" = "m s-1", "min" = "m s-1", "max" = "m s-1", "vari" = "m s-1", "numSamp" = "NA", "timeBgn" = "NA", "timeEnd" = "NA"), 
+  "angZaxsErth"= c("mean" = "deg", "min" = "deg", "max" = "deg", "vari" = "deg", "numSamp" = "NA", "timeBgn" = "NA", "timeEnd" = "NA"), 
+  "tempSoni"= c("mean" = "C", "min" = "C", "max" = "C", "vari" = "C", "numSamp" = "NA", "timeBgn" = "NA", "timeEnd" = "NA"), 
+  "tempAir"= c("mean" = "C", "min" = "C", "max" = "C", "vari" = "C", "numSamp" = "NA", "timeBgn" = "NA", "timeEnd" = "NA"))
 
-outAttr$amrs <- list("angNedXaxs"= c("mean" = "deg", "min" = "deg", "max" = "deg", "vari" = "deg", "numSamp" = "NA", "timeBgn" = "NA", "timeEnd" = "NA"), "angNedYaxs"= c("mean" = "deg", "min" = "deg", "max" = "deg", "vari" = "deg", "numSamp" = "NA", "timeBgn" = "NA", "timeEnd" = "NA"), "angNedZaxs"= c("mean" = "deg", "min" = "deg", "max" = "deg", "vari" = "deg", "numSamp" = "NA", "timeBgn" = "NA", "timeEnd" = "NA"))
+outAttr$amrs <- list(
+  "angNedXaxs"= c("mean" = "deg", "min" = "deg", "max" = "deg", "vari" = "deg", "numSamp" = "NA", "timeBgn" = "NA", "timeEnd" = "NA"), 
+  "angNedYaxs"= c("mean" = "deg", "min" = "deg", "max" = "deg", "vari" = "deg", "numSamp" = "NA", "timeBgn" = "NA", "timeEnd" = "NA"), 
+  "angNedZaxs"= c("mean" = "deg", "min" = "deg", "max" = "deg", "vari" = "deg", "numSamp" = "NA", "timeBgn" = "NA", "timeEnd" = "NA"))
 
-outAttr$co2Turb <- list("rtioMoleDryCo2"= c("mean" = "umolCo2 mol-1Dry", "min" = "umolCo2 mol-1Dry", "max" = "umolCo2 mol-1Dry", "vari" = "umolCo2 mol-1Dry", "numSamp" = "NA", "timeBgn" = "NA", "timeEnd" = "NA"), "densMoleCo2"= c("mean" = "umolCo2 m-3", "min" = "umolCo2 m-3", "max" = "umolCo2 m-3", "vari" = "umolCo2 m-3", "numSamp" = "NA", "timeBgn" = "NA", "timeEnd" = "NA"), "presAtm"= c("mean" = "kPa", "min" = "kPa", "max" = "kPa", "vari" = "kPa", "numSamp" = "NA", "timeBgn" = "NA", "timeEnd" = "NA"), "presSum"= c("mean" = "kPa", "min" = "kPa", "max" = "kPa", "vari" = "kPa", "numSamp" = "NA", "timeBgn" = "NA", "timeEnd" = "NA"), "frt00Samp"= c("mean" = "dm3 min-1", "min" = "dm3 min-1", "max" = "dm3 min-1", "vari" = "dm3 min-1", "numSamp" = "NA", "timeBgn" = "NA", "timeEnd" = "NA"), "tempAve"= c("mean" = "C", "min" = "C", "max" = "C", "vari" = "C", "numSamp" = "NA", "timeBgn" = "NA", "timeEnd" = "NA"))
+outAttr$co2Turb <- list(
+  "rtioMoleDryCo2"= c("mean" = "umolCo2 mol-1Dry", "min" = "umolCo2 mol-1Dry", "max" = "umolCo2 mol-1Dry", "vari" = "umolCo2 mol-1Dry", "numSamp" = "NA", "timeBgn" = "NA", "timeEnd" = "NA"), 
+  "densMoleCo2"= c("mean" = "umolCo2 m-3", "min" = "umolCo2 m-3", "max" = "umolCo2 m-3", "vari" = "umolCo2 m-3", "numSamp" = "NA", "timeBgn" = "NA", "timeEnd" = "NA"), 
+  "presAtm"= c("mean" = "kPa", "min" = "kPa", "max" = "kPa", "vari" = "kPa", "numSamp" = "NA", "timeBgn" = "NA", "timeEnd" = "NA"), 
+  "presSum"= c("mean" = "kPa", "min" = "kPa", "max" = "kPa", "vari" = "kPa", "numSamp" = "NA", "timeBgn" = "NA", "timeEnd" = "NA"), 
+  "frt00Samp"= c("mean" = "dm3 min-1", "min" = "dm3 min-1", "max" = "dm3 min-1", "vari" = "dm3 min-1", "numSamp" = "NA", "timeBgn" = "NA", "timeEnd" = "NA"), 
+  "tempAve"= c("mean" = "C", "min" = "C", "max" = "C", "vari" = "C", "numSamp" = "NA", "timeBgn" = "NA", "timeEnd" = "NA"))
 
-outAttr$h2oTurb <- list("rtioMoleDryCo2"= c("mean" = "mmolCo2 mol-1Dry", "min" = "mmolCo2 mol-1Dry", "max" = "mmolCo2 mol-1Dry", "vari" = "mmolCo2 mol-1Dry", "numSamp" = "NA", "timeBgn" = "NA", "timeEnd" = "NA"), "densMoleCo2"= c("mean" = "mmolCo2 m-3", "min" = "mmolCo2 m-3", "max" = "mmolCo2 m-3", "vari" = "mmolCo2 m-3", "numSamp" = "NA", "timeBgn" = "NA", "timeEnd" = "NA"), "presAtm"= c("mean" = "kPa", "min" = "kPa", "max" = "kPa", "vari" = "kPa", "numSamp" = "NA", "timeBgn" = "NA", "timeEnd" = "NA"), "presSum"= c("mean" = "kPa", "min" = "kPa", "max" = "kPa", "vari" = "kPa", "numSamp" = "NA", "timeBgn" = "NA", "timeEnd" = "NA"), "frt00Samp"= c("mean" = "dm3 min-1", "min" = "dm3 min-1", "max" = "dm3 min-1", "vari" = "dm3 min-1", "numSamp" = "NA", "timeBgn" = "NA", "timeEnd" = "NA"), "tempAve"= c("mean" = "C", "min" = "C", "max" = "C", "vari" = "C", "numSamp" = "NA", "timeBgn" = "NA", "timeEnd" = "NA"))
+outAttr$h2oTurb <- list(
+  "rtioMoleDryCo2"= c("mean" = "mmolCo2 mol-1Dry", "min" = "mmolCo2 mol-1Dry", "max" = "mmolCo2 mol-1Dry", "vari" = "mmolCo2 mol-1Dry", "numSamp" = "NA", "timeBgn" = "NA", "timeEnd" = "NA"), 
+  "densMoleCo2"= c("mean" = "mmolCo2 m-3", "min" = "mmolCo2 m-3", "max" = "mmolCo2 m-3", "vari" = "mmolCo2 m-3", "numSamp" = "NA", "timeBgn" = "NA", "timeEnd" = "NA"), 
+  "presAtm"= c("mean" = "kPa", "min" = "kPa", "max" = "kPa", "vari" = "kPa", "numSamp" = "NA", "timeBgn" = "NA", "timeEnd" = "NA"), 
+  "presSum"= c("mean" = "kPa", "min" = "kPa", "max" = "kPa", "vari" = "kPa", "numSamp" = "NA", "timeBgn" = "NA", "timeEnd" = "NA"), 
+  "frt00Samp"= c("mean" = "dm3 min-1", "min" = "dm3 min-1", "max" = "dm3 min-1", "vari" = "dm3 min-1", "numSamp" = "NA", "timeBgn" = "NA", "timeEnd" = "NA"), 
+  "tempAve"= c("mean" = "C", "min" = "C", "max" = "C", "vari" = "C", "numSamp" = "NA", "timeBgn" = "NA", "timeEnd" = "NA"))
 
 #test <- outList
 
