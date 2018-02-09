@@ -111,8 +111,8 @@ outAttr$co2Turb <- list(
   "tempAve"= c("mean" = "C", "min" = "C", "max" = "C", "vari" = "C", "numSamp" = "NA", "timeBgn" = "NA", "timeEnd" = "NA"))
 
 outAttr$h2oTurb <- list(
-  "rtioMoleDryCo2"= c("mean" = "mmolCo2 mol-1Dry", "min" = "mmolCo2 mol-1Dry", "max" = "mmolCo2 mol-1Dry", "vari" = "mmolCo2 mol-1Dry", "numSamp" = "NA", "timeBgn" = "NA", "timeEnd" = "NA"), 
-  "densMoleCo2"= c("mean" = "mmolCo2 m-3", "min" = "mmolCo2 m-3", "max" = "mmolCo2 m-3", "vari" = "mmolCo2 m-3", "numSamp" = "NA", "timeBgn" = "NA", "timeEnd" = "NA"), 
+  "rtioMoleDryH2o"= c("mean" = "mmolH2o mol-1Dry", "min" = "mmolH2o mol-1Dry", "max" = "mmolH2o mol-1Dry", "vari" = "mmolH2o mol-1Dry", "numSamp" = "NA", "timeBgn" = "NA", "timeEnd" = "NA"), 
+  "densMoleH2o"= c("mean" = "mmolH2o m-3", "min" = "mmolH2o m-3", "max" = "mmolH2o m-3", "vari" = "mmolH2o m-3", "numSamp" = "NA", "timeBgn" = "NA", "timeEnd" = "NA"), 
   "presAtm"= c("mean" = "kPa", "min" = "kPa", "max" = "kPa", "vari" = "kPa", "numSamp" = "NA", "timeBgn" = "NA", "timeEnd" = "NA"), 
   "presSum"= c("mean" = "kPa", "min" = "kPa", "max" = "kPa", "vari" = "kPa", "numSamp" = "NA", "timeBgn" = "NA", "timeEnd" = "NA"), 
   "frt00Samp"= c("mean" = "dm3 min-1", "min" = "dm3 min-1", "max" = "dm3 min-1", "vari" = "dm3 min-1", "numSamp" = "NA", "timeBgn" = "NA", "timeEnd" = "NA"), 
@@ -126,7 +126,13 @@ for(idxDp in names(outList$data)){
 for(idxVar in names(outList$data[[idxDp]])){
   #idxVar <- names(outList$data[[idxDp]])[7] #for testing
   baseAttr <- attributes(outList$data[[idxDp]][[idxVar]])$unit
-  wrkAttr[[idxDp]][[idxVar]] <- unlist(list("mean"= baseAttr, "min" = baseAttr, "max" = baseAttr, "vari" = baseAttr, "numSamp" = "NA", "timeBgn" = "NA", "timeEnd" = "NA"))
+
+  wrkAttr[[idxDp]][[idxVar]] <- c("mean"= baseAttr, "min" = baseAttr, "max" = baseAttr, "vari" = baseAttr, "numSamp" = "NA", "timeBgn" = "NA", "timeEnd" = "NA")
+  
+  #Only variables with conversion factors (i.e. multiplied differences should be converted using the unit conversion tool. Temp has an offset applied, this should not be performed for any variable with the mean removed, i.e. vari, se, etc.)
+  if(grepl(pattern = "temp", x = idxVar)){wrkAttr[[idxDp]][[idxVar]]["vari"] <- "C"}
+  
+  #To apply unit conversion to variance, we need to take sqrt first
   outList$data[[idxDp]][[idxVar]]$vari <- sqrt(outList$data[[idxDp]][[idxVar]]$vari)
  attributes(outList$data[[idxDp]][[idxVar]])$unit <- wrkAttr[[idxDp]][[idxVar]]
  #Applying unit conversion#
