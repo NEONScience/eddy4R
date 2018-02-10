@@ -36,6 +36,8 @@
 #     adding parameter MethMeas to distinguish different cases for ecte and ecse
 #   David Durden (2017-12-12)
 #     Removing rev number from dp0p data product HDF5 group levels 
+#   Natchaya P-Durden (2018-01-19)
+#     Updating to remove rev numbers from ECSE dp0p HDF5 data product group level 
 ##############################################################################################
 
 def.neon.read.hdf5.qfqm <- function(
@@ -56,7 +58,7 @@ qfqm <- rhdf5::h5read(file = base::paste0(DirInpLoca, "/ECTE_dp0p_", SiteLoca, "
 
 if (MethMeas == "ecse") {
 qfqm <- rhdf5::h5read(file = base::paste0(DirInpLoca, "/ECSE_dp0p_", SiteLoca, "_", DateLoca, ".h5"),
-                      name = base::paste0("/", SiteLoca, "/dp0p/qfqm/", VarLoca, "_001/",LevlTowr), read.attributes = TRUE)
+                      name = base::paste0("/", SiteLoca, "/dp0p/qfqm/", VarLoca, "/",LevlTowr), read.attributes = TRUE)
 }
   
 #Convert each flag to a vector from a 1D array                     
