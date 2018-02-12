@@ -87,13 +87,18 @@ if(MethSubAgr == TRUE){
 ######################################################################
 #End of packing output into proper structure format; begin unit conversion
 ######################################################################
+#Unit conversion for dp01 30 min data
 outList$data <- wrap.unit.conv.out.ec(inpList = outList$data, MethType = "data") 
-
+#Unit conversion for dp01 sub-aggregated data
 outList$dp01AgrSub$data <- wrap.unit.conv.out.ec(inpList = outList$dp01AgrSub$data, MethType = "data") 
-
+#Unit conversion for dp01 30 min ucrt values
 outList$ucrt <- wrap.unit.conv.out.ec(inpList = outList$ucrt, MethType = "ucrt") 
-
+#Unit conversion for dp01 sub-aggregated ucrt values
 outList$dp01AgrSub$ucrt <- wrap.unit.conv.out.ec(inpList = outList$dp01AgrSub$ucrt, MethType = "ucrt")
+#Applying units to each output in dp01 30 min qfqm
+outList$qfqm <- wrap.unit.conv.out.ec(inpList = outList$qfqm, MethType = "qfqm")
+#Applying units to each output in dp01 sub-aggregrated qfqm
+outList$dp01AgrSub$qfqm <- wrap.unit.conv.out.ec(inpList = outList$dp01AgrSub$qfqm, MethType = "qfqm")
 
 #Applying the HDF5 write output function across all DPs
 lapply(names(outList$data), function(x) eddy4R.base::def.hdf5.wrte.dp01(inpList = outList, FileOut = FileOut, SiteLoca = SiteLoca, LevlTowr = LevlTowr, Dp01 = x, MethUcrt = MethUcrt, MethSubAgr = MethSubAgr))
