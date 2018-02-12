@@ -134,19 +134,19 @@ for(idxDp in base::names(rpt)){
       #Apply NA for all qf and time variables
       wrkAttr[[idxDp]][[idxVar]][grep(pattern = "qf|time", x = names(wrkAttr[[idxDp]][[idxVar]]))] <- "NA"
       #Apply dimensionless fraction for all qm variables
-      wrkAttr[[idxDp]][[idxVar]][grep(pattern = "qm", x = names(wrkAttr[[idxDp]][[idxVar]])] <- "-"
+      wrkAttr[[idxDp]][[idxVar]][grep(pattern = "qm", x = names(wrkAttr[[idxDp]][[idxVar]]))] <- "-"
       
       # Apply output attributes
       outAttr[[idxDp]][[idxVar]] <- wrkAttr[[idxDp]][[idxVar]]
       
     }
     #To apply unit conversion to variance, we need to take sqrt first
-    base::try(rpt[[idxDp]][[idxVar]]$vari <- base::sqrt(rpt[[idxDp]][[idxVar]]$vari))
+    base::try(rpt[[idxDp]][[idxVar]]$vari <- base::sqrt(rpt[[idxDp]][[idxVar]]$vari), silent = TRUE)
     base::attributes(rpt[[idxDp]][[idxVar]])$unit <- wrkAttr[[idxDp]][[idxVar]]
     #Applying unit conversion#
     rpt[[idxDp]][[idxVar]] <- base::suppressWarnings(eddy4R.base::def.unit.conv(data = rpt[[idxDp]][[idxVar]], unitFrom = attributes(rpt[[idxDp]][[idxVar]])$unit, unitTo = outAttr[[idxDp]][[idxVar]], MethGc = FALSE))
     
-    base::try(rpt[[idxDp]][[idxVar]]$vari <- (rpt[[idxDp]][[idxVar]]$vari)^2)
+    base::try(rpt[[idxDp]][[idxVar]]$vari <- (rpt[[idxDp]][[idxVar]]$vari)^2, silent = TRUE)
     
   } #End loop around idxVar
 } #End loop around idxDp
