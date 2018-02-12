@@ -28,7 +28,7 @@ c("co2Stor", "h2oStor", "tempAirLvl", "tempAirTop", "isoCo2", "isoH2o"). Default
 
 \item{\code{data}}{A list of data frame containing the input dp0p data that related to dp01 which qfqm are being calculated. Of class integer". [User defined]}
 
-\item{\code{qfInput}}{A list of data frame containing the input quality flag data that related to dp01 are being grouped. Of class integer". [NA]}
+\item{\code{qfInput}}{A list of data frame containing the input quality flag data that related to dp01 are being grouped. Of class integer". [-]}
 
 \item{\code{TypeMeas}}{A vector of class "character" containing the name of measurement type (sampling or validation), TypeMeas = c("samp", "vali"). Defaults to "samp". [-]}
 
