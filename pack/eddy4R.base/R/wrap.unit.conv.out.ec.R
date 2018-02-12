@@ -37,6 +37,7 @@ wrap.unit.conv.out.ec <- function(
   MethType <- base::tolower(MethType)
   
 rpt <- inpList 
+
 outAttr <- base::list()
 if(MethType == "data"){
 outAttr$soni <- base::list(
@@ -124,7 +125,21 @@ for(idxDp in base::names(rpt)){
       wrkAttr[[idxDp]][[idxVar]] <- c("mean"= baseAttr, "vari" = baseAttr, "se" = baseAttr, "timeBgn" = "NA", "timeEnd" = "NA")
 #Only variables with conversion factors (i.e. multiplied differences should be converted using the unit conversion tool. Temp has an offset applied, this should not be performed for any variable with the mean removed, i.e. vari, se, etc.)
       if(base::grepl(pattern = "temp", x = idxVar)){wrkAttr[[idxDp]][[idxVar]][wrkAttr[[idxDp]][[idxVar]] == baseAttr] <- "C"}
-    }  
+    }
+    else if(MethType == "qfqm"){
+      # Create qfqm list of units
+      wrkAttr[[idxDp]][[idxVar]] <- rep_len(baseAttr, length.out = length(rpt[[idxDp]][[idxVar]]))
+      # Add names to units vector
+      names(wrkAttr[[idxDp]][[idxVar]]) <- names(rpt[[idxDp]][[idxVar]])
+      #Apply NA for all qf and time variables
+      wrkAttr[[idxDp]][[idxVar]][grep(pattern = "qf|time", x = names(wrkAttr[[idxDp]][[idxVar]])] <- "NA"
+      #Apply dimensionless fraction for all qm variables
+      wrkAttr[[idxDp]][[idxVar]][grep(pattern = "qm", x = names(wrkAttr[[idxDp]][[idxVar]])] <- "-"
+      
+      # Apply output attributes
+      outAttr[[idxDp]][[idxVar]] <- wrkAttr[[idxDp]][[idxVar]]
+      
+    }
     #To apply unit conversion to variance, we need to take sqrt first
     base::try(rpt[[idxDp]][[idxVar]]$vari <- base::sqrt(rpt[[idxDp]][[idxVar]]$vari))
     base::attributes(rpt[[idxDp]][[idxVar]])$unit <- wrkAttr[[idxDp]][[idxVar]]
