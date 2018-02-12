@@ -28,7 +28,7 @@
 #     original creation
 ############################################################################################
 
-wrap.unit.conv.out <- function(
+wrap.unit.conv.out.ec <- function(
   inpList,
   MethType = c("data","ucrt","qfqm")[1]
   ){
@@ -122,12 +122,12 @@ for(idxDp in names(rpt)){
       if(grepl(pattern = "temp", x = idxVar)){wrkAttr[[idxDp]][[idxVar]][wrkAttr[[idxDp]][[idxVar]] == baseAttr] <- "C"}
     }  
     #To apply unit conversion to variance, we need to take sqrt first
-    rpt[[idxDp]][[idxVar]]$vari <- sqrt(rpt[[idxDp]][[idxVar]]$vari)
+    base::try(rpt[[idxDp]][[idxVar]]$vari <- sqrt(rpt[[idxDp]][[idxVar]]$vari))
     attributes(rpt[[idxDp]][[idxVar]])$unit <- wrkAttr[[idxDp]][[idxVar]]
     #Applying unit conversion#
     rpt[[idxDp]][[idxVar]] <- base::suppressWarnings(eddy4R.base::def.unit.conv(data = rpt[[idxDp]][[idxVar]], unitFrom = attributes(rpt[[idxDp]][[idxVar]])$unit, unitTo = outAttr[[idxDp]][[idxVar]], MethGc = FALSE))
     
-    rpt[[idxDp]][[idxVar]]$vari <- (rpt[[idxDp]][[idxVar]]$vari)^2
+    base::try(rpt[[idxDp]][[idxVar]]$vari <- (rpt[[idxDp]][[idxVar]]$vari)^2)
     
   } #End loop around idxVar
 } #End loop around idxDp
