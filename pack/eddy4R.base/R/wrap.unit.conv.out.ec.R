@@ -9,7 +9,7 @@
 #' @param inpList Required. A named list of data frames of type numeric, containing the data to be converted.
 #' @param MethType Required. A character string containing the type of data to be converted (Defauts to \code(MethType) = "data").  
 
-#' @return An HDF5 file with dp01 data, qfqm, and uncertainty written
+#' @return A list, \code(rpt), with data, qfqm, or uncertainty output with the correct output units
 #' 
 #' @references
 #' License: GNU AFFERO GENERAL PUBLIC LICENSE Version 3, 19 November 2007.
@@ -33,6 +33,7 @@ wrap.unit.conv.out <- function(
   MethType = c("data","ucrt","qfqm")[1]
   ){
 
+rpt <- inpList 
 outAttr <- list()
 if(MethType == "data"){
 outAttr$soni <- list(
@@ -103,11 +104,11 @@ outAttr$h2oTurb <- list(
 
 
 wrkAttr <- list()
-for(idxDp in names(inpList)){
-  #idxDp <- names(inpList)[1] #for testing
-  for(idxVar in names(inpList[[idxDp]])){
-    #idxVar <- names(inpList[[idxDp]])[7] #for testing
-    baseAttr <- attributes(inpList[[idxDp]][[idxVar]])$unit
+for(idxDp in names(rpt)){
+  #idxDp <- names(rpt)[1] #for testing
+  for(idxVar in names(rpt[[idxDp]])){
+    #idxVar <- names(rpt[[idxDp]])[7] #for testing
+    baseAttr <- attributes(rpt[[idxDp]][[idxVar]])$unit
     
     if(MethType == "data"){
       wrkAttr[[idxDp]][[idxVar]] <- c("mean"= baseAttr, "min" = baseAttr, "max" = baseAttr, "vari" = baseAttr, "numSamp" = "NA", "timeBgn" = "NA", "timeEnd" = "NA")
@@ -121,10 +122,15 @@ for(idxDp in names(inpList)){
       if(grepl(pattern = "temp", x = idxVar)){wrkAttr[[idxDp]][[idxVar]][wrkAttr[[idxDp]][[idxVar]] == baseAttr] <- "C"}
     }  
     #To apply unit conversion to variance, we need to take sqrt first
-    inpList[[idxDp]][[idxVar]]$vari <- sqrt(inpList[[idxDp]][[idxVar]]$vari)
-    attributes(inpList[[idxDp]][[idxVar]])$unit <- wrkAttr[[idxDp]][[idxVar]]
+    rpt[[idxDp]][[idxVar]]$vari <- sqrt(rpt[[idxDp]][[idxVar]]$vari)
+    attributes(rpt[[idxDp]][[idxVar]])$unit <- wrkAttr[[idxDp]][[idxVar]]
     #Applying unit conversion#
-    inpList[[idxDp]][[idxVar]] <- base::suppressWarnings(eddy4R.base::def.unit.conv(data = inpList[[idxDp]][[idxVar]], unitFrom = attributes(inpList[[idxDp]][[idxVar]])$unit, unitTo = outAttr[[idxDp]][[idxVar]], MethGc = FALSE))
+    rpt[[idxDp]][[idxVar]] <- base::suppressWarnings(eddy4R.base::def.unit.conv(data = rpt[[idxDp]][[idxVar]], unitFrom = attributes(rpt[[idxDp]][[idxVar]])$unit, unitTo = outAttr[[idxDp]][[idxVar]], MethGc = FALSE))
+    
+    rpt[[idxDp]][[idxVar]]$vari <- (rpt[[idxDp]][[idxVar]]$vari)^2
+    
   } #End loop around idxVar
 } #End loop around idxDp
+
+return(rpt) #Returning list from function
 } #End of wrapper function
