@@ -30,9 +30,12 @@
 
 wrap.unit.conv.out.ec <- function(
   inpList,
-  MethType = c("data","ucrt","qfqm")[1]
+  MethType = c("Data","Ucrt","Qfqm")[1]
   ){
 
+#Putting MethType to lowercase always
+  MethType <- base::tolower(MethType)
+  
 rpt <- inpList 
 outAttr <- base::list()
 if(MethType == "data"){
