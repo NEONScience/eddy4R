@@ -132,7 +132,7 @@ for(idxDp in base::names(rpt)){
       # Add names to units vector
       names(wrkAttr[[idxDp]][[idxVar]]) <- names(rpt[[idxDp]][[idxVar]])
       #Apply NA for all qf and time variables
-      wrkAttr[[idxDp]][[idxVar]][grep(pattern = "qf|time", x = names(wrkAttr[[idxDp]][[idxVar]])] <- "NA"
+      wrkAttr[[idxDp]][[idxVar]][grep(pattern = "qf|time", x = names(wrkAttr[[idxDp]][[idxVar]]))] <- "NA"
       #Apply dimensionless fraction for all qm variables
       wrkAttr[[idxDp]][[idxVar]][grep(pattern = "qm", x = names(wrkAttr[[idxDp]][[idxVar]])] <- "-"
       
