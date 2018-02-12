@@ -87,67 +87,13 @@ if(MethSubAgr == TRUE){
 ######################################################################
 #End of packing output into proper structure format; begin unit conversion
 ######################################################################
-outAttr <- list()
-outAttr$soni <- list(
-  "veloXaxsErth"= c("mean" = "m s-1", "min" = "m s-1", "max" = "m s-1", "vari" = "m s-1", "numSamp" = "NA", "timeBgn" = "NA", "timeEnd" = "NA"), 
-  "veloYaxsErth"= c("mean" = "m s-1", "min" = "m s-1", "max" = "m s-1", "vari" = "m s-1", "numSamp" = "NA", "timeBgn" = "NA", "timeEnd" = "NA"), 
-  "veloZaxsErth"= c("mean" = "m s-1", "min" = "m s-1", "max" = "m s-1", "vari" = "m s-1", "numSamp" = "NA", "timeBgn" = "NA", "timeEnd" = "NA"), 
-  "veloXaxsYaxsErth"= c("mean" = "m s-1", "min" = "m s-1", "max" = "m s-1", "vari" = "m s-1", "numSamp" = "NA", "timeBgn" = "NA", "timeEnd" = "NA"), 
-  "angZaxsErth"= c("mean" = "deg", "min" = "deg", "max" = "deg", "vari" = "deg", "numSamp" = "NA", "timeBgn" = "NA", "timeEnd" = "NA"), 
-  "tempSoni"= c("mean" = "C", "min" = "C", "max" = "C", "vari" = "C", "numSamp" = "NA", "timeBgn" = "NA", "timeEnd" = "NA"), 
-  "tempAir"= c("mean" = "C", "min" = "C", "max" = "C", "vari" = "C", "numSamp" = "NA", "timeBgn" = "NA", "timeEnd" = "NA"))
+outList$data <- wrap.unit.conv.out.ec(inpList = outList$data, MethType = "data") 
 
-outAttr$amrs <- list(
-  "angNedXaxs"= c("mean" = "deg", "min" = "deg", "max" = "deg", "vari" = "deg", "numSamp" = "NA", "timeBgn" = "NA", "timeEnd" = "NA"), 
-  "angNedYaxs"= c("mean" = "deg", "min" = "deg", "max" = "deg", "vari" = "deg", "numSamp" = "NA", "timeBgn" = "NA", "timeEnd" = "NA"), 
-  "angNedZaxs"= c("mean" = "deg", "min" = "deg", "max" = "deg", "vari" = "deg", "numSamp" = "NA", "timeBgn" = "NA", "timeEnd" = "NA"))
+outList$dp01AgrSub$data <- wrap.unit.conv.out.ec(inpList = outList$dp01AgrSub$data, MethType = "data") 
 
-outAttr$co2Turb <- list(
-  "rtioMoleDryCo2"= c("mean" = "umolCo2 mol-1Dry", "min" = "umolCo2 mol-1Dry", "max" = "umolCo2 mol-1Dry", "vari" = "umolCo2 mol-1Dry", "numSamp" = "NA", "timeBgn" = "NA", "timeEnd" = "NA"), 
-  "densMoleCo2"= c("mean" = "umolCo2 m-3", "min" = "umolCo2 m-3", "max" = "umolCo2 m-3", "vari" = "umolCo2 m-3", "numSamp" = "NA", "timeBgn" = "NA", "timeEnd" = "NA"), 
-  "presAtm"= c("mean" = "kPa", "min" = "kPa", "max" = "kPa", "vari" = "kPa", "numSamp" = "NA", "timeBgn" = "NA", "timeEnd" = "NA"), 
-  "presSum"= c("mean" = "kPa", "min" = "kPa", "max" = "kPa", "vari" = "kPa", "numSamp" = "NA", "timeBgn" = "NA", "timeEnd" = "NA"), 
-  "frt00Samp"= c("mean" = "dm3 min-1", "min" = "dm3 min-1", "max" = "dm3 min-1", "vari" = "dm3 min-1", "numSamp" = "NA", "timeBgn" = "NA", "timeEnd" = "NA"), 
-  "tempAve"= c("mean" = "C", "min" = "C", "max" = "C", "vari" = "C", "numSamp" = "NA", "timeBgn" = "NA", "timeEnd" = "NA"))
+outList$ucrt <- wrap.unit.conv.out.ec(inpList = outList$ucrt, MethType = "ucrt") 
 
-outAttr$h2oTurb <- list(
-  "rtioMoleDryH2o"= c("mean" = "mmolH2o mol-1Dry", "min" = "mmolH2o mol-1Dry", "max" = "mmolH2o mol-1Dry", "vari" = "mmolH2o mol-1Dry", "numSamp" = "NA", "timeBgn" = "NA", "timeEnd" = "NA"), 
-  "densMoleH2o"= c("mean" = "mmolH2o m-3", "min" = "mmolH2o m-3", "max" = "mmolH2o m-3", "vari" = "mmolH2o m-3", "numSamp" = "NA", "timeBgn" = "NA", "timeEnd" = "NA"), 
-  "tempDew"= c("mean" = "C", "min" = "C", "max" = "C", "vari" = "C", "numSamp" = "NA", "timeBgn" = "NA", "timeEnd" = "NA"),
-  "presAtm"= c("mean" = "kPa", "min" = "kPa", "max" = "kPa", "vari" = "kPa", "numSamp" = "NA", "timeBgn" = "NA", "timeEnd" = "NA"), 
-  "presSum"= c("mean" = "kPa", "min" = "kPa", "max" = "kPa", "vari" = "kPa", "numSamp" = "NA", "timeBgn" = "NA", "timeEnd" = "NA"), 
-  "frt00Samp"= c("mean" = "dm3 min-1", "min" = "dm3 min-1", "max" = "dm3 min-1", "vari" = "dm3 min-1", "numSamp" = "NA", "timeBgn" = "NA", "timeEnd" = "NA"), 
-  "tempAve"= c("mean" = "C", "min" = "C", "max" = "C", "vari" = "C", "numSamp" = "NA", "timeBgn" = "NA", "timeEnd" = "NA"))
-
-#test <- outList
-
-wrkAttr <- list()
-for(idxDp in names(outList$data)){
-  #idxDp <- names(outList$data)[1] #for testing
-for(idxVar in names(outList$data[[idxDp]])){
-  #idxVar <- names(outList$data[[idxDp]])[7] #for testing
-  baseAttr <- attributes(outList$data[[idxDp]][[idxVar]])$unit
-
-  wrkAttr[[idxDp]][[idxVar]] <- c("mean"= baseAttr, "min" = baseAttr, "max" = baseAttr, "vari" = baseAttr, "numSamp" = "NA", "timeBgn" = "NA", "timeEnd" = "NA")
-  
-  #Only variables with conversion factors (i.e. multiplied differences should be converted using the unit conversion tool. Temp has an offset applied, this should not be performed for any variable with the mean removed, i.e. vari, se, etc.)
-  if(grepl(pattern = "temp", x = idxVar)){wrkAttr[[idxDp]][[idxVar]]["vari"] <- "C"}
-  
-  #To apply unit conversion to variance, we need to take sqrt first
-  outList$data[[idxDp]][[idxVar]]$vari <- sqrt(outList$data[[idxDp]][[idxVar]]$vari)
- attributes(outList$data[[idxDp]][[idxVar]])$unit <- wrkAttr[[idxDp]][[idxVar]]
- #Applying unit conversion#
- outList$data[[idxDp]][[idxVar]] <- base::suppressWarnings(eddy4R.base::def.unit.conv(data = outList$data[[idxDp]][[idxVar]], unitFrom = attributes(outList$data[[idxDp]][[idxVar]])$unit, unitTo = outAttr[[idxDp]][[idxVar]], MethGc = FALSE))
-}
-}
-
-for(idxDp in names(outList$dp01AgrSub$data)){
-  lapply(names(outList$dp01AgrSub$data[[idxDp]]), function(idxVar){
-    baseAttr <- attributes(outList$dp01AgrSub$data[[idxDp]][[idxVar]])$unit
-    wrkAttr[[idxDp]][[idxVar]] <<- unlist(list("mean"= baseAttr, "min" = baseAttr, "max" = baseAttr, "vari" = baseAttr, "numSamp" = "NA", "timeBgn" = "NA", "timeEnd" = "NA"))
-    attributes(outList$dp01AgrSub$data[[idxDp]][[idxVar]])$unit <<- wrkAttr[[idxDp]][[idxVar]]
-  })
-}
+outList$dp01AgrSub$ucrt <- wrap.unit.conv.out.ec(inpList = outList$dp01AgrSub$ucrt, MethType = "ucrt")
 
 #Applying the HDF5 write output function across all DPs
 lapply(names(outList$data), function(x) eddy4R.base::def.hdf5.wrte.dp01(inpList = outList, FileOut = FileOut, SiteLoca = SiteLoca, LevlTowr = LevlTowr, Dp01 = x, MethUcrt = MethUcrt, MethSubAgr = MethSubAgr))
