@@ -105,6 +105,28 @@ else if(MethType == "ucrt"){
     "tempAve"= c("mean" = "C", "vari" = "C", "se" = "C", "timeBgn" = "NA", "timeEnd" = "NA"))
 }
 
+outAttr$vari <- base::list(
+  "veloXaxsErth"= "m2 s-2", 
+  "veloYaxsErth"= "m2 s-2", 
+  "veloZaxsErth"= "m2 s-2",
+  "veloXaxsYaxsErth"= "m2 s-2", 
+  "angZaxsErth"= "deg2", 
+  "tempSoni"= "C2", 
+  "tempAir"= "C2", 
+  "angNedXaxs"= "deg2", 
+  "angNedYaxs"= "deg2", 
+  "angNedZaxs"= "deg2",
+  "rtioMoleDryCo2"= "umol2Co2 mol-2Dry", 
+  "densMoleCo2"= "umol2Co2 m-6", 
+  "presAtm"= "kPa2", 
+  "presSum"= "kPa2", 
+  "frt00Samp"= "dm6 min-2", 
+  "tempAve"= "C2",
+  "rtioMoleDryH2o"= "mmolH2o2 mol-2Dry", 
+  "densMoleH2o"= "mmol2H2o m-6", 
+  "tempDew"= "C2"
+  )
+
 #test <- outList
 
 
@@ -128,13 +150,13 @@ for(idxDp in base::names(rpt)){
     }
     else if(MethType == "qfqm"){
       # Create qfqm list of units
-      wrkAttr[[idxDp]][[idxVar]] <- rep_len(baseAttr, length.out = length(rpt[[idxDp]][[idxVar]]))
+      wrkAttr[[idxDp]][[idxVar]] <- base::rep_len(baseAttr, length.out = length(rpt[[idxDp]][[idxVar]]))
       # Add names to units vector
       names(wrkAttr[[idxDp]][[idxVar]]) <- names(rpt[[idxDp]][[idxVar]])
       #Apply NA for all qf and time variables
-      wrkAttr[[idxDp]][[idxVar]][grep(pattern = "qf|time", x = names(wrkAttr[[idxDp]][[idxVar]]))] <- "NA"
+      wrkAttr[[idxDp]][[idxVar]][base::grep(pattern = "qf|time", x = names(wrkAttr[[idxDp]][[idxVar]]))] <- "NA"
       #Apply dimensionless fraction for all qm variables
-      wrkAttr[[idxDp]][[idxVar]][grep(pattern = "qm", x = names(wrkAttr[[idxDp]][[idxVar]]))] <- "-"
+      wrkAttr[[idxDp]][[idxVar]][base::grep(pattern = "qm", x = names(wrkAttr[[idxDp]][[idxVar]]))] <- "-"
       
       # Apply output attributes
       outAttr[[idxDp]][[idxVar]] <- wrkAttr[[idxDp]][[idxVar]]
@@ -146,7 +168,11 @@ for(idxDp in base::names(rpt)){
     #Applying unit conversion#
     rpt[[idxDp]][[idxVar]] <- base::suppressWarnings(eddy4R.base::def.unit.conv(data = rpt[[idxDp]][[idxVar]], unitFrom = attributes(rpt[[idxDp]][[idxVar]])$unit, unitTo = outAttr[[idxDp]][[idxVar]], MethGc = FALSE))
     
+    #Convert units values back to variance
     base::try(rpt[[idxDp]][[idxVar]]$vari <- (rpt[[idxDp]][[idxVar]]$vari)^2, silent = TRUE)
+    
+    # Apply variance units
+    base::try(attributes(rpt[[idxDp]][[idxVar]])$unit[names(attributes(rpt[[idxDp]][[idxVar]])$unit) == "vari"] <- outAttr$vari[[idxVar]], silent = TRUE)
     
   } #End loop around idxVar
 } #End loop around idxDp
