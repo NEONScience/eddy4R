@@ -102,7 +102,6 @@ outAttr$h2oTurb <- list(
 #test <- outList
 
 
-if(MethType == "data"){
 wrkAttr <- list()
 for(idxDp in names(inpList)){
   #idxDp <- names(inpList)[1] #for testing
@@ -110,22 +109,22 @@ for(idxDp in names(inpList)){
     #idxVar <- names(inpList[[idxDp]])[7] #for testing
     baseAttr <- attributes(inpList[[idxDp]][[idxVar]])$unit
     
-    wrkAttr[[idxDp]][[idxVar]] <- c("mean"= baseAttr, "min" = baseAttr, "max" = baseAttr, "vari" = baseAttr, "numSamp" = "NA", "timeBgn" = "NA", "timeEnd" = "NA")
+    if(MethType == "data"){
+      wrkAttr[[idxDp]][[idxVar]] <- c("mean"= baseAttr, "min" = baseAttr, "max" = baseAttr, "vari" = baseAttr, "numSamp" = "NA", "timeBgn" = "NA", "timeEnd" = "NA")
     
     #Only variables with conversion factors (i.e. multiplied differences should be converted using the unit conversion tool. Temp has an offset applied, this should not be performed for any variable with the mean removed, i.e. vari, se, etc.)
     if(grepl(pattern = "temp", x = idxVar)){wrkAttr[[idxDp]][[idxVar]]["vari"] <- "C"}
-    
+    }
+    else if(MethType == "ucrt"){
+      wrkAttr[[idxDp]][[idxVar]] <- c("mean"= baseAttr, "vari" = baseAttr, "se" = baseAttr, "timeBgn" = "NA", "timeEnd" = "NA")
+#Only variables with conversion factors (i.e. multiplied differences should be converted using the unit conversion tool. Temp has an offset applied, this should not be performed for any variable with the mean removed, i.e. vari, se, etc.)
+      if(grepl(pattern = "temp", x = idxVar)){wrkAttr[[idxDp]][[idxVar]][wrkAttr[[idxDp]][[idxVar]] == baseAttr] <- "C"}
+    }  
     #To apply unit conversion to variance, we need to take sqrt first
     inpList[[idxDp]][[idxVar]]$vari <- sqrt(inpList[[idxDp]][[idxVar]]$vari)
     attributes(inpList[[idxDp]][[idxVar]])$unit <- wrkAttr[[idxDp]][[idxVar]]
     #Applying unit conversion#
     inpList[[idxDp]][[idxVar]] <- base::suppressWarnings(eddy4R.base::def.unit.conv(data = inpList[[idxDp]][[idxVar]], unitFrom = attributes(inpList[[idxDp]][[idxVar]])$unit, unitTo = outAttr[[idxDp]][[idxVar]], MethGc = FALSE))
-  }
-
-} else if (MethType == "ucrt"){
-  
-  
-}
-
-}
-}
+  } #End loop around idxVar
+} #End loop around idxDp
+} #End of wrapper function
