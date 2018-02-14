@@ -30,6 +30,8 @@
 # changelog and author contributions / copyrights
 #   Natchaya P-Durden (2017-10-20)
 #     original creation
+#   Natchaya P-Durden (2018-02-14)
+#     fix bugs when missing crdH2o
 ##############################################################################################
 wrap.time.rglr.dp00.ecse <- function(
   DirIn,
@@ -1401,6 +1403,10 @@ if (IdDp00 %in% c("DP0.00103")){
     }
   }#end of for loop in subDp00
   
+  #if not all data in "001.02306.700.000.000" is NaN
+  tmpIdDp00 <- paste0("NEON",".",DOM,".",Site,".", "DP0.00103")
+  tmpName <- paste0(tmpIdDp00,".", "001.02306.700.000.000")
+  if(length(is.na(dataList[[tmpName]]$data)) < 86400){
   convTime <- list()
   diffTime <-list()
   qfDiffTime <- list()
@@ -1456,6 +1462,10 @@ if (IdDp00 %in% c("DP0.00103")){
                         dataIn[[subDp00[1]]]$qfSensStus,#qfSensStus
                         dataIn[[subDp00[9]]]$qfStusN2,#qfStusN2
                         dataIn[[subDp00[6]]]$qfLowRtioMoleWetH2o)#qfLowRtioMoleWetH2o
+  }else{
+    #combine regularize data for crdH20
+    dataTmp <- as.data.frame(matrix(NaN, nrow = 86400, ncol = 13))
+  }
   
   #assign eddy4R name style to the output variables
   colnames(dataTmp) <- c("sensStus", "pres", "temp", "tempWbox", "valvCrdH2o" , "rtioMoleWetH2o",
