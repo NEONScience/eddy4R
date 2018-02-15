@@ -1406,7 +1406,7 @@ if (IdDp00 %in% c("DP0.00103")){
   #if not all data in "001.02306.700.000.000" is NaN
   tmpIdDp00 <- paste0("NEON",".",DOM,".",Site,".", "DP0.00103")
   tmpName <- paste0(tmpIdDp00,".", "001.02306.700.000.000")
-  if(length(is.na(dataList[[tmpName]]$data)) < 86400){
+  if(all(is.na(dataList[[tmpName]]$data)) == FALSE){
   convTime <- list()
   diffTime <-list()
   qfDiffTime <- list()
