@@ -16,7 +16,7 @@
 #' @param \code{lvlValvAux} Location of valvAux which apply to only  dp01 equal to "co2Stor" or "h2oStor". Defaults to NULL. Of type character. [-]
 #' @param \code{lvlCrdH2oValvVali} Measurement level of crdH2oValvVali which apply to only  dp01 equal to "isoH2o". Defaults to NULL. Of type character. [-]
 #' @param \code{data} A list of data frame containing the input dp0p data that related to dp01 which qfqm are being calculated. Of class integer". [User defined] 
-#' @param \code{qfInput} A list of data frame containing the input quality flag data that related to dp01 are being grouped. Of class integer". [NA] 
+#' @param \code{qfInput} A list of data frame containing the input quality flag data that related to dp01 are being grouped. Of class integer". [-] 
 #' @param \code{TypeMeas} A vector of class "character" containing the name of measurement type (sampling or validation), TypeMeas = c("samp", "vali"). Defaults to "samp". [-]
 #' @param \code{PrdMeas} The measurement time period in minute.  [min]
 #' @param \code{PrdAgr} The time period to aggregate to averaging in minute. [min]
@@ -50,6 +50,8 @@
 #     added envHut data
 #   Natchaya Pingintha-Durden (2017-12-04)
 #     modified the logic to not output the empty list when there is no data for a whole day
+#   Natchaya Pingintha-Durden (2018-01-23)
+#     use quality flag to determine indices
 ##############################################################################################
 wrap.neon.dp01.qfqm.ecse <- function(
   dp01 = c("co2Stor", "h2oStor", "tempAirLvl", "tempAirTop", "isoCo2", "isoH2o")[1],
@@ -133,9 +135,9 @@ wrap.neon.dp01.qfqm.ecse <- function(
         #rpt[[dp01]][[idxLvLPrdAgr]] <- list()
         
         #if there is at least one measurement
-        if(length(which(!is.na(wrk$data$temp))) > 0){
+        if(length(which(!is.na(wrk$qfqm$irgaStor$qfRngTemp))) > 0){
           #determine the index of each measurement  
-          wrk$idx <- eddy4R.base::def.idx.agr(time = data$time, PrdAgr = (PrdMeas*60), FreqLoca = 1, MethIdx = "specBgn", data = wrk$data$temp, CritTime = 60)
+          wrk$idx <- eddy4R.base::def.idx.agr(time = data$time, PrdAgr = (PrdMeas*60), FreqLoca = 1, MethIdx = "specBgn", data = wrk$qfqm$irgaStor$qfRngTemp, CritTime = 60)
           #delete row if last timeBgn and timeEnd is NA
           wrk$idx <- wrk$idx[rowSums(is.na(wrk$idx)) != 2,]
           #if last timeEnd is NA, replce that time to the last time value in data$time
@@ -229,10 +231,10 @@ wrap.neon.dp01.qfqm.ecse <- function(
       if (PrdMeas != PrdAgr) {
         #PrdAgr <- 30
         #if there is at least one measurement
-        if(length(which(!is.na(wrk$data$temp))) > 0){
+        if(length(which(!is.na(wrk$qfqm$irgaStor$qfRngTemp))) > 0){
           
           #determine the index of each measurement  
-          wrk$idx <- eddy4R.base::def.idx.agr(time = data$time, PrdAgr = (PrdMeas*60), FreqLoca = 1, MethIdx = "specBgn", data = wrk$data$temp, CritTime = 60)
+          wrk$idx <- eddy4R.base::def.idx.agr(time = data$time, PrdAgr = (PrdMeas*60), FreqLoca = 1, MethIdx = "specBgn", data = wrk$qfqm$irgaStor$qfRngTemp, CritTime = 60)
           #delete row if last timeBgn and timeEnd is NA
           wrk$idx <- wrk$idx[rowSums(is.na(wrk$idx)) != 2,]
           #if last timeEnd is NA, replce that time to the last time value in data$time
@@ -356,9 +358,9 @@ wrap.neon.dp01.qfqm.ecse <- function(
         #rpt[[dp01]][[idxLvLPrdAgr]] <- list()
         
         #if there is at least one measurement
-        if(length(which(!is.na(wrk$data$temp))) > 0){
+        if(length(which(!is.na(wrk$qfqm$irgaStor$qfRngTemp))) > 0){
           #determine the end time of each measurement
-          wrk$idx <- eddy4R.base::def.idx.agr(time = data$time, PrdAgr = (PrdMeas*60), FreqLoca = 1, MethIdx = "specEnd", data = wrk$data$temp, CritTime = 20)
+          wrk$idx <- eddy4R.base::def.idx.agr(time = data$time, PrdAgr = (PrdMeas*60), FreqLoca = 1, MethIdx = "specEnd", data = wrk$qfqm$irgaStor$qfRngTemp, CritTime = 20)
           #delete row if last timeBgn and timeEnd is NA
           wrk$idx <- wrk$idx[rowSums(is.na(wrk$idx)) != 2,]
           #if last timeEnd is NA, replce that time to the last time value in data$time
@@ -441,9 +443,9 @@ wrap.neon.dp01.qfqm.ecse <- function(
       if (PrdMeas != PrdAgr) {
         #PrdAgr <- 30
         #if there is at least one measurement
-        if(length(which(!is.na(wrk$data$temp))) > 0){
+        if(length(which(!is.na(wrk$qfqm$irgaStor$qfRngTemp))) > 0){
           #   #determine the end time of each measurement  
-          wrk$idx <- eddy4R.base::def.idx.agr(time = data$time, PrdAgr = (PrdMeas*60), FreqLoca = 1, MethIdx = "specEnd", data = wrk$data$temp, CritTime = 20)
+          wrk$idx <- eddy4R.base::def.idx.agr(time = data$time, PrdAgr = (PrdMeas*60), FreqLoca = 1, MethIdx = "specEnd", data = wrk$qfqm$irgaStor$qfRngTemp, CritTime = 20)
           #delete row if last timeBgn and timeEnd is NA
           wrk$idx <- wrk$idx[rowSums(is.na(wrk$idx)) != 2,]
           #if last timeEnd is NA, replce that time to the last time value in data$time
@@ -602,9 +604,9 @@ wrap.neon.dp01.qfqm.ecse <- function(
         #rpt[[dp01]][[idxLvLPrdAgr]] <- list()
         
         #if there is at least one measurement
-        if(length(which(!is.na(wrk$data$temp))) > 0){
+        if(length(which(!is.na(wrk$qfqm$crdCo2$qfRngTemp))) > 0){
           #determine the index of each measurement  
-          wrk$idx <- eddy4R.base::def.idx.agr(time = data$time, PrdAgr = (PrdMeas*60), FreqLoca = 1, MethIdx = "specBgn", data = wrk$data$temp, CritTime = 60)
+          wrk$idx <- eddy4R.base::def.idx.agr(time = data$time, PrdAgr = (PrdMeas*60), FreqLoca = 1, MethIdx = "specBgn", data = wrk$qfqm$crdCo2$qfRngTemp, CritTime = 60)
           #delete row if last timeBgn and timeEnd is NA
           wrk$idx <- wrk$idx[rowSums(is.na(wrk$idx)) != 2,]
           #if last timeEnd is NA, replce that time to the last time value in data$time
@@ -688,10 +690,10 @@ wrap.neon.dp01.qfqm.ecse <- function(
       if (PrdMeas != PrdAgr) {
         #PrdAgr <- 30
         #if there is at least one measurement
-        if(length(which(!is.na(wrk$data$temp))) > 0){
+        if(length(which(!is.na(wrk$qfqm$crdCo2$qfRngTemp))) > 0){
           
           #determine the index of each measurement  
-          wrk$idx <- eddy4R.base::def.idx.agr(time = data$time, PrdAgr = (PrdMeas*60), FreqLoca = 1, MethIdx = "specBgn", data = wrk$data$temp, CritTime = 60)
+          wrk$idx <- eddy4R.base::def.idx.agr(time = data$time, PrdAgr = (PrdMeas*60), FreqLoca = 1, MethIdx = "specBgn", data = wrk$qfqm$crdCo2$qfRngTemp, CritTime = 60)
           #delete row if last timeBgn and timeEnd is NA
           wrk$idx <- wrk$idx[rowSums(is.na(wrk$idx)) != 2,]
           #if last timeEnd is NA, replce that time to the last time value in data$time
@@ -787,9 +789,9 @@ wrap.neon.dp01.qfqm.ecse <- function(
         #rpt[[dp01]][[idxLvLPrdAgr]] <- list()
         
         #if there is at least one measurement
-        if(length(which(!is.na(wrk$data$temp))) > 0){
+        if(length(which(!is.na(wrk$qfqm$crdCo2$qfRngTemp))) > 0){
           #determine the end time of each measurement
-          wrk$idx <- eddy4R.base::def.idx.agr(time = data$time, PrdAgr = (PrdMeas*60), FreqLoca = 1, MethIdx = "specBgn", data = wrk$data$temp, CritTime = 60)
+          wrk$idx <- eddy4R.base::def.idx.agr(time = data$time, PrdAgr = (PrdMeas*60), FreqLoca = 1, MethIdx = "specBgn", data = wrk$qfqm$crdCo2$qfRngTemp, CritTime = 60)
           #delete row if last timeBgn and timeEnd is NA
           wrk$idx <- wrk$idx[rowSums(is.na(wrk$idx)) != 2,]
           #if last timeEnd is NA, replce that time to the last time value in data$time
@@ -877,9 +879,9 @@ wrap.neon.dp01.qfqm.ecse <- function(
       if (PrdMeas != PrdAgr) {
         #PrdAgr <- 30
         #if there is at least one measurement
-        if(length(which(!is.na(wrk$data$temp))) > 0){
+        if(length(which(!is.na(wrk$qfqm$crdCo2$qfRngTemp))) > 0){
           #   #determine the end time of each measurement  
-          wrk$idx <- eddy4R.base::def.idx.agr(time = data$time, PrdAgr = (PrdMeas*60), FreqLoca = 1, MethIdx = "specBgn", data = wrk$data$temp, CritTime = 60)
+          wrk$idx <- eddy4R.base::def.idx.agr(time = data$time, PrdAgr = (PrdMeas*60), FreqLoca = 1, MethIdx = "specBgn", data = wrk$qfqm$crdCo2$qfRngTemp, CritTime = 60)
           #delete row if last timeBgn and timeEnd is NA
           wrk$idx <- wrk$idx[rowSums(is.na(wrk$idx)) != 2,]
           #if last timeEnd is NA, replce that time to the last time value in data$time
@@ -975,9 +977,9 @@ wrap.neon.dp01.qfqm.ecse <- function(
         #rpt[[dp01]][[idxLvLPrdAgr]] <- list()
         
         #if there is at least one measurement
-        if(length(which(!is.na(wrk$data$temp))) > 0){
+        if(length(which(!is.na(wrk$qfqm$crdH2o$qfRngTemp))) > 0){
           #determine the index of each measurement  
-          wrk$idx <- eddy4R.base::def.idx.agr(time = data$time, PrdAgr = (PrdMeas*60), FreqLoca = 1, MethIdx = "specBgn", data = wrk$data$temp, CritTime = 60)
+          wrk$idx <- eddy4R.base::def.idx.agr(time = data$time, PrdAgr = (PrdMeas*60), FreqLoca = 1, MethIdx = "specBgn", data = wrk$qfqm$crdH2o$qfRngTemp, CritTime = 60)
           #delete row if last timeBgn and timeEnd is NA
           wrk$idx <- wrk$idx[rowSums(is.na(wrk$idx)) != 2,]
           #if last timeEnd is NA, replce that time to the last time value in data$time
@@ -1058,10 +1060,10 @@ wrap.neon.dp01.qfqm.ecse <- function(
       if (PrdMeas != PrdAgr) {
         #PrdAgr <- 30
         #if there is at least one measurement
-        if(length(which(!is.na(wrk$data$temp))) > 0){
+        if(length(which(!is.na(wrk$qfqm$crdH2o$qfRngTemp))) > 0){
           
           #determine the index of each measurement  
-          wrk$idx <- eddy4R.base::def.idx.agr(time = data$time, PrdAgr = (PrdMeas*60), FreqLoca = 1, MethIdx = "specBgn", data = wrk$data$temp, CritTime = 60)
+          wrk$idx <- eddy4R.base::def.idx.agr(time = data$time, PrdAgr = (PrdMeas*60), FreqLoca = 1, MethIdx = "specBgn", data = wrk$qfqm$crdH2o$qfRngTemp, CritTime = 60)
           #delete row if last timeBgn and timeEnd is NA
           wrk$idx <- wrk$idx[rowSums(is.na(wrk$idx)) != 2,]
           #if last timeEnd is NA, replce that time to the last time value in data$time
@@ -1150,13 +1152,15 @@ wrap.neon.dp01.qfqm.ecse <- function(
                              "injNum" = data$crdH2oValvVali[[lvlCrdH2oValvVali]]$injNum
                              
       )
-      #replace injNum to NaN when they are not measured at that period
-      wrk$data$injNum <- ifelse(is.na(wrk$data$temp), NaN, wrk$data$injNum)
       
       #input the whole day qfqm
       wrk$qfqm <- list()
       wrk$qfqm$crdH2o <- qfInput$crdH2o[[lvl]]
       wrk$qfqm$envHut <- qfInput$envHut[[lvlEnvHut]]
+      
+      #replace injNum to NaN when they are not measured at that period
+      wrk$data$injNum <- ifelse(is.na(wrk$qfqm$crdH2o$qfRngTemp), NaN, wrk$data$injNum)
+      
       #calculated the qfValiH2o: injNum 1, 2, 3, 7, 8, 9, 13, 14, and 15 set to 1
       #threshold to determine qfValiH2o (default to reference water +/- 30% of reference water)
       Thsh <- 0.3
@@ -1170,7 +1174,7 @@ wrap.neon.dp01.qfqm.ecse <- function(
         #rpt[[dp01]][[idxLvLPrdAgr]] <- list()
         
         #if there is at least one measurement
-        if(length(which(!is.na(wrk$data$temp))) > 0){
+        if(length(which(!is.na(wrk$qfqm$crdH2o$qfRngTemp))) > 0){
           #determine the end time of each measurement
           wrk$idx <- eddy4R.base::def.idx.agr(time = data$time, PrdAgr = (PrdMeas*60), FreqLoca = 1, MethIdx = "specEnd", crdH2oVali = TRUE, data = wrk$data$injNum, CritTime = 15)
           #delete row if last timeBgn and timeEnd is NA
@@ -1253,7 +1257,7 @@ wrap.neon.dp01.qfqm.ecse <- function(
       
       if (PrdMeas != PrdAgr) {
         #if there is at least one measurement
-        if(length(which(!is.na(wrk$data$temp))) > 0){
+        if(length(which(!is.na(wrk$qfqm$crdH2o$qfRngTemp))) > 0){
           #   #determine the end time of each measurement  
           wrk$idx <- eddy4R.base::def.idx.agr(time = data$time, PrdAgr = (PrdMeas*60), FreqLoca = 1, MethIdx = "specEnd", crdH2oVali = TRUE, data = wrk$data$injNum, CritTime = 15)
           #delete row if last timeBgn and timeEnd is NA

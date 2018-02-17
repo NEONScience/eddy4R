@@ -12,6 +12,7 @@
 #' @param Vrbs Optional. A logical {FALSE/TRUE} value indicating whether to:\cr
 #' \code{Vrbs = FALSE}: (Default) cleaned data set, list of variables assessed, list of quality flags for each variable assessed, and the total number of bad data per variable, or \cr
 #' \code{Vrbs = TRUE}: cleaned data set, list of variables assessed, list of quality flags for each variable assessed, the number of each quality flag tripped for each variable and the total number of bad data per variable
+#' @param TypeData Type of input data, TypeData = c("integer", "real"). Defaults to "integer". [-]. 
 #' 
 #' @return A list (\code{rpt}) containing a dataframe (\code{rpt$dfData}) of the data with bad data replaced by NaN's, a vector of data variables to assess (\code{rpt$listVar}),  a list containing vectors of flag names used for each variable (\code{rpt$listQf}),  a list containing vectors of the number of quality flags set high for each variable (\code{rpt$fracQfBad}), a list containing vectors of flagged data points for each variable (\code{rpt$posBad}), a list containing total number of flagged data points for each variable (\code{rpt$numBadSum}).
 
@@ -35,6 +36,10 @@
 #     bug fixes when only one qf is used to determine qf analysis
 #   Dave Durden (2017-01-15)
 #     bug fixes when only one qf is set high in first element of list
+#   Natchaya Pingintha-Durden (2018-01-23)
+#     added TypeData to paramerter
+#   Dave Durden (2018-01-23)
+#     bug fixes to not include NaN values when calculating the fracQfBad
 ##############################################################################################
 
 
@@ -42,7 +47,8 @@ def.qf.rmv.data <- function(
   dfData,
   dfQf,
   Sens = NULL,
-  Vrbs = FALSE){
+  Vrbs = FALSE,
+  TypeData = c("integer", "real")[1]){
   
   #Create a list to hold all the output
   rpt <- list()
@@ -65,11 +71,15 @@ def.qf.rmv.data <- function(
     qfSens <- NULL  
   }
   
-  # Grab only qf that are integers  
+  # Grab only qf that are integers 
+  if(TypeData == "integer"){
   if(ff::is.ffdf(dfQf)){
     qfName <-  base::names(dfQf[ff::vmode(dfQf) == "integer"]) #method for ffdf objects
   }else{
     qfName <-  base::names(base::Filter(base::is.integer, dfQf))  #method for normal data.frame objects
+  }
+  }else{
+    qfName <-  base::names(dfQf)
   }
   
   # A list of all the flags to be included in the data removal  
@@ -77,6 +87,9 @@ def.qf.rmv.data <- function(
     tmp <- base::subset(x = names(dfQf), subset = base::grepl(pattern = base::paste(x,qfSens, sep ="|"),x = qfName, ignore.case = TRUE))
     #qfCal flags from consideration
     tmp[base::grep(pattern = "qfCal", x = tmp, invert = TRUE), drop = FALSE]
+    #take flag that generate for using in the other sensors out (i.e., qfRh and qfTemp in envHut)
+    tmpFlag <- paste0("qf",paste(toupper(substr(x, 1, 1)), substr(x, 2, nchar(x)), sep =""), sep = "")
+    tmp[base::grep(pattern = tmpFlag, x = tmp, invert = TRUE), drop = FALSE]
   })
   
   #Add list names
@@ -94,8 +107,8 @@ def.qf.rmv.data <- function(
     #Remove qfCal flags
     tmp <- tmp[,base::grep(pattern = "qfCal", x = names(tmp), invert = TRUE), drop = FALSE]
     #Calculate the number of times each quality flag was set high (qf..= 1)
-    if(Vrbs == TRUE) {if(ncol(tmp) > 1){rpt$fracQfBad[[x]] <<- base::apply(X = tmp, MARGIN = 2, FUN = function(x) base::length(which(x == 1))/base::length(x))}
-      else{rpt$fracQfBad[[x]] <<- base::sum(tmp)/base::nrow(tmp)
+    if(Vrbs == TRUE) {if(ncol(tmp) > 1){rpt$fracQfBad[[x]] <<- base::apply(X = tmp, MARGIN = 2, FUN = function(x) base::length(which(x == 1))/base::length(which(!is.na(x))))}
+      else{rpt$fracQfBad[[x]] <<- base::sum(tmp == 1, na.rm = TRUE)/base::sum(!is.na(tmp))
       names(rpt$fracQfBad[[x]]) <<- names(tmp)}}
     #Record the row positions for each variable where at least 1 flag is raised
     rpt$posBad[[x]] <<-  base::which(base::rowSums(tmp == 1) > 0)

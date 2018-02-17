@@ -4,7 +4,8 @@
 \alias{def.qf.rmv.data}
 \title{Definition function: to remove high frequency data points that have failed quality flags}
 \usage{
-def.qf.rmv.data(dfData, dfQf, Sens = NULL, Vrbs = FALSE)
+def.qf.rmv.data(dfData, dfQf, Sens = NULL, Vrbs = FALSE,
+  TypeData = c("integer", "real")[1])
 }
 \arguments{
 \item{dfData}{Input data.frame for data to be removed from based on quality flags}
@@ -16,6 +17,8 @@ def.qf.rmv.data(dfData, dfQf, Sens = NULL, Vrbs = FALSE)
 \item{Vrbs}{Optional. A logical {FALSE/TRUE} value indicating whether to:\cr
 \code{Vrbs = FALSE}: (Default) cleaned data set, list of variables assessed, list of quality flags for each variable assessed, and the total number of bad data per variable, or \cr
 \code{Vrbs = TRUE}: cleaned data set, list of variables assessed, list of quality flags for each variable assessed, the number of each quality flag tripped for each variable and the total number of bad data per variable}
+
+\item{TypeData}{Type of input data, TypeData = c("integer", "real"). Defaults to "integer". [-].}
 }
 \value{
 A list (\code{rpt}) containing a dataframe (\code{rpt$dfData}) of the data with bad data replaced by NaN's, a vector of data variables to assess (\code{rpt$listVar}),  a list containing vectors of flag names used for each variable (\code{rpt$listQf}),  a list containing vectors of the number of quality flags set high for each variable (\code{rpt$fracQfBad}), a list containing vectors of flagged data points for each variable (\code{rpt$posBad}), a list containing total number of flagged data points for each variable (\code{rpt$numBadSum}).

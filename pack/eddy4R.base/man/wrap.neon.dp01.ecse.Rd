@@ -7,7 +7,8 @@
 wrap.neon.dp01.ecse(dp01 = c("co2Stor", "h2oStor", "tempAirLvl", "tempAirTop",
   "isoCo2", "isoH2o")[1], lvl, lvlMfcSampStor = NULL, lvlEnvHut = NULL,
   lvlValv = NULL, lvlCrdH2oValvVali = NULL, data = list(),
-  TypeMeas = c("samp", "vali")[1], PrdMeas, PrdAgr, idxTime = list())
+  qfInput = list(), TypeMeas = c("samp", "vali")[1], PrdMeas, PrdAgr,
+  idxTime = list())
 }
 \arguments{
 \item{\code{dp01}}{A vector of class "character" containing the name of NEON ECSE dp01 which descriptive statistics are being calculated, \cr
@@ -24,6 +25,8 @@ c("co2Stor", "h2oStor", "tempAirLvl", "tempAirTop", "isoCo2", "isoH2o"). Default
 \item{\code{lvlCrdH2oValvVali}}{Measurement level of crdH2oValvVali which apply to only  dp01 equal to "isoH2o". Defaults to NULL. Of type character. [-]}
 
 \item{\code{data}}{A list of data frame containing the input dp0p data that related to dp01 which descriptive statistics are being calculated. Of class integer". [User defined]}
+
+\item{\code{qfInput}}{A list of data frame containing the input quality flag data that related to dp01 are being grouped. Of class integer". [-]}
 
 \item{\code{TypeMeas}}{A vector of class "character" containing the name of measurement type (sampling or validation), TypeMeas = c("samp", "vali"). Defaults to "samp". [-]}
 
