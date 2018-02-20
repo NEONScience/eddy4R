@@ -62,6 +62,8 @@
 #     updated ECTE term names
 #   Natchaya P-Durden (2018-01-12)
 #     bugs fixed on determination qf for presEnvHut
+#   Natchaya P-Durden (2018-02-16)
+#     replace -1 if all qfSens in crdCo2 and crdH2o are NaN
 ##############################################################################################
 
 def.neon.dp01.qf.grp <- function(
@@ -1051,6 +1053,10 @@ if (MethMeas == "ecse") {
     if (length(which(!is.na(qfInput$crdCo2$qfRngTemp))) == 0){
       qfInput$crdCo2[,1:length(qfInput$crdCo2)] <- -1
     }
+    #replace -1 if all qfSens in crdCo2 are NA
+    if (length(which(!is.na(qfInput$crdCo2$qfSensStus))) == 0){
+      qfInput$crdCo2$qfSensStus <- -1
+    }
     #setQf for crdCo2
     setQf$rtioMoleDryCo2 <- data.frame("qfRngRtioMoleDryCo2" = qfInput$crdCo2$qfRngRtioMoleDryCo2, 
                                        "qfStepRtioMoleDryCo2" = qfInput$crdCo2$qfStepRtioMoleDryCo2,
@@ -1450,6 +1456,13 @@ if (MethMeas == "ecse") {
     if (length(which(!is.na(qfInput$crdH2o$qfRngTemp))) == 0){
       qfInput$crdH2o[,1:length(qfInput$crdH2o)] <- -1
     }
+    
+    #replace -1 if all qf in crdCH2o are NA
+    qfName <- c("qfSensStus", "qfStusN2", "qfValiH2o")
+    for (idx in 1:length(qfName)){
+    if (length(which(!is.na(qfInput$crdH2o[[qfName[idx]]]))) == 0){
+      qfInput$crdH2o[[qfName[idx]]] <- -1
+    }}
     
     #setQf for crdH2o
     setQf$rtioMoleDryH2o <- data.frame("qfRngRtioMoleDryH2o" = qfInput$crdH2o$qfRngRtioMoleDryH2o, 
