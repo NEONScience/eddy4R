@@ -38,6 +38,8 @@
 #     MVP candidate incl. efficiency improvements
 #   David Durden (2018-01-12)
 #     Added failsafe for ts object creation in case all dfInp values are NaN's
+#   Stefan Metzger (2018-02-24)
+#     Added failsafe in case the vertical wind is not available
 ##############################################################################################
 
 
@@ -60,6 +62,9 @@ rpt <- list()
 rpt$qfMiss <- as.list(colMeans(is.na(dfInp)) > ThshMiss)
 #Turn the flags into integers
 rpt$qfMiss <- lapply(rpt$qfMiss, as.integer)
+# in case the vertical wind is not available, no cospectral correction can be performed
+# then flag all scalars
+if(rpt$qfMiss$w_hor == 1) base::invisible(lapply(names(rpt$qfMiss), function(x) rpt$qfMiss[x] <<- 1))
 ####################################################################
 
 # fill missing values through linear interpolation
