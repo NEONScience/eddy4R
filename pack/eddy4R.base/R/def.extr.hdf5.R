@@ -5,9 +5,10 @@
 #' David Durden \email{ddurden@battelleecology.org}
 
 #' @description 
-#' Definition function. Function extracts group sturcture, data, and metadata attributes from input, examples include ecte (turbulent/turb) and ecse (storage/stor) HDF5 files to a another HDF5 file, used for nsae (net surface atmosphere exchange), with the same group heirarchy structure from each file.
+#' Definition function. Function extracts group sturcture, data, and metadata attributes from input, examples include ecte (turbulent/turb) and ecse (storage/stor) HDF5 files to a another HDF5 file, used for nsae (net surface atmosphere exchange), with the same group heirarchy structure from each file. Either \code{FileIn} or \code{rpt} must be specified for \code{eddy4R.base::def.extr.hdf5()} to work. If \code{FileIn} is specified, the contents of the specified file are read (and optionally written to an output file). If \code{rpt} is specified, its contents are being written to an output file. This enables to read hdf5 files (call \code{eddy4R.base::def.extr.hdf5()} and specify \code{FileIn}), then modify the resulting \code{rpt} object as needed, and lastly to write the modified \code{rpt} object to file (call \code{eddy4R.base::def.extr.hdf5()} and specify \code{rpt}).
 
-#' @param FileIn is the input HDF5 file (turb or stor) the data and metadata are being read from.
+#' @param FileIn is the input HDF5 file (turb or stor) the data and metadata are being read from. It is ignored if \code{rpt} is specified.
+#' @param rpt is the list returned from a previous call of \code{eddy4R.base::def.extr.hdf5()} with \code{FileIn} specified. At a minimum the entries \code{rpt$listGrpName}, \code{rpt$listData} and \code{rpt$listAttr} are required to write the contents to an output hdf5 file.
 #' @param FileOut is the output file nsae HDF5 written to.
 #' @param MethExtrData logical parameter that decides if data from the input file should be extracted and written to the output file.
 #' @param MethExtrAttr logical parameter that decides if attributes (metadata) from the input file should be extracted and written to the output file.
@@ -43,82 +44,123 @@
 ##############################################################################################################
 
 def.extr.hdf5 <- function(
-  FileIn,
+  FileIn = NULL,
+  rpt = NULL,
   FileOut = NULL,
   MethExtrData = TRUE,
   MethExtrAttr = TRUE,
   dp01 = NULL
-){
+) {
+
   
+    
+# read data only if rpt is not specified
+if(base::is.null(rpt)) {
+
+  
+  # test whether input file present
   if(!base::file.exists(FileIn)) {
     stop("Input file does not exist")
   } 
-  
-  #Create a list to report data and attributes
-  rpt <- list()
-  
-  #list of everything written within the input file
-  listObj <- rhdf5::h5ls(FileIn, datasetinfo = FALSE)
-  
-  #List of all object names
-  listObjName <- base::paste(listObj$group, listObj$name, sep = "/")
 
-##Groups for HDF5 group structure    
-  #Grabbing just the HDF5 groups
-  listGrp <- listObj[listObj$otype == "H5I_GROUP",] 
+    
+  # list file contents
+    
+    #Create a list to report data and attributes
+    rpt <- list()
+    
+    #list of everything written within the input file
+    listObj <- rhdf5::h5ls(FileIn, datasetinfo = FALSE)
+    
+    #List of all object names
+    listObjName <- base::paste(listObj$group, listObj$name, sep = "/")
   
-  listGrpName <- base::paste(listGrp$group, listGrp$name, sep = "/") # Combining group names for writing output
+    
+  # Groups for HDF5 group structure
+    
+    #Grabbing just the HDF5 groups
+    listGrp <- listObj[listObj$otype == "H5I_GROUP",] 
+    
+    rpt$listGrpName <- base::paste(listGrp$group, listGrp$name, sep = "/") # Combining group names for writing output
+  
+    
+  # Dataset for HDF5 dataset output
+    
+    #Grab just the data objects
+    listDataObj <- listObj[listObj$otype == "H5I_DATASET",]
+    
+    #Combining names for grabbing datasets
+    listDataName <- base::paste(listDataObj$group, listDataObj$name, sep = "/") # Combining output
+    
+    #Ignoring dp0p data
+    listDataName <- listDataName[grep(pattern = "dp0p", x = listDataName, invert = TRUE)]
+    
+    #Ignoring dp01 data as define in dp01GrpName
+    if (!is.null(dp01)){
+      for (idx in dp01){
+      listDataName <- listDataName[grep(paste0("dp01", "/", "data", "/", idx), x = listDataName, invert = TRUE)] 
+      listDataName <- listDataName[grep(paste0("dp01", "/", "qfqm", "/", idx), x = listDataName, invert = TRUE)]
+      listDataName <- listDataName[grep(paste0("dp01", "/", "ucrt", "/", idx), x = listDataName, invert = TRUE)]
+      }
+    } 
+   
+    # Read data from the input file
+    rpt$listData <- base::lapply(listDataName, rhdf5::h5read, file = FileIn)
+    
+    #Apply group names to the attributes list
+    base::names(rpt$listData) <- listDataName
+  
+    
+  # Attributes for writing to the output HDF5 file
+    
+    # read attributes from input file
+    rpt$listAttr <- base::lapply(listObjName, rhdf5::h5readAttributes, file = FileIn)
+    
+    #Apply group names to the attributes list
+    base::names(rpt$listAttr) <- listObjName
+    
+    #Remove all empty lists
+    rpt$listAttr <- rpt$listAttr[!base::sapply(rpt$listAttr, function(x) base::length(x) == 0)]
 
-##Dataset for HDF5 dataset output    
-  #Grab just the data objects
-  listDataObj <- listObj[listObj$otype == "H5I_DATASET",]
+    
+}
   
-  #Combining names for grabbing datasets
-  listDataName <- base::paste(listDataObj$group, listDataObj$name, sep = "/") # Combining output
-  
-  #Ignoring dp0p data
-  listDataName <- listDataName[grep(pattern = "dp0p", x = listDataName, invert = TRUE)]
-  
-  #Ignoring dp01 data as define in dp01GrpName
-  if (!is.null(dp01)){
-    for (idx in dp01){
-    listDataName <- listDataName[grep(paste0("dp01", "/", "data", "/", idx), x = listDataName, invert = TRUE)] 
-    listDataName <- listDataName[grep(paste0("dp01", "/", "qfqm", "/", idx), x = listDataName, invert = TRUE)]
-    listDataName <- listDataName[grep(paste0("dp01", "/", "ucrt", "/", idx), x = listDataName, invert = TRUE)]
-    }
-  } 
- 
-  # Read data from the input file
-  rpt$listData <- base::lapply(listDataName, rhdf5::h5read, file = FileIn)
-  
-  #Apply group names to the attributes list
-  base::names(rpt$listData) <- listDataName
 
-#Attributes for writing to the output HDF5 file    
-  # read attributes from input file
-  rpt$listAttr <- base::lapply(listObjName, rhdf5::h5readAttributes, file = FileIn)
+    
+# perform some tests if rpt is provided
+if(base::is.null(rpt)) {
   
-  #Apply group names to the attributes list
-  base::names(rpt$listAttr) <- listObjName
+  # rpt of type list?
+  if(!(base::typeof(rpt) == "list")) base::stop("rpt needs to be of type 'list'.")
   
-  #Remove all empty lists
-  rpt$listAttr <- rpt$listAttr[!base::sapply(rpt$listAttr, function(x) base::length(x) == 0)]
+  # are all mandatory list entries specified?
+  if(base::is.null(rpt$listGrpName)) base::stop("please provide rpt$listGrpName.")
+  if(base::is.null(rpt$listData)) base::stop("please provide rpt$listData.")
+  if(base::is.null(rpt$listAttr)) base::stop("please provide rpt$listAttr.")
+
+}
+
   
-##Write to the output HDF5 file, if FileOut provided
-  if(!is.null(FileOut)){
-  #Create connection to HDF5 file if FileOut already exists, or create new file
-  if(file.exists(FileOut) == TRUE){
+  
+# Write to the output HDF5 file, if FileOut provided
+if(!is.null(FileOut)) {
+  
+    
+  # create connection to HDF5 file if FileOut already exists, or create new file
+  if(file.exists(FileOut) == TRUE) {
     fid <- rhdf5::H5Fopen(name = FileOut) #Open connection
-  }else{
+  } else {
     fid <- rhdf5::H5Fcreate(name = FileOut) #Create file and open connection
   }
-  
-  #Create the group structure in the output file
-  lapply(listGrpName, function(x){
+
+    
+  # create the group structure in the output file
+  lapply(rpt$listGrpName, function(x){
     rhdf5::h5createGroup(fid, x)
     })
   
-  #Determine if data should be written to output HDF5
+  
+  # determine if data should be written to output HDF5
   if(MethExtrData == TRUE){
   #Write the data to the output file
   lapply(names(rpt$listData), function(x){
@@ -126,7 +168,8 @@ def.extr.hdf5 <- function(
   })
   }  
   
-  #Determine if attributes should be written to output HDF5
+  
+  # determine if attributes should be written to output HDF5
   if(MethExtrAttr == TRUE){
     #Write attributes to the output HDF5 file
     lapply(names(rpt$listAttr), function(x){
@@ -137,11 +180,15 @@ def.extr.hdf5 <- function(
     })
   }
   
-  #Close the HDF5 file connection
-  rhdf5::H5close()
-  }
   
-  #Return the data and attributes
-  return(rpt)
+# close the HDF5 file connection
+rhdf5::H5close()
+}
   
+  
+  
+# return the data and attributes
+return(rpt)
+
+    
 }
