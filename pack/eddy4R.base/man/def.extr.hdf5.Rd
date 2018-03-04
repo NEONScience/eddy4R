@@ -38,7 +38,8 @@ NEON Algorithm Theoretical Basis Document:Eddy Covariance Turbulent Exchange Sub
 Currently none
 }
 \author{
-David Durden \email{ddurden@battelleecology.org}
+David Durden \email{eddy4R.info@gmail.com}
+Stefan Metzger \email{eddy4R.info@gmail.com}
 }
 \keyword{ECSE,}
 \keyword{ECTE,}
