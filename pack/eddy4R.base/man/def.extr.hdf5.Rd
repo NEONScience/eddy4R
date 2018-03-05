@@ -4,11 +4,13 @@
 \alias{def.extr.hdf5}
 \title{Definition function: Extract data and attributes from HDF5 input file to another HDF5 output file}
 \usage{
-def.extr.hdf5(FileIn, FileOut = NULL, MethExtrData = TRUE,
-  MethExtrAttr = TRUE, dp01 = NULL)
+def.extr.hdf5(FileIn = NULL, rpt = NULL, FileOut = NULL,
+  MethExtrData = TRUE, MethExtrAttr = TRUE, dp01 = NULL)
 }
 \arguments{
-\item{FileIn}{is the input HDF5 file (turb or stor) the data and metadata are being read from.}
+\item{FileIn}{is the input HDF5 file (turb or stor) the data and metadata are being read from. It is ignored if \code{rpt} is specified.}
+
+\item{rpt}{is the list returned from a previous call of \code{eddy4R.base::def.extr.hdf5()} with \code{FileIn} specified. At a minimum the entries \code{rpt$listGrpName}, \code{rpt$listData} and \code{rpt$listAttr} are required to write the contents to an output hdf5 file.}
 
 \item{FileOut}{is the output file nsae HDF5 written to.}
 
@@ -22,7 +24,7 @@ def.extr.hdf5(FileIn, FileOut = NULL, MethExtrData = TRUE,
 A NEON formatted HDF5 file that has parameters from the input file written to the output HDF5 file.
 }
 \description{
-Definition function. Function extracts group sturcture, data, and metadata attributes from input, examples include ecte (turbulent/turb) and ecse (storage/stor) HDF5 files to a another HDF5 file, used for nsae (net surface atmosphere exchange), with the same group heirarchy structure from each file.
+Definition function. Function extracts group sturcture, data, and metadata attributes from input, examples include ecte (turbulent/turb) and ecse (storage/stor) HDF5 files to a another HDF5 file, used for nsae (net surface atmosphere exchange), with the same group heirarchy structure from each file. Either \code{FileIn} or \code{rpt} must be specified for \code{eddy4R.base::def.extr.hdf5()} to work. If \code{FileIn} is specified, the contents of the specified file are read (and optionally written to an output file). If \code{rpt} is specified, its contents are being written to an output file. This enables to read hdf5 files (call \code{eddy4R.base::def.extr.hdf5()} and specify \code{FileIn}), then modify the resulting \code{rpt} object as needed, and lastly to write the modified \code{rpt} object to file (call \code{eddy4R.base::def.extr.hdf5()} and specify \code{rpt}).
 }
 \examples{
 Currently none
@@ -36,7 +38,8 @@ NEON Algorithm Theoretical Basis Document:Eddy Covariance Turbulent Exchange Sub
 Currently none
 }
 \author{
-David Durden \email{ddurden@battelleecology.org}
+David Durden \email{eddy4R.info@gmail.com}
+Stefan Metzger \email{eddy4R.info@gmail.com}
 }
 \keyword{ECSE,}
 \keyword{ECTE,}
