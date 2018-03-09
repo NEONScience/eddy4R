@@ -45,7 +45,7 @@
 #     original creation
 #   Natchaya Pingintha-Durden (2017-05-26)
 #     added functionality to determine PrdAgr
-#   Natchaya Pingintha-Durden (2017-05-26)
+#   Natchaya Pingintha-Durden (2018-02-27)
 #     replace negative idxBgn to 1 in specEnd method
 #   Natchaya Pingintha-Durden (2018-03-09)
 #     replace negative idxEnd to 1 in specEnd method
