@@ -45,6 +45,8 @@
 #     original creation
 #   Natchaya Pingintha-Durden (2017-05-26)
 #     added functionality to determine PrdAgr
+#   Natchaya Pingintha-Durden (2017-05-26)
+#     replace negative idxBgn to 1 in specEnd method
 ##############################################################################################
 
 def.idx.agr <- function(
@@ -148,6 +150,8 @@ def.idx.agr <- function(
     #CritTime <- 0
     #PrdAgr <- 120
     idxBgn <- whrEnd - (CritTime*FreqLoca) - PrdAgr + 1
+    #replace negative idxBgn to 1
+    idxBgn <- ifelse(idxBgn <= 0, 1, idxBgn)
     #Beginning time based on indices
     timeBgn <- time[idxBgn]
     #determine the Ending indices
