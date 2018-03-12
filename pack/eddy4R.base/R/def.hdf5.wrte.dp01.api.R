@@ -159,6 +159,11 @@ rpt$qfqm <- lapply(LevlMeasOut, function(x){
   return(tmp)
 })
 
+#Convert all NaNs in the qfSci to 0
+lapply(names(rpt$qfqm), function(x){
+  rpt$qfqm[[x]][is.nan(rpt$qfqm[[x]]$qfSci),"qfSci"] <<- 0L
+})
+
 rpt$ucrt <- lapply(LevlMeasOut, function(x){
   #Grab just the columns to be output  
   tmp <- data[,grep(pattern = paste(nameVar$UcrtOut, collapse = "|"), x = names(data))]
