@@ -31,13 +31,13 @@
 #     original creation
 ##############################################################################################
 
-# date <- "20170925"
+# date <- "20170901"
 # 
 # SiteLoca <- "CPER"
 # 
 # DpName <- "tempAirLvl" #"DP1.00002.001" #SAAT
 # #DpName <- "tempAirTop" "DP1.00003.001" #TRAAT
-# FileOut <- "/home/ddurden/eddy/data/dev_tests/dp01/ECSE_dp0p_CPER_2017-09-25.h5"
+# FileOut <- "/home/ddurden/eddy/data/dev_tests/dp01/ECSE_dp0p_CPER_2017-09-01.h5"
 # 
 # LevlTowr <- "000_040"  
 # 
@@ -54,11 +54,13 @@ wrap.hdf5.wrte.dp01.api <- function(
   #Initialize the reporting data list
  rpt <- list() 
  
- for(idx in DpName){
+ #Loop around data products
+ for(idxDp in DpName){
  #Call the definition function for all the data product
  rpt[[idx]] <- lapply(TimeAgr, function(x) {
-   def.hdf5.wrte.dp01.api(date = date, FileOut = FileOut, DpName = DpName, TimeAgr = TimeAgr)
- })
- } 
+   #Use the definition function to grab reingest data
+   def.hdf5.wrte.dp01.api(date = date, FileOut = FileOut, DpName = idxDp, TimeAgr = x)
+ })# End of lapply function
+ } #End of for loop around dp01 data products
   
-}
+} #End of wrap.hdf5.wrte.dp01.api function
