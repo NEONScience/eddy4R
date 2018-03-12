@@ -38,20 +38,16 @@ SiteLoca <- "CPER"
 
 DpName <- "tempAirLvl" #"DP1.00002.001" #SAAT
 #DpName <- "tempAirTop" "DP1.00003.001" #TRAAT
-FileOut <- 
+FileOut <- "/home/ddurden/eddy/data/dev_tests/dp01/test.h5"
 
 LevlTowr <- "000_040"  
+
+timeAgr <- 01
 ##############################################################################
 
 
+library(rhdf5)
 
-##TO DO Add functionality for DpName
-############################################################################
-#Grab all NEON data products  
-#prod <- nneo::nneo_products()
-
-#Extract just air temperature products
-#tempVar <- prod[grep(pattern = "air temperature",x = prod$productName),]
 ############################################################################
 #Convert date to lubridate object
 date <- lubridate::as_datetime(date)
@@ -60,7 +56,6 @@ timeBgn <- date - lubridate::minutes(1)
 
 timeEnd <- date + lubridate::days(1)
 
-timeAgr <- 30
 
 #List of DP numbers by eddy4R DP names
 listDpNum <- c("tempAirLvl" = "DP1.00002.001", "tempAirTop" = "DP1.00003.001")
@@ -188,59 +183,61 @@ rpt$ucrt <- lapply(LevlMeasOut, function(x){
 #Writing output to existing dp0p HDF5 file
 #############################################################################
 #Create the file, create a class
-idFile <- H5Fopen(FileOut)
+idFile <- rhdf5::H5Fopen(FileOut)
 
 #Create a group level for site
-idSite <- H5Gopen(idFile, SiteLoca) 
+idSite <- rhdf5::H5Gopen(idFile, SiteLoca) 
 
 #Open dp01 level
-idDp01 <- H5Gopen(idSite,"dp01")
+idDp01 <- rhdf5::H5Gopen(idSite,"dp01")
 
 #Open type levels
-idDataLvlDp01 <- H5Gopen(idDp01,"data")
-idQfqmLvlDp01 <- H5Gopen(idDp01,"qfqm")
-idUcrtLvlDp01 <-H5Gopen(idDp01,"ucrt")
+idDataLvlDp01 <- rhdf5::H5Gopen(idDp01,"data")
+idQfqmLvlDp01 <- rhdf5::H5Gopen(idDp01,"qfqm")
+idUcrtLvlDp01 <- rhdf5::H5Gopen(idDp01,"ucrt")
 
 
 
 #Create group structures for the added dp01 variable
-idDataDp01 <- H5Gcreate(idDataLvlDp01, DpName))
-idQfqmDp01 <-  H5Gcreate(idQfqmLvlDp01, DpName))
-idUcrtDp01 <-  H5Gcreate(idUcrtLvlDp01, DpName))
+idDataDp01 <- rhdf5::H5Gopen(idDataLvlDp01, DpName)
+idQfqmDp01 <-  rhdf5::H5Gopen(idQfqmLvlDp01, DpName)
+idUcrtDp01 <-  rhdf5::H5Gopen(idUcrtLvlDp01, DpName)
 
 #Loop around the measurement levels
-for(idx in LevlMeasOut){
-
+for(idx in names(LevlMeasOut)){
+#idx <- names(LevlMeasOut[1])
 #write attribute to the data table level for each measurement level
-idLevlMeasData <- H5Oopen(idDataDp01,paste0(names(LevlMeasOut[idx]), "_",timeAgr,"m"))
+idLevlMeasData <- rhdf5::H5Oopen(idDataDp01,paste0(names(LevlMeasOut[idx]), "_",base::formatC(timeAgr, width=2, flag="0"),"m"))
 #write attribute to the data table level for each measurement level
-idLevlMeasQfqm <- H5Oopen(idQfqmDp01,paste0(names(LevlMeasOut[idx]), "_",timeAgr,"m"))
+idLevlMeasQfqm <- rhdf5::H5Oopen(idQfqmDp01,paste0(names(LevlMeasOut[idx]), "_",base::formatC(timeAgr, width=2, flag="0"),"m"))
 #write attribute to the data table level for each measurement level
-idLevlMeasUcrt <- H5Oopen(idUcrtDp01,paste0(names(LevlMeasOut[idx]), "_",timeAgr,"m"))
+idLevlMeasUcrt <- rhdf5::H5Oopen(idUcrtDp01,paste0(names(LevlMeasOut[idx]), "_",base::formatC(timeAgr, width=2, flag="0"),"m"))
 
 #Write output data
-rhdf5::h5writeDataset.data.frame(obj = rpt$data[names(LevlMeasOut[idx])], h5loc = idLevlMeasData, name = TblName, DataFrameAsCompound = TRUE))
-
-if (!is.null(attributes(rpt$data[names(LevlMeasOut[idx])])$unit) == TRUE){
+rhdf5::h5writeDataset.data.frame(obj = rpt$data[[names(LevlMeasOut[idx])]], h5loc = idLevlMeasData, name = TblName, DataFrameAsCompound = TRUE)
+# Writing attributes to the data
+if(!is.null(attributes(rpt$data[[names(LevlMeasOut[idx])]])$unit) == TRUE){ 
   dgid <- rhdf5::H5Dopen(idLevlMeasData, TblName)
-  rhdf5::h5writeAttribute(attributes(rpt$data[names(LevlMeasOut[idx])]$unit, h5obj = dgid, name = "unit")
+  rhdf5::h5writeAttribute(attributes(rpt$data[[names(LevlMeasOut[idx])]])$unit, h5obj = dgid, name = "unit")
 }
 
 #Write output data
-rhdf5::h5writeDataset.data.frame(obj = rpt$qfqm[names(LevlMeasOut[idx])], h5loc = idLevlMeasQfqm, name = TblName, DataFrameAsCompound = TRUE))
+rhdf5::h5writeDataset.data.frame(obj = rpt$qfqm[names(LevlMeasOut[idx])], h5loc = idLevlMeasQfqm, name = TblName, DataFrameAsCompound = TRUE)
   
-  if (!is.null(attributes(rpt$qfqm[names(LevlMeasOut[idx])])$unit) == TRUE){
-    dgid <- rhdf5::H5Dopen(idLevlMeasQfqm, TblName)
-    rhdf5::h5writeAttribute(attributes(rpt$qfqm[names(LevlMeasOut[idx])]$unit, h5obj = dgid, name = "unit")
-  }
+# Writing attributes to the qfqm
+if(!is.null(attributes(rpt$qfqm[[names(LevlMeasOut[idx])]])$unit) == TRUE){ 
+  dgid <- rhdf5::H5Dopen(idLevlMeasData, TblName)
+  rhdf5::h5writeAttribute(attributes(rpt$qfqm[[names(LevlMeasOut[idx])]])$unit, h5obj = dgid, name = "unit")
+}
   
   #Write output data
-  rhdf5::h5writeDataset.data.frame(obj = rpt$ucrt[names(LevlMeasOut[idx])], h5loc = idLevlMeasUcrt, name = TblName, DataFrameAsCompound = TRUE))
+  rhdf5::h5writeDataset.data.frame(obj = rpt$ucrt[names(LevlMeasOut[idx])], h5loc = idLevlMeasUcrt, name = TblName, DataFrameAsCompound = TRUE)
     
-    if (!is.null(attributes(rpt$ucrt[names(LevlMeasOut[idx])])$unit) == TRUE){
-      dgid <- rhdf5::H5Dopen(idLevlMeasUcrt, TblName)
-      rhdf5::h5writeAttribute(attributes(rpt$ucrt[names(LevlMeasOut[idx])]$unit, h5obj = dgid, name = "unit")
-    }
+  # Writing attributes to the data
+  if(!is.null(attributes(rpt$ucrt[[names(LevlMeasOut[idx])]])$unit) == TRUE){ 
+    dgid <- rhdf5::H5Dopen(idLevlMeasData, TblName)
+    rhdf5::h5writeAttribute(attributes(rpt$ucrt[[names(LevlMeasOut[idx])]])$unit, h5obj = dgid, name = "unit")
+  }
 
 
 } #End of for loop around measurement levels
