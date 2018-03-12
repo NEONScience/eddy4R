@@ -62,7 +62,7 @@ wrap.hdf5.wrte.dp01.api <- function(
  #Call the definition function for all the data product
  rpt[[idxDp]] <- lapply(TimeAgr, function(x) {
    #Use the definition function to grab reingest data
-   def.hdf5.wrte.dp01.api(date = date, SiteLoca = SiteLoca, FileOut = FileOut, DpName = idxDp, LevlTowr = LevlTowr, TimeAgr = x)
+   eddy4R.base::def.hdf5.wrte.dp01.api(date = date, SiteLoca = SiteLoca, FileOut = FileOut, DpName = idxDp, LevlTowr = LevlTowr, TimeAgr = x)
  })# End of lapply function
  } #End of for loop around dp01 data products
   
