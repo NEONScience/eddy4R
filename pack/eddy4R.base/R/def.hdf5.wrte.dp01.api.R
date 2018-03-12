@@ -42,7 +42,7 @@ FileOut <- "/home/ddurden/eddy/data/dev_tests/dp01/test.h5"
 
 LevlTowr <- "000_040"  
 
-timeAgr <- 01
+timeAgr <- 1
 ##############################################################################
 
 
@@ -205,7 +205,7 @@ idUcrtDp01 <-  rhdf5::H5Gopen(idUcrtLvlDp01, DpName)
 
 #Loop around the measurement levels
 for(idx in names(LevlMeasOut)){
-#idx <- names(LevlMeasOut[1])
+#idx <- names(LevlMeasOut[2])
 #write attribute to the data table level for each measurement level
 idLevlMeasData <- rhdf5::H5Oopen(idDataDp01,paste0(names(LevlMeasOut[idx]), "_",base::formatC(timeAgr, width=2, flag="0"),"m"))
 #write attribute to the data table level for each measurement level
@@ -222,24 +222,25 @@ if(!is.null(attributes(rpt$data[[names(LevlMeasOut[idx])]])$unit) == TRUE){
 }
 
 #Write output data
-rhdf5::h5writeDataset.data.frame(obj = rpt$qfqm[names(LevlMeasOut[idx])], h5loc = idLevlMeasQfqm, name = TblName, DataFrameAsCompound = TRUE)
+rhdf5::h5writeDataset.data.frame(obj = rpt$qfqm[[names(LevlMeasOut[idx])]], h5loc = idLevlMeasQfqm, name = TblName, DataFrameAsCompound = TRUE)
   
 # Writing attributes to the qfqm
 if(!is.null(attributes(rpt$qfqm[[names(LevlMeasOut[idx])]])$unit) == TRUE){ 
-  dgid <- rhdf5::H5Dopen(idLevlMeasData, TblName)
+  dgid <- rhdf5::H5Dopen(idLevlMeasQfqm, TblName)
   rhdf5::h5writeAttribute(attributes(rpt$qfqm[[names(LevlMeasOut[idx])]])$unit, h5obj = dgid, name = "unit")
 }
   
   #Write output data
-  rhdf5::h5writeDataset.data.frame(obj = rpt$ucrt[names(LevlMeasOut[idx])], h5loc = idLevlMeasUcrt, name = TblName, DataFrameAsCompound = TRUE)
+  rhdf5::h5writeDataset.data.frame(obj = rpt$ucrt[[names(LevlMeasOut[idx])]], h5loc = idLevlMeasUcrt, name = TblName, DataFrameAsCompound = TRUE)
     
   # Writing attributes to the data
   if(!is.null(attributes(rpt$ucrt[[names(LevlMeasOut[idx])]])$unit) == TRUE){ 
-    dgid <- rhdf5::H5Dopen(idLevlMeasData, TblName)
+    dgid <- rhdf5::H5Dopen(idLevlMeasUcrt, TblName)
     rhdf5::h5writeAttribute(attributes(rpt$ucrt[[names(LevlMeasOut[idx])]])$unit, h5obj = dgid, name = "unit")
   }
 
 
 } #End of for loop around measurement levels
 
+#Close all the HDF5 connections
 H5close()
