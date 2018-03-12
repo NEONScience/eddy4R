@@ -10,8 +10,9 @@
 #' @param date Character: The date for the data to be gathered.
 #' @param FileOut Character: The file name for the output HDF5 file
 #' @param SiteLoca Character: Site location.
-#' @param dpNum Character: The date for the data to be gathered.
-#' @param dpName Character: The date for the data to be gathered.
+#' @param DpNum Character: The date for the data to be gathered.
+#' @param DpName Character: The date for the data to be gathered.
+#' @param TimeAgr Integer: The time aggregation index in minutes (1,30)
 
 #' @return An updated dp0p HDF5 file with dp01 data, qfqm, and uncertainty written
 #' 
@@ -32,17 +33,22 @@
 #     original creation
 ##############################################################################################
 
-date <- "20170925"
+# date <- "20170925"
+# 
+# SiteLoca <- "CPER"
+# 
+# DpName <- "tempAirLvl" #"DP1.00002.001" #SAAT
+# #DpName <- "tempAirTop" "DP1.00003.001" #TRAAT
+# FileOut <- "/home/ddurden/eddy/data/dev_tests/dp01/ECSE_dp0p_CPER_2017-09-25.h5"
+# 
+# LevlTowr <- "000_040"  
+# 
+# TimeAgr <- 1
 
-SiteLoca <- "CPER"
+def.hdf5.wrte.dp01 <- function(
+  
+)
 
-DpName <- "tempAirLvl" #"DP1.00002.001" #SAAT
-#DpName <- "tempAirTop" "DP1.00003.001" #TRAAT
-FileOut <- "/home/ddurden/eddy/data/dev_tests/dp01/ECSE_dp0p_CPER_2017-09-25.h5"
-
-LevlTowr <- "000_040"  
-
-timeAgr <- 1
 ##############################################################################
 
 
@@ -65,7 +71,7 @@ DpNum <- listDpNum[DpName]
 if(substr(DpName, 1, 4) == "temp"){TblName <- substr(DpName, 1, 4)}
 
 # Grab 30 minute data to be written
-data <- Noble::pull.date(site = SiteLoca, dpID = DpNum, bgn.date = timeBgn, end.date = timeEnd, package = "expanded", time.agr = timeAgr) #Currently requires to subtract 1 minute otherwise (1 index will be cut from the beginning)
+data <- Noble::pull.date(site = SiteLoca, dpID = DpNum, bgn.date = timeBgn, end.date = timeEnd, package = "expanded", time.agr = TimeAgr) #Currently requires to subtract 1 minute otherwise (1 index will be cut from the beginning)
 
 
 #replace NA with NaN
@@ -212,11 +218,11 @@ idUcrtDp01 <-  rhdf5::H5Gopen(idUcrtLvlDp01, DpName)
 for(idx in names(LevlMeasOut)){
 #idx <- names(LevlMeasOut[2])
 #write attribute to the data table level for each measurement level
-idLevlMeasData <- rhdf5::H5Oopen(idDataDp01,paste0(names(LevlMeasOut[idx]), "_",base::formatC(timeAgr, width=2, flag="0"),"m"))
+idLevlMeasData <- rhdf5::H5Oopen(idDataDp01,paste0(names(LevlMeasOut[idx]), "_",base::formatC(TimeAgr, width=2, flag="0"),"m"))
 #write attribute to the data table level for each measurement level
-idLevlMeasQfqm <- rhdf5::H5Oopen(idQfqmDp01,paste0(names(LevlMeasOut[idx]), "_",base::formatC(timeAgr, width=2, flag="0"),"m"))
+idLevlMeasQfqm <- rhdf5::H5Oopen(idQfqmDp01,paste0(names(LevlMeasOut[idx]), "_",base::formatC(TimeAgr, width=2, flag="0"),"m"))
 #write attribute to the data table level for each measurement level
-idLevlMeasUcrt <- rhdf5::H5Oopen(idUcrtDp01,paste0(names(LevlMeasOut[idx]), "_",base::formatC(timeAgr, width=2, flag="0"),"m"))
+idLevlMeasUcrt <- rhdf5::H5Oopen(idUcrtDp01,paste0(names(LevlMeasOut[idx]), "_",base::formatC(TimeAgr, width=2, flag="0"),"m"))
 
 #Write output data
 rhdf5::h5writeDataset.data.frame(obj = rpt$data[[names(LevlMeasOut[idx])]], h5loc = idLevlMeasData, name = TblName, DataFrameAsCompound = TRUE)
