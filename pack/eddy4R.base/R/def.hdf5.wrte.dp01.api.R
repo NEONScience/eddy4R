@@ -1,5 +1,5 @@
 ##############################################################################################
-#' @title Definition function: Write NEON Level 1 data, qfqm, and uncertainty to output HDF5
+#' @title Definition function: Gather/Write reingested NEON Level 1 data, qfqm, and uncertainty to output HDF5
 
 #' @author
 #' David Durden \email{ddurden@battelleecology.org}
@@ -11,7 +11,7 @@
 #' @param FileOut Character: The file name for the output HDF5 file
 #' @param SiteLoca Character: Site location.
 #' @param DpName Character: The data product name for the data to be gathered.
-#' @param TimeAgr Integer: The time aggregation index in minutes (1,30)
+#' @param TimeAgr Integer: The time aggregation index in minutes (i.e. 30)
 
 #' @return An updated dp0p HDF5 file with dp01 data, qfqm, and uncertainty written
 #' 
@@ -44,7 +44,7 @@
 # 
 # TimeAgr <- 1
 
-def.hdf5.wrte.dp01 <- function(
+def.hdf5.wrte.dp01.api <- function(
   date,
   FileOut,
   SiteLoca,
