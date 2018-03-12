@@ -12,6 +12,7 @@
 #' @param MethExtrData logical parameter that decides if data from the input file should be extracted and written to the output file.
 #' @param MethExtrAttr logical parameter that decides if attributes (metadata) from the input file should be extracted and written to the output file.
 #' @param dp01 A vector of class "character" containing the name of NEON dp01 which data from the input file are not extracted and written to the output file
+#' @param MethDp0p A logical stating if NEON dp0p data from the input file are not extracted and written to the output file
 
 #' @return A NEON formatted HDF5 file that has parameters from the input file written to the output HDF5 file. 
 
@@ -38,6 +39,8 @@
 #     Update function to report data and attributes
 #   Dave Durden (2017-11-08)
 #     Update function to prevent output to another file if FileOut = NULL
+#   Dave Durden (2018-03-12)
+#     Adding option to output dp0p
 ##############################################################################################################
 #Start of function call to extract data from one file and write to another
 ##############################################################################################################
@@ -47,7 +50,8 @@ def.extr.hdf5 <- function(
   FileOut = NULL,
   MethExtrData = TRUE,
   MethExtrAttr = TRUE,
-  dp01 = NULL
+  dp01 = NULL,
+  MethDp0p = FALSE
 ){
   
   if(!base::file.exists(FileIn)) {
@@ -77,7 +81,7 @@ def.extr.hdf5 <- function(
   listDataName <- base::paste(listDataObj$group, listDataObj$name, sep = "/") # Combining output
   
   #Ignoring dp0p data
-  listDataName <- listDataName[grep(pattern = "dp0p", x = listDataName, invert = TRUE)]
+  if(MethDp0p == FALSE) {listDataName <- listDataName[grep(pattern = "dp0p", x = listDataName, invert = TRUE)]}
   
   #Ignoring dp01 data as define in dp01GrpName
   if (!is.null(dp01)){
@@ -103,6 +107,16 @@ def.extr.hdf5 <- function(
   
   #Remove all empty lists
   rpt$listAttr <- rpt$listAttr[!base::sapply(rpt$listAttr, function(x) base::length(x) == 0)]
+  
+  #Subset Attr lists to remove unused attributes from removed data
+  dp01AttrExtr <- names(rpt$listAttr[grep(pattern = paste(dp01, collapse = "|"), x = names(rpt$listAttr))])
+  # Subsetting below the HOR_VER to keep attributes from breaking code when removing dp01 data
+  dp01AttrExtr <- dp01AttrExtr[grep(pattern = "01m|30m", x = dp01Extr)]
+  
+   # Actually subsetting the list to remove the attributes  
+    rpt$listAttr <- rpt$listAttr[!rpt$listAttr %in% dp01AttrExtr]
+  
+
   
 ##Write to the output HDF5 file, if FileOut provided
   if(!is.null(FileOut)){
