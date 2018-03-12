@@ -50,6 +50,7 @@ wrap.hdf5.wrte.dp01.api <- function(
   FileOut,
   SiteLoca,
   DpName = c("tempAirLvl", "tempAirTop"),
+  LevlTowr,
   TimeAgr = c(1,30)
 ){
  
@@ -59,9 +60,9 @@ wrap.hdf5.wrte.dp01.api <- function(
  #Loop around data products
  for(idxDp in DpName){
  #Call the definition function for all the data product
- rpt[[idx]] <- lapply(TimeAgr, function(x) {
+ rpt[[idxDp]] <- lapply(TimeAgr, function(x) {
    #Use the definition function to grab reingest data
-   def.hdf5.wrte.dp01.api(date = date, SiteLoca = SiteLoca, FileOut = FileOut, DpName = idxDp, TimeAgr = x)
+   def.hdf5.wrte.dp01.api(date = date, SiteLoca = SiteLoca, FileOut = FileOut, DpName = idxDp, LevlTowr = LevlTowr, TimeAgr = x)
  })# End of lapply function
  } #End of for loop around dp01 data products
   
