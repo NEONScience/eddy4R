@@ -38,7 +38,7 @@ SiteLoca <- "CPER"
 
 DpName <- "tempAirLvl" #"DP1.00002.001" #SAAT
 #DpName <- "tempAirTop" "DP1.00003.001" #TRAAT
-FileOut <- "/home/ddurden/eddy/data/dev_tests/dp01/test.h5"
+FileOut <- "/home/ddurden/eddy/data/dev_tests/dp01/ECSE_dp0p_CPER_2017-09-25.h5"
 
 LevlTowr <- "000_040"  
 
