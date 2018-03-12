@@ -29,7 +29,10 @@
 
 # changelog and author contributions / copyrights 
 #   David Durden (2018-02-24)
-#     original creation
+#     original creation;
+#     #TODO: 
+#     - Create check if group level exists and create if not
+#     - Add other dp01's and remove hardcoded units
 ##############################################################################################
 
 
