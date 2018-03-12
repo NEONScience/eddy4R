@@ -10,8 +10,7 @@
 #' @param date Character: The date for the data to be gathered.
 #' @param FileOut Character: The file name for the output HDF5 file
 #' @param SiteLoca Character: Site location.
-#' @param DpNum Character: The date for the data to be gathered.
-#' @param DpName Character: The date for the data to be gathered.
+#' @param DpName Character: The data product name for the data to be gathered.
 #' @param TimeAgr Integer: The time aggregation index in minutes (1,30)
 
 #' @return An updated dp0p HDF5 file with dp01 data, qfqm, and uncertainty written
@@ -46,8 +45,12 @@
 # TimeAgr <- 1
 
 def.hdf5.wrte.dp01 <- function(
-  
-)
+  date,
+  FileOut,
+  SiteLoca,
+  DpName,
+  TimeAgr
+){
 
 ##############################################################################
 
@@ -255,3 +258,5 @@ if(!is.null(attributes(rpt$qfqm[[names(LevlMeasOut[idx])]])$unit) == TRUE){
 
 #Close all the HDF5 connections
 H5close()
+
+} #End of dp01 ingest function
