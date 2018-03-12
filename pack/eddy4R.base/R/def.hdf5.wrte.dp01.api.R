@@ -259,4 +259,6 @@ if(!is.null(attributes(rpt$qfqm[[names(LevlMeasOut[idx])]])$unit) == TRUE){
 #Close all the HDF5 connections
 H5close()
 
+return(rpt)
+
 } #End of dp01 ingest function
