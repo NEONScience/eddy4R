@@ -11,7 +11,9 @@
 #' @param FileOut Character: The file name for the output HDF5 file
 #' @param SiteLoca Character: Site location.
 #' @param Dp01 Character: A vector of data product names for the data to be gathered.
-
+#' @param LevlTowr Character: The tower level that the sensor data is being collected in NEON data product convention (HOR_VER).
+#' @param TimeAgr Integer: The time aggregation index in minutes (i.e. 30)
+#' 
 #' @return An updated dp0p HDF5 file with dp01 data, qfqm, and uncertainty written
 #' 
 #' @references
@@ -59,7 +61,7 @@ wrap.hdf5.wrte.dp01.api <- function(
  #Call the definition function for all the data product
  rpt[[idx]] <- lapply(TimeAgr, function(x) {
    #Use the definition function to grab reingest data
-   def.hdf5.wrte.dp01.api(date = date, FileOut = FileOut, DpName = idxDp, TimeAgr = x)
+   def.hdf5.wrte.dp01.api(date = date, SiteLoca = SiteLoca, FileOut = FileOut, DpName = idxDp, TimeAgr = x)
  })# End of lapply function
  } #End of for loop around dp01 data products
   
