@@ -137,9 +137,9 @@ rpt$data  <- lapply(LevlMeasOut, function(x){
     tmp <- tmp[order(names(tmp))]
     #Change the output column names to eddy4R terms
     colnames(tmp) <- names(nameVar$DataOut)
-    
+    # Adding time to output
     tmp<- data.frame("timeBgn" = strftime(as.character(data$startDateTime), format= "%Y-%m-%dT%H:%M:%OSZ", tz="UTC"), "timeEnd" = strftime(as.character(data$endDateTime), format= "%Y-%m-%dT%H:%M:%OSZ", tz="UTC"), tmp, stringsAsFactors = FALSE)
-    
+    #Adding unit attributes and naming them
     attributes(tmp)$unit <- c("NA","NA","C","C","C","C","C2")
     names(attributes(tmp)$unit) <- names(tmp)
     #Return output
@@ -155,6 +155,11 @@ rpt$qfqm <- lapply(LevlMeasOut, function(x){
   tmp <- tmp[order(names(tmp))]
   #Change the output column names to eddy4R terms
   colnames(tmp) <- names(nameVar$QfqmOut)
+  # Adding time to output
+  tmp<- data.frame("timeBgn" = strftime(as.character(data$startDateTime), format= "%Y-%m-%dT%H:%M:%OSZ", tz="UTC"), "timeEnd" = strftime(as.character(data$endDateTime), format= "%Y-%m-%dT%H:%M:%OSZ", tz="UTC"), tmp, stringsAsFactors = FALSE)
+  #Adding unit attributes and naming them
+  attributes(tmp)$unit <- base::rep_len(x = "NA", length.out = ncol(tmp))
+  names(attributes(tmp)$unit) <- names(tmp)
   #Return output
   return(tmp)
 })
@@ -168,6 +173,12 @@ rpt$ucrt <- lapply(LevlMeasOut, function(x){
   tmp <- tmp[order(names(tmp))]
   #Change the output column names to eddy4R terms
   colnames(tmp) <- names(nameVar$UcrtOut)
+  # Adding time to output
+  tmp<- data.frame("timeBgn" = strftime(as.character(data$startDateTime), format= "%Y-%m-%dT%H:%M:%OSZ", tz="UTC"), "timeEnd" = strftime(as.character(data$endDateTime), format= "%Y-%m-%dT%H:%M:%OSZ", tz="UTC"), tmp, stringsAsFactors = FALSE)
+  #Adding unit attributes and naming them
+  attributes(tmp)$unit <- c("NA","NA","C","C")
+  names(attributes(tmp)$unit) <- names(tmp)
+  
   #Return output
   return(tmp)
 })
