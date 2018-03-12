@@ -67,6 +67,8 @@ listDpNum <- c("tempAirLvl" = "DP1.00002.001", "tempAirTop" = "DP1.00003.001")
 #Determine DP number
 DpNum <- listDpNum[DpName]
 
+if(substr(DpName, 1, 4) == "temp"){TblName <- substr(DpName, 1, 4)}
+
 # Grab 30 minute data to be written
 data <- Noble::pull.date(site = SiteLoca, dpID = DpNum, bgn.date = timeBgn, end.date = timeEnd, package = "expanded", time.agr = timeAgr) #Currently requires to subtract 1 minute otherwise (1 index will be cut from the beginning)
 
@@ -76,22 +78,6 @@ data[is.na(data)] <- NaN
 
 
 ###############################################################################
-#Grabbing the tower measurement levels for a given dp01 product
-###############################################################################
-#get tower top level
-LevlTop <- strsplit(LevlTowr,"")
-LevlTop <- base::as.numeric(LevlTop[[1]][6])
-
-#get the sequence from top to first level
-LevlMeas<- base::seq(from = LevlTop, to = 1, by = -1)
-LevlMeas <- paste0("000.0",LevlMeas,"0",sep="")
-
-#Determine the output levels
-LevlMeasOut <- grep(pattern = paste(unique(sub(".*\\.", "",namesData)), collapse = "|"), x = LevlMeas, value = TRUE )
-#Name for HDF5 output
-names(LevlMeasOut) <- gsub(pattern = "\\.", replacement = "_", LevlMeasOut)
-
-
 
 
 ###############################################################################
@@ -106,22 +92,43 @@ nameVar$Ucrt <- grep(pattern = "stdermean|expUncert", x = names(data), ignore.ca
 #Grab the names of variables for qfqm
 nameVar$Qfqm <- grep(pattern = "alphaqm|betaqm|finalqf", x = names(data), ignore.case = TRUE, value =  TRUE)
 #Grab the names of variables for data
-nameVar$Data <- grep(pattern = "mean|variance|minimum|maximum|numpts", x = names(data), ignore.case = TRUE, value =  TRUE) 
+nameVar$Data <- grep(pattern = "mean|variance|minimum|maximum|numpts", x = names(data), ignore.case = TRUE, value =  TRUE)
+#Grab the names of variables for time
+nameVar$Time <- grep(pattern = "time", x = names(data), ignore.case = TRUE, value =  TRUE)
 #Exclude stdermean from data
 nameVar$Data <- nameVar$Data[!nameVar$Data %in% nameVar$Ucrt]
 
 #Align eddy4R names with DP names, i.e. dp name mapping
 nameVar$DataOut <- sort(unique(sub("[.](.*)", "", nameVar$Data)))
-names(nameVar$DataOut) <- c("max", "mean", "min", "num", "var") 
+names(nameVar$DataOut) <- c("max", "mean", "min", "numSamp", "vari") 
 nameVar$QfqmOut <- sort(unique(sub("[.](.*)", "", nameVar$Qfqm)))
 names(nameVar$QfqmOut) <- c("qmAlph", "qmBeta", "qfFinl", "qfSci") 
 nameVar$UcrtOut <- sort(unique(sub("[.](.*)", "", nameVar$Ucrt)))
 names(nameVar$UcrtOut) <- c("ucrtCal95", "se") 
+nameVar$TimeOut <- sort(nameVar$Time)
+names(nameVar$TimeOut) <- c("timeEnd", "timeBgn") 
 
 
+#Grabbing the tower measurement levels for a given dp01 product
+###############################################################################
+#get tower top level
+LevlTop <- strsplit(LevlTowr,"")
+LevlTop <- base::as.numeric(LevlTop[[1]][6])
+
+#get the sequence from top to first level
+LevlMeas<- base::seq(from = LevlTop, to = 1, by = -1)
+LevlMeas <- paste0("000.0",LevlMeas,"0",sep="")
+
+#Determine the output levels
+LevlMeasOut <- grep(pattern = paste(unique(sub(".*\\.", "",nameVar$Data)), collapse = "|"), x = LevlMeas, value = TRUE )
+
+#Name for HDF5 output
+names(LevlMeasOut) <- gsub(pattern = "\\.", replacement = "_", LevlMeasOut)
+
+#####################################################################################
 
 #Sort output data and apply eddy4R naming conventions
-rpt$data <- lapply(LevlMeasOut, function(x){
+rpt$data  <- lapply(LevlMeasOut, function(x){
   #Grab just the columns to be output  
   tmp <- data[,grep(pattern = paste(nameVar$DataOut, collapse = "|"), x = names(data))]
     #Sort the output columns to grab the HOR_VER level as separate lists of dataframes
@@ -130,6 +137,11 @@ rpt$data <- lapply(LevlMeasOut, function(x){
     tmp <- tmp[order(names(tmp))]
     #Change the output column names to eddy4R terms
     colnames(tmp) <- names(nameVar$DataOut)
+    
+    tmp<- data.frame("timeBgn" = strftime(as.character(data$startDateTime), format= "%Y-%m-%dT%H:%M:%OSZ", tz="UTC"), "timeEnd" = strftime(as.character(data$endDateTime), format= "%Y-%m-%dT%H:%M:%OSZ", tz="UTC"), tmp, stringsAsFactors = FALSE)
+    
+    attributes(tmp)$unit <- c("NA","NA","C","C","C","C","C2")
+    names(attributes(tmp)$unit) <- names(tmp)
     #Return output
     return(tmp)
     })
@@ -178,19 +190,19 @@ idDataLvlDp01 <- H5Gopen(idDp01,"data")
 idQfqmLvlDp01 <- H5Gopen(idDp01,"qfqm")
 idUcrtLvlDp01 <-H5Gopen(idDp01,"ucrt")
 
-#Name for creation of HDF5 group
-grpListDp01 <- dpName
+
+
 #Create group structures for the added dp01 variable
-idDataDp01 <- H5Gcreate(idDataLvlDp01, x))
-idQfqmDp01 <-  H5Gcreate(idQfqmLvlDp01, x))
-idUcrtDp01 <-  H5Gcreate(idUcrtLvlDp01, x))
+idDataDp01 <- H5Gcreate(idDataLvlDp01, DpName))
+idQfqmDp01 <-  H5Gcreate(idQfqmLvlDp01, DpName))
+idUcrtDp01 <-  H5Gcreate(idUcrtLvlDp01, DpName))
 
+for(idx in seq(LevlMeasOut)){
+  print(idx)
 
-
-idDataDp01 <- H5Oopen(idDataLvlDp01, DpName) 
 #write attribute to the data table level for each measurement level
+idLevlMeasData <- H5Oopen(,paste0(names(LevlMeasOut), "_",timeAgr,"m"))
 
-idLevlMeas <- H5Oopen(,paste0(names(LevlMeasOut), "_",timeAgr,"m"))
+}
 
-
-
+H5close()
