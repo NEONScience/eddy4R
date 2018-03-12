@@ -11,6 +11,7 @@
 #' @param FileOut Character: The file name for the output HDF5 file
 #' @param SiteLoca Character: Site location.
 #' @param DpName Character: The data product name for the data to be gathered.
+#' @param LevlTowr Character: The tower level that the sensor data is being collected in NEON data product convention (HOR_VER).
 #' @param TimeAgr Integer: The time aggregation index in minutes (i.e. 30)
 
 #' @return An updated dp0p HDF5 file with dp01 data, qfqm, and uncertainty written
@@ -41,6 +42,7 @@ def.hdf5.wrte.dp01.api <- function(
   FileOut,
   SiteLoca,
   DpName,
+  LevlTowr,
   TimeAgr
 ){
 
