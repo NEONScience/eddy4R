@@ -2,7 +2,8 @@
 #' @title Definition function: Determine workflow parameters for NEON's eddy-covariance turbulence exchange workflow
 
 #' @author 
-#' Stefan Metzger \email{eddy4R.info@gmail.com}
+#' Stefan Metzger \email{eddy4R.info@gmail.com} \cr
+#' David Durden \email{eddy4R.info@gmail.com}
 
 #' @description 
 #' Definition function. Collects the workflow parameters for NEON's eddy-covariance turbulence exchange workflow. It also checks for the presence and correctness of the most important workflow parameters (\code{ParaFlow$Meth}, \code{ParaFlow$DirInp}, \code{ParaFlow$DateOut}, \code{ParaFlow$FileOutBase}, \code{ParaFlow$FileOutBase}), and creates and sets the input, output, temporary and working directories. One of three methods needs to be provided via the \code{ParaFlow$Meth} argument: \cr
@@ -78,7 +79,9 @@
 
 # changelog and author contributions / copyrights
 #   Stefan Metzger (2017-10-01)
-#     original creation re-purposing parts from eddy4R.base::def.para.flow.R
+#     original creation re-purposing parts from eddy4R.base::def.para.flow.R (created by David Durden)
+#   Stefan Metzger (2018-01-20)
+#     hardening and testing of "host" mode (environment variables)
 
 ##############################################################################################################
 #Start of function call to determine workflow parameters
@@ -114,7 +117,7 @@ def.para.flow.ecte <- function(
     ParaFlow$DirTmp <- base::tempdir()
     ParaFlow$DirWrk <- base::tempdir()
     ParaFlow$FileInp <- NA
-    ParaFlow$FileOutBase <- "NEON.D10.CPER.DP4.00200.001.ec-flux"
+    ParaFlow$FileOutBase <- "NEON.D10.CPER.DP4.00200.001.ecte"
     ParaFlow$NameDataExt <- NA
     ParaFlow$OutMeth <- c("hdf5", "diag")
     ParaFlow$OutSub <- 1:10
@@ -163,6 +166,11 @@ def.para.flow.ecte <- function(
         # split strings by colon (:) to separate multiple multiple values (if present)
         if(is.character(ParaFlow[[x]])) ParaFlow[[x]] <<- strsplit(x = ParaFlow[[x]], split = ":")[[1]]
         
+        # convert character NAs ("NA") to R-recognized missing values (NA)
+        idxNa <- base::which(ParaFlow[[x]] == "NA")
+        if(base::length(idxNa) > 0) ParaFlow[[x]][idxNa] <<- NA
+        rm(idxNa)
+        
       # in case corresponding environmental variable NOT present
       } else {
         ParaFlow[[x]] <<- NA
@@ -170,6 +178,9 @@ def.para.flow.ecte <- function(
       }
     })
     
+    # convert from character (default for environmental variable) to integer
+    lapply(c("OutSub", "PrdIncrCalc", "PrdIncrPf", "PrdWndwCalc", "PrdWndwPf"), function(x) ParaFlow[[x]] <<- base::as.integer(ParaFlow[[x]]))
+
   }
 
   
