@@ -135,9 +135,8 @@ if(base::is.null(rpt)) {
     dp01AttrExtr <- dp01AttrExtr[grep(pattern = "01m|30m", x = dp01AttrExtr)]
     
     # Actually subsetting the list to remove the attributes  
-    rpt$listAttr <- rpt$listAttr[!rpt$listAttr %in% dp01AttrExtr]  
+    rpt$listAttr <- rpt$listAttr[!names(rpt$listAttr) %in% dp01AttrExtr]  
 
-    
 }
   
 
