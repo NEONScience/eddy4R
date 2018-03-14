@@ -138,7 +138,7 @@ rpt$data  <- lapply(LevlMeasOut, function(x){
     # Adding time to output
     tmp<- data.frame("timeBgn" = strftime(as.character(data$startDateTime), format= "%Y-%m-%dT%H:%M:%OSZ", tz="UTC"), "timeEnd" = strftime(as.character(data$endDateTime), format= "%Y-%m-%dT%H:%M:%OSZ", tz="UTC"), tmp, stringsAsFactors = FALSE)
     #Adding unit attributes and naming them
-    attributes(tmp)$unit <- c("NA","NA","C","C","C","C","C2")
+    attributes(tmp)$unit <- c("NA","NA","C","C","C","NA","C2")
     names(attributes(tmp)$unit) <- names(tmp)
     #Return output
     return(tmp)
