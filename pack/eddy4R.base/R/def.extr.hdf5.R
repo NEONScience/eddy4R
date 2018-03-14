@@ -132,7 +132,7 @@ if(base::is.null(rpt)) {
     #Subset Attr lists to remove unused attributes from removed data
     dp01AttrExtr <- names(rpt$listAttr[grep(pattern = paste(dp01, collapse = "|"), x = names(rpt$listAttr))])
     # Subsetting below the HOR_VER to keep attributes from breaking code when removing dp01 data
-    dp01AttrExtr <- dp01AttrExtr[grep(pattern = "01m|30m", x = dp01Extr)]
+    dp01AttrExtr <- dp01AttrExtr[grep(pattern = "01m|30m", x = dp01AttrExtr)]
     
     # Actually subsetting the list to remove the attributes  
     rpt$listAttr <- rpt$listAttr[!rpt$listAttr %in% dp01AttrExtr]  
