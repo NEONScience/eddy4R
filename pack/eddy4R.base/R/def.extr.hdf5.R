@@ -129,6 +129,7 @@ if(base::is.null(rpt)) {
     #Remove all empty lists
     rpt$listAttr <- rpt$listAttr[!base::sapply(rpt$listAttr, function(x) base::length(x) == 0)]
     
+    if (!is.null(dp01)){
     #Subset Attr lists to remove unused attributes from removed data
     dp01AttrExtr <- names(rpt$listAttr[grep(pattern = paste(dp01, collapse = "|"), x = names(rpt$listAttr))])
     # Subsetting below the HOR_VER to keep attributes from breaking code when removing dp01 data
@@ -136,7 +137,7 @@ if(base::is.null(rpt)) {
     
     # Actually subsetting the list to remove the attributes  
     rpt$listAttr <- rpt$listAttr[!names(rpt$listAttr) %in% dp01AttrExtr]  
-
+    }
 }
   
 
