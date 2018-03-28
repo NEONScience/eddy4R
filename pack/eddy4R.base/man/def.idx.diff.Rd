@@ -20,10 +20,10 @@ A dataframe of indices for difference calculation.
 Definition function to produce a dataframe of indices and corresponding times for difference calculation.
 }
 \examples{
-PrdWndwAgr <- 4 * 60
-PrdIncrAgr <- resoTimeDp02[[idxDp]] * 60
+PrdWndwAgr <- 240
+PrdIncrAgr <- 1800
 numDate <- 1
-wrk$whrData <- eddy4R.base::def.idx.diff(
+out <- eddy4R.base::def.idx.diff(
  PrdWndwAgr=PrdWndwAgr,
  PrdIncrAgr=PrdIncrAgr,
  numDate=numDate
