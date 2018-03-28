@@ -15,9 +15,10 @@
 #' @param \code{zone} The time zone of the location, which is the offset from Coordinated Universal Time (UTC) by a whole number of hours. If local time is ahead (behind) the Greenwich mean time, zone is a positive (negative) number. e.g. CST" [hour]. a time offset in Wisconsin, in the North American Central Time Zone, would be -6.
 #' @param \code{MethAgr} String type. One of three choices: "agrHour", "mdc", "agrMnth". "agrHour" represents aggregation from minutely to hourly resolution; "mdc" represents aggregation from hourly to diurnal cycle; "agrMnth" represents aggregation from diurnal cycle to monthly resolution.
 
-#' @return Returns object of class "dataframe": if MethAgr is "agrHour", the dataframe is [n, 1:5] containing timeDoyIntg, hour, mean, variance, square of standard error of the scalar at hourly resolution
-#'                                              if MethAgr is "mdc", the dataframe is [n, 1:4] containing hour, mean, variance, square of standard error of the scalar at diurnal cycle
-#'                                              if MethAgr is "agrMnth", the dataframe is [n, 1:3] containing mean, variance, square of standard error of the scalar at monthly scale
+#' @return Returns object of class "dataframe": cr\
+#' if \code{MethAgr} is "agrHour", the dataframe is [n, 1:5] containing timeDoyIntg, hour, mean, variance, square of standard error of the scalar at hourly resolution \cr
+#' if \code{MethAgr} is "mdc", the dataframe is [n, 1:4] containing hour, mean, variance, square of standard error of the scalar at diurnal cycle \cr
+#' if \code{MethAgr} is "agrMnth", the dataframe is [n, 1:3] containing mean, variance, square of standard error of the scalar at monthly scale
 
 #' @references 
 #' License: GNU AFFERO GENERAL PUBLIC LICENSE Version 3, 19 November 2007.
@@ -53,6 +54,8 @@
 #    combine wrap.hour.vari.seSq.R, wrap.mdc.vari.seSq.R, and wrap.Mnth.vari.seSq.R into wrap.agr.vari.seSq.R
 #   Ke Xu (2016-11-28)
 #    minor change to remove the unnecessary sdSq in the input
+#   Natchaya P-Durden (2018-03-28)
+#    updated function header
 ##############################################################################################
 
 wrap.agr.vari.seSq <- function(

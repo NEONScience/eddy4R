@@ -12,11 +12,11 @@
 #' @return A data.frame consisting of the threshold values to be used for the provided site.
 
 #' @references
+#' License: GNU AFFERO GENERAL PUBLIC LICENSE Version 3, 19 November 2007. \cr
 
+#' @keywords threshold
 
-#' @keywords 
-
-#' @examples
+#' @examples Currently none
 
 #' @seealso Currently none
 
@@ -29,6 +29,8 @@
 #     modularizing and adapting for ECTE & ECSE
 #   Dave Durden (2017-11-23)
 #     modularizing the code to grab all thresholds passed in the data.frame
+#   Natchaya P-Durden (2018-03-28)
+#     updated function header
 ##############################################################################################
 def.para.thsh <- function(
   

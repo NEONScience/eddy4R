@@ -1,5 +1,6 @@
 ##############################################################################################
 #' @title Defination Function to combine two daily files into one file and replacing NA values with previous value. 
+
 #' @author 
 #' Natchaya Pingintha-Durden \email{ndurden@battelleecology.org}
 
@@ -14,7 +15,7 @@
 #' @return A dataframe including the data and time in the processing date which NA values have been replaced by previous value. [User-defined]
 
 #' @references
-#' License: Terms of use of the NEON FIU algorithm repository dated 2015-01-16. \cr
+#' License: GNU AFFERO GENERAL PUBLIC LICENSE Version 3, 19 November 2007
 
 #' @keywords eddy-covariance, NEON, NA
 
@@ -27,6 +28,8 @@
 # changelog and author contributions / copyrights
 #   Natchaya P-Durden (2017-10-26)
 #     original creation
+#   Natchaya P-Durden (2018-03-28)
+#     update license
 ##############################################################################################
 def.repl.na <- function(
   dataProcDate,

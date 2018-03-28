@@ -15,7 +15,7 @@
 #' @param TimeAgr Integer: The time aggregation index in minutes (i.e. 30)
 
 #' @return An updated dp0p HDF5 file with dp01 data, qfqm, and uncertainty written
-#' 
+ 
 #' @references
 #' License: GNU AFFERO GENERAL PUBLIC LICENSE Version 3, 19 November 2007.
 
@@ -30,12 +30,10 @@
 
 # changelog and author contributions / copyrights 
 #   David Durden (2018-02-24)
-#     original creation;
-#     #TODO: 
-#     - Create check if group level exists and create if not
-#     - Add other dp01's and remove hardcoded units
+#     original creation
+#   Natchaya P-Durden (2018-03-28)
+#     removed comment lines from the header
 ##############################################################################################
-
 
 def.hdf5.wrte.dp01.api <- function(
   date,
@@ -47,10 +45,10 @@ def.hdf5.wrte.dp01.api <- function(
 ){
 
 ##############################################################################
-
-
 library(rhdf5)
-
+#TODO: 
+#Create check if group level exists and create if not
+#Add other dp01's and remove hardcoded units
 ############################################################################
 #Convert date to lubridate object
 date <- lubridate::as_datetime(date)
