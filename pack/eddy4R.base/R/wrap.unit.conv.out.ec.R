@@ -7,7 +7,7 @@
 #' @description Function wrapper. Convert a list of data to eddy4r output units using def.unit.conv function, with special attention to variable with the mean removed that are translated between units (i.e. variance for temperature when converting K to C). 
 
 #' @param inpList Required. A named list of data frames of type numeric, containing the data to be converted.
-#' @param MethType Required. A character string containing the type of data to be converted. Defauts to \code{MethType} = "data".  
+#' @param MethType Required. A character string containing the type of data to be converted. Defauts to \code{MethType} = c("Data").  
 
 #' @return A list, \code{rpt}, with data, qfqm, or uncertainty output with the correct output units
 

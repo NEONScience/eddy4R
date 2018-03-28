@@ -20,9 +20,10 @@ wrap.agr.vari.seSq(data = data.frame(timeDoyDecm, mean, vari), zone, MethAgr)
 \item{\code{MethAgr}}{String type. One of three choices: "agrHour", "mdc", "agrMnth". "agrHour" represents aggregation from minutely to hourly resolution; "mdc" represents aggregation from hourly to diurnal cycle; "agrMnth" represents aggregation from diurnal cycle to monthly resolution.}
 }
 \value{
-Returns object of class "dataframe": if MethAgr is "agrHour", the dataframe is [n, 1:5] containing timeDoyIntg, hour, mean, variance, square of standard error of the scalar at hourly resolution
-                                             if MethAgr is "mdc", the dataframe is [n, 1:4] containing hour, mean, variance, square of standard error of the scalar at diurnal cycle
-                                             if MethAgr is "agrMnth", the dataframe is [n, 1:3] containing mean, variance, square of standard error of the scalar at monthly scale
+Returns object of class "dataframe": cr\
+if \code{MethAgr} is "agrHour", the dataframe is [n, 1:5] containing timeDoyIntg, hour, mean, variance, square of standard error of the scalar at hourly resolution \cr
+if \code{MethAgr} is "mdc", the dataframe is [n, 1:4] containing hour, mean, variance, square of standard error of the scalar at diurnal cycle \cr
+if \code{MethAgr} is "agrMnth", the dataframe is [n, 1:3] containing mean, variance, square of standard error of the scalar at monthly scale
 }
 \description{
 Function wrapper. Calculate aggregated variance and squared standard error from a finer to a coarser temporal resolution: from minutely to hourly resolution, from hourly to diurnal cycle, and from diurnal cycle to monthly. The input data can be irregular, because data expansion is included in the current wrapper to generate unbiased mean, variance and squared standard error.

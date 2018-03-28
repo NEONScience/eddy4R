@@ -17,6 +17,12 @@ A data.frame consisting of the threshold values to be used for the provided site
 \description{
 Definition function to read threshold table from CI-Parameter-Repo
 }
+\examples{
+Currently none
+}
+\references{
+License: GNU AFFERO GENERAL PUBLIC LICENSE Version 3, 19 November 2007. \cr
+}
 \seealso{
 Currently none
 }
@@ -24,3 +30,4 @@ Currently none
 Natchaya Pingintha-Durden \email{ndurden@battelleecology.org}
 David Durden \email{ddurden@battelleecology.org}
 }
+\keyword{threshold}
