@@ -7,17 +7,16 @@
 #' @description Function wrapper. Convert a list of data to eddy4r output units using def.unit.conv function, with special attention to variable with the mean removed that are translated between units (i.e. variance for temperature when converting K to C). 
 
 #' @param inpList Required. A named list of data frames of type numeric, containing the data to be converted.
-#' @param MethType Required. A character string containing the type of data to be converted (Defauts to \code(MethType) = "data").  
+#' @param MethType Required. A character string containing the type of data to be converted. Defauts to \code{MethType} = "data".  
 
-#' @return A list, \code(rpt), with data, qfqm, or uncertainty output with the correct output units
-#' 
+#' @return A list, \code{rpt}, with data, qfqm, or uncertainty output with the correct output units
+
 #' @references
 #' License: GNU AFFERO GENERAL PUBLIC LICENSE Version 3, 19 November 2007.
 
 #' @keywords output, HDF5
 
 #' @examples Currently none.
-
 
 #' @seealso Currently none.
 
@@ -26,6 +25,8 @@
 # changelog and author contributions / copyrights 
 #   David Durden (2018-02-12)
 #     original creation
+#   Natchaya P-Durden (2018-03-28)
+#     updated function header
 ############################################################################################
 
 wrap.unit.conv.out.ec <- function(
