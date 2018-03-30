@@ -9,7 +9,7 @@
 
 #' @param FileInp is the input dp0p ECTE HDF5 file where the parameters are being read from.
 
-#' @return \code{rpt} is list returned that indicates NEON specific site four letter code (\code{rpt$Loc})  and  the Horizontal and Vertical indices of the tower top measurement level (\code{rpt$LevlTowr}). 
+#' @return \code{rpt} is list returned that indicates NEON specific site four letter code (\code{rpt$Loc})  and  the Horizontal and Vertical indices of the tower top measurement level (\code{rpt$LvlTowr}). 
 
 #' @references
 #' License: GNU AFFERO GENERAL PUBLIC LICENSE Version 3, 19 November 2007. \cr
@@ -32,7 +32,8 @@
 #     adding functionality to grab Loc parameter from file structure
 #   Dave Durden (2017-09-22)
 #     Allow function to grab more than one level
-
+#   Natchaya P-Durden (2018-03-30)
+#     applied term name convention; replace Levl by Lvl
 ##############################################################################################################
 #Start of function call to determine tower top level
 ##############################################################################################################
@@ -54,21 +55,21 @@ def.para.site <- function(
   rpt$Loc <- listPara[grepl(pattern = "^[[:upper:]]+$",x =  listPara$name), "name"]
   
   #Grab the group level for tower levels
-  rpt$LevlTowr <- unique(listPara[grep("^000_[0-9][0-9][0-9]$",listPara$name),"name"])
+  rpt$LvlTowr <- unique(listPara[grep("^000_[0-9][0-9][0-9]$",listPara$name),"name"])
   
   #Grab the group level with the _30m aggregation, remove that part of the string
-  #rpt$LevlTowr <- sub("_30m","",unique(listPara[grep("_30m",listPara$name),"name"])) #This must be a ECTE dp0p HDF5 file to work 
+  #rpt$LvlTowr <- sub("_30m","",unique(listPara[grep("_30m",listPara$name),"name"])) #This must be a ECTE dp0p HDF5 file to work 
   
   
   #Throw an error if length of the returned value is not 1
   if(!base::length(rpt$Loc) == 1) {
     stop("Input file is not standard dp0p HDF5 structure")
-    #LevlTowr <- unique(listPara[grep("000_",listPara$name),"name"]) #Second way to determine
+    #LvlTowr <- unique(listPara[grep("000_",listPara$name),"name"]) #Second way to determine
   }
   
-  if(!base::length(rpt$LevlTowr) == 1) {
-    warning("LevlTowr shows more than 1 level.")
-    #LevlTowr <- unique(listPara[grep("000_",listPara$name),"name"]) #Second way to determine
+  if(!base::length(rpt$LvlTowr) == 1) {
+    warning("LvlTowr shows more than 1 level.")
+    #LvlTowr <- unique(listPara[grep("000_",listPara$name),"name"]) #Second way to determine
   }
     
   
