@@ -4,7 +4,7 @@
 \alias{wrap.hdf5.wrte.dp01}
 \title{Wrapper function: Write NEON Level 1 data, qfqm, and uncertainty to output HDF5}
 \usage{
-wrap.hdf5.wrte.dp01(inpList, FileIn, FileOut, SiteLoca, LevlTowr,
+wrap.hdf5.wrte.dp01(inpList, FileIn, FileOut, SiteLoca, LvlTowr,
   MethUcrt = TRUE, MethDp04 = FALSE, MethSubAgr = TRUE)
 }
 \arguments{
@@ -16,7 +16,7 @@ wrap.hdf5.wrte.dp01(inpList, FileIn, FileOut, SiteLoca, LevlTowr,
 
 \item{SiteLoca}{Character: Site location.}
 
-\item{LevlTowr}{The tower level that the sensor data is being collected in NEON data product convention (HOR_VER)}
+\item{LvlTowr}{The tower level that the sensor data is being collected in NEON data product convention (HOR_VER)}
 
 \item{MethUcrt}{Logical: Determines if uncertainty information is available for output.}
 

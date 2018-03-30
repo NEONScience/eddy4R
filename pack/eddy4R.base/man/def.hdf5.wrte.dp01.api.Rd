@@ -4,7 +4,7 @@
 \alias{def.hdf5.wrte.dp01.api}
 \title{Definition function: Gather/Write reingested NEON Level 1 data, qfqm, and uncertainty to output HDF5}
 \usage{
-def.hdf5.wrte.dp01.api(date, FileOut, SiteLoca, DpName, LevlTowr, TimeAgr)
+def.hdf5.wrte.dp01.api(date, FileOut, SiteLoca, DpName, LvlTowr, TimeAgr)
 }
 \arguments{
 \item{date}{Character: The date for the data to be gathered.}
@@ -15,7 +15,7 @@ def.hdf5.wrte.dp01.api(date, FileOut, SiteLoca, DpName, LevlTowr, TimeAgr)
 
 \item{DpName}{Character: The data product name for the data to be gathered.}
 
-\item{LevlTowr}{Character: The tower level that the sensor data is being collected in NEON data product convention (HOR_VER).}
+\item{LvlTowr}{Character: The tower level that the sensor data is being collected in NEON data product convention (HOR_VER).}
 
 \item{TimeAgr}{Integer: The time aggregation index in minutes (i.e. 30)}
 }

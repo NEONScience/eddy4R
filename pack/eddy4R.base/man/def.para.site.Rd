@@ -10,7 +10,7 @@ def.para.site(FileInp)
 \item{FileInp}{is the input dp0p ECTE HDF5 file where the parameters are being read from.}
 }
 \value{
-\code{rpt} is list returned that indicates NEON specific site four letter code (\code{rpt$Loc})  and  the Horizontal and Vertical indices of the tower top measurement level (\code{rpt$LevlTowr}).
+\code{rpt} is list returned that indicates NEON specific site four letter code (\code{rpt$Loc})  and  the Horizontal and Vertical indices of the tower top measurement level (\code{rpt$LvlTowr}).
 }
 \description{
 Definition function. Function determines the site location and tower top measurement level from input dp0p ECTE HDF5 file structure
