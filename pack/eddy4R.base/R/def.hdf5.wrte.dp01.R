@@ -10,7 +10,7 @@
 #' @param inpList A list of including dp01 data, quality flags and quality metrics, and uncertainty calculations to package and write to an output HDF5 file.
 #' @param FileOut Character: The file name for the output HDF5 file
 #' @param SiteLoca Character: Site location.
-#' @param LevlTowr Character: The tower level that the sensor data is being collected in NEON data product convention (HOR_VER).
+#' @param LvlTowr Character: The tower level that the sensor data is being collected in NEON data product convention (HOR_VER).
 #' @param MethUcrt Logical: Determines if uncertainty information is available for output.
 #' @param MethSubAgr Logical: Determines if 1-minute data is available for output.
 #'
@@ -37,6 +37,8 @@
 #     Adding switches for writing output
 #   David Durden (2017-12-18)
 #     bug fix to write unit attribute to 30 min basic output for qfqm's
+#   Natchaya P-Durden (2018-03-30)
+#     applied term name convention; replace LevlTowr by LvlTowr
 ##############################################################################################
 
 
@@ -46,7 +48,7 @@ def.hdf5.wrte.dp01 <- function(
   inpList,
   FileOut,
   SiteLoca,
-  LevlTowr,
+  LvlTowr,
   Dp01,
   MethUcrt = TRUE,
   MethSubAgr = TRUE
@@ -60,22 +62,22 @@ fid <- rhdf5::H5Fopen(FileOut)
 
 # Was used to open connection to the group levels for data and qfqm for 1-min, 2-min (soni) and 30-min output
 # if (Dp01 == "soni")
-# {gid01 <- rhdf5::H5Gopen(fid,paste0("/", SiteLoca, "/dp01/data/",Dp01,"/",LevlTowr,"_02m"))
-# gid30 <- rhdf5::H5Gopen(fid,paste0("/", SiteLoca, "/dp01/data/",Dp01,"/",LevlTowr,"_30m"))
-# qfid01 <- rhdf5::H5Gopen(fid,paste0("/", SiteLoca, "/dp01/qfqm/",Dp01,"/",LevlTowr,"_02m"))
-# qfid30 <- rhdf5::H5Gopen(fid,paste0("/", SiteLoca, "/dp01/qfqm/",Dp01,"/",LevlTowr,"_30m"))
+# {gid01 <- rhdf5::H5Gopen(fid,paste0("/", SiteLoca, "/dp01/data/",Dp01,"/",LvlTowr,"_02m"))
+# gid30 <- rhdf5::H5Gopen(fid,paste0("/", SiteLoca, "/dp01/data/",Dp01,"/",LvlTowr,"_30m"))
+# qfid01 <- rhdf5::H5Gopen(fid,paste0("/", SiteLoca, "/dp01/qfqm/",Dp01,"/",LvlTowr,"_02m"))
+# qfid30 <- rhdf5::H5Gopen(fid,paste0("/", SiteLoca, "/dp01/qfqm/",Dp01,"/",LvlTowr,"_30m"))
 # } else {
 
 # Open connection to the group levels for data and qfqm for 1-min and 30-min output
 # data group level connections
-idData01 <- rhdf5::H5Gopen(fid,paste0("/", SiteLoca, "/dp01/data/",Dp01,"/",LevlTowr,"_01m"))
-idData30 <- rhdf5::H5Gopen(fid,paste0("/", SiteLoca, "/dp01/data/",Dp01,"/",LevlTowr,"_30m"))
+idData01 <- rhdf5::H5Gopen(fid,paste0("/", SiteLoca, "/dp01/data/",Dp01,"/",LvlTowr,"_01m"))
+idData30 <- rhdf5::H5Gopen(fid,paste0("/", SiteLoca, "/dp01/data/",Dp01,"/",LvlTowr,"_30m"))
 # qfqm group level connections
-idQfqm01 <- rhdf5::H5Gopen(fid,paste0("/", SiteLoca, "/dp01/qfqm/",Dp01,"/",LevlTowr,"_01m"))
-idQfqm30 <- rhdf5::H5Gopen(fid,paste0("/", SiteLoca, "/dp01/qfqm/",Dp01,"/",LevlTowr,"_30m"))
+idQfqm01 <- rhdf5::H5Gopen(fid,paste0("/", SiteLoca, "/dp01/qfqm/",Dp01,"/",LvlTowr,"_01m"))
+idQfqm30 <- rhdf5::H5Gopen(fid,paste0("/", SiteLoca, "/dp01/qfqm/",Dp01,"/",LvlTowr,"_30m"))
 # ucrt group level connections
-idUcrt01 <- rhdf5::H5Gopen(fid,paste0("/", SiteLoca, "/dp01/ucrt/",Dp01,"/",LevlTowr,"_01m"))
-idUcrt30 <- rhdf5::H5Gopen(fid,paste0("/", SiteLoca, "/dp01/ucrt/",Dp01,"/",LevlTowr,"_30m"))
+idUcrt01 <- rhdf5::H5Gopen(fid,paste0("/", SiteLoca, "/dp01/ucrt/",Dp01,"/",LvlTowr,"_01m"))
+idUcrt30 <- rhdf5::H5Gopen(fid,paste0("/", SiteLoca, "/dp01/ucrt/",Dp01,"/",LvlTowr,"_30m"))
 #}
 
 ##########################################################################################

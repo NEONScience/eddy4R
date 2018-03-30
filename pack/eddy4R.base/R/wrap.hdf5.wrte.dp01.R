@@ -11,7 +11,7 @@
 #' @param FileIn The file name for the input dp0p HDF5 file to grab metadata
 #' @param FileOut The file name for the output HDF5 file
 #' @param SiteLoca Character: Site location.
-#' @param LevlTowr The tower level that the sensor data is being collected in NEON data product convention (HOR_VER)
+#' @param LvlTowr The tower level that the sensor data is being collected in NEON data product convention (HOR_VER)
 #' @param MethUcrt Logical: Determines if uncertainty information is available for output.
 #' @param MethDp04 logical indicating if ECTE dp04 HDF5 data should be included.
 #' @param MethSubAgr Logical: Determines if 1-minute data is available for output.
@@ -44,6 +44,8 @@
 #     Altering the dp04 output to allow footprint output
 #   David Durden (2017-02-12)
 #     Adding unit conversion for output
+#   Natchaya P-Durden (2018-03-30)
+#     applied term name convention; replace LevlTowr by LvlTowr
 ##############################################################################################
 
 
@@ -54,7 +56,7 @@ wrap.hdf5.wrte.dp01 <- function(
   FileIn,
   FileOut,
   SiteLoca,
-  LevlTowr,
+  LvlTowr,
   MethUcrt = TRUE,
   MethDp04 = FALSE,
   MethSubAgr = TRUE
@@ -114,7 +116,7 @@ if(MethSubAgr == TRUE){
 ######################################################################
 
 #Applying the HDF5 write output function across all DPs
-lapply(names(outList$data), function(x) eddy4R.base::def.hdf5.wrte.dp01(inpList = outList, FileOut = FileOut, SiteLoca = SiteLoca, LevlTowr = LevlTowr, Dp01 = x, MethUcrt = MethUcrt, MethSubAgr = MethSubAgr))
+lapply(names(outList$data), function(x) eddy4R.base::def.hdf5.wrte.dp01(inpList = outList, FileOut = FileOut, SiteLoca = SiteLoca, LvlTowr = LvlTowr, Dp01 = x, MethUcrt = MethUcrt, MethSubAgr = MethSubAgr))
 
 ######################################################################
 #dp04 formatting and output

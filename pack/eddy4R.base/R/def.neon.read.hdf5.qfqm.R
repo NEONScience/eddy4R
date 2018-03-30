@@ -10,7 +10,7 @@
 #' @param SiteLoca Character: Site location.
 #' @param DateLoca Character: Date in ISO format "(2016-05-26").
 #' @param VarLoca Character: Which instrument to read data from.
-#' @param LevlTowr The tower level that the sensor data is being collected in NEON data product convention (HOR_VER)
+#' @param LvlTowr The tower level that the sensor data is being collected in NEON data product convention (HOR_VER)
 #' @param FreqLoca Integer: Measurement frequency.
 #' @param MethMeas A vector of class "character" containing the name of measurement method (eddy-covariance turbulent exchange or storage exchange), MethMeas = c("ecte", "ecse"). Defaults to "ecte".
 
@@ -38,6 +38,8 @@
 #     Removing rev number from dp0p data product HDF5 group levels 
 #   Natchaya P-Durden (2018-01-19)
 #     Updating to remove rev numbers from ECSE dp0p HDF5 data product group level 
+#   Natchaya P-Durden (2018-03-30)
+#     applied term name convention; replaced Levl by Lvl
 ##############################################################################################
 
 def.neon.read.hdf5.qfqm <- function(
@@ -45,7 +47,7 @@ def.neon.read.hdf5.qfqm <- function(
   SiteLoca,
   DateLoca,
   VarLoca,
-  LevlTowr = c("000_040", "000_050", "000_060")[3],
+  LvlTowr = c("000_040", "000_050", "000_060")[3],
   FreqLoca,
   MethMeas = c("ecte", "ecse")[1]
 ){
@@ -53,12 +55,12 @@ def.neon.read.hdf5.qfqm <- function(
 #Read in the flags from the HDF5 file 
 if (MethMeas == "ecte") {
 qfqm <- rhdf5::h5read(file = base::paste0(DirInpLoca, "/ECTE_dp0p_", SiteLoca, "_", DateLoca, ".h5"),
-                      name = base::paste0("/", SiteLoca, "/dp0p/qfqm/", VarLoca, "/",LevlTowr), read.attributes = TRUE)
+                      name = base::paste0("/", SiteLoca, "/dp0p/qfqm/", VarLoca, "/",LvlTowr), read.attributes = TRUE)
 }
 
 if (MethMeas == "ecse") {
 qfqm <- rhdf5::h5read(file = base::paste0(DirInpLoca, "/ECSE_dp0p_", SiteLoca, "_", DateLoca, ".h5"),
-                      name = base::paste0("/", SiteLoca, "/dp0p/qfqm/", VarLoca, "/",LevlTowr), read.attributes = TRUE)
+                      name = base::paste0("/", SiteLoca, "/dp0p/qfqm/", VarLoca, "/",LvlTowr), read.attributes = TRUE)
 }
   
 #Convert each flag to a vector from a 1D array                     
