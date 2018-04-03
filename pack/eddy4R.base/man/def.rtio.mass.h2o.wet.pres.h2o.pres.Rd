@@ -7,9 +7,9 @@
 def.rtio.mass.h2o.wet.pres.h2o.pres(presH2o, pres)
 }
 \arguments{
-\item{\code{presH2o}}{Either a vector or an object of class numeric of measured water vapor pressure and of the same length as \code{pres}. [Pa]}
+\item{presH2o}{Either a vector or an object of class numeric of measured water vapor pressure and of the same length as \code{pres}. [Pa]}
 
-\item{\code{pres}}{Either a vector or an object of class numeric of static pressure and of the same length as \code{presH2o}. [Pa]}
+\item{pres}{Either a vector or an object of class numeric of static pressure and of the same length as \code{presH2o}. [Pa]}
 }
 \value{
 Specific humidity and of the same length as \code{presH2o} and \code{pres}. [kg kg-1]

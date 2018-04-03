@@ -8,7 +8,7 @@
 #' within eddy4R internal data \code{eddy4R.base::IntlUnit} for the base unit symbol, unit prefix, chemical   
 #' species, and unit suffix (raise to the power of)
 
-#' @param \code{unit} Required. A single character string providing the compount unit, constructed
+#' @param unit Required. A single character string providing the compount unit, constructed
 #' with the following rules. \cr
 #' \cr
 #' Unit character strings must be constructed from the base unit symbols (case-sensitive) listed 
@@ -60,6 +60,8 @@
 #     update all function calls to use double-colon operator
 #   Natchaya P-Durden (2016-11-27)
 #     rename function to def.unit.info()
+#   Natchaya P-Durden (2018-04-03)
+#     update @param format
 ##############################################################################################
 
 def.unit.info <- function(unit) {

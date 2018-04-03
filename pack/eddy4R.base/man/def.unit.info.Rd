@@ -7,7 +7,7 @@
 def.unit.info(unit)
 }
 \arguments{
-\item{\code{unit}}{Required. A single character string providing the compount unit, constructed
+\item{unit}{Required. A single character string providing the compount unit, constructed
 with the following rules. \cr
 \cr
 Unit character strings must be constructed from the base unit symbols (case-sensitive) listed 

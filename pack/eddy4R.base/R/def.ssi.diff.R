@@ -7,8 +7,8 @@
 
 #' @description Function definition. Calculation of signal strength difference for LI-7200 IRGA.
 
-#' @param \code{ssiCo2} A vector containing the CO2 signal strength, of class "numeric". [unitless]
-#' @param \code{ssiH2o} A vector containing the H2O signal strength, of class "numeric". [unitless]
+#' @param ssiCo2 A vector containing the CO2 signal strength, of class "numeric". [unitless]
+#' @param ssiH2o A vector containing the H2O signal strength, of class "numeric". [unitless]
 
 #' @return 
 #' The returned object is the signal strength difference between the CO2 signal strength and the H2O signal strength.  
@@ -38,6 +38,8 @@
 #     original creation
 #   Hongyan Luo (2016-10-10)
 #     adjust to eddy4R coding style
+#   Natchaya P-Durden (2018-04-03)
+#     update @param format
 ##############################################################################################
 
 def.ssi.diff <- function(

@@ -7,8 +7,8 @@
 
 #' @description Calculate water vapor pressure from saturated water vapor pressure and relative humidity.
 
-#' @param \code{presH2oSat} Either a vector or an object of class numeric of saturated water vapor pressure and of the same length as \code{rh}. [Pa]
-#' @param \code{rh} Either a vector or an object of class numeric of relative humidity and of the same length as \code{presH2oSat}. [-]
+#' @param presH2oSat Either a vector or an object of class numeric of saturated water vapor pressure and of the same length as \code{rh}. [Pa]
+#' @param rh Either a vector or an object of class numeric of relative humidity and of the same length as \code{presH2oSat}. [-]
 
 #' @return Water vapor pressure and of the same length as \code{presH2oSat} and \code{rh}. [Pa]
 
@@ -34,6 +34,8 @@
 #     initail naming convention for eddy4R
 #   Natchaya P-Durden (2016-11-27)
 #     rename function to def.pres.h2o.pres.h2o.sat.rh()
+#   Natchaya P-Durden (2018-04-03)
+#     update @param format
 ##############################################################################################
 
 def.pres.h2o.pres.h2o.sat.rh <- function(presH2oSat, rh) {

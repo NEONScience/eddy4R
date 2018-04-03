@@ -8,13 +8,13 @@ def.dens.temp.pois(dens01, temp01, temp02,
   Kppa = eddy4R.base::IntlNatu$KppaDry)
 }
 \arguments{
-\item{\code{dens01}}{Measured density, Amount per volume [same unit as returned density, e.g. kg/m3 or kmol/m3].}
+\item{dens01}{Measured density, Amount per volume [same unit as returned density, e.g. kg/m3 or kmol/m3].}
 
-\item{\code{temp01}}{Measured air temperature [K]}
+\item{temp01}{Measured air temperature [K]}
 
-\item{\code{temp02}}{Reference temperature [K]}
+\item{temp02}{Reference temperature [K]}
 
-\item{\code{Kppa}}{Ratio of specific gas constant to specific heat at constant pressure. Default as KppaDry [-]}
+\item{Kppa}{Ratio of specific gas constant to specific heat at constant pressure. Default as KppaDry [-]}
 }
 \value{
 Densities at reference temperature [same unit as measured density]

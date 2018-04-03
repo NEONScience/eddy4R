@@ -8,9 +8,9 @@
 
 #' @description Function definition. Determine base state for eddy-covariance calculation.
 
-#' @param \code{pos} time index used for interpolation [-]
-#' @param \code{var} variable of interest []
-#' @param \code{AlgBase} c("mean", "trnd", "ord03") algorithm used to determine base state, where \cr
+#' @param pos time index used for interpolation [-]
+#' @param var variable of interest []
+#' @param AlgBase c("mean", "trnd", "ord03") algorithm used to determine base state, where \cr
 #' "mean" is the simple algorithmic mean, \cr
 #' "trnd" is the least squares linear (1st order) trend, and \cr
 #' "ord03" is the least squares 3rd order polynomial fit
@@ -37,6 +37,8 @@
 #     conformed code to EC TES coding convention (prev func name: base.state.r)
 #   Natchaya P-Durden (2016-11-27)
 #     rename function to def.base.ec()
+#   Natchaya P-Durden (2018-04-03)
+#     update @param format
 ##############################################################################################
 
 

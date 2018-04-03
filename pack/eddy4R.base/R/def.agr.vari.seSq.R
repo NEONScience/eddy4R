@@ -8,9 +8,9 @@
 #' @description 
 #' Function defintion. Calculates the mean, external, internal and total variance, and the squared standard error over all supplied input values. Useful e.g. to aggregate from daily to monthly resolution by using all provided values, or similar.
 
-#' @param \code{data} Dataframe of type numeric containing column vectors \code{mean} and \code{vari} of equal length.
-#' @param \code{mean} Vector of type numeric. Means of the variable of interest at finer resolution, e.g. minutely [user-defined].
-#' @param \code{vari} Vector of type numeric. Variances of the variable of interest at finer resolution, e.g. minutely [user-defined^2].
+#' @param data Dataframe of type numeric containing column vectors \code{mean} and \code{vari} of equal length.
+#' @param mean Vector of type numeric. Means of the variable of interest at finer resolution, e.g. minutely [user-defined].
+#' @param vari Vector of type numeric. Variances of the variable of interest at finer resolution, e.g. minutely [user-defined^2].
 
 #' @return Returns a list containing mean \code{mean}, external variance \code{variExt}, internal variance \code{variIntl}, total variance \code{variTota}, and squared standard error \code{seSq} at coarser resolution, e.g. hourly when \code{data} contains 60 minutely values.
 
@@ -37,6 +37,8 @@
 #    formulate with data.frame input, use variance throughout, fix standard error equation, report list
 #   Ke Xu (2016-06-08)
 #     rename variIntl and variExt to be consistent with Mahrt (1998).
+#   Natchaya P-Durden (2018-04-03)
+#     update @param format
 ##############################################################################################
 
 

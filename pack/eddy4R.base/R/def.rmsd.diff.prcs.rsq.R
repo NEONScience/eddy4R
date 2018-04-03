@@ -7,11 +7,11 @@
 
 #' @description Function defintion.RMSD, bias, precision and coefficient of determination - incl. deadband.  
 
-#' @param \code{refe}  Variable of class numeric. Reference data.Same unit as test data. 
-#' @param \code{test}  Variable of class numeric. Test data.Same unit as reference data.
-#' @param \code{Perc}  Variable of class logical. It describe if the output is in percentage.
-#' @param \code{Deba}  Variable of class numeric. Numbers of the deadband around zero denominator
-#' @param \code{DebaRltv}  Variable of class logical.Absolute or relative (percentage) deadband around zero. True indicates Deba in relative (percentage), False indicates Deba in absolute numbers. 
+#' @param refe  Variable of class numeric. Reference data.Same unit as test data. 
+#' @param test  Variable of class numeric. Test data.Same unit as reference data.
+#' @param Perc  Variable of class logical. It describe if the output is in percentage.
+#' @param Deba  Variable of class numeric. Numbers of the deadband around zero denominator
+#' @param DebaRltv  Variable of class logical.Absolute or relative (percentage) deadband around zero. True indicates Deba in relative (percentage), False indicates Deba in absolute numbers. 
 
 #' @return Currently none
 
@@ -39,6 +39,8 @@
 #     re-formualtion as function() to allow packaging
 #   Hongyan Luo (2016-06-10)
 #     adjust to eddy4R terms
+#   Natchaya P-Durden (2018-04-03)
+#     update @param format
 #############################################################################################
 
 #RETURNS RESIDUAL STANDARD ERROR AND COEFFICIENT OF DETERMINATION FOR TWO DATA SERIES

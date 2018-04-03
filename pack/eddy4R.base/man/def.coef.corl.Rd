@@ -7,7 +7,7 @@
 def.coef.corl(lat)
 }
 \arguments{
-\item{\code{lat}}{Required. Latitude [degrees North]}
+\item{lat}{Required. Latitude [degrees North]}
 }
 \value{
 Coriolis coefficient for \code{lat} [rad s-1].

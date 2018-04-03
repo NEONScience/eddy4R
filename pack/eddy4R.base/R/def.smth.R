@@ -7,9 +7,9 @@
 
 #' @description Function definition.Data smoothing method.
 
-#' @param \code{data} A vector containing the input data. Of class "numeric" or "integer". []
-#' @param \code{span} A Vector containing the span values. Of class "numeric" or "integer". The option \code{span} controls the degree of smoothing. For example; using span = c(15) to apply a long smoothing filter, or using spans = c(3,3) to apply two short filters in succession. [-]
-#' @param \code{smthFunc} An object of class string containing the smooth functions ("smthKern"). []
+#' @param data A vector containing the input data. Of class "numeric" or "integer". []
+#' @param span A Vector containing the span values. Of class "numeric" or "integer". The option \code{span} controls the degree of smoothing. For example; using span = c(15) to apply a long smoothing filter, or using spans = c(3,3) to apply two short filters in succession. [-]
+#' @param smthFunc An object of class string containing the smooth functions ("smthKern"). []
 
 #' @return Estimated smooth values and of the same length as \code{data}. []
 
@@ -35,6 +35,8 @@
 #     re-formualtion as function() to allow packaging
 #   Natchaya P-Durden (2016-04-28)
 #     Initail naming convention for eddy4R
+#   Natchaya P-Durden (2018-04-03)
+#     update @param format
 ##############################################################################################
 #KERNEL SMOOTHER
 

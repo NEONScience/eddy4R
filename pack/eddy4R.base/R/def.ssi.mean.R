@@ -7,8 +7,8 @@
 
 #' @description Function definition. Calculation of average signal strength for LI-7200 IRGA.
 
-#' @param \code{ssiCo2} A vector containing the CO2 signal strength, of class "numeric". [percent]
-#' @param \code{ssiH2o} A vector containing the H2O signal strength, of class "numeric". [percent]
+#' @param ssiCo2 A vector containing the CO2 signal strength, of class "numeric". [percent]
+#' @param ssiH2o A vector containing the H2O signal strength, of class "numeric". [percent]
 
 #' @return 
 #' The returned object is the average signal strength calculated from the CO2 signal strength and the H2O signal strength.  
@@ -32,6 +32,8 @@
 #     adjust to eddy4R coding style
 #   Stefan Metzger (2016-09-13)
 #     complete example call to def.ssi.mean()
+#   Natchaya P-Durden (2018-04-03)
+#     update @param format
 ##############################################################################################
 def.ssi.mean <- function(
   # CO2 signal strength 

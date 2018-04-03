@@ -10,29 +10,29 @@ def.lag(refe, meas, freq, dataRefe = refe, dataMeas = meas,
   fracMin = 0.1)
 }
 \arguments{
-\item{\code{refe}}{A vector with variable in reference time frame. Of class numeric. [-]}
+\item{refe}{A vector with variable in reference time frame. Of class numeric. [-]}
 
-\item{\code{meas}}{A vector with variable in time frame to be adjusted. Of class numeric. [-]}
+\item{meas}{A vector with variable in time frame to be adjusted. Of class numeric. [-]}
 
-\item{\code{freq}}{Acquisition frequency of refe and meas. Of class ingeter. [Hz]}
+\item{freq}{Acquisition frequency of refe and meas. Of class ingeter. [Hz]}
 
-\item{\code{dataRefe}}{A matrix or data.frame with all data that carries the time frame of refe. Defaults to refe. Of any class. [-]}
+\item{dataRefe}{A matrix or data.frame with all data that carries the time frame of refe. Defaults to refe. Of any class. [-]}
 
-\item{\code{dataMeas}}{A matrix or data.frame with all data that carries the time frame of meas. Defaults to meas. Of any class. [-]}
+\item{dataMeas}{A matrix or data.frame with all data that carries the time frame of meas. Defaults to meas. Of any class. [-]}
 
-\item{\code{measVar}}{A vector specifying if only several columns in dataMeas shall be lagged. Defaults to NULL. Of class integer or character. [-]}
+\item{measVar}{A vector specifying if only several columns in dataMeas shall be lagged. Defaults to NULL. Of class integer or character. [-]}
 
-\item{\code{lagMax}}{Maximum lag, by default 2 x freq. Of class integer. [-]}
+\item{lagMax}{Maximum lag, by default 2 x freq. Of class integer. [-]}
 
-\item{\code{lagCnst}}{TRUE - interpret lagMax as maximum permissible lag; FALSE - start with lagMax as first estimate and increase iteratively. Defaults to TRUE. Of class logical. [-]}
+\item{lagCnst}{TRUE - interpret lagMax as maximum permissible lag; FALSE - start with lagMax as first estimate and increase iteratively. Defaults to TRUE. Of class logical. [-]}
 
-\item{\code{lagNgtvPstv}}{"n" - consider negative lag times only, i.e. meas is expected to lag behind refe; "p" - consider positive lag times only, i.e. refe is expected to lag behind meas; "np" - consider negative and positive lag times. Defaults to "np". Of class character. [-]}
+\item{lagNgtvPstv}{"n" - consider negative lag times only, i.e. meas is expected to lag behind refe; "p" - consider positive lag times only, i.e. refe is expected to lag behind meas; "np" - consider negative and positive lag times. Defaults to "np". Of class character. [-]}
 
-\item{\code{lagAll}}{TRUE - consider positive and negative correlations when finding lag time; FALSE - consider positive correlations only when finding lag time. Defaults to TRUE. Of class logical. [-]}
+\item{lagAll}{TRUE - consider positive and negative correlations when finding lag time; FALSE - consider positive correlations only when finding lag time. Defaults to TRUE. Of class logical. [-]}
 
-\item{\code{hpf}}{TRUE - apply Butterworth high-pass filter; FALSE - use raw data. Defaults to TRUE. Of class logical. [-]}
+\item{hpf}{TRUE - apply Butterworth high-pass filter; FALSE - use raw data. Defaults to TRUE. Of class logical. [-]}
 
-\item{\code{fracMin}}{Minimum fraction of data to attempt lag determination. Defaults to 0.1. Of class numeric. [-]}
+\item{fracMin}{Minimum fraction of data to attempt lag determination. Defaults to 0.1. Of class numeric. [-]}
 }
 \value{
 Lagged input data and calculation results in a list consisting of:\cr

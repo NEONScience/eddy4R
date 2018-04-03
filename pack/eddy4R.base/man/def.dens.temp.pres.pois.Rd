@@ -7,15 +7,15 @@
 def.dens.temp.pres.pois(dens01, temp01, temp02, pres01, pres02)
 }
 \arguments{
-\item{\code{dens01}}{Measured density, Amount per volume [same unit as returned density, e.g. kg/m3 or kmol/m3].}
+\item{dens01}{Measured density, Amount per volume [same unit as returned density, e.g. kg/m3 or kmol/m3].}
 
-\item{\code{pres01}}{Measured air pressure [same unit as reference pressure]}
+\item{temp01}{Measured air temperature [K]}
 
-\item{\code{pres02}}{Reference pressure [same unit as measured air pressure]}
+\item{temp02}{Reference temperature [K]}
 
-\item{\code{temp01}}{Measured air temperature [K]}
+\item{pres01}{Measured air pressure [same unit as reference pressure]}
 
-\item{\code{temp02}}{Reference temperature [K]}
+\item{pres02}{Reference pressure [same unit as measured air pressure]}
 }
 \value{
 Densities at reference pressure and temperature [same unit as measured density]

@@ -7,9 +7,9 @@
 #' @description Function definition. Given an arbitraty input unit string, find the corresponding 
 #' internal unit (string) used within the eddy4R family of functions. 
 
-#' @param \code{unit} Required. A single character string providing the compount unit, constructed
+#' @param unit Required. A single character string providing the compount unit, constructed
 #' with the rules specified in eddy4R.base::def.unit.info.R. \cr
-#' #' 
+ 
 #' @return A single character string specifying the corresponding eddy4R internal unit.
 
 #' @references 
@@ -31,6 +31,8 @@
 #     update all function calls to use double-colon operator
 #   Natchaya P-Durden
 #     rename function to def.unit.intl()
+#   Natchaya P-Durden (2018-04-03)
+#     update @param format
 ##############################################################################################
 
 def.unit.intl <- function(unit) {

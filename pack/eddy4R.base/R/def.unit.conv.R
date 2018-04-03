@@ -7,9 +7,9 @@
 #' @description Function definition. Convert data between units using unit character strings 
 #' or numerical conversion factors
 
-#' @param \code{data} Required. A named data frame of type numeric, containing the data to be converted. 
+#' @param data Required. A named data frame of type numeric, containing the data to be converted. 
 #' A numeric vector input is also allowed if only 1 variable is to be converted.
-#' @param \code{unitFrom} Optional. The current units of \code{data}. Either: \cr 
+#' @param unitFrom Optional. The current units of \code{data}. Either: \cr 
 #' (1) the case-sensitive character string "intl", signifying the current units are in the internal 
 #' unit base (see documentation for eddy4R.base internal data IntlUnit$Intl). \cr
 #' (2) a named list or vector of type character containing the existing units of the corresponding variable 
@@ -17,7 +17,7 @@
 #' containing only one unit string is specified, it will be used for all variables in \code{data}.\cr
 #' (3) the case-sensitive character string "arb" (default), signifying the current units are arbitrarily 
 #' defined and numerical scale factors for conversion are given within input parameter \code{coefPoly}.
-#' @param \code{unitTo} Optional if \code{unitFrom = "arb"}. The units to convert to.
+#' @param unitTo Optional if \code{unitFrom = "arb"}. The units to convert to.
 #' Either: \cr 
 #' (1) the character string "intl", signifying to convert to the internal unit base. In this case, 
 #' input parameter \code{unitFrom} must be a named list of units to convert from). \cr
@@ -68,7 +68,7 @@
 #' is relevant for moist air, which must be converted to molar units outside of this unit conversion 
 #' function.
 #' \cr
-#' @param \code{coefPoly} Optional. A named list of type numeric, containing the polynomial 
+#' @param coefPoly Optional. A named list of type numeric, containing the polynomial 
 #' coefficients (in increasing order) to apply to the corresponding variable in \code{data}. 
 #' Each entry in the named list contains a numerical vector of [a0 a1 a2 a3 ...] signifying the 
 #' coeficients of the equation a0 + a1*x + a2*x^2 + a3*x^3 ... , where x is the input data.
@@ -76,7 +76,7 @@
 #' with coefPoly, coefPoly is applied first. Then the unit transformation from \code{unitFrom} to
 #' \code{unitTo} is performed.
 #' \cr
-#' @param \code{MethGc} is set to \code{TRUE} (default), to run garbage collection function.
+#' @param MethGc is set to \code{TRUE} (default), to run garbage collection function.
 #'  
 #' @return Function output format depends on input parameter \code{vrbs}. \cr
 #' If \code{vrbs} is set to \code{FALSE} (default), the function returns a vector or named data frame 
@@ -128,6 +128,8 @@
 #     rename function to def.unit.conv()
 #   Natchaya P-Durden (2017-09-20)
 #     added MethGc in parameter
+#   Natchaya P-Durden (2018-04-03)
+#     update @param format
 ##############################################################################################
 
 def.unit.conv <- function(

@@ -7,8 +7,8 @@
 
 #' @description Function definition. Calculation of RH from water vapor partial pressure and saturation pressure  
 
-#' @param \code{presH2o} A vector containing the water vapor partial pressure, of class "numeric". [Pa]
-#' @param \code{presH2oSat} A vector containing the water vapor saturation pressure, of class "numeric". [Pa]
+#' @param presH2o A vector containing the water vapor partial pressure, of class "numeric". [Pa]
+#' @param presH2oSat A vector containing the water vapor saturation pressure, of class "numeric". [Pa]
 
 #' @return 
 #' The returned object is the RH calculated from water vapor partial pressure and saturation pressure    
@@ -38,6 +38,8 @@
 #     original creation
 #   Hongyan Luo (2016-10-23)
 #     adjust to eddy4R coding style
+#   Natchaya P-Durden (2018-04-03)
+#     update @param format
 ###############################################################################################
 # Calculation of RH
 def.rh.pres.h2o.pres.sat.h2o <- function(

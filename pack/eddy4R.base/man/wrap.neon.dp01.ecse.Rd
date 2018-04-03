@@ -11,30 +11,30 @@ wrap.neon.dp01.ecse(dp01 = c("co2Stor", "h2oStor", "tempAirLvl", "tempAirTop",
   idxTime = list())
 }
 \arguments{
-\item{\code{dp01}}{A vector of class "character" containing the name of NEON ECSE dp01 which descriptive statistics are being calculated, \cr
+\item{dp01}{A vector of class "character" containing the name of NEON ECSE dp01 which descriptive statistics are being calculated, \cr
 c("co2Stor", "h2oStor", "tempAirLvl", "tempAirTop", "isoCo2", "isoH2o"). Defaults to "co2Stor". [-]}
 
-\item{\code{lvl}}{Measurement level of dp01 which descriptive statistics are being calculated. Of type character. [-]}
+\item{lvl}{Measurement level of dp01 which descriptive statistics are being calculated. Of type character. [-]}
 
-\item{\code{lvlMfcSampStor}}{Measurement level of mfcSampStor which apply to only  dp01 equal to "co2Stor" or "h2oStor". Defaults to NULL. Of type character. [-]}
+\item{lvlMfcSampStor}{Measurement level of mfcSampStor which apply to only  dp01 equal to "co2Stor" or "h2oStor". Defaults to NULL. Of type character. [-]}
 
-\item{\code{lvlEnvHut}}{Measurement level of envHut. Defaults to NULL. Of type character. [-]}
+\item{lvlEnvHut}{Measurement level of envHut. Defaults to NULL. Of type character. [-]}
 
-\item{\code{lvlValv}}{Measurement level of irgaValvLvl, crdCo2ValvLvl, or crdH2oValvLvl. Defaults to NULL. Of type character. [-]}
+\item{lvlValv}{Measurement level of irgaValvLvl, crdCo2ValvLvl, or crdH2oValvLvl. Defaults to NULL. Of type character. [-]}
 
-\item{\code{lvlCrdH2oValvVali}}{Measurement level of crdH2oValvVali which apply to only  dp01 equal to "isoH2o". Defaults to NULL. Of type character. [-]}
+\item{lvlCrdH2oValvVali}{Measurement level of crdH2oValvVali which apply to only  dp01 equal to "isoH2o". Defaults to NULL. Of type character. [-]}
 
-\item{\code{data}}{A list of data frame containing the input dp0p data that related to dp01 which descriptive statistics are being calculated. Of class integer". [User defined]}
+\item{data}{A list of data frame containing the input dp0p data that related to dp01 which descriptive statistics are being calculated. Of class integer". [User defined]}
 
-\item{\code{qfInput}}{A list of data frame containing the input quality flag data that related to dp01 are being grouped. Of class integer". [-]}
+\item{qfInput}{A list of data frame containing the input quality flag data that related to dp01 are being grouped. Of class integer". [-]}
 
-\item{\code{TypeMeas}}{A vector of class "character" containing the name of measurement type (sampling or validation), TypeMeas = c("samp", "vali"). Defaults to "samp". [-]}
+\item{TypeMeas}{A vector of class "character" containing the name of measurement type (sampling or validation), TypeMeas = c("samp", "vali"). Defaults to "samp". [-]}
 
-\item{\code{PrdMeas}}{The measurement time period in minute.  [min]}
+\item{PrdMeas}{The measurement time period in minute.  [min]}
 
-\item{\code{PrdAgr}}{The time period to aggregate to averaging in minute. [min]}
+\item{PrdAgr}{The time period to aggregate to averaging in minute. [min]}
 
-\item{\code{idxTime}}{A list of data frame containing the indices and corresponding times for aggregation periods. [-]}
+\item{idxTime}{A list of data frame containing the indices and corresponding times for aggregation periods. [-]}
 }
 \value{
 A list of dp01 descriptive statistics. \cr 

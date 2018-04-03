@@ -6,13 +6,13 @@
 #' @description  
 #'  Wrapper function. Time regularization for ECSE dp00
 
-#' @param \code{DirIn} Character: Input directory. [-]
-#' @param \code{Date} Character: Processing date e.g. "20170521". [-]
-#' @param \code{Site} Character: Site location. [-]
-#' @param \code{Dom} Character: Domain. [-]
-#' @param \code{Freq} Desired frequency of  the regularized dataset. Of class "numeric" or "integer". [Hz]
-#' @param \code{IdDp00} Character: dp00 data product number. [-]
-#' @param \code{horVer} Character: Horizontal and vertical location of dp00. [-]
+#' @param DirIn Character: Input directory. [-]
+#' @param Date Character: Processing date e.g. "20170521". [-]
+#' @param Site Character: Site location. [-]
+#' @param Dom Character: Domain. [-]
+#' @param Freq Desired frequency of  the regularized dataset. Of class "numeric" or "integer". [Hz]
+#' @param IdDp00 Character: dp00 data product number. [-]
+#' @param horVer Character: Horizontal and vertical location of dp00. [-]
 
 #' @return  A dataframe including the regularized dp00. [User-defined]
 
@@ -32,6 +32,8 @@
 #     original creation
 #   Natchaya P-Durden (2018-02-14)
 #     fix bugs when missing crdH2o
+#   Natchaya P-Durden (2018-04-03)
+#     update @param format
 ##############################################################################################
 wrap.time.rglr.dp00.ecse <- function(
   DirIn,

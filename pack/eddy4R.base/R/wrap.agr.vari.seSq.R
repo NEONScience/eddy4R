@@ -8,12 +8,12 @@
 #' Function wrapper. Calculate aggregated variance and squared standard error from a finer to a coarser temporal resolution: from minutely to hourly resolution, from hourly to diurnal cycle, and from diurnal cycle to monthly. The input data can be irregular, because data expansion is included in the current wrapper to generate unbiased mean, variance and squared standard error. 
 
 
-#' @param \code{data} Dataframe of type numeric containing column vectors \code{timeDoyDecm}, \code{mean}, and \code{vari} of equal length.
-#' @param \code{timeDoyDecm} input decimal doy time in UTC [float number].
-#' @param \code{mean} Vector of type numeric. Means of the variable of interest at finer resolution, e.g. minutely [user-defined].
-#' @param \code{vari} Vector of type numeric. Variances of the variable of interest at finer resolution, e.g. minutely [user-defined^2].
-#' @param \code{zone} The time zone of the location, which is the offset from Coordinated Universal Time (UTC) by a whole number of hours. If local time is ahead (behind) the Greenwich mean time, zone is a positive (negative) number. e.g. CST" [hour]. a time offset in Wisconsin, in the North American Central Time Zone, would be -6.
-#' @param \code{MethAgr} String type. One of three choices: "agrHour", "mdc", "agrMnth". "agrHour" represents aggregation from minutely to hourly resolution; "mdc" represents aggregation from hourly to diurnal cycle; "agrMnth" represents aggregation from diurnal cycle to monthly resolution.
+#' @param data Dataframe of type numeric containing column vectors \code{timeDoyDecm}, \code{mean}, and \code{vari} of equal length.
+#' @param timeDoyDecm input decimal doy time in UTC [float number].
+#' @param mean Vector of type numeric. Means of the variable of interest at finer resolution, e.g. minutely [user-defined].
+#' @param vari Vector of type numeric. Variances of the variable of interest at finer resolution, e.g. minutely [user-defined^2].
+#' @param zone The time zone of the location, which is the offset from Coordinated Universal Time (UTC) by a whole number of hours. If local time is ahead (behind) the Greenwich mean time, zone is a positive (negative) number. e.g. CST" [hour]. a time offset in Wisconsin, in the North American Central Time Zone, would be -6.
+#' @param MethAgr String type. One of three choices: "agrHour", "mdc", "agrMnth". "agrHour" represents aggregation from minutely to hourly resolution; "mdc" represents aggregation from hourly to diurnal cycle; "agrMnth" represents aggregation from diurnal cycle to monthly resolution.
 
 #' @return Returns object of class "dataframe": cr\
 #' if \code{MethAgr} is "agrHour", the dataframe is [n, 1:5] containing timeDoyIntg, hour, mean, variance, square of standard error of the scalar at hourly resolution \cr
@@ -56,6 +56,8 @@
 #    minor change to remove the unnecessary sdSq in the input
 #   Natchaya P-Durden (2018-03-28)
 #    updated function header
+#   Natchaya P-Durden (2018-04-03)
+#     update @param format
 ##############################################################################################
 
 wrap.agr.vari.seSq <- function(

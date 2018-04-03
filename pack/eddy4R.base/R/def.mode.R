@@ -7,7 +7,7 @@
 
 #' @description Calculate mode based on a continuous distribution.
 
-#' @param \code{x} Either a vector or an object of class numeric of the data from which the estimate is to be computed.
+#' @param x Either a vector or an object of class numeric of the data from which the estimate is to be computed.
 
 #' @return 
 #' The estimated arithmetic mode of the values in \code{x}. \cr
@@ -32,6 +32,8 @@
 #     re-formualtion as function() to allow packaging
 #   Natchaya P-Durden (2016-02-22)
 #     Initail naming convention for eddy4R
+#   Natchaya P-Durden (2018-04-03)
+#     update @param format
 ##############################################################################################
 #calculate mode based on a continuous distribution
 #http://stackoverflow.com/questions/2547402/standard-library-function-in-r-for-finding-the-mode

@@ -7,13 +7,13 @@
 def.mtch.out.refe(fileOut, fileRefe, Head = FALSE, NumLine = 10)
 }
 \arguments{
-\item{\code{fileOut}}{String. The relative or absolute path and filename of the numerical data output.}
+\item{fileOut}{String. The relative or absolute path and filename of the numerical data output.}
 
-\item{\code{fileRefe}}{String. The relative or absolute path and filename of the numerical reference data.}
+\item{fileRefe}{String. The relative or absolute path and filename of the numerical reference data.}
 
-\item{\code{Head}}{Logical. TRUE if there is 1 header row in both the output and reference files. Defaults to FALSE.}
+\item{Head}{Logical. TRUE if there is 1 header row in both the output and reference files. Defaults to FALSE.}
 
-\item{\code{NumLine}}{The number of output rows to compare (starting from the first row). Defaults to 10.}
+\item{NumLine}{The number of output rows to compare (starting from the first row). Defaults to 10.}
 }
 \value{
 Currently none

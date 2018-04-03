@@ -7,7 +7,7 @@
 def.pol.cart(cart)
 }
 \arguments{
-\item{\code{cart}}{variable of type numeric, matrix consisting of unit vectors X (1st column, -1 ... 1, positive to north) and Y (2nd column, -1 ... 1, positive to east)}
+\item{cart}{variable of type numeric, matrix consisting of unit vectors X (1st column, -1 ... 1, positive to north) and Y (2nd column, -1 ... 1, positive to east)}
 }
 \value{
 clockwise azimuth angle with 0 / 360 degree discontinuity in north [decimal degrees]

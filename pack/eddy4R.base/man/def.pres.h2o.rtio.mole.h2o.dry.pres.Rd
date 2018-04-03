@@ -7,9 +7,9 @@
 def.pres.h2o.rtio.mole.h2o.dry.pres(rtioMoleDryH2o, pres)
 }
 \arguments{
-\item{\code{rtioMoleDryH2o}}{Either a vector or an object of class numeric of water dry mole fraction and of the same length as \code{pres}. [kmol kmol-1]}
+\item{rtioMoleDryH2o}{Either a vector or an object of class numeric of water dry mole fraction and of the same length as \code{pres}. [kmol kmol-1]}
 
-\item{\code{pres}}{Either a vector or an object of class numeric of static pressure and of the same length as \code{rtioMoleDryH2o}. [Pa]}
+\item{pres}{Either a vector or an object of class numeric of static pressure and of the same length as \code{rtioMoleDryH2o}. [Pa]}
 }
 \value{
 Water vapor pressure and of the same length as \code{rtioMoleDryH2o} and \code{pres}. [Pa]

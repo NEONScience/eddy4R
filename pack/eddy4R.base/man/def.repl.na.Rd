@@ -7,13 +7,13 @@
 def.repl.na(dataProcDate, dataBgnDate, Date, numCol)
 }
 \arguments{
-\item{\code{dataProcDate}}{A dataframe containing data and time in the processing date. [User-defined]}
+\item{dataProcDate}{A dataframe containing data and time in the processing date. [User-defined]}
 
-\item{\code{dataBgnDate}}{A dataframe containing data and time in the day before processing date. [User-defined]}
+\item{dataBgnDate}{A dataframe containing data and time in the day before processing date. [User-defined]}
 
-\item{\code{Date}}{Character: Processing date e.g. "20170521". [-]}
+\item{Date}{Character: Processing date e.g. "20170521". [-]}
 
-\item{\code{numCol}}{Numeric: Define which column number in \code{dataProcDate} and \code{dataBgnDate} are being process. [-]}
+\item{numCol}{Numeric: Define which column number in \code{dataProcDate} and \code{dataBgnDate} are being process. [-]}
 }
 \value{
 A dataframe including the data and time in the processing date which NA values have been replaced by previous value. [User-defined]
