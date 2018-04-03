@@ -8,19 +8,19 @@ def.agr.file.dp00(dirFile = ".", nameFile, nameVar, unitVar, Freq,
   FmtTime = "\%d-\%b-\%Y \%I.\%M.\%OS \%p", Tz = "GMT")
 }
 \arguments{
-\item{\code{dirFile}}{Optional. A character string indicating the directory in which the files to combine are stored. Default is the current working directory.}
+\item{dirFile}{Optional. A character string indicating the directory in which the files to combine are stored. Default is the current working directory.}
 
-\item{\code{nameFile}}{Required. A character vector of file names holding the L0 data streams to combine. Must be in .csv format. Within these files, the first column must containing the measurement time, the second column must contain one L0 data stream}
+\item{nameFile}{Required. A character vector of file names holding the L0 data streams to combine. Must be in .csv format. Within these files, the first column must containing the measurement time, the second column must contain one L0 data stream}
 
-\item{\code{nameVar}}{Required. A character vector of the same length as nameFile with the variable names of the L0 data streams}
+\item{nameVar}{Required. A character vector of the same length as nameFile with the variable names of the L0 data streams}
 
-\item{\code{unitVar}}{Required. A character vector of the same length as nameFile with the variable units}
+\item{unitVar}{Required. A character vector of the same length as nameFile with the variable units}
 
-\item{\code{Freq}}{Required. A numeric value indicating the expected frequency [Hz] of L0 data within the files in nameFile}
+\item{Freq}{Required. A numeric value indicating the expected frequency [Hz] of L0 data within the files in nameFile}
 
-\item{\code{FmtTime}}{Optional. An character format string to interpret the time values in the first column of each file in nameFile. Default is \%d-\%b-\%Y \%I.\%M.\%OS \%p}
+\item{FmtTime}{Optional. An character format string to interpret the time values in the first column of each file in nameFile. Default is \%d-\%b-\%Y \%I.\%M.\%OS \%p}
 
-\item{\code{Tz}}{Optional. A character string specifying the time zone in with the time values in the first column of each file in nameFile are represented. Default is GMT}
+\item{Tz}{Optional. A character string specifying the time zone in with the time values in the first column of each file in nameFile are represented. Default is GMT}
 }
 \value{
 A list of: \cr

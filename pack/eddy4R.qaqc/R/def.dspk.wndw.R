@@ -8,8 +8,8 @@
 #' @description 
 #' Function definition. Determines spike locations based on window-based Gaussian statistics (arithmetic mean and standard deviation) and distribution statistics (median, median absolute deviation).
 
-#' @param \code{data} Required input. A data frame or matrix containing the data to be evaluated.
-#' @param \code{Trt} Optional. A list of the following parameters specifying the details of the despike algorithm. \cr
+#' @param data Required input. A data frame or matrix containing the data to be evaluated.
+#' @param Trt Optional. A list of the following parameters specifying the details of the despike algorithm. \cr
 #' \code{AlgClss}: string. de-spiking algorithm class ["mean" or "median"] \cr
 #' \code{NumPtsWndw}: integer. window size [data points] (must be odd for median / mad) \cr
 #' \code{NumPtsSlid}: integer. window sliding increment [data points] \cr
@@ -19,11 +19,11 @@
 #' \code{IterMax}: number or Inf. maximum number of iterations \cr
 #' \code{NumPtsGrp}. integer. minimum group size that is not considered as consecutive spikes [data points] \cr
 #' \code{NaTrt}. string. spike handling among iterations ["approx" or "omit"]
-#' @param \code{Cntl} Optional. A list of the following parameters specifying other implementation details \cr
+#' @param Cntl Optional. A list of the following parameters specifying other implementation details \cr
 #' \code{NaOmit}: Logical. delete leading / trailing NAs from dataset? \cr
 #' \code{Prnt}: Logical. print results? \cr
 #' \code{Plot}: Logical. plot results?
-#' @param \code{Vrbs} Optional. Option to output the quality flags (same size as \code{data}) rather than vector positions of failed and na values. Default = FALSE
+#' @param Vrbs Optional. Option to output the quality flags (same size as \code{data}) rather than vector positions of failed and na values. Default = FALSE
   
 #' @return A list of the following: \cr
 #' \code{data}: the despiked data matrix \cr
@@ -68,6 +68,8 @@
 #        of failed and na values
 #     adjusted output of vector positions of failed and na spike positions (Vrbs = FALSE) to be nested 
 #        under each variable rather than each variable nested under the lists of failed and na results 
+#   Natchaya P-Durden (2018-04-03)
+#     update @param format
 ##############################################################################################
 
 

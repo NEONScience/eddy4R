@@ -7,18 +7,18 @@
 #' @description 
 #' Function definition. Determines inplausible data indices based on user-specified limits for the data range, step between adjacent values, persistence (similarity of adjacent values), nulls, and gaps.
 
-#' @param \code{data} Required input. A data frame containing the data to be evaluated (do not include the time stamp vector here). 
-#' @param \code{time} Optional. A time vector of class POSIXlt of times corresponding with each row in data. Defaults to an evenly spaced time vector starting from system time of execution by seconds. 
-#' @param \code{RngMin} Optional. A numeric vector of length equal to number of variables in data containing the minimum acceptable value for each variable. Defaults to observed minimums (no flags will result)
-#' @param \code{RngMax} Optional. A numeric vector of length equal to number of variables in data containing the maximum acceptable value for each variable. Defaults to observed maximums (no flags will result)
-#' @param \code{DiffStepMax} Optional. A numeric vector of length equal to number of variables in data containing the maximum acceptable absolute difference between sequential data points for each variable. Defaults to observed maximum (no flags will result)
-#' @param \code{DiffPersMin} Optional. A numeric vector of length equal to number of variables in data containing the minimum absolute change in value over the interval specified in WndwPers to indicate the sensor is not "stuck". Defaults to a vector of zeros (no flags will result).
-#' @param \code{WndwPers} Optional. The time window for evaluting the persistence test. This must be a vector of length equal to number of variables in data. If the values are numeric (integer), then WndwPers specifies number of data points over which to test for the minimum absolute change in value specified in DiffPersMin. 
+#' @param data Required input. A data frame containing the data to be evaluated (do not include the time stamp vector here). 
+#' @param time Optional. A time vector of class POSIXlt of times corresponding with each row in data. Defaults to an evenly spaced time vector starting from system time of execution by seconds. 
+#' @param RngMin Optional. A numeric vector of length equal to number of variables in data containing the minimum acceptable value for each variable. Defaults to observed minimums (no flags will result)
+#' @param RngMax Optional. A numeric vector of length equal to number of variables in data containing the maximum acceptable value for each variable. Defaults to observed maximums (no flags will result)
+#' @param DiffStepMax Optional. A numeric vector of length equal to number of variables in data containing the maximum acceptable absolute difference between sequential data points for each variable. Defaults to observed maximum (no flags will result)
+#' @param DiffPersMin Optional. A numeric vector of length equal to number of variables in data containing the minimum absolute change in value over the interval specified in WndwPers to indicate the sensor is not "stuck". Defaults to a vector of zeros (no flags will result).
+#' @param WndwPers Optional. The time window for evaluting the persistence test. This must be a vector of length equal to number of variables in data. If the values are numeric (integer), then WndwPers specifies number of data points over which to test for the minimum absolute change in value specified in DiffPersMin. 
 #' If the vector is a difftime object (e.g. as.difftime(5,units="secs")), it specifies the time interval over which to test for the minimum absolute change in value specified in DiffPersMin. The results are the same if the time-based window exactly corresponds to an integer number of data points.
 #' Defaults to a difftime object of 60 x median observed time difference. 
-#' @param \code{TestNull} Optional. Apply the null test? A logical vector of [TRUE or FALSE] of length equal to number of variables in data. Defaults to FALSE (no null values are flagged)
-#' @param \code{NumGap} Optional.  A numeric value >= 1, interpretable as an integer, specifying the numer of consecutive NA values constituting a gap. Default is the one more than the length of the data series (no gaps will be flagged)
-#' @param \code{Vrbs} Optional. A logical {FALSE/TRUE} value indicating whether to:\cr
+#' @param TestNull Optional. Apply the null test? A logical vector of [TRUE or FALSE] of length equal to number of variables in data. Defaults to FALSE (no null values are flagged)
+#' @param NumGap Optional.  A numeric value >= 1, interpretable as an integer, specifying the numer of consecutive NA values constituting a gap. Default is the one more than the length of the data series (no gaps will be flagged)
+#' @param Vrbs Optional. A logical {FALSE/TRUE} value indicating whether to:\cr
 #' \code{Vrbs = FALSE}: (Default) output the vector positions of the fail and na results for each test (default), or \cr
 #' \code{Vrbs = TRUE}: output a data frame for each variable in data, with a column for each plausibility test outputting the actual quality flags [-1,0,1] for each data point
 
@@ -81,6 +81,8 @@
 #         on number of points vs. time. The time-based approach is retained as an option, and has been 
 #         optimized for cpu time. Output is identical if the time-based approach corresponds to an exact 
 #         number of data points. Processing time has been reduced by >90%.
+#   Natchaya P-Durden (2018-04-03)
+#     update @param format
 ##############################################################################################
 def.plau <- function (
   data,                               # a data frame containing the data to be evaluated (do not include the time stamp vector here). Required input.

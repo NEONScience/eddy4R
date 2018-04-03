@@ -6,12 +6,12 @@
 
 #' @description Function definition. Grouping the quality flags of each NEON ECTE and ECSE L1 data product into a single dataframe for further use in the calculation of Alpha, Beta, and Final flag.
 
-#' @param \code{qfInput} A list of data frame containing the input quality flag data that related to L1 data products are being grouped. Of class integer". [-] 
-#' @param \code{MethMeas} A vector of class "character" containing the name of measurement method (eddy-covariance turbulent exchange or storage exchange), MethMeas = c("ecte", "ecse"). Defaults to "ecse". [-] 
-#' @param \code{TypeMeas} A vector of class "character" containing the name of measurement type (sampling or validation), TypeMeas = c("samp", "ecse"). Defaults to "samp". [-]
-#' @param \code{dp01} A vector of class "character" containing the name of NEON ECTE and ECSE L1 data products which the flags are being grouped, \cr
+#' @param qfInput A list of data frame containing the input quality flag data that related to L1 data products are being grouped. Of class integer". [-] 
+#' @param MethMeas A vector of class "character" containing the name of measurement method (eddy-covariance turbulent exchange or storage exchange), MethMeas = c("ecte", "ecse"). Defaults to "ecse". [-] 
+#' @param TypeMeas A vector of class "character" containing the name of measurement type (sampling or validation), TypeMeas = c("samp", "ecse"). Defaults to "samp". [-]
+#' @param dp01 A vector of class "character" containing the name of NEON ECTE and ECSE L1 data products which the flags are being grouped, \cr
 #' c("envHut", "co2Turb", "h2oTurb", "isoCo2", "isoH2o", "soni", "amrs", "tempAirLvl", "tempAirTop"). Defaults to "co2Turb". [-] 
-#' @param \code{idGas} A data frame contianing gas ID for isoCo2 measurement. Need to provide when dp01 = "isoCo2". Default to NULL. [-]
+#' @param idGas A data frame contianing gas ID for isoCo2 measurement. Need to provide when dp01 = "isoCo2". Default to NULL. [-]
 
 #' @return A list of data frame of the quality flags related to that sub-data product. \cr
 
@@ -64,6 +64,8 @@
 #     bugs fixed on determination qf for presEnvHut
 #   Natchaya P-Durden (2018-02-16)
 #     replace -1 if all qfSens in crdCo2 and crdH2o are NaN
+#   Natchaya P-Durden (2018-04-03)
+#     update @param format
 ##############################################################################################
 
 def.neon.dp01.qf.grp <- function(
