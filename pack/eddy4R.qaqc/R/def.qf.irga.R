@@ -6,8 +6,8 @@
 
 #' @description 
 #' Definition function to interpret the irga sensor flags from \code{diag01}.
-#' @param \code{diag01} The 32-bit diagnostic stream that is output from the LI7200. 
-#' @param \code{MethQf} Switch for quality flag determination for the LI7200, diag01 provides ones for passing quality by default the equals "lico". The "qfqm" method changes the ones to zeros to match the NEON QFQM logic.
+#' @param diag01 The 32-bit diagnostic stream that is output from the LI7200. 
+#' @param MethQf Switch for quality flag determination for the LI7200, diag01 provides ones for passing quality by default the equals "lico". The "qfqm" method changes the ones to zeros to match the NEON QFQM logic.
 #' 
 #' @return A dataframe (\code{qfIrgaTurb}) of sensor specific irga quality flags as described in NEON.DOC.000807.
 
@@ -33,6 +33,8 @@
 #     fixing issues with missing diag data and order bits are analyzed for qfIrgaTurbAgc
 #   Dave Durden (2017-12-03)
 #     Changing output naming convention to qfIrgaTurb
+#   Natchaya P-Durden (2018-04-03)
+#     update @param format
 ##############################################################################################
 
 

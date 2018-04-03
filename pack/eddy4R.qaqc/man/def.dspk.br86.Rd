@@ -8,15 +8,15 @@ def.dspk.br86(dataIn, WndwFilt = 9, NumBin = 2, ThshReso = 10,
   FracRealMin = 0.025)
 }
 \arguments{
-\item{\code{dataIn}}{Required. A univariate vector of integers or numerics of Input data}
+\item{dataIn}{Required. A univariate vector of integers or numerics of Input data}
 
-\item{\code{WndwFilt}}{Optional. A single integer value of filter width. Default = 9}
+\item{WndwFilt}{Optional. A single integer value of filter width. Default = 9}
 
-\item{\code{NumBin}}{Optional. A single integer value of the initial number/step size of histogram bins. Default = 2}
+\item{NumBin}{Optional. A single integer value of the initial number/step size of histogram bins. Default = 2}
 
-\item{\code{ThshReso}}{Optional. A single integer value of the resolution threshold for spike determination. Only considered spike only if difference larger than measurement resolution x ThshReso. Default = 10}
+\item{ThshReso}{Optional. A single integer value of the resolution threshold for spike determination. Only considered spike only if difference larger than measurement resolution x ThshReso. Default = 10}
 
-\item{\code{FracRealMin}}{Optional. A single numeric value of the minimum fraction of non-NA values required to perform median filter despiking. Default = 0.025 (2.5\%)}
+\item{FracRealMin}{Optional. A single numeric value of the minimum fraction of non-NA values required to perform median filter despiking. Default = 0.025 (2.5\%)}
 }
 \value{
 A list of:

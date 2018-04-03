@@ -7,11 +7,11 @@
 def.qf.finl(qf, WghtAlphBeta = c(2, 1), Thsh = 0.2)
 }
 \arguments{
-\item{\code{qf}}{A data frame of quality flags, class integer, from which to compute the final quality flag. Each column contains the quality flag values [-1,0,1] for that flag. Note: This is the Vrbs output from def.plau, def.dspk.wndw, and def.dspk.br86. See def.conv.qf.vrbs for converting from non-verbose to verbose output.}
+\item{qf}{A data frame of quality flags, class integer, from which to compute the final quality flag. Each column contains the quality flag values [-1,0,1] for that flag. Note: This is the Vrbs output from def.plau, def.dspk.wndw, and def.dspk.br86. See def.conv.qf.vrbs for converting from non-verbose to verbose output.}
 
-\item{\code{WghtAlphBeta}}{A 2-element integer vector of weights to apply to the alpha and beta quality metrics, which will then be summed and evaluated against the threshold (\code{Thsh}) for determing the final quality flag. Default to WghtAlphBeta=c(2,1). [-]}
+\item{WghtAlphBeta}{A 2-element integer vector of weights to apply to the alpha and beta quality metrics, which will then be summed and evaluated against the threshold (\code{Thsh}) for determing the final quality flag. Default to WghtAlphBeta=c(2,1). [-]}
 
-\item{\code{Thsh}}{Threshold for determine the condition (pass = 0 or failed = 1) of final quality flag. Default to 0.2 (0.2 percent). [fraction]}
+\item{Thsh}{Threshold for determine the condition (pass = 0 or failed = 1) of final quality flag. Default to 0.2 (0.2 percent). [fraction]}
 }
 \value{
 A list of: \cr

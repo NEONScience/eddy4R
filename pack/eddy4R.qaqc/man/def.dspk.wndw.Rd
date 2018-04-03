@@ -11,9 +11,9 @@ def.dspk.wndw(data, Trt = list(AlgClss = c("mean", "median")[2], NumPtsWndw =
   c(TRUE, FALSE)[1]), Vrbs = FALSE)
 }
 \arguments{
-\item{\code{data}}{Required input. A data frame or matrix containing the data to be evaluated.}
+\item{data}{Required input. A data frame or matrix containing the data to be evaluated.}
 
-\item{\code{Trt}}{Optional. A list of the following parameters specifying the details of the despike algorithm. \cr
+\item{Trt}{Optional. A list of the following parameters specifying the details of the despike algorithm. \cr
 \code{AlgClss}: string. de-spiking algorithm class ["mean" or "median"] \cr
 \code{NumPtsWndw}: integer. window size [data points] (must be odd for median / mad) \cr
 \code{NumPtsSlid}: integer. window sliding increment [data points] \cr
@@ -24,12 +24,12 @@ def.dspk.wndw(data, Trt = list(AlgClss = c("mean", "median")[2], NumPtsWndw =
 \code{NumPtsGrp}. integer. minimum group size that is not considered as consecutive spikes [data points] \cr
 \code{NaTrt}. string. spike handling among iterations ["approx" or "omit"]}
 
-\item{\code{Cntl}}{Optional. A list of the following parameters specifying other implementation details \cr
+\item{Cntl}{Optional. A list of the following parameters specifying other implementation details \cr
 \code{NaOmit}: Logical. delete leading / trailing NAs from dataset? \cr
 \code{Prnt}: Logical. print results? \cr
 \code{Plot}: Logical. plot results?}
 
-\item{\code{Vrbs}}{Optional. Option to output the quality flags (same size as \code{data}) rather than vector positions of failed and na values. Default = FALSE}
+\item{Vrbs}{Optional. Option to output the quality flags (same size as \code{data}) rather than vector positions of failed and na values. Default = FALSE}
 }
 \value{
 A list of the following: \cr

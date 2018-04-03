@@ -22,11 +22,11 @@
 #' -2: singular or constant value \cr
 #' -3: measurement changes so slow that time-series and filter value are identical \cr
 
-#' @param \code{dataIn} Required. A univariate vector of integers or numerics of Input data
-#' @param \code{WndwFilt} Optional. A single integer value of filter width. Default = 9
-#' @param \code{NumBin} Optional. A single integer value of the initial number/step size of histogram bins. Default = 2
-#' @param \code{ThshReso} Optional. A single integer value of the resolution threshold for spike determination. Only considered spike only if difference larger than measurement resolution x ThshReso. Default = 10
-#' @param \code{FracRealMin} Optional. A single numeric value of the minimum fraction of non-NA values required to perform median filter despiking. Default = 0.025 (2.5\%)
+#' @param dataIn Required. A univariate vector of integers or numerics of Input data
+#' @param WndwFilt Optional. A single integer value of filter width. Default = 9
+#' @param NumBin Optional. A single integer value of the initial number/step size of histogram bins. Default = 2
+#' @param ThshReso Optional. A single integer value of the resolution threshold for spike determination. Only considered spike only if difference larger than measurement resolution x ThshReso. Default = 10
+#' @param FracRealMin Optional. A single numeric value of the minimum fraction of non-NA values required to perform median filter despiking. Default = 0.025 (2.5\%)
 
 #' @return A list of:
 #' @return \code{dataIn} Same as input.
@@ -86,6 +86,8 @@
 #     added output of quality flag values for Despike test
 #   Natchaya P-Durden (2016-12-02)
 #     rename function to def.dspk.br86()
+#   Natchaya P-Durden (2018-04-03)
+#     update @param format
 ##############################################################################################
 
 def.dspk.br86 <- function(

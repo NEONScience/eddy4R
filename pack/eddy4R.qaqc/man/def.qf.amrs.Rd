@@ -7,9 +7,9 @@
 def.qf.amrs(diag32, MethQf = c("qfqm", "xsen")[1])
 }
 \arguments{
-\item{\code{diag32}}{The 32-bit diagnostic stream that is output from the XSens AMRS.}
+\item{diag32}{The 32-bit diagnostic stream that is output from the XSens AMRS.}
 
-\item{\code{MethQf}}{Switch for quality flag determination for the XSens AMRS, diag32 provides ones for passing quality by default the equals "xsen". The "qfqm" method changes the ones to zeros to match the NEON QFQM logic for certain flags that are set high when good, qfAmrsVal & qfAmrsFilt.}
+\item{MethQf}{Switch for quality flag determination for the XSens AMRS, diag32 provides ones for passing quality by default the equals "xsen". The "qfqm" method changes the ones to zeros to match the NEON QFQM logic for certain flags that are set high when good, qfAmrsVal & qfAmrsFilt.}
 }
 \value{
 A dataframe (\code{qfSoniAmrs}) of sensor specific AMRS quality flags as described in NEON.DOC.000807.

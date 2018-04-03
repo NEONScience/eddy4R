@@ -6,11 +6,11 @@
 
 #' @description 
 #' Workflow. File to create fake flags for soni to test the QAQC test
-#' @param \code{TimeBgn} is the beginning time of the period to generate flags.
-#' @param \code{TimeEnd} is the end time of the period to generate flags.
-#' @param \code{Freq} is the measurement frequency used to generate flags.
-#' @param \code{Sens} is ECTE sensor assembly name for which the flags are being generated.
-#' @param \code{PcntQf} is percentage of observations that should be flagged.
+#' @param TimeBgn is the beginning time of the period to generate flags.
+#' @param TimeEnd is the end time of the period to generate flags.
+#' @param Freq is the measurement frequency used to generate flags.
+#' @param Sens is ECTE sensor assembly name for which the flags are being generated.
+#' @param PcntQf is percentage of observations that should be flagged.
 
 #' @return Currently none.
 
@@ -36,6 +36,8 @@
 #     original creation
 #   Natchaya P-Durden (2016-12-05)
 #     edited term name
+#   Natchaya P-Durden (2018-04-03)
+#     update @param format
 ##############################################################################################
 
 def.qf.ecte <- function(

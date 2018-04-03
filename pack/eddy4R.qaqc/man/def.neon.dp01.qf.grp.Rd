@@ -10,16 +10,16 @@ def.neon.dp01.qf.grp(qfInput = list(), MethMeas = c("ecte", "ecse")[1],
   "tempAirTop")[1], idGas = NULL)
 }
 \arguments{
-\item{\code{qfInput}}{A list of data frame containing the input quality flag data that related to L1 data products are being grouped. Of class integer". [-]}
+\item{qfInput}{A list of data frame containing the input quality flag data that related to L1 data products are being grouped. Of class integer". [-]}
 
-\item{\code{MethMeas}}{A vector of class "character" containing the name of measurement method (eddy-covariance turbulent exchange or storage exchange), MethMeas = c("ecte", "ecse"). Defaults to "ecse". [-]}
+\item{MethMeas}{A vector of class "character" containing the name of measurement method (eddy-covariance turbulent exchange or storage exchange), MethMeas = c("ecte", "ecse"). Defaults to "ecse". [-]}
 
-\item{\code{TypeMeas}}{A vector of class "character" containing the name of measurement type (sampling or validation), TypeMeas = c("samp", "ecse"). Defaults to "samp". [-]}
+\item{TypeMeas}{A vector of class "character" containing the name of measurement type (sampling or validation), TypeMeas = c("samp", "ecse"). Defaults to "samp". [-]}
 
-\item{\code{dp01}}{A vector of class "character" containing the name of NEON ECTE and ECSE L1 data products which the flags are being grouped, \cr
+\item{dp01}{A vector of class "character" containing the name of NEON ECTE and ECSE L1 data products which the flags are being grouped, \cr
 c("envHut", "co2Turb", "h2oTurb", "isoCo2", "isoH2o", "soni", "amrs", "tempAirLvl", "tempAirTop"). Defaults to "co2Turb". [-]}
 
-\item{\code{idGas}}{A data frame contianing gas ID for isoCo2 measurement. Need to provide when dp01 = "isoCo2". Default to NULL. [-]}
+\item{idGas}{A data frame contianing gas ID for isoCo2 measurement. Need to provide when dp01 = "isoCo2". Default to NULL. [-]}
 }
 \value{
 A list of data frame of the quality flags related to that sub-data product. \cr
