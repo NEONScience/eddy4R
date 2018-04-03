@@ -7,9 +7,9 @@
 def.ssi.diff(ssiCo2, ssiH2o)
 }
 \arguments{
-\item{\code{ssiCo2}}{A vector containing the CO2 signal strength, of class "numeric". [unitless]}
+\item{ssiCo2}{A vector containing the CO2 signal strength, of class "numeric". [unitless]}
 
-\item{\code{ssiH2o}}{A vector containing the H2O signal strength, of class "numeric". [unitless]}
+\item{ssiH2o}{A vector containing the H2O signal strength, of class "numeric". [unitless]}
 }
 \value{
 The returned object is the signal strength difference between the CO2 signal strength and the H2O signal strength.

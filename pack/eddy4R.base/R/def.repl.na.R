@@ -7,10 +7,10 @@
 #' @description  Defination Function to two combine daily files into one file, replacing NA with previous value, and divide file back into daily.\cr
 #' Specific for pump and soleniod valves.
 
-#' @param \code{dataProcDate} A dataframe containing data and time in the processing date. [User-defined]
-#' @param \code{dataBgnDate} A dataframe containing data and time in the day before processing date. [User-defined]
-#' @param \code{Date} Character: Processing date e.g. "20170521". [-]
-#' @param \code{numCol} Numeric: Define which column number in \code{dataProcDate} and \code{dataBgnDate} are being process. [-]
+#' @param dataProcDate A dataframe containing data and time in the processing date. [User-defined]
+#' @param dataBgnDate A dataframe containing data and time in the day before processing date. [User-defined]
+#' @param Date Character: Processing date e.g. "20170521". [-]
+#' @param numCol Numeric: Define which column number in \code{dataProcDate} and \code{dataBgnDate} are being process. [-]
 
 #' @return A dataframe including the data and time in the processing date which NA values have been replaced by previous value. [User-defined]
 
@@ -30,6 +30,8 @@
 #     original creation
 #   Natchaya P-Durden (2018-03-28)
 #     update license
+#   Natchaya P-Durden (2018-04-03)
+#     update @param format
 ##############################################################################################
 def.repl.na <- function(
   dataProcDate,

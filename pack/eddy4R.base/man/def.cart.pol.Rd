@@ -7,7 +7,7 @@
 def.cart.pol(az)
 }
 \arguments{
-\item{\code{az}}{vector of type numeric, clockwise azimuth angle with 0 / 360 degree discontinuity in north [decimal degrees]}
+\item{az}{vector of type numeric, clockwise azimuth angle with 0 / 360 degree discontinuity in north [decimal degrees]}
 }
 \value{
 matrix consisting of unit vectors X (1st column, -1 ... 1, positive to north) and Y (2nd column, -1 ... 1, positive to east)

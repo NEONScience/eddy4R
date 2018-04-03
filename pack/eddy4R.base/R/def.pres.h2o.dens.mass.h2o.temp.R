@@ -7,8 +7,8 @@
 
 #' @description Calculate water pressure from absolute humidity and ambient temperature.
 
-#' @param \code{densMassH2o} Either a vector or an object of class numeric of absolute humidity and of the same length as \code{temp}. [kg m-3]
-#' @param \code{temp} Either a vector or an object of class numeric of measured air temperature and of the same length as \code{densMassH2o}. [K]
+#' @param densMassH2o Either a vector or an object of class numeric of absolute humidity and of the same length as \code{temp}. [kg m-3]
+#' @param temp Either a vector or an object of class numeric of measured air temperature and of the same length as \code{densMassH2o}. [K]
 
 #' @return Water vapor pressure and of the same length as \code{densMassH2o} and \code{temp}. [Pa]
 
@@ -34,6 +34,8 @@
 #     Initail naming convention for eddy4R
 #   Natchaya P-Durden (2016-11-30)
 #     rename function to def.pres.h2o.dens.mass.h2o.temp()
+#   Natchaya P-Durden (2018-03-04)
+#     update @param format
 ##############################################################################################
 
 def.pres.h2o.dens.mass.h2o.temp <- function(densMassH2o, temp)  {

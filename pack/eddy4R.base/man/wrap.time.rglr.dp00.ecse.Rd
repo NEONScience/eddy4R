@@ -8,19 +8,19 @@ wrap.time.rglr.dp00.ecse(DirIn, Date, Site = "CPER", Dom = "D10", Freq,
   IdDp00, horVer)
 }
 \arguments{
-\item{\code{DirIn}}{Character: Input directory. [-]}
+\item{DirIn}{Character: Input directory. [-]}
 
-\item{\code{Date}}{Character: Processing date e.g. "20170521". [-]}
+\item{Date}{Character: Processing date e.g. "20170521". [-]}
 
-\item{\code{Site}}{Character: Site location. [-]}
+\item{Site}{Character: Site location. [-]}
 
-\item{\code{Dom}}{Character: Domain. [-]}
+\item{Dom}{Character: Domain. [-]}
 
-\item{\code{Freq}}{Desired frequency of  the regularized dataset. Of class "numeric" or "integer". [Hz]}
+\item{Freq}{Desired frequency of  the regularized dataset. Of class "numeric" or "integer". [Hz]}
 
-\item{\code{IdDp00}}{Character: dp00 data product number. [-]}
+\item{IdDp00}{Character: dp00 data product number. [-]}
 
-\item{\code{horVer}}{Character: Horizontal and vertical location of dp00. [-]}
+\item{horVer}{Character: Horizontal and vertical location of dp00. [-]}
 }
 \value{
 A dataframe including the regularized dp00. [User-defined]

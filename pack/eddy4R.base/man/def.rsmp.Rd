@@ -7,15 +7,15 @@
 def.rsmp(data, FreqInp, FreqOut, MethRsmp, ColDisc = NULL)
 }
 \arguments{
-\item{\code{data}}{A vector or matrix of type numeric, containing the data to be resampled. [user-defined]}
+\item{data}{A vector or matrix of type numeric, containing the data to be resampled. [user-defined]}
 
-\item{\code{FreqInp}}{Input sampling or measurements frequency. Of class "numeric" or "integer". [Hz]}
+\item{FreqInp}{Input sampling or measurements frequency. Of class "numeric" or "integer". [Hz]}
 
-\item{\code{FreqOut}}{Desired out put frequency. Of class "numeric" or "integer". [Hz]}
+\item{FreqOut}{Desired out put frequency. Of class "numeric" or "integer". [Hz]}
 
-\item{\code{MethRsmp}}{An object of class "character" containing the resampling method ("zoo","filt"). [-]}
+\item{MethRsmp}{An object of class "character" containing the resampling method ("zoo","filt"). [-]}
 
-\item{\code{ColDisc}}{Specific column in \code{data} which containing the discontinuity variable e.g. azimuth angle of wind direction. Of class "numeric" (column number) or "character" (column name). Defaults to NULL. [-]}
+\item{ColDisc}{Specific column in \code{data} which containing the discontinuity variable e.g. azimuth angle of wind direction. Of class "numeric" (column number) or "character" (column name). Defaults to NULL. [-]}
 }
 \value{
 Data frame of resampling data and of the same number of variables as \code{data}. [user-defined]

@@ -7,8 +7,8 @@
 
 #' @description Function definition. Calculate the wet mass fraction (specific humidity) of air mixture from mole density of water vapor and mole density of dry air 
 
-#' @param \code{densMoleH2o} A vector containing mole density of water vapor, of class "numeric". [molH2o m-3]
-#' @param \code{densMoleAirDry} A vector containing the mole density of dry air, of class "numeric". [mol m-3]
+#' @param densMoleH2o A vector containing mole density of water vapor, of class "numeric". [molH2o m-3]
+#' @param densMoleAirDry A vector containing the mole density of dry air, of class "numeric". [mol m-3]
 
 #' @return 
 #' The returned object is wet mass fraction (specific humidity)  
@@ -38,6 +38,8 @@
 #     original creation
 #   Hongyan Luo (2016-11-20)
 #     adjust to eddy4R coding style
+#   Natchaya P-Durden (2018-04-03)
+#     update @param format
 ###############################################################################################
 
 # Function to calculate the wet mass fraction (specific humidity) of air misxture from mole density of water vapor and mole density of dry air 

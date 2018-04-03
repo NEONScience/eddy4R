@@ -7,9 +7,9 @@
 def.para.hdf5.dp01(FileIn, FileOut)
 }
 \arguments{
-\item{\code{FileIn}}{is the input file where the parameters are being read from.}
+\item{FileIn}{is the input file where the parameters are being read from.}
 
-\item{\code{FileOut}}{is the output file where the parameters are being written to.}
+\item{FileOut}{is the output file where the parameters are being written to.}
 }
 \value{
 A NEON formatted HDF5 file that has parameters from the input file written to the output HDF5 file.

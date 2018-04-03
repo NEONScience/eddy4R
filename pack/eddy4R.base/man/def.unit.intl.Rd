@@ -7,9 +7,8 @@
 def.unit.intl(unit)
 }
 \arguments{
-\item{\code{unit}}{Required. A single character string providing the compount unit, constructed
-with the rules specified in eddy4R.base::def.unit.info.R. \cr
-#'}
+\item{unit}{Required. A single character string providing the compount unit, constructed
+with the rules specified in eddy4R.base::def.unit.info.R. \cr}
 }
 \value{
 A single character string specifying the corresponding eddy4R internal unit.

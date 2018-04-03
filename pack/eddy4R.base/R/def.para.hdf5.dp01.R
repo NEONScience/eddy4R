@@ -7,8 +7,8 @@
 #' @description 
 #' Definition function. Function recreates the metadata from an HDF5 file to another HDF5 file with the same group heirarchy structure.
 
-#' @param \code{FileIn} is the input file where the parameters are being read from.
-#' @param \code{FileOut} is the output file where the parameters are being written to.
+#' @param FileIn is the input file where the parameters are being read from.
+#' @param FileOut is the output file where the parameters are being written to.
 
 
 #' @return A NEON formatted HDF5 file that has parameters from the input file written to the output HDF5 file. 
@@ -30,7 +30,8 @@
 # changelog and author contributions / copyrights
 #   Dave Durden (2016-02-12)
 #     original creation
-
+#   Natchaya P-Durden (2018-04-03)
+#     update @param format
 ##############################################################################################################
 #Start of function call to read metadata from one file and write to another
 ##############################################################################################################

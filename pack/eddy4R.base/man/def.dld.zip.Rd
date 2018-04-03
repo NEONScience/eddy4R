@@ -7,11 +7,11 @@
 def.dld.zip(Inp = list(Url, Dir = tempdir()))
 }
 \arguments{
-\item{\code{Inp}}{The input parameter list containing \code{Url} and \code{Dir}.}
+\item{Inp}{The input parameter list containing \code{Url} and \code{Dir}.}
 
-\item{\code{Url}}{The internet address, of class "character". For use with Dropbox, Google Drive, OneNote... the \href{https://www.google.com/search?q=Direct+Link+Generator}{direct download link} needs to be used. For example in case of Dropbox the web address needs to end on ...dl=1.}
+\item{Url}{The internet address, of class "character". For use with Dropbox, Google Drive, OneNote... the \href{https://www.google.com/search?q=Direct+Link+Generator}{direct download link} needs to be used. For example in case of Dropbox the web address needs to end on ...dl=1.}
 
-\item{\code{Dir}}{The target directory, of class "character".}
+\item{Dir}{The target directory, of class "character".}
 }
 \value{
 The function saves the extracted .zip archive into the directory \code{Dir}. Currently no values are returned to the environment it is called from.

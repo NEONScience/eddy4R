@@ -7,8 +7,8 @@
 #' @description 
 #' Wrapper function. Compute NEON Level 1 data product descriptive statistics (mean, minimum, maximum, variance, number of non-NA points) across list elements. 
 
-#' @param \code{data} A data.frame or list containing the L0p (calibrated) input data at native resolution. Of type numeric or integer. [-]
-#' @param \code{idx} If data is a list, which list entries should be processed into Level 1 data products? Defaults to NULL which expects data to be a data.frame. Of type character. [-]
+#' @param data A data.frame or list containing the L0p (calibrated) input data at native resolution. Of type numeric or integer. [-]
+#' @param idx If data is a list, which list entries should be processed into Level 1 data products? Defaults to NULL which expects data to be a data.frame. Of type character. [-]
 
 #' @return Descriptive statistics, for \code{vrbs = FALSE} a data frame and for \code{vrbs = TRUE} a list:\cr
 #' \code{mean} The mean of non-NA values in \code{data}
@@ -64,6 +64,8 @@
 #     Adding calculations for wind direction
 #   David Durden (2017-06-10)
 #     Adding fix for infinite min and max wind direction
+#   Natchaya P-Durden (2018-04-03)
+#     update @param format
 ##############################################################################################
 
 

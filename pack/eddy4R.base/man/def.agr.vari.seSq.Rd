@@ -7,11 +7,11 @@
 def.agr.vari.seSq(data = data.frame(mean, vari))
 }
 \arguments{
-\item{\code{data}}{Dataframe of type numeric containing column vectors \code{mean} and \code{vari} of equal length.}
+\item{data}{Dataframe of type numeric containing column vectors \code{mean} and \code{vari} of equal length.}
 
-\item{\code{mean}}{Vector of type numeric. Means of the variable of interest at finer resolution, e.g. minutely [user-defined].}
+\item{mean}{Vector of type numeric. Means of the variable of interest at finer resolution, e.g. minutely [user-defined].}
 
-\item{\code{vari}}{Vector of type numeric. Variances of the variable of interest at finer resolution, e.g. minutely [user-defined^2].}
+\item{vari}{Vector of type numeric. Variances of the variable of interest at finer resolution, e.g. minutely [user-defined^2].}
 }
 \value{
 Returns a list containing mean \code{mean}, external variance \code{variExt}, internal variance \code{variIntl}, total variance \code{variTota}, and squared standard error \code{seSq} at coarser resolution, e.g. hourly when \code{data} contains 60 minutely values.

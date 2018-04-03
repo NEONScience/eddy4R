@@ -7,16 +7,16 @@
 def.conv.poly(data, coefPoly = c(0, 1), MethGc = TRUE)
 }
 \arguments{
-\item{\code{data}}{Required. A vector or matrix of type numeric, containing the data to be converted}
+\item{data}{Required. A vector or matrix of type numeric, containing the data to be converted}
 
-\item{\code{coefPoly}}{Optional. A vector of type numeric, containing the polynomial 
+\item{coefPoly}{Optional. A vector of type numeric, containing the polynomial 
 coefficients (in increasing order) to apply to \code{data}. 
 This is a numerical vector of [a0 a1 a2 a3 ...] signifying the 
 coeficients of the equation a0 + a1*x + a2*x^2 + a3*x^3 ... , where x is the input data.
 Default is c(0,1).
 \cr}
 
-\item{\code{MethGc}}{is set to \code{TRUE} (default), to run garbage collection function.}
+\item{MethGc}{is set to \code{TRUE} (default), to run garbage collection function.}
 }
 \value{
 A vector or matrix, matching the format of \code{data} containing the data with 

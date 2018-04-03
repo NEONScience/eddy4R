@@ -7,8 +7,8 @@
 
 #' @description Function definition. Calculation of the average temperature in LI-7200 IRGA cell
 
-#' @param \code{tempIn} A vector containing the tempertaure measured at IRGA cell inlet, of class "numeric". [K]
-#' @param \code{tempOut} A vector containing the tempertaure measured at IRGA cell outlet, of class "numeric". [K]
+#' @param tempIn A vector containing the tempertaure measured at IRGA cell inlet, of class "numeric". [K]
+#' @param tempOut A vector containing the tempertaure measured at IRGA cell outlet, of class "numeric". [K]
 
 #' @return 
 #' The returned object is the the average temperature in LI-7200 IRGA cell calculated from the temperatrue at IRGA cell inlet and the temperature at IRGA cell outlet.  
@@ -38,6 +38,8 @@
 #     original creation
 #   Hongyan Luo (2016-10-23)
 #     adjust to eddy4R coding style
+#   Natchaya P-Durden (2018-04-03)
+#     update @param format
 ###############################################################################################
 # average temperature in LI-7200 irga cell
 def.temp.mean.7200 <- function(

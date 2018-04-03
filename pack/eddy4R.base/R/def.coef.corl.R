@@ -7,7 +7,7 @@
 
 #' @description Function definition. Determine coriolis coefficient.
 
-#' @param \code{lat} Required. Latitude [degrees North]
+#' @param lat Required. Latitude [degrees North]
 
 #' @return Coriolis coefficient for \code{lat} [rad s-1].
 
@@ -32,6 +32,8 @@
 #     adjusted used of natural constants used within function to call internal package data
 #   Natchaya P-Durden (2018-03-28)
 #     removed comment lines from the header
+#   Natchaya P-Durden (2018-04-03)
+#     update @param format
 ##############################################################################################
 
 def.coef.corl <- function(lat) {
