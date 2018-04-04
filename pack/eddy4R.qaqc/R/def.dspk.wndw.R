@@ -29,7 +29,7 @@
 #' \code{data}: the despiked data matrix \cr
 #' \code{smmy}: a summary of the despike algorithm results, including iterations (\code{iter}), determined spikes (\code{news}), and total resultant NAs (\code{alls}) \cr
 #' And one of the following:
-#' \code{posSpk}: output if \code{Vrbs} is FALSE. A list of each input variable, with nested lists of $posQfSpk$fail and $posQfSpk$na vector positions of determined spikes and 'cannot evaluate' positions, respectively. This output format is identical to def.plau
+#' \code{posSpk}: output if \code{Vrbs} is FALSE. A list of each input variable, with nested lists of $setQfSpk$fail and $setQfSpk$na vector positions of determined spikes and 'cannot evaluate' positions, respectively. This output format is identical to def.plau
 #' \code{qfSpk}: output if \code{Vrbs} is TRUE. A data frame the same size as data with the quality flag values [-1,0,1] for each input variable
 
 #' @references
@@ -70,6 +70,8 @@
 #        under each variable rather than each variable nested under the lists of failed and na results 
 #   Natchaya P-Durden (2018-04-03)
 #     update @param format
+#   Natchaya P-Durden (2018-04-04)
+#    applied eddy4R term name convention; replaced posQf by setQf
 ##############################################################################################
 
 
@@ -118,10 +120,10 @@ def.dspk.wndw <- function (
     trns <- mat[,idxVar]
     
     # initialize fail and na spike positions for this variable
-    posSpk[[idxVar]] <- list(posQfSpk=list(fail=numeric(0),na=numeric(0)))
+    posSpk[[idxVar]] <- list(setQfSpk=list(fail=numeric(0),na=numeric(0)))
     
     # Store na positions as "unable to evaluate" spikes
-    posSpk[[idxVar]]$posQfSpk$na <- which(is.na(trns))
+    posSpk[[idxVar]]$setQfSpk$na <- which(is.na(trns))
     
     if(Trt$NaTrt == "approx") {
       trns <- approx(x=index(trns), y=trns, xout=index(trns))$y
@@ -257,7 +259,7 @@ def.dspk.wndw <- function (
                 posSpkPrlm <- base:::sort(unique(c(posSpkPrlm, posSpkNew)))
                 
               }
-              posSpk[[idxVar]]$posQfSpk$na <- base:::sort(unique(c(posSpk[[idxVar]]$posQfSpk$na,posNaSpkNew)))
+              posSpk[[idxVar]]$setQfSpk$na <- base:::sort(unique(c(posSpk[[idxVar]]$setQfSpk$na,posNaSpkNew)))
             
           }
   
@@ -328,7 +330,7 @@ def.dspk.wndw <- function (
     }
   
   #store result
-    posSpk[[idxVar]]$posQfSpk$fail <- posSpkVar
+    posSpk[[idxVar]]$setQfSpk$fail <- posSpkVar
     mat[posSpkVar,idxVar] <- NA
     smmyOutVar <- as.matrix(c(iter, length(posSpkVar), length(which(is.na(mat[,idxVar])))))
     dimnames(smmyOutVar)[[1]] <- c("iter", "news", "alls")
@@ -346,7 +348,7 @@ def.dspk.wndw <- function (
   
     # For Verbose option, output actual flag values
     if(Vrbs) {
-      qfSpk[[idxVar]][posSpk[[idxVar]]$posQfSpk$na] <- -1 # flag na values
+      qfSpk[[idxVar]][posSpk[[idxVar]]$setQfSpk$na] <- -1 # flag na values
       qfSpk[[idxVar]][posSpkVar] <- 1 # flag failed values
     } 
     

@@ -45,6 +45,8 @@
 #   Cove Sturtevant (2016-11-22)
 #     added default functionality for naming of output quality metrics
 #     adjusted output of quality metrics to fractions (previously percentage)
+#   Natchaya P-Durden (2018-04-04)
+#    applied eddy4R term name convention; replaced posQf by setQf
 ##############################################################################################
 def.qm <- function (
   qf, # A data frame of quality flags, class integer. Each column contains the quality flag values [-1,0,1] for that flag. Note: This is the Vrbs output from def.plau, def.dspk.wndw, and def.dspk.br86
@@ -80,13 +82,13 @@ def.qm <- function (
     
     tmp <- nameQmOut[idxQf]
     
-    # Get rid of "qf" or "posQf" (if using default naming)
+    # Get rid of "qf" or "setQf" (if using default naming)
     if (flagNameOut && (base::regexpr(pattern="qf",text=tmp,ignore.case=FALSE)[1] == 1 || 
-                        base::regexpr(pattern="posQf",text=tmp,ignore.case=FALSE)[1] == 1)) {
+                        base::regexpr(pattern="setQf",text=tmp,ignore.case=FALSE)[1] == 1)) {
       tmp <- base::sub(pattern="qf", replacement="", x=tmp, ignore.case = FALSE, perl = FALSE,
                  fixed = FALSE, useBytes = FALSE)
       
-      tmp <- base::sub(pattern="posQf", replacement="", x=tmp, ignore.case = FALSE, perl = FALSE,
+      tmp <- base::sub(pattern="setQf", replacement="", x=tmp, ignore.case = FALSE, perl = FALSE,
                  fixed = FALSE, useBytes = FALSE)
       
       tmp <- base::paste0("qm",tools::toTitleCase(tmp),collapse="")

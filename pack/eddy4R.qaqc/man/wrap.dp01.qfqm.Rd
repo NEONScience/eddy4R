@@ -6,7 +6,7 @@
 \usage{
 wrap.dp01.qfqm(data, time = base::as.POSIXlt(base::seq.POSIXt(from =
   base::Sys.time(), by = "sec", length.out = base::length(data[, 1]))),
-  posQf = base::vector("list", base::length(data)),
+  setQf = base::vector("list", base::length(data)),
   qf = base::vector("list", base::length(data)), WndwAgr = 1800 *
   stats::median(base::abs(base::diff(time)), na.rm = TRUE), TimeBgn = NULL,
   TimeEnd = NULL, NameQfExcl = base::as.list(base::character(length =
@@ -17,9 +17,9 @@ wrap.dp01.qfqm(data, time = base::as.POSIXlt(base::seq.POSIXt(from =
 
 \item{time}{Optional. A time vector of class POSIXlt of times corresponding with each row in data. Defaults to an evenly spaced time vector starting from system time of execution by seconds.}
 
-\item{posQf}{Optional. Only input ONE of either \code{posQf} or \code{qf}. # A named list of variables matching those in data, each itself a named list of flags (standard or user-defined names), with nested lists of $fail and $na vector positions of failed and na quality tests for that variable and flag (eg. posQf$X$posQfStep$fail and posQf$Y$posQfStep$na). Aggregated quality flags and metrics will be computed for all flags in this list, and all will be used to compute the final quality flag. This function directly accepts the output from def.plaus.R and def.dspk.wndw.R. Defaults to an empty flag list.}
+\item{setQf}{Optional. Only input ONE of either \code{setQf} or \code{qf}. # A named list of variables matching those in data, each itself a named list of flags (standard or user-defined names), with nested lists of $fail and $na vector positions of failed and na quality tests for that variable and flag (eg. setQf$X$setQfStep$fail and setQf$Y$setQfStep$na). Aggregated quality flags and metrics will be computed for all flags in this list, and all will be used to compute the final quality flag. This function directly accepts the output from def.plaus.R and def.dspk.wndw.R. Defaults to an empty flag list.}
 
-\item{qf}{Optional. Only input ONE of either \code{posQf} or \code{qf}. A list of variables matching those in data, each containing a data frame of quality flags for that variable. Number of rows must match that of \code{data}}
+\item{qf}{Optional. Only input ONE of either \code{setQf} or \code{qf}. A list of variables matching those in data, each containing a data frame of quality flags for that variable. Number of rows must match that of \code{data}}
 
 \item{WndwAgr}{Optional. A difftime object of length 1 specifying the time interval for aggregating the data and flags of each variable. Defaults to 1800 x median observed time difference. Class difftime can be generated using as.difftime. If \code{WndwAgr} is < 1}
 
@@ -27,13 +27,13 @@ wrap.dp01.qfqm(data, time = base::as.POSIXlt(base::seq.POSIXt(from =
 
 \item{TimeEnd}{Optional. A POSIXlt vector of length 1 indicating the time to end aggregation (non-inclusive). If unspecified, defaults to the end of the last aggregation window containing data values as constructed from \code{WndwAgr} and \code{TimeBgn}}
 
-\item{NameQfExcl}{Optional. A list of length equal to number of variables, each itself a vector of character strings naming the flags (matching a subset of posQf or qf) for which to exclude the flagged indices of each variable from the L1 average. Eg. \code{NameQfExcl} <- list(x=c("posQfRng","posQfStep"),y=c("posQfPers","posQfNull","posQfGap")). Note that variables in the list must be in the same order as those in data. Defaults to an empty list (flagged points are not excluded from the L1 average).}
+\item{NameQfExcl}{Optional. A list of length equal to number of variables, each itself a vector of character strings naming the flags (matching a subset of setQf or qf) for which to exclude the flagged indices of each variable from the L1 average. Eg. \code{NameQfExcl} <- list(x=c("setQfRng","setQfStep"),y=c("setQfPers","setQfNull","setQfGap")). Note that variables in the list must be in the same order as those in data. Defaults to an empty list (flagged points are not excluded from the L1 average).}
 }
 \value{
 A list of: \cr
 timeAgrBgn - the starting time stamp of aggregated L1 data and quality metrics \cr
 timeAgrEnd - the ending time stamp (non-inclusive) of aggregated L1 data and quality metrics
-dataAgr - a list of variables, each containing a data frame of the time-aggregated mean, minimum, maximum, variance, number of points going into the average, and quality metrics (pass, fail, NA) pertaining to that variable for each flag in posQf, as well as the alpha & beta quality metrics and final quality flag.
+dataAgr - a list of variables, each containing a data frame of the time-aggregated mean, minimum, maximum, variance, number of points going into the average, and quality metrics (pass, fail, NA) pertaining to that variable for each flag in setQf, as well as the alpha & beta quality metrics and final quality flag.
 }
 \description{
 Function wrapper. Aggregates Level 0' (calibrated raw) data and accompanying quality flags and metrics into a basic time-aggregated L1 data product, including descriptive statics, quality metrics, and final quality flag.
