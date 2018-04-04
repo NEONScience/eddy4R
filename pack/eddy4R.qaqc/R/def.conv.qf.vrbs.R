@@ -7,10 +7,10 @@
 #' @description 
 #' Function definition. Convert from the non-verbose option (vector positions of failed and na test results) of quality test algorithms to the verbose output (actual quality flag values).  
 
-#' @param posQf A named list of variables, each itself a named list of flags (standard or user-defined names), with nested lists of $fail and $na vector positions of failed and na quality tests for that variable and flag (eg. posQf$X$posQfStep$fail and posQf$Y$posQfStep$na).
-#' @param numRow A single integer indicating the number of rows in the original data from which the quality test results in \code{posQf} were derived
+#' @param setQf A named list of variables, each itself a named list of flags (standard or user-defined names), with nested lists of $fail and $na vector positions of failed and na quality tests for that variable and flag (eg. setQf$X$setQfStep$fail and setQf$Y$setQfStep$na).
+#' @param numRow A single integer indicating the number of rows in the original data from which the quality test results in \code{setQf} were derived
 
-#' @return A list of variables matching those in \code{posQf}, each containing a data frame of quality flags for that variable. Number of rows match that of \code{numRow} 
+#' @return A list of variables matching those in \code{setQf}, each containing a data frame of quality flags for that variable. Number of rows match that of \code{numRow} 
 
 #' @references
 #' License: GNU AFFERO GENERAL PUBLIC LICENSE Version 3, 19 November 2007
@@ -18,8 +18,8 @@
 #' @keywords quality flag
 
 #' @examples 
-#' posQf <- list(var01=list(qfRng = list(fail=c(2,5),na=c(3,10)),qfStep = list(fail=numeric(0),na=c(3,4,10)))) # non-verbose output from quality testing
-#' qf <- def.conv.qf.vrbs(posQf=posQf,numRow=10) # Convert to quality flag values
+#' setQf <- list(var01=list(qfRng = list(fail=c(2,5),na=c(3,10)),qfStep = list(fail=numeric(0),na=c(3,4,10)))) # non-verbose output from quality testing
+#' qf <- def.conv.qf.vrbs(setQf=setQf,numRow=10) # Convert to quality flag values
 
 #' @seealso 
 #' \code{\link[eddy4R.qaqc]{def.plau}}
@@ -30,13 +30,15 @@
 # changelog and author contributions / copyrights 
 #   Cove Sturtevant (2016-11-22)
 #     original creation 
+#   Natchaya P-Durden (2018-04-04)
+#    applied eddy4R term name convention; replaced posQf by setQf
 ##############################################################################################
 def.conv.qf.vrbs <- function (
-  posQf,
+  setQf,
   numRow
 ) {
   
-  nameVar <- base::names(posQf)
+  nameVar <- base::names(setQf)
   numVar <- base::length(nameVar)
   
   qf <- base::vector("list",numVar) # Initialize
@@ -45,16 +47,16 @@ def.conv.qf.vrbs <- function (
   for (idxVar in nameVar) {
     
     # Intialize flags for this variable
-    numQf <- base::length(posQf[[idxVar]])
+    numQf <- base::length(setQf[[idxVar]])
     qf[[idxVar]] <- base::as.data.frame(base::matrix(0,ncol=numQf,nrow=numRow)) # Intialize quality flags with all 0
-    nameQf <- base::names(posQf[[idxVar]])
+    nameQf <- base::names(setQf[[idxVar]])
     base::names(qf[[idxVar]]) <- nameQf
     
     for (idxQf in nameQf) {
       
       # Assign quality flags for failed & na vector positions
-      posFail <- posQf[[idxVar]][[idxQf]]$fail
-      posNa <- posQf[[idxVar]][[idxQf]]$na
+      posFail <- setQf[[idxVar]][[idxQf]]$fail
+      posNa <- setQf[[idxVar]][[idxQf]]$na
       qf[[idxVar]][posFail,idxQf] <- 1 # fail
       qf[[idxVar]][posNa,idxQf] <- -1 # na
       
