@@ -32,6 +32,8 @@
 #     adding functionality to grab Loc parameter from file structure
 #   Dave Durden (2017-09-22)
 #     Allow function to grab more than one level
+#   Dave Durden (2018-04-09)
+#     Allow function to grab MDxx (MDP deployment) site locations
 
 ##############################################################################################################
 #Start of function call to determine tower top level
@@ -51,7 +53,7 @@ def.para.site <- function(
   listPara <- rhdf5::h5ls(FileInp, datasetinfo = FALSE)
   
   #Grab site location code parameter (Loc) from the HDF5 file structure 
-  rpt$Loc <- listPara[grepl(pattern = "^[[:upper:]]+$",x =  listPara$name), "name"]
+  rpt$Loc <- listPara[grepl(pattern = "^[[:upper:]]+$|MD[0-9][0-9]",x =  listPara$name), "name"]
   
   #Grab the group level for tower levels
   rpt$LevlTowr <- unique(listPara[grep("^000_[0-9][0-9][0-9]$",listPara$name),"name"])
