@@ -35,6 +35,8 @@
 #     removed comment lines from the header
 #   Natchaya P-Durden (2018-03-30)
 #     applied term name convention; replace Levl by Lvl
+#   David Durden (2018-04-02)
+#     fix for missing timeEnd
 ##############################################################################################
 
 def.hdf5.wrte.dp01.api <- function(
@@ -70,6 +72,15 @@ if(substr(DpName, 1, 4) == "temp"){TblName <- substr(DpName, 1, 4)}
 # Grab 30 minute data to be written
 data <- Noble::pull.date(site = SiteLoca, dpID = DpNum, bgn.date = timeBgn, end.date = timeEnd, package = "expanded", time.agr = TimeAgr) #Currently requires to subtract 1 minute otherwise (1 index will be cut from the beginning)
 
+#Convert times to POSIXct
+data$startDateTime <- as.POSIXct(data$startDateTime)
+data$endDateTime <- as.POSIXct(data$endDateTime)
+
+#Set of times where endDateTime is NA
+setNa <- which(is.na(data$endDateTime))
+
+#Set the endDateTime values based off of startDateTime and TimeAgr (aggregation period)
+data$endDateTime[setNa] <- data$startDateTime[setNa] + lubridate::minutes(TimeAgr)
 
 #replace NA with NaN
 data[is.na(data)] <- NaN
