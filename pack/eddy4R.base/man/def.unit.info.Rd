@@ -33,12 +33,12 @@ A named list of vectors, each of length N, where N is the number of base units
 making up the compound unit. For example, umolCO2 m-2 s-1 has 3 base units (mol, m, s): \cr
 type: the abbreviated character string denoting unit type (e.g. "dist" for distance)
 base: the base unit character symbol as listed in eddy4R.base::IntlUnit$Base$Symb
-posBase: the integer list position in eddy4R.base::IntlUnit$Base$Symb corresponding to the base unit
+setBase: the integer list position in eddy4R.base::IntlUnit$Base$Symb corresponding to the base unit
 prfx: the unit prefix character(s) as listed in eddy4R.base::IntlUnit$Prfx
-posPrfx: the integer list position in eddy4R.base::IntlUnit$Prfx corresponding to the unit prefix
+setPrfx: the integer list position in eddy4R.base::IntlUnit$Prfx corresponding to the unit prefix
 sufx: the numerical unit suffix (i.e. the power to which the unit is raised)
 spcs: a character string of the chemical species as listed in eddy4R.base::Unit$Spcs
-posSpcs: the integer list position in eddy4R.base::IntlUnit$Spcs corresponding to the chemical species
+setSpcs: the integer list position in eddy4R.base::IntlUnit$Spcs corresponding to the chemical species
 }
 \description{
 Function definition. Interpret a compound unit string, identifying the matching entries
