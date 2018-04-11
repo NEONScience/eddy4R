@@ -48,6 +48,8 @@
 #     update to eddy4R terms
 #   Natchaya P-Durden (2018-04-03)
 #     update @param format
+#   Natchaya P-Durden (2018-04-11)
+#    applied eddy4R term name convention; replaced pos by idx
 ##############################################################################################
 
 
@@ -126,16 +128,16 @@ def.lag <- function(
       #discard two filter lengths from start and end        
       filtTmp <- -c(1:(freq/freqThsh * 3), (length(refe)-(freq/freqThsh * 3)):length(refe)) 
       #actual application
-      posRefe <- signal::filtfilt(filt, refe)[filtTmp]
+      idxRefe <- signal::filtfilt(filt, refe)[filtTmp]
       #           plot(refe[filtTmp], type="l")
-      #           lines(I(posRefe + mean(refe)), col=2)
-      posMeas <- signal::filtfilt(filt, meas)[filtTmp]
+      #           lines(I(idxRefe + mean(refe)), col=2)
+      idxMeas <- signal::filtfilt(filt, meas)[filtTmp]
       #           plot(meas[filtTmp], type="l")
-      #           lines(I(posMeas + mean(meas[filtTmp])), col=2)
+      #           lines(I(idxMeas + mean(meas[filtTmp])), col=2)
       
       #assign results
-      refe <- posRefe
-      meas <- posMeas
+      refe <- idxRefe
+      meas <- idxMeas
       
       #clean up
       rm(filtTmp)
