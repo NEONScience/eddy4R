@@ -35,6 +35,8 @@
 #     Changing output naming convention to qfIrgaTurb
 #   Natchaya P-Durden (2018-04-03)
 #     update @param format
+#   Natchaya P-Durden (2018-04-11)
+#    applied eddy4R term name convention; replaced pos by set
 ##############################################################################################
 
 
@@ -50,7 +52,7 @@ def.qf.irga <- function(diag01, MethQf = c("qfqm","lico")[1]){
  
 
   #Grab position of NA's
-  posNa <- which(is.na(diag01))
+  setNa <- which(is.na(diag01))
   
   # Turn the diag01 into a matrix of 32 bits separated into columns for the timeseries of diagnostic values  
 qfIrgaTurb <- t(base::sapply(diag01,function(x){ base::as.integer(base::intToBits(x))}))
@@ -74,16 +76,16 @@ base::names(qfIrgaTurb) <- c("qfIrgaTurbAgc", "qfIrgaTurbSync", "qfIrgaTurbPll",
 if (MethQf == "qfqm"){
 #Change all the 1 values to 0 and 0 to 1 to fit the NEON qfqm framework
 base::lapply(base::names(qfIrgaTurb[!names(qfIrgaTurb) == "qfIrgaTurbAgc"]), function(x) {
-  pos <- which(qfIrgaTurb[,x] == 1)
-  qfIrgaTurb[pos,x] <<- base::as.integer(0)
-  qfIrgaTurb[-pos,x] <<- base::as.integer(1)
+  set <- which(qfIrgaTurb[,x] == 1)
+  qfIrgaTurb[set,x] <<- base::as.integer(0)
+  qfIrgaTurb[-set,x] <<- base::as.integer(1)
   qfIrgaTurb[,x] <<- base::as.integer(qfIrgaTurb[,x])
 })}
 
 #Replace positions without diag data with -1
-qfIrgaTurb[posNa,] <- -1L
+qfIrgaTurb[setNa,] <- -1L
 
-qfIrgaTurb$qfIrgaTurbAgc[posNa] <- NaN
+qfIrgaTurb$qfIrgaTurbAgc[setNa] <- NaN
 
 
 #return dataframe

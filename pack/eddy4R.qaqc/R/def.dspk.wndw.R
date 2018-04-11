@@ -29,7 +29,7 @@
 #' \code{data}: the despiked data matrix \cr
 #' \code{smmy}: a summary of the despike algorithm results, including iterations (\code{iter}), determined spikes (\code{news}), and total resultant NAs (\code{alls}) \cr
 #' And one of the following:
-#' \code{posSpk}: output if \code{Vrbs} is FALSE. A list of each input variable, with nested lists of $setQfSpk$fail and $setQfSpk$na vector positions of determined spikes and 'cannot evaluate' positions, respectively. This output format is identical to def.plau
+#' \code{setSpk}: output if \code{Vrbs} is FALSE. A list of each input variable, with nested lists of $setQfSpk$fail and $setQfSpk$na vector positions of determined spikes and 'cannot evaluate' positions, respectively. This output format is identical to def.plau
 #' \code{qfSpk}: output if \code{Vrbs} is TRUE. A data frame the same size as data with the quality flag values [-1,0,1] for each input variable
 
 #' @references
@@ -72,6 +72,8 @@
 #     update @param format
 #   Natchaya P-Durden (2018-04-04)
 #    applied eddy4R term name convention; replaced posQf by setQf
+#   Natchaya P-Durden (2018-04-11)
+#    applied eddy4R term name convention; replaced pos by set
 ##############################################################################################
 
 
@@ -113,25 +115,25 @@ def.dspk.wndw <- function (
 
   ###
   #start loop around data columns
-  posSpk <- base::vector("list",numVar) # Initialize output of spike positions for each variable
-  names(posSpk) <- names(data)
+  setSpk <- base::vector("list",numVar) # Initialize output of spike positions for each variable
+  names(setSpk) <- names(data)
   for(idxVar in 1:numVar) {
     #idxVar<-1
     trns <- mat[,idxVar]
     
     # initialize fail and na spike positions for this variable
-    posSpk[[idxVar]] <- list(setQfSpk=list(fail=numeric(0),na=numeric(0)))
+    setSpk[[idxVar]] <- list(setQfSpk=list(fail=numeric(0),na=numeric(0)))
     
     # Store na positions as "unable to evaluate" spikes
-    posSpk[[idxVar]]$setQfSpk$na <- which(is.na(trns))
+    setSpk[[idxVar]]$setQfSpk$na <- which(is.na(trns))
     
     if(Trt$NaTrt == "approx") {
       trns <- approx(x=index(trns), y=trns, xout=index(trns))$y
     }
     
-    posNa <- which(is.na(trns))
+    setNa <- which(is.na(trns))
     iter <- 0
-    posSpkPrlm <- integer(0)
+    setSpkPrlm <- integer(0)
     ###
   
   
@@ -172,21 +174,21 @@ def.dspk.wndw <- function (
       
         # Find windows where there were not enough data points to reliably compute statistics
         naFracRoll <- zoo::rollapply(data=zoo::zoo(trns),width=numPtsWndw,FUN=function(Var){length(which(is.na(Var)))/length(Var)},by=Trt$NumPtsSlid, fill = NA)
-        posNaSpkNew <- which(naFracRoll > Trt$NaFracMax)
+        setNaSpkNew <- which(naFracRoll > Trt$NaFracMax)
         
         #calculate and match criteria
           crit <- abs((trns - cntrRoll) / sprdRoll)
-        	posSpkNew <- which(crit > (Trt$ThshStd * (1 + (iter - 1) * Trt$Infl)))
-        	posNaSpkNew <- intersect(posSpkNew,posNaSpkNew) # record spike positions in which there were too many NAs in the window
-        	posSpkNew <- setdiff(posSpkNew,posNaSpkNew) # remove unreliable spikes
-        	numSpkNew <- length(posSpkNew)
+        	setSpkNew <- which(crit > (Trt$ThshStd * (1 + (iter - 1) * Trt$Infl)))
+        	setNaSpkNew <- intersect(setSpkNew,setNaSpkNew) # record spike positions in which there were too many NAs in the window
+        	setSpkNew <- setdiff(setSpkNew,setNaSpkNew) # remove unreliable spikes
+        	numSpkNew <- length(setSpkNew)
         
         #replicate cntrRoll and sprdRoll for untreated indices if sliding increment > 1
           if(Trt$NumPtsSlid > 1) {
             
-            posUntr <- which(!is.na(cntrRoll))
-            posUntrBgn <- sapply(posUntr, function(val) val - (Trt$NumPtsWndw/2 - 1))
-            posUntrEnd <- sapply(posUntr, function(val) val + (Trt$NumPtsWndw/2))
+            setUntr <- which(!is.na(cntrRoll))
+            setUntrBgn <- sapply(setUntr, function(val) val - (Trt$NumPtsWndw/2 - 1))
+            setUntrEnd <- sapply(setUntr, function(val) val + (Trt$NumPtsWndw/2))
             
             #assign local variables
               cntrRollLocl <- cntrRoll
@@ -195,50 +197,50 @@ def.dspk.wndw <- function (
   
             #forward
               #assignment
-                for(idxUntr in 1:length(posUntr)){
+                for(idxUntr in 1:length(setUntr)){
                 #idxUntr <- 1
                 
-                  cntrRollLocl[posUntrBgn[idxUntr]:posUntrEnd[idxUntr]] <- cntrRoll[posUntr[idxUntr]]
-                  sprdRollLocl[posUntrBgn[idxUntr]:posUntrEnd[idxUntr]] <- sprdRoll[posUntr[idxUntr]]
-                  naFracRollLocl[posUntrBgn[idxUntr]:posUntrEnd[idxUntr]] <- naFracRoll[posUntr[idxUntr]]
+                  cntrRollLocl[setUntrBgn[idxUntr]:setUntrEnd[idxUntr]] <- cntrRoll[setUntr[idxUntr]]
+                  sprdRollLocl[setUntrBgn[idxUntr]:setUntrEnd[idxUntr]] <- sprdRoll[setUntr[idxUntr]]
+                  naFracRollLocl[setUntrBgn[idxUntr]:setUntrEnd[idxUntr]] <- naFracRoll[setUntr[idxUntr]]
                   
                 }; rm(idxUntr)
               
               #calculate and match criteria
                 crit <- abs((trns - cntrRollLocl) / sprdRollLocl)
-                posNaSpkNewFwd <- which(naFracRollLocl > Trt$NaFracMax)
+                setNaSpkNewFwd <- which(naFracRollLocl > Trt$NaFracMax)
 
-                posSpkNewFwd <- which(crit > (Trt$ThshStd * (1 + (iter - 1) * Trt$Infl)))
-                posNaSpkNewFwd <- intersect(posSpkNewFwd,posNaSpkNewFwd) # record spike positions in which there were too many NAs in the window
-                posSpkNewFwd <- setdiff(posSpkNewFwd,posNaSpkNewFwd) # remove unreliable spikes
+                setSpkNewFwd <- which(crit > (Trt$ThshStd * (1 + (iter - 1) * Trt$Infl)))
+                setNaSpkNewFwd <- intersect(setSpkNewFwd,setNaSpkNewFwd) # record spike positions in which there were too many NAs in the window
+                setSpkNewFwd <- setdiff(setSpkNewFwd,setNaSpkNewFwd) # remove unreliable spikes
 
             #backward
               #assignment
-                for(idxUntr in length(posUntr):1){
+                for(idxUntr in length(setUntr):1){
                 #idxUntr <- 1
                 
-                  cntrRollLocl[posUntrBgn[idxUntr]:posUntrEnd[idxUntr]] <- cntrRoll[posUntr[idxUntr]]
-                  sprdRollLocl[posUntrBgn[idxUntr]:posUntrEnd[idxUntr]] <- sprdRoll[posUntr[idxUntr]]
-                  naFracRollLocl[posUntrBgn[idxUntr]:posUntrEnd[idxUntr]] <- naFracRoll[posUntr[idxUntr]]
+                  cntrRollLocl[setUntrBgn[idxUntr]:setUntrEnd[idxUntr]] <- cntrRoll[setUntr[idxUntr]]
+                  sprdRollLocl[setUntrBgn[idxUntr]:setUntrEnd[idxUntr]] <- sprdRoll[setUntr[idxUntr]]
+                  naFracRollLocl[setUntrBgn[idxUntr]:setUntrEnd[idxUntr]] <- naFracRoll[setUntr[idxUntr]]
                   
                 }; rm(idxUntr)
               
               #calculate and match criteria
                 crit <- abs((trns - cntrRollLocl) / sprdRollLocl)
-                posNaSpkNewBwd <- which(naFracRollLocl > Trt$NaFracMax)
+                setNaSpkNewBwd <- which(naFracRollLocl > Trt$NaFracMax)
 
-                posSpkNewBwd <- which(crit > (Trt$ThshStd * (1 + (iter - 1) * Trt$Infl)))
-                posNaSpkNewBwd <- intersect(posSpkNewBwd,posNaSpkNewBwd) # record spike positions in which there were too many NAs in the window
-                posSpkNewBwd <- setdiff(posSpkNewBwd,posNaSpkNewBwd) # remove unreliable spikes
+                setSpkNewBwd <- which(crit > (Trt$ThshStd * (1 + (iter - 1) * Trt$Infl)))
+                setNaSpkNewBwd <- intersect(setSpkNewBwd,setNaSpkNewBwd) # record spike positions in which there were too many NAs in the window
+                setSpkNewBwd <- setdiff(setSpkNewBwd,setNaSpkNewBwd) # remove unreliable spikes
                 
                   
             #combine results
-              posSpkNew <- unique(c(posSpkNewFwd, posSpkNewBwd))
-              posNaSpkNew <- unique(c(posNaSpkNewFwd, posNaSpkNewBwd))
-              numSpkNew <- length(posSpkNew)
+              setSpkNew <- unique(c(setSpkNewFwd, setSpkNewBwd))
+              setNaSpkNew <- unique(c(setNaSpkNewFwd, setNaSpkNewBwd))
+              numSpkNew <- length(setSpkNew)
        
           #clean up
-            rm(posUntrEnd, cntrRollLocl, posUntr, sprdRollLocl, posUntrBgn, posSpkNewFwd, posSpkNewBwd)
+            rm(setUntrEnd, cntrRollLocl, setUntr, sprdRollLocl, setUntrBgn, setSpkNewFwd, setSpkNewBwd)
           
           }
       
@@ -247,19 +249,19 @@ def.dspk.wndw <- function (
           if(numSpkNew > 0) {
             
             #remove spikes
-              trns[posSpkNew] <- NA
+              trns[setSpkNew] <- NA
               
             #store results
               if(iter == 1) {
                 
-                posSpkPrlm <- posSpkNew
+                setSpkPrlm <- setSpkNew
                 
               } else {
                 
-                posSpkPrlm <- base:::sort(unique(c(posSpkPrlm, posSpkNew)))
+                setSpkPrlm <- base:::sort(unique(c(setSpkPrlm, setSpkNew)))
                 
               }
-              posSpk[[idxVar]]$setQfSpk$na <- base:::sort(unique(c(posSpk[[idxVar]]$setQfSpk$na,posNaSpkNew)))
+              setSpk[[idxVar]]$setQfSpk$na <- base:::sort(unique(c(setSpk[[idxVar]]$setQfSpk$na,setNaSpkNew)))
             
           }
   
@@ -272,7 +274,7 @@ def.dspk.wndw <- function (
         #how many iterations do we need?
         	if(Cntl$Prnt == TRUE) {
         	  print(paste("Variable ", idxVar, " of ", numVar, ", iteration ", iter, " is finished. ", 
-                        numSpkNew, " new spikes, totally ", length(posSpkPrlm), " spikes.", sep=""))
+                        numSpkNew, " new spikes, totally ", length(setSpkPrlm), " spikes.", sep=""))
         	}
       
         #break if maximum number of iterations is reached
@@ -292,47 +294,47 @@ def.dspk.wndw <- function (
   
   
   # #where have we found spikes
-  #   posSpkPrlm <- which(is.na(trns))
-  #   if(length(posNa) > 0 & length(posSpkPrlm) > 0) {
-  #     whr_n <- sapply(1:length(posNa), function(val) which(posSpkPrlm == posNa[val]))
-  #     posSpkPrlm <- posSpkPrlm[-whr_n]
+  #   setSpkPrlm <- which(is.na(trns))
+  #   if(length(setNa) > 0 & length(setSpkPrlm) > 0) {
+  #     whr_n <- sapply(1:length(setNa), function(val) which(setSpkPrlm == setNa[val]))
+  #     setSpkPrlm <- setSpkPrlm[-whr_n]
   #   }
   
   
   #which of them are neighboring?
     if(is.logical(Trt$NumPtsGrp[1]) & Trt$NumPtsGrp[1] == FALSE) {
     #omit group considerations?
-      nons <- integer(0); posNons <- integer(0)
-      posSpkVar <- posSpkPrlm
+      nons <- integer(0); setNons <- integer(0)
+      setSpkVar <- setSpkPrlm
     } else {
     #consider groups
-      if(length(posSpkPrlm) > 0) {
-      	diffIdx <- diff(posSpkPrlm)
-      	idxNbr <- unique(c(posSpkPrlm[which(diffIdx == 1)], posSpkPrlm[which(diffIdx == 1)] + 1))
+      if(length(setSpkPrlm) > 0) {
+      	diffIdx <- diff(setSpkPrlm)
+      	idxNbr <- unique(c(setSpkPrlm[which(diffIdx == 1)], setSpkPrlm[which(diffIdx == 1)] + 1))
       	spkGrp <- rep(0, length(trns))
       	spkGrp[idxNbr] <- 1
         #are there groups of neighbors >= Trt$NumPtsGrp length flagged as spikes?
       	spkGrpMean <- zoo::rollmean(x=zoo::zoo(spkGrp), k=Trt$NumPtsGrp, fill = NA, align="center")
-      	posSpkGrp <- which(spkGrpMean == 1)
-      	if(length(posSpkGrp) > 0) {
-      	    posSpkGrpWndw <- (1:Trt$NumPtsGrp) - ceiling(Trt$NumPtsGrp / 2)
-      	    nons <- unique(sapply(1:length(posSpkGrp), function(val) posSpkGrp[val] + posSpkGrpWndw))
-      	    posNons <- sapply(1:length(nons), function(val) which(posSpkPrlm == nons[val]))
-      	    posSpkVar <- posSpkPrlm[-posNons]
+      	setSpkGrp <- which(spkGrpMean == 1)
+      	if(length(setSpkGrp) > 0) {
+      	    setSpkGrpWndw <- (1:Trt$NumPtsGrp) - ceiling(Trt$NumPtsGrp / 2)
+      	    nons <- unique(sapply(1:length(setSpkGrp), function(val) setSpkGrp[val] + setSpkGrpWndw))
+      	    setNons <- sapply(1:length(nons), function(val) which(setSpkPrlm == nons[val]))
+      	    setSpkVar <- setSpkPrlm[-setNons]
       	} else {
-      	    nons <- integer(0); posNons <- integer(0)
-      	    posSpkVar <- posSpkPrlm
+      	    nons <- integer(0); setNons <- integer(0)
+      	    setSpkVar <- setSpkPrlm
       	}
       } else {
-        nons <- integer(0); posNons <- integer(0)
-        posSpkVar <- integer(0)
+        nons <- integer(0); setNons <- integer(0)
+        setSpkVar <- integer(0)
       }
     }
   
   #store result
-    posSpk[[idxVar]]$setQfSpk$fail <- posSpkVar
-    mat[posSpkVar,idxVar] <- NA
-    smmyOutVar <- as.matrix(c(iter, length(posSpkVar), length(which(is.na(mat[,idxVar])))))
+    setSpk[[idxVar]]$setQfSpk$fail <- setSpkVar
+    mat[setSpkVar,idxVar] <- NA
+    smmyOutVar <- as.matrix(c(iter, length(setSpkVar), length(which(is.na(mat[,idxVar])))))
     dimnames(smmyOutVar)[[1]] <- c("iter", "news", "alls")
     if(idxVar == 1) {
       smmyOut <- smmyOutVar
@@ -348,8 +350,8 @@ def.dspk.wndw <- function (
   
     # For Verbose option, output actual flag values
     if(Vrbs) {
-      qfSpk[[idxVar]][posSpk[[idxVar]]$setQfSpk$na] <- -1 # flag na values
-      qfSpk[[idxVar]][posSpkVar] <- 1 # flag failed values
+      qfSpk[[idxVar]][setSpk[[idxVar]]$setQfSpk$na] <- -1 # flag na values
+      qfSpk[[idxVar]][setSpkVar] <- 1 # flag failed values
     } 
     
   ###
@@ -378,7 +380,7 @@ def.dspk.wndw <- function (
     rpt <- list(
       data=mat,
       smmy=smmyOut,
-      posSpk=posSpk
+      setSpk=setSpk
     )
   }
     

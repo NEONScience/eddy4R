@@ -54,6 +54,8 @@
 #     added optional specification of beginning and ending time
 #   Natchaya P-Durden (2018-04-04)
 #    applied eddy4R term name convention; replaced posQf by setQf
+#   Natchaya P-Durden (2018-04-11)
+#    applied eddy4R term name convention; replaced pos by set
 ##############################################################################################
 
 wrap.dp01.qfqm <- function (
@@ -162,9 +164,9 @@ wrap.dp01.qfqm <- function (
   while (!exstData && flagTime) {
     
     # Do we have data points?
-    posData <- base::which((time >= timeAgrBgn[idxAgr]) & (time < timeAgrBgn[idxAgr]+WndwAgr))
+    setData <- base::which((time >= timeAgrBgn[idxAgr]) & (time < timeAgrBgn[idxAgr]+WndwAgr))
     
-    if (base::length(posData) == 0) {
+    if (base::length(setData) == 0) {
       idxAgr <- idxAgr+1
     } else {
       exstData <- TRUE
@@ -211,8 +213,8 @@ wrap.dp01.qfqm <- function (
       }
       
       # If we made it this far, we found a the quality flag that results in data exclusion. Let's do it.
-      posExcl <- which(qf[[idxVar]][[idxQfExcl]] == 1)
-      data[[idxVar]][posExcl] <- NA
+      setExcl <- which(qf[[idxVar]][[idxQfExcl]] == 1)
+      data[[idxVar]][setExcl] <- NA
       
     }
   }
@@ -233,8 +235,8 @@ wrap.dp01.qfqm <- function (
     for (idxAgr in 1:numDataAgr) {
       
       # Find data locations in window
-      posData <- base::which((time >= timeAgrBgn[idxAgr]) & (time < timeAgrBgn[idxAgr]+WndwAgr))
-      numDataAgr <- base::length(posData)
+      setData <- base::which((time >= timeAgrBgn[idxAgr]) & (time < timeAgrBgn[idxAgr]+WndwAgr))
+      numDataAgr <- base::length(setData)
       
       # If there is no data to process move to next aggregation window
       if (numDataAgr == 0) {
@@ -242,13 +244,13 @@ wrap.dp01.qfqm <- function (
       }
       
       # Summary statistics
-      statSmmy <- eddy4R.base::def.neon.dp01(data=data[[idxVar]][posData])
+      statSmmy <- eddy4R.base::def.neon.dp01(data=data[[idxVar]][setData])
       
       # Quality metrics
-      qm <- eddy4R.qaqc::def.qm(qf=qf[[idxVar]][posData,])
+      qm <- eddy4R.qaqc::def.qm(qf=qf[[idxVar]][setData,])
       
       # Alpha, beta qms and final quality flag
-      qfFinl <- eddy4R.qaqc::def.qf.finl(qf=qf[[idxVar]][posData,], WghtAlphBeta=c(2,1), Thsh=0.2)[["qfqm"]]
+      qfFinl <- eddy4R.qaqc::def.qf.finl(qf=qf[[idxVar]][setData,], WghtAlphBeta=c(2,1), Thsh=0.2)[["qfqm"]]
       
       # Combine all outputs
       dataAgr[[idxVar]][idxAgr,] <- cbind(statSmmy,qm,qfFinl)

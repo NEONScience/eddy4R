@@ -20,8 +20,8 @@
 #' @examples 
 #' diag16 <- as.integer(rep(135, 36000))
 
-#' pos <- runif(20,1, 36000) # inserting error positions for other flags
-#' diag16[pos] <- as.integer(c(32768,16384,8192,4096,61442, 61441,61440,61503, -99999, NaN)) # filling with numbers that would indicate flags soni flags
+#' set <- runif(20,1, 36000) # inserting error positions for other flags
+#' diag16[set] <- as.integer(c(32768,16384,8192,4096,61442, 61441,61440,61503, -99999, NaN)) # filling with numbers that would indicate flags soni flags
 #' 
 #' eddy4R.qaqc::def.qf.soni(diag16 = diag16)
 
@@ -36,6 +36,8 @@
 #     fixing bug in order of qfSoni flags
 #   Dave Durden (2017-05-12)
 #     fixing bug in dealing with missing diag values
+#   Natchaya P-Durden (2018-04-11)
+#    applied eddy4R term name convention; replaced pos by set
 ##############################################################################################
 
 
@@ -50,7 +52,7 @@ def.qf.soni <- function(diag16){
   } 
  
   #Grab position of NA's
-  posNa <- which(is.na(diag16))
+  setNa <- which(is.na(diag16))
   
   #diag16[base::is.na(diag16)] <- -99999 # Convert NAs or NaNs to -99999
   
@@ -75,7 +77,7 @@ qfSoni <- base::data.frame( qfSoniUnrs,qfSoniData,qfSoniTrig,qfSoniComm, qfSoniC
 base::names(qfSoni) <- c("qfSoniUnrs", "qfSoniData", "qfSoniTrig", "qfSoniComm", "qfSoniCode", "qfSoniSgnlLow", "qfSoniSgnlHigh", "qfSoniSgnlPoor", "qfSoniTemp")
 
 #Replace positions without diag data with -1
-qfSoni[posNa,] <- -1L
+qfSoni[setNa,] <- -1L
 
 #return dataframe
 return(qfSoni)

@@ -35,6 +35,8 @@
 #     original creation
 #   Natchaya P-Durden (2018-04-03)
 #     update @param format
+#   Natchaya P-Durden (2018-04-11)
+#    applied eddy4R term name convention; replaced pos by idx
 ##############################################################################################
 
 def.agr.file.dp00 <- function (
@@ -91,11 +93,11 @@ time <- base::seq.POSIXt(from=timeMin,to=timeMax,by=1/Freq)
 data <- base::matrix(data=NA,nrow=base::length(time),ncol=base::length(nameFile))
 for(idxFile in 1:base::length(nameFile)){
   # Find start and end 
-  posBgn <- base::which(time == timeRglr[[idxFile]][1])
-  posEnd <- base::which(time == timeRglr[[idxFile]][base::length(timeRglr[[idxFile]])])
+  idxBgn <- base::which(time == timeRglr[[idxFile]][1])
+  idxEnd <- base::which(time == timeRglr[[idxFile]][base::length(timeRglr[[idxFile]])])
   
   # Put the data in the correct place
-  data[posBgn:posEnd,idxFile] <- dataRglr[[idxFile]]
+  data[idxBgn:idxEnd,idxFile] <- dataRglr[[idxFile]]
   
 }
 data <- as.data.frame(data) # Make a data frame. 

@@ -36,7 +36,7 @@ A list of the following: \cr
 \code{data}: the despiked data matrix \cr
 \code{smmy}: a summary of the despike algorithm results, including iterations (\code{iter}), determined spikes (\code{news}), and total resultant NAs (\code{alls}) \cr
 And one of the following:
-\code{posSpk}: output if \code{Vrbs} is FALSE. A list of each input variable, with nested lists of $setQfSpk$fail and $setQfSpk$na vector positions of determined spikes and 'cannot evaluate' positions, respectively. This output format is identical to def.plau
+\code{setSpk}: output if \code{Vrbs} is FALSE. A list of each input variable, with nested lists of $setQfSpk$fail and $setQfSpk$na vector positions of determined spikes and 'cannot evaluate' positions, respectively. This output format is identical to def.plau
 \code{qfSpk}: output if \code{Vrbs} is TRUE. A data frame the same size as data with the quality flag values [-1,0,1] for each input variable
 }
 \description{
