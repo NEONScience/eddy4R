@@ -32,6 +32,8 @@
 #     original creation 
 #   Natchaya P-Durden (2018-04-04)
 #    applied eddy4R term name convention; replaced posQf by setQf
+#   Natchaya P-Durden (2018-04-11)
+#    applied eddy4R term name convention; replaced pos by idx
 ##############################################################################################
 def.conv.qf.vrbs <- function (
   setQf,
@@ -55,10 +57,10 @@ def.conv.qf.vrbs <- function (
     for (idxQf in nameQf) {
       
       # Assign quality flags for failed & na vector positions
-      posFail <- setQf[[idxVar]][[idxQf]]$fail
-      posNa <- setQf[[idxVar]][[idxQf]]$na
-      qf[[idxVar]][posFail,idxQf] <- 1 # fail
-      qf[[idxVar]][posNa,idxQf] <- -1 # na
+      idxFail <- setQf[[idxVar]][[idxQf]]$fail
+      idxNa <- setQf[[idxVar]][[idxQf]]$na
+      qf[[idxVar]][idxFail,idxQf] <- 1 # fail
+      qf[[idxVar]][idxNa,idxQf] <- -1 # na
       
     }
     

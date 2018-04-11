@@ -59,19 +59,19 @@ A list of:
 
 \code{histDiffFinl$breaks} Numeric vector. Bin edges for \code{histDiffFinl}
 
-\code{posBinMin} Integer. Index of histogram bin within \code{histDiffFinl} with minimum number of counts.
+\code{idxBinMin} Integer. Index of histogram bin within \code{histDiffFinl} with minimum number of counts.
 
-\code{posBinMax} Integer. Index of histogram bin within \code{histDiffFinl} with maximum number of counts.
+\code{idxBinMax} Integer. Index of histogram bin within \code{histDiffFinl} with maximum number of counts.
 
-\code{posThshBinMin} Integer. Current iteration of minimum threshold index of histogram bin within \code{histDiffFinl} for spike determination
+\code{idxThshBinMin} Integer. Current iteration of minimum threshold index of histogram bin within \code{histDiffFinl} for spike determination
 
-\code{posThshBinMax}  Integer. Current iteration of maximum threshold index of histogram bin within \code{histDiffFinl} for spike determination
+\code{idxThshBinMax}  Integer. Current iteration of maximum threshold index of histogram bin within \code{histDiffFinl} for spike determination
 
-\code{posThshBinMinFinl} Integer. Final minimum threshold index of histogram bin within \code{histDiffFinl} for spike determination
+\code{idxThshBinMinFinl} Integer. Final minimum threshold index of histogram bin within \code{histDiffFinl} for spike determination
 
-\code{posThshBinMaxFinl} Integer. Final maximum threshold index of histogram bin within \code{histDiffFinl} for spike determination
+\code{idxThshBinMaxFinl} Integer. Final maximum threshold index of histogram bin within \code{histDiffFinl} for spike determination
 
-\code{posSpk} Indices of determined spikes within \code{dataIn}
+\code{setSpk} Indices of determined spikes within \code{dataIn}
 
 \code{qfSpk} Integer. Quality flag values [-1,0,1] for despike test, matching same size as \code{dataIn}
 }

@@ -14,7 +14,7 @@
 #' \code{Vrbs = TRUE}: cleaned data set, list of variables assessed, list of quality flags for each variable assessed, the number of each quality flag tripped for each variable and the total number of bad data per variable
 #' @param TypeData Type of input data, TypeData = c("integer", "real"). Defaults to "integer". [-]. 
 #' 
-#' @return A list (\code{rpt}) containing a dataframe (\code{rpt$dfData}) of the data with bad data replaced by NaN's, a vector of data variables to assess (\code{rpt$listVar}),  a list containing vectors of flag names used for each variable (\code{rpt$listQf}),  a list containing vectors of the number of quality flags set high for each variable (\code{rpt$fracQfBad}), a list containing vectors of flagged data points for each variable (\code{rpt$posBad}), a list containing total number of flagged data points for each variable (\code{rpt$numBadSum}).
+#' @return A list (\code{rpt}) containing a dataframe (\code{rpt$dfData}) of the data with bad data replaced by NaN's, a vector of data variables to assess (\code{rpt$listVar}),  a list containing vectors of flag names used for each variable (\code{rpt$listQf}),  a list containing vectors of the number of quality flags set high for each variable (\code{rpt$fracQfBad}), a list containing vectors of flagged data points for each variable (\code{rpt$setBad}), a list containing total number of flagged data points for each variable (\code{rpt$numBadSum}).
 
 #' @references 
 #' License: GNU AFFERO GENERAL PUBLIC LICENSE Version 3, 19 November 2007. \cr
@@ -40,6 +40,8 @@
 #     added TypeData to paramerter
 #   Dave Durden (2018-01-23)
 #     bug fixes to not include NaN values when calculating the fracQfBad
+#   Natchaya P-Durden (2018-04-11)
+#    applied eddy4R term name convention; replaced posBad by setBad
 ##############################################################################################
 
 
@@ -96,7 +98,7 @@ def.qf.rmv.data <- function(
   base::names(rpt$listQf) <- rpt$listVar
   
   #Initialize list to prevent simplifying
-  rpt$posBad <- list()
+  rpt$setBad <- list()
   
   # Replace the flagged data with NaN, and calculate the total number of bad data points
   base::lapply(rpt$listVar, function(x){
@@ -111,14 +113,14 @@ def.qf.rmv.data <- function(
       else{rpt$fracQfBad[[x]] <<- base::sum(tmp == 1, na.rm = TRUE)/base::sum(!is.na(tmp))
       names(rpt$fracQfBad[[x]]) <<- names(tmp)}}
     #Record the row positions for each variable where at least 1 flag is raised
-    rpt$posBad[[x]] <<-  base::which(base::rowSums(tmp == 1) > 0)
+    rpt$setBad[[x]] <<-  base::which(base::rowSums(tmp == 1) > 0)
     #Remove the data for each variable according to the position vector identified
-    rpt$dfData[[x]][rpt$posBad[[x]]] <<- NaN 
+    rpt$dfData[[x]][rpt$setBad[[x]]] <<- NaN 
     #Calculate the total number of bad data to be removed for each variable
-    rpt$numBadSum[[x]] <<- base::length(rpt$posBad[[x]])
+    rpt$numBadSum[[x]] <<- base::length(rpt$setBad[[x]])
     } else {
       # Report NA for output if no quality flags applied to a data stream
-      rpt$posBad[[x]] <<- NA
+      rpt$setBad[[x]] <<- NA
       rpt$numBadSum[[x]] <<- NA
       rpt$fracQfBad[[x]] <<- NA
     }

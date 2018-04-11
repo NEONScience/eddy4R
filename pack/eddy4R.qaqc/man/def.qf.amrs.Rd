@@ -21,8 +21,8 @@ Definition function to interpret the AMRS (Attitude and Reference Motion System)
 diag32 <- as.integer(rep(135, 72000))
 def.qf.amrs(diag32 = diag32)
 
-pos <- runif(15,1, 72000) # inserting error positions for other flags
-diag32[pos] <- as.integer(c(262279,524423, 1048710)) # filling with numbers that would indicate flags for qfAmrsVal, qfAmrsVelo, and qfAmrsRng
+set <- runif(15,1, 72000) # inserting error positions for other flags
+diag32[set] <- as.integer(c(262279,524423, 1048710)) # filling with numbers that would indicate flags for qfAmrsVal, qfAmrsVelo, and qfAmrsRng
 eddy4R.qaqc::def.qf.amrs(diag32 = diag32)
 }
 \references{

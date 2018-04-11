@@ -48,13 +48,13 @@
 #' @return \code{histDiffFinl} Numeric vector. Final histogram of differences of \code{dataNormFiltMed} using bin edges in \code{locBin} 
 #' @return \code{histDiffFinl$counts} Integer vector. Counts within each bin of \code{histDiffFinl} 
 #' @return \code{histDiffFinl$breaks} Numeric vector. Bin edges for \code{histDiffFinl} 
-#' @return \code{posBinMin} Integer. Index of histogram bin within \code{histDiffFinl} with minimum number of counts. 
-#' @return \code{posBinMax} Integer. Index of histogram bin within \code{histDiffFinl} with maximum number of counts. 
-#' @return \code{posThshBinMin} Integer. Current iteration of minimum threshold index of histogram bin within \code{histDiffFinl} for spike determination 
-#' @return \code{posThshBinMax}  Integer. Current iteration of maximum threshold index of histogram bin within \code{histDiffFinl} for spike determination 
-#' @return \code{posThshBinMinFinl} Integer. Final minimum threshold index of histogram bin within \code{histDiffFinl} for spike determination 
-#' @return \code{posThshBinMaxFinl} Integer. Final maximum threshold index of histogram bin within \code{histDiffFinl} for spike determination 
-#' @return \code{posSpk} Indices of determined spikes within \code{dataIn}
+#' @return \code{idxBinMin} Integer. Index of histogram bin within \code{histDiffFinl} with minimum number of counts. 
+#' @return \code{idxBinMax} Integer. Index of histogram bin within \code{histDiffFinl} with maximum number of counts. 
+#' @return \code{idxThshBinMin} Integer. Current iteration of minimum threshold index of histogram bin within \code{histDiffFinl} for spike determination 
+#' @return \code{idxThshBinMax}  Integer. Current iteration of maximum threshold index of histogram bin within \code{histDiffFinl} for spike determination 
+#' @return \code{idxThshBinMinFinl} Integer. Final minimum threshold index of histogram bin within \code{histDiffFinl} for spike determination 
+#' @return \code{idxThshBinMaxFinl} Integer. Final maximum threshold index of histogram bin within \code{histDiffFinl} for spike determination 
+#' @return \code{setSpk} Indices of determined spikes within \code{dataIn}
 #' @return \code{qfSpk} Integer. Quality flag values [-1,0,1] for despike test, matching same size as \code{dataIn}
 #'  
 #' 
@@ -88,6 +88,8 @@
 #     rename function to def.dspk.br86()
 #   Natchaya P-Durden (2018-04-03)
 #     update @param format
+#   Natchaya P-Durden (2018-04-11)
+#    applied eddy4R term name convention; replaced pos by idx or set
 ##############################################################################################
 
 def.dspk.br86 <- function(
@@ -221,24 +223,24 @@ def.dspk.br86 <- function(
               rpt$histDiffFinl <- graphics::hist(rpt$histDiff, breaks = rpt$locBin, plot=FALSE)
             
             #determine bin with most values
-              rpt$posBinMax <- base::which.max(rpt$histDiffFinl$counts)
+              rpt$idxBinMax <- base::which.max(rpt$histDiffFinl$counts)
             #data needs to have extrema, otherwise it will not identify the zero crossing
             #hence attaching sin(1:10) to the end
-              rpt$posBinMin <- EMD::extrema(y=c(rpt$histDiffFinl$counts, base::sin(1:10)))$minindex[,1]
+              rpt$idxBinMin <- EMD::extrema(y=c(rpt$histDiffFinl$counts, base::sin(1:10)))$minindex[,1]
             #remove sin(1:10) minima from end
-              rpt$posBinMin <- rpt$posBinMin[-base::which(rpt$posBinMin > (rpt$numBinFinl - 1))]
+              rpt$idxBinMin <- rpt$idxBinMin[-base::which(rpt$idxBinMin > (rpt$numBinFinl - 1))]
           
             #minimum threshold
-              rpt$posThshBinMin <- base::which(rpt$histDiffFinl$counts[rpt$posBinMin] == 0 & rpt$posBinMin < rpt$posBinMax)
+              rpt$idxThshBinMin <- base::which(rpt$histDiffFinl$counts[rpt$idxBinMin] == 0 & rpt$idxBinMin < rpt$idxBinMax)
             #maximum threshold
-              rpt$posThshBinMax <- base::which(rpt$histDiffFinl$counts[rpt$posBinMin] == 0 & rpt$posBinMin > rpt$posBinMax)
+              rpt$idxThshBinMax <- base::which(rpt$histDiffFinl$counts[rpt$idxBinMin] == 0 & rpt$idxBinMin > rpt$idxBinMax)
             
       #      #message to screen
       #        print(paste("PDF with ", rpt$numBinFinl, " bins is completed", sep=""))
           
             #conditional statement for while loop
             #continue iterating if no bins with zero entries are found below AND above distribution maximum, else calculate thresholds
-              if(base::length(rpt$posThshBinMin) == 0 | length(rpt$posThshBinMax) == 0) {
+              if(base::length(rpt$idxThshBinMin) == 0 | length(rpt$idxThshBinMax) == 0) {
                 
                 #rpt$iter <- rpt$iter + 1
                 rpt$numBinFinl <- 2 * rpt$numBinFinl
@@ -246,9 +248,9 @@ def.dspk.br86 <- function(
               } else {
           
                 #final minimum threshold, i.e. lower break of closest bin with zero observations below distribution maximum
-                  rpt$posThshBinMinFinl <- rpt$histDiffFinl$breaks[rpt$posBinMin[rpt$posThshBinMin][base::length(rpt$posThshBinMin)]]
+                  rpt$idxThshBinMinFinl <- rpt$histDiffFinl$breaks[rpt$idxBinMin[rpt$idxThshBinMin][base::length(rpt$idxThshBinMin)]]
                 #final maximum threshold, i.e. upper break of closest bin with zero observations above distribution maximum
-                  rpt$posThshBinMaxFinl <- rpt$histDiffFinl$breaks[rpt$posBinMin[rpt$posThshBinMax][1] + 1]
+                  rpt$idxThshBinMaxFinl <- rpt$histDiffFinl$breaks[rpt$idxBinMin[rpt$idxThshBinMax][1] + 1]
                 
                 rpt$crit <- TRUE
                 
@@ -265,15 +267,15 @@ def.dspk.br86 <- function(
           
           #determine indices of spikes
           #considers spikes only if difference larger than measurement resolution x rpt$ThshReso
-            rpt$posSpk <- base::which(
-                              rpt$histDiff < rpt$posThshBinMinFinl & base::abs(rpt$histDiff) > rpt$resoDataNorm * rpt$ThshReso |
-                              rpt$histDiff > rpt$posThshBinMaxFinl & base::abs(rpt$histDiff) > rpt$resoDataNorm * rpt$ThshReso
+            rpt$setSpk <- base::which(
+                              rpt$histDiff < rpt$idxThshBinMinFinl & base::abs(rpt$histDiff) > rpt$resoDataNorm * rpt$ThshReso |
+                              rpt$histDiff > rpt$idxThshBinMaxFinl & base::abs(rpt$histDiff) > rpt$resoDataNorm * rpt$ThshReso
                             )
-            rpt$numSpk <- base::length(rpt$posSpk) # Number of spikes found
+            rpt$numSpk <- base::length(rpt$setSpk) # Number of spikes found
         
           #remove spikes
             rpt$dataOut <- rpt$dataIn
-            if(rpt$numSpk > 0) rpt$dataOut[rpt$posSpk] <- NA
+            if(rpt$numSpk > 0) rpt$dataOut[rpt$setSpk] <- NA
 
   
       
@@ -303,7 +305,7 @@ def.dspk.br86 <- function(
   rpt$qfSpk <- dataIn # initialize size of output
   rpt$qfSpk[] <- 0 # start with all flags not raised
   rpt$qfSpk[base::is.na(rpt$dataIn)] <- -1 # 'could not evaluate' flag for original NA values
-  rpt$qfSpk[rpt$posSpk] <- 1 # raise flag for determined spikes
+  rpt$qfSpk[rpt$setSpk] <- 1 # raise flag for determined spikes
   
 #  #print message to screen
 #    print(paste("De-spiking completed, ", rpt$numSpk, " spikes have been removed", sep=""))
