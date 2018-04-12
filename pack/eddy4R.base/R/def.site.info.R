@@ -42,11 +42,55 @@ def.site.info <- function(
   loc=c("IM", "LOS", "NR", "NS", "PF" , "SERC", "CPER")[6]
 ) {
   
-  #allocate empty list for site information
-  SiteInfo <- list()
+  # prepare
+  
+    # allocate empty list for site information
+    SiteInfo <- list()
+    
+    # assign CPER defaults as failsafe
+    # UTC to local time difference (Mountain standard time, MST)
+    SiteInfo$TimeDiffUtcLt <- -7
+    # coordinates in UTM [m]
+    SiteInfo$ZoneUtm <- data.frame(Zone=13, Estg=521456, Nthg=4518311)
+    # height of tower base above sea level [m]
+    SiteInfo$ElevAslTow <- 1654
+    # measurement height [m]
+    SiteInfo$DistZaxsMeas <- 8.3
+    # displacement height 1.5 +/- 1.5[m]
+    SiteInfo$DistZaxsDisp <- 1.5
   
   #get site info
   
+  # BART, NH, U.S.A.
+  if(loc == "BART") {
+    # UTC to local time difference (Eastern standard time, EST)
+    SiteInfo$TimeDiffUtcLt <- -5
+    SiteInfo$Tz <- "EST"
+    # coordinates in UTM [m]
+    SiteInfo$ZoneUtm <- data.frame(Zone=19, Estg=316812, Nthg=4881511)
+    # height of tower base above sea level [m]
+    SiteInfo$ElevAslTow <- 293
+    # measurement height [m]
+    SiteInfo$DistZaxsMeas <- 29
+    # displacement height
+    SiteInfo$DistZaxsDisp <- 13
+  }
+
+  # HARV, MA, U.S.A.
+  if(loc == "HARV") {
+    # UTC to local time difference (Eastern standard time, EST)
+    SiteInfo$TimeDiffUtcLt <- -5
+    SiteInfo$Tz <- "EST"
+    # coordinates in UTM [m]
+    SiteInfo$ZoneUtm <- data.frame(Zone=18, Estg=732183, Nthg=4713265)
+    # height of tower base above sea level [m]
+    SiteInfo$ElevAslTow <- 349
+    # measurement height [m]
+    SiteInfo$DistZaxsMeas <- 36
+    # displacement height
+    SiteInfo$DistZaxsDisp <- 16
+  }
+    
   #CPER, CO, U.S.A.
   if(loc == "CPER") {
     #UTC to local time difference (Mountain standard time, MST)
