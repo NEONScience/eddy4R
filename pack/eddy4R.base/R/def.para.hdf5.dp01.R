@@ -32,6 +32,9 @@
 #     original creation
 #   Natchaya P-Durden (2018-04-03)
 #     update @param format
+#   Natchaya P-Durden (2018-04-12)
+#    applied eddy4R term name convention; replaced fid by idFile
+#    replaced gid by idData
 ##############################################################################################################
 #Start of function call to read metadata from one file and write to another
 ##############################################################################################################
@@ -69,16 +72,16 @@ listAttr <- listAttr[!base::sapply(listAttr, function(x) base::length(x) == 0)]
 
 
 #Open the output file HDF5 link
-fid <- rhdf5::H5Fopen(FileOut)
+idFile <- rhdf5::H5Fopen(FileOut)
   
 #Write the attributes to the new file
 lapply(names(listAttr), function(x){
   
   #x <- "/CPER/dp0p/data/irga_001/000_020"
-  gid <- rhdf5::H5Oopen(fid, x)
+  idData <- rhdf5::H5Oopen(idFile, x)
  base::lapply(names(listAttr[[x]]), function(y){
    #y <- names(listAttr[[x]])[1]
-   rhdf5::h5writeAttribute(attr = listAttr[[x]][[y]], h5obj = gid, name = y)})
+   rhdf5::h5writeAttribute(attr = listAttr[[x]][[y]], h5obj = idData, name = y)})
 })
 
 H5close()
