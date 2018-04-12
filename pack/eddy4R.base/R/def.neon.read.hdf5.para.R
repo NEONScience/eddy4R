@@ -10,7 +10,7 @@
 
 #' @param DirFileParaLoca Absolute path to h5 file from which workflow and scientific parameters are to be used, of class "character". [-]
 #' @param GrpName Absolute path to h5 file group and variable name from which parameters are to be read, of class "character". [-]
-#' @param PosPara Parameters can be subset by PosPara; defaults to NULL which imports all parameters. A vector of characters. [-]
+#' @param SetPara Parameters can be subset by SetPara; defaults to NULL which imports all parameters. A vector of characters. [-]
 
 #' @return 
 #' The returned object is the parameters extracted from dp0p file for future use.  
@@ -39,6 +39,8 @@
 #     Remove NaN from the list of output that will cause a conversion to logical
 #   Natchaya P-Durden (2018-04-03)
 #     update @param format
+#   Natchaya P-Durden (2018-04-12)
+#    applied eddy4R term name convention; replaced pos by set
 ###############################################################################################
 
 # definition function for parameter extraction
@@ -49,8 +51,8 @@ def.neon.read.hdf5.para <- function(
   # Grp and Name correspond to the group and name variables returned by h5ls(), so that GrpName <- paste0(group, "/", name)
   # GrpName = "site" reports the parameters at h5 file root level
   GrpName,
-  # parameters can be subset by PosPara; defaults to NULL which imports all parameters
-  PosPara = NULL
+  # parameters can be subset by SetPara; defaults to NULL which imports all parameters
+  SetPara = NULL
 ) {
   
   # open first dp0p h5 file to explore structure
@@ -65,21 +67,21 @@ def.neon.read.hdf5.para <- function(
   rpt <- rhdf5::h5readAttributes(file = fileHdf5, name = GrpName)
   
   # subset selected parameters
-  if(!is.null(PosPara)) rpt <- rpt[PosPara]
+  if(!is.null(SetPara)) rpt <- rpt[SetPara]
   
   # sort attributes alphabetically
   rpt <- rpt[base::sort(base::names(rpt))]
   
   # which attributes are of type character?
-  Pos01 <- base::names(rpt)[base::sapply(base::names(rpt), function(x) base::is.character(rpt[[x]]))]
+  Set01 <- base::names(rpt)[base::sapply(base::names(rpt), function(x) base::is.character(rpt[[x]]))]
   
   # split characters by comma separator and trim white spaces
-  if(base::length(Pos01) > 0) {
+  if(base::length(Set01) > 0) {
     
-    tmp <- base::sapply(Pos01, function(x) base::trimws(base::unlist(base::strsplit(x = rpt[[x]], split = ","))))
+    tmp <- base::sapply(Set01, function(x) base::trimws(base::unlist(base::strsplit(x = rpt[[x]], split = ","))))
     if(is.vector(tmp)) tmp <- as.list(tmp)
     if(is.matrix(tmp)) tmp <- as.list(as.data.frame(tmp, stringsAsFactors = FALSE))
-    rpt[Pos01] <- tmp
+    rpt[Set01] <- tmp
     rm(tmp)
     
   }
@@ -105,7 +107,7 @@ def.neon.read.hdf5.para <- function(
   
   # close h5 file and clean up
   rhdf5::H5close()
-  rm(Pos01)
+  rm(Set01)
   
   # return result
   base::return(rpt)

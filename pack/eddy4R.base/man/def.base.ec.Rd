@@ -4,10 +4,10 @@
 \alias{def.base.ec}
 \title{Definition function: Base state for eddy-covariance calculation}
 \usage{
-def.base.ec(pos, var, AlgBase)
+def.base.ec(idxTime, var, AlgBase)
 }
 \arguments{
-\item{pos}{time index used for interpolation [-]}
+\item{idxTime}{time index used for interpolation [-]}
 
 \item{var}{variable of interest []}
 

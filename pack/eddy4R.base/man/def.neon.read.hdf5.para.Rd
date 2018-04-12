@@ -4,14 +4,14 @@
 \alias{def.neon.read.hdf5.para}
 \title{Definition function: Function to read in dp0p files}
 \usage{
-def.neon.read.hdf5.para(DirFileParaLoca, GrpName, PosPara = NULL)
+def.neon.read.hdf5.para(DirFileParaLoca, GrpName, SetPara = NULL)
 }
 \arguments{
 \item{DirFileParaLoca}{Absolute path to h5 file from which workflow and scientific parameters are to be used, of class "character". [-]}
 
 \item{GrpName}{Absolute path to h5 file group and variable name from which parameters are to be read, of class "character". [-]}
 
-\item{PosPara}{Parameters can be subset by PosPara; defaults to NULL which imports all parameters. A vector of characters. [-]}
+\item{SetPara}{Parameters can be subset by SetPara; defaults to NULL which imports all parameters. A vector of characters. [-]}
 }
 \value{
 The returned object is the parameters extracted from dp0p file for future use.
