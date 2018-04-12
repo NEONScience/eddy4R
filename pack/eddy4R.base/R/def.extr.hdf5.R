@@ -45,6 +45,9 @@
 #     enable writing of modified data objects by adding rpt to arguments
 #   Dave Durden (2018-03-12)
 #     Adding option to output dp0p  
+#   Natchaya P-Durden (2018-04-12)
+#    applied eddy4R term name convention; replaced fid by idFile
+#    replaced gid by idData
 ##############################################################################################################
 #Start of function call to extract data from one file and write to another
 ##############################################################################################################
@@ -161,15 +164,15 @@ if(!is.null(FileOut)) {
   
   # create connection to HDF5 file if FileOut already exists, or create new file
   if(file.exists(FileOut) == TRUE) {
-    fid <- rhdf5::H5Fopen(name = FileOut) #Open connection
+    idFile <- rhdf5::H5Fopen(name = FileOut) #Open connection
   } else {
-    fid <- rhdf5::H5Fcreate(name = FileOut) #Create file and open connection
+    idFile <- rhdf5::H5Fcreate(name = FileOut) #Create file and open connection
   }
 
     
   # create the group structure in the output file
   lapply(rpt$listGrpName, function(x){
-    rhdf5::h5createGroup(fid, x)
+    rhdf5::h5createGroup(idFile, x)
     })
   
   
@@ -177,7 +180,7 @@ if(!is.null(FileOut)) {
   if(MethExtrData == TRUE){
   #Write the data to the output file
   lapply(names(rpt$listData), function(x){
-   rhdf5::h5write(obj = rpt$listData[[x]], file = fid, name = x)
+   rhdf5::h5write(obj = rpt$listData[[x]], file = idFile, name = x)
   })
   }  
   
@@ -186,10 +189,10 @@ if(!is.null(FileOut)) {
   if(MethExtrAttr == TRUE){
     #Write attributes to the output HDF5 file
     lapply(names(rpt$listAttr), function(x){
-      gid <- rhdf5::H5Oopen(fid, x)
+      idData <- rhdf5::H5Oopen(idFile, x)
       base::lapply(names(rpt$listAttr[[x]]), function(y){
         #y <- names(rpt$listAttr[[x]])[1]
-        rhdf5::h5writeAttribute(attr = rpt$listAttr[[x]][[y]], h5obj = gid, name = y)})
+        rhdf5::h5writeAttribute(attr = rpt$listAttr[[x]][[y]], h5obj = idData, name = y)})
     })
   }
   

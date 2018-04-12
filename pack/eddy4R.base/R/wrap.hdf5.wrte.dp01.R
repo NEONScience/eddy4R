@@ -46,6 +46,8 @@
 #     Adding unit conversion for output
 #   Natchaya P-Durden (2018-03-30)
 #     applied term name convention; replace LevlTowr by LvlTowr
+#   Natchaya P-Durden (2018-04-12)
+#    applied eddy4R term name convention; replaced fid by idFile
 ##############################################################################################
 
 
@@ -124,7 +126,7 @@ lapply(names(outList$data), function(x) eddy4R.base::def.hdf5.wrte.dp01(inpList 
 if(MethDp04 == TRUE){
   
   #Create HDF5 connection to the output file  
-  fid <- rhdf5::H5Fopen(FileOut)
+  idFile <- rhdf5::H5Fopen(FileOut)
 
   for(idxDp04 in names(inpList$dp04$data)){
     #idxDp04 <- names(inpList$dp04$data)[5]
@@ -136,7 +138,7 @@ if(MethDp04 == TRUE){
       attributes(rptDp04)$unit <- attributes(inpList$dp04$data[[idxDp04]]$stat)$unit
 
       #Open connection to dp04 data level
-      idDataDp04 <- rhdf5::H5Gopen(fid,paste0("/", SiteLoca, "/dp04/data/",idxDp04))
+      idDataDp04 <- rhdf5::H5Gopen(idFile,paste0("/", SiteLoca, "/dp04/data/",idxDp04))
       
       #Writing flux data to output HDF5 file
       rhdf5::h5writeDataset.data.frame(obj = rptDp04, h5loc = idDataDp04, name = "stat", DataFrameAsCompound = TRUE)
@@ -166,7 +168,7 @@ if(MethDp04 == TRUE){
   attributes(rptDp04)$unit <- sapply(names(inpList$dp04$data[[idxDp04]]$turb), function(x) attributes(inpList$dp04$data[[idxDp04]]$turb[[x]])$unit)
 
   #Open connection to dp04 data level
-  idDataDp04 <- rhdf5::H5Gopen(fid,paste0("/", SiteLoca, "/dp04/data/",idxDp04))
+  idDataDp04 <- rhdf5::H5Gopen(idFile,paste0("/", SiteLoca, "/dp04/data/",idxDp04))
   
   #Writing flux data to output HDF5 file
   rhdf5::h5writeDataset.data.frame(obj = rptDp04, h5loc = idDataDp04, name = "turb", DataFrameAsCompound = TRUE)
