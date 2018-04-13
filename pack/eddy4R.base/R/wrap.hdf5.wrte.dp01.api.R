@@ -11,7 +11,7 @@
 #' @param FileOut Character: The file name for the output HDF5 file
 #' @param SiteLoca Character: Site location.
 #' @param Dp01 Character: A vector of data product names for the data to be gathered.
-#' @param LevlTowr Character: The tower level that the sensor data is being collected in NEON data product convention (HOR_VER).
+#' @param LvlTowr Character: The tower level that the sensor data is being collected in NEON data product convention (HOR_VER).
 #' @param TimeAgr Integer: The time aggregation index in minutes (i.e. 30)
 #' 
 #' @return An updated dp0p HDF5 file with dp01 data, qfqm, and uncertainty written
@@ -41,7 +41,7 @@
 # #DpName <- "tempAirTop" "DP1.00003.001" #TRAAT
 # FileOut <- "/home/ddurden/eddy/data/dev_tests/dp01/ECSE_dp0p_CPER_2017-09-01.h5"
 # 
-# LevlTowr <- "000_040"  
+# LvlTowr <- "000_040"  
 # 
 # TimeAgr <- c(1,30)
 
@@ -50,7 +50,7 @@ wrap.hdf5.wrte.dp01.api <- function(
   FileOut,
   SiteLoca,
   DpName = c("tempAirLvl", "tempAirTop"),
-  LevlTowr,
+  LvlTowr,
   TimeAgr = c(1,30)
 ){
  
@@ -62,7 +62,7 @@ wrap.hdf5.wrte.dp01.api <- function(
  #Call the definition function for all the data product
  rpt[[idxDp]] <- lapply(TimeAgr, function(x) {
    #Use the definition function to grab reingest data
-   eddy4R.base::def.hdf5.wrte.dp01.api(date = date, SiteLoca = SiteLoca, FileOut = FileOut, DpName = idxDp, LevlTowr = LevlTowr, TimeAgr = x)
+   eddy4R.base::def.hdf5.wrte.dp01.api(date = date, SiteLoca = SiteLoca, FileOut = FileOut, DpName = idxDp, LvlTowr = LvlTowr, TimeAgr = x)
  })# End of lapply function
  } #End of for loop around dp01 data products
   
