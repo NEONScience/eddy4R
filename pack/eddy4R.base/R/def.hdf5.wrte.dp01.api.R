@@ -88,8 +88,8 @@ if(class(data) == "try-error"){
   LvlMeas <- paste0("000_0",LvlMeas,"0",sep="")
   
   #Grabbing the measurement levels based on the sensor assembly
-  if(DpName == "tempAirTop"){LvlMeas <- LvlTowr}
-  if(DpName == "tempAirLvl"){LvlMeas <- LvlMeas[!LvlMeas == LvlTowr]}
+  if(DpName == "tempAirTop"){LvlMeasOut <- LvlTowr}
+  if(DpName == "tempAirLvl"){LvlMeasOut <- LvlMeas[!LvlMeas == LvlTowr]}
   
   #Create the timeBgn vector for aggregation period specified (1, 30 minutes)
   timeBgnOut <- seq(from = lubridate::ymd_hms(timeBgn) + lubridate::seconds(1), to = base::as.POSIXlt(timeEnd) - lubridate::minutes(TimeAgr), by = paste(TimeAgr, "mins", sep = " "))
@@ -115,9 +115,8 @@ if(class(data) == "try-error"){
     rpt$ucrt[[x]] <<- ucrtOut
     }) #End of lapply around measurement levels
 
-#Return the filled list of data.frames
-return(rpt)  
 } #End of failsafe if statement 
+else {
 
 #Convert times to POSIXct
 data$startDateTime <- as.POSIXct(data$startDateTime)
@@ -245,7 +244,7 @@ rpt$ucrt <- lapply(LvlMeasOut, function(x){
   return(tmp)
 })
 
-
+}
 #############################################################################
 #Writing output to existing dp0p HDF5 file
 #############################################################################
