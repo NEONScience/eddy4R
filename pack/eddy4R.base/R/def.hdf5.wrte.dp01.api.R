@@ -57,9 +57,9 @@ library(rhdf5)
 #Convert date to lubridate object
 date <- lubridate::as_datetime(date)
 
-timeBgn <- date - lubridate::minutes(1)
+timeBgn <- date - lubridate::seconds(1)
 
-timeEnd <- date + lubridate::days(1)
+timeEnd <- date + lubridate::days(1) 
 
 
 #List of DP numbers by eddy4R DP names
@@ -70,11 +70,62 @@ DpNum <- listDpNum[DpName]
 if(substr(DpName, 1, 4) == "temp"){TblName <- substr(DpName, 1, 4)}
 
 # Grab 30 minute data to be written
-data <- Noble::pull.date(site = SiteLoca, dpID = DpNum, bgn.date = timeBgn, end.date = timeEnd, package = "expanded", time.agr = TimeAgr) #Currently requires to subtract 1 minute otherwise (1 index will be cut from the beginning)
+data <- try(expr = Noble::pull.date(site = SiteLoca, dpID = DpNum, bgn.date = timeBgn, end.date = timeEnd, package = "expanded", time.agr = TimeAgr), silent = TRUE) #Currently requires to subtract 1 minute otherwise (1 index will be cut from the beginning)
+
+#Test if API pull produced an error
+if(class(data) == "try-error"){
+  #Initialize lists
+  rpt <- list(data = list(), qfqm = list(), ucrt = list())
+  
+  #get tower top level
+  LevlTop <- strsplit(LevlTowr,"")
+  LevlTop <- base::as.numeric(LevlTop[[1]][6])
+  
+  #get the sequence from top to first level
+  LevlMeas<- base::seq(from = LevlTop, to = 1, by = -1)
+  LevlMeas <- paste0("000_0",LevlMeas,"0",sep="")
+  
+  timeBgnOut <- seq(from = lubridate::ymd_hms(timeBgn) + lubridate::seconds(1), to = base::as.POSIXlt(timeEnd) - lubridate::minutes(TimeAgr), by = paste(TimeAgr, "mins", sep = " "))
+  
+  timeEndOut <- seq(from = lubridate::ymd_hms(timeBgn) + lubridate::minutes(TimeAgr)+ lubridate::seconds(1), to = base::as.POSIXlt(timeEnd), by = paste(TimeAgr, "mins", sep = " "))
+  
+  #Creating a vector of NaN's to fill data.frames
+  dataNa <- rep(x = NaN, length = length(timeBgnOut))
+  
+  dataOut <- data.frame("timeBgn" = timeBgnOut, "timeEnd" = timeEndOut, "max" = dataNa, "mean" = dataNa, "min" = dataNa, "numSamp" = dataNa, "vari"= dataNa) 
+  
+  qfqmOut <- c("timeBgn" = timeBgnOut, "timeEnd" = timeEndOut, "qmAlph" = rep(x = 0.0, length = length(timeBgnOut)), "qmBeta" = rep(x = 1.0, length = length(timeBgnOut)), "qfFinl" = rep(x = 1L, length = length(timeBgnOut)), "qfSci" = rep(x = 0L, length = length(timeBgnOut))) 
+  
+  
+  ucrtOut <- data.frame("timeBgn" = timeBgnOut, "timeEnd" = timeEndOut, "ucrtCal95" = dataNa, "se" = dataNa) 
+  
+  lappy(LevlMeas, function(x) {
+    rpt$data[[x]] <<- dataOut
+    rpt$qfqm[[x]] <<- qfqmOut
+    rpt$ucrt[[x]] <<- ucrtOut
+    
+    })
+
+  
+  timeBgnOut <- seq(from = lubridate::ymd_hms(timeBgn) + lubridate::seconds(1), to = base::as.POSIXlt(timeEnd) - lubridate::minutes(TimeAgr), by = paste(TimeAgr, "mins", sep = " "))
+  
+  timeEndOut <- seq(from = lubridate::ymd_hms(timeBgn) + lubridate::minutes(TimeAgr)+ lubridate::seconds(1), to = base::as.POSIXlt(timeEnd), by = paste(TimeAgr, "mins", sep = " "))
+  
+ #timeBgnRglr = base::as.POSIXlt(timeBgn, format="%Y-%m-%d %H:%M:%OS", tz="UTC"),
+ #timeEndRglr < base::as.POSIXlt(timeEnd, format="%Y-%m-%d %H:%M:%OS", tz="UTC")
+  
+  
+
+  
+
+  TimeOut <- c("timeEnd", "timeBgn") 
+  
+}
 
 #Convert times to POSIXct
 data$startDateTime <- as.POSIXct(data$startDateTime)
-data$endDateTime <- as.POSIXct(data$endDateTime)
+data$endDateTime <- as.POSIXct(data$endDateTime, format = "%Y-%m-%dT%H:%M:%OSZ", tz = "UTC")
+
 
 #Set of times where endDateTime is NA
 setNa <- which(is.na(data$endDateTime))
