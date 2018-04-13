@@ -11,7 +11,7 @@
 #' @param FileOut Character: The file name for the output HDF5 file
 #' @param SiteLoca Character: Site location.
 #' @param DpName Character: The data product name for the data to be gathered.
-#' @param LevlTowr Character: The tower level that the sensor data is being collected in NEON data product convention (HOR_VER).
+#' @param LvlTowr Character: The tower level that the sensor data is being collected in NEON data product convention (HOR_VER).
 #' @param TimeAgr Integer: The time aggregation index in minutes (i.e. 30)
 
 #' @return An updated dp0p HDF5 file with dp01 data, qfqm, and uncertainty written
@@ -46,7 +46,7 @@ def.hdf5.wrte.dp01.api <- function(
   FileOut,
   SiteLoca,
   DpName,
-  LevlTowr,
+  LvlTowr,
   TimeAgr
 ){
 
@@ -80,16 +80,16 @@ if(class(data) == "try-error"){
   rpt <- list(data = list(), qfqm = list(), ucrt = list())
   
   #get tower top level
-  LevlTop <- strsplit(LevlTowr,"")
-  LevlTop <- base::as.numeric(LevlTop[[1]][6])
+  LvlTop <- strsplit(LvlTowr,"")
+  LvlTop <- base::as.numeric(LvlTop[[1]][6])
   
   #get the sequence from top to first level
-  LevlMeas<- base::seq(from = LevlTop, to = 1, by = -1)
-  LevlMeas <- paste0("000_0",LevlMeas,"0",sep="")
+  LvlMeas<- base::seq(from = LvlTop, to = 1, by = -1)
+  LvlMeas <- paste0("000_0",LvlMeas,"0",sep="")
   
   #Grabbing the measurement levels based on the sensor assembly
-  if(DpName == "tempAirTop"){LevlMeas <- LevlTowr}
-  if(DpName == "tempAirLevl"){LevlMeas <- LevlMeas[!LevlMeas == LevlTowr]}
+  if(DpName == "tempAirTop"){LvlMeas <- LvlTowr}
+  if(DpName == "tempAirLvl"){LvlMeas <- LvlMeas[!LvlMeas == LvlTowr]}
   
   #Create the timeBgn vector for aggregation period specified (1, 30 minutes)
   timeBgnOut <- seq(from = lubridate::ymd_hms(timeBgn) + lubridate::seconds(1), to = base::as.POSIXlt(timeEnd) - lubridate::minutes(TimeAgr), by = paste(TimeAgr, "mins", sep = " "))
@@ -109,7 +109,7 @@ if(class(data) == "try-error"){
   ucrtOut <- data.frame("timeBgn" = timeBgnOut, "timeEnd" = timeEndOut, "ucrtCal95" = dataNa, "se" = dataNa) 
   
   #Create list structure for the return output (type>>HOR_VER>>output_dataframes)
-  lapply(LevlMeas, function(x) {
+  lapply(LvlMeas, function(x) {
     rpt$data[[x]] <<- dataOut
     rpt$qfqm[[x]] <<- qfqmOut
     rpt$ucrt[[x]] <<- ucrtOut
@@ -169,23 +169,23 @@ names(nameVar$TimeOut) <- c("timeEnd", "timeBgn")
 #Grabbing the tower measurement levels for a given dp01 product
 ###############################################################################
 #get tower top level
-LevlTop <- strsplit(LevlTowr,"")
-LevlTop <- base::as.numeric(LevlTop[[1]][6])
+LvlTop <- strsplit(LvlTowr,"")
+LvlTop <- base::as.numeric(LvlTop[[1]][6])
 
 #get the sequence from top to first level
-LevlMeas<- base::seq(from = LevlTop, to = 1, by = -1)
-LevlMeas <- paste0("000.0",LevlMeas,"0",sep="")
+LvlMeas<- base::seq(from = LvlTop, to = 1, by = -1)
+LvlMeas <- paste0("000.0",LvlMeas,"0",sep="")
 
 #Determine the output levels
-LevlMeasOut <- grep(pattern = paste(unique(sub(".*\\.", "",nameVar$Data)), collapse = "|"), x = LevlMeas, value = TRUE )
+LvlMeasOut <- grep(pattern = paste(unique(sub(".*\\.", "",nameVar$Data)), collapse = "|"), x = LvlMeas, value = TRUE )
 
 #Name for HDF5 output
-names(LevlMeasOut) <- gsub(pattern = "\\.", replacement = "_", LevlMeasOut)
+names(LvlMeasOut) <- gsub(pattern = "\\.", replacement = "_", LvlMeasOut)
 
 #####################################################################################
 
 #Sort output data and apply eddy4R naming conventions
-rpt$data  <- lapply(LevlMeasOut, function(x){
+rpt$data  <- lapply(LvlMeasOut, function(x){
   #Grab just the columns to be output  
   tmp <- data[,grep(pattern = paste(nameVar$DataOut, collapse = "|"), x = names(data))]
     #Sort the output columns to grab the HOR_VER level as separate lists of dataframes
@@ -203,7 +203,7 @@ rpt$data  <- lapply(LevlMeasOut, function(x){
     return(tmp)
     })
 
-rpt$qfqm <- lapply(LevlMeasOut, function(x){
+rpt$qfqm <- lapply(LvlMeasOut, function(x){
   #Grab just the columns to be output  
   tmp <- data[,grep(pattern = paste(nameVar$QfqmOut, collapse = "|"), x = names(data))]
   #Sort the output columns to grab the HOR_VER level as separate lists of dataframes
@@ -226,7 +226,7 @@ lapply(names(rpt$qfqm), function(x){
   rpt$qfqm[[x]][is.nan(rpt$qfqm[[x]]$qfSci),"qfSci"] <<- 0L
 })
 
-rpt$ucrt <- lapply(LevlMeasOut, function(x){
+rpt$ucrt <- lapply(LvlMeasOut, function(x){
   #Grab just the columns to be output  
   tmp <- data[,grep(pattern = paste(nameVar$UcrtOut, collapse = "|"), x = names(data))]
   #Sort the output columns to grab the HOR_VER level as separate lists of dataframes
@@ -271,39 +271,39 @@ idQfqmDp01 <-  rhdf5::H5Gopen(idQfqmLvlDp01, DpName)
 idUcrtDp01 <-  rhdf5::H5Gopen(idUcrtLvlDp01, DpName)
 
 #Loop around the measurement levels
-for(idx in names(LevlMeasOut)){
-#idx <- names(LevlMeasOut[2])
+for(idx in names(LvlMeasOut)){
+#idx <- names(LvlMeasOut[2])
 #write attribute to the data table level for each measurement level
-idLevlMeasData <- rhdf5::H5Oopen(idDataDp01,paste0(names(LevlMeasOut[idx]), "_",base::formatC(TimeAgr, width=2, flag="0"),"m"))
+idLvlMeasData <- rhdf5::H5Oopen(idDataDp01,paste0(names(LvlMeasOut[idx]), "_",base::formatC(TimeAgr, width=2, flag="0"),"m"))
 #write attribute to the data table level for each measurement level
-idLevlMeasQfqm <- rhdf5::H5Oopen(idQfqmDp01,paste0(names(LevlMeasOut[idx]), "_",base::formatC(TimeAgr, width=2, flag="0"),"m"))
+idLvlMeasQfqm <- rhdf5::H5Oopen(idQfqmDp01,paste0(names(LvlMeasOut[idx]), "_",base::formatC(TimeAgr, width=2, flag="0"),"m"))
 #write attribute to the data table level for each measurement level
-idLevlMeasUcrt <- rhdf5::H5Oopen(idUcrtDp01,paste0(names(LevlMeasOut[idx]), "_",base::formatC(TimeAgr, width=2, flag="0"),"m"))
+idLvlMeasUcrt <- rhdf5::H5Oopen(idUcrtDp01,paste0(names(LvlMeasOut[idx]), "_",base::formatC(TimeAgr, width=2, flag="0"),"m"))
 
 #Write output data
-rhdf5::h5writeDataset.data.frame(obj = rpt$data[[names(LevlMeasOut[idx])]], h5loc = idLevlMeasData, name = TblName, DataFrameAsCompound = TRUE)
+rhdf5::h5writeDataset.data.frame(obj = rpt$data[[names(LvlMeasOut[idx])]], h5loc = idLvlMeasData, name = TblName, DataFrameAsCompound = TRUE)
 # Writing attributes to the data
-if(!is.null(attributes(rpt$data[[names(LevlMeasOut[idx])]])$unit) == TRUE){ 
-  dgid <- rhdf5::H5Dopen(idLevlMeasData, TblName)
-  rhdf5::h5writeAttribute(attributes(rpt$data[[names(LevlMeasOut[idx])]])$unit, h5obj = dgid, name = "unit")
+if(!is.null(attributes(rpt$data[[names(LvlMeasOut[idx])]])$unit) == TRUE){ 
+  dgid <- rhdf5::H5Dopen(idLvlMeasData, TblName)
+  rhdf5::h5writeAttribute(attributes(rpt$data[[names(LvlMeasOut[idx])]])$unit, h5obj = dgid, name = "unit")
 }
 
 #Write output data
-rhdf5::h5writeDataset.data.frame(obj = rpt$qfqm[[names(LevlMeasOut[idx])]], h5loc = idLevlMeasQfqm, name = TblName, DataFrameAsCompound = TRUE)
+rhdf5::h5writeDataset.data.frame(obj = rpt$qfqm[[names(LvlMeasOut[idx])]], h5loc = idLvlMeasQfqm, name = TblName, DataFrameAsCompound = TRUE)
   
 # Writing attributes to the qfqm
-if(!is.null(attributes(rpt$qfqm[[names(LevlMeasOut[idx])]])$unit) == TRUE){ 
-  dgid <- rhdf5::H5Dopen(idLevlMeasQfqm, TblName)
-  rhdf5::h5writeAttribute(attributes(rpt$qfqm[[names(LevlMeasOut[idx])]])$unit, h5obj = dgid, name = "unit")
+if(!is.null(attributes(rpt$qfqm[[names(LvlMeasOut[idx])]])$unit) == TRUE){ 
+  dgid <- rhdf5::H5Dopen(idLvlMeasQfqm, TblName)
+  rhdf5::h5writeAttribute(attributes(rpt$qfqm[[names(LvlMeasOut[idx])]])$unit, h5obj = dgid, name = "unit")
 }
   
   #Write output data
-  rhdf5::h5writeDataset.data.frame(obj = rpt$ucrt[[names(LevlMeasOut[idx])]], h5loc = idLevlMeasUcrt, name = TblName, DataFrameAsCompound = TRUE)
+  rhdf5::h5writeDataset.data.frame(obj = rpt$ucrt[[names(LvlMeasOut[idx])]], h5loc = idLvlMeasUcrt, name = TblName, DataFrameAsCompound = TRUE)
     
   # Writing attributes to the data
-  if(!is.null(attributes(rpt$ucrt[[names(LevlMeasOut[idx])]])$unit) == TRUE){ 
-    dgid <- rhdf5::H5Dopen(idLevlMeasUcrt, TblName)
-    rhdf5::h5writeAttribute(attributes(rpt$ucrt[[names(LevlMeasOut[idx])]])$unit, h5obj = dgid, name = "unit")
+  if(!is.null(attributes(rpt$ucrt[[names(LvlMeasOut[idx])]])$unit) == TRUE){ 
+    dgid <- rhdf5::H5Dopen(idLvlMeasUcrt, TblName)
+    rhdf5::h5writeAttribute(attributes(rpt$ucrt[[names(LvlMeasOut[idx])]])$unit, h5obj = dgid, name = "unit")
   }
 
 
