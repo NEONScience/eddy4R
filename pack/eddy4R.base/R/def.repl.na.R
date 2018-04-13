@@ -32,6 +32,8 @@
 #     update license
 #   Natchaya P-Durden (2018-04-03)
 #     update @param format
+#   Natchaya P-Durden (2018-04-13)
+#    applied eddy4R term name convention; replaced mergFile by combFile
 ##############################################################################################
 def.repl.na <- function(
   dataProcDate,
@@ -40,10 +42,10 @@ def.repl.na <- function(
   numCol
 ){
 #merge daily files into one file
-mergFile <- rbind(dataBgnDate, dataProcDate) 
+combFile <- rbind(dataBgnDate, dataProcDate) 
 #replace NA with previous value
-mergFile[,numCol] <- zoo::na.locf(mergFile[,numCol], na.rm = FALSE)
-#mergFile$timeNew <- as.POSIXct(strptime(mergFile$time, format="%Y-%m-%dT%H:%M:%OSZ", tz="UTC"))
+combFile[,numCol] <- zoo::na.locf(combFile[,numCol], na.rm = FALSE)
+#combFile$timeNew <- as.POSIXct(strptime(combFile$time, format="%Y-%m-%dT%H:%M:%OSZ", tz="UTC"))
  
 #add hyphen between date
 Date <- gsub("(\\d{4})(\\d{2})(\\d{2})$","\\1-\\2-\\3",Date)
@@ -52,7 +54,7 @@ Date <- gsub("(\\d{4})(\\d{2})(\\d{2})$","\\1-\\2-\\3",Date)
 dateBgn <- strptime(paste0(Date, " ", "00:00:00", sep=""),format=("%Y-%m-%d %H:%M:%OS"), tz="UTC")
 dateEnd <- strptime(paste0(Date, " ", "23:59:59.595", sep=""),format=("%Y-%m-%d %H:%M:%OS"), tz="UTC")
 
-subFile <- subset(mergFile, mergFile$time >= dateBgn & mergFile$time <= dateEnd)
+subFile <- subset(combFile, combFile$time >= dateBgn & combFile$time <= dateEnd)
 #subFile <- subFile[, !(names(subFile) %in% c("timeNew"))]
 
 #report output
