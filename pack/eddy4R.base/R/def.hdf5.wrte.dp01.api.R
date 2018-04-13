@@ -87,6 +87,10 @@ if(class(data) == "try-error"){
   LevlMeas<- base::seq(from = LevlTop, to = 1, by = -1)
   LevlMeas <- paste0("000_0",LevlMeas,"0",sep="")
   
+  #Grabbing the measurement levels based on the sensor assembly
+  if(DpName == "tempAirTop"){LevlMeas <- LevlTowr}
+  if(DpName == "tempAirLevl"){LevlMeas <- LevlMeas[!LevlMeas == LevlTowr]}
+  
   #Create the timeBgn vector for aggregation period specified (1, 30 minutes)
   timeBgnOut <- seq(from = lubridate::ymd_hms(timeBgn) + lubridate::seconds(1), to = base::as.POSIXlt(timeEnd) - lubridate::minutes(TimeAgr), by = paste(TimeAgr, "mins", sep = " "))
   
