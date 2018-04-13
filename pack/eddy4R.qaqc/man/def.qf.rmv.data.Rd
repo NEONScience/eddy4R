@@ -4,13 +4,13 @@
 \alias{def.qf.rmv.data}
 \title{Definition function: to remove high frequency data points that have failed quality flags}
 \usage{
-def.qf.rmv.data(dfData, dfQf, Sens = NULL, Vrbs = FALSE,
+def.qf.rmv.data(inpData, inpQf, Sens = NULL, Vrbs = FALSE,
   TypeData = c("integer", "real")[1])
 }
 \arguments{
-\item{dfData}{Input data.frame for data to be removed from based on quality flags}
+\item{inpData}{Input data.frame for data to be removed from based on quality flags}
 
-\item{dfQf}{Input data.frame of quality flags (must be of class integer to be included in the processing)}
+\item{inpQf}{Input data.frame of quality flags (must be of class integer to be included in the processing)}
 
 \item{Sens}{Character string indicating the sensor the high frequency data come from to check for sensor specific flags}
 
@@ -21,7 +21,7 @@ def.qf.rmv.data(dfData, dfQf, Sens = NULL, Vrbs = FALSE,
 \item{TypeData}{Type of input data, TypeData = c("integer", "real"). Defaults to "integer". [-].}
 }
 \value{
-A list (\code{rpt}) containing a dataframe (\code{rpt$dfData}) of the data with bad data replaced by NaN's, a vector of data variables to assess (\code{rpt$listVar}),  a list containing vectors of flag names used for each variable (\code{rpt$listQf}),  a list containing vectors of the number of quality flags set high for each variable (\code{rpt$fracQfBad}), a list containing vectors of flagged data points for each variable (\code{rpt$setBad}), a list containing total number of flagged data points for each variable (\code{rpt$numBadSum}).
+A list (\code{rpt}) containing a dataframe (\code{rpt$inpData}) of the data with bad data replaced by NaN's, a vector of data variables to assess (\code{rpt$listVar}),  a list containing vectors of flag names used for each variable (\code{rpt$listQf}),  a list containing vectors of the number of quality flags set high for each variable (\code{rpt$fracQfBad}), a list containing vectors of flagged data points for each variable (\code{rpt$setBad}), a list containing total number of flagged data points for each variable (\code{rpt$numBadSum}).
 }
 \description{
 Definition function  to remove high frequency data points that have failed quality flags from a data.frame
