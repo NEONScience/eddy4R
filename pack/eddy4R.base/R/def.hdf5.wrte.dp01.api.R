@@ -33,6 +33,8 @@
 #     original creation;
 #   David Durden (2018-04-02)
 #     fix for missing timeEnd;
+#   David Durden (2018-04-12)
+#     add failsafe for missing data in API;
 #     #TODO: 
 #     - Create check if group level exists and create if not
 #     - Add other dp01's and remove hardcoded units
@@ -50,7 +52,7 @@ def.hdf5.wrte.dp01.api <- function(
 
 ##############################################################################
 
-
+#Needed library
 library(rhdf5)
 
 ############################################################################
@@ -72,7 +74,7 @@ if(substr(DpName, 1, 4) == "temp"){TblName <- substr(DpName, 1, 4)}
 # Grab 30 minute data to be written
 data <- try(expr = Noble::pull.date(site = SiteLoca, dpID = DpNum, bgn.date = timeBgn, end.date = timeEnd, package = "expanded", time.agr = TimeAgr), silent = TRUE) #Currently requires to subtract 1 minute otherwise (1 index will be cut from the beginning)
 
-#Test if API pull produced an error
+#Failsafe test if API pull produced an error
 if(class(data) == "try-error"){
   #Initialize lists
   rpt <- list(data = list(), qfqm = list(), ucrt = list())
@@ -85,42 +87,33 @@ if(class(data) == "try-error"){
   LevlMeas<- base::seq(from = LevlTop, to = 1, by = -1)
   LevlMeas <- paste0("000_0",LevlMeas,"0",sep="")
   
+  #Create the timeBgn vector for aggregation period specified (1, 30 minutes)
   timeBgnOut <- seq(from = lubridate::ymd_hms(timeBgn) + lubridate::seconds(1), to = base::as.POSIXlt(timeEnd) - lubridate::minutes(TimeAgr), by = paste(TimeAgr, "mins", sep = " "))
   
+  #Create the timeEnd vector for aggregation period specified (1, 30 minutes)
   timeEndOut <- seq(from = lubridate::ymd_hms(timeBgn) + lubridate::minutes(TimeAgr)+ lubridate::seconds(1), to = base::as.POSIXlt(timeEnd), by = paste(TimeAgr, "mins", sep = " "))
   
   #Creating a vector of NaN's to fill data.frames
   dataNa <- rep(x = NaN, length = length(timeBgnOut))
   
+  #Create the output dataframe for data values
   dataOut <- data.frame("timeBgn" = timeBgnOut, "timeEnd" = timeEndOut, "max" = dataNa, "mean" = dataNa, "min" = dataNa, "numSamp" = dataNa, "vari"= dataNa) 
+  #Create the output dataframe for qfqm values
+  qfqmOut <- data.frame("timeBgn" = timeBgnOut, "timeEnd" = timeEndOut, "qmAlph" = rep(x = 0.0, length = length(timeBgnOut)), "qmBeta" = rep(x = 1.0, length = length(timeBgnOut)), "qfFinl" = rep(x = 1L, length = length(timeBgnOut)), "qfSci" = rep(x = 0L, length = length(timeBgnOut))) 
   
-  qfqmOut <- c("timeBgn" = timeBgnOut, "timeEnd" = timeEndOut, "qmAlph" = rep(x = 0.0, length = length(timeBgnOut)), "qmBeta" = rep(x = 1.0, length = length(timeBgnOut)), "qfFinl" = rep(x = 1L, length = length(timeBgnOut)), "qfSci" = rep(x = 0L, length = length(timeBgnOut))) 
-  
-  
+  #Create the output dataframe for ucrt values 
   ucrtOut <- data.frame("timeBgn" = timeBgnOut, "timeEnd" = timeEndOut, "ucrtCal95" = dataNa, "se" = dataNa) 
   
-  lappy(LevlMeas, function(x) {
+  #Create list structure for the return output (type>>HOR_VER>>output_dataframes)
+  lapply(LevlMeas, function(x) {
     rpt$data[[x]] <<- dataOut
     rpt$qfqm[[x]] <<- qfqmOut
     rpt$ucrt[[x]] <<- ucrtOut
-    
-    })
+    }) #End of lapply around measurement levels
 
-  
-  timeBgnOut <- seq(from = lubridate::ymd_hms(timeBgn) + lubridate::seconds(1), to = base::as.POSIXlt(timeEnd) - lubridate::minutes(TimeAgr), by = paste(TimeAgr, "mins", sep = " "))
-  
-  timeEndOut <- seq(from = lubridate::ymd_hms(timeBgn) + lubridate::minutes(TimeAgr)+ lubridate::seconds(1), to = base::as.POSIXlt(timeEnd), by = paste(TimeAgr, "mins", sep = " "))
-  
- #timeBgnRglr = base::as.POSIXlt(timeBgn, format="%Y-%m-%d %H:%M:%OS", tz="UTC"),
- #timeEndRglr < base::as.POSIXlt(timeEnd, format="%Y-%m-%d %H:%M:%OS", tz="UTC")
-  
-  
-
-  
-
-  TimeOut <- c("timeEnd", "timeBgn") 
-  
-}
+#Return the filled list of data.frames
+return(rpt)  
+} #End of failsafe if statement 
 
 #Convert times to POSIXct
 data$startDateTime <- as.POSIXct(data$startDateTime)
