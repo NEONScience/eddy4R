@@ -64,6 +64,8 @@
 #     update @param format
 #   Natchaya P-Durden (2018-04-11)
 #    applied eddy4R term name convention; replaced pos by set
+#   Natchaya P-Durden (2018-04-18)
+#    applied eddy4R term name convention; replaced val by valu
 ##############################################################################################
 
 def.unit.info <- function(unit) {
@@ -103,7 +105,7 @@ def.unit.info <- function(unit) {
                                               ignore.case=FALSE)) == TRUE)
     
     # For each base unit, which positions within the split character string match?
-    setChar <- base::lapply(eddy4R.base::IntlUnit$Base$Symb,function(val) {base::gregexpr(pattern=val,text=unitSplt[idxSplt],
+    setChar <- base::lapply(eddy4R.base::IntlUnit$Base$Symb,function(valu) {base::gregexpr(pattern=valu,text=unitSplt[idxSplt],
                                                         ignore.case=FALSE,fixed=TRUE)[[1]]})
     
     # Check to see if any possibilities exist. If not, move on
@@ -144,8 +146,8 @@ def.unit.info <- function(unit) {
           setCharPrfx <- 1:(setCharBase[1]-1)
           
           # Do we have a match for the prefix?
-          setPrfx <- base::which(base::as.data.frame(base::lapply(eddy4R.base::IntlUnit$Prfx,function(val){
-            val==base::paste0(base::strsplit(unitSplt[idxSplt],"")[[1]][setCharPrfx],collapse="")})) == TRUE)
+          setPrfx <- base::which(base::as.data.frame(base::lapply(eddy4R.base::IntlUnit$Prfx,function(valu){
+            valu==base::paste0(base::strsplit(unitSplt[idxSplt],"")[[1]][setCharPrfx],collapse="")})) == TRUE)
           if(base::length(setPrfx) == 0) {
             setPrfx <- NA
             next
