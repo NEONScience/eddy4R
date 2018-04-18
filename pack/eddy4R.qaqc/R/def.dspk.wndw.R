@@ -10,7 +10,7 @@
 
 #' @param data Required input. A data frame or matrix containing the data to be evaluated.
 #' @param Trt Optional. A list of the following parameters specifying the details of the despike algorithm. \cr
-#' \code{AlgClss}: string. de-spiking algorithm class ["mean" or "median"] \cr
+#' \code{AlgClas}: string. de-spiking algorithm class ["mean" or "median"] \cr
 #' \code{NumPtsWndw}: integer. window size [data points] (must be odd for median / mad) \cr
 #' \code{NumPtsSlid}: integer. window sliding increment [data points] \cr
 #' \code{ThshStd}: number. threshold for detecting data point as spike [sigma / MAD_sigma] \cr
@@ -74,13 +74,15 @@
 #    applied eddy4R term name convention; replaced posQf by setQf
 #   Natchaya P-Durden (2018-04-11)
 #    applied eddy4R term name convention; replaced pos by set
+#   Natchaya P-Durden (2018-04-18)
+#    applied eddy4R term name convention; replaced AlgClss by AlgClas
 ##############################################################################################
 
 
 def.dspk.wndw <- function (
   data,
   Trt=list(
-    AlgClss=c("mean", "median")[2],   #de-spiking algorithm class [mean vs. median]
+    AlgClas=c("mean", "median")[2],   #de-spiking algorithm class [mean vs. median]
     NumPtsWndw=c(11, 101)[2],           #window size [data points] (must be odd for median / mad); mean:10, med:101
     NumPtsSlid=1,                        #window sliding increment [data points]
     ThshStd=c(3.5, 20)[2],           #threshold for detecting data point as spike [sigma / MAD_sigma]; mean:3.5, med:20
@@ -149,7 +151,7 @@ def.dspk.wndw <- function (
         iter <- iter + 1
   
         #apply spike detection over windows
-        	if(Trt$AlgClss == "mean") {
+        	if(Trt$AlgClas == "mean") {
         	#mean and sd (> 1 s per 1e4 entries)
         	  #location - rolling mean (representing center of data)
         	    if(all(!is.na(trns)) & Trt$NumPtsSlid == 1) {

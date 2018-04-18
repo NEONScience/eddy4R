@@ -4,7 +4,7 @@
 \alias{def.dspk.wndw}
 \title{Definition function: Determine spike locations using window-based statistics}
 \usage{
-def.dspk.wndw(data, Trt = list(AlgClss = c("mean", "median")[2], NumPtsWndw =
+def.dspk.wndw(data, Trt = list(AlgClas = c("mean", "median")[2], NumPtsWndw =
   c(11, 101)[2], NumPtsSlid = 1, ThshStd = c(3.5, 20)[2], NaFracMax = 0.1, Infl
   = 0, IterMax = Inf, NumPtsGrp = c(4, 10)[2], NaTrt = c("approx", "omit")[2]),
   Cntl = list(NaOmit = c(TRUE, FALSE)[2], Prnt = c(TRUE, FALSE)[1], Plot =
@@ -14,7 +14,7 @@ def.dspk.wndw(data, Trt = list(AlgClss = c("mean", "median")[2], NumPtsWndw =
 \item{data}{Required input. A data frame or matrix containing the data to be evaluated.}
 
 \item{Trt}{Optional. A list of the following parameters specifying the details of the despike algorithm. \cr
-\code{AlgClss}: string. de-spiking algorithm class ["mean" or "median"] \cr
+\code{AlgClas}: string. de-spiking algorithm class ["mean" or "median"] \cr
 \code{NumPtsWndw}: integer. window size [data points] (must be odd for median / mad) \cr
 \code{NumPtsSlid}: integer. window sliding increment [data points] \cr
 \code{ThshStd}: number. threshold for detecting data point as spike [sigma / MAD_sigma] \cr
