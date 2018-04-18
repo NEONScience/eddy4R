@@ -39,6 +39,8 @@
 #     changed function name from def.plot.qfqm.dp01 to def.plot.dp01.qfqm
 #   Natchaya P-Durden (2018-04-11)
 #    applied eddy4R term name convention; replaced pos by set
+#   Natchaya P-Durden (2018-04-18)
+#    applied eddy4R term name convention; replaced val by valu
 ##############################################################################################
 
 
@@ -79,8 +81,8 @@ def.plot.dp01.qfqm <- function (
     dataIdx$time <- dataDp01$timeAgrBgn
 
     # Set of plots for basic stats: Mean, min, max, var, num,se 
-    dataIdxQf <- base::data.frame(time=dataIdx$time,val=dataIdx$mean,valQfFinlFail=dataIdx$mean)
-    dataIdxQf$valQfFinlFail[dataIdx$qfFinl==0] <- NA
+    dataIdxQf <- base::data.frame(time=dataIdx$time,valu=dataIdx$mean,valuQfFinlFail=dataIdx$mean)
+    dataIdxQf$valuQfFinlFail[dataIdx$qfFinl==0] <- NA
     dataIdxQf <- reshape2::melt(dataIdxQf,id="time")
     if(base::sum(dataIdx$mean,na.rm=TRUE) == 0) {
       # No non-NA data, generate empty plot

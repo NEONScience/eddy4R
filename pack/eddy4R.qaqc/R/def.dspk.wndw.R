@@ -76,6 +76,7 @@
 #    applied eddy4R term name convention; replaced pos by set
 #   Natchaya P-Durden (2018-04-18)
 #    applied eddy4R term name convention; replaced AlgClss by AlgClas
+#    replaced val by valu
 ##############################################################################################
 
 
@@ -189,8 +190,8 @@ def.dspk.wndw <- function (
           if(Trt$NumPtsSlid > 1) {
             
             setUntr <- which(!is.na(cntrRoll))
-            setUntrBgn <- sapply(setUntr, function(val) val - (Trt$NumPtsWndw/2 - 1))
-            setUntrEnd <- sapply(setUntr, function(val) val + (Trt$NumPtsWndw/2))
+            setUntrBgn <- sapply(setUntr, function(valu) valu - (Trt$NumPtsWndw/2 - 1))
+            setUntrEnd <- sapply(setUntr, function(valu) valu + (Trt$NumPtsWndw/2))
             
             #assign local variables
               cntrRollLocl <- cntrRoll
@@ -298,7 +299,7 @@ def.dspk.wndw <- function (
   # #where have we found spikes
   #   setSpkPrlm <- which(is.na(trns))
   #   if(length(setNa) > 0 & length(setSpkPrlm) > 0) {
-  #     whr_n <- sapply(1:length(setNa), function(val) which(setSpkPrlm == setNa[val]))
+  #     whr_n <- sapply(1:length(setNa), function(valu) which(setSpkPrlm == setNa[valu]))
   #     setSpkPrlm <- setSpkPrlm[-whr_n]
   #   }
   
@@ -320,8 +321,8 @@ def.dspk.wndw <- function (
       	setSpkGrp <- which(spkGrpMean == 1)
       	if(length(setSpkGrp) > 0) {
       	    setSpkGrpWndw <- (1:Trt$NumPtsGrp) - ceiling(Trt$NumPtsGrp / 2)
-      	    nons <- unique(sapply(1:length(setSpkGrp), function(val) setSpkGrp[val] + setSpkGrpWndw))
-      	    setNons <- sapply(1:length(nons), function(val) which(setSpkPrlm == nons[val]))
+      	    nons <- unique(sapply(1:length(setSpkGrp), function(valu) setSpkGrp[valu] + setSpkGrpWndw))
+      	    setNons <- sapply(1:length(nons), function(valu) which(setSpkPrlm == nons[valu]))
       	    setSpkVar <- setSpkPrlm[-setNons]
       	} else {
       	    nons <- integer(0); setNons <- integer(0)
