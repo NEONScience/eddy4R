@@ -6,7 +6,7 @@
 #' @description  
 #'  Wrapper function. Time regularization for ECSE dp00
 
-#' @param DirIn Character: Input directory. [-]
+#' @param DirInp Character: Input directory. [-]
 #' @param Date Character: Processing date e.g. "20170521". [-]
 #' @param Site Character: Site location. [-]
 #' @param Dom Character: Domain. [-]
@@ -34,9 +34,11 @@
 #     fix bugs when missing crdH2o
 #   Natchaya P-Durden (2018-04-03)
 #     update @param format
+#   Ke Xu (2018-04-18)
+#     update eddy4R term: update DirIn to DirInp
 ##############################################################################################
 wrap.time.rglr.dp00.ecse <- function(
-  DirIn,
+  DirInp,
   Date,
   Site = "CPER",
   Dom = "D10",
@@ -52,11 +54,11 @@ require(zoo)
 numDp00 <- paste0("NEON.",Dom,".",Site,".",IdDp00, sep="")
 
 #read in data ##################################################################
-DirIn00 <- paste0(DirIn,"/",Date, "/", numDp00)
-#read in all file list in DirIn
-fileList00 <- list.files(path = DirIn00, pattern = ".csv")
+DirInp00 <- paste0(DirInp,"/",Date, "/", numDp00)
+#read in all file list in DirInp
+fileList00 <- list.files(path = DirInp00, pattern = ".csv")
 #reating full path filenames
-fileList01 <- paste(DirIn00,fileList00, sep = "/")
+fileList01 <- paste(DirInp00,fileList00, sep = "/")
 #create a vector of variable names from the filenames
 varName <- gsub(".csv","",fileList00)
 #read in the data into a list of dataframes
