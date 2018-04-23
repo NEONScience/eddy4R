@@ -30,6 +30,8 @@
 #     original creation
 #   Stefan Metzger (2018-01-30)
 #     move ECSE de-spiking from wrap.neon.read.hdf5.eddy() to wrap.prd.day.ecse()
+#   Ke Xu (2018-04-19)
+#     applied term name convention; replaced dataIn by dataInp
 ##############################################################################################
 
 wrap.prd.day.ecse <- function(
@@ -63,7 +65,7 @@ wrap.prd.day.ecse <- function(
         #execute de-spiking algorithm
         rpt$data[[sens]][[lvl]][[var]] <- eddy4R.qaqc::def.dspk.br86(
           # input data, univariate vector of integers or numerics
-          dataIn = rpt$data[[sens]][[lvl]][[var]],
+          dataInp = rpt$data[[sens]][[lvl]][[var]],
           # filter width
           WndwFilt = Desp$widt,
           # initial number/step size of histogram bins
