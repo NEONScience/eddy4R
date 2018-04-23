@@ -6,10 +6,10 @@
 #' Stefan Metzger \email{eddy4R.info@gmail.com}
 
 #' @description 
-#' Definition function. Function extracts group sturcture, data, and metadata attributes from input, examples include ecte (turbulent/turb) and ecse (storage/stor) HDF5 files to a another HDF5 file, used for nsae (net surface atmosphere exchange), with the same group heirarchy structure from each file. Either \code{FileIn} or \code{rpt} must be specified for \code{eddy4R.base::def.extr.hdf5()} to work. If \code{FileIn} is specified, the contents of the specified file are read (and optionally written to an output file). If \code{rpt} is specified, its contents are being written to an output file. This enables to read hdf5 files (call \code{eddy4R.base::def.extr.hdf5()} and specify \code{FileIn}), then modify the resulting \code{rpt} object as needed, and lastly to write the modified \code{rpt} object to file (call \code{eddy4R.base::def.extr.hdf5()} and specify \code{rpt}).
+#' Definition function. Function extracts group sturcture, data, and metadata attributes from input, examples include ecte (turbulent/turb) and ecse (storage/stor) HDF5 files to a another HDF5 file, used for nsae (net surface atmosphere exchange), with the same group heirarchy structure from each file. Either \code{FileInp} or \code{rpt} must be specified for \code{eddy4R.base::def.extr.hdf5()} to work. If \code{FileInp} is specified, the contents of the specified file are read (and optionally written to an output file). If \code{rpt} is specified, its contents are being written to an output file. This enables to read hdf5 files (call \code{eddy4R.base::def.extr.hdf5()} and specify \code{FileInp}), then modify the resulting \code{rpt} object as needed, and lastly to write the modified \code{rpt} object to file (call \code{eddy4R.base::def.extr.hdf5()} and specify \code{rpt}).
 
-#' @param FileIn is the input HDF5 file (turb or stor) the data and metadata are being read from. It is ignored if \code{rpt} is specified.
-#' @param rpt is the list returned from a previous call of \code{eddy4R.base::def.extr.hdf5()} with \code{FileIn} specified. At a minimum the entries \code{rpt$listGrpName}, \code{rpt$listData} and \code{rpt$listAttr} are required to write the contents to an output hdf5 file.
+#' @param FileInp is the input HDF5 file (turb or stor) the data and metadata are being read from. It is ignored if \code{rpt} is specified.
+#' @param rpt is the list returned from a previous call of \code{eddy4R.base::def.extr.hdf5()} with \code{FileInp} specified. At a minimum the entries \code{rpt$listGrpName}, \code{rpt$listData} and \code{rpt$listAttr} are required to write the contents to an output hdf5 file.
 #' @param FileOut is the output file nsae HDF5 written to.
 #' @param MethExtrData logical parameter that decides if data from the input file should be extracted and written to the output file.
 #' @param MethExtrAttr logical parameter that decides if attributes (metadata) from the input file should be extracted and written to the output file.
@@ -48,12 +48,14 @@
 #   Natchaya P-Durden (2018-04-12)
 #    applied eddy4R term name convention; replaced fid by idFile
 #    replaced gid by idData
+#   Ke Xu (2018-04-19)
+#     applied term name convention; replaced FileIn by FileInp
 ##############################################################################################################
 #Start of function call to extract data from one file and write to another
 ##############################################################################################################
 
 def.extr.hdf5 <- function(
-  FileIn = NULL,
+  FileInp = NULL,
   rpt = NULL,
   FileOut = NULL,
   MethExtrData = TRUE,
@@ -69,7 +71,7 @@ if(base::is.null(rpt)) {
 
   
   # test whether input file present
-  if(!base::file.exists(FileIn)) {
+  if(!base::file.exists(FileInp)) {
     stop("Input file does not exist")
   } 
 
@@ -80,7 +82,7 @@ if(base::is.null(rpt)) {
     rpt <- list()
     
     #list of everything written within the input file
-    listObj <- rhdf5::h5ls(FileIn, datasetinfo = FALSE)
+    listObj <- rhdf5::h5ls(FileInp, datasetinfo = FALSE)
     
     #List of all object names
     listObjName <- base::paste(listObj$group, listObj$name, sep = "/")
@@ -115,7 +117,7 @@ if(base::is.null(rpt)) {
     } 
    
     # Read data from the input file
-    rpt$listData <- base::lapply(listDataName, rhdf5::h5read, file = FileIn)
+    rpt$listData <- base::lapply(listDataName, rhdf5::h5read, file = FileInp)
     
     #Apply group names to the attributes list
     base::names(rpt$listData) <- listDataName
@@ -124,7 +126,7 @@ if(base::is.null(rpt)) {
   # Attributes for writing to the output HDF5 file
     
     # read attributes from input file
-    rpt$listAttr <- base::lapply(listObjName, rhdf5::h5readAttributes, file = FileIn)
+    rpt$listAttr <- base::lapply(listObjName, rhdf5::h5readAttributes, file = FileInp)
     
     #Apply group names to the attributes list
     base::names(rpt$listAttr) <- listObjName
