@@ -7,7 +7,7 @@
 wrap.neon.dp01.qfqm.ecse(dp01 = c("co2Stor", "h2oStor", "tempAirLvl",
   "tempAirTop", "isoCo2", "isoH2o")[1], lvl, lvlMfcSampStor = NULL,
   lvlEnvHut = NULL, lvlValv = NULL, lvlValvAux = NULL,
-  lvlCrdH2oValvVali = NULL, data = list(), qfInput = list(),
+  lvlCrdH2oValvVali = NULL, data = list(), qfInp = list(),
   TypeMeas = c("samp", "vali")[1], PrdMeas, PrdAgr, idxTime = list())
 }
 \arguments{
@@ -28,7 +28,7 @@ c("co2Stor", "h2oStor", "tempAirLvl", "tempAirTop", "isoCo2", "isoH2o"). Default
 
 \item{data}{A list of data frame containing the input dp0p data that related to dp01 which qfqm are being calculated. Of class integer". [User defined]}
 
-\item{qfInput}{A list of data frame containing the input quality flag data that related to dp01 are being grouped. Of class integer". [-]}
+\item{qfInp}{A list of data frame containing the input quality flag data that related to dp01 are being grouped. Of class integer". [-]}
 
 \item{TypeMeas}{A vector of class "character" containing the name of measurement type (sampling or validation), TypeMeas = c("samp", "vali"). Defaults to "samp". [-]}
 
