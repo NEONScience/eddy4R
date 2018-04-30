@@ -15,7 +15,7 @@
 #' @param lvlValv Measurement level of irgaValvLvl, crdCo2ValvLvl, or crdH2oValvLvl. Defaults to NULL. Of type character. [-]
 #' @param lvlCrdH2oValvVali Measurement level of crdH2oValvVali which apply to only  dp01 equal to "isoH2o". Defaults to NULL. Of type character. [-]
 #' @param data A list of data frame containing the input dp0p data that related to dp01 which descriptive statistics are being calculated. Of class integer". [User defined] 
-#' @param qfInput A list of data frame containing the input quality flag data that related to dp01 are being grouped. Of class integer". [-] 
+#' @param qfInp A list of data frame containing the input quality flag data that related to dp01 are being grouped. Of class integer". [-] 
 #' @param TypeMeas A vector of class "character" containing the name of measurement type (sampling or validation), TypeMeas = c("samp", "vali"). Defaults to "samp". [-]
 #' @param PrdMeas The measurement time period in minute.  [min]
 #' @param PrdAgr The time period to aggregate to averaging in minute. [min]
@@ -57,6 +57,8 @@
 #     use quality flag to determine indices
 #   Natchaya P-Durden (2018-04-03)
 #     update @param format
+#   Ke Xu (2018-04-19)
+#     applied term name convention; replaced qfInput by qfInp
 ##############################################################################################
 wrap.neon.dp01.ecse <- function(
   dp01 = c("co2Stor", "h2oStor", "tempAirLvl", "tempAirTop", "isoCo2", "isoH2o")[1],
@@ -66,7 +68,7 @@ wrap.neon.dp01.ecse <- function(
   lvlValv = NULL,
   lvlCrdH2oValvVali = NULL,
   data = list(),
-  qfInput = list(),
+  qfInp = list(),
   TypeMeas = c("samp", "vali")[1],
   PrdMeas,
   PrdAgr,
@@ -128,7 +130,7 @@ wrap.neon.dp01.ecse <- function(
       
       #input the whole day qfqm 
       wrk$qfqm <- list()
-      wrk$qfqm$irgaStor <- qfInput$irga[[lvl]]
+      wrk$qfqm$irgaStor <- qfInp$irga[[lvl]]
       
       if (PrdMeas == PrdAgr) {
         #PrdAgr <- 2
@@ -339,7 +341,7 @@ wrap.neon.dp01.ecse <- function(
       
       #input the whole day qfqm 
       wrk$qfqm <- list()
-      wrk$qfqm$irgaStor <- qfInput$irga[[lvl]]
+      wrk$qfqm$irgaStor <- qfInp$irga[[lvl]]
       
       if (PrdMeas == PrdAgr) {
         #PrdAgr <- 2
@@ -565,7 +567,7 @@ wrap.neon.dp01.ecse <- function(
       #input the whole day qfqm 
       wrk$qfqm <- list()
       #subset only
-      wrk$qfqm$crdCo2 <- qfInput$crdCo2[[lvl]]
+      wrk$qfqm$crdCo2 <- qfInp$crdCo2[[lvl]]
       
       if (PrdMeas == PrdAgr) {
         #PrdAgr <- 9
@@ -760,7 +762,7 @@ wrap.neon.dp01.ecse <- function(
       
       #input the whole day qfqm 
       wrk$qfqm <- list()
-      wrk$qfqm$crdCo2 <- qfInput$crdCo2[[lvl]]
+      wrk$qfqm$crdCo2 <- qfInp$crdCo2[[lvl]]
       
       if (PrdMeas == PrdAgr) {
         #PrdAgr <- 9
@@ -940,7 +942,7 @@ wrap.neon.dp01.ecse <- function(
       
       #input the whole day qfqm
       wrk$qfqm <- list()
-      wrk$qfqm$crdH2o <- qfInput$crdH2o[[lvl]]
+      wrk$qfqm$crdH2o <- qfInp$crdH2o[[lvl]]
       
       if (PrdMeas == PrdAgr) {
         #PrdAgr <- 9
@@ -1134,7 +1136,7 @@ wrap.neon.dp01.ecse <- function(
       
       #input the whole day qfqm
       wrk$qfqm <- list()
-      wrk$qfqm$crdH2o <- qfInput$crdH2o[[lvl]]
+      wrk$qfqm$crdH2o <- qfInp$crdH2o[[lvl]]
       #replace injNum to NaN when they are not measured at that period
       wrk$data$injNum <- ifelse(is.na(wrk$qfqm$crdH2o$qfRngTemp), NaN, wrk$data$injNum)
       if (PrdMeas == PrdAgr) {        
