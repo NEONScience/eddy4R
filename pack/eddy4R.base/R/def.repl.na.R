@@ -7,10 +7,10 @@
 #' @description  Defination Function to two combine daily files into one file, replacing NA with previous value, and divide file back into daily.\cr
 #' Specific for pump and soleniod valves.
 
-#' @param dataProcDate A dataframe containing data and time in the processing date. [User-defined]
+#' @param dataCalcDate A dataframe containing data and time in the processing date. [User-defined]
 #' @param dataBgnDate A dataframe containing data and time in the day before processing date. [User-defined]
 #' @param Date Character: Processing date e.g. "20170521". [-]
-#' @param numCol Numeric: Define which column number in \code{dataProcDate} and \code{dataBgnDate} are being process. [-]
+#' @param numCol Numeric: Define which column number in \code{dataCalcDate} and \code{dataBgnDate} are being process. [-]
 
 #' @return A dataframe including the data and time in the processing date which NA values have been replaced by previous value. [User-defined]
 
@@ -34,15 +34,17 @@
 #     update @param format
 #   Natchaya P-Durden (2018-04-13)
 #    applied eddy4R term name convention; replaced mergFile by combFile
+#   Ke Xu (2018-04-30): applied eddy4R term name convention; replaced dataProcDate by dataCalcDate
+
 ##############################################################################################
 def.repl.na <- function(
-  dataProcDate,
+  dataCalcDate,
   dataBgnDate,
   Date,
   numCol
 ){
 #merge daily files into one file
-combFile <- rbind(dataBgnDate, dataProcDate) 
+combFile <- rbind(dataBgnDate, dataCalcDate) 
 #replace NA with previous value
 combFile[,numCol] <- zoo::na.locf(combFile[,numCol], na.rm = FALSE)
 #combFile$timeNew <- as.POSIXct(strptime(combFile$time, format="%Y-%m-%dT%H:%M:%OSZ", tz="UTC"))
