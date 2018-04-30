@@ -36,7 +36,12 @@
 #   Natchaya P-Durden (2018-03-30)
 #     applied term name convention; replace Levl by Lvl
 #   David Durden (2018-04-02)
-#     fix for missing timeEnd
+#     fix for missing timeEnd;
+#   David Durden (2018-04-12)
+#     add failsafe for missing data in API;
+#     #TODO: 
+#     - Create check if group level exists and create if not
+#     - Add other dp01's and remove hardcoded units
 ##############################################################################################
 
 def.hdf5.wrte.dp01.api <- function(
@@ -49,6 +54,8 @@ def.hdf5.wrte.dp01.api <- function(
 ){
 
 ##############################################################################
+
+#Needed library
 library(rhdf5)
 #TODO: 
 #Create check if group level exists and create if not
@@ -57,9 +64,9 @@ library(rhdf5)
 #Convert date to lubridate object
 date <- lubridate::as_datetime(date)
 
-timeBgn <- date - lubridate::minutes(1)
+timeBgn <- date - lubridate::seconds(1)
 
-timeEnd <- date + lubridate::days(1)
+timeEnd <- date + lubridate::days(1) 
 
 
 #List of DP numbers by eddy4R DP names
@@ -70,11 +77,71 @@ DpNum <- listDpNum[DpName]
 if(substr(DpName, 1, 4) == "temp"){TblName <- substr(DpName, 1, 4)}
 
 # Grab 30 minute data to be written
-data <- Noble::pull.date(site = SiteLoca, dpID = DpNum, bgn.date = timeBgn, end.date = timeEnd, package = "expanded", time.agr = TimeAgr) #Currently requires to subtract 1 minute otherwise (1 index will be cut from the beginning)
+data <- try(expr = Noble::pull.date(site = SiteLoca, dpID = DpNum, bgn.date = timeBgn, end.date = timeEnd, package = "expanded", time.agr = TimeAgr), silent = TRUE) #Currently requires to subtract 1 minute otherwise (1 index will be cut from the beginning)
+
+#Failsafe test if API pull produced an error
+if(class(data) == "try-error"){
+  #Initialize lists
+  rpt <- list(data = list(), qfqm = list(), ucrt = list())
+  
+  #get tower top level
+  LvlTop <- strsplit(LvlTowr,"")
+  LvlTop <- base::as.numeric(LvlTop[[1]][6])
+  
+  #get the sequence from top to first level
+  LvlMeas<- base::seq(from = LvlTop, to = 1, by = -1)
+  LvlMeas <- paste0("000_0",LvlMeas,"0",sep="")
+  
+  #Grabbing the measurement levels based on the sensor assembly
+  if(DpName == "tempAirTop"){LvlMeasOut <- LvlTowr}
+  if(DpName == "tempAirLvl"){LvlMeasOut <- LvlMeas[!LvlMeas == LvlTowr]}
+  
+  #Create names for LevlMeasOut
+  names(LvlMeasOut) <- LvlMeasOut
+  
+  #Create the timeBgn vector for aggregation period specified (1, 30 minutes)
+  timeBgnOut <- seq(from = lubridate::ymd_hms(timeBgn) + lubridate::seconds(1), to = base::as.POSIXlt(timeEnd) - lubridate::minutes(TimeAgr), by = paste(TimeAgr, "mins", sep = " "))
+  
+  #Create the timeEnd vector for aggregation period specified (1, 30 minutes)
+  timeEndOut <- seq(from = lubridate::ymd_hms(timeBgn) + lubridate::minutes(TimeAgr)+ lubridate::seconds(1), to = base::as.POSIXlt(timeEnd), by = paste(TimeAgr, "mins", sep = " "))
+  
+  #Creating a vector of NaN's to fill data.frames
+  dataNa <- rep(x = NaN, length = length(timeBgnOut))
+  
+  #Create the output dataframe for data values
+  dataOut <- data.frame("timeBgn" = strftime(as.character(timeBgnOut), format= "%Y-%m-%dT%H:%M:%OSZ", tz="UTC"), "timeEnd" = strftime(as.character(timeEndOut), format= "%Y-%m-%dT%H:%M:%OSZ", tz="UTC"), "max" = dataNa, "mean" = dataNa, "min" = dataNa, "numSamp" = dataNa, "vari"= dataNa, stringsAsFactors = FALSE) 
+  
+  #Adding unit attributes and naming them
+  attributes(dataOut)$unit <- c("NA","NA","C","C","C","NA","C2")
+  names(attributes(dataOut)$unit) <- names(dataOut)
+  
+  #Create the output dataframe for qfqm values
+  qfqmOut <- data.frame("timeBgn" = strftime(as.character(timeBgnOut), format= "%Y-%m-%dT%H:%M:%OSZ", tz="UTC"), "timeEnd" = strftime(as.character(timeEndOut), format= "%Y-%m-%dT%H:%M:%OSZ", tz="UTC"), "qmAlph" = rep(x = 0.0, length = length(timeBgnOut)), "qmBeta" = rep(x = 1.0, length = length(timeBgnOut)), "qfFinl" = rep(x = 1L, length = length(timeBgnOut)), "qfSci" = rep(x = 0L, length = length(timeBgnOut)), stringsAsFactors = FALSE) 
+  
+  #Setting attributes
+  attributes(qfqmOut)$unit <- base::rep_len(x = "NA", length.out = ncol(qfqmOut))
+  names(attributes(qfqmOut)$unit) <- names(qfqmOut)
+  
+  #Create the output dataframe for ucrt values 
+  ucrtOut <- data.frame("timeBgn" = strftime(as.character(timeBgnOut), format= "%Y-%m-%dT%H:%M:%OSZ", tz="UTC"), "timeEnd" = strftime(as.character(timeEndOut), format= "%Y-%m-%dT%H:%M:%OSZ", tz="UTC"), "ucrtCal95" = dataNa, "se" = dataNa, stringsAsFactors = FALSE) 
+  
+  #Adding unit attributes and naming them
+  attributes(ucrtOut)$unit <- c("NA","NA","C","C")
+  names(attributes(ucrtOut)$unit) <- names(ucrtOut)
+  
+  #Create list structure for the return output (type>>HOR_VER>>output_dataframes)
+  lapply(LvlMeas, function(x) {
+    rpt$data[[x]] <<- dataOut
+    rpt$qfqm[[x]] <<- qfqmOut
+    rpt$ucrt[[x]] <<- ucrtOut
+    }) #End of lapply around measurement levels
+
+} else {
 
 #Convert times to POSIXct
 data$startDateTime <- as.POSIXct(data$startDateTime)
-data$endDateTime <- as.POSIXct(data$endDateTime)
+data$endDateTime <- as.POSIXct(data$endDateTime, format = "%Y-%m-%dT%H:%M:%OSZ", tz = "UTC")
+
 
 #Set of times where endDateTime is NA
 setNa <- which(is.na(data$endDateTime))
@@ -197,7 +264,7 @@ rpt$ucrt <- lapply(LvlMeasOut, function(x){
   return(tmp)
 })
 
-
+} #End of else statement
 #############################################################################
 #Writing output to existing dp0p HDF5 file
 #############################################################################
