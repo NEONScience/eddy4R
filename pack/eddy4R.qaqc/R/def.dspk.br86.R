@@ -22,14 +22,14 @@
 #' -2: singular or constant value \cr
 #' -3: measurement changes so slow that time-series and filter value are identical \cr
 
-#' @param dataIn Required. A univariate vector of integers or numerics of Input data
+#' @param dataInp Required. A univariate vector of integers or numerics of Input data
 #' @param WndwFilt Optional. A single integer value of filter width. Default = 9
 #' @param NumBin Optional. A single integer value of the initial number/step size of histogram bins. Default = 2
 #' @param ThshReso Optional. A single integer value of the resolution threshold for spike determination. Only considered spike only if difference larger than measurement resolution x ThshReso. Default = 10
 #' @param FracRealMin Optional. A single numeric value of the minimum fraction of non-NA values required to perform median filter despiking. Default = 0.025 (2.5\%)
 
 #' @return A list of:
-#' @return \code{dataIn} Same as input.
+#' @return \code{dataInp} Same as input.
 #' @return \code{WndwFilt} Same as input.
 #' @return \code{NumBin} Same as input.
 #' @return \code{ThshReso} Same as input.
@@ -38,7 +38,7 @@
 #' @return \code{numSpk} Integer. The number of spikes identified.
 #' @return \code{dataOut} Numeric vector of input data with spikes removed.
 #' @return \code{dataNorm} Numeric vector of input data normalized to mean 0 and standard deviation of 1 
-#' @return \code{dataNormDiff} Numeric vector of differences between subsequent values of \code{dataNorm}. Length = 1-length(dataIn) 
+#' @return \code{dataNormDiff} Numeric vector of differences between subsequent values of \code{dataNorm}. Length = 1-length(dataInp) 
 #' @return \code{resoDataNorm} Numeric value. Measurement resolution (assumed to be smallest recorded change in \code{dataNorm}) 
 #' @return \code{thshNumData} Numeric value. Minimum number of non-NAs in window to calculate median, otherwise NA is returned. 
 #' @return \code{dataNormFiltMed} Numeric vector. Median-filtered timeseries of \code{dataNorm}.  
@@ -54,8 +54,8 @@
 #' @return \code{idxThshBinMax}  Integer. Current iteration of maximum threshold index of histogram bin within \code{histDiffFinl} for spike determination 
 #' @return \code{idxThshBinMinFinl} Integer. Final minimum threshold index of histogram bin within \code{histDiffFinl} for spike determination 
 #' @return \code{idxThshBinMaxFinl} Integer. Final maximum threshold index of histogram bin within \code{histDiffFinl} for spike determination 
-#' @return \code{setSpk} Indices of determined spikes within \code{dataIn}
-#' @return \code{qfSpk} Integer. Quality flag values [-1,0,1] for despike test, matching same size as \code{dataIn}
+#' @return \code{setSpk} Indices of determined spikes within \code{dataInp}
+#' @return \code{qfSpk} Integer. Quality flag values [-1,0,1] for despike test, matching same size as \code{dataInp}
 #'  
 #' 
 #' @references
@@ -90,10 +90,12 @@
 #     update @param format
 #   Natchaya P-Durden (2018-04-11)
 #    applied eddy4R term name convention; replaced pos by idx or set
+#   Ke Xu (2018-04-19)
+#     applied term name convention; replaced dataIn by dataInp
 ##############################################################################################
 
 def.dspk.br86 <- function(
-    dataIn, # input data, univariate vector of integers or numerics
+    dataInp, # input data, univariate vector of integers or numerics
     WndwFilt = 9, # filter width
     NumBin = 2, # initial number/step size of histogram bins
     ThshReso = 10, # resolution threshold for spike determination
@@ -101,18 +103,18 @@ def.dspk.br86 <- function(
   ) {
   
   # Initialize output
-  rpt <- base::list(dataIn=dataIn,WndwFilt=WndwFilt,NumBin=NumBin,ThshReso=ThshReso,FracRealMin=FracRealMin)
+  rpt <- base::list(dataInp=dataInp,WndwFilt=WndwFilt,NumBin=NumBin,ThshReso=ThshReso,FracRealMin=FracRealMin)
   
   #Error catching 1: 
   #fewer non-NAs in dataset than required for 0.5 h out of 24 h of data (default 2.5%)
-  if(base::length(base::which(!base::is.na(rpt$dataIn)))/base::length(rpt$dataIn) < rpt$FracRealMin) {
+  if(base::length(base::which(!base::is.na(rpt$dataInp)))/base::length(rpt$dataInp) < rpt$FracRealMin) {
   ###
 
     
     
     rpt$numBinFinl <- -1 # Set to error code
     rpt$numSpk <- -1 # Set to error code
-    rpt$dataOut <- rpt$dataIn      
+    rpt$dataOut <- rpt$dataInp      
     
     
     
@@ -125,7 +127,7 @@ def.dspk.br86 <- function(
     
 
     #normalizing time-series to mean = 0 and sd = 1
-      rpt$dataNorm <- (rpt$dataIn - base::mean(rpt$dataIn, na.rm=TRUE)) / stats::sd(rpt$dataIn, na.rm=TRUE)  
+      rpt$dataNorm <- (rpt$dataInp - base::mean(rpt$dataInp, na.rm=TRUE)) / stats::sd(rpt$dataInp, na.rm=TRUE)  
     #determine differences
       rpt$dataNormDiff <- base::diff(rpt$dataNorm)
   
@@ -134,7 +136,7 @@ def.dspk.br86 <- function(
     ###
     #Error catching 2: 
     #(i) singular or constant value, or (ii) no consecutive values.
-    #in (i) the first case sd(rpt$dataIn) will return NA, and so rpt$dataNorm will be all NAs
+    #in (i) the first case sd(rpt$dataInp) will return NA, and so rpt$dataNorm will be all NAs
     #in (ii) all differences are NA
     if(base::length(base::which(!base::is.na(rpt$dataNormDiff))) == 0) {
     ###
@@ -143,7 +145,7 @@ def.dspk.br86 <- function(
       
       rpt$numBinFinl <- -2 # Set to error code
       rpt$numSpk <- -2 # Set to error code
-      rpt$dataOut <- rpt$dataIn      
+      rpt$dataOut <- rpt$dataInp      
       
       
       
@@ -157,8 +159,8 @@ def.dspk.br86 <- function(
         
       #determine measurement resolution (assumed to be smallest recorded change in data series)
         rpt$resoDataNorm <- base::min(base::abs(rpt$dataNormDiff[base::which(rpt$dataNormDiff != 0)]), na.rm=TRUE)
-      #     plot(rpt$dataIn[1:100], type="l")
-      #     min(diff(rpt$dataIn[1:100]), na.rm=TRUE)
+      #     plot(rpt$dataInp[1:100], type="l")
+      #     min(diff(rpt$dataInp[1:100]), na.rm=TRUE)
       
       #apply median filter and calculate differences
         #minimum number of non-NAs in window to calculate median, else return NA
@@ -170,7 +172,7 @@ def.dspk.br86 <- function(
       
           if(base::length(rpt$dataNormFiltMed) == 1) {
             
-            rpt$histDiff <- base::rep(0, base::length(rpt$dataIn))
+            rpt$histDiff <- base::rep(0, base::length(rpt$dataInp))
             
           } else {
           
@@ -185,8 +187,8 @@ def.dspk.br86 <- function(
       #measurement changes so slow that time-series and filter value are identical
       #Or: less non-NAs in differences than required for 0.5 h out of 24 h of data (approx 2.5%)      
       if(base::max(rpt$histDiff, na.rm=TRUE) == 0 |
-         base::length(base::which(!base::is.na(rpt$histDiff)))/base::length(rpt$dataIn) < rpt$FracRealMin |
-         base::length(stats::na.omit(base::unique(rpt$histDiff)))/base::length(rpt$dataIn) < 0.001
+         base::length(base::which(!base::is.na(rpt$histDiff)))/base::length(rpt$dataInp) < rpt$FracRealMin |
+         base::length(stats::na.omit(base::unique(rpt$histDiff)))/base::length(rpt$dataInp) < 0.001
          ) {
       ###
         
@@ -194,7 +196,7 @@ def.dspk.br86 <- function(
         
         rpt$numBinFinl <- -3 # Set to error code
         rpt$numSpk <- -3 # Set to error code
-        rpt$dataOut <- rpt$dataIn      
+        rpt$dataOut <- rpt$dataInp      
     
         
         
@@ -274,7 +276,7 @@ def.dspk.br86 <- function(
             rpt$numSpk <- base::length(rpt$setSpk) # Number of spikes found
         
           #remove spikes
-            rpt$dataOut <- rpt$dataIn
+            rpt$dataOut <- rpt$dataInp
             if(rpt$numSpk > 0) rpt$dataOut[rpt$setSpk] <- NA
 
   
@@ -302,9 +304,9 @@ def.dspk.br86 <- function(
   ###
   
   # Create vector of quality flag values [-1,0,1]
-  rpt$qfSpk <- dataIn # initialize size of output
+  rpt$qfSpk <- dataInp # initialize size of output
   rpt$qfSpk[] <- 0 # start with all flags not raised
-  rpt$qfSpk[base::is.na(rpt$dataIn)] <- -1 # 'could not evaluate' flag for original NA values
+  rpt$qfSpk[base::is.na(rpt$dataInp)] <- -1 # 'could not evaluate' flag for original NA values
   rpt$qfSpk[rpt$setSpk] <- 1 # raise flag for determined spikes
   
 #  #print message to screen

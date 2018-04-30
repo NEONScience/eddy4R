@@ -4,13 +4,13 @@
 \alias{wrap.neon.dp01.qfqm}
 \title{Wrapper function: Calculate quality metrics, alpha and beta quality metrics, and final quality flag for the NEON eddy-covariance turbulent and stroage exchange L1 data products}
 \usage{
-wrap.neon.dp01.qfqm(qfInput = list(), MethMeas = c("ecte", "ecse")[1],
+wrap.neon.dp01.qfqm(qfInp = list(), MethMeas = c("ecte", "ecse")[1],
   TypeMeas = c("samp", "vali")[1], RptExpd = FALSE, dp01 = c("envHut",
   "co2Turb", "h2oTurb", "co2Stor", "h2oStor", "isoCo2", "isoH2o", "soni",
   "soniAmrs", "tempAirLvl", "tempAirTop")[1], idGas = NULL)
 }
 \arguments{
-\item{qfInput}{A list of data frame containing the input quality flag data that related to L1 data products are being grouped. Of class integer". [-]}
+\item{qfInp}{A list of data frame containing the input quality flag data that related to L1 data products are being grouped. Of class integer". [-]}
 
 \item{MethMeas}{A vector of class "character" containing the name of measurement method (eddy-covariance turbulent exchange or storage exchange), MethMeas = c("ecte", "ecse"). Defaults to "ecse". [-]}
 
@@ -45,11 +45,11 @@ qf$soni <- eddy4R.qaqc::def.qf.ecte(TimeBgn = TimeBgn, TimeEnd = TimeEnd, Freq =
 qf$soniAmrs <- eddy4R.qaqc::def.qf.ecte(TimeBgn = TimeBgn, TimeEnd = TimeEnd, Freq = 40, Sens = "soniAmrs", PcntQf = 0.05)
 #calculate quality metric, qmAlpha, qmBeta, qfFinl
 qfqm <- list()
-qfqm$co2Turb <- eddy4R.qaqc::wrap.neon.dp01.qfqm (qfInput = qf, MethMeas = "ecte", TypeMeas = "samp", dp01="co2Turb")
-qfqm$h2oTurb <- eddy4R.qaqc::wrap.neon.dp01.qfqm (qfInput = qf, MethMeas = "ecte", TypeMeas = "samp", dp01="h2oTurb")
-qfqm$soni <- eddy4R.qaqc::wrap.neon.dp01.qfqm (qfInput = qf, MethMeas = "ecte", TypeMeas = "samp", dp01="soni")
+qfqm$co2Turb <- eddy4R.qaqc::wrap.neon.dp01.qfqm (qfInp = qf, MethMeas = "ecte", TypeMeas = "samp", dp01="co2Turb")
+qfqm$h2oTurb <- eddy4R.qaqc::wrap.neon.dp01.qfqm (qfInp = qf, MethMeas = "ecte", TypeMeas = "samp", dp01="h2oTurb")
+qfqm$soni <- eddy4R.qaqc::wrap.neon.dp01.qfqm (qfInp = qf, MethMeas = "ecte", TypeMeas = "samp", dp01="soni")
 # Example with expanded quality metrics included
-qfqm$soniAmrs <- eddy4R.qaqc::wrap.neon.dp01.qfqm (qfInput = qf, MethMeas = "ecte", TypeMeas = "samp", RptExpd = TRUE, dp01="soniAmrs")
+qfqm$soniAmrs <- eddy4R.qaqc::wrap.neon.dp01.qfqm (qfInp = qf, MethMeas = "ecte", TypeMeas = "samp", RptExpd = TRUE, dp01="soniAmrs")
 }
 \references{
 License: GNU AFFERO GENERAL PUBLIC LICENSE Version 3, 19 November 2007.

@@ -35,6 +35,8 @@
 #     building a function that can be called by workflow
 #   Natchaya P-Durden (2018-03-28)
 #     updated the function header
+#   Ke Xu (2018-04-19)
+#     applied term name convention; replaced dataIn by dataInp
 ##############################################################################################
 wrap.para.thsh <- function(
   DpName = c("IrgaTurb","MfcSampTurb","Soni","Amrs"),
@@ -69,7 +71,7 @@ dataList <- lapply(fileList01, read.table, header = T,
 #using the data names provided with the data to name the lists
 names(dataList) <- varName
 dataOutList <- list()
-lapply(names(dataList), function(x) dataOutList[[x]] <<- eddy4R.base::def.para.thsh(dataIn=dataList[[x]], site="Neon"))
+lapply(names(dataList), function(x) dataOutList[[x]] <<- eddy4R.base::def.para.thsh(dataInp=dataList[[x]], site="Neon"))
 #assign name of data list
 names(dataOutList) <- varName
 
