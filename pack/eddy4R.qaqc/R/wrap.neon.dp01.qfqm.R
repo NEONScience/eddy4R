@@ -7,7 +7,7 @@
 
 #' @description Wrapper function. Calculate quality metrics, alpha and beta quality metrics, and final quality flag for the NEON eddy-covariance turbulent and storage exchange L1 data products.
 
-#' @param qfInput A list of data frame containing the input quality flag data that related to L1 data products are being grouped. Of class integer". [-] 
+#' @param qfInp A list of data frame containing the input quality flag data that related to L1 data products are being grouped. Of class integer". [-] 
 #' @param MethMeas A vector of class "character" containing the name of measurement method (eddy-covariance turbulent exchange or storage exchange), MethMeas = c("ecte", "ecse"). Defaults to "ecse". [-] 
 #' @param TypeMeas A vector of class "character" containing the name of measurement type (sampling or validation), TypeMeas = c("samp", "ecse"). Defaults to "samp". [-]
 #' @param RptExpd A logical parameter that determines if the full quality metric \code{qm} is output in the returned list (defaults to FALSE).
@@ -38,11 +38,11 @@
 #' qf$soniAmrs <- eddy4R.qaqc::def.qf.ecte(TimeBgn = TimeBgn, TimeEnd = TimeEnd, Freq = 40, Sens = "soniAmrs", PcntQf = 0.05)
 #' #calculate quality metric, qmAlpha, qmBeta, qfFinl
 #' qfqm <- list()
-#' qfqm$co2Turb <- eddy4R.qaqc::wrap.neon.dp01.qfqm (qfInput = qf, MethMeas = "ecte", TypeMeas = "samp", dp01="co2Turb")
-#' qfqm$h2oTurb <- eddy4R.qaqc::wrap.neon.dp01.qfqm (qfInput = qf, MethMeas = "ecte", TypeMeas = "samp", dp01="h2oTurb")
-#' qfqm$soni <- eddy4R.qaqc::wrap.neon.dp01.qfqm (qfInput = qf, MethMeas = "ecte", TypeMeas = "samp", dp01="soni")
+#' qfqm$co2Turb <- eddy4R.qaqc::wrap.neon.dp01.qfqm (qfInp = qf, MethMeas = "ecte", TypeMeas = "samp", dp01="co2Turb")
+#' qfqm$h2oTurb <- eddy4R.qaqc::wrap.neon.dp01.qfqm (qfInp = qf, MethMeas = "ecte", TypeMeas = "samp", dp01="h2oTurb")
+#' qfqm$soni <- eddy4R.qaqc::wrap.neon.dp01.qfqm (qfInp = qf, MethMeas = "ecte", TypeMeas = "samp", dp01="soni")
 #' # Example with expanded quality metrics included
-#' qfqm$soniAmrs <- eddy4R.qaqc::wrap.neon.dp01.qfqm (qfInput = qf, MethMeas = "ecte", TypeMeas = "samp", RptExpd = TRUE, dp01="soniAmrs")
+#' qfqm$soniAmrs <- eddy4R.qaqc::wrap.neon.dp01.qfqm (qfInp = qf, MethMeas = "ecte", TypeMeas = "samp", RptExpd = TRUE, dp01="soniAmrs")
 
 #' @seealso Currently none
 
@@ -63,10 +63,12 @@
 #     added idGas and replaced isopCo2 and isopH2o by isoCo2 and isoH2o
 #   Natchaya P-Durden (2017-08-17)
 #     added co2Stor and h2oStor in dp01 name input
+#   Ke Xu (2018-04-19)
+#     applied term name convention; replaced qfInput by qfInp
 ##############################################################################################
 
 wrap.neon.dp01.qfqm <- function(
-  qfInput = list(),
+  qfInp = list(),
   MethMeas = c("ecte", "ecse")[1],
   TypeMeas = c("samp", "vali")[1], 
   RptExpd = FALSE,
@@ -78,7 +80,7 @@ wrap.neon.dp01.qfqm <- function(
   rpt <- list()
   tmp <- list()
   #grouping qf
-  inp <- eddy4R.qaqc::def.neon.dp01.qf.grp(qfInput = qfInput, MethMeas = MethMeas, TypeMeas = TypeMeas, dp01=dp01, idGas = idGas)
+  inp <- eddy4R.qaqc::def.neon.dp01.qf.grp(qfInp = qfInp, MethMeas = MethMeas, TypeMeas = TypeMeas, dp01=dp01, idGas = idGas)
   
   #calculate qmAlpha, qmBeta, qfFinl
   tmp <- lapply(inp, FUN = eddy4R.qaqc::def.qf.finl)

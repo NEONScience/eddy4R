@@ -8,7 +8,7 @@
 #' Wrapper function. To write NEON Level 1 data product descriptive statistics (mean, minimum, maximum, variance, number of non-NA points), quality flags and quality metrics, and uncertainty quantification to an output HDF5 file. 
 
 #' @param inpList A list of including dp01 data, quality flags and quality metrics, and uncertainty calculations to package and write to an output HDF5 file
-#' @param FileIn The file name for the input dp0p HDF5 file to grab metadata
+#' @param FileInp The file name for the input dp0p HDF5 file to grab metadata
 #' @param FileOut The file name for the output HDF5 file
 #' @param SiteLoca Character: Site location.
 #' @param LvlTowr The tower level that the sensor data is being collected in NEON data product convention (HOR_VER)
@@ -48,6 +48,8 @@
 #     applied term name convention; replace LevlTowr by LvlTowr
 #   Natchaya P-Durden (2018-04-12)
 #    applied eddy4R term name convention; replaced fid by idFile
+#   Ke Xu (2018-04-19)
+#     applied term name convention; replaced FileIn by FileInp
 ##############################################################################################
 
 
@@ -55,7 +57,7 @@
 
 wrap.hdf5.wrte.dp01 <- function(
   inpList,
-  FileIn,
+  FileInp,
   FileOut,
   SiteLoca,
   LvlTowr,
@@ -185,6 +187,6 @@ if(MethDp04 == TRUE){
 ######################################################################
 #Writing metadata from input dp0p file to output dp01 file
 ######################################################################
-eddy4R.base::def.para.hdf5.dp01(FileIn = FileIn, FileOut = FileOut)
+eddy4R.base::def.para.hdf5.dp01(FileInp = FileInp, FileOut = FileOut)
 
 }

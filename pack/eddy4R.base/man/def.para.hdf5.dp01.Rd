@@ -4,10 +4,10 @@
 \alias{def.para.hdf5.dp01}
 \title{Definition function: Copy metadata from HDF5 input file to another HDF5 output file}
 \usage{
-def.para.hdf5.dp01(FileIn, FileOut)
+def.para.hdf5.dp01(FileInp, FileOut)
 }
 \arguments{
-\item{FileIn}{is the input file where the parameters are being read from.}
+\item{FileInp}{is the input file where the parameters are being read from.}
 
 \item{FileOut}{is the output file where the parameters are being written to.}
 }
