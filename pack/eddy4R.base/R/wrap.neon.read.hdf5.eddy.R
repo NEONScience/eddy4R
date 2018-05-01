@@ -53,6 +53,8 @@
 #     move ECSE de-spiking from wrap.neon.read.hdf5.eddy() to wrap.prd.day.ecse()
 #   Natchaya P-Durden (2018-03-30)
 #     applied term name convention; replace LevlTowr by LvlTowr
+#   Ke Xu (2018-04-19)
+#     applied term name convention; replaced dataIn by dataInp
 ##############################################################################################
         
 wrap.neon.read.hdf5.eddy <- function(
@@ -395,7 +397,7 @@ if(!(DateLoca %in% file)) {
         #execute de-spiking algorithm
         data[,idx] <- eddy4R.qaqc::def.dspk.br86(
           # input data, univariate vector of integers or numerics
-          dataIn = as.vector(data[,idx]),
+          dataInp = as.vector(data[,idx]),
           # filter width
           WndwFilt = DespLoca$widt,
           # initial number/step size of histogram bins

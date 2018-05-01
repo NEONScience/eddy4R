@@ -4,10 +4,10 @@
 \alias{def.para.thsh}
 \title{Definition function to read threshold table from CI-Parameter-Repo}
 \usage{
-def.para.thsh(dataIn, site)
+def.para.thsh(dataInp, site)
 }
 \arguments{
-\item{dataIn}{data.frame containing the threshold data from the CI-Parameter-Repo}
+\item{dataInp}{data.frame containing the threshold data from the CI-Parameter-Repo}
 
 \item{site}{The site for which the parameters are being pulled}
 }
