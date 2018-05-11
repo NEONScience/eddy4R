@@ -34,11 +34,13 @@
 #     Added MethMeas
 #    Natchaya Pingintha-Durden (2017-09-07)
 #     removed MethMeas and generated new function for ECSE
+#    Natchaya P-Durden (2018-05-11)
+#     rename function from def.hdf5.dp01.pack() to def.hdf5.pack.dp01()
 ##############################################################################################
 
 
 
-def.hdf5.dp01.pack <- function(
+def.hdf5.pack.dp01 <- function(
   inpList,
   time,
   Dp01
