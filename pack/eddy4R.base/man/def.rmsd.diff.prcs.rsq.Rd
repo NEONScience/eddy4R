@@ -8,15 +8,15 @@ def.rmsd.diff.prcs.rsq(refe, test, Perc = FALSE, Deba = NULL,
   DebaRltv = FALSE)
 }
 \arguments{
-\item{\code{refe}}{Variable of class numeric. Reference data.Same unit as test data.}
+\item{refe}{Variable of class numeric. Reference data.Same unit as test data.}
 
-\item{\code{test}}{Variable of class numeric. Test data.Same unit as reference data.}
+\item{test}{Variable of class numeric. Test data.Same unit as reference data.}
 
-\item{\code{Perc}}{Variable of class logical. It describe if the output is in percentage.}
+\item{Perc}{Variable of class logical. It describe if the output is in percentage.}
 
-\item{\code{Deba}}{Variable of class numeric. Numbers of the deadband around zero denominator}
+\item{Deba}{Variable of class numeric. Numbers of the deadband around zero denominator}
 
-\item{\code{DebaRltv}}{Variable of class logical.Absolute or relative (percentage) deadband around zero. True indicates Deba in relative (percentage), False indicates Deba in absolute numbers.}
+\item{DebaRltv}{Variable of class logical.Absolute or relative (percentage) deadband around zero. True indicates Deba in relative (percentage), False indicates Deba in absolute numbers.}
 }
 \value{
 Currently none

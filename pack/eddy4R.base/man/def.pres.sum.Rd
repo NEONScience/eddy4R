@@ -7,9 +7,9 @@
 def.pres.sum(presAtm, presDiff)
 }
 \arguments{
-\item{\code{presAtm}}{A vector containing the atmospheric pressure (or static pressure), of class "numeric". [Pa]}
+\item{presAtm}{A vector containing the atmospheric pressure (or static pressure), of class "numeric". [Pa]}
 
-\item{\code{presDiff}}{A vector containing the differential pressure, of class "numeric". [Pa]}
+\item{presDiff}{A vector containing the differential pressure, of class "numeric". [Pa]}
 }
 \value{
 The returned object is the total pressure calculated by summing the static pressure (presAtm) and the differential pressure (presDiff).

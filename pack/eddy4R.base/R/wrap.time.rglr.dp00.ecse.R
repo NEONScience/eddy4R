@@ -6,13 +6,13 @@
 #' @description  
 #'  Wrapper function. Time regularization for ECSE dp00
 
-#' @param \code{DirIn} Character: Input directory. [-]
-#' @param \code{Date} Character: Processing date e.g. "20170521". [-]
-#' @param \code{Site} Character: Site location. [-]
-#' @param \code{Dom} Character: Domain. [-]
-#' @param \code{Freq} Desired frequency of  the regularized dataset. Of class "numeric" or "integer". [Hz]
-#' @param \code{IdDp00} Character: dp00 data product number. [-]
-#' @param \code{horVer} Character: Horizontal and vertical location of dp00. [-]
+#' @param DirInp Character: Input directory. [-]
+#' @param Date Character: Processing date e.g. "20170521". [-]
+#' @param Site Character: Site location. [-]
+#' @param Dom Character: Domain. [-]
+#' @param Freq Desired frequency of  the regularized dataset. Of class "numeric" or "integer". [Hz]
+#' @param IdDp00 Character: dp00 data product number. [-]
+#' @param horVer Character: Horizontal and vertical location of dp00. [-]
 
 #' @return  A dataframe including the regularized dp00. [User-defined]
 
@@ -32,9 +32,17 @@
 #     original creation
 #   Natchaya P-Durden (2018-02-14)
 #     fix bugs when missing crdH2o
+#   Natchaya P-Durden (2018-04-03)
+#     update @param format
+#   Natchaya P-Durden (2018-04-13)
+#    applied eddy4R term name convention; replaced timeReg by timeRglr
+#   Ke Xu (2018-04-18)
+#     update eddy4R term: update DirIn to DirInp
+#   Ke Xu (2018-04-19)
+#     applied term name convention; replaced dataIn by dataInp
 ##############################################################################################
 wrap.time.rglr.dp00.ecse <- function(
-  DirIn,
+  DirInp,
   Date,
   Site = "CPER",
   Dom = "D10",
@@ -50,11 +58,11 @@ require(zoo)
 numDp00 <- paste0("NEON.",Dom,".",Site,".",IdDp00, sep="")
 
 #read in data ##################################################################
-DirIn00 <- paste0(DirIn,"/",Date, "/", numDp00)
-#read in all file list in DirIn
-fileList00 <- list.files(path = DirIn00, pattern = ".csv")
+DirInp00 <- paste0(DirInp,"/",Date, "/", numDp00)
+#read in all file list in DirInp
+fileList00 <- list.files(path = DirInp00, pattern = ".csv")
 #reating full path filenames
-fileList01 <- paste(DirIn00,fileList00, sep = "/")
+fileList01 <- paste(DirInp00,fileList00, sep = "/")
 #create a vector of variable names from the filenames
 varName <- gsub(".csv","",fileList00)
 #read in the data into a list of dataframes
@@ -73,7 +81,7 @@ lapply(names(dataList), function(x) dataList[[x]][,"timeNew"] <<-  format(as.POS
 outDate <- gsub("(\\d{4})(\\d{2})(\\d{2})$","\\1-\\2-\\3",Date)
 
 #generate time according to frequency
-timeReg <- seq.POSIXt(
+timeRglr <- seq.POSIXt(
   from = base::as.POSIXlt(paste(outDate, " ", "00:00:00.0001", sep=""), format="%Y-%m-%d %H:%M:%OS", tz="UTC"),
   to = base::as.POSIXlt(paste(outDate, " ", "23:59:59.9502", sep=""), format="%Y-%m-%d %H:%M:%OS", tz="UTC"),
   by = 1/Freq
@@ -92,36 +100,36 @@ if (IdDp00 %in% c("DP0.00105")){
   for (idxSubDp00 in subDp00){
     #idxSubDp00 <- subDp00[1]
     if (!(idxSubDp00 %in% names(dataList))) {
-      dataList[[idxSubDp00]] <- data.frame(matrix(data = NaN, ncol = 4, nrow = length(timeReg)))
+      dataList[[idxSubDp00]] <- data.frame(matrix(data = NaN, ncol = 4, nrow = length(timeRglr)))
       names(dataList[[idxSubDp00]]) <- c("time", "data", "exst", "timeNew")
-      dataList[[idxSubDp00]]$timeNew <- timeReg 
+      dataList[[idxSubDp00]]$timeNew <- timeRglr 
     }
   }#end of for loop in subDp00
   
-  #empty dataIn for time regularization
-  dataIn <- list()
-  lapply(names(dataList), function(x) dataIn[[x]] <<- eddy4R.base::def.rglr(timeMeas = base::as.POSIXlt(dataList[[x]][,"timeNew"], format="%Y-%m-%dT%H:%M:%OSZ", tz="UTC"),
+  #empty dataInp for time regularization
+  dataInp <- list()
+  lapply(names(dataList), function(x) dataInp[[x]] <<- eddy4R.base::def.rglr(timeMeas = base::as.POSIXlt(dataList[[x]][,"timeNew"], format="%Y-%m-%dT%H:%M:%OSZ", tz="UTC"),
                                                                dataMeas = dataList[[x]],
-                                                               BgnRglr = as.POSIXlt(min(timeReg)),
-                                                               EndRglr = as.POSIXlt(max(timeReg)),
+                                                               BgnRglr = as.POSIXlt(min(timeRglr)),
+                                                               EndRglr = as.POSIXlt(max(timeRglr)),
                                                                FreqRglr = Freq,
                                                                MethRglr = "CybiEc"
   )$dataRglr)
   
   #calculate CO2 dry mole fraction 
-  dataIn[[subDp00[1]]]$rtioMoleDryCo2 <- ((dataIn[[subDp00[1]]]$data)/10^6)/(1-(dataIn[[subDp00[2]]]$data/10^3))
+  dataInp[[subDp00[1]]]$rtioMoleDryCo2 <- ((dataInp[[subDp00[1]]]$data)/10^6)/(1-(dataInp[[subDp00[2]]]$data/10^3))
   #calculate H2o dry mole fraction
-  dataIn[[subDp00[2]]]$rtioMoleDryH2o <- ((dataIn[[subDp00[2]]]$data)/10^3)/(1-(dataIn[[subDp00[2]]]$data/10^3))
+  dataInp[[subDp00[2]]]$rtioMoleDryH2o <- ((dataInp[[subDp00[2]]]$data)/10^3)/(1-(dataInp[[subDp00[2]]]$data/10^3))
   
   #combine regularize data for irga
-  dataTmp <- data.frame(dataIn[[subDp00[5]]]$data,
-                        dataIn[[subDp00[6]]]$data,
-                        dataIn[[subDp00[1]]]$data,
-                        dataIn[[subDp00[1]]]$rtioMoleDryCo2,
-                        dataIn[[subDp00[2]]]$data,
-                        dataIn[[subDp00[2]]]$rtioMoleDryH2o,
-                        dataIn[[subDp00[3]]]$data,
-                        dataIn[[subDp00[4]]]$data)
+  dataTmp <- data.frame(dataInp[[subDp00[5]]]$data,
+                        dataInp[[subDp00[6]]]$data,
+                        dataInp[[subDp00[1]]]$data,
+                        dataInp[[subDp00[1]]]$rtioMoleDryCo2,
+                        dataInp[[subDp00[2]]]$data,
+                        dataInp[[subDp00[2]]]$rtioMoleDryH2o,
+                        dataInp[[subDp00[3]]]$data,
+                        dataInp[[subDp00[4]]]$data)
   
   #assign eddy4R name style to the output variables
   colnames(dataTmp) <- c("asrpCo2","asrpH2o", "rtioMoleWetCo2", "rtioMoleDryCo2", "rtioMoleWetH2o", 
@@ -150,8 +158,8 @@ if (IdDp00 %in% c("DP0.00105")){
                                                                unitFrom = attributes(dataTmp)$unit,
                                                                unitTo = "intl"))
   #combine regularize time and data
-  #dataTmp <- cbind(dataTmp, time = strftime(timeReg, format="%Y-%m-%dT%H:%M:%OSZ", tz="UTC"), stringsAsFactors = F)
-  dataTmp <- cbind(dataTmp, time = timeReg, stringsAsFactors = F)
+  #dataTmp <- cbind(dataTmp, time = strftime(timeRglr, format="%Y-%m-%dT%H:%M:%OSZ", tz="UTC"), stringsAsFactors = F)
+  dataTmp <- cbind(dataTmp, time = timeRglr, stringsAsFactors = F)
   #report output
   rpt <- dataTmp   
   #remove dataframe
@@ -163,7 +171,7 @@ if (IdDp00 %in% c("DP0.00113")){
   convTime <- list()
   diffTime <-list()
   qfDiffTime <- list()
-  dataIn <- list()
+  dataInp <- list()
   #convert time
   lapply(names(dataList), function(x) convTime[[x]] <<- base::as.POSIXlt(dataList[[x]]$timeNew, format="%Y-%m-%dT%H:%M:%OSZ", tz="UTC"))
   #calculate time difference
@@ -199,32 +207,32 @@ if (IdDp00 %in% c("DP0.00113")){
   for (idxSubDp00 in subDp00){
     #idxSubDp00 <- subDp00[1]
     if (!(idxSubDp00 %in% names(dataList))) {
-      dataList[[idxSubDp00]] <- data.frame(matrix(data = 0, ncol = 4, nrow = length(timeReg)))
+      dataList[[idxSubDp00]] <- data.frame(matrix(data = 0, ncol = 4, nrow = length(timeRglr)))
       names(dataList[[idxSubDp00]]) <- c("time", "data", "exst", "timeNew")
-      dataList[[idxSubDp00]]$timeNew <- timeReg 
+      dataList[[idxSubDp00]]$timeNew <- timeRglr 
     }
   }#end of for loop in subDp00
                
-  lapply(names(dataList), function(x) dataIn[[x]] <<- eddy4R.base::def.rglr(timeMeas = base::as.POSIXlt(dataList[[x]][,"timeNew"], format="%Y-%m-%dT%H:%M:%OSZ", tz="UTC"),
+  lapply(names(dataList), function(x) dataInp[[x]] <<- eddy4R.base::def.rglr(timeMeas = base::as.POSIXlt(dataList[[x]][,"timeNew"], format="%Y-%m-%dT%H:%M:%OSZ", tz="UTC"),
                                                                dataMeas = dataList[[x]],
-                                                               BgnRglr = as.POSIXlt(min(timeReg)),
-                                                               EndRglr = as.POSIXlt(max(timeReg)),
+                                                               BgnRglr = as.POSIXlt(min(timeRglr)),
+                                                               EndRglr = as.POSIXlt(max(timeRglr)),
                                                                FreqRglr = Freq,
                                                                MethRglr = "CybiEc",
                                                                PosWndw = "PosWndwMax"
   )$dataRglr)  
   #generate 0 value for unused valve
-  #dataIn$valv <- as.integer (0)
+  #dataInp$valv <- as.integer (0)
   
   #combine regularize time and data for irgaValvLvl
-  dataTmp <- data.frame(dataIn[[subDp00[1]]]$data,
-                        dataIn[[subDp00[2]]]$data,
-                        dataIn[[subDp00[3]]]$data,
-                        dataIn[[subDp00[4]]]$data,
-                        dataIn[[subDp00[5]]]$data,
-                        dataIn[[subDp00[6]]]$data,
-                        dataIn[[subDp00[7]]]$data,
-                        dataIn[[subDp00[8]]]$data)
+  dataTmp <- data.frame(dataInp[[subDp00[1]]]$data,
+                        dataInp[[subDp00[2]]]$data,
+                        dataInp[[subDp00[3]]]$data,
+                        dataInp[[subDp00[4]]]$data,
+                        dataInp[[subDp00[5]]]$data,
+                        dataInp[[subDp00[6]]]$data,
+                        dataInp[[subDp00[7]]]$data,
+                        dataInp[[subDp00[8]]]$data)
   
   #assign eddy4R name style to the output variables
   colnames(dataTmp) <- c("valv01", "valv02", "valv03", "valv04", "valv05", "valv06", "valv07", "valv08")
@@ -245,8 +253,8 @@ if (IdDp00 %in% c("DP0.00113")){
                                                                unitFrom = attributes(dataTmp)$unit,
                                                                unitTo = "intl"))
   #combine regularize time and data
-  #dataTmp <- cbind(dataTmp, time = strftime(timeReg, format="%Y-%m-%dT%H:%M:%OSZ", tz="UTC"), stringsAsFactors = F)
-  dataTmp <- cbind(dataTmp, time = timeReg, stringsAsFactors = F)
+  #dataTmp <- cbind(dataTmp, time = strftime(timeRglr, format="%Y-%m-%dT%H:%M:%OSZ", tz="UTC"), stringsAsFactors = F)
+  dataTmp <- cbind(dataTmp, time = timeRglr, stringsAsFactors = F)
   #filled NA with previous value
   dataTmp[,1:8] <- zoo::na.locf(dataTmp[,1:8], na.rm = FALSE)
   #report output
@@ -271,32 +279,32 @@ if (IdDp00 %in% c("DP0.00113")){
     for (idxSubDp00 in subDp00){
       #idxSubDp00 <- subDp00[1]
       if (!(idxSubDp00 %in% names(dataList))) {
-        dataList[[idxSubDp00]] <- data.frame(matrix(data = 0, ncol = 4, nrow = length(timeReg)))
+        dataList[[idxSubDp00]] <- data.frame(matrix(data = 0, ncol = 4, nrow = length(timeRglr)))
         names(dataList[[idxSubDp00]]) <- c("time", "data", "exst", "timeNew")
-        dataList[[idxSubDp00]]$timeNew <- timeReg 
+        dataList[[idxSubDp00]]$timeNew <- timeRglr 
       }
     }#end of for loop in subDp00
     
-    lapply(names(dataList), function(x) dataIn[[x]] <<- eddy4R.base::def.rglr(timeMeas = base::as.POSIXlt(dataList[[x]][,"timeNew"], format="%Y-%m-%dT%H:%M:%OSZ", tz="UTC"),
+    lapply(names(dataList), function(x) dataInp[[x]] <<- eddy4R.base::def.rglr(timeMeas = base::as.POSIXlt(dataList[[x]][,"timeNew"], format="%Y-%m-%dT%H:%M:%OSZ", tz="UTC"),
                                                                  dataMeas = dataList[[x]],
-                                                                 BgnRglr = as.POSIXlt(min(timeReg)),
-                                                                 EndRglr = as.POSIXlt(max(timeReg)),
+                                                                 BgnRglr = as.POSIXlt(min(timeRglr)),
+                                                                 EndRglr = as.POSIXlt(max(timeRglr)),
                                                                  FreqRglr = Freq,
                                                                  MethRglr = "CybiEc",
                                                                  PosWndw = "PosWndwMax"
     )$dataRglr)  
     #generate 0 value for unused valve
-    #dataIn$valv <- as.integer (0)
+    #dataInp$valv <- as.integer (0)
     
     #combine regularize time and data for valvVali
-    dataTmp <- data.frame(dataIn[[subDp00[1]]]$data,
-                          dataIn[[subDp00[2]]]$data,
-                          dataIn[[subDp00[3]]]$data,
-                          dataIn[[subDp00[4]]]$data,
-                          dataIn[[subDp00[5]]]$data,
-                          dataIn[[subDp00[6]]]$data,
-                          dataIn[[subDp00[7]]]$data,
-                          dataIn[[subDp00[8]]]$data)
+    dataTmp <- data.frame(dataInp[[subDp00[1]]]$data,
+                          dataInp[[subDp00[2]]]$data,
+                          dataInp[[subDp00[3]]]$data,
+                          dataInp[[subDp00[4]]]$data,
+                          dataInp[[subDp00[5]]]$data,
+                          dataInp[[subDp00[6]]]$data,
+                          dataInp[[subDp00[7]]]$data,
+                          dataInp[[subDp00[8]]]$data)
   
   #assign eddy4R name style to the output variables
   colnames(dataTmp) <- c("valv01", "valv02", "valv03", "valv04", "valv05", "valv06", "valv07", "valv08")
@@ -317,8 +325,8 @@ if (IdDp00 %in% c("DP0.00113")){
                                                                unitFrom = attributes(dataTmp)$unit,
                                                                unitTo = "intl"))
   #combine regularize time and data
-  #dataTmp <- cbind(dataTmp, time = strftime(timeReg, format="%Y-%m-%dT%H:%M:%OSZ", tz="UTC"), stringsAsFactors = F)
-  dataTmp <- cbind(dataTmp, time = timeReg, stringsAsFactors = F)
+  #dataTmp <- cbind(dataTmp, time = strftime(timeRglr, format="%Y-%m-%dT%H:%M:%OSZ", tz="UTC"), stringsAsFactors = F)
+  dataTmp <- cbind(dataTmp, time = timeRglr, stringsAsFactors = F)
   #filled NA with previous value
   dataTmp[,1:8] <- zoo::na.locf(dataTmp[,1:8], na.rm = FALSE)
   #report output
@@ -344,32 +352,32 @@ if (IdDp00 %in% c("DP0.00113")){
     for (idxSubDp00 in subDp00){
       #idxSubDp00 <- subDp00[1]
       if (!(idxSubDp00 %in% names(dataList))) {
-        dataList[[idxSubDp00]] <- data.frame(matrix(data = 0, ncol = 4, nrow = length(timeReg)))
+        dataList[[idxSubDp00]] <- data.frame(matrix(data = 0, ncol = 4, nrow = length(timeRglr)))
         names(dataList[[idxSubDp00]]) <- c("time", "data", "exst", "timeNew")
-        dataList[[idxSubDp00]]$timeNew <- timeReg 
+        dataList[[idxSubDp00]]$timeNew <- timeRglr 
       }
     }#end of for loop in subDp00
     
-    lapply(names(dataList), function(x) dataIn[[x]] <<- eddy4R.base::def.rglr(timeMeas = base::as.POSIXlt(dataList[[x]][,"timeNew"], format="%Y-%m-%dT%H:%M:%OSZ", tz="UTC"),
+    lapply(names(dataList), function(x) dataInp[[x]] <<- eddy4R.base::def.rglr(timeMeas = base::as.POSIXlt(dataList[[x]][,"timeNew"], format="%Y-%m-%dT%H:%M:%OSZ", tz="UTC"),
                                                                  dataMeas = dataList[[x]],
-                                                                 BgnRglr = as.POSIXlt(min(timeReg)),
-                                                                 EndRglr = as.POSIXlt(max(timeReg)),
+                                                                 BgnRglr = as.POSIXlt(min(timeRglr)),
+                                                                 EndRglr = as.POSIXlt(max(timeRglr)),
                                                                  FreqRglr = Freq,
                                                                  MethRglr = "CybiEc",
                                                                  PosWndw = "PosWndwMax"
     )$dataRglr)  
     #generate 0 value for unused valve
-    #dataIn$valv <- as.integer (0)
+    #dataInp$valv <- as.integer (0)
     
     #combine regularize time and data for crdCo2ValvLvl
-    dataTmp <- data.frame(dataIn[[subDp00[1]]]$data,
-                          dataIn[[subDp00[2]]]$data,
-                          dataIn[[subDp00[3]]]$data,
-                          dataIn[[subDp00[4]]]$data,
-                          dataIn[[subDp00[5]]]$data,
-                          dataIn[[subDp00[6]]]$data,
-                          dataIn[[subDp00[7]]]$data,
-                          dataIn[[subDp00[8]]]$data)
+    dataTmp <- data.frame(dataInp[[subDp00[1]]]$data,
+                          dataInp[[subDp00[2]]]$data,
+                          dataInp[[subDp00[3]]]$data,
+                          dataInp[[subDp00[4]]]$data,
+                          dataInp[[subDp00[5]]]$data,
+                          dataInp[[subDp00[6]]]$data,
+                          dataInp[[subDp00[7]]]$data,
+                          dataInp[[subDp00[8]]]$data)
   
   #assign eddy4R name style to the output variables
   colnames(dataTmp) <- c("valv01", "valv02", "valv03", "valv04", "valv05", "valv06", "valv07", "valv08")
@@ -390,8 +398,8 @@ if (IdDp00 %in% c("DP0.00113")){
                                                                unitFrom = attributes(dataTmp)$unit,
                                                                unitTo = "intl"))
   #combine regularize time and data
-  #dataTmp <- cbind(dataTmp, time = strftime(timeReg, format="%Y-%m-%dT%H:%M:%OSZ", tz="UTC"), stringsAsFactors = F)
-  dataTmp <- cbind(dataTmp, time = timeReg, stringsAsFactors = F)
+  #dataTmp <- cbind(dataTmp, time = strftime(timeRglr, format="%Y-%m-%dT%H:%M:%OSZ", tz="UTC"), stringsAsFactors = F)
+  dataTmp <- cbind(dataTmp, time = timeRglr, stringsAsFactors = F)
   #filled NA with previous value
   dataTmp[,1:8] <- zoo::na.locf(dataTmp[,1:8], na.rm = FALSE)
   #report output
@@ -418,32 +426,32 @@ if (IdDp00 %in% c("DP0.00113")){
     for (idxSubDp00 in subDp00){
       #idxSubDp00 <- subDp00[1]
       if (!(idxSubDp00 %in% names(dataList))) {
-        dataList[[idxSubDp00]] <- data.frame(matrix(data = 0, ncol = 4, nrow = length(timeReg)))
+        dataList[[idxSubDp00]] <- data.frame(matrix(data = 0, ncol = 4, nrow = length(timeRglr)))
         names(dataList[[idxSubDp00]]) <- c("time", "data", "exst", "timeNew")
-        dataList[[idxSubDp00]]$timeNew <- timeReg 
+        dataList[[idxSubDp00]]$timeNew <- timeRglr 
       }
     }#end of for loop in subDp00
     
-    lapply(names(dataList), function(x) dataIn[[x]] <<- eddy4R.base::def.rglr(timeMeas = base::as.POSIXlt(dataList[[x]][,"timeNew"], format="%Y-%m-%dT%H:%M:%OSZ", tz="UTC"),
+    lapply(names(dataList), function(x) dataInp[[x]] <<- eddy4R.base::def.rglr(timeMeas = base::as.POSIXlt(dataList[[x]][,"timeNew"], format="%Y-%m-%dT%H:%M:%OSZ", tz="UTC"),
                                                                  dataMeas = dataList[[x]],
-                                                                 BgnRglr = as.POSIXlt(min(timeReg)),
-                                                                 EndRglr = as.POSIXlt(max(timeReg)),
+                                                                 BgnRglr = as.POSIXlt(min(timeRglr)),
+                                                                 EndRglr = as.POSIXlt(max(timeRglr)),
                                                                  FreqRglr = Freq,
                                                                  MethRglr = "CybiEc",
                                                                  PosWndw = "PosWndwMax"
     )$dataRglr)  
     #generate 0 value for unused valve
-    #dataIn$valv <- as.integer (0)
+    #dataInp$valv <- as.integer (0)
     
     #combine regularize time and data for crdH2oValvLvl
-    dataTmp <- data.frame(dataIn[[subDp00[1]]]$data,
-                          dataIn[[subDp00[2]]]$data,
-                          dataIn[[subDp00[3]]]$data,
-                          dataIn[[subDp00[4]]]$data,
-                          dataIn[[subDp00[5]]]$data,
-                          dataIn[[subDp00[6]]]$data,
-                          dataIn[[subDp00[7]]]$data,
-                          dataIn[[subDp00[8]]]$data)
+    dataTmp <- data.frame(dataInp[[subDp00[1]]]$data,
+                          dataInp[[subDp00[2]]]$data,
+                          dataInp[[subDp00[3]]]$data,
+                          dataInp[[subDp00[4]]]$data,
+                          dataInp[[subDp00[5]]]$data,
+                          dataInp[[subDp00[6]]]$data,
+                          dataInp[[subDp00[7]]]$data,
+                          dataInp[[subDp00[8]]]$data)
   
   #assign eddy4R name style to the output variables
   colnames(dataTmp) <- c("valv01", "valv02", "valv03", "valv04", "valv05", "valv06", "valv07", "valv08")
@@ -464,8 +472,8 @@ if (IdDp00 %in% c("DP0.00113")){
                                                                unitFrom = attributes(dataTmp)$unit,
                                                                unitTo = "intl"))
   #combine regularize time and data
-  #dataTmp <- cbind(dataTmp, time = strftime(timeReg, format="%Y-%m-%dT%H:%M:%OSZ", tz="UTC"), stringsAsFactors = F)
-  dataTmp <- cbind(dataTmp, time = timeReg, stringsAsFactors = F)
+  #dataTmp <- cbind(dataTmp, time = strftime(timeRglr, format="%Y-%m-%dT%H:%M:%OSZ", tz="UTC"), stringsAsFactors = F)
+  dataTmp <- cbind(dataTmp, time = timeRglr, stringsAsFactors = F)
   #filled NA with previous value
   dataTmp[,1:8] <- zoo::na.locf(dataTmp[,1:8], na.rm = FALSE)
   #report output
@@ -480,7 +488,7 @@ if (IdDp00 %in% c("DP0.00114")){
   convTime <- list()
   diffTime <-list()
   qfDiffTime <- list()
-  dataIn <- list()
+  dataInp <- list()
   #convert time
   lapply(names(dataList), function(x) convTime[[x]] <<- base::as.POSIXlt(dataList[[x]]$timeNew, format="%Y-%m-%dT%H:%M:%OSZ", tz="UTC"))
   #calculate time difference
@@ -509,26 +517,26 @@ if (IdDp00 %in% c("DP0.00114")){
   for (idxSubDp00 in subDp00){
     #idxSubDp00 <- subDp00[1]
     if (!(idxSubDp00 %in% names(dataList))) {
-      dataList[[idxSubDp00]] <- data.frame(matrix(data = 0, ncol = 4, nrow = length(timeReg)))
+      dataList[[idxSubDp00]] <- data.frame(matrix(data = 0, ncol = 4, nrow = length(timeRglr)))
       names(dataList[[idxSubDp00]]) <- c("time", "data", "exst", "timeNew")
-      dataList[[idxSubDp00]]$timeNew <- timeReg 
+      dataList[[idxSubDp00]]$timeNew <- timeRglr 
     }
   }#end of for loop in subDp00
   
-  lapply(names(dataList), function(x) dataIn[[x]] <<- eddy4R.base::def.rglr(timeMeas = base::as.POSIXlt(dataList[[x]][,"timeNew"], format="%Y-%m-%dT%H:%M:%OSZ", tz="UTC"),
+  lapply(names(dataList), function(x) dataInp[[x]] <<- eddy4R.base::def.rglr(timeMeas = base::as.POSIXlt(dataList[[x]][,"timeNew"], format="%Y-%m-%dT%H:%M:%OSZ", tz="UTC"),
                                                                dataMeas = dataList[[x]],
-                                                               BgnRglr = as.POSIXlt(min(timeReg)),
-                                                               EndRglr = as.POSIXlt(max(timeReg)),
+                                                               BgnRglr = as.POSIXlt(min(timeRglr)),
+                                                               EndRglr = as.POSIXlt(max(timeRglr)),
                                                                FreqRglr = Freq,
                                                                MethRglr = "CybiEc",
                                                                PosWndw = "PosWndwMax"
   )$dataRglr) 
   
   #combine regularize data for irgaValvLvl
-  dataTmp <- data.frame(dataIn[[subDp00[1]]]$data,
-                        dataIn[[subDp00[2]]]$data,
-                        dataIn[[subDp00[3]]]$data,
-                        dataIn[[subDp00[4]]]$data)
+  dataTmp <- data.frame(dataInp[[subDp00[1]]]$data,
+                        dataInp[[subDp00[2]]]$data,
+                        dataInp[[subDp00[3]]]$data,
+                        dataInp[[subDp00[4]]]$data)
   
   #assign eddy4R name style to the output variables
   colnames(dataTmp) <- c("valv01", "valv02", "valv03", "valv04")
@@ -549,8 +557,8 @@ if (IdDp00 %in% c("DP0.00114")){
                                                                unitFrom = attributes(dataTmp)$unit,
                                                                unitTo = "intl"))
   #combine regularize time and data
-  #dataTmp <- cbind(dataTmp, time = strftime(timeReg, format="%Y-%m-%dT%H:%M:%OSZ", tz="UTC"), stringsAsFactors = F)
-  dataTmp <- cbind(dataTmp, time = timeReg, stringsAsFactors = F)
+  #dataTmp <- cbind(dataTmp, time = strftime(timeRglr, format="%Y-%m-%dT%H:%M:%OSZ", tz="UTC"), stringsAsFactors = F)
+  dataTmp <- cbind(dataTmp, time = timeRglr, stringsAsFactors = F)
   #filled NA with previous value
   dataTmp[,1:4] <- zoo::na.locf(dataTmp[,1:4], na.rm = FALSE)
   #report output
@@ -573,29 +581,29 @@ if (IdDp00 %in% c("DP0.00104")){
   for (idxSubDp00 in subDp00){
     #idxSubDp00 <- subDp00[1]
     if (!(idxSubDp00 %in% names(dataList))) {
-      dataList[[idxSubDp00]] <- data.frame(matrix(data = NaN, ncol = 4, nrow = length(timeReg)))
+      dataList[[idxSubDp00]] <- data.frame(matrix(data = NaN, ncol = 4, nrow = length(timeRglr)))
       names(dataList[[idxSubDp00]]) <- c("time", "data", "exst", "timeNew")
-      dataList[[idxSubDp00]]$timeNew <- timeReg 
+      dataList[[idxSubDp00]]$timeNew <- timeRglr 
     }
   }#end of for loop in subDp00
   
-  dataIn <- list()
-  lapply(names(dataList), function(x) dataIn[[x]] <<- eddy4R.base::def.rglr(timeMeas = base::as.POSIXlt(dataList[[x]][,"timeNew"], format="%Y-%m-%dT%H:%M:%OSZ", tz="UTC"),
+  dataInp <- list()
+  lapply(names(dataList), function(x) dataInp[[x]] <<- eddy4R.base::def.rglr(timeMeas = base::as.POSIXlt(dataList[[x]][,"timeNew"], format="%Y-%m-%dT%H:%M:%OSZ", tz="UTC"),
                                                                dataMeas = dataList[[x]],
-                                                               BgnRglr = as.POSIXlt(min(timeReg)),
-                                                               EndRglr = as.POSIXlt(max(timeReg)),
+                                                               BgnRglr = as.POSIXlt(min(timeRglr)),
+                                                               EndRglr = as.POSIXlt(max(timeRglr)),
                                                                FreqRglr = Freq,
                                                                MethRglr = "CybiEc"
   )$dataRglr)
   
   #calculate rtioMoleWetH2o from H2OMixRatioHut
-  dataIn[[subDp00[4]]]$rtioMoleWetH2o <- (dataIn[[subDp00[4]]]$data)*(eddy4R.base::IntlNatu$RtioMolmDryH2o)*(dataIn[[subDp00[3]]]$data/eddy4R.base::IntlNatu$Pres00)
+  dataInp[[subDp00[4]]]$rtioMoleWetH2o <- (dataInp[[subDp00[4]]]$data)*(eddy4R.base::IntlNatu$RtioMolmDryH2o)*(dataInp[[subDp00[3]]]$data/eddy4R.base::IntlNatu$Pres00)
   
   #combine regularize data for envHut
-  dataTmp <- data.frame(dataIn[[subDp00[1]]]$data,
-                        dataIn[[subDp00[2]]]$data,
-                        dataIn[[subDp00[3]]]$data,
-                        dataIn[[subDp00[4]]]$rtioMoleWetH2o)
+  dataTmp <- data.frame(dataInp[[subDp00[1]]]$data,
+                        dataInp[[subDp00[2]]]$data,
+                        dataInp[[subDp00[3]]]$data,
+                        dataInp[[subDp00[4]]]$rtioMoleWetH2o)
   
   #assign eddy4R name style to the output variables
   colnames(dataTmp) <- c("temp", "rh", "pres", "rtioMoleWetH2o")
@@ -619,8 +627,8 @@ if (IdDp00 %in% c("DP0.00104")){
                                                                unitFrom = attributes(dataTmp)$unit,
                                                                unitTo = "intl"))
   #combine regularize time and data
-  #dataTmp <- cbind(dataTmp, time = strftime(timeReg, format="%Y-%m-%dT%H:%M:%OSZ", tz="UTC"), stringsAsFactors = F)
-  dataTmp <- cbind(dataTmp, time = timeReg, stringsAsFactors = F)
+  #dataTmp <- cbind(dataTmp, time = strftime(timeRglr, format="%Y-%m-%dT%H:%M:%OSZ", tz="UTC"), stringsAsFactors = F)
+  dataTmp <- cbind(dataTmp, time = timeRglr, stringsAsFactors = F)
   #report output
   rpt <- dataTmp    
   #remove dataframe
@@ -644,33 +652,33 @@ if (IdDp00 %in% c("DP0.00110")){
   for (idxSubDp00 in subDp00){
     #idxSubDp00 <- subDp00[1]
     if (!(idxSubDp00 %in% names(dataList))) {
-      dataList[[idxSubDp00]] <- data.frame(matrix(data = NaN, ncol = 4, nrow = length(timeReg)))
+      dataList[[idxSubDp00]] <- data.frame(matrix(data = NaN, ncol = 4, nrow = length(timeRglr)))
       names(dataList[[idxSubDp00]]) <- c("time", "data", "exst", "timeNew")
-      dataList[[idxSubDp00]]$timeNew <- timeReg 
+      dataList[[idxSubDp00]]$timeNew <- timeRglr 
     }
   }#end of for loop in subDp00
   
-  dataIn <- list()
-  lapply(names(dataList), function(x) dataIn[[x]] <<- eddy4R.base::def.rglr(timeMeas = base::as.POSIXlt(dataList[[x]][,"timeNew"], format="%Y-%m-%dT%H:%M:%OSZ", tz="UTC"),
+  dataInp <- list()
+  lapply(names(dataList), function(x) dataInp[[x]] <<- eddy4R.base::def.rglr(timeMeas = base::as.POSIXlt(dataList[[x]][,"timeNew"], format="%Y-%m-%dT%H:%M:%OSZ", tz="UTC"),
                                                                dataMeas = dataList[[x]],
-                                                               BgnRglr = as.POSIXlt(min(timeReg)),
-                                                               EndRglr = as.POSIXlt(max(timeReg)),
+                                                               BgnRglr = as.POSIXlt(min(timeRglr)),
+                                                               EndRglr = as.POSIXlt(max(timeRglr)),
                                                                FreqRglr = Freq,
                                                                MethRglr = "CybiEc"
   )$dataRglr)
   
     if (horVer %in% "709.000") {
-      dataTmp <- data.frame(dataIn[[subDp00[1]]]$data)}
+      dataTmp <- data.frame(dataInp[[subDp00[1]]]$data)}
     if (horVer %in% "710.000") {
-      dataTmp <- data.frame(dataIn[[subDp00[2]]]$data)}
+      dataTmp <- data.frame(dataInp[[subDp00[2]]]$data)}
     if (horVer %in% "711.000") {
-      dataTmp <- data.frame(dataIn[[subDp00[3]]]$data)}
+      dataTmp <- data.frame(dataInp[[subDp00[3]]]$data)}
     if (horVer %in% "712.000") {
-      dataTmp <- data.frame(dataIn[[subDp00[4]]]$data)}
+      dataTmp <- data.frame(dataInp[[subDp00[4]]]$data)}
     if (horVer %in% "713.000") {
-      dataTmp <- data.frame(dataIn[[subDp00[5]]]$data)}
+      dataTmp <- data.frame(dataInp[[subDp00[5]]]$data)}
     if (horVer %in% "714.000") {
-      dataTmp <- data.frame(dataIn[[subDp00[6]]]$data)}
+      dataTmp <- data.frame(dataInp[[subDp00[6]]]$data)}
     
     
     #assign eddy4R name style to the output variables
@@ -692,8 +700,8 @@ if (IdDp00 %in% c("DP0.00110")){
                                                                  unitFrom = attributes(dataTmp)$unit,
                                                                  unitTo = "intl"))
     #combine regularize time and data
-    #dataTmp <- cbind(dataTmp, time = strftime(timeReg, format="%Y-%m-%dT%H:%M:%OSZ", tz="UTC"), stringsAsFactors = F)
-    dataTmp <- cbind(dataTmp, time = timeReg, stringsAsFactors = F)
+    #dataTmp <- cbind(dataTmp, time = strftime(timeRglr, format="%Y-%m-%dT%H:%M:%OSZ", tz="UTC"), stringsAsFactors = F)
+    dataTmp <- cbind(dataTmp, time = timeRglr, stringsAsFactors = F)
     
     #report output
     rpt <- dataTmp   
@@ -717,33 +725,33 @@ if (IdDp00 %in% c("DP0.00111")){
   for (idxSubDp00 in subDp00){
     #idxSubDp00 <- subDp00[1]
     if (!(idxSubDp00 %in% names(dataList))) {
-      dataList[[idxSubDp00]] <- data.frame(matrix(data = NaN, ncol = 4, nrow = length(timeReg)))
+      dataList[[idxSubDp00]] <- data.frame(matrix(data = NaN, ncol = 4, nrow = length(timeRglr)))
       names(dataList[[idxSubDp00]]) <- c("time", "data", "exst", "timeNew")
-      dataList[[idxSubDp00]]$timeNew <- timeReg 
+      dataList[[idxSubDp00]]$timeNew <- timeRglr 
     }
   }#end of for loop in subDp00
   
-  dataIn <- list()
-  lapply(names(dataList), function(x) dataIn[[x]] <<- eddy4R.base::def.rglr(timeMeas = base::as.POSIXlt(dataList[[x]][,"timeNew"], format="%Y-%m-%dT%H:%M:%OSZ", tz="UTC"),
+  dataInp <- list()
+  lapply(names(dataList), function(x) dataInp[[x]] <<- eddy4R.base::def.rglr(timeMeas = base::as.POSIXlt(dataList[[x]][,"timeNew"], format="%Y-%m-%dT%H:%M:%OSZ", tz="UTC"),
                                                                dataMeas = dataList[[x]],
-                                                               BgnRglr = as.POSIXlt(min(timeReg)),
-                                                               EndRglr = as.POSIXlt(max(timeReg)),
+                                                               BgnRglr = as.POSIXlt(min(timeRglr)),
+                                                               EndRglr = as.POSIXlt(max(timeRglr)),
                                                                FreqRglr = Freq,
                                                                MethRglr = "CybiEc"
   )$dataRglr)
   
   if (horVer %in% "709.000") {
-    dataTmp <- data.frame(dataIn[[subDp00[1]]]$data)}
+    dataTmp <- data.frame(dataInp[[subDp00[1]]]$data)}
   if (horVer %in% "710.000") {
-    dataTmp <- data.frame(dataIn[[subDp00[2]]]$data)}
+    dataTmp <- data.frame(dataInp[[subDp00[2]]]$data)}
   if (horVer %in% "711.000") {
-    dataTmp <- data.frame(dataIn[[subDp00[3]]]$data)}
+    dataTmp <- data.frame(dataInp[[subDp00[3]]]$data)}
   if (horVer %in% "712.000") {
-    dataTmp <- data.frame(dataIn[[subDp00[4]]]$data)}
+    dataTmp <- data.frame(dataInp[[subDp00[4]]]$data)}
   if (horVer %in% "713.000") {
-    dataTmp <- data.frame(dataIn[[subDp00[5]]]$data)}
+    dataTmp <- data.frame(dataInp[[subDp00[5]]]$data)}
   if (horVer %in% "714.000") {
-    dataTmp <- data.frame(dataIn[[subDp00[6]]]$data)}
+    dataTmp <- data.frame(dataInp[[subDp00[6]]]$data)}
     
     
     #assign eddy4R name style to the output variables
@@ -765,8 +773,8 @@ if (IdDp00 %in% c("DP0.00111")){
                                                                  unitFrom = attributes(dataTmp)$unit,
                                                                  unitTo = "intl"))
     #combine regularize time and data
-    #dataTmp <- cbind(dataTmp, time = strftime(timeReg, format="%Y-%m-%dT%H:%M:%OSZ", tz="UTC"), stringsAsFactors = F)
-    dataTmp <- cbind(dataTmp, time = timeReg, stringsAsFactors = F)
+    #dataTmp <- cbind(dataTmp, time = strftime(timeRglr, format="%Y-%m-%dT%H:%M:%OSZ", tz="UTC"), stringsAsFactors = F)
+    dataTmp <- cbind(dataTmp, time = timeRglr, stringsAsFactors = F)
     #report output
     rpt <- dataTmp   
     #remove dataframe
@@ -791,39 +799,39 @@ if (IdDp00 %in% c("DP0.00109")){
   for (idxSubDp00 in subDp00){
     #idxSubDp00 <- subDp00[1]
     if (!(idxSubDp00 %in% names(dataList))) {
-      dataList[[idxSubDp00]] <- data.frame(matrix(data = NaN, ncol = 4, nrow = length(timeReg)))
+      dataList[[idxSubDp00]] <- data.frame(matrix(data = NaN, ncol = 4, nrow = length(timeRglr)))
       names(dataList[[idxSubDp00]]) <- c("time", "data", "exst", "timeNew")
-      dataList[[idxSubDp00]]$timeNew <- timeReg 
+      dataList[[idxSubDp00]]$timeNew <- timeRglr 
     }
   }#end of for loop in subDp00
   
   
-  dataIn <- list()
-  lapply(names(dataList), function(x) dataIn[[x]] <<- eddy4R.base::def.rglr(timeMeas = base::as.POSIXlt(dataList[[x]][,"timeNew"], format="%Y-%m-%dT%H:%M:%OSZ", tz="UTC"),
+  dataInp <- list()
+  lapply(names(dataList), function(x) dataInp[[x]] <<- eddy4R.base::def.rglr(timeMeas = base::as.POSIXlt(dataList[[x]][,"timeNew"], format="%Y-%m-%dT%H:%M:%OSZ", tz="UTC"),
                                                                dataMeas = dataList[[x]],
-                                                               BgnRglr = as.POSIXlt(min(timeReg)),
-                                                               EndRglr = as.POSIXlt(max(timeReg)),
+                                                               BgnRglr = as.POSIXlt(min(timeRglr)),
+                                                               EndRglr = as.POSIXlt(max(timeRglr)),
                                                                FreqRglr = Freq,
                                                                MethRglr = "CybiEc"
   )$dataRglr)
   
   
   if (horVer %in% "000.010") {
-    dataTmp <- data.frame(dataIn[[subDp00[1]]]$data)}
+    dataTmp <- data.frame(dataInp[[subDp00[1]]]$data)}
   if (horVer %in% "000.020") {
-    dataTmp <- data.frame(dataIn[[subDp00[2]]]$data)}
+    dataTmp <- data.frame(dataInp[[subDp00[2]]]$data)}
   if (horVer %in% "000.030") {
-    dataTmp <- data.frame(dataIn[[subDp00[3]]]$data)}
+    dataTmp <- data.frame(dataInp[[subDp00[3]]]$data)}
   if (horVer %in% "000.040") {
-    dataTmp <- data.frame(dataIn[[subDp00[4]]]$data)}
+    dataTmp <- data.frame(dataInp[[subDp00[4]]]$data)}
   if (horVer %in% "000.050") {
-    dataTmp <- data.frame(dataIn[[subDp00[5]]]$data)}
+    dataTmp <- data.frame(dataInp[[subDp00[5]]]$data)}
   if (horVer %in% "000.060") {
-    dataTmp <- data.frame(dataIn[[subDp00[6]]]$data)}
+    dataTmp <- data.frame(dataInp[[subDp00[6]]]$data)}
   if (horVer %in% "000.070") {
-    dataTmp <- data.frame(dataIn[[subDp00[7]]]$data)}
+    dataTmp <- data.frame(dataInp[[subDp00[7]]]$data)}
   if (horVer %in% "000.080") {
-    dataTmp <- data.frame(dataIn[[subDp00[8]]]$data)}
+    dataTmp <- data.frame(dataInp[[subDp00[8]]]$data)}
     
     #assign eddy4R name style to the output variables
     colnames(dataTmp) <- c("presDiff")
@@ -844,8 +852,8 @@ if (IdDp00 %in% c("DP0.00109")){
                                                                  unitFrom = attributes(dataTmp)$unit,
                                                                  unitTo = "intl"))
     #combine regularize time and data
-    #dataTmp <- cbind(dataTmp, time = strftime(timeReg, format="%Y-%m-%dT%H:%M:%OSZ", tz="UTC"), stringsAsFactors = F)
-    dataTmp <- cbind(dataTmp, time = timeReg, stringsAsFactors = F)
+    #dataTmp <- cbind(dataTmp, time = strftime(timeRglr, format="%Y-%m-%dT%H:%M:%OSZ", tz="UTC"), stringsAsFactors = F)
+    dataTmp <- cbind(dataTmp, time = timeRglr, stringsAsFactors = F)
     
     #report output
     rpt <- dataTmp    
@@ -867,27 +875,27 @@ if (IdDp00 %in% c("DP0.00106")){
   for (idxSubDp00 in subDp00){
     #idxSubDp00 <- subDp00[1]
     if (!(idxSubDp00 %in% names(dataList))) {
-      dataList[[idxSubDp00]] <- data.frame(matrix(data = NaN, ncol = 4, nrow = length(timeReg)))
+      dataList[[idxSubDp00]] <- data.frame(matrix(data = NaN, ncol = 4, nrow = length(timeRglr)))
       names(dataList[[idxSubDp00]]) <- c("time", "data", "exst", "timeNew")
-      dataList[[idxSubDp00]]$timeNew <- timeReg 
+      dataList[[idxSubDp00]]$timeNew <- timeRglr 
     }
   }#end of for loop in subDp00
   
-  dataIn <- list()
-  lapply(names(dataList), function(x) dataIn[[x]] <<- eddy4R.base::def.rglr(timeMeas = base::as.POSIXlt(dataList[[x]][,"timeNew"], format="%Y-%m-%dT%H:%M:%OSZ", tz="UTC"),
+  dataInp <- list()
+  lapply(names(dataList), function(x) dataInp[[x]] <<- eddy4R.base::def.rglr(timeMeas = base::as.POSIXlt(dataList[[x]][,"timeNew"], format="%Y-%m-%dT%H:%M:%OSZ", tz="UTC"),
                                                                dataMeas = dataList[[x]],
-                                                               BgnRglr = as.POSIXlt(min(timeReg)),
-                                                               EndRglr = as.POSIXlt(max(timeReg)),
+                                                               BgnRglr = as.POSIXlt(min(timeRglr)),
+                                                               EndRglr = as.POSIXlt(max(timeRglr)),
                                                                FreqRglr = Freq,
                                                                MethRglr = "CybiEc"
   )$dataRglr)
   
   #combine regularize data 
-  dataTmp <- data.frame(dataIn[[subDp00[1]]]$data,
-                        dataIn[[subDp00[2]]]$data,
-                        dataIn[[subDp00[3]]]$data,
-                        dataIn[[subDp00[4]]]$data,
-                        dataIn[[subDp00[5]]]$data)
+  dataTmp <- data.frame(dataInp[[subDp00[1]]]$data,
+                        dataInp[[subDp00[2]]]$data,
+                        dataInp[[subDp00[3]]]$data,
+                        dataInp[[subDp00[4]]]$data,
+                        dataInp[[subDp00[5]]]$data)
   
   #assign eddy4R name style to the output variables
   colnames(dataTmp) <- c("frtSet00", "frt00", "frt", "temp", "presAtm")
@@ -912,8 +920,8 @@ if (IdDp00 %in% c("DP0.00106")){
                                                                unitFrom = attributes(dataTmp)$unit,
                                                                unitTo = "intl"))
   #combine regularize time and data
-  #dataTmp <- cbind(dataTmp, time = strftime(timeReg, format="%Y-%m-%dT%H:%M:%OSZ", tz="UTC"), stringsAsFactors = F)
-  dataTmp <- cbind(dataTmp, time = timeReg, stringsAsFactors = F)
+  #dataTmp <- cbind(dataTmp, time = strftime(timeRglr, format="%Y-%m-%dT%H:%M:%OSZ", tz="UTC"), stringsAsFactors = F)
+  dataTmp <- cbind(dataTmp, time = timeRglr, stringsAsFactors = F)
   
   #report output
   rpt <- dataTmp   
@@ -935,28 +943,28 @@ if (IdDp00 %in% c("DP0.00107")){
   for (idxSubDp00 in subDp00){
     #idxSubDp00 <- subDp00[1]
     if (!(idxSubDp00 %in% names(dataList))) {
-      dataList[[idxSubDp00]] <- data.frame(matrix(data = NaN, ncol = 4, nrow = length(timeReg)))
+      dataList[[idxSubDp00]] <- data.frame(matrix(data = NaN, ncol = 4, nrow = length(timeRglr)))
       names(dataList[[idxSubDp00]]) <- c("time", "data", "exst", "timeNew")
-      dataList[[idxSubDp00]]$timeNew <- timeReg 
+      dataList[[idxSubDp00]]$timeNew <- timeRglr 
     }
   }#end of for loop in subDp00
   
   
-  dataIn <- list()
-  lapply(names(dataList), function(x) dataIn[[x]] <<- eddy4R.base::def.rglr(timeMeas = base::as.POSIXlt(dataList[[x]][,"timeNew"], format="%Y-%m-%dT%H:%M:%OSZ", tz="UTC"),
+  dataInp <- list()
+  lapply(names(dataList), function(x) dataInp[[x]] <<- eddy4R.base::def.rglr(timeMeas = base::as.POSIXlt(dataList[[x]][,"timeNew"], format="%Y-%m-%dT%H:%M:%OSZ", tz="UTC"),
                                                                dataMeas = dataList[[x]],
-                                                               BgnRglr = as.POSIXlt(min(timeReg)),
-                                                               EndRglr = as.POSIXlt(max(timeReg)),
+                                                               BgnRglr = as.POSIXlt(min(timeRglr)),
+                                                               EndRglr = as.POSIXlt(max(timeRglr)),
                                                                FreqRglr = Freq,
                                                                MethRglr = "CybiEc"
   )$dataRglr)
   
   #combine regularize data
-  dataTmp <- data.frame(dataIn[[subDp00[1]]]$data,
-                        dataIn[[subDp00[2]]]$data,
-                        dataIn[[subDp00[3]]]$data,
-                        dataIn[[subDp00[4]]]$data,
-                        dataIn[[subDp00[5]]]$data)
+  dataTmp <- data.frame(dataInp[[subDp00[1]]]$data,
+                        dataInp[[subDp00[2]]]$data,
+                        dataInp[[subDp00[3]]]$data,
+                        dataInp[[subDp00[4]]]$data,
+                        dataInp[[subDp00[5]]]$data)
   
   #assign eddy4R name style to the output variables
   colnames(dataTmp) <- c("frtSet00", "frt00", "frt", "temp", "presAtm")
@@ -981,8 +989,8 @@ if (IdDp00 %in% c("DP0.00107")){
                                                                unitFrom = attributes(dataTmp)$unit,
                                                                unitTo = "intl"))
   #combine regularize time and data
-  #dataTmp <- cbind(dataTmp, time = strftime(timeReg, format="%Y-%m-%dT%H:%M:%OSZ", tz="UTC"), stringsAsFactors = F)
-  dataTmp <- cbind(dataTmp, time = timeReg, stringsAsFactors = F)
+  #dataTmp <- cbind(dataTmp, time = strftime(timeRglr, format="%Y-%m-%dT%H:%M:%OSZ", tz="UTC"), stringsAsFactors = F)
+  dataTmp <- cbind(dataTmp, time = timeRglr, stringsAsFactors = F)
   
   #report output
   rpt <- dataTmp 
@@ -1031,61 +1039,61 @@ if (IdDp00 %in% c("DP0.00108")){
   for (idxSubDp00 in subDp00){
     #idxSubDp00 <- subDp00[1]
     if (!(idxSubDp00 %in% names(dataList))) {
-      dataList[[idxSubDp00]] <- data.frame(matrix(data = NaN, ncol = 4, nrow = length(timeReg)))
+      dataList[[idxSubDp00]] <- data.frame(matrix(data = NaN, ncol = 4, nrow = length(timeRglr)))
       names(dataList[[idxSubDp00]]) <- c("time", "data", "exst", "timeNew")
-      dataList[[idxSubDp00]]$timeNew <- timeReg 
+      dataList[[idxSubDp00]]$timeNew <- timeRglr 
     }
   }#end of for loop in subDp00
   
-  dataIn <- list()
-  lapply(names(dataList), function(x) dataIn[[x]] <<- eddy4R.base::def.rglr(timeMeas = base::as.POSIXlt(dataList[[x]][,"timeNew"], format="%Y-%m-%dT%H:%M:%OSZ", tz="UTC"),
+  dataInp <- list()
+  lapply(names(dataList), function(x) dataInp[[x]] <<- eddy4R.base::def.rglr(timeMeas = base::as.POSIXlt(dataList[[x]][,"timeNew"], format="%Y-%m-%dT%H:%M:%OSZ", tz="UTC"),
                                                                dataMeas = dataList[[x]],
-                                                               BgnRglr = as.POSIXlt(min(timeReg)),
-                                                               EndRglr = as.POSIXlt(max(timeReg)),
+                                                               BgnRglr = as.POSIXlt(min(timeRglr)),
+                                                               EndRglr = as.POSIXlt(max(timeRglr)),
                                                                FreqRglr = Freq,
                                                                MethRglr = "CybiEc"
   )$dataRglr)
   
   if (horVer %in% "700.010") {
-    dataTmp <- data.frame(dataIn[[subDp00[1]]]$data,
-                          dataIn[[subDp00[2]]]$data,
-                          dataIn[[subDp00[3]]]$data,
-                          dataIn[[subDp00[4]]]$data)}
+    dataTmp <- data.frame(dataInp[[subDp00[1]]]$data,
+                          dataInp[[subDp00[2]]]$data,
+                          dataInp[[subDp00[3]]]$data,
+                          dataInp[[subDp00[4]]]$data)}
   if (horVer %in% "700.020") {
-    dataTmp <- data.frame(dataIn[[subDp00[5]]]$data,
-                          dataIn[[subDp00[6]]]$data,
-                          dataIn[[subDp00[7]]]$data,
-                          dataIn[[subDp00[8]]]$data)}
+    dataTmp <- data.frame(dataInp[[subDp00[5]]]$data,
+                          dataInp[[subDp00[6]]]$data,
+                          dataInp[[subDp00[7]]]$data,
+                          dataInp[[subDp00[8]]]$data)}
   if (horVer %in% "700.030") {
-    dataTmp <- data.frame(dataIn[[subDp00[9]]]$data,
-                          dataIn[[subDp00[10]]]$data,
-                          dataIn[[subDp00[11]]]$data,
-                          dataIn[[subDp00[12]]]$data)}
+    dataTmp <- data.frame(dataInp[[subDp00[9]]]$data,
+                          dataInp[[subDp00[10]]]$data,
+                          dataInp[[subDp00[11]]]$data,
+                          dataInp[[subDp00[12]]]$data)}
   if (horVer %in% "700.040") {
-    dataTmp <- data.frame(dataIn[[subDp00[13]]]$data,
-                          dataIn[[subDp00[14]]]$data,
-                          dataIn[[subDp00[15]]]$data,
-                          dataIn[[subDp00[16]]]$data)}
+    dataTmp <- data.frame(dataInp[[subDp00[13]]]$data,
+                          dataInp[[subDp00[14]]]$data,
+                          dataInp[[subDp00[15]]]$data,
+                          dataInp[[subDp00[16]]]$data)}
   if (horVer %in% "700.050") {
-    dataTmp <- data.frame(dataIn[[subDp00[17]]]$data,
-                          dataIn[[subDp00[18]]]$data,
-                          dataIn[[subDp00[19]]]$data,
-                          dataIn[[subDp00[20]]]$data)}
+    dataTmp <- data.frame(dataInp[[subDp00[17]]]$data,
+                          dataInp[[subDp00[18]]]$data,
+                          dataInp[[subDp00[19]]]$data,
+                          dataInp[[subDp00[20]]]$data)}
   if (horVer %in% "700.060") {
-    dataTmp <- data.frame(dataIn[[subDp00[21]]]$data,
-                          dataIn[[subDp00[22]]]$data,
-                          dataIn[[subDp00[23]]]$data,
-                          dataIn[[subDp00[24]]]$data)}
+    dataTmp <- data.frame(dataInp[[subDp00[21]]]$data,
+                          dataInp[[subDp00[22]]]$data,
+                          dataInp[[subDp00[23]]]$data,
+                          dataInp[[subDp00[24]]]$data)}
   if (horVer %in% "700.070") {
-    dataTmp <- data.frame(dataIn[[subDp00[25]]]$data,
-                          dataIn[[subDp00[26]]]$data,
-                          dataIn[[subDp00[27]]]$data,
-                          dataIn[[subDp00[28]]]$data)}
+    dataTmp <- data.frame(dataInp[[subDp00[25]]]$data,
+                          dataInp[[subDp00[26]]]$data,
+                          dataInp[[subDp00[27]]]$data,
+                          dataInp[[subDp00[28]]]$data)}
   if (horVer %in% "700.080") {
-    dataTmp <- data.frame(dataIn[[subDp00[29]]]$data,
-                          dataIn[[subDp00[30]]]$data,
-                          dataIn[[subDp00[31]]]$data,
-                          dataIn[[subDp00[32]]]$data)}
+    dataTmp <- data.frame(dataInp[[subDp00[29]]]$data,
+                          dataInp[[subDp00[30]]]$data,
+                          dataInp[[subDp00[31]]]$data,
+                          dataInp[[subDp00[32]]]$data)}
     
     #assign eddy4R name style to the output variables
     colnames(dataTmp) <- c("frt00", "frt", "temp", "presAtm")
@@ -1109,8 +1117,8 @@ if (IdDp00 %in% c("DP0.00108")){
                                                                  unitFrom = attributes(dataTmp)$unit,
                                                                  unitTo = "intl"))
     #combine regularize time and data
-    #dataTmp <- cbind(dataTmp, time = strftime(timeReg, format="%Y-%m-%dT%H:%M:%OSZ", tz="UTC"), stringsAsFactors = F)
-    dataTmp <- cbind(dataTmp, time = timeReg, stringsAsFactors = F)
+    #dataTmp <- cbind(dataTmp, time = strftime(timeRglr, format="%Y-%m-%dT%H:%M:%OSZ", tz="UTC"), stringsAsFactors = F)
+    dataTmp <- cbind(dataTmp, time = timeRglr, stringsAsFactors = F)
     
     #report output
     rpt <- dataTmp     
@@ -1137,39 +1145,39 @@ if (IdDp00 %in% c("DP0.00112")){
   for (idxSubDp00 in subDp00){
     #idxSubDp00 <- subDp00[1]
     if (!(idxSubDp00 %in% names(dataList))) {
-      dataList[[idxSubDp00]] <- data.frame(matrix(data = NaN, ncol = 4, nrow = length(timeReg)))
+      dataList[[idxSubDp00]] <- data.frame(matrix(data = NaN, ncol = 4, nrow = length(timeRglr)))
       names(dataList[[idxSubDp00]]) <- c("time", "data", "exst", "timeNew")
-      dataList[[idxSubDp00]]$timeNew <- timeReg 
+      dataList[[idxSubDp00]]$timeNew <- timeRglr 
     }
   }#end of for loop in subDp00
   
-  dataIn <- list()
-  lapply(names(dataList), function(x) dataIn[[x]] <<- eddy4R.base::def.rglr(timeMeas = base::as.POSIXlt(dataList[[x]][,"timeNew"], format="%Y-%m-%dT%H:%M:%OSZ", tz="UTC"),
+  dataInp <- list()
+  lapply(names(dataList), function(x) dataInp[[x]] <<- eddy4R.base::def.rglr(timeMeas = base::as.POSIXlt(dataList[[x]][,"timeNew"], format="%Y-%m-%dT%H:%M:%OSZ", tz="UTC"),
                                                                dataMeas = dataList[[x]],
-                                                               BgnRglr = as.POSIXlt(min(timeReg)),
-                                                               EndRglr = as.POSIXlt(max(timeReg)),
+                                                               BgnRglr = as.POSIXlt(min(timeRglr)),
+                                                               EndRglr = as.POSIXlt(max(timeRglr)),
                                                                FreqRglr = Freq,
                                                                MethRglr = "CybiEc"
   )$dataRglr)
   
   if (horVer %in% "700.000") {
-    dataTmp <- data.frame(dataIn[[subDp00[1]]]$data)}
+    dataTmp <- data.frame(dataInp[[subDp00[1]]]$data)}
   if (horVer %in% "700.010") {
-    dataTmp <- data.frame(dataIn[[subDp00[2]]]$data)}
+    dataTmp <- data.frame(dataInp[[subDp00[2]]]$data)}
   if (horVer %in% "700.020") {
-    dataTmp <- data.frame(dataIn[[subDp00[3]]]$data)}
+    dataTmp <- data.frame(dataInp[[subDp00[3]]]$data)}
   if (horVer %in% "700.030") {
-    dataTmp <- data.frame(dataIn[[subDp00[4]]]$data)}
+    dataTmp <- data.frame(dataInp[[subDp00[4]]]$data)}
   if (horVer %in% "700.040") {
-    dataTmp <- data.frame(dataIn[[subDp00[5]]]$data)}
+    dataTmp <- data.frame(dataInp[[subDp00[5]]]$data)}
   if (horVer %in% "700.050") {
-    dataTmp <- data.frame(dataIn[[subDp00[6]]]$data)}
+    dataTmp <- data.frame(dataInp[[subDp00[6]]]$data)}
   if (horVer %in% "700.060") {
-    dataTmp <- data.frame(dataIn[[subDp00[7]]]$data)}
+    dataTmp <- data.frame(dataInp[[subDp00[7]]]$data)}
   if (horVer %in% "700.070") {
-    dataTmp <- data.frame(dataIn[[subDp00[8]]]$data)}
+    dataTmp <- data.frame(dataInp[[subDp00[8]]]$data)}
   if (horVer %in% "700.080") {
-    dataTmp <- data.frame(dataIn[[subDp00[9]]]$data)}
+    dataTmp <- data.frame(dataInp[[subDp00[9]]]$data)}
     
     #assign eddy4R name style to the output variables
     colnames(dataTmp) <- c("pumpVolt")
@@ -1190,8 +1198,8 @@ if (IdDp00 %in% c("DP0.00112")){
                                                                  unitFrom = attributes(dataTmp)$unit,
                                                                  unitTo = "intl"))
     #combine regularize time and data
-    #dataTmp <- cbind(dataTmp, time = strftime(timeReg, format="%Y-%m-%dT%H:%M:%OSZ", tz="UTC"), stringsAsFactors = F)
-    dataTmp <- cbind(dataTmp, time = timeReg, stringsAsFactors = F)
+    #dataTmp <- cbind(dataTmp, time = strftime(timeRglr, format="%Y-%m-%dT%H:%M:%OSZ", tz="UTC"), stringsAsFactors = F)
+    dataTmp <- cbind(dataTmp, time = timeRglr, stringsAsFactors = F)
     
     #filled NA with previous value
     dataTmp[,1] <- zoo::na.locf(dataTmp[,1], na.rm = FALSE)
@@ -1211,24 +1219,24 @@ if (IdDp00 %in% c("DP0.00115")){
   for (idxSubDp00 in subDp00){
     #idxSubDp00 <- subDp00[1]
     if (!(idxSubDp00 %in% names(dataList))) {
-      dataList[[idxSubDp00]] <- data.frame(matrix(data = NaN, ncol = 4, nrow = length(timeReg)))
+      dataList[[idxSubDp00]] <- data.frame(matrix(data = NaN, ncol = 4, nrow = length(timeRglr)))
       names(dataList[[idxSubDp00]]) <- c("time", "data", "exst", "timeNew")
-      dataList[[idxSubDp00]]$timeNew <- timeReg 
+      dataList[[idxSubDp00]]$timeNew <- timeRglr 
     }
   }#end of for loop in subDp00
   
-  dataIn <- list()
+  dataInp <- list()
   
-  lapply(names(dataList), function(x) dataIn[[x]] <<- eddy4R.base::def.rglr(timeMeas = base::as.POSIXlt(dataList[[x]][,"timeNew"], format="%Y-%m-%dT%H:%M:%OSZ", tz="UTC"),
+  lapply(names(dataList), function(x) dataInp[[x]] <<- eddy4R.base::def.rglr(timeMeas = base::as.POSIXlt(dataList[[x]][,"timeNew"], format="%Y-%m-%dT%H:%M:%OSZ", tz="UTC"),
                                                                dataMeas = dataList[[x]],
-                                                               BgnRglr = as.POSIXlt(min(timeReg)),
-                                                               EndRglr = as.POSIXlt(max(timeReg)),
+                                                               BgnRglr = as.POSIXlt(min(timeRglr)),
+                                                               EndRglr = as.POSIXlt(max(timeRglr)),
                                                                FreqRglr = Freq,
                                                                MethRglr = "CybiEc",
                                                                PosWndw = "PosWndwMax"
   )$dataRglr)
   
-  dataTmp <- data.frame(dataIn[[subDp00[1]]]$data)
+  dataTmp <- data.frame(dataInp[[subDp00[1]]]$data)
   #assign eddy4R name style to the output variables
   colnames(dataTmp) <- c("valv")
   
@@ -1240,8 +1248,8 @@ if (IdDp00 %in% c("DP0.00115")){
                                                                unitFrom = attributes(dataTmp)$unit,
                                                                unitTo = "intl"))
   #combine regularize time and data
-  #dataTmp <- cbind(dataTmp, time = strftime(timeReg, format="%Y-%m-%dT%H:%M:%OSZ", tz="UTC"), stringsAsFactors = F)
-  dataTmp <- cbind(dataTmp, time = timeReg, stringsAsFactors = F)
+  #dataTmp <- cbind(dataTmp, time = strftime(timeRglr, format="%Y-%m-%dT%H:%M:%OSZ", tz="UTC"), stringsAsFactors = F)
+  dataTmp <- cbind(dataTmp, time = timeRglr, stringsAsFactors = F)
   
   #filled NA with previous value
   dataTmp[,1] <- zoo::na.locf(dataTmp[,1], na.rm = FALSE)
@@ -1272,9 +1280,9 @@ if (IdDp00 %in% c("DP0.00102")){
   for (idxSubDp00 in subDp00){
     #idxSubDp00 <- subDp00[1]
     if (!(idxSubDp00 %in% names(dataList))) {
-      dataList[[idxSubDp00]] <- data.frame(matrix(data = NaN, ncol = 4, nrow = length(timeReg)))
+      dataList[[idxSubDp00]] <- data.frame(matrix(data = NaN, ncol = 4, nrow = length(timeRglr)))
       names(dataList[[idxSubDp00]]) <- c("time", "data", "exst", "timeNew")
-      dataList[[idxSubDp00]]$timeNew <- timeReg 
+      dataList[[idxSubDp00]]$timeNew <- timeRglr 
     }
   }#end of for loop in subDp00
   #determine qfSensStus
@@ -1295,35 +1303,35 @@ if (IdDp00 %in% c("DP0.00102")){
   
   #replace qfSensStus that have qfDiffTime equal to -1 to -1
   dataList[[subDp00[1]]]$qfSensStus <- ifelse(is.na(dataList[[subDp00[1]]]$qfDiffTime), dataList[[subDp00[1]]]$qfSensStus, -1)
-  #empty dataIn for time regularization
-  dataIn <- list()
-  lapply(names(dataList), function(x) dataIn[[x]] <<- eddy4R.base::def.rglr(timeMeas = base::as.POSIXlt(dataList[[x]][,"timeNew"], format="%Y-%m-%dT%H:%M:%OSZ", tz="UTC"),
+  #empty dataInp for time regularization
+  dataInp <- list()
+  lapply(names(dataList), function(x) dataInp[[x]] <<- eddy4R.base::def.rglr(timeMeas = base::as.POSIXlt(dataList[[x]][,"timeNew"], format="%Y-%m-%dT%H:%M:%OSZ", tz="UTC"),
                                                                dataMeas = dataList[[x]],
-                                                               BgnRglr = as.POSIXlt(min(timeReg)),
-                                                               EndRglr = as.POSIXlt(max(timeReg)),
+                                                               BgnRglr = as.POSIXlt(min(timeRglr)),
+                                                               EndRglr = as.POSIXlt(max(timeRglr)),
                                                                FreqRglr = Freq,
                                                                MethRglr = "CybiEc"
   )$dataRglr)
   
   #calculate H2o dry mole fraction in mol mol-1
-  dataIn[[subDp00[13]]]$rtioMoleDryH2o <- ((dataIn[[subDp00[13]]]$data)/10^2)/(1-(dataIn[[subDp00[13]]]$data/10^2))
+  dataInp[[subDp00[13]]]$rtioMoleDryH2o <- ((dataInp[[subDp00[13]]]$data)/10^2)/(1-(dataInp[[subDp00[13]]]$data/10^2))
   
   #combine regularize data for crdCo2
-  dataTmp <- data.frame(dataIn[[subDp00[1]]]$data,#sensStus
-                        dataIn[[subDp00[2]]]$data,#pres
-                        dataIn[[subDp00[3]]]$data,#temp
-                        dataIn[[subDp00[4]]]$data,#tempWbox
-                        dataIn[[subDp00[5]]]$data,#idGas
-                        dataIn[[subDp00[6]]]$data,#rtioMoleWetCo2
-                        dataIn[[subDp00[7]]]$data,#rtioMoleDryCo2
-                        dataIn[[subDp00[8]]]$data,#rtioMoleWet12CCo2
-                        dataIn[[subDp00[9]]]$data,#rtioMoleDry12CCo2
-                        dataIn[[subDp00[10]]]$data,#rtioMoleWet13CCo2
-                        dataIn[[subDp00[11]]]$data,#rtioMoleDry13CCo2
-                        dataIn[[subDp00[12]]]$data,#dlta13CCo2
-                        dataIn[[subDp00[13]]]$data,#rtioMoleWetH2o
-                        dataIn[[subDp00[13]]]$rtioMoleDryH2o,#rtioMoleDryH2o
-                        dataIn[[subDp00[1]]]$qfSensStus)#qfSensStus
+  dataTmp <- data.frame(dataInp[[subDp00[1]]]$data,#sensStus
+                        dataInp[[subDp00[2]]]$data,#pres
+                        dataInp[[subDp00[3]]]$data,#temp
+                        dataInp[[subDp00[4]]]$data,#tempWbox
+                        dataInp[[subDp00[5]]]$data,#idGas
+                        dataInp[[subDp00[6]]]$data,#rtioMoleWetCo2
+                        dataInp[[subDp00[7]]]$data,#rtioMoleDryCo2
+                        dataInp[[subDp00[8]]]$data,#rtioMoleWet12CCo2
+                        dataInp[[subDp00[9]]]$data,#rtioMoleDry12CCo2
+                        dataInp[[subDp00[10]]]$data,#rtioMoleWet13CCo2
+                        dataInp[[subDp00[11]]]$data,#rtioMoleDry13CCo2
+                        dataInp[[subDp00[12]]]$data,#dlta13CCo2
+                        dataInp[[subDp00[13]]]$data,#rtioMoleWetH2o
+                        dataInp[[subDp00[13]]]$rtioMoleDryH2o,#rtioMoleDryH2o
+                        dataInp[[subDp00[1]]]$qfSensStus)#qfSensStus
 
   #assign eddy4R name style to the output variables
   colnames(dataTmp) <- c("sensStus", "pres", "temp", "tempWbox", "idGas", "rtioMoleWetCo2",
@@ -1371,8 +1379,8 @@ if (IdDp00 %in% c("DP0.00102")){
                                                                unitFrom = attributes(dataTmp)$unit,
                                                                unitTo = "intl"))
   #combine regularize time and data
-  #dataTmp <- cbind(dataTmp, time = strftime(timeReg, format="%Y-%m-%dT%H:%M:%OSZ", tz="UTC"), stringsAsFactors = F)
-  dataTmp <- cbind(dataTmp, time = timeReg, stringsAsFactors = F)
+  #dataTmp <- cbind(dataTmp, time = strftime(timeRglr, format="%Y-%m-%dT%H:%M:%OSZ", tz="UTC"), stringsAsFactors = F)
+  dataTmp <- cbind(dataTmp, time = timeRglr, stringsAsFactors = F)
   
   #report output
   rpt <- dataTmp    
@@ -1397,9 +1405,9 @@ if (IdDp00 %in% c("DP0.00103")){
   for (idxSubDp00 in subDp00){
     #idxSubDp00 <- subDp00[1]
     if (!(idxSubDp00 %in% names(dataList))) {
-      dataList[[idxSubDp00]] <- data.frame(matrix(data = NaN, ncol = 4, nrow = length(timeReg)))
+      dataList[[idxSubDp00]] <- data.frame(matrix(data = NaN, ncol = 4, nrow = length(timeRglr)))
       names(dataList[[idxSubDp00]]) <- c("time", "data", "exst", "timeNew")
-      dataList[[idxSubDp00]]$timeNew <- timeReg 
+      dataList[[idxSubDp00]]$timeNew <- timeRglr 
     }
   }#end of for loop in subDp00
   
@@ -1438,30 +1446,30 @@ if (IdDp00 %in% c("DP0.00103")){
   dataList[[subDp00[9]]]$qfStusN2 <- ifelse(is.na(dataList[[subDp00[9]]]$qfDiffTime), dataList[[subDp00[9]]]$qfStusN2, -1)
   dataList[[subDp00[6]]]$qfLowRtioMoleWetH2o <- ifelse(is.na(dataList[[subDp00[6]]]$qfDiffTime), dataList[[subDp00[6]]]$qfLowRtioMoleWetH2o, -1)
   
-  #empty dataIn for time regularization
-  dataIn <- list()
-  lapply(names(dataList), function(x) dataIn[[x]] <<- eddy4R.base::def.rglr(timeMeas = base::as.POSIXlt(dataList[[x]][,"timeNew"], format="%Y-%m-%dT%H:%M:%OSZ", tz="UTC"),
+  #empty dataInp for time regularization
+  dataInp <- list()
+  lapply(names(dataList), function(x) dataInp[[x]] <<- eddy4R.base::def.rglr(timeMeas = base::as.POSIXlt(dataList[[x]][,"timeNew"], format="%Y-%m-%dT%H:%M:%OSZ", tz="UTC"),
                                                                dataMeas = dataList[[x]],
-                                                               BgnRglr = as.POSIXlt(min(timeReg)),
-                                                               EndRglr = as.POSIXlt(max(timeReg)),
+                                                               BgnRglr = as.POSIXlt(min(timeRglr)),
+                                                               EndRglr = as.POSIXlt(max(timeRglr)),
                                                                FreqRglr = Freq,
                                                                MethRglr = "CybiEc"
   )$dataRglr)
   
   #combine regularize data for crdH20
-  dataTmp <- data.frame(dataIn[[subDp00[1]]]$data,#sensStus
-                        dataIn[[subDp00[2]]]$data,#pres
-                        dataIn[[subDp00[3]]]$data,#temp
-                        dataIn[[subDp00[4]]]$data,#tempWbox
-                        dataIn[[subDp00[5]]]$data,#valvCrdH2o
-                        dataIn[[subDp00[6]]]$data,#rtioMoleWetH2o
-                        dataIn[[subDp00[7]]]$data,#dlta18OH2o
-                        dataIn[[subDp00[8]]]$data,#dlta2HH2o
-                        dataIn[[subDp00[9]]]$data,#stusN2
-                        dataIn[[subDp00[6]]]$rtioMoleDryH2o,#rtioMoleDryH2o
-                        dataIn[[subDp00[1]]]$qfSensStus,#qfSensStus
-                        dataIn[[subDp00[9]]]$qfStusN2,#qfStusN2
-                        dataIn[[subDp00[6]]]$qfLowRtioMoleWetH2o)#qfLowRtioMoleWetH2o
+  dataTmp <- data.frame(dataInp[[subDp00[1]]]$data,#sensStus
+                        dataInp[[subDp00[2]]]$data,#pres
+                        dataInp[[subDp00[3]]]$data,#temp
+                        dataInp[[subDp00[4]]]$data,#tempWbox
+                        dataInp[[subDp00[5]]]$data,#valvCrdH2o
+                        dataInp[[subDp00[6]]]$data,#rtioMoleWetH2o
+                        dataInp[[subDp00[7]]]$data,#dlta18OH2o
+                        dataInp[[subDp00[8]]]$data,#dlta2HH2o
+                        dataInp[[subDp00[9]]]$data,#stusN2
+                        dataInp[[subDp00[6]]]$rtioMoleDryH2o,#rtioMoleDryH2o
+                        dataInp[[subDp00[1]]]$qfSensStus,#qfSensStus
+                        dataInp[[subDp00[9]]]$qfStusN2,#qfStusN2
+                        dataInp[[subDp00[6]]]$qfLowRtioMoleWetH2o)#qfLowRtioMoleWetH2o
   }else{
     #combine regularize data for crdH20
     dataTmp <- as.data.frame(matrix(NaN, nrow = 86400, ncol = 13))
@@ -1497,8 +1505,8 @@ if (IdDp00 %in% c("DP0.00103")){
                                                                unitFrom = attributes(dataTmp)$unit,
                                                                unitTo = "intl"))
   #combine regularize time and data
-  #dataTmp <- cbind(dataTmp, time = strftime(timeReg, format="%Y-%m-%dT%H:%M:%OSZ", tz="UTC"), stringsAsFactors = F)
-  dataTmp <- cbind(dataTmp, time = timeReg, stringsAsFactors = F)
+  #dataTmp <- cbind(dataTmp, time = strftime(timeRglr, format="%Y-%m-%dT%H:%M:%OSZ", tz="UTC"), stringsAsFactors = F)
+  dataTmp <- cbind(dataTmp, time = timeRglr, stringsAsFactors = F)
   
   #report output
   rpt <- dataTmp     
@@ -1538,56 +1546,56 @@ if (IdDp00 %in% c("DP0.00098")){
   for (idxSubDp00 in subDp00){
     #idxSubDp00 <- subDp00[1]
     if (!(idxSubDp00 %in% names(dataList))) {
-      dataList[[idxSubDp00]] <- data.frame(matrix(data = NaN, ncol = 4, nrow = length(timeReg)))
+      dataList[[idxSubDp00]] <- data.frame(matrix(data = NaN, ncol = 4, nrow = length(timeRglr)))
       names(dataList[[idxSubDp00]]) <- c("time", "data", "exst", "timeNew")
-      dataList[[idxSubDp00]]$timeNew <- timeReg 
+      dataList[[idxSubDp00]]$timeNew <- timeRglr 
     }
   }#end of for loop in subDp00
   
-  dataIn <- list()
-  lapply(names(dataList), function(x) dataIn[[x]] <<- eddy4R.base::def.rglr(timeMeas = base::as.POSIXlt(dataList[[x]][,"timeNew"], format="%Y-%m-%dT%H:%M:%OSZ", tz="UTC"),
+  dataInp <- list()
+  lapply(names(dataList), function(x) dataInp[[x]] <<- eddy4R.base::def.rglr(timeMeas = base::as.POSIXlt(dataList[[x]][,"timeNew"], format="%Y-%m-%dT%H:%M:%OSZ", tz="UTC"),
                                                                dataMeas = dataList[[x]],
-                                                               BgnRglr = as.POSIXlt(min(timeReg)),
-                                                               EndRglr = as.POSIXlt(max(timeReg)),
+                                                               BgnRglr = as.POSIXlt(min(timeRglr)),
+                                                               EndRglr = as.POSIXlt(max(timeRglr)),
                                                                FreqRglr = Freq,
                                                                MethRglr = "CybiEc"
   )$dataRglr)
   
   if (horVer %in% "000.040") {
-    dataTmp <- data.frame(dataIn[[subDp00[1]]]$data,#rh
-                          dataIn[[subDp00[2]]]$data,#temp
-                          dataIn[[subDp00[3]]]$data,#tempDew
-                          dataIn[[subDp00[4]]]$data)#qfSens
+    dataTmp <- data.frame(dataInp[[subDp00[1]]]$data,#rh
+                          dataInp[[subDp00[2]]]$data,#temp
+                          dataInp[[subDp00[3]]]$data,#tempDew
+                          dataInp[[subDp00[4]]]$data)#qfSens
   }
   if (horVer %in% "000.050") {
-    dataTmp <- data.frame(dataIn[[subDp00[5]]]$data,#rh
-                         dataIn[[subDp00[6]]]$data,#temp
-                         dataIn[[subDp00[7]]]$data,#tempDew
-                         dataIn[[subDp00[8]]]$data)#qfSens
+    dataTmp <- data.frame(dataInp[[subDp00[5]]]$data,#rh
+                         dataInp[[subDp00[6]]]$data,#temp
+                         dataInp[[subDp00[7]]]$data,#tempDew
+                         dataInp[[subDp00[8]]]$data)#qfSens
   }
   if (horVer %in% "000.060") {
-    dataTmp <- data.frame(dataIn[[subDp00[9]]]$data,#rh
-                         dataIn[[subDp00[10]]]$data,#temp
-                         dataIn[[subDp00[11]]]$data,#tempDew
-                         dataIn[[subDp00[12]]]$data)#qfSens
+    dataTmp <- data.frame(dataInp[[subDp00[9]]]$data,#rh
+                         dataInp[[subDp00[10]]]$data,#temp
+                         dataInp[[subDp00[11]]]$data,#tempDew
+                         dataInp[[subDp00[12]]]$data)#qfSens
   }
   if (horVer %in% "000.070") {
-    dataTmp <- data.frame(dataIn[[subDp00[13]]]$data,#rh
-                         dataIn[[subDp00[14]]]$data,#temp
-                         dataIn[[subDp00[15]]]$data,#tempDew
-                         dataIn[[subDp00[16]]]$data)#qfSens
+    dataTmp <- data.frame(dataInp[[subDp00[13]]]$data,#rh
+                         dataInp[[subDp00[14]]]$data,#temp
+                         dataInp[[subDp00[15]]]$data,#tempDew
+                         dataInp[[subDp00[16]]]$data)#qfSens
   }
   if (horVer %in% "000.080") {
-    dataTmp <- data.frame(dataIn[[subDp00[17]]]$data,#rh
-                         dataIn[[subDp00[18]]]$data,#temp
-                         dataIn[[subDp00[19]]]$data,#tempDew
-                         dataIn[[subDp00[20]]]$data)#qfSens
+    dataTmp <- data.frame(dataInp[[subDp00[17]]]$data,#rh
+                         dataInp[[subDp00[18]]]$data,#temp
+                         dataInp[[subDp00[19]]]$data,#tempDew
+                         dataInp[[subDp00[20]]]$data)#qfSens
   }
   if (horVer %in% "003.000") {
-    dataTmp <- data.frame(dataIn[[subDp00[21]]]$data,#rh
-                         dataIn[[subDp00[22]]]$data,#temp
-                         dataIn[[subDp00[23]]]$data,#tempDew
-                         dataIn[[subDp00[24]]]$data)#qfSens
+    dataTmp <- data.frame(dataInp[[subDp00[21]]]$data,#rh
+                         dataInp[[subDp00[22]]]$data,#temp
+                         dataInp[[subDp00[23]]]$data,#tempDew
+                         dataInp[[subDp00[24]]]$data)#qfSens
   }
   
   #assign eddy4R name style to the output variables
@@ -1614,8 +1622,8 @@ if (IdDp00 %in% c("DP0.00098")){
                                                                  unitTo = "intl"))
   
   #combine regularize time and data
-  #dataTmp <- cbind(dataTmp, time = strftime(timeReg, format="%Y-%m-%dT%H:%M:%OSZ", tz="UTC"), stringsAsFactors = F)
-  dataTmp <- cbind(dataTmp, time = timeReg, stringsAsFactors = F)
+  #dataTmp <- cbind(dataTmp, time = strftime(timeRglr, format="%Y-%m-%dT%H:%M:%OSZ", tz="UTC"), stringsAsFactors = F)
+  dataTmp <- cbind(dataTmp, time = timeRglr, stringsAsFactors = F)
   
   #report output
   rpt <- dataTmp  

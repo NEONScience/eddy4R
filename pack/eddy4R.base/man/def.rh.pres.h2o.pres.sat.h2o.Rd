@@ -7,9 +7,9 @@
 def.rh.pres.h2o.pres.sat.h2o(presH2o, presH2oSat)
 }
 \arguments{
-\item{\code{presH2o}}{A vector containing the water vapor partial pressure, of class "numeric". [Pa]}
+\item{presH2o}{A vector containing the water vapor partial pressure, of class "numeric". [Pa]}
 
-\item{\code{presH2oSat}}{A vector containing the water vapor saturation pressure, of class "numeric". [Pa]}
+\item{presH2oSat}{A vector containing the water vapor saturation pressure, of class "numeric". [Pa]}
 }
 \value{
 The returned object is the RH calculated from water vapor partial pressure and saturation pressure

@@ -1,17 +1,13 @@
 ##############################################################################################
 #' @title Definition function: Coriolis coefficient
 
-# type (one of function defintion, function wrapper, workflow, demo): function defintion
-
-# license: Terms of use of the NEON FIU algorithm repository dated 2015-01-16
-
 #' @author 
 #' Stefan Metzger \email{eddy4R.info@gmail.com} \cr
 #' Cove Sturtevant \email{eddy4R.info@gmail.com}
 
 #' @description Function definition. Determine coriolis coefficient.
 
-#' @param \code{lat} Required. Latitude [degrees North]
+#' @param lat Required. Latitude [degrees North]
 
 #' @return Coriolis coefficient for \code{lat} [rad s-1].
 
@@ -34,6 +30,10 @@
 #          changed function name from coriolis to def.coef.corl
 #   Cove Sturtevant (2016-03-10)
 #     adjusted used of natural constants used within function to call internal package data
+#   Natchaya P-Durden (2018-03-28)
+#     removed comment lines from the header
+#   Natchaya P-Durden (2018-04-03)
+#     update @param format
 ##############################################################################################
 
 def.coef.corl <- function(lat) {

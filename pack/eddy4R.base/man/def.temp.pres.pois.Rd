@@ -8,13 +8,13 @@ def.temp.pres.pois(temp01, pres01, pres02,
   Kppa = eddy4R.base::IntlNatu$KppaDry)
 }
 \arguments{
-\item{\code{pres01}}{Measured air pressure [same unit as reference pressure]}
+\item{temp01}{Measured air temperature [K]}
 
-\item{\code{pres02}}{Reference pressure [same unit as reference pressure]}
+\item{pres01}{Measured air pressure [same unit as reference pressure]}
 
-\item{\code{temp01}}{Measured air temperature [K]}
+\item{pres02}{Reference pressure [same unit as reference pressure]}
 
-\item{\code{Kppa}}{Ratio of specific gas constant to specific heat at constant pressure. Default as KppaDry [-]}
+\item{Kppa}{Ratio of specific gas constant to specific heat at constant pressure. Default as KppaDry [-]}
 }
 \value{
 Temperature at refernce pressure [K]

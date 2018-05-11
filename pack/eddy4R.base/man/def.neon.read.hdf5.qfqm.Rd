@@ -5,7 +5,7 @@
 \title{Wrapper function: Reading quality flags from NEON HDF5 files}
 \usage{
 def.neon.read.hdf5.qfqm(DirInpLoca, SiteLoca, DateLoca, VarLoca,
-  LevlTowr = c("000_040", "000_050", "000_060")[3], FreqLoca,
+  LvlTowr = c("000_040", "000_050", "000_060")[3], FreqLoca,
   MethMeas = c("ecte", "ecse")[1])
 }
 \arguments{
@@ -17,7 +17,7 @@ def.neon.read.hdf5.qfqm(DirInpLoca, SiteLoca, DateLoca, VarLoca,
 
 \item{VarLoca}{Character: Which instrument to read data from.}
 
-\item{LevlTowr}{The tower level that the sensor data is being collected in NEON data product convention (HOR_VER)}
+\item{LvlTowr}{The tower level that the sensor data is being collected in NEON data product convention (HOR_VER)}
 
 \item{FreqLoca}{Integer: Measurement frequency.}
 

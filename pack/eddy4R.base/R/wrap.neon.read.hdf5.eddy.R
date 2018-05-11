@@ -10,7 +10,7 @@
 #' @param SiteLoca Character: Site location.
 #' @param DateLoca Character: Date in ISO format "(2016-05-26").
 #' @param VarLoca Character: Which instrument to read data from.
-#' @param LevlTowr The tower level that the sensor data is being collected in NEON data product convention (HOR_VER)
+#' @param LvlTowr The tower level that the sensor data is being collected in NEON data product convention (HOR_VER)
 #' @param FreqLoca Integer: Measurement frequency.
 #' @param RngLoca List of named ingegers: Thresholds for range test.
 #' @param DespLoca List of integers: De-spiking parameters
@@ -51,6 +51,10 @@
 #    Updating to remove rev numbers from ECTE dp0p HDF5 data product group levels
 #   Stefan Metzger (2018-01-30)
 #     move ECSE de-spiking from wrap.neon.read.hdf5.eddy() to wrap.prd.day.ecse()
+#   Natchaya P-Durden (2018-03-30)
+#     applied term name convention; replace LevlTowr by LvlTowr
+#   Ke Xu (2018-04-19)
+#     applied term name convention; replaced dataIn by dataInp
 ##############################################################################################
         
 wrap.neon.read.hdf5.eddy <- function(
@@ -58,7 +62,7 @@ wrap.neon.read.hdf5.eddy <- function(
   SiteLoca,
   DateLoca,
   VarLoca,
-  LevlTowr = c("000_040", "000_050", "000_060")[3],
+  LvlTowr = c("000_040", "000_050", "000_060")[3],
   FreqLoca,
   Rglr = FALSE,
   Diag = FALSE,
@@ -175,12 +179,12 @@ if(!(DateLoca %in% file)) {
   
    
   if(MethMeas == "ecte")  data <- rhdf5::h5read(file = base::paste0(DirInpLoca, "/ECTE_dp0p_", SiteLoca, "_", DateLoca, ".h5"),
-                                                name = base::paste0("/", SiteLoca, "/dp0p/data/", VarLoca, "/",LevlTowr),
+                                                name = base::paste0("/", SiteLoca, "/dp0p/data/", VarLoca, "/",LvlTowr),
                                                 read.attributes = TRUE)
   
   
   if(MethMeas == "ecse")  data <- rhdf5::h5read(file = base::paste0(DirInpLoca, "/ECSE_dp0p_", SiteLoca, "_", DateLoca, ".h5"),
-                                                name = base::paste0("/", SiteLoca, "/dp0p/data/", VarLoca, "/",LevlTowr),
+                                                name = base::paste0("/", SiteLoca, "/dp0p/data/", VarLoca, "/",LvlTowr),
                                                 read.attributes = TRUE)
   
 
@@ -203,11 +207,11 @@ if(!(DateLoca %in% file)) {
     # read attributes
   
   if(MethMeas == "ecte") attr <- rhdf5::h5readAttributes(file = base::paste0(DirInpLoca, "/ECTE_dp0p_", SiteLoca, "_", DateLoca, ".h5"),
-                                                         name = base::paste0("/", SiteLoca, "/dp0p/data/", VarLoca, "/", LevlTowr))
+                                                         name = base::paste0("/", SiteLoca, "/dp0p/data/", VarLoca, "/", LvlTowr))
   
   
    if(MethMeas == "ecse") attr <- rhdf5::h5readAttributes(file = base::paste0(DirInpLoca, "/ECSE_dp0p_", SiteLoca, "_", DateLoca, ".h5"),
-                                    name = base::paste0("/", SiteLoca, "/dp0p/data/", VarLoca, "/", LevlTowr))
+                                    name = base::paste0("/", SiteLoca, "/dp0p/data/", VarLoca, "/", LvlTowr))
     
     #########This section not needed after moving the names and units to the data table level###########################
     # which attributes are of type character? 
@@ -393,7 +397,7 @@ if(!(DateLoca %in% file)) {
         #execute de-spiking algorithm
         data[,idx] <- eddy4R.qaqc::def.dspk.br86(
           # input data, univariate vector of integers or numerics
-          dataIn = as.vector(data[,idx]),
+          dataInp = as.vector(data[,idx]),
           # filter width
           WndwFilt = DespLoca$widt,
           # initial number/step size of histogram bins

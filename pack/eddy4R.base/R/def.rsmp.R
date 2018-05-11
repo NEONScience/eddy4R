@@ -7,11 +7,11 @@
 
 #' @description Function definition. Resampling data by changing the sample rate from high frequency to low frequency.
 
-#' @param \code{data} A vector or matrix of type numeric, containing the data to be resampled. [user-defined]
-#' @param \code{FreqInp} Input sampling or measurements frequency. Of class "numeric" or "integer". [Hz]
-#' @param \code{FreqOut} Desired out put frequency. Of class "numeric" or "integer". [Hz]
-#' @param \code{MethRsmp} An object of class "character" containing the resampling method ("zoo","filt"). [-]
-#' @param \code{ColDisc} Specific column in \code{data} which containing the discontinuity variable e.g. azimuth angle of wind direction. Of class "numeric" (column number) or "character" (column name). Defaults to NULL. [-] 
+#' @param data A vector or matrix of type numeric, containing the data to be resampled. [user-defined]
+#' @param FreqInp Input sampling or measurements frequency. Of class "numeric" or "integer". [Hz]
+#' @param FreqOut Desired out put frequency. Of class "numeric" or "integer". [Hz]
+#' @param MethRsmp An object of class "character" containing the resampling method ("zoo","filt"). [-]
+#' @param ColDisc Specific column in \code{data} which containing the discontinuity variable e.g. azimuth angle of wind direction. Of class "numeric" (column number) or "character" (column name). Defaults to NULL. [-] 
 
 #' @return Data frame of resampling data and of the same number of variables as \code{data}. [user-defined]
 
@@ -37,6 +37,8 @@
 #     re-formualtion as function() to allow packaging
 #   Natchaya P-Durden (2016-06-02)
 #     Initail naming convention for eddy4R
+#   Natchaya P-Durden (2018-04-03)
+#     update @param format
 ##############################################################################################
 
 def.rsmp <- function (data, FreqInp, FreqOut, MethRsmp, ColDisc=NULL) {

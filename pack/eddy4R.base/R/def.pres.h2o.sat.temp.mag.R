@@ -7,7 +7,7 @@
  
 #' @description Calculate saturated water vapor pressure from temperature using Magnus equation.
 
-#' @param \code{temp} Either a vector or an object of class numeric of measured air temperature. [K]
+#' @param temp Either a vector or an object of class numeric of measured air temperature. [K]
 
 #' @return Saturated water vapor pressure and of the same length as \code{temp}. [Pa]
 
@@ -34,6 +34,8 @@
 #     Initail naming convention for eddy4R
 #   Natchaya P-Durden (2015-11-30)
 #     rename function to def.pres.h2o.sat.temp.mag()
+#   Natchaya P-Durden (2018-04-03)
+#     update @param format
 ##############################################################################################
 
 def.pres.h2o.sat.temp.mag <- function(temp) {

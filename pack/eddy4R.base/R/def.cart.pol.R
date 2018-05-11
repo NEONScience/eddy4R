@@ -7,7 +7,7 @@
 
 #' @description Decompose azimuth angles from polar to cartesian for angular averaging. 
 
-#' @param \code{az} vector of type numeric, clockwise azimuth angle with 0 / 360 degree discontinuity in north [decimal degrees]
+#' @param az vector of type numeric, clockwise azimuth angle with 0 / 360 degree discontinuity in north [decimal degrees]
 
 #' @return matrix consisting of unit vectors X (1st column, -1 ... 1, positive to north) and Y (2nd column, -1 ... 1, positive to east) 
 
@@ -33,6 +33,8 @@
 #     rename to def.cart.az()
 #   Natchaya P-Durden (2016-12-02)
 #     rename to def.cart.pol()
+#   Natchaya P-Durden (2018-04-03)
+#     update @param format
 ##############################################################################################
 
 #decompose heading from polar to cartesian for angular averaging

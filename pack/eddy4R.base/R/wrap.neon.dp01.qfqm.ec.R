@@ -45,6 +45,8 @@
 # changelog and author contributions / copyrights 
 #   David Durden (2017-04-30)
 #     original creation
+#   Ke Xu (2018-04-19)
+#     applied term name convention; replaced qfInput by qfInp
 ##############################################################################################
 
 
@@ -64,7 +66,7 @@ wrap.neon.dp01.qfqm.ec <- function(
   
   # if data is a list, calculate NEON Level 1 data products recursively for each list element
  rpt <- lapply(idx, function(x) {
-   eddy4R.qaqc::wrap.neon.dp01.qfqm (qfInput = qfqm, MethMeas = MethMeas, TypeMeas = TypeMeas, dp01=x, RptExpd = RptExpd)
+   eddy4R.qaqc::wrap.neon.dp01.qfqm (qfInp = qfqm, MethMeas = MethMeas, TypeMeas = TypeMeas, dp01=x, RptExpd = RptExpd)
                                      })
   
  names(rpt) <- idx

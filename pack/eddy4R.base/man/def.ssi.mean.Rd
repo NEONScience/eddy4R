@@ -7,9 +7,9 @@
 def.ssi.mean(ssiCo2, ssiH2o)
 }
 \arguments{
-\item{\code{ssiCo2}}{A vector containing the CO2 signal strength, of class "numeric". [percent]}
+\item{ssiCo2}{A vector containing the CO2 signal strength, of class "numeric". [percent]}
 
-\item{\code{ssiH2o}}{A vector containing the H2O signal strength, of class "numeric". [percent]}
+\item{ssiH2o}{A vector containing the H2O signal strength, of class "numeric". [percent]}
 }
 \value{
 The returned object is the average signal strength calculated from the CO2 signal strength and the H2O signal strength.

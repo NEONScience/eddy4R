@@ -7,11 +7,11 @@
 def.repl.char(data, ReplFrom, ReplTo)
 }
 \arguments{
-\item{\code{data}}{Named character vector, can contain values that are to be replaced as specified via \code{ReplFrom} and \code{ReplTo}.}
+\item{data}{Named character vector, can contain values that are to be replaced as specified via \code{ReplFrom} and \code{ReplTo}.}
 
-\item{\code{ReplFrom}}{Character vector of the same length as \code{ReplTo}, specifying the values in \code{data} that are to be replaced with the corrresponding values in \code{ReplTo}.}
+\item{ReplFrom}{Character vector of the same length as \code{ReplTo}, specifying the values in \code{data} that are to be replaced with the corrresponding values in \code{ReplTo}.}
 
-\item{\code{ReplTo}}{Character vector of the same length as \code{ReplFrom}, specifying the replacement values for \code{ReplFrom} in \code{data}.}
+\item{ReplTo}{Character vector of the same length as \code{ReplFrom}, specifying the replacement values for \code{ReplFrom} in \code{data}.}
 }
 \value{
 Named character vector of the same length as \code{data}, with values specified in \code{ReplFrom} replaced by the corresponding values in \code{ReplTo}. If none of the entries in \code{ReplFrom} exist in \code{data}, then \code{data} is returned unchanged.

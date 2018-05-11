@@ -8,8 +8,8 @@
 #' @description 
 #' Function definition. Compute NEON Level 1 data product descriptive statistics (mean, minimum, maximum, variance, number of non-NA points) by aggregating the input data over its entire range. 
 
-#' @param \code{data} A numeric vector or data.frame containing the L0p (calibrated) input data at native resolution. Of class numeric". [-]
-#' @param \code{vrbs} Verbose output, one of either TRUE of FALSE, defaults to FALSE. If \code{vrbs = FALSE} is selected, the returned object is a data.frame. If  \code{vrbs = TRUE} is selected, the returned object is a list supporting the propagation of unit attributes for individual variables in \code{data}. Of class logical". [-]
+#' @param data A numeric vector or data.frame containing the L0p (calibrated) input data at native resolution. Of class numeric". [-]
+#' @param vrbs Verbose output, one of either TRUE of FALSE, defaults to FALSE. If \code{vrbs = FALSE} is selected, the returned object is a data.frame. If  \code{vrbs = TRUE} is selected, the returned object is a list supporting the propagation of unit attributes for individual variables in \code{data}. Of class logical". [-]
 
 
 #' @return Descriptive statistics, for \code{vrbs = FALSE} a data frame and for \code{vrbs = TRUE} a list:\cr
@@ -74,6 +74,8 @@
 #     original creation (def.dp01.stat.R, which was consolidated into def.neon.dp01.R)
 #   Stefan Metzger (2016-12-02)
 #     consolidation of def.dp01.stat.R into def.neon.dp01.R
+#   Natchaya P-Durden (2018-04-03)
+#     update @param format
 ##############################################################################################
 
 # definition function to calculate standard NEON Level 1 data products from single data.frame

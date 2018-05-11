@@ -7,7 +7,7 @@
 def.pres.h2o.sat.temp.mag(temp)
 }
 \arguments{
-\item{\code{temp}}{Either a vector or an object of class numeric of measured air temperature. [K]}
+\item{temp}{Either a vector or an object of class numeric of measured air temperature. [K]}
 }
 \value{
 Saturated water vapor pressure and of the same length as \code{temp}. [Pa]

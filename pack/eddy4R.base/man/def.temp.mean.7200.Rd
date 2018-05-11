@@ -7,9 +7,9 @@
 def.temp.mean.7200(tempIn, tempOut, Vali = FALSE)
 }
 \arguments{
-\item{\code{tempIn}}{A vector containing the tempertaure measured at IRGA cell inlet, of class "numeric". [K]}
+\item{tempIn}{A vector containing the tempertaure measured at IRGA cell inlet, of class "numeric". [K]}
 
-\item{\code{tempOut}}{A vector containing the tempertaure measured at IRGA cell outlet, of class "numeric". [K]}
+\item{tempOut}{A vector containing the tempertaure measured at IRGA cell outlet, of class "numeric". [K]}
 }
 \value{
 The returned object is the the average temperature in LI-7200 IRGA cell calculated from the temperatrue at IRGA cell inlet and the temperature at IRGA cell outlet.

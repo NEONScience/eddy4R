@@ -6,14 +6,14 @@
 
 #' @description Function definition. Apply a polynomial equation to data given the polynomial coefficients.
 
-#' @param \code{data} Required. A vector or matrix of type numeric, containing the data to be converted
-#' @param \code{coefPoly} Optional. A vector of type numeric, containing the polynomial 
+#' @param data Required. A vector or matrix of type numeric, containing the data to be converted
+#' @param coefPoly Optional. A vector of type numeric, containing the polynomial 
 #' coefficients (in increasing order) to apply to \code{data}. 
 #' This is a numerical vector of [a0 a1 a2 a3 ...] signifying the 
 #' coeficients of the equation a0 + a1*x + a2*x^2 + a3*x^3 ... , where x is the input data.
 #' Default is c(0,1).
 #' \cr
-#' @param \code{MethGc} is set to \code{TRUE} (default), to run garbage collection function.
+#' @param MethGc is set to \code{TRUE} (default), to run garbage collection function.
 #'  
 #' @return A vector or matrix, matching the format of \code{data} containing the data with 
 #' polynomial conversion applied. 
@@ -40,6 +40,8 @@
 #     rename to def.conv.poly()
 #   Natchaya P-Durden (2017-09-20)
 #     added MethGc in parameter
+#   Natchaya P-Durden (2018-04-03)
+#     update @param format
 ##############################################################################################
 def.conv.poly <- function(data,coefPoly=c(0,1), MethGc=TRUE) {
   

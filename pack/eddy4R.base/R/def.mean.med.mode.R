@@ -7,9 +7,9 @@
 
 #' @description Calculate descriptive statistics based on arithmetic mean, median and mode.
 
-#' @param \code{test} A vector containing the test data. Of class "numeric" or "integer", and of the same length as \code{refe}. [same units as reference data]
-#' @param \code{refe} A vector containing the reference data. Of class "numeric" or "integer". Defaults to \code{refe = 0}. [same units as test data]
-#' @param \code{Perc} Report results in the same units as \code{refe} and \code{test} (\code{Perc = FALSE}) or as percentages (\code{Perc = TRUE})? Of class "logical", defaults to \code{Perc = FALSE}.
+#' @param test A vector containing the test data. Of class "numeric" or "integer", and of the same length as \code{refe}. [same units as reference data]
+#' @param refe A vector containing the reference data. Of class "numeric" or "integer". Defaults to \code{refe = 0}. [same units as test data]
+#' @param Perc Report results in the same units as \code{refe} and \code{test} (\code{Perc = FALSE}) or as percentages (\code{Perc = TRUE})? Of class "logical", defaults to \code{Perc = FALSE}.
 
 #' @return \code{statLoc} A list object of class "numeric" [1, 1:3] containing mean, median, and mode. \cr
 #' @return \code{statDis} A list object of class "numeric" [1, 1:3] containing standard deviation, median absolute deviation, and mode absolute deviation. \cr
@@ -41,6 +41,8 @@
 #     re-formualtion as function() to allow packaging
 #   Natchaya P-Durden (2016-02-22)
 #     Initail naming convention for eddy4R
+#   Natchaya P-Durden (2018-04-03)
+#     update @param format
 ##############################################################################################
 #calculate descriptive statistics based on arithmetic mean, median and mode
 

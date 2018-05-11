@@ -6,8 +6,8 @@
 
 #' @description 
 #' Definition function to interpret the irga sensor flags from \code{diag01}.
-#' @param \code{diag01} The 32-bit diagnostic stream that is output from the LI7200. 
-#' @param \code{MethQf} Switch for quality flag determination for the LI7200, diag01 provides ones for passing quality by default the equals "lico". The "qfqm" method changes the ones to zeros to match the NEON QFQM logic.
+#' @param diag01 The 32-bit diagnostic stream that is output from the LI7200. 
+#' @param MethQf Switch for quality flag determination for the LI7200, diag01 provides ones for passing quality by default the equals "lico". The "qfqm" method changes the ones to zeros to match the NEON QFQM logic.
 #' 
 #' @return A dataframe (\code{qfIrgaTurb}) of sensor specific irga quality flags as described in NEON.DOC.000807.
 
@@ -33,6 +33,10 @@
 #     fixing issues with missing diag data and order bits are analyzed for qfIrgaTurbAgc
 #   Dave Durden (2017-12-03)
 #     Changing output naming convention to qfIrgaTurb
+#   Natchaya P-Durden (2018-04-03)
+#     update @param format
+#   Natchaya P-Durden (2018-04-11)
+#    applied eddy4R term name convention; replaced pos by set
 ##############################################################################################
 
 
@@ -48,7 +52,7 @@ def.qf.irga <- function(diag01, MethQf = c("qfqm","lico")[1]){
  
 
   #Grab position of NA's
-  posNa <- which(is.na(diag01))
+  setNa <- which(is.na(diag01))
   
   # Turn the diag01 into a matrix of 32 bits separated into columns for the timeseries of diagnostic values  
 qfIrgaTurb <- t(base::sapply(diag01,function(x){ base::as.integer(base::intToBits(x))}))
@@ -72,16 +76,16 @@ base::names(qfIrgaTurb) <- c("qfIrgaTurbAgc", "qfIrgaTurbSync", "qfIrgaTurbPll",
 if (MethQf == "qfqm"){
 #Change all the 1 values to 0 and 0 to 1 to fit the NEON qfqm framework
 base::lapply(base::names(qfIrgaTurb[!names(qfIrgaTurb) == "qfIrgaTurbAgc"]), function(x) {
-  pos <- which(qfIrgaTurb[,x] == 1)
-  qfIrgaTurb[pos,x] <<- base::as.integer(0)
-  qfIrgaTurb[-pos,x] <<- base::as.integer(1)
+  set <- which(qfIrgaTurb[,x] == 1)
+  qfIrgaTurb[set,x] <<- base::as.integer(0)
+  qfIrgaTurb[-set,x] <<- base::as.integer(1)
   qfIrgaTurb[,x] <<- base::as.integer(qfIrgaTurb[,x])
 })}
 
 #Replace positions without diag data with -1
-qfIrgaTurb[posNa,] <- -1L
+qfIrgaTurb[setNa,] <- -1L
 
-qfIrgaTurb$qfIrgaTurbAgc[posNa] <- NaN
+qfIrgaTurb$qfIrgaTurbAgc[setNa] <- NaN
 
 
 #return dataframe

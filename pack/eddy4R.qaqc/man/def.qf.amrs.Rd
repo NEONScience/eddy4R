@@ -7,9 +7,9 @@
 def.qf.amrs(diag32, MethQf = c("qfqm", "xsen")[1])
 }
 \arguments{
-\item{\code{diag32}}{The 32-bit diagnostic stream that is output from the XSens AMRS.}
+\item{diag32}{The 32-bit diagnostic stream that is output from the XSens AMRS.}
 
-\item{\code{MethQf}}{Switch for quality flag determination for the XSens AMRS, diag32 provides ones for passing quality by default the equals "xsen". The "qfqm" method changes the ones to zeros to match the NEON QFQM logic for certain flags that are set high when good, qfAmrsVal & qfAmrsFilt.}
+\item{MethQf}{Switch for quality flag determination for the XSens AMRS, diag32 provides ones for passing quality by default the equals "xsen". The "qfqm" method changes the ones to zeros to match the NEON QFQM logic for certain flags that are set high when good, qfAmrsVal & qfAmrsFilt.}
 }
 \value{
 A dataframe (\code{qfSoniAmrs}) of sensor specific AMRS quality flags as described in NEON.DOC.000807.
@@ -21,8 +21,8 @@ Definition function to interpret the AMRS (Attitude and Reference Motion System)
 diag32 <- as.integer(rep(135, 72000))
 def.qf.amrs(diag32 = diag32)
 
-pos <- runif(15,1, 72000) # inserting error positions for other flags
-diag32[pos] <- as.integer(c(262279,524423, 1048710)) # filling with numbers that would indicate flags for qfAmrsVal, qfAmrsVelo, and qfAmrsRng
+set <- runif(15,1, 72000) # inserting error positions for other flags
+diag32[set] <- as.integer(c(262279,524423, 1048710)) # filling with numbers that would indicate flags for qfAmrsVal, qfAmrsVelo, and qfAmrsRng
 eddy4R.qaqc::def.qf.amrs(diag32 = diag32)
 }
 \references{

@@ -7,7 +7,7 @@
 def.site.info(loc = c("IM", "LOS", "NR", "NS", "PF", "SERC", "CPER")[6])
 }
 \arguments{
-\item{\code{loc}}{Parameter of class character. A parameter to choose the site for which site specific information is pulled.}
+\item{loc}{Parameter of class character. A parameter to choose the site for which site specific information is pulled.}
 }
 \value{
 Site specific information provided as a list \code{SiteInfo}

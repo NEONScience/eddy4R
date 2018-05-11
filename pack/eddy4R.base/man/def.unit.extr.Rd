@@ -4,16 +4,16 @@
 \alias{def.unit.extr}
 \title{Definition function: Extract variable with unit attribute from data frame}
 \usage{
-def.unit.extr(data, nameVar, AllwPos = FALSE)
+def.unit.extr(data, nameVar, AllwIdx = FALSE)
 }
 \arguments{
-\item{\code{data}}{Required. A data frame with units of each variables attached as a named attribute "unit"
+\item{data}{Required. A data frame with units of each variables attached as a named attribute "unit"
 to the data frame.}
 
-\item{\code{nameVar}}{Required. A string containing the name of the variable within \code{data} to extract,
+\item{nameVar}{Required. A string containing the name of the variable within \code{data} to extract,
 along with its units}
 
-\item{\code{AllwPos}}{Optional. Logical, defaulting to FALSE. Allow positional determination of the unit within
+\item{AllwIdx}{Optional. Logical, defaulting to FALSE. Allow positional determination of the unit within
 the unit attribute vector? If FALSE, an error will result if the variable name does not match an entry with 
 the named unit vector. If TRUE, the unit attribute vector does not need to be named, and the unit will be 
 pulled based on the same position of the variable within the data frame \code{data}.}

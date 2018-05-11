@@ -11,10 +11,10 @@
 #' results.\cr
 #' The function reads in the new data produced in the tmp directory and compares the first 10 lines to the reference output data.
 
-#' @param \code{fileOut} String. The relative or absolute path and filename of the numerical data output.
-#' @param \code{fileRefe} String. The relative or absolute path and filename of the numerical reference data.
-#' @param \code{Head} Logical. TRUE if there is 1 header row in both the output and reference files. Defaults to FALSE.
-#' @param \code{NumLine} The number of output rows to compare (starting from the first row). Defaults to 10.
+#' @param fileOut String. The relative or absolute path and filename of the numerical data output.
+#' @param fileRefe String. The relative or absolute path and filename of the numerical reference data.
+#' @param Head Logical. TRUE if there is 1 header row in both the output and reference files. Defaults to FALSE.
+#' @param NumLine The number of output rows to compare (starting from the first row). Defaults to 10.
 
 #' @return Currently none
 
@@ -37,6 +37,8 @@
 #     turned original workflow into a general function to be called at the end of each test script
 #   Natchaya P-Durden (2016-11-26)
 #     rename to def.mtch.out.refe()
+#   Natchaya P-Durden (2018-04-03)
+#     update @param format
 ##############################################################################################
 
 def.mtch.out.refe <- function(

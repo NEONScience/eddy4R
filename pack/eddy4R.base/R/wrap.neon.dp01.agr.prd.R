@@ -41,6 +41,8 @@
 #     original creation
 #   David Durden (2017-12-12)
 #     updating naming conventions
+#   Natchaya P-Durden (2018-03-30)
+#     applied term name convention; replace levl by lvl
 ##############################################################################################
 
 
@@ -79,7 +81,7 @@ for(idxAgr in 1:iter){
   numAgr <- numAgr + 1
   
   #Create a list identifier for the Aggregation loops
-  levlAgr <- paste0("numAgr",ifelse(numAgr < 10, paste0("0",numAgr),numAgr))
+  lvlAgr <- paste0("numAgr",ifelse(numAgr < 10, paste0("0",numAgr),numAgr))
 
   for(idxSens in names(inpList$tmp$data)){
   #Grab sub-indices to calculate shorter timescale
@@ -115,7 +117,7 @@ for(idxAgr in 1:iter){
     }
   
   
-    tmp$dp01[[levlAgr]] <- eddy4R.base::wrap.neon.dp01(
+    tmp$dp01[[lvlAgr]] <- eddy4R.base::wrap.neon.dp01(
       # assign data: data.frame or list of type numeric or integer
       data = tmp$data,
       # if data is a list, which list entries should be processed into Level 1 data products?
@@ -123,7 +125,7 @@ for(idxAgr in 1:iter){
       idx = names(tmp$data)
     )
     
-    tmp$qfqmOut[[levlAgr]] <- eddy4R.base::wrap.neon.dp01.qfqm.ec(qfqm = tmp$qfqm, idx = names(tmp$data), MethMeas = "ecte", RptExpd = FALSE )
+    tmp$qfqmOut[[lvlAgr]] <- eddy4R.base::wrap.neon.dp01.qfqm.ec(qfqm = tmp$qfqm, idx = names(tmp$data), MethMeas = "ecte", RptExpd = FALSE )
   
 tmp$data <- NULL
 tmp$qfqm <- NULL

@@ -20,10 +20,10 @@
 #' @keywords NEON, aggregation, averaging intervals, difference
 
 #' @examples 
-#' PrdWndwAgr <- 4 * 60
-#' PrdIncrAgr <- resoTimeDp02[[idxDp]] * 60
+#' PrdWndwAgr <- 240
+#' PrdIncrAgr <- 1800
 #' numDate <- 1
-#' wrk$whrData <- eddy4R.base::def.idx.diff(
+#' out <- eddy4R.base::def.idx.diff(
 #'  PrdWndwAgr=PrdWndwAgr,
 #'  PrdIncrAgr=PrdIncrAgr,
 #'  numDate=numDate
@@ -36,6 +36,8 @@
 # changelog and author contributions / copyrights
 #   Ke Xu (2017-08-12)
 #     original creation
+#   Natchaya P-Durden (2018-03-28)
+#     revised examples
 ##############################################################################################
 
 def.idx.diff <- function(
