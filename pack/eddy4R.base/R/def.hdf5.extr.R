@@ -6,10 +6,10 @@
 #' Stefan Metzger \email{eddy4R.info@gmail.com}
 
 #' @description 
-#' Definition function. Function extracts group sturcture, data, and metadata attributes from input, examples include ecte (turbulent/turb) and ecse (storage/stor) HDF5 files to a another HDF5 file, used for nsae (net surface atmosphere exchange), with the same group heirarchy structure from each file. Either \code{FileInp} or \code{rpt} must be specified for \code{eddy4R.base::def.extr.hdf5()} to work. If \code{FileInp} is specified, the contents of the specified file are read (and optionally written to an output file). If \code{rpt} is specified, its contents are being written to an output file. This enables to read hdf5 files (call \code{eddy4R.base::def.extr.hdf5()} and specify \code{FileInp}), then modify the resulting \code{rpt} object as needed, and lastly to write the modified \code{rpt} object to file (call \code{eddy4R.base::def.extr.hdf5()} and specify \code{rpt}).
+#' Definition function. Function extracts group sturcture, data, and metadata attributes from input, examples include ecte (turbulent/turb) and ecse (storage/stor) HDF5 files to a another HDF5 file, used for nsae (net surface atmosphere exchange), with the same group heirarchy structure from each file. Either \code{FileInp} or \code{rpt} must be specified for \code{eddy4R.base::def.hdf5.extr()} to work. If \code{FileInp} is specified, the contents of the specified file are read (and optionally written to an output file). If \code{rpt} is specified, its contents are being written to an output file. This enables to read hdf5 files (call \code{eddy4R.base::def.extr.hdf5()} and specify \code{FileInp}), then modify the resulting \code{rpt} object as needed, and lastly to write the modified \code{rpt} object to file (call \code{eddy4R.base::def.extr.hdf5()} and specify \code{rpt}).
 
 #' @param FileInp is the input HDF5 file (turb or stor) the data and metadata are being read from. It is ignored if \code{rpt} is specified.
-#' @param rpt is the list returned from a previous call of \code{eddy4R.base::def.extr.hdf5()} with \code{FileInp} specified. At a minimum the entries \code{rpt$listGrpName}, \code{rpt$listData} and \code{rpt$listAttr} are required to write the contents to an output hdf5 file.
+#' @param rpt is the list returned from a previous call of \code{eddy4R.base::def.hdf5.extr()} with \code{FileInp} specified. At a minimum the entries \code{rpt$listGrpName}, \code{rpt$listData} and \code{rpt$listAttr} are required to write the contents to an output hdf5 file.
 #' @param FileOut is the output file nsae HDF5 written to.
 #' @param MethExtrData logical parameter that decides if data from the input file should be extracted and written to the output file.
 #' @param MethExtrAttr logical parameter that decides if attributes (metadata) from the input file should be extracted and written to the output file.
@@ -50,11 +50,13 @@
 #    replaced gid by idData
 #   Ke Xu (2018-04-19)
 #     applied term name convention; replaced FileIn by FileInp
+#   Natchaya P-Durden (2018-05-11)
+#     rename function from def.extr.hdf5() to def.hdf5.extr()
 ##############################################################################################################
 #Start of function call to extract data from one file and write to another
 ##############################################################################################################
 
-def.extr.hdf5 <- function(
+def.hdf5.extr <- function(
   FileInp = NULL,
   rpt = NULL,
   FileOut = NULL,
