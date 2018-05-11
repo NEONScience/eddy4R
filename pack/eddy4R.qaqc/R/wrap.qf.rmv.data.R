@@ -98,11 +98,7 @@ wrap.qf.rmv.data <- function(
     if(Vrbs == TRUE){
       base::lapply(base::names(inpList$data[[idxSens]]), function(x) {
         #Write out qfqm analytics as a separate list to the output
-<<<<<<< HEAD
-        rpt$qfqmAnls[[idxSens]][[x]] <<- outList[[idxSens]][[x]][!names(outList[[idxSens]][[x]]) %in% "dfData"] 
-=======
-        rpt$qfqmAnal[[idxSens]][[x]] <<- outList[[idxSens]][[x]][!names(outList[[idxSens]][[x]]) %in% "inpData"] 
->>>>>>> master
+        rpt$qfqmAnls[[idxSens]][[x]] <<- outList[[idxSens]][[x]][!names(outList[[idxSens]][[x]]) %in% "inpData"] 
       })}
     }#end of each sensor
   }#end of MethMeas == "ecse"
