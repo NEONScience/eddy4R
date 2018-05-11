@@ -43,6 +43,8 @@
 #     updating naming conventions
 #   Natchaya P-Durden (2018-03-30)
 #     applied term name convention; replace levl by lvl
+#   Natchaya P-Durden (2018-05-11)
+#     rename function from def.agr.ecte.dp01() to def.dp01.agr.ecte()
 ##############################################################################################
 
 
@@ -132,7 +134,7 @@ tmp$qfqm <- NULL
 invisible(gc())
 }
 
-rpt <- eddy4R.base::def.agr.ecte.dp01(inpList = tmp)
+rpt <- eddy4R.base::def.dp01.agr.ecte(inpList = tmp)
 
 return(rpt)
 }
