@@ -29,9 +29,11 @@
 #     original creation
 #   Dave Durden (2017-12-12)
 #     Updating to new naming conventions
+#   Natchaya P-Durden (2018-05-11)
+#     rename function from def.agr.ecte.dp01() to def.dp01.agr.ecte()
 ##############################################################################################
 
-def.agr.ecte.dp01 <- function(
+def.dp01.agr.ecte <- function(
 inpList, 
 MethSubAgr = FALSE,
 MethUcrt = FALSE,
