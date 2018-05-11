@@ -9,11 +9,11 @@
 #' @param inpList List consisting of \code{ff::ffdf} file-backed objects, in the format provided by function \code{eddy4R.base::wrap.neon.read.hdf5.eddy()}. Of types numeric and integer.
 #' @param Vrbs Optional. A logical {FALSE/TRUE} value indicating whether to:\cr
 #' \code{Vrbs = FALSE}: (Default) cleaned data set with the bad high frequency quality flagged data replaced with NaN's as part of the \code{inpList} in the same format., or \cr
-#' \code{Vrbs = TRUE}: cleaned data set with the bad high frequency quality flagged data replaced with NaN's as part of the \code{inpList} in the same format. In addition, a separate list  \code{qfqmAnal} will be added to the output list \code{rpt} with a list of variables assessed, a list of quality flags for each variable assessed, the number of each quality flag tripped for each variable and the total number of bad data per variable.
+#' \code{Vrbs = TRUE}: cleaned data set with the bad high frequency quality flagged data replaced with NaN's as part of the \code{inpList} in the same format. In addition, a separate list  \code{qfqmAnls} will be added to the output list \code{rpt} with a list of variables assessed, a list of quality flags for each variable assessed, the number of each quality flag tripped for each variable and the total number of bad data per variable.
 #' @param MethMeas A vector of class "character" containing the name of measurement method (eddy-covariance turbulent exchange or storage exchange), MethMeas = c("ecte", "ecse"). Defaults to "ecte". [-]
 
 #' 
-#' @return The returned object consistes of \code{inpList}, with the bad high frequency quality flagged data replaced with NaN's. Optionally, (\code{Vrbs = TRUE}) a separate list \code{qfqmAnal} will be added to the output list \code{rpt} with a list of variables assessed, a list of quality flags for each variable assessed, the number of each quality flag tripped for each variable and the total number of bad data per variable.
+#' @return The returned object consistes of \code{inpList}, with the bad high frequency quality flagged data replaced with NaN's. Optionally, (\code{Vrbs = TRUE}) a separate list \code{qfqmAnls} will be added to the output list \code{rpt} with a list of variables assessed, a list of quality flags for each variable assessed, the number of each quality flag tripped for each variable and the total number of bad data per variable.
 
 #' @references 
 #' License: GNU AFFERO GENERAL PUBLIC LICENSE Version 3, 19 November 2007. \cr
@@ -69,7 +69,7 @@ wrap.qf.rmv.data <- function(
   if(Vrbs == TRUE){
     base::lapply(base::names(outList), function(x) {
       #Write out qfqm analytics as a separate list to the output
-      rpt$qfqmAnal[[x]] <<- outList[[x]][!names(outList[[x]]) %in% "dfData"] 
+      rpt$qfqmAnls[[x]] <<- outList[[x]][!names(outList[[x]]) %in% "dfData"] 
     })}
   }#end of MethMeas == "ecte"
   
@@ -95,7 +95,7 @@ wrap.qf.rmv.data <- function(
     if(Vrbs == TRUE){
       base::lapply(base::names(inpList$data[[idxSens]]), function(x) {
         #Write out qfqm analytics as a separate list to the output
-        rpt$qfqmAnal[[idxSens]][[x]] <<- outList[[idxSens]][[x]][!names(outList[[idxSens]][[x]]) %in% "dfData"] 
+        rpt$qfqmAnls[[idxSens]][[x]] <<- outList[[idxSens]][[x]][!names(outList[[idxSens]][[x]]) %in% "dfData"] 
       })}
     }#end of each sensor
   }#end of MethMeas == "ecse"
