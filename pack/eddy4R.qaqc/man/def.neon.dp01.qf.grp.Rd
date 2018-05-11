@@ -4,22 +4,22 @@
 \alias{def.neon.dp01.qf.grp}
 \title{Definition function: Grouping the quality flags for each of NEON ECTE and ECSE L1 data product}
 \usage{
-def.neon.dp01.qf.grp(qfInput = list(), MethMeas = c("ecte", "ecse")[1],
+def.neon.dp01.qf.grp(qfInp = list(), MethMeas = c("ecte", "ecse")[1],
   TypeMeas = c("samp", "vali")[1], dp01 = c("envHut", "co2Turb", "h2oTurb",
   "co2Stor", "h2oStor", "isoCo2", "isoH2o", "soni", "amrs", "tempAirLvl",
   "tempAirTop")[1], idGas = NULL)
 }
 \arguments{
-\item{\code{qfInput}}{A list of data frame containing the input quality flag data that related to L1 data products are being grouped. Of class integer". [-]}
+\item{qfInp}{A list of data frame containing the input quality flag data that related to L1 data products are being grouped. Of class integer". [-]}
 
-\item{\code{MethMeas}}{A vector of class "character" containing the name of measurement method (eddy-covariance turbulent exchange or storage exchange), MethMeas = c("ecte", "ecse"). Defaults to "ecse". [-]}
+\item{MethMeas}{A vector of class "character" containing the name of measurement method (eddy-covariance turbulent exchange or storage exchange), MethMeas = c("ecte", "ecse"). Defaults to "ecse". [-]}
 
-\item{\code{TypeMeas}}{A vector of class "character" containing the name of measurement type (sampling or validation), TypeMeas = c("samp", "ecse"). Defaults to "samp". [-]}
+\item{TypeMeas}{A vector of class "character" containing the name of measurement type (sampling or validation), TypeMeas = c("samp", "ecse"). Defaults to "samp". [-]}
 
-\item{\code{dp01}}{A vector of class "character" containing the name of NEON ECTE and ECSE L1 data products which the flags are being grouped, \cr
+\item{dp01}{A vector of class "character" containing the name of NEON ECTE and ECSE L1 data products which the flags are being grouped, \cr
 c("envHut", "co2Turb", "h2oTurb", "isoCo2", "isoH2o", "soni", "amrs", "tempAirLvl", "tempAirTop"). Defaults to "co2Turb". [-]}
 
-\item{\code{idGas}}{A data frame contianing gas ID for isoCo2 measurement. Need to provide when dp01 = "isoCo2". Default to NULL. [-]}
+\item{idGas}{A data frame contianing gas ID for isoCo2 measurement. Need to provide when dp01 = "isoCo2". Default to NULL. [-]}
 }
 \value{
 A list of data frame of the quality flags related to that sub-data product. \cr
@@ -40,8 +40,8 @@ qf$soni <- eddy4R.qaqc::def.qf.ecte(TimeBgn = TimeBgn, TimeEnd = TimeEnd, Freq =
 qf$amrs <- eddy4R.qaqc::def.qf.ecte(TimeBgn = TimeBgn, TimeEnd = TimeEnd, Freq = 40, Sens = "amrs", PcntQf = 0.05)
 
 #grouping the set of the flags
-qfGrpCo2Turb <- eddy4R.qaqc::def.neon.dp01.qf.grp(qfInput = qf, MethMeas = "ecte", TypeMeas = "vali", dp01="co2Turb")
-qfGrpSoni <- eddy4R.qaqc::def.neon.dp01.qf.grp(qfInput = qf, MethMeas = "ecte", TypeMeas = "samp", dp01="soni")
+qfGrpCo2Turb <- eddy4R.qaqc::def.neon.dp01.qf.grp(qfInp = qf, MethMeas = "ecte", TypeMeas = "vali", dp01="co2Turb")
+qfGrpSoni <- eddy4R.qaqc::def.neon.dp01.qf.grp(qfInp = qf, MethMeas = "ecte", TypeMeas = "samp", dp01="soni")
 }
 \references{
 License: GNU AFFERO GENERAL PUBLIC LICENSE Version 3, 19 November 2007

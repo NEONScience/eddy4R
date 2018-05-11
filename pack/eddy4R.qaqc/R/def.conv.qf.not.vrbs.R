@@ -11,7 +11,7 @@
 
 #' @return A named list of variables matching those in \code{qf}, each itself a named list of flags 
 #' (standard or user-defined names), with nested lists of $fail and $na vector positions of failed and na 
-#' quality test results for that variable and flag (eg. posQf$X$posQfStep$fail and posQf$Y$posQfStep$na). 
+#' quality test results for that variable and flag (eg. setQf$X$setQfStep$fail and setQf$Y$setQfStep$na). 
 
 #' @references
 #' License: GNU AFFERO GENERAL PUBLIC LICENSE Version 3, 19 November 2007
@@ -20,7 +20,7 @@
 
 #' @examples 
 #' qf <- list(var01=data.frame(qfRng = c(0,1,-1,0,1,0,0,0,0,-1),qfStep = c(0,0,-1,-1,0,0,0,0,0,-1))) # Verbose output from quality testing
-#' posQf <- def.conv.qf.not.vrbs(qf=qf) # Convert to vector positions of failed and na quality tests
+#' setQf <- def.conv.qf.not.vrbs(qf=qf) # Convert to vector positions of failed and na quality tests
 
 #' @seealso 
 #' \code{\link[eddy4R.qaqc]{def.plau}}
@@ -31,6 +31,8 @@
 # changelog and author contributions / copyrights 
 #   Cove Sturtevant (2016-11-22)
 #     original creation 
+#   Natchaya P-Durden (2018-04-04)
+#    applied eddy4R term name convention; replaced posQf by setQf
 ##############################################################################################
 def.conv.qf.not.vrbs <- function (
   qf
@@ -39,27 +41,27 @@ def.conv.qf.not.vrbs <- function (
   nameVar <- base::names(qf)
   numVar <- base::length(nameVar)
   
-  posQf <- base::vector("list",numVar) # Initialize
-  base::names(posQf) <- nameVar
+  setQf <- base::vector("list",numVar) # Initialize
+  base::names(setQf) <- nameVar
   
   for (idxVar in nameVar) {
     
     # Intialize flags for this variable
     numQf <- base::length(qf[[idxVar]])
-    posQf[[idxVar]] <- base::vector("list",numQf)
-    base::names(posQf[[idxVar]]) <- base::names(qf[[idxVar]])
+    setQf[[idxVar]] <- base::vector("list",numQf)
+    base::names(setQf[[idxVar]]) <- base::names(qf[[idxVar]])
     
     for (idxQf in 1:numQf) {
-      posQf[[idxVar]][[idxQf]] <- base::list(fail=numeric(0),na=numeric(0)) # initialize
+      setQf[[idxVar]][[idxQf]] <- base::list(fail=numeric(0),na=numeric(0)) # initialize
       
       # Get positions of failed & na vector positions
-      posQf[[idxVar]][[idxQf]]$fail <- base::which(qf[[idxVar]][,idxQf] == 1) # fail
-      posQf[[idxVar]][[idxQf]]$na <- base::which(qf[[idxVar]][,idxQf] == -1) # na
+      setQf[[idxVar]][[idxQf]]$fail <- base::which(qf[[idxVar]][,idxQf] == 1) # fail
+      setQf[[idxVar]][[idxQf]]$na <- base::which(qf[[idxVar]][,idxQf] == -1) # na
       
     }
     
   }
   
-  return(posQf)
+  return(setQf)
   
 }

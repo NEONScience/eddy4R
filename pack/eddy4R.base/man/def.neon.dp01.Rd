@@ -7,9 +7,9 @@
 def.neon.dp01(data, vrbs = FALSE)
 }
 \arguments{
-\item{\code{data}}{A numeric vector or data.frame containing the L0p (calibrated) input data at native resolution. Of class numeric". [-]}
+\item{data}{A numeric vector or data.frame containing the L0p (calibrated) input data at native resolution. Of class numeric". [-]}
 
-\item{\code{vrbs}}{Verbose output, one of either TRUE of FALSE, defaults to FALSE. If \code{vrbs = FALSE} is selected, the returned object is a data.frame. If  \code{vrbs = TRUE} is selected, the returned object is a list supporting the propagation of unit attributes for individual variables in \code{data}. Of class logical". [-]}
+\item{vrbs}{Verbose output, one of either TRUE of FALSE, defaults to FALSE. If \code{vrbs = FALSE} is selected, the returned object is a data.frame. If  \code{vrbs = TRUE} is selected, the returned object is a list supporting the propagation of unit attributes for individual variables in \code{data}. Of class logical". [-]}
 }
 \value{
 Descriptive statistics, for \code{vrbs = FALSE} a data frame and for \code{vrbs = TRUE} a list:\cr

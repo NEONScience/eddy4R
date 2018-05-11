@@ -7,9 +7,9 @@
 def.dens.mole.air(presSum, tempMean)
 }
 \arguments{
-\item{\code{presSum}}{A vector containing the total pressure of the air mixture, of class "numeric". [Pa]}
+\item{presSum}{A vector containing the total pressure of the air mixture, of class "numeric". [Pa]}
 
-\item{\code{tempMean}}{A vector containing the mean temperatrue of the air mixture, of class "numeric". [K]}
+\item{tempMean}{A vector containing the mean temperatrue of the air mixture, of class "numeric". [K]}
 }
 \value{
 The returned object is the the molar density of the mixture of dry air and water vapor

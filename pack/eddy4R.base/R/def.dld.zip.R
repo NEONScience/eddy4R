@@ -6,9 +6,9 @@
 
 #' @description Function defintion. Downloads .zip archives from a web \code{Url}, and saves and extracts the archive into the directory \code{Dir}.
 
-#' @param \code{Inp} The input parameter list containing \code{Url} and \code{Dir}.
-#' @param \code{Url} The internet address, of class "character". For use with Dropbox, Google Drive, OneNote... the \href{https://www.google.com/search?q=Direct+Link+Generator}{direct download link} needs to be used. For example in case of Dropbox the web address needs to end on ...dl=1.
-#' @param \code{Dir} The target directory, of class "character".
+#' @param Inp The input parameter list containing \code{Url} and \code{Dir}.
+#' @param Url The internet address, of class "character". For use with Dropbox, Google Drive, OneNote... the \href{https://www.google.com/search?q=Direct+Link+Generator}{direct download link} needs to be used. For example in case of Dropbox the web address needs to end on ...dl=1.
+#' @param Dir The target directory, of class "character".
 
 #' @return The function saves the extracted .zip archive into the directory \code{Dir}. Currently no values are returned to the environment it is called from.
 
@@ -36,6 +36,8 @@
 #     add download method for both mac and unix
 #   Stefan Metzger (2016-09-25)
 #     included packages when calling download commands
+#   Natchaya P-Durden (2018-04-03)
+#     update @param format
 ##############################################################################################
 
 

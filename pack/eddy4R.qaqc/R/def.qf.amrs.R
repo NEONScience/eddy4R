@@ -6,8 +6,8 @@
 
 #' @description 
 #' Definition function to interpret the AMRS (Attitude and Reference Motion System) sensor flags from \code{diag32}. Flags output are a reduced set that were deemed important for the NEON QFQM framework and described in the NEON.DOC.000807.
-#' @param \code{diag32} The 32-bit diagnostic stream that is output from the XSens AMRS. 
-#' @param \code{MethQf} Switch for quality flag determination for the XSens AMRS, diag32 provides ones for passing quality by default the equals "xsen". The "qfqm" method changes the ones to zeros to match the NEON QFQM logic for certain flags that are set high when good, qfAmrsVal & qfAmrsFilt.
+#' @param diag32 The 32-bit diagnostic stream that is output from the XSens AMRS. 
+#' @param MethQf Switch for quality flag determination for the XSens AMRS, diag32 provides ones for passing quality by default the equals "xsen". The "qfqm" method changes the ones to zeros to match the NEON QFQM logic for certain flags that are set high when good, qfAmrsVal & qfAmrsFilt.
 #' 
 #' @return A dataframe (\code{qfSoniAmrs}) of sensor specific AMRS quality flags as described in NEON.DOC.000807.
 
@@ -23,8 +23,8 @@
 
 #' def.qf.amrs(diag32 = diag32)
 #' 
-#' pos <- runif(15,1, 72000) # inserting error positions for other flags
-#' diag32[pos] <- as.integer(c(262279,524423, 1048710)) # filling with numbers that would indicate flags for qfAmrsVal, qfAmrsVelo, and qfAmrsRng
+#' set <- runif(15,1, 72000) # inserting error positions for other flags
+#' diag32[set] <- as.integer(c(262279,524423, 1048710)) # filling with numbers that would indicate flags for qfAmrsVal, qfAmrsVelo, and qfAmrsRng
 #' eddy4R.qaqc::def.qf.amrs(diag32 = diag32)
 
 #' @seealso Currently none
@@ -36,6 +36,10 @@
 #     original creation
 #   Dave Durden (2017-12-02)
 #     fixing with how function deals with NA's in diag data
+#   Natchaya P-Durden (2018-04-03)
+#     update @param format
+#   Natchaya P-Durden (2018-04-11)
+#    applied eddy4R term name convention; replaced pos by set
 ##############################################################################################
 
 
@@ -50,7 +54,7 @@ def.qf.amrs <- function(diag32, MethQf = c("qfqm","xsen")[1]){
   } 
   
   #Grab position of NA's
-  posNa <- which(is.na(diag32))
+  setNa <- which(is.na(diag32))
  
 # Turn the diag32 into a matrix of 32 bits separated into columns for the timeseries of diagnostic values  
 qfAmrs <- t(base::sapply(diag32,function(x){ base::as.integer(base::intToBits(x))}))
@@ -60,9 +64,9 @@ qfAmrs <- t(base::sapply(diag32,function(x){ base::as.integer(base::intToBits(x)
 qfAmrs <- base::data.frame(qfAmrs[,c(1,2,18:20)])
 
 # Combine No velocity update flags in to one flag
-pos <- which(qfAmrs[,3] == 1 | qfAmrs[,4] == 1) # Save positions of flagged data
+set <- which(qfAmrs[,3] == 1 | qfAmrs[,4] == 1) # Save positions of flagged data
 qfAmrsVelo <- as.integer(rep(0, nrow(qfAmrs))) # Create initialized vector
-qfAmrsVelo[pos] <- as.integer(1) # For positions with flagged data put together
+qfAmrsVelo[set] <- as.integer(1) # For positions with flagged data put together
 
 # Create the output data frame
 qfAmrs <- base::data.frame(qfAmrs[,c(1:2)], qfAmrsVelo,qfAmrs[,5])
@@ -74,14 +78,14 @@ base::names(qfAmrs) <- c("qfAmrsVal", "qfAmrsFilt", "qfAmrsVelo", "qfAmrsRng")
 if (MethQf == "qfqm"){
 #Change defined flags with 1 values to 0 and 0 to 1 to fit the NEON qfqm framework
 base::lapply(base::names(qfAmrs[,names(qfAmrs) %in% c("qfAmrsVal", "qfAmrsFilt")]), function(x) {
-  pos <- which(qfAmrs[,x] == 1)
-  qfAmrs[pos,x] <<- base::as.integer(0)
-  qfAmrs[-pos,x] <<- base::as.integer(1)
+  set <- which(qfAmrs[,x] == 1)
+  qfAmrs[set,x] <<- base::as.integer(0)
+  qfAmrs[-set,x] <<- base::as.integer(1)
   qfAmrs[,x] <<- base::as.integer(qfAmrs[,x])
 })}
 
 #Replace positions without diag data with -1
-qfAmrs[posNa,] <- -1L
+qfAmrs[setNa,] <- -1L
 
 #return dataframe
 return(qfAmrs)

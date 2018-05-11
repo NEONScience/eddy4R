@@ -6,9 +6,9 @@
 
 #' @description Function defintion. Calculates the median as robust measure of scale, and the sample-size corrected median absolute deviation as robust measure of dispersion. By default, the univariate statistics of the test data \code{test} are returned. If reference data \code{refe} is provided, the bivariate statistics of the residuals \code{test - refe} are returned.
 
-#' @param \code{test} A vector containing the test data. Of class "numeric" or "integer", and of the same length as \code{refe}. [same units as reference data]
-#' @param \code{refe} A vector containing the reference data. Of class "numeric" or "integer", and of the same length as \code{test}. Defaults to \code{refe = 0}. [same units as test data]
-#' @param \code{Perc} Report results in the same units as \code{refe} and \code{test} (\code{Perc = FALSE}) or as percentages (\code{Perc = TRUE})? Of class "logical", defaults to \code{Perc = FALSE}.
+#' @param test A vector containing the test data. Of class "numeric" or "integer", and of the same length as \code{refe}. [same units as reference data]
+#' @param refe A vector containing the reference data. Of class "numeric" or "integer", and of the same length as \code{test}. Defaults to \code{refe = 0}. [same units as test data]
+#' @param Perc Report results in the same units as \code{refe} and \code{test} (\code{Perc = FALSE}) or as percentages (\code{Perc = TRUE})? Of class "logical", defaults to \code{Perc = FALSE}.
 
 #' @return Returns object of class "numeric" [1, 1:3] containing median, median absolute deviation, and sample size (NaNs not included).
 
@@ -37,6 +37,8 @@
 #     re-formualtion as function() to allow packaging
 #   Stefan Metzger (2016-02-10)
 #     apply eddy4R code-style convention
+#   Natchaya P-Durden (2018-04-03)
+#     update @param format
 ##############################################################################################
 
 

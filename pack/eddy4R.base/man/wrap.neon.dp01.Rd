@@ -7,9 +7,9 @@
 wrap.neon.dp01(data, idx = NULL)
 }
 \arguments{
-\item{\code{data}}{A data.frame or list containing the L0p (calibrated) input data at native resolution. Of type numeric or integer. [-]}
+\item{data}{A data.frame or list containing the L0p (calibrated) input data at native resolution. Of type numeric or integer. [-]}
 
-\item{\code{idx}}{If data is a list, which list entries should be processed into Level 1 data products? Defaults to NULL which expects data to be a data.frame. Of type character. [-]}
+\item{idx}{If data is a list, which list entries should be processed into Level 1 data products? Defaults to NULL which expects data to be a data.frame. Of type character. [-]}
 }
 \value{
 Descriptive statistics, for \code{vrbs = FALSE} a data frame and for \code{vrbs = TRUE} a list:\cr

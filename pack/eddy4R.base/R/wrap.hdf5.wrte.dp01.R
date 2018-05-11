@@ -8,10 +8,10 @@
 #' Wrapper function. To write NEON Level 1 data product descriptive statistics (mean, minimum, maximum, variance, number of non-NA points), quality flags and quality metrics, and uncertainty quantification to an output HDF5 file. 
 
 #' @param inpList A list of including dp01 data, quality flags and quality metrics, and uncertainty calculations to package and write to an output HDF5 file
-#' @param FileIn The file name for the input dp0p HDF5 file to grab metadata
+#' @param FileInp The file name for the input dp0p HDF5 file to grab metadata
 #' @param FileOut The file name for the output HDF5 file
 #' @param SiteLoca Character: Site location.
-#' @param LevlTowr The tower level that the sensor data is being collected in NEON data product convention (HOR_VER)
+#' @param LvlTowr The tower level that the sensor data is being collected in NEON data product convention (HOR_VER)
 #' @param MethUcrt Logical: Determines if uncertainty information is available for output.
 #' @param MethDp04 logical indicating if ECTE dp04 HDF5 data should be included.
 #' @param MethSubAgr Logical: Determines if 1-minute data is available for output.
@@ -44,6 +44,12 @@
 #     Altering the dp04 output to allow footprint output
 #   David Durden (2017-02-12)
 #     Adding unit conversion for output
+#   Natchaya P-Durden (2018-03-30)
+#     applied term name convention; replace LevlTowr by LvlTowr
+#   Natchaya P-Durden (2018-04-12)
+#    applied eddy4R term name convention; replaced fid by idFile
+#   Ke Xu (2018-04-19)
+#     applied term name convention; replaced FileIn by FileInp
 ##############################################################################################
 
 
@@ -51,10 +57,10 @@
 
 wrap.hdf5.wrte.dp01 <- function(
   inpList,
-  FileIn,
+  FileInp,
   FileOut,
   SiteLoca,
-  LevlTowr,
+  LvlTowr,
   MethUcrt = TRUE,
   MethDp04 = FALSE,
   MethSubAgr = TRUE
@@ -114,7 +120,7 @@ if(MethSubAgr == TRUE){
 ######################################################################
 
 #Applying the HDF5 write output function across all DPs
-lapply(names(outList$data), function(x) eddy4R.base::def.hdf5.wrte.dp01(inpList = outList, FileOut = FileOut, SiteLoca = SiteLoca, LevlTowr = LevlTowr, Dp01 = x, MethUcrt = MethUcrt, MethSubAgr = MethSubAgr))
+lapply(names(outList$data), function(x) eddy4R.base::def.hdf5.wrte.dp01(inpList = outList, FileOut = FileOut, SiteLoca = SiteLoca, LvlTowr = LvlTowr, Dp01 = x, MethUcrt = MethUcrt, MethSubAgr = MethSubAgr))
 
 ######################################################################
 #dp04 formatting and output
@@ -122,7 +128,7 @@ lapply(names(outList$data), function(x) eddy4R.base::def.hdf5.wrte.dp01(inpList 
 if(MethDp04 == TRUE){
   
   #Create HDF5 connection to the output file  
-  fid <- rhdf5::H5Fopen(FileOut)
+  idFile <- rhdf5::H5Fopen(FileOut)
 
   for(idxDp04 in names(inpList$dp04$data)){
     #idxDp04 <- names(inpList$dp04$data)[5]
@@ -134,7 +140,7 @@ if(MethDp04 == TRUE){
       attributes(rptDp04)$unit <- attributes(inpList$dp04$data[[idxDp04]]$stat)$unit
 
       #Open connection to dp04 data level
-      idDataDp04 <- rhdf5::H5Gopen(fid,paste0("/", SiteLoca, "/dp04/data/",idxDp04))
+      idDataDp04 <- rhdf5::H5Gopen(idFile,paste0("/", SiteLoca, "/dp04/data/",idxDp04))
       
       #Writing flux data to output HDF5 file
       rhdf5::h5writeDataset.data.frame(obj = rptDp04, h5loc = idDataDp04, name = "stat", DataFrameAsCompound = TRUE)
@@ -164,7 +170,7 @@ if(MethDp04 == TRUE){
   attributes(rptDp04)$unit <- sapply(names(inpList$dp04$data[[idxDp04]]$turb), function(x) attributes(inpList$dp04$data[[idxDp04]]$turb[[x]])$unit)
 
   #Open connection to dp04 data level
-  idDataDp04 <- rhdf5::H5Gopen(fid,paste0("/", SiteLoca, "/dp04/data/",idxDp04))
+  idDataDp04 <- rhdf5::H5Gopen(idFile,paste0("/", SiteLoca, "/dp04/data/",idxDp04))
   
   #Writing flux data to output HDF5 file
   rhdf5::h5writeDataset.data.frame(obj = rptDp04, h5loc = idDataDp04, name = "turb", DataFrameAsCompound = TRUE)
@@ -181,6 +187,6 @@ if(MethDp04 == TRUE){
 ######################################################################
 #Writing metadata from input dp0p file to output dp01 file
 ######################################################################
-eddy4R.base::def.para.hdf5.dp01(FileIn = FileIn, FileOut = FileOut)
+eddy4R.base::def.para.hdf5.dp01(FileInp = FileInp, FileOut = FileOut)
 
 }

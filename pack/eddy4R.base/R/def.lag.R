@@ -7,18 +7,18 @@
 #' @description 
 #' Function definition. Lag two datasets, so as to maximise their cross-correlation.
 
-#' @param \code{refe} A vector with variable in reference time frame. Of class numeric. [-]
-#' @param \code{meas} A vector with variable in time frame to be adjusted. Of class numeric. [-]
-#' @param \code{freq} Acquisition frequency of refe and meas. Of class ingeter. [Hz]
-#' @param \code{dataRefe} A matrix or data.frame with all data that carries the time frame of refe. Defaults to refe. Of any class. [-]
-#' @param \code{dataMeas} A matrix or data.frame with all data that carries the time frame of meas. Defaults to meas. Of any class. [-]
-#' @param \code{measVar} A vector specifying if only several columns in dataMeas shall be lagged. Defaults to NULL. Of class integer or character. [-]
-#' @param \code{lagMax} Maximum lag, by default 2 x freq. Of class integer. [-]
-#' @param \code{lagCnst} TRUE - interpret lagMax as maximum permissible lag; FALSE - start with lagMax as first estimate and increase iteratively. Defaults to TRUE. Of class logical. [-]
-#' @param \code{lagNgtvPstv} "n" - consider negative lag times only, i.e. meas is expected to lag behind refe; "p" - consider positive lag times only, i.e. refe is expected to lag behind meas; "np" - consider negative and positive lag times. Defaults to "np". Of class character. [-]
-#' @param \code{lagAll} TRUE - consider positive and negative correlations when finding lag time; FALSE - consider positive correlations only when finding lag time. Defaults to TRUE. Of class logical. [-]
-#' @param \code{hpf} TRUE - apply Butterworth high-pass filter; FALSE - use raw data. Defaults to TRUE. Of class logical. [-]
-#' @param \code{fracMin} Minimum fraction of data to attempt lag determination. Defaults to 0.1. Of class numeric. [-]
+#' @param refe A vector with variable in reference time frame. Of class numeric. [-]
+#' @param meas A vector with variable in time frame to be adjusted. Of class numeric. [-]
+#' @param freq Acquisition frequency of refe and meas. Of class ingeter. [Hz]
+#' @param dataRefe A matrix or data.frame with all data that carries the time frame of refe. Defaults to refe. Of any class. [-]
+#' @param dataMeas A matrix or data.frame with all data that carries the time frame of meas. Defaults to meas. Of any class. [-]
+#' @param measVar A vector specifying if only several columns in dataMeas shall be lagged. Defaults to NULL. Of class integer or character. [-]
+#' @param lagMax Maximum lag, by default 2 x freq. Of class integer. [-]
+#' @param lagCnst TRUE - interpret lagMax as maximum permissible lag; FALSE - start with lagMax as first estimate and increase iteratively. Defaults to TRUE. Of class logical. [-]
+#' @param lagNgtvPstv "n" - consider negative lag times only, i.e. meas is expected to lag behind refe; "p" - consider positive lag times only, i.e. refe is expected to lag behind meas; "np" - consider negative and positive lag times. Defaults to "np". Of class character. [-]
+#' @param lagAll TRUE - consider positive and negative correlations when finding lag time; FALSE - consider positive correlations only when finding lag time. Defaults to TRUE. Of class logical. [-]
+#' @param hpf TRUE - apply Butterworth high-pass filter; FALSE - use raw data. Defaults to TRUE. Of class logical. [-]
+#' @param fracMin Minimum fraction of data to attempt lag determination. Defaults to 0.1. Of class numeric. [-]
 
 #' @return Lagged input data and calculation results in a list consisting of:\cr
 #' \code{dataRefe} The reference data.
@@ -46,6 +46,10 @@
 #     partial update to eddy4R terms
 #   Hongyan Luo (2017-03-10)
 #     update to eddy4R terms
+#   Natchaya P-Durden (2018-04-03)
+#     update @param format
+#   Natchaya P-Durden (2018-04-11)
+#    applied eddy4R term name convention; replaced pos by idx
 ##############################################################################################
 
 
@@ -124,16 +128,16 @@ def.lag <- function(
       #discard two filter lengths from start and end        
       filtTmp <- -c(1:(freq/freqThsh * 3), (length(refe)-(freq/freqThsh * 3)):length(refe)) 
       #actual application
-      posRefe <- signal::filtfilt(filt, refe)[filtTmp]
+      idxRefe <- signal::filtfilt(filt, refe)[filtTmp]
       #           plot(refe[filtTmp], type="l")
-      #           lines(I(posRefe + mean(refe)), col=2)
-      posMeas <- signal::filtfilt(filt, meas)[filtTmp]
+      #           lines(I(idxRefe + mean(refe)), col=2)
+      idxMeas <- signal::filtfilt(filt, meas)[filtTmp]
       #           plot(meas[filtTmp], type="l")
-      #           lines(I(posMeas + mean(meas[filtTmp])), col=2)
+      #           lines(I(idxMeas + mean(meas[filtTmp])), col=2)
       
       #assign results
-      refe <- posRefe
-      meas <- posMeas
+      refe <- idxRefe
+      meas <- idxMeas
       
       #clean up
       rm(filtTmp)

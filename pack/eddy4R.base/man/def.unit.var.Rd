@@ -7,9 +7,9 @@
 def.unit.var(samp, refe)
 }
 \arguments{
-\item{\code{samp}}{A data.frame containing variables that are missing the unit attribute.}
+\item{samp}{A data.frame containing variables that are missing the unit attribute.}
 
-\item{\code{refe}}{A data.frame containing all variables (by name) of \code{samp} incl. their corresponding unit attribute.}
+\item{refe}{A data.frame containing all variables (by name) of \code{samp} incl. their corresponding unit attribute.}
 }
 \value{
 The function returns \code{samp} with the corresponding units from \code{refe} assigned to each of its variables.

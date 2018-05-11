@@ -8,17 +8,17 @@ def.bin(idep, depe, RngMinMax = NULL, NumBin, widtBin = c("lin", "log10",
   "exp10", "logExp", "expLog"), meanFunc = c("mean", "median"))
 }
 \arguments{
-\item{\code{idep}}{Either a vector or matrix of class numeric or integer containing the independent variable and of the same length as \code{depe}. []}
+\item{idep}{Either a vector or matrix of class numeric or integer containing the independent variable and of the same length as \code{depe}. []}
 
-\item{\code{depe}}{Either a vector or matrix of class numeric or integer containing the dependent variable and of the same length as \code{idep}. []}
+\item{depe}{Either a vector or matrix of class numeric or integer containing the dependent variable and of the same length as \code{idep}. []}
 
-\item{\code{RngMinMax}}{An object of class numeric or integer containing the minimum and maximum values of the independent variable. Defaults to NULL. []}
+\item{RngMinMax}{An object of class numeric or integer containing the minimum and maximum values of the independent variable. Defaults to NULL. []}
 
-\item{\code{NumBin}}{An object of class numeric or integer containing the number of bins. []}
+\item{NumBin}{An object of class numeric or integer containing the number of bins. []}
 
-\item{\code{widtBin}}{An object of class string containing the functions ("lin", "log10", "exp10", "logExp", "expLog") to determine bin width distribution of the independent variable. []}
+\item{widtBin}{An object of class string containing the functions ("lin", "log10", "exp10", "logExp", "expLog") to determine bin width distribution of the independent variable. []}
 
-\item{\code{meanFunc}}{An object of class string containing the arithmetic "mean" and "median". []}
+\item{meanFunc}{An object of class string containing the arithmetic "mean" and "median". []}
 }
 \value{
 \code{idep} A list object of class "numeric" containing the resulted binning of independent variable and of the same length as {widtBin} and \code{depe} a matrix containing the the resulted binning of dependent variable and of the same length as {widtBin}. \cr

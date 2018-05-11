@@ -7,7 +7,7 @@
 
 #' @description Composing azimuth angle from cartesian vector data.
 
-#' @param \code{cart} variable of type numeric, matrix consisting of unit vectors X (1st column, -1 ... 1, positive to north) and Y (2nd column, -1 ... 1, positive to east) 
+#' @param cart variable of type numeric, matrix consisting of unit vectors X (1st column, -1 ... 1, positive to north) and Y (2nd column, -1 ... 1, positive to east) 
 
 #' @return clockwise azimuth angle with 0 / 360 degree discontinuity in north [decimal degrees]
 
@@ -33,6 +33,8 @@
 #     rename function to def.az.cart()
 #   Natchaya P-Durden (2016-12-02)
 #     rename function to def.pol.cart()
+#   Natchaya P-Durden (2018-04-03)
+#     update @param format
 ##############################################################################################
 
 #convert cartesian vector data to angular degree; convetion:

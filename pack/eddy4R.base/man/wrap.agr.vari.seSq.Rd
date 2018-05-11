@@ -7,22 +7,23 @@
 wrap.agr.vari.seSq(data = data.frame(timeDoyDecm, mean, vari), zone, MethAgr)
 }
 \arguments{
-\item{\code{data}}{Dataframe of type numeric containing column vectors \code{timeDoyDecm}, \code{mean}, and \code{vari} of equal length.}
+\item{data}{Dataframe of type numeric containing column vectors \code{timeDoyDecm}, \code{mean}, and \code{vari} of equal length.}
 
-\item{\code{timeDoyDecm}}{input decimal doy time in UTC [float number].}
+\item{zone}{The time zone of the location, which is the offset from Coordinated Universal Time (UTC) by a whole number of hours. If local time is ahead (behind) the Greenwich mean time, zone is a positive (negative) number. e.g. CST" [hour]. a time offset in Wisconsin, in the North American Central Time Zone, would be -6.}
 
-\item{\code{mean}}{Vector of type numeric. Means of the variable of interest at finer resolution, e.g. minutely [user-defined].}
+\item{MethAgr}{String type. One of three choices: "agrHour", "mdc", "agrMnth". "agrHour" represents aggregation from minutely to hourly resolution; "mdc" represents aggregation from hourly to diurnal cycle; "agrMnth" represents aggregation from diurnal cycle to monthly resolution.}
 
-\item{\code{vari}}{Vector of type numeric. Variances of the variable of interest at finer resolution, e.g. minutely [user-defined^2].}
+\item{timeDoyDecm}{input decimal doy time in UTC [float number].}
 
-\item{\code{zone}}{The time zone of the location, which is the offset from Coordinated Universal Time (UTC) by a whole number of hours. If local time is ahead (behind) the Greenwich mean time, zone is a positive (negative) number. e.g. CST" [hour]. a time offset in Wisconsin, in the North American Central Time Zone, would be -6.}
+\item{mean}{Vector of type numeric. Means of the variable of interest at finer resolution, e.g. minutely [user-defined].}
 
-\item{\code{MethAgr}}{String type. One of three choices: "agrHour", "mdc", "agrMnth". "agrHour" represents aggregation from minutely to hourly resolution; "mdc" represents aggregation from hourly to diurnal cycle; "agrMnth" represents aggregation from diurnal cycle to monthly resolution.}
+\item{vari}{Vector of type numeric. Variances of the variable of interest at finer resolution, e.g. minutely [user-defined^2].}
 }
 \value{
-Returns object of class "dataframe": if MethAgr is "agrHour", the dataframe is [n, 1:5] containing timeDoyIntg, hour, mean, variance, square of standard error of the scalar at hourly resolution
-                                             if MethAgr is "mdc", the dataframe is [n, 1:4] containing hour, mean, variance, square of standard error of the scalar at diurnal cycle
-                                             if MethAgr is "agrMnth", the dataframe is [n, 1:3] containing mean, variance, square of standard error of the scalar at monthly scale
+Returns object of class "dataframe": cr\
+if \code{MethAgr} is "agrHour", the dataframe is [n, 1:5] containing timeDoyIntg, hour, mean, variance, square of standard error of the scalar at hourly resolution \cr
+if \code{MethAgr} is "mdc", the dataframe is [n, 1:4] containing hour, mean, variance, square of standard error of the scalar at diurnal cycle \cr
+if \code{MethAgr} is "agrMnth", the dataframe is [n, 1:3] containing mean, variance, square of standard error of the scalar at monthly scale
 }
 \description{
 Function wrapper. Calculate aggregated variance and squared standard error from a finer to a coarser temporal resolution: from minutely to hourly resolution, from hourly to diurnal cycle, and from diurnal cycle to monthly. The input data can be irregular, because data expansion is included in the current wrapper to generate unbiased mean, variance and squared standard error.

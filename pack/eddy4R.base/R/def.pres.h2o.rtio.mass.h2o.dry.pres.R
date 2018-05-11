@@ -7,8 +7,8 @@
 
 #' @description Calculate water vapor pressure from dry mass fraction and static pressure.
 
-#' @param \code{rtioMassDryH2o} Either a vector or an object of class numeric of water dry mass fraction and of the same length as \code{pres}. [kg kg-1]
-#' @param \code{pres} Either a vector or an object of class numeric of static pressure and of the same length as \code{rtioMassDryH2o}. [Pa]
+#' @param rtioMassDryH2o Either a vector or an object of class numeric of water dry mass fraction and of the same length as \code{pres}. [kg kg-1]
+#' @param pres Either a vector or an object of class numeric of static pressure and of the same length as \code{rtioMassDryH2o}. [Pa]
 
 #' @return Water vapor pressure and of the same length as \code{rtioMassDryH2o} and \code{pres}. [Pa]
 
@@ -34,6 +34,8 @@
 #     initail naming convention for eddy4R
 #   Natchaya P-Durden (2016-11-27)
 #     rename function to def.pres.h2o.rtio.mass.h2o.dry.pres()
+#   Natchaya P-Durden (2018-04-03)
+#     update @param format
 ##############################################################################################
 
 def.pres.h2o.rtio.mass.h2o.dry.pres <- function(rtioMassDryH2o, pres)  {

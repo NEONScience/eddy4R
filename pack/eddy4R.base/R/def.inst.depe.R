@@ -29,6 +29,8 @@
 #     original creation
 #   Stefan Metzger (2018-02-17)
 #     adjusted to eddy4R syntax
+#   Natchaya P-Durden (2018-04-13)
+#     adjusted to eddy4R syntax
 ##############################################################################################
 
 
@@ -40,20 +42,20 @@ def.inst.depe = function(
   
   # default dependencies
   if(Depe == TRUE) {
-    Depe = c("Depends", "Imports", "LinkingTo")
+    Depe <- c("Depends", "Imports", "LinkingTo")
   }
   
   # returns string w/o leading or trailing whitespace
-  trim = function (x) base::gsub("^\\s+|\\s+$", "", x)
+  trim <- function (x) base::gsub("^\\s+|\\s+$", "", x)
   
   # http://stackoverflow.com/questions/30223957/elegantly-extract-r-package-dependencies-of-a-package-not-listed-on-cran
-  dscr = base::read.dcf(file.path(DirPack, "DESCRIPTION"))
-  depe = base::unique(base::gsub("\\s.*", "", trim(base::unlist(
+  dscr <- base::read.dcf(file.path(DirPack, "DESCRIPTION"))
+  depe <- base::unique(base::gsub("\\s.*", "", trim(base::unlist(
                                    base::strsplit(dscr[, base::intersect(Depe, base::colnames(dscr))], ","),
                                    use.names = FALSE))))
   
   # install dependencies that aren't already installed
-  depe = depe[!(depe %in% c("R", base::rownames(utils::installed.packages())))]
+  depe <- depe[!(depe %in% c("R", base::rownames(utils::installed.packages())))]
   if(base::length(depe) > 0) {
     base::message(base::paste("Also installing:", paste(depe)))
     utils::install.packages(pkgs = depe, lib = Lib, repos = Repo)

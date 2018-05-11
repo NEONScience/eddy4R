@@ -5,7 +5,7 @@
 \title{Wrapper function: Reading NEON HDF5 files}
 \usage{
 wrap.neon.read.hdf5.eddy(DirInpLoca, SiteLoca, DateLoca, VarLoca,
-  LevlTowr = c("000_040", "000_050", "000_060")[3], FreqLoca, Rglr = FALSE,
+  LvlTowr = c("000_040", "000_050", "000_060")[3], FreqLoca, Rglr = FALSE,
   Diag = FALSE, Rng = FALSE, RngLoca, DespLoca, MethMeas = c("ecte",
   "ecse")[1])
 }
@@ -18,7 +18,7 @@ wrap.neon.read.hdf5.eddy(DirInpLoca, SiteLoca, DateLoca, VarLoca,
 
 \item{VarLoca}{Character: Which instrument to read data from.}
 
-\item{LevlTowr}{The tower level that the sensor data is being collected in NEON data product convention (HOR_VER)}
+\item{LvlTowr}{The tower level that the sensor data is being collected in NEON data product convention (HOR_VER)}
 
 \item{FreqLoca}{Integer: Measurement frequency.}
 

@@ -17,8 +17,8 @@ Definition function to interpret the Soni (Campbell Sci. CSAT3) sensor flags fro
 }
 \examples{
 diag16 <- as.integer(rep(135, 36000))
-pos <- runif(20,1, 36000) # inserting error positions for other flags
-diag16[pos] <- as.integer(c(32768,16384,8192,4096,61442, 61441,61440,61503, -99999, NaN)) # filling with numbers that would indicate flags soni flags
+set <- runif(20,1, 36000) # inserting error positions for other flags
+diag16[set] <- as.integer(c(32768,16384,8192,4096,61442, 61441,61440,61503, -99999, NaN)) # filling with numbers that would indicate flags soni flags
 
 eddy4R.qaqc::def.qf.soni(diag16 = diag16)
 }

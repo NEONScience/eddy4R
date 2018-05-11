@@ -37,6 +37,10 @@
 #   Cove Sturtevant (2016-11-28)
 #     adjusted for changes to upstream dependencies
 #     changed function name from def.plot.qfqm.dp01 to def.plot.dp01.qfqm
+#   Natchaya P-Durden (2018-04-11)
+#    applied eddy4R term name convention; replaced pos by set
+#   Natchaya P-Durden (2018-04-18)
+#    applied eddy4R term name convention; replaced val by valu
 ##############################################################################################
 
 
@@ -77,8 +81,8 @@ def.plot.dp01.qfqm <- function (
     dataIdx$time <- dataDp01$timeAgrBgn
 
     # Set of plots for basic stats: Mean, min, max, var, num,se 
-    dataIdxQf <- base::data.frame(time=dataIdx$time,val=dataIdx$mean,valQfFinlFail=dataIdx$mean)
-    dataIdxQf$valQfFinlFail[dataIdx$qfFinl==0] <- NA
+    dataIdxQf <- base::data.frame(time=dataIdx$time,valu=dataIdx$mean,valuQfFinlFail=dataIdx$mean)
+    dataIdxQf$valuQfFinlFail[dataIdx$qfFinl==0] <- NA
     dataIdxQf <- reshape2::melt(dataIdxQf,id="time")
     if(base::sum(dataIdx$mean,na.rm=TRUE) == 0) {
       # No non-NA data, generate empty plot
@@ -166,30 +170,30 @@ def.plot.dp01.qfqm <- function (
     
     # Set up the quality metrics to plot
     nameColsIdx <- base::names(dataIdx) # get column names for this variable
-    posQm <- base::numeric(0) # initialize the individual QMs we want to plot
+    setQm <- base::numeric(0) # initialize the individual QMs we want to plot
     for (idxNameQmPlot in 1:base::length(NameQmPlot)) {
-      posQm <- base::union(posQm,base::grep(NameQmPlot[idxNameQmPlot],nameColsIdx)) # Find the QMs in the list of those to plot
+      setQm <- base::union(setQm,base::grep(NameQmPlot[idxNameQmPlot],nameColsIdx)) # Find the QMs in the list of those to plot
     }
-    posQmPass <- base::intersect(posQm,base::grep("Pass",nameColsIdx)) # get column positions of pass quality metrics
-    posQmFail <- base::intersect(posQm,base::grep("Fail",nameColsIdx)) # get column positions of fail quality metrics
-    posQmNa <- base::intersect(posQm,base::grep("Na",nameColsIdx)) # get column positions of NA quality metrics
-    posQmNa <- base::setdiff(posQmNa,base::union(posQmPass,posQmFail)) # Ensure QMs aren't chosen by accident due to "Na" being elsewhere in the name
+    setQmPass <- base::intersect(setQm,base::grep("Pass",nameColsIdx)) # get column positions of pass quality metrics
+    setQmFail <- base::intersect(setQm,base::grep("Fail",nameColsIdx)) # get column positions of fail quality metrics
+    setQmNa <- base::intersect(setQm,base::grep("Na",nameColsIdx)) # get column positions of NA quality metrics
+    setQmNa <- base::setdiff(setQmNa,base::union(setQmPass,setQmFail)) # Ensure QMs aren't chosen by accident due to "Na" being elsewhere in the name
     
     # Subset out the "pass", "fail", and "NA" quality metrics in long format
-    dataQmPass <- base::data.frame(time=dataIdx$time, dataIdx[,nameColsIdx[posQmPass]])
-    names(dataQmPass) <- base::c("time",nameColsIdx[posQmPass])
+    dataQmPass <- base::data.frame(time=dataIdx$time, dataIdx[,nameColsIdx[setQmPass]])
+    names(dataQmPass) <- base::c("time",nameColsIdx[setQmPass])
     dataQmPass <- reshape2::melt(dataQmPass,id="time")
     dataQmPass$variable <- base::sub("Pass","",dataQmPass$variable) # get rid of the "Pass" in the QM name
     dataQmPass$variable <- base::sub("Pos","",dataQmPass$variable) # get rid of the "Pos" in the QM name
     
-    dataQmFail <- base::data.frame(time=dataIdx$time, dataIdx[,nameColsIdx[posQmFail]])
-    names(dataQmFail) <- base::c("time",nameColsIdx[posQmFail])
+    dataQmFail <- base::data.frame(time=dataIdx$time, dataIdx[,nameColsIdx[setQmFail]])
+    names(dataQmFail) <- base::c("time",nameColsIdx[setQmFail])
     dataQmFail <- reshape2::melt(dataQmFail,id="time")
     dataQmFail$variable <- base::sub("Fail","",dataQmFail$variable) # get rid of the "Fail" in the QM name
     dataQmFail$variable <- base::sub("Pos","",dataQmFail$variable) # get rid of the "Pos" in the QM name
     
-    dataQmNa <- base::data.frame(time=dataIdx$time, dataIdx[,nameColsIdx[posQmNa]])
-    names(dataQmNa) <- base::c("time",nameColsIdx[posQmNa])
+    dataQmNa <- base::data.frame(time=dataIdx$time, dataIdx[,nameColsIdx[setQmNa]])
+    names(dataQmNa) <- base::c("time",nameColsIdx[setQmNa])
     dataQmNa <- reshape2::melt(dataQmNa,id="time")
     dataQmNa$variable <- base::sub("Na","",dataQmNa$variable) # get rid of the "Na" in the QM name
     dataQmNa$variable <- base::sub("Pos","",dataQmNa$variable) # get rid of the "Pos" in the QM name

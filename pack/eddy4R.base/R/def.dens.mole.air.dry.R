@@ -8,8 +8,8 @@
 
 #' @description Function definition. Calculation of the molar density of the mdry air alone
 
-#' @param \code{densMoleAir} A vector containing the mole density of the air mixture (includes dry air and water vapor), of class "numeric". [mol m-3]
-#' @param \code{densMoleH2o} A vector containing the water vapor mole density of the air mixture, of class "numeric". [molH2o m-3]
+#' @param densMoleAir A vector containing the mole density of the air mixture (includes dry air and water vapor), of class "numeric". [mol m-3]
+#' @param densMoleH2o A vector containing the water vapor mole density of the air mixture, of class "numeric". [molH2o m-3]
 
 #' @return 
 #' The returned object is the the molar density of the dry air alone  
@@ -39,6 +39,8 @@
 #     original creation
 #   Hongyan Luo (2016-11-15)
 #     adjust to eddy4R coding style
+#   Natchaya P-Durden (2018-04-03)
+#     update @param format
 ###############################################################################################
 
 # Function to calculate the molar density of the dry air alone

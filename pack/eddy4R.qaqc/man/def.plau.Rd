@@ -14,34 +14,34 @@ def.plau(data, time = as.POSIXlt(seq.POSIXt(from = Sys.time(), by = "sec",
   length(data)), Vrbs = FALSE)
 }
 \arguments{
-\item{\code{data}}{Required input. A data frame containing the data to be evaluated (do not include the time stamp vector here).}
+\item{data}{Required input. A data frame containing the data to be evaluated (do not include the time stamp vector here).}
 
-\item{\code{time}}{Optional. A time vector of class POSIXlt of times corresponding with each row in data. Defaults to an evenly spaced time vector starting from system time of execution by seconds.}
+\item{time}{Optional. A time vector of class POSIXlt of times corresponding with each row in data. Defaults to an evenly spaced time vector starting from system time of execution by seconds.}
 
-\item{\code{RngMin}}{Optional. A numeric vector of length equal to number of variables in data containing the minimum acceptable value for each variable. Defaults to observed minimums (no flags will result)}
+\item{RngMin}{Optional. A numeric vector of length equal to number of variables in data containing the minimum acceptable value for each variable. Defaults to observed minimums (no flags will result)}
 
-\item{\code{RngMax}}{Optional. A numeric vector of length equal to number of variables in data containing the maximum acceptable value for each variable. Defaults to observed maximums (no flags will result)}
+\item{RngMax}{Optional. A numeric vector of length equal to number of variables in data containing the maximum acceptable value for each variable. Defaults to observed maximums (no flags will result)}
 
-\item{\code{DiffStepMax}}{Optional. A numeric vector of length equal to number of variables in data containing the maximum acceptable absolute difference between sequential data points for each variable. Defaults to observed maximum (no flags will result)}
+\item{DiffStepMax}{Optional. A numeric vector of length equal to number of variables in data containing the maximum acceptable absolute difference between sequential data points for each variable. Defaults to observed maximum (no flags will result)}
 
-\item{\code{DiffPersMin}}{Optional. A numeric vector of length equal to number of variables in data containing the minimum absolute change in value over the interval specified in WndwPers to indicate the sensor is not "stuck". Defaults to a vector of zeros (no flags will result).}
+\item{DiffPersMin}{Optional. A numeric vector of length equal to number of variables in data containing the minimum absolute change in value over the interval specified in WndwPers to indicate the sensor is not "stuck". Defaults to a vector of zeros (no flags will result).}
 
-\item{\code{WndwPers}}{Optional. The time window for evaluting the persistence test. This must be a vector of length equal to number of variables in data. If the values are numeric (integer), then WndwPers specifies number of data points over which to test for the minimum absolute change in value specified in DiffPersMin. 
+\item{WndwPers}{Optional. The time window for evaluting the persistence test. This must be a vector of length equal to number of variables in data. If the values are numeric (integer), then WndwPers specifies number of data points over which to test for the minimum absolute change in value specified in DiffPersMin. 
 If the vector is a difftime object (e.g. as.difftime(5,units="secs")), it specifies the time interval over which to test for the minimum absolute change in value specified in DiffPersMin. The results are the same if the time-based window exactly corresponds to an integer number of data points.
 Defaults to a difftime object of 60 x median observed time difference.}
 
-\item{\code{TestNull}}{Optional. Apply the null test? A logical vector of [TRUE or FALSE] of length equal to number of variables in data. Defaults to FALSE (no null values are flagged)}
+\item{TestNull}{Optional. Apply the null test? A logical vector of [TRUE or FALSE] of length equal to number of variables in data. Defaults to FALSE (no null values are flagged)}
 
-\item{\code{NumGap}}{Optional.  A numeric value >= 1, interpretable as an integer, specifying the numer of consecutive NA values constituting a gap. Default is the one more than the length of the data series (no gaps will be flagged)}
+\item{NumGap}{Optional.  A numeric value >= 1, interpretable as an integer, specifying the numer of consecutive NA values constituting a gap. Default is the one more than the length of the data series (no gaps will be flagged)}
 
-\item{\code{Vrbs}}{Optional. A logical {FALSE/TRUE} value indicating whether to:\cr
+\item{Vrbs}{Optional. A logical {FALSE/TRUE} value indicating whether to:\cr
 \code{Vrbs = FALSE}: (Default) output the vector positions of the fail and na results for each test (default), or \cr
 \code{Vrbs = TRUE}: output a data frame for each variable in data, with a column for each plausibility test outputting the actual quality flags [-1,0,1] for each data point}
 }
 \value{
 If:\cr
-\code{Vrbs = FALSE} A list of variables in \code{data}, nested within each a list of qf test names: (\code{posQfRng}), Step (\code{posQfStep}), Persistence  (\code{posQfPers}), Null (\code{posQfNull}), and Gap(\code{posQfGap}) tests.
-Each flag is itself a nested list of failed and na (unable to eval) flagged vector positions (e.g. \code{$X$posQfRng$fail} and \code{$X$posQfRng$na} \cr
+\code{Vrbs = FALSE} A list of variables in \code{data}, nested within each a list of qf test names: (\code{setQfRng}), Step (\code{setQfStep}), Persistence  (\code{setQfPers}), Null (\code{setQfNull}), and Gap(\code{setQfGap}) tests.
+Each flag is itself a nested list of failed and na (unable to eval) flagged vector positions (e.g. \code{$X$setQfRng$fail} and \code{$X$setQfRng$na} \cr
 \code{Vrbs = TRUE} A list of variables matching those in \code{data}, each containing a data frame with a column for each plausibility test outputting the actual quality flags [-1,0,1] for each data point, where -1 indicates the test could not be evaluated, 0 indicates a pass, and 1 indicates a fail
 }
 \description{

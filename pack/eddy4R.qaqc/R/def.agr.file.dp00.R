@@ -7,13 +7,13 @@
 #' @description 
 #' Definition function. Combine (and regularize) L0 data streams downloaded in individual files from the L0 sandbox tool. 
 
-#' @param \code{dirFile} Optional. A character string indicating the directory in which the files to combine are stored. Default is the current working directory.
-#' @param \code{nameFile} Required. A character vector of file names holding the L0 data streams to combine. Must be in .csv format. Within these files, the first column must containing the measurement time, the second column must contain one L0 data stream
-#' @param \code{nameVar} Required. A character vector of the same length as nameFile with the variable names of the L0 data streams
-#' @param \code{unitVar} Required. A character vector of the same length as nameFile with the variable units
-#' @param \code{Freq} Required. A numeric value indicating the expected frequency [Hz] of L0 data within the files in nameFile
-#' @param \code{FmtTime} Optional. An character format string to interpret the time values in the first column of each file in nameFile. Default is \%d-\%b-\%Y \%I.\%M.\%OS \%p
-#' @param \code{Tz} Optional. A character string specifying the time zone in with the time values in the first column of each file in nameFile are represented. Default is GMT
+#' @param dirFile Optional. A character string indicating the directory in which the files to combine are stored. Default is the current working directory.
+#' @param nameFile Required. A character vector of file names holding the L0 data streams to combine. Must be in .csv format. Within these files, the first column must containing the measurement time, the second column must contain one L0 data stream
+#' @param nameVar Required. A character vector of the same length as nameFile with the variable names of the L0 data streams
+#' @param unitVar Required. A character vector of the same length as nameFile with the variable units
+#' @param Freq Required. A numeric value indicating the expected frequency [Hz] of L0 data within the files in nameFile
+#' @param FmtTime Optional. An character format string to interpret the time values in the first column of each file in nameFile. Default is \%d-\%b-\%Y \%I.\%M.\%OS \%p
+#' @param Tz Optional. A character string specifying the time zone in with the time values in the first column of each file in nameFile are represented. Default is GMT
 
 #' @return A list of: \cr
 #' \code{time} a POSIXlt vector of regularized times corresponding to each row in data. Limits are the min and max of times found within nameFile \cr
@@ -33,6 +33,10 @@
 # changelog and author contributions / copyrights
 #   Cove Sturtevant (2016-11-03)
 #     original creation
+#   Natchaya P-Durden (2018-04-03)
+#     update @param format
+#   Natchaya P-Durden (2018-04-11)
+#    applied eddy4R term name convention; replaced pos by idx
 ##############################################################################################
 
 def.agr.file.dp00 <- function (
@@ -89,11 +93,11 @@ time <- base::seq.POSIXt(from=timeMin,to=timeMax,by=1/Freq)
 data <- base::matrix(data=NA,nrow=base::length(time),ncol=base::length(nameFile))
 for(idxFile in 1:base::length(nameFile)){
   # Find start and end 
-  posBgn <- base::which(time == timeRglr[[idxFile]][1])
-  posEnd <- base::which(time == timeRglr[[idxFile]][base::length(timeRglr[[idxFile]])])
+  idxBgn <- base::which(time == timeRglr[[idxFile]][1])
+  idxEnd <- base::which(time == timeRglr[[idxFile]][base::length(timeRglr[[idxFile]])])
   
   # Put the data in the correct place
-  data[posBgn:posEnd,idxFile] <- dataRglr[[idxFile]]
+  data[idxBgn:idxEnd,idxFile] <- dataRglr[[idxFile]]
   
 }
 data <- as.data.frame(data) # Make a data frame. 

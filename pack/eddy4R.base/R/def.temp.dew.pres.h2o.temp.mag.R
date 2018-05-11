@@ -7,8 +7,8 @@
 
 #' @description  Calculate dew point temperature from water vapor pressure and ambient temperature using Magnus equation.
 
-#' @param \code{presH2o} Either a vector or an object of class numeric of measured water vapor pressure and of the same length as \code{temp}. [Pa]
-#' @param \code{temp} Either a vector or an object of class numeric of measured air temperature and of the same length as \code{presH2o}. [K]
+#' @param presH2o Either a vector or an object of class numeric of measured water vapor pressure and of the same length as \code{temp}. [Pa]
+#' @param temp Either a vector or an object of class numeric of measured air temperature and of the same length as \code{presH2o}. [K]
 
 
 #' @return Dew point temperature and of the same length as \code{presH2o} and \code{temp}. [K]
@@ -38,6 +38,8 @@
 #     fixing unit assignment
 #   David Durden (2017-06-14)
 #     fixing bug if all NA's are passed
+#   Natchaya P-Durden (2018-04-03)
+#     update @param format
 ##############################################################################################
 
 def.temp.dew.pres.h2o.temp.mag <- function(presH2o, temp) {

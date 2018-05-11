@@ -8,15 +8,15 @@ def.qf.ecte(TimeBgn, TimeEnd, Freq = 20, Sens = c("soni", "irga",
   "irgaMfcSamp", "soniAmrs")[1], PcntQf = 0.05)
 }
 \arguments{
-\item{\code{TimeBgn}}{is the beginning time of the period to generate flags.}
+\item{TimeBgn}{is the beginning time of the period to generate flags.}
 
-\item{\code{TimeEnd}}{is the end time of the period to generate flags.}
+\item{TimeEnd}{is the end time of the period to generate flags.}
 
-\item{\code{Freq}}{is the measurement frequency used to generate flags.}
+\item{Freq}{is the measurement frequency used to generate flags.}
 
-\item{\code{Sens}}{is ECTE sensor assembly name for which the flags are being generated.}
+\item{Sens}{is ECTE sensor assembly name for which the flags are being generated.}
 
-\item{\code{PcntQf}}{is percentage of observations that should be flagged.}
+\item{PcntQf}{is percentage of observations that should be flagged.}
 }
 \value{
 Currently none.

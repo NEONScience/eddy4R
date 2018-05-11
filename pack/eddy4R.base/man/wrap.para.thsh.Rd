@@ -8,14 +8,26 @@ wrap.para.thsh(DpName = c("IrgaTurb", "MfcSampTurb", "Soni", "Amrs"),
   DirInp = "~/eddy/data/Thresholds_EC/CI-Parameter-Repo/ParaSci/Ecte/Dp0p",
   DirOut = "~/eddy/data/Thresholds_EC/threshold_ecte", FileWrte = FALSE)
 }
+\arguments{
+\item{DpName}{Character: Name of data product. [-]}
+
+\item{DirInp}{Character: Input directory. [-]}
+
+\item{DirOut}{Character: Output directory. [-]}
+
+\item{FileWrte}{Logical: Determines if file is writing out. Default to FALSE. [-]}
+}
 \value{
-A data.frame consisting of the threshold values to be used for the provided site.
+A dataframe consisting of the threshold values to be used for the provided site.
 }
 \description{
 Workflow to read ECSE threshold table from CI-Parameter-Repo
 }
 \examples{
 Currently none
+}
+\references{
+License: GNU AFFERO GENERAL PUBLIC LICENSE Version 3, 19 November 2007
 }
 \seealso{
 Currently none

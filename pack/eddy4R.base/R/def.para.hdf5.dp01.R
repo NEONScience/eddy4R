@@ -7,8 +7,8 @@
 #' @description 
 #' Definition function. Function recreates the metadata from an HDF5 file to another HDF5 file with the same group heirarchy structure.
 
-#' @param \code{FileIn} is the input file where the parameters are being read from.
-#' @param \code{FileOut} is the output file where the parameters are being written to.
+#' @param FileInp is the input file where the parameters are being read from.
+#' @param FileOut is the output file where the parameters are being written to.
 
 
 #' @return A NEON formatted HDF5 file that has parameters from the input file written to the output HDF5 file. 
@@ -30,17 +30,23 @@
 # changelog and author contributions / copyrights
 #   Dave Durden (2016-02-12)
 #     original creation
-
+#   Natchaya P-Durden (2018-04-03)
+#     update @param format
+#   Natchaya P-Durden (2018-04-12)
+#    applied eddy4R term name convention; replaced fid by idFile
+#    replaced gid by idData
+#   Ke Xu (2018-04-19)
+#     applied term name convention; replaced FileIn by FileInp
 ##############################################################################################################
 #Start of function call to read metadata from one file and write to another
 ##############################################################################################################
 
 def.para.hdf5.dp01 <- function(
-  FileIn,
+  FileInp,
   FileOut
 ){
 
-  if(!base::file.exists(FileIn)) {
+  if(!base::file.exists(FileInp)) {
     stop("Input file does not exist")
   } 
   
@@ -49,7 +55,7 @@ def.para.hdf5.dp01 <- function(
   } 
   
   #list of everything written within the input file
-listPara <- rhdf5::h5ls(FileIn, datasetinfo = FALSE)
+listPara <- rhdf5::h5ls(FileInp, datasetinfo = FALSE)
 
 #Grabbing just the HDF5 groups
 #listPara <- listPara[listPara$otype == "H5I_GROUP",] #Used to grab metadata if it is only attached to the group level
@@ -57,7 +63,7 @@ listGrp <- base::paste(listPara$group, listPara$name, sep = "/") # Combining out
 
 
 # read attributes from input file
-listAttr <- base::lapply(listGrp, rhdf5::h5readAttributes, file = FileIn)
+listAttr <- base::lapply(listGrp, rhdf5::h5readAttributes, file = FileInp)
 
 
 #Apply group names to the attributes list
@@ -68,16 +74,16 @@ listAttr <- listAttr[!base::sapply(listAttr, function(x) base::length(x) == 0)]
 
 
 #Open the output file HDF5 link
-fid <- rhdf5::H5Fopen(FileOut)
+idFile <- rhdf5::H5Fopen(FileOut)
   
 #Write the attributes to the new file
 lapply(names(listAttr), function(x){
   
   #x <- "/CPER/dp0p/data/irga_001/000_020"
-  gid <- rhdf5::H5Oopen(fid, x)
+  idData <- rhdf5::H5Oopen(idFile, x)
  base::lapply(names(listAttr[[x]]), function(y){
    #y <- names(listAttr[[x]])[1]
-   rhdf5::h5writeAttribute(attr = listAttr[[x]][[y]], h5obj = gid, name = y)})
+   rhdf5::h5writeAttribute(attr = listAttr[[x]][[y]], h5obj = idData, name = y)})
 })
 
 H5close()
