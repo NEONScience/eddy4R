@@ -33,9 +33,11 @@
 #     original creation
 #   Natchaya Pingintha-Durden (2017-09-07)
 #     added MethMeas and rename function to def.hdf5.dp.pack()
+#   Natchaya P-Durden (2018-05-11)
+#     rename function from def.hdf5.dp.pack() to def.hdf5.pack()
 ##############################################################################################
 
-def.hdf5.dp.pack <- function(
+def.hdf5.pack <- function(
   inpList,
   MethMeas = c("ecte", "ecse")[1],
   time,
