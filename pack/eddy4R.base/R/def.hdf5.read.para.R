@@ -41,10 +41,12 @@
 #     update @param format
 #   Natchaya P-Durden (2018-04-12)
 #    applied eddy4R term name convention; replaced pos by set
+#   Natchaya P-Durden (2018-05-22)
+#    rename function from def.neon.read.hdf5.para() to def.hdf5.read.para()
 ###############################################################################################
 
 # definition function for parameter extraction
-def.neon.read.hdf5.para <- function(
+def.hdf5.read.para <- function(
   # absolute path to h5 file from which workflow and scientific parameters are to be used
   DirFileParaLoca,
   # absolute path to h5 file group and variable name from which parameters are to be read
