@@ -40,8 +40,10 @@
 #     update eddy4R term: update DirIn to DirInp
 #   Ke Xu (2018-04-19)
 #     applied term name convention; replaced dataIn by dataInp
+#   Natchaya P-Durden (2018-05-22)
+#     rename function from wrap.time.rglr.dp00.ecse() to wrap.dp00.rglr.ecse()
 ##############################################################################################
-wrap.time.rglr.dp00.ecse <- function(
+wrap.dp00.rglr.ecse <- function(
   DirInp,
   Date,
   Site = "CPER",
