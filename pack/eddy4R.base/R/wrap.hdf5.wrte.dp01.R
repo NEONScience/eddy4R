@@ -52,6 +52,8 @@
 #     applied term name convention; replaced FileIn by FileInp
 #    Natchaya P-Durden (2018-05-11)
 #     rename function from def.hdf5.dp01.pack() to def.hdf5.pack.dp01()
+#    Natchaya P-Durden (2018-05-22)
+#     rename function from def.para.hdf5.dp01() to def.hdf5.copy.para()
 ##############################################################################################
 
 
@@ -189,6 +191,6 @@ if(MethDp04 == TRUE){
 ######################################################################
 #Writing metadata from input dp0p file to output dp01 file
 ######################################################################
-eddy4R.base::def.para.hdf5.dp01(FileInp = FileInp, FileOut = FileOut)
+eddy4R.base::def.hdf5.copy.para(FileInp = FileInp, FileOut = FileOut)
 
 }

@@ -37,11 +37,13 @@
 #    replaced gid by idData
 #   Ke Xu (2018-04-19)
 #     applied term name convention; replaced FileIn by FileInp
+#    Natchaya P-Durden (2018-05-22)
+#     rename function from def.para.hdf5.dp01() to def.hdf5.copy.para()
 ##############################################################################################################
 #Start of function call to read metadata from one file and write to another
 ##############################################################################################################
 
-def.para.hdf5.dp01 <- function(
+def.hdf5.copy.para <- function(
   FileInp,
   FileOut
 ){
