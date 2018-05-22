@@ -55,9 +55,11 @@
 #     applied term name convention; replace LevlTowr by LvlTowr
 #   Ke Xu (2018-04-19)
 #     applied term name convention; replaced dataIn by dataInp
+#   Natchaya P-Durden (2018-05-22)
+#     rename function from wrap.neon.read.hdf5.eddy() to wrap.hdf5.read()
 ##############################################################################################
         
-wrap.neon.read.hdf5.eddy <- function(
+wrap.hdf5.read <- function(
   DirInpLoca,
   SiteLoca,
   DateLoca,
