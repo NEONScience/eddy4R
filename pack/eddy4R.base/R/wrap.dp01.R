@@ -48,7 +48,7 @@
 #'     attributes(data$sens03$temp)$unit <- "K"
 #'   
 #'   # calculate L1 data products only for sensors sens01 and sens02
-#'   rpt <- wrap.neon.dp01(data = data, idx = c("sens01", "sens02"))
+#'   rpt <- wrap.dp01(data = data, idx = c("sens01", "sens02"))
 #'   # units are propagated
 #'   attributes(rpt$sens02$se$velo)$unit
 #'   # [1] "m s-1"
@@ -68,17 +68,18 @@
 #     update @param format
 #   Natchaya P-Durden (2018-05-22)
 #     rename function from def.neon.dp01() to def.dp01()
+#     rename function from wrap.neon.dp01() to wrap.dp01()
 ##############################################################################################
 
 
-# start function wrap.neon.dp01()
-wrap.neon.dp01 <- function(
+# start function wrap.dp01()
+wrap.dp01 <- function(
   data,
   idx = NULL
 ) {
   
   # stop if data is a list but idx is not specified  
-  if(!is.data.frame(data) & is.null(idx)) stop("wrap.neon.dp01: data is not a data.frame; if data is a list please specify idx.")
+  if(!is.data.frame(data) & is.null(idx)) stop("wrap.dp01: data is not a data.frame; if data is a list please specify idx.")
   
   # if data is a data.frame, calculate NEON Level 1 data products directly
   if(is.data.frame(data)) rpt <- eddy4R.base::def.dp01(data = data, vrbs = TRUE)
@@ -110,4 +111,4 @@ wrap.neon.dp01 <- function(
   return(rpt)
   
 }
-# end function wrap.neon.dp01()
+# end function wrap.dp01()

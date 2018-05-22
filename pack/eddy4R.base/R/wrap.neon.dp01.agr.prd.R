@@ -45,6 +45,8 @@
 #     applied term name convention; replace levl by lvl
 #   Natchaya P-Durden (2018-05-11)
 #     rename function from def.agr.ecte.dp01() to def.dp01.agr.ecte()
+#   Natchaya P-Durden (2018-05-22)
+#     rename function from wrap.neon.dp01() to wrap.dp01()
 ##############################################################################################
 
 
@@ -119,7 +121,7 @@ for(idxAgr in 1:iter){
     }
   
   
-    tmp$dp01[[lvlAgr]] <- eddy4R.base::wrap.neon.dp01(
+    tmp$dp01[[lvlAgr]] <- eddy4R.base::wrap.dp01(
       # assign data: data.frame or list of type numeric or integer
       data = tmp$data,
       # if data is a list, which list entries should be processed into Level 1 data products?
