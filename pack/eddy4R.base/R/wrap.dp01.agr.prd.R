@@ -47,10 +47,11 @@
 #     rename function from def.agr.ecte.dp01() to def.dp01.agr.ecte()
 #   Natchaya P-Durden (2018-05-22)
 #     rename function from wrap.neon.dp01() to wrap.dp01()
+#     rename function from wrap.neon.dp01.agr.prd() to wrap.dp01.agr.prd()
 ##############################################################################################
 
 
-wrap.neon.dp01.agr.prd <- function(
+wrap.dp01.agr.prd <- function(
  inpList
  ){
 
