@@ -40,9 +40,11 @@
 #     Updating to remove rev numbers from ECSE dp0p HDF5 data product group level 
 #   Natchaya P-Durden (2018-03-30)
 #     applied term name convention; replaced Levl by Lvl
+#   Natchaya P-Durden (2018-05-22)
+#     rename function from def.neon.read.hdf5.qfqm() to def.hdf5.read.qfqm()
 ##############################################################################################
 
-def.neon.read.hdf5.qfqm <- function(
+def.hdf5.read.qfqm <- function(
   DirInpLoca,
   SiteLoca,
   DateLoca,
