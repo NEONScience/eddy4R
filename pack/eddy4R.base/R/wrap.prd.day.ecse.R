@@ -7,7 +7,7 @@
 
 #' @description Wrapper function. To perform daily ECSE processing in native resolution
 
-#' @param inpList List consisting of input data in the format provided by function \code{eddy4R.base::wrap.neon.read.hdf5.eddy()}. Of types numeric, integer,  character and POSIXct.
+#' @param inpList List consisting of input data in the format provided by function \code{eddy4R.base::wrap.hdf5.read()}. Of types numeric, integer,  character and POSIXct.
 #' @param Desp De-spiking parameters as mixed list of types integer and character with the following list entries: \code{widt} de-spiking median filter window width (single integer); \code{nbin} de-spiking histogram bins initial number/step size (single integer); \code{rest} de-spiking resolution threshold (single integer); \code{var} sub-list of sensors in \code{inpList}, with each list entry containing the variable names for which to perform de-spiking (character). See \code{?eddy4R.qaqc::def.dspk.br86} for details.
 #'  
 #' @return 
