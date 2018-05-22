@@ -33,10 +33,10 @@
 #'      data <- c(1,2,3,NA,5,6,7,NaN,9,10)
 #'      
 #'    # Level 1 descriptive statistics
-#'      dp01 <- def.neon.dp01(data = data)
+#'      dp01 <- def.dp01(data = data)
 #'      
 #'    # Level 1 descriptive statistics in verbose output
-#'      dp01Vrbs <- def.neon.dp01(data = data, vrbs = TRUE)
+#'      dp01Vrbs <- def.dp01(data = data, vrbs = TRUE)
 #' 
 #' # argument vrbs = TRUE is useful for preserving unit information on
 #' # per-variable basis and use with lapply() and do.call()
@@ -56,11 +56,11 @@
 #'      attributes(data$dist)$unit <- "m"
 #' 
 #'    # vrbs = FALSE does not propagate unit information
-#'    attributes(def.neon.dp01(data = data, vrbs = FALSE)$se.velo)$unit
+#'    attributes(def.dp01(data = data, vrbs = FALSE)$se.velo)$unit
 #'    # NULL
 #'    
 #'    # vrbs = TRUE propagates unit information
-#'    attributes(def.neon.dp01(data = data, vrbs = TRUE)$se$velo)$unit
+#'    attributes(def.dp01(data = data, vrbs = TRUE)$se$velo)$unit
 #'    # [1] "m s-1"
 
 #' @seealso Currently none.
@@ -76,12 +76,14 @@
 #     consolidation of def.dp01.stat.R into def.neon.dp01.R
 #   Natchaya P-Durden (2018-04-03)
 #     update @param format
+#   Natchaya P-Durden (2018-05-22)
+#     rename function from def.neon.dp01() to def.dp01()
 ##############################################################################################
 
 # definition function to calculate standard NEON Level 1 data products from single data.frame
 
-# start function def.neon.dp01()
-def.neon.dp01 <- function(
+# start function def.dp01()
+def.dp01 <- function(
   # assign data, data.frame or matrix of type numeric or integer
   data,
   # return list which also includes units?
@@ -178,4 +180,4 @@ def.neon.dp01 <- function(
   return(rpt)
   
 }
-# end function def.neon.dp01()
+# end function def.dp01()
