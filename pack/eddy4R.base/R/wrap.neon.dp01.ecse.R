@@ -59,6 +59,8 @@
 #     update @param format
 #   Ke Xu (2018-04-19)
 #     applied term name convention; replaced qfInput by qfInp
+#   Natchaya P-Durden (2018-05-22)
+#     rename function from wrap.neon.dp01() to wrap.dp01()
 ##############################################################################################
 wrap.neon.dp01.ecse <- function(
   dp01 = c("co2Stor", "h2oStor", "tempAirLvl", "tempAirTop", "isoCo2", "isoH2o")[1],
@@ -162,7 +164,7 @@ wrap.neon.dp01.ecse <- function(
             #get rid of lvlIrga
             wrk$inpMask$data <- wrk$inpMask$data[,-which(names(wrk$inpMask$data) == "lvlIrga")]
             
-            rpt[[idxAgr]] <- eddy4R.base::wrap.neon.dp01(
+            rpt[[idxAgr]] <- eddy4R.base::wrap.dp01(
               # assign data: data.frame or list of type numeric or integer
               data = wrk$inpMask$data#,
               # if data is a list, which list entries should be processed into Level 1 data products?
@@ -273,7 +275,7 @@ wrap.neon.dp01.ecse <- function(
           #get rid of lvlIrga
           wrk$inpMask$data <- wrk$inpMask$data[,-which(names(wrk$inpMask$data) == "lvlIrga")]
           
-          rpt[[idxAgr]] <- eddy4R.base::wrap.neon.dp01(
+          rpt[[idxAgr]] <- eddy4R.base::wrap.dp01(
             # assign data: data.frame or list of type numeric or integer
             data = wrk$inpMask$data#,
             # if data is a list, which list entries should be processed into Level 1 data products?
@@ -366,7 +368,7 @@ wrap.neon.dp01.ecse <- function(
             wrk$inpMask$data <- wrk$data[wrk$idx$idxBgn[idxAgr]:wrk$idx$idxEnd[idxAgr],] 
             
             #dp01 processing
-            rpt[[idxAgr]] <- eddy4R.base::wrap.neon.dp01(
+            rpt[[idxAgr]] <- eddy4R.base::wrap.dp01(
               # assign data: data.frame or list of type numeric or integer
               data = wrk$inpMask$data#,
             )
@@ -453,7 +455,7 @@ wrap.neon.dp01.ecse <- function(
           wrk$inpMask$data <- wrk$data[idxTime[[paste0(PrdAgr, "min")]]$Bgn[idxAgr]:idxTime[[paste0(PrdAgr, "min")]]$End[idxAgr],]
           
           #dp01 processing
-          rpt[[idxAgr]] <- eddy4R.base::wrap.neon.dp01(
+          rpt[[idxAgr]] <- eddy4R.base::wrap.dp01(
             # assign data: data.frame or list of type numeric or integer
             data = wrk$inpMask$data
           )
@@ -505,8 +507,8 @@ wrap.neon.dp01.ecse <- function(
         )
       } 
       
-      #call wrap.neon.dp01.R to calculate descriptive statistics       
-      rpt[[idxAgr]] <- eddy4R.base::wrap.neon.dp01(
+      #call wrap.dp01.R to calculate descriptive statistics       
+      rpt[[idxAgr]] <- eddy4R.base::wrap.dp01(
         # assign data: data.frame or list of type numeric or integer
         data = wrk$inpMask$data#,
       )
@@ -600,7 +602,7 @@ wrap.neon.dp01.ecse <- function(
             wrk$inpMask$data <- wrk$inpMask$data[,-which(names(wrk$inpMask$data) == "lvlCrdCo2")]
             
             #dp01 processing
-            rpt[[idxAgr]] <- eddy4R.base::wrap.neon.dp01(
+            rpt[[idxAgr]] <- eddy4R.base::wrap.dp01(
               # assign data: data.frame or list of type numeric or integer
               data = wrk$inpMask$data#,
               # if data is a list, which list entries should be processed into Level 1 data products?
@@ -706,8 +708,8 @@ wrap.neon.dp01.ecse <- function(
           #get rid of lvlCrdCo2
           wrk$inpMask$data <- wrk$inpMask$data[,-which(names(wrk$inpMask$data) == "lvlCrdCo2")]
           
-          #call wrap.neon.dp01.R to calculate descriptive statistics 
-          rpt[[idxAgr]] <- eddy4R.base::wrap.neon.dp01(
+          #call wrap.dp01.R to calculate descriptive statistics 
+          rpt[[idxAgr]] <- eddy4R.base::wrap.dp01(
             # assign data: data.frame or list of type numeric or integer
             data = wrk$inpMask$data#,
             # if data is a list, which list entries should be processed into Level 1 data products?
@@ -787,7 +789,7 @@ wrap.neon.dp01.ecse <- function(
             wrk$inpMask$data <- wrk$data[wrk$idx$idxBgn[idxAgr]:wrk$idx$idxEnd[idxAgr],] 
             
             #calculate dp01
-            rpt[[idxAgr]] <- eddy4R.base::wrap.neon.dp01(
+            rpt[[idxAgr]] <- eddy4R.base::wrap.dp01(
               # assign data: data.frame or list of type numeric or integer
               data = wrk$inpMask$data#,
               # if data is a list, which list entries should be processed into Level 1 data products?
@@ -883,8 +885,8 @@ wrap.neon.dp01.ecse <- function(
           idxLvLPrdAgr <- paste0(lvl, "_", sprintf("%02d", PrdAgr), "m")      
           wrk$inpMask$data <- wrk$data[idxTime[[paste0(PrdAgr, "min")]]$Bgn[idxAgr]:idxTime[[paste0(PrdAgr, "min")]]$End[idxAgr],]
           
-          #call wrap.neon.dp01.R to calculate descriptive statistics 
-          rpt[[idxAgr]] <- eddy4R.base::wrap.neon.dp01(
+          #call wrap.dp01.R to calculate descriptive statistics 
+          rpt[[idxAgr]] <- eddy4R.base::wrap.dp01(
             # assign data: data.frame or list of type numeric or integer
             data = wrk$inpMask$data#,
           )
@@ -973,7 +975,7 @@ wrap.neon.dp01.ecse <- function(
             wrk$inpMask$data <- wrk$inpMask$data[,-which(names(wrk$inpMask$data) == "lvlCrdH2o")]
             
             #dp01 processing
-            rpt[[idxAgr]] <- eddy4R.base::wrap.neon.dp01(
+            rpt[[idxAgr]] <- eddy4R.base::wrap.dp01(
               # assign data: data.frame or list of type numeric or integer
               data = wrk$inpMask$data#,
             )
@@ -1075,9 +1077,9 @@ wrap.neon.dp01.ecse <- function(
           #get rid of lvlCrdH2o
           wrk$inpMask$data <- wrk$inpMask$data[,-which(names(wrk$inpMask$data) == "lvlCrdH2o")]
           # for qfqm
-          #call wrap.neon.dp01.R to calculate descriptive statistics
+          #call wrap.dp01.R to calculate descriptive statistics
           
-          rpt[[idxAgr]] <- eddy4R.base::wrap.neon.dp01(
+          rpt[[idxAgr]] <- eddy4R.base::wrap.dp01(
             # assign data: data.frame or list of type numeric or integer
             data = wrk$inpMask$data#,
             
@@ -1161,7 +1163,7 @@ wrap.neon.dp01.ecse <- function(
             #get rid of injNum
             wrk$inpMask$data <- wrk$inpMask$data[,-which(names(wrk$inpMask$data) == "injNum")]
             #calculate dp01
-            rpt[[idxAgr]] <- eddy4R.base::wrap.neon.dp01(
+            rpt[[idxAgr]] <- eddy4R.base::wrap.dp01(
               # assign data: data.frame or list of type numeric or integer
               data = wrk$inpMask$data#,
               # if data is a list, which list entries should be processed into Level 1 data products?
@@ -1262,9 +1264,9 @@ wrap.neon.dp01.ecse <- function(
           wrk$inpMask$data <- wrk$inpMask$data[,-which(names(wrk$inpMask$data) == "injNum")]
           
           # http://stackoverflow.com/questions/26843861/replace-rbind-in-for-loop-with-lapply-2nd-circle-of-hell
-          #call wrap.neon.dp01.R to calculate descriptive statistics
+          #call wrap.dp01.R to calculate descriptive statistics
           
-          rpt[[idxAgr]] <- eddy4R.base::wrap.neon.dp01(
+          rpt[[idxAgr]] <- eddy4R.base::wrap.dp01(
             # assign data: data.frame or list of type numeric or integer
             data = wrk$inpMask$data#,
             # if data is a list, which list entries should be processed into Level 1 data products?
