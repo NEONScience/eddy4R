@@ -66,6 +66,8 @@
 #     Adding fix for infinite min and max wind direction
 #   Natchaya P-Durden (2018-04-03)
 #     update @param format
+#   Natchaya P-Durden (2018-05-22)
+#     rename function from def.neon.dp01() to def.dp01()
 ##############################################################################################
 
 
@@ -79,10 +81,10 @@ wrap.neon.dp01 <- function(
   if(!is.data.frame(data) & is.null(idx)) stop("wrap.neon.dp01: data is not a data.frame; if data is a list please specify idx.")
   
   # if data is a data.frame, calculate NEON Level 1 data products directly
-  if(is.data.frame(data)) rpt <- eddy4R.base::def.neon.dp01(data = data, vrbs = TRUE)
+  if(is.data.frame(data)) rpt <- eddy4R.base::def.dp01(data = data, vrbs = TRUE)
   
   # if data is a list, calculate NEON Level 1 data products recursively for each list element
-  if(is.list(data) & !is.data.frame(data)) rpt <- lapply(X = data[idx], FUN = eddy4R.base::def.neon.dp01, vrbs = TRUE)
+  if(is.list(data) & !is.data.frame(data)) rpt <- lapply(X = data[idx], FUN = eddy4R.base::def.dp01, vrbs = TRUE)
 
   if("soni" %in% idx){
     #Calculate wind direction using vector averaging approach
