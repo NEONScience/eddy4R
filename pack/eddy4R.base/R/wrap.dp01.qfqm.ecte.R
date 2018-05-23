@@ -49,6 +49,7 @@
 #     applied term name convention; replaced qfInput by qfInp
 #   Natchaya P-Durden (2018-05-23)
 #     rename function from wrap.neon.dp01.qfqm.ec() to wrap.dp01.qfqm.ecte()
+#     rename function from wrap.neon.dp01.qfqm() to wrap.dp01.qfqm.eddy()
 ##############################################################################################
 
 
@@ -68,7 +69,7 @@ wrap.dp01.qfqm.ecte <- function(
   
   # if data is a list, calculate NEON Level 1 data products recursively for each list element
  rpt <- lapply(idx, function(x) {
-   eddy4R.qaqc::wrap.neon.dp01.qfqm (qfInp = qfqm, MethMeas = MethMeas, TypeMeas = TypeMeas, dp01=x, RptExpd = RptExpd)
+   eddy4R.qaqc::wrap.dp01.qfqm.eddy (qfInp = qfqm, MethMeas = MethMeas, TypeMeas = TypeMeas, dp01=x, RptExpd = RptExpd)
                                      })
   
  names(rpt) <- idx
