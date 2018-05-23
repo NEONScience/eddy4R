@@ -33,8 +33,8 @@
 #' qf$amrs <- eddy4R.qaqc::def.qf.ecte(TimeBgn = TimeBgn, TimeEnd = TimeEnd, Freq = 40, Sens = "amrs", PcntQf = 0.05)
 #' 
 #' #grouping the set of the flags
-#' qfGrpCo2Turb <- eddy4R.qaqc::def.neon.dp01.qf.grp(qfInp = qf, MethMeas = "ecte", TypeMeas = "vali", dp01="co2Turb")
-#' qfGrpSoni <- eddy4R.qaqc::def.neon.dp01.qf.grp(qfInp = qf, MethMeas = "ecte", TypeMeas = "samp", dp01="soni")
+#' qfGrpCo2Turb <- eddy4R.qaqc::def.dp01.grp.qf(qfInp = qf, MethMeas = "ecte", TypeMeas = "vali", dp01="co2Turb")
+#' qfGrpSoni <- eddy4R.qaqc::def.dp01.grp.qf(qfInp = qf, MethMeas = "ecte", TypeMeas = "samp", dp01="soni")
 
 #' @seealso Currently none
 
@@ -68,9 +68,11 @@
 #     update @param format
 #   Ke Xu (2018-04-19)
 #     applied term name convention; replaced qfInput by qfInp
+#   Natchaya P-Durden (2018-05-23)
+#     rename function from def.neon.dp01.qf.grp() to def.dp01.grp.qf()
 ##############################################################################################
 
-def.neon.dp01.qf.grp <- function(
+def.dp01.grp.qf <- function(
   qfInp = list(),
   MethMeas = c("ecte", "ecse")[1],
   TypeMeas = c("samp", "vali")[1], 
@@ -1685,5 +1687,5 @@ if (MethMeas == "ecse") {
 #return values
 return(rpt)
   
-#end function def.neon.dp01.qf.grp()
+#end function def.dp01.grp.qf()
 }
