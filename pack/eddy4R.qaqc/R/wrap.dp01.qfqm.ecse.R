@@ -56,8 +56,10 @@
 #     update @param format
 #   Ke Xu (2018-04-19)
 #     applied term name convention; replaced qfInput by qfInp
+#   Natchaya P-Durden (2018-05-23)
+#     rename function from wrap.neon.dp01.qfqm.ecse() to wrap.dp01.qfqm.ecse()
 ##############################################################################################
-wrap.neon.dp01.qfqm.ecse <- function(
+wrap.dp01.qfqm.ecse <- function(
   dp01 = c("co2Stor", "h2oStor", "tempAirLvl", "tempAirTop", "isoCo2", "isoH2o")[1],
   lvl,
   lvlMfcSampStor = NULL,
@@ -1330,4 +1332,4 @@ wrap.neon.dp01.qfqm.ecse <- function(
   #return results
   return(rpt)
   
-}#end function wrap.neon.dp01.qfqm.ecse()
+}#end function wrap.dp01.qfqm.ecse()
