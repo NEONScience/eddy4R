@@ -38,11 +38,11 @@
 #' qf$soniAmrs <- eddy4R.qaqc::def.qf.ecte(TimeBgn = TimeBgn, TimeEnd = TimeEnd, Freq = 40, Sens = "soniAmrs", PcntQf = 0.05)
 #' #calculate quality metric, qmAlpha, qmBeta, qfFinl
 #' qfqm <- list()
-#' qfqm$co2Turb <- eddy4R.qaqc::wrap.neon.dp01.qfqm (qfInp = qf, MethMeas = "ecte", TypeMeas = "samp", dp01="co2Turb")
-#' qfqm$h2oTurb <- eddy4R.qaqc::wrap.neon.dp01.qfqm (qfInp = qf, MethMeas = "ecte", TypeMeas = "samp", dp01="h2oTurb")
-#' qfqm$soni <- eddy4R.qaqc::wrap.neon.dp01.qfqm (qfInp = qf, MethMeas = "ecte", TypeMeas = "samp", dp01="soni")
+#' qfqm$co2Turb <- eddy4R.qaqc::wrap.dp01.qfqm.eddy (qfInp = qf, MethMeas = "ecte", TypeMeas = "samp", dp01="co2Turb")
+#' qfqm$h2oTurb <- eddy4R.qaqc::wrap.dp01.qfqm.eddy (qfInp = qf, MethMeas = "ecte", TypeMeas = "samp", dp01="h2oTurb")
+#' qfqm$soni <- eddy4R.qaqc::wrap.dp01.qfqm.eddy (qfInp = qf, MethMeas = "ecte", TypeMeas = "samp", dp01="soni")
 #' # Example with expanded quality metrics included
-#' qfqm$soniAmrs <- eddy4R.qaqc::wrap.neon.dp01.qfqm (qfInp = qf, MethMeas = "ecte", TypeMeas = "samp", RptExpd = TRUE, dp01="soniAmrs")
+#' qfqm$soniAmrs <- eddy4R.qaqc::wrap.dp01.qfqm.eddy (qfInp = qf, MethMeas = "ecte", TypeMeas = "samp", RptExpd = TRUE, dp01="soniAmrs")
 
 #' @seealso Currently none
 
@@ -67,9 +67,10 @@
 #     applied term name convention; replaced qfInput by qfInp
 #   Natchaya P-Durden (2018-05-23)
 #     rename function from def.neon.dp01.qf.grp() to def.dp01.grp.qf()
+#     rename function from wrap.neon.dp01.qfqm() to wrap.dp01.qfqm.eddy()
 ##############################################################################################
 
-wrap.neon.dp01.qfqm <- function(
+wrap.dp01.qfqm.eddy <- function(
   qfInp = list(),
   MethMeas = c("ecte", "ecse")[1],
   TypeMeas = c("samp", "vali")[1], 

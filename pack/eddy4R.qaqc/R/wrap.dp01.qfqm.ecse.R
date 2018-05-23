@@ -58,6 +58,7 @@
 #     applied term name convention; replaced qfInput by qfInp
 #   Natchaya P-Durden (2018-05-23)
 #     rename function from wrap.neon.dp01.qfqm.ecse() to wrap.dp01.qfqm.ecse()
+#     rename function from wrap.neon.dp01.qfqm() to wrap.dp01.qfqm.eddy()
 ##############################################################################################
 wrap.dp01.qfqm.ecse <- function(
   dp01 = c("co2Stor", "h2oStor", "tempAirLvl", "tempAirTop", "isoCo2", "isoH2o")[1],
@@ -174,7 +175,7 @@ wrap.dp01.qfqm.ecse <- function(
             }
             
             #qfqm processing
-            rpt[[idxAgr]] <- eddy4R.qaqc::wrap.neon.dp01.qfqm(
+            rpt[[idxAgr]] <- eddy4R.qaqc::wrap.dp01.qfqm.eddy(
               qfInp = wrk$inpMask$qfqm, 
               MethMeas = "ecse",
               TypeMeas = "samp",
@@ -291,7 +292,7 @@ wrap.dp01.qfqm.ecse <- function(
           lapply(names(wrk$qfqm), function (x) wrk$inpMask$qfqm[[x]] <<- wrk$qfqm[[x]][idxTime[[paste0(PrdAgr, "min")]]$Bgn[idxAgr]:idxTime[[paste0(PrdAgr, "min")]]$End[idxAgr], , drop=FALSE])
           
           #qfqm processing
-          rpt[[idxAgr]] <- eddy4R.qaqc::wrap.neon.dp01.qfqm(
+          rpt[[idxAgr]] <- eddy4R.qaqc::wrap.dp01.qfqm.eddy(
             qfInp = wrk$inpMask$qfqm, 
             MethMeas = "ecse",
             TypeMeas = "samp",
@@ -380,7 +381,7 @@ wrap.dp01.qfqm.ecse <- function(
             lapply(names(wrk$qfqm), function (x) wrk$inpMask$qfqm[[x]] <<- wrk$qfqm[[x]][wrk$idx$idxBgn[idxAgr]:wrk$idx$idxEnd[idxAgr], ,drop = FALSE] )
             
             #qfqm processing
-            rpt[[idxAgr]] <- eddy4R.qaqc::wrap.neon.dp01.qfqm(
+            rpt[[idxAgr]] <- eddy4R.qaqc::wrap.dp01.qfqm.eddy(
               qfInp = wrk$inpMask$qfqm, 
               MethMeas = "ecse",
               TypeMeas = "vali",
@@ -481,7 +482,7 @@ wrap.dp01.qfqm.ecse <- function(
           lapply(names(wrk$qfqm), function (x) wrk$inpMask$qfqm[[x]] <<- wrk$qfqm[[x]][idxTime[[paste0(PrdAgr, "min")]]$Bgn[idxAgr]:idxTime[[paste0(PrdAgr, "min")]]$End[idxAgr], , drop = FALSE])
           
           #qfqm processing
-          rpt[[idxAgr]] <- eddy4R.qaqc::wrap.neon.dp01.qfqm(
+          rpt[[idxAgr]] <- eddy4R.qaqc::wrap.dp01.qfqm.eddy(
             qfInp = wrk$inpMask$qfqm, 
             MethMeas = "ecse",
             TypeMeas = "vali",
@@ -540,7 +541,7 @@ wrap.dp01.qfqm.ecse <- function(
       } 
       
       #qfqm processing
-      rpt[[idxAgr]] <- eddy4R.qaqc::wrap.neon.dp01.qfqm(
+      rpt[[idxAgr]] <- eddy4R.qaqc::wrap.dp01.qfqm.eddy(
         qfInp = wrk$inpMask$qfqm, 
         MethMeas = "ecse",
         TypeMeas = "samp",
@@ -635,7 +636,7 @@ wrap.dp01.qfqm.ecse <- function(
             }
             
             #qfqm processing
-            rpt[[idxAgr]] <- eddy4R.qaqc::wrap.neon.dp01.qfqm(
+            rpt[[idxAgr]] <- eddy4R.qaqc::wrap.dp01.qfqm.eddy(
               qfInp = wrk$inpMask$qfqm, 
               MethMeas = "ecse",
               TypeMeas = "samp",
@@ -736,7 +737,7 @@ wrap.dp01.qfqm.ecse <- function(
           lapply(names(wrk$qfqm), function (x) wrk$inpMask$qfqm[[x]] <<- wrk$qfqm[[x]][idxTime[[paste0(PrdAgr, "min")]]$Bgn[idxAgr]:idxTime[[paste0(PrdAgr, "min")]]$End[idxAgr],])
           
           #qfqm processing
-          rpt[[idxAgr]] <- eddy4R.qaqc::wrap.neon.dp01.qfqm(
+          rpt[[idxAgr]] <- eddy4R.qaqc::wrap.dp01.qfqm.eddy(
             qfInp = wrk$inpMask$qfqm, 
             MethMeas = "ecse",
             TypeMeas = "samp",
@@ -814,7 +815,7 @@ wrap.dp01.qfqm.ecse <- function(
             lapply(names(wrk$qfqm), function (x) wrk$inpMask$qfqm[[x]] <<- wrk$qfqm[[x]][wrk$idx$idxBgn[idxAgr]:wrk$idx$idxEnd[idxAgr],] )
             
             #qfqm processing
-            rpt[[idxAgr]] <- eddy4R.qaqc::wrap.neon.dp01.qfqm(
+            rpt[[idxAgr]] <- eddy4R.qaqc::wrap.dp01.qfqm.eddy(
               qfInp = wrk$inpMask$qfqm, 
               MethMeas = "ecse",
               TypeMeas = "vali",
@@ -918,7 +919,7 @@ wrap.dp01.qfqm.ecse <- function(
           lapply(names(wrk$qfqm), function (x) wrk$inpMask$qfqm[[x]] <<- wrk$qfqm[[x]][idxTime[[paste0(PrdAgr, "min")]]$Bgn[idxAgr]:idxTime[[paste0(PrdAgr, "min")]]$End[idxAgr],])
           
           #qfqm processing
-          rpt[[idxAgr]] <- eddy4R.qaqc::wrap.neon.dp01.qfqm(
+          rpt[[idxAgr]] <- eddy4R.qaqc::wrap.dp01.qfqm.eddy(
             qfInp = wrk$inpMask$qfqm, 
             MethMeas = "ecse",
             TypeMeas = "vali",
@@ -1005,7 +1006,7 @@ wrap.dp01.qfqm.ecse <- function(
             }
             
             #qfqm processing
-            rpt[[idxAgr]] <- eddy4R.qaqc::wrap.neon.dp01.qfqm(
+            rpt[[idxAgr]] <- eddy4R.qaqc::wrap.dp01.qfqm.eddy(
               qfInp = wrk$inpMask$qfqm, 
               MethMeas = "ecse",
               TypeMeas = "samp",
@@ -1106,7 +1107,7 @@ wrap.dp01.qfqm.ecse <- function(
           lapply(names(wrk$qfqm), function (x) wrk$inpMask$qfqm[[x]] <<- wrk$qfqm[[x]][idxTime[[paste0(PrdAgr, "min")]]$Bgn[idxAgr]:idxTime[[paste0(PrdAgr, "min")]]$End[idxAgr],])
           
           #qfqm processing
-          rpt[[idxAgr]] <- eddy4R.qaqc::wrap.neon.dp01.qfqm(
+          rpt[[idxAgr]] <- eddy4R.qaqc::wrap.dp01.qfqm.eddy(
             qfInp = wrk$inpMask$qfqm, 
             MethMeas = "ecse",
             TypeMeas = "samp",
@@ -1201,7 +1202,7 @@ wrap.dp01.qfqm.ecse <- function(
             lapply(names(wrk$qfqm), function (x) wrk$inpMask$qfqm[[x]] <<- wrk$qfqm[[x]][wrk$idx$idxBgn[idxAgr]:wrk$idx$idxEnd[idxAgr],] )
             
             #qfqm processing
-            rpt[[idxAgr]] <- eddy4R.qaqc::wrap.neon.dp01.qfqm(
+            rpt[[idxAgr]] <- eddy4R.qaqc::wrap.dp01.qfqm.eddy(
               qfInp = wrk$inpMask$qfqm, 
               MethMeas = "ecse",
               TypeMeas = "vali",
@@ -1302,7 +1303,7 @@ wrap.dp01.qfqm.ecse <- function(
           
           
           #qfqm processing
-          rpt[[idxAgr]] <- eddy4R.qaqc::wrap.neon.dp01.qfqm(
+          rpt[[idxAgr]] <- eddy4R.qaqc::wrap.dp01.qfqm.eddy(
             qfInp = wrk$inpMask$qfqm, 
             MethMeas = "ecse",
             TypeMeas = "vali",
