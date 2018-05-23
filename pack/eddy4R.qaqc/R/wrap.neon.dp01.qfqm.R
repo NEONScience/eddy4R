@@ -65,6 +65,8 @@
 #     added co2Stor and h2oStor in dp01 name input
 #   Ke Xu (2018-04-19)
 #     applied term name convention; replaced qfInput by qfInp
+#   Natchaya P-Durden (2018-05-23)
+#     rename function from def.neon.dp01.qf.grp() to def.dp01.grp.qf()
 ##############################################################################################
 
 wrap.neon.dp01.qfqm <- function(
@@ -80,7 +82,7 @@ wrap.neon.dp01.qfqm <- function(
   rpt <- list()
   tmp <- list()
   #grouping qf
-  inp <- eddy4R.qaqc::def.neon.dp01.qf.grp(qfInp = qfInp, MethMeas = MethMeas, TypeMeas = TypeMeas, dp01=dp01, idGas = idGas)
+  inp <- eddy4R.qaqc::def.dp01.grp.qf(qfInp = qfInp, MethMeas = MethMeas, TypeMeas = TypeMeas, dp01=dp01, idGas = idGas)
   
   #calculate qmAlpha, qmBeta, qfFinl
   tmp <- lapply(inp, FUN = eddy4R.qaqc::def.qf.finl)
