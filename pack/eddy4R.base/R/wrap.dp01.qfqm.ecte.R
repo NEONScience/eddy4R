@@ -36,7 +36,7 @@
 #' qf$amrs <- eddy4R.qaqc::def.qf.ecte(TimeBgn = TimeBgn, TimeEnd = TimeEnd, Freq = 40, Sens = "amrs", PcntQf = 0.05)
 #' #calculate quality metric, qmAlpha, qmBeta, qfFinl
 #' qfqm <- list()
-#' qfqm <- wrap.neon.dp01.qfqm.ec(qfqm = wrk$qfqm, idx = c("soni", "amrs", "co2Turb", "h2oTurb") )
+#' qfqm <- wrap.dp01.qfqm.ecte(qfqm = wrk$qfqm, idx = c("soni", "amrs", "co2Turb", "h2oTurb") )
 
 #' @seealso Currently none.
 
@@ -47,11 +47,13 @@
 #     original creation
 #   Ke Xu (2018-04-19)
 #     applied term name convention; replaced qfInput by qfInp
+#   Natchaya P-Durden (2018-05-23)
+#     rename function from wrap.neon.dp01.qfqm.ec() to wrap.dp01.qfqm.ecte()
 ##############################################################################################
 
 
-# start function wrap.neon.dp01.qfqm.ec()
-wrap.neon.dp01.qfqm.ec <- function(
+# start function wrap.dp01.qfqm.ecte()
+wrap.dp01.qfqm.ecte <- function(
   qfqm,
   idx = NULL,
   TypeMeas = "samp",
@@ -60,7 +62,7 @@ wrap.neon.dp01.qfqm.ec <- function(
 ) {
   
   # stop if data is a list but idx is not specified  
-  if(!is.list(qfqm)|is.null(idx)) stop("wrap.neon.dp01.qfqm.ec: qfqm is a list please specify idx.")
+  if(!is.list(qfqm)|is.null(idx)) stop("wrap.dp01.qfqm.ecte: qfqm is a list please specify idx.")
   
   
   
@@ -74,4 +76,4 @@ wrap.neon.dp01.qfqm.ec <- function(
   return(rpt)
   
 }
-# end function wrap.neon.dp01.qfqm.ec()
+# end function wrap.dp01.qfqm.ecte()

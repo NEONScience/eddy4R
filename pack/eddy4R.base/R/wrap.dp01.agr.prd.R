@@ -48,6 +48,8 @@
 #   Natchaya P-Durden (2018-05-22)
 #     rename function from wrap.neon.dp01() to wrap.dp01()
 #     rename function from wrap.neon.dp01.agr.prd() to wrap.dp01.agr.prd()
+#   Natchaya P-Durden (2018-05-23)
+#     rename function from wrap.neon.dp01.qfqm.ec() to wrap.dp01.qfqm.ecte()
 ##############################################################################################
 
 
@@ -130,7 +132,7 @@ for(idxAgr in 1:iter){
       idx = names(tmp$data)
     )
     
-    tmp$qfqmOut[[lvlAgr]] <- eddy4R.base::wrap.neon.dp01.qfqm.ec(qfqm = tmp$qfqm, idx = names(tmp$data), MethMeas = "ecte", RptExpd = FALSE )
+    tmp$qfqmOut[[lvlAgr]] <- eddy4R.base::wrap.dp01.qfqm.ecte(qfqm = tmp$qfqm, idx = names(tmp$data), MethMeas = "ecte", RptExpd = FALSE )
   
 tmp$data <- NULL
 tmp$qfqm <- NULL
