@@ -41,6 +41,8 @@
 #    applied eddy4R term name convention; replaced pos by set
 #   Natchaya P-Durden (2018-04-18)
 #    applied eddy4R term name convention; replaced val by valu
+#   Cove Sturtevant (2018-05-23)
+#     Changed term 'Pos' to 'Set' for multiple indices
 ##############################################################################################
 
 
@@ -184,19 +186,19 @@ def.plot.dp01.qfqm <- function (
     names(dataQmPass) <- base::c("time",nameColsIdx[setQmPass])
     dataQmPass <- reshape2::melt(dataQmPass,id="time")
     dataQmPass$variable <- base::sub("Pass","",dataQmPass$variable) # get rid of the "Pass" in the QM name
-    dataQmPass$variable <- base::sub("Pos","",dataQmPass$variable) # get rid of the "Pos" in the QM name
+    dataQmPass$variable <- base::sub("Set","",dataQmPass$variable) # get rid of the "Set" in the QM name
     
     dataQmFail <- base::data.frame(time=dataIdx$time, dataIdx[,nameColsIdx[setQmFail]])
     names(dataQmFail) <- base::c("time",nameColsIdx[setQmFail])
     dataQmFail <- reshape2::melt(dataQmFail,id="time")
     dataQmFail$variable <- base::sub("Fail","",dataQmFail$variable) # get rid of the "Fail" in the QM name
-    dataQmFail$variable <- base::sub("Pos","",dataQmFail$variable) # get rid of the "Pos" in the QM name
+    dataQmFail$variable <- base::sub("Set","",dataQmFail$variable) # get rid of the "Set" in the QM name
     
     dataQmNa <- base::data.frame(time=dataIdx$time, dataIdx[,nameColsIdx[setQmNa]])
     names(dataQmNa) <- base::c("time",nameColsIdx[setQmNa])
     dataQmNa <- reshape2::melt(dataQmNa,id="time")
     dataQmNa$variable <- base::sub("Na","",dataQmNa$variable) # get rid of the "Na" in the QM name
-    dataQmNa$variable <- base::sub("Pos","",dataQmNa$variable) # get rid of the "Pos" in the QM name
+    dataQmNa$variable <- base::sub("Set","",dataQmNa$variable) # get rid of the "Set" in the QM name
     
     
     # Plot the passing, failing, and na quality metrics
