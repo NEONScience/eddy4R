@@ -8,7 +8,7 @@ def.rglr(timeMeas, dataMeas, unitMeas = base::attributes(dataMeas)$unit,
   BgnRglr = NULL, EndRglr = NULL,
   TzRglr = base::attributes(BgnRglr)$tzone, FreqRglr, MethRglr = c("CybiEc",
   "cybiDflt", "zoo")[1], WndwRglr = c("Cntr", "Lead", "Trlg")[1],
-  PosWndw = c("Clst", "PosWndwMin", "PosWndwMax")[1], PrcsSec = 6)
+  IdxWndw = c("Clst", "IdxWndwMin", "IdxWndwMax")[1], PrcsSec = 6)
 }
 \arguments{
 \item{timeMeas}{A vector containing the observation times. Of class "POSIXlt" including timezone attribute, and of the same length as \code{dataMeas}. [-]}
@@ -35,7 +35,7 @@ Method "zoo" implements the regularization method using the zoo::na.approx funct
 
 \item{WndwRglr}{Position of the window for binning in the "CybiEc" method. \code{WndwRglr} can be centered [Cntr], leading [Lead], or trailing [Trlg] (defaults to centered).\cr}
 
-\item{PosWndw}{Determines which observation to allocate to a bin if multiple observations fall into a single bin when using the "CybiEc" method.. \code{PosWndw} can be set to closest [Clst], first [PosWndwMin], or last [PosWndwMax] (defaults to closest).\cr}
+\item{IdxWndw}{Determines which observation to allocate to a bin if multiple observations fall into a single bin when using the "CybiEc" method.. \code{IdxWndw} can be set to closest [Clst], first [IdxWndwMin], or last [IdxWndwMax] (defaults to closest).\cr}
 
 \item{PrcsSec}{A single numeric (integer) value indicating the operational precision of the seconds field of time vectors. Defaults to 6 (microsecond-precision). Values higher than 6 cannot be guaranteed to produce desired results.}
 }
@@ -84,7 +84,7 @@ def.rglr(
   FreqRglr = 10,
   MethRglr = "CybiEc",
   WndwRglr = "Cntr",
-  PosWndw = "Clst"
+  IdxWndw = "Clst"
 )  
 }
 \references{

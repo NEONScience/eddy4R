@@ -57,6 +57,8 @@
 #     applied term name convention; replaced dataIn by dataInp
 #   Natchaya P-Durden (2018-05-22)
 #     rename function from wrap.neon.read.hdf5.eddy() to wrap.hdf5.read()
+#   Cove Sturtevant (2018-05-23)
+#     Changed term 'Pos' to 'Set' for multiple indices
 ##############################################################################################
         
 wrap.hdf5.read <- function(
@@ -217,10 +219,10 @@ if(!(DateLoca %in% file)) {
     
     #########This section not needed after moving the names and units to the data table level###########################
     # which attributes are of type character? 
-#    Pos01 <- base::names(attr)[base::sapply(base::names(attr), function(x) base::is.character(attr[[x]]))]
+#    Set01 <- base::names(attr)[base::sapply(base::names(attr), function(x) base::is.character(attr[[x]]))]
     
     # split characters by comma separator and trim white spaces
-#    if(base::length(Pos01) > 0) attr[Pos01] <- base::sapply(Pos01, function(x) base::trimws(base::unlist(base::strsplit(x = attr[[x]], split = ","))))
+#    if(base::length(Set01) > 0) attr[Set01] <- base::sapply(Set01, function(x) base::trimws(base::unlist(base::strsplit(x = attr[[x]], split = ","))))
 
     # assign variable names to units to enable sorting
     base::names(attr$Unit) <- attr$Name
@@ -272,7 +274,7 @@ if(!(DateLoca %in% file)) {
       FreqRglr = FreqLoca,
       MethRglr = "CybiEc",
       WndwRglr = "Cntr",
-      PosWndw = "Clst"
+      IdxWndw = "Clst"
     )$dataRglr
 
     # print message to screen
