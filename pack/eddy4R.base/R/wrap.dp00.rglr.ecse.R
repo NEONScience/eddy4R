@@ -42,6 +42,8 @@
 #     applied term name convention; replaced dataIn by dataInp
 #   Natchaya P-Durden (2018-05-22)
 #     rename function from wrap.time.rglr.dp00.ecse() to wrap.dp00.rglr.ecse()
+#   Cove Sturtevant (2018-05-23)
+#     Changed term 'Pos' to 'Idx'
 ##############################################################################################
 wrap.dp00.rglr.ecse <- function(
   DirInp,
@@ -221,7 +223,7 @@ if (IdDp00 %in% c("DP0.00113")){
                                                                EndRglr = as.POSIXlt(max(timeRglr)),
                                                                FreqRglr = Freq,
                                                                MethRglr = "CybiEc",
-                                                               PosWndw = "PosWndwMax"
+                                                               IdxWndw = "IdxWndwMax"
   )$dataRglr)  
   #generate 0 value for unused valve
   #dataInp$valv <- as.integer (0)
@@ -293,7 +295,7 @@ if (IdDp00 %in% c("DP0.00113")){
                                                                  EndRglr = as.POSIXlt(max(timeRglr)),
                                                                  FreqRglr = Freq,
                                                                  MethRglr = "CybiEc",
-                                                                 PosWndw = "PosWndwMax"
+                                                                 IdxWndw = "IdxWndwMax"
     )$dataRglr)  
     #generate 0 value for unused valve
     #dataInp$valv <- as.integer (0)
@@ -366,7 +368,7 @@ if (IdDp00 %in% c("DP0.00113")){
                                                                  EndRglr = as.POSIXlt(max(timeRglr)),
                                                                  FreqRglr = Freq,
                                                                  MethRglr = "CybiEc",
-                                                                 PosWndw = "PosWndwMax"
+                                                                 IdxWndw = "IdxWndwMax"
     )$dataRglr)  
     #generate 0 value for unused valve
     #dataInp$valv <- as.integer (0)
@@ -440,7 +442,7 @@ if (IdDp00 %in% c("DP0.00113")){
                                                                  EndRglr = as.POSIXlt(max(timeRglr)),
                                                                  FreqRglr = Freq,
                                                                  MethRglr = "CybiEc",
-                                                                 PosWndw = "PosWndwMax"
+                                                                 IdxWndw = "IdxWndwMax"
     )$dataRglr)  
     #generate 0 value for unused valve
     #dataInp$valv <- as.integer (0)
@@ -531,7 +533,7 @@ if (IdDp00 %in% c("DP0.00114")){
                                                                EndRglr = as.POSIXlt(max(timeRglr)),
                                                                FreqRglr = Freq,
                                                                MethRglr = "CybiEc",
-                                                               PosWndw = "PosWndwMax"
+                                                               IdxWndw = "IdxWndwMax"
   )$dataRglr) 
   
   #combine regularize data for irgaValvLvl
@@ -1235,7 +1237,7 @@ if (IdDp00 %in% c("DP0.00115")){
                                                                EndRglr = as.POSIXlt(max(timeRglr)),
                                                                FreqRglr = Freq,
                                                                MethRglr = "CybiEc",
-                                                               PosWndw = "PosWndwMax"
+                                                               IdxWndw = "IdxWndwMax"
   )$dataRglr)
   
   dataTmp <- data.frame(dataInp[[subDp00[1]]]$data)
