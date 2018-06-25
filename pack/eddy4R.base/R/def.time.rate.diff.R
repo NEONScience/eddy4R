@@ -84,6 +84,7 @@ def.time.rate.diff <- function(
     rpt$qfqm[[idxAgr]]$timeBgn[[paste0("rate", capitalize(idxVar))]] <- format(timeDp02[wrk$whrData$End[idxAgr] - 1], format = "%Y-%m-%d %H:%M:%S")
     rpt$qfqm[[idxAgr]]$timeEnd[[paste0("rate", capitalize(idxVar))]] <- timeDp02[(wrk$whrData$End[idxAgr] - 1) + (resoTimeDp02[[idxDp]] - 1)] + 59
     
+  }
   
   return(rpt)
   
