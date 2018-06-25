@@ -4,11 +4,11 @@
 \alias{wrap.time.rglr.dp00.ecse}
 \title{Wrapper function: Time regularization for ECSE dp00}
 \usage{
-wrap.time.rglr.dp00.ecse(DirIn, Date, Site = "CPER", Dom = "D10", Freq,
+wrap.time.rglr.dp00.ecse(DirInp, Date, Site = "CPER", Dom = "D10", Freq,
   IdDp00, horVer)
 }
 \arguments{
-\item{DirIn}{Character: Input directory. [-]}
+\item{DirInp}{Character: Input directory. [-]}
 
 \item{Date}{Character: Processing date e.g. "20170521". [-]}
 
