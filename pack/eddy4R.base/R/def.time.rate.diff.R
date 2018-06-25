@@ -1,5 +1,5 @@
 ##############################################################################################
-#' @title Definition function: calculate time rate of change for ecse dp02
+#' @title Definition function: calculate time rate of change for ecse dp02 data and qfqm
 
 #' @author 
 #' Ke Xu \email{kxu@battelleecology.org}
@@ -29,7 +29,7 @@
 #' @export
 
 # changelog and author contributions / copyrights
-#   Ke Xu (2018-06-20)
+#   Ke Xu (2018-06-21)
 #     original creation
 ##############################################################################################################
 #Start of function call
@@ -48,9 +48,6 @@ def.time.rate.diff <- function(
   wrk <- list()
   wrk$whrData <- list()
   
-  #unit [s]
-  PrdWndwAgr <- 4 * 60
-  PrdIncrAgr <- resoTimeDp02[[idxDp]] * 60
   
   wrk$whrData <- eddy4R.base::def.idx.diff(
     PrdWndwAgr=PrdWndwAgr,
