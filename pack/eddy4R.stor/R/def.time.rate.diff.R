@@ -11,6 +11,8 @@
 #' @param \code{numDate} number of dates of the input data
 #' @param \code{PrdWndwAgr} window period, 240 s as the default
 #' @param \code{PrdIncrAgr} incremental period, 30 min, 1800 s as the default
+#' @param \code{Date} Date of the dataInp
+#' @param \code{qfqmFlag} whether the input data is actual data or qfqm, FALSE as default
 
 #' @return \code{rpt} is list returned that consists of the time rate of change of data and qfqm. 
 
@@ -39,7 +41,9 @@ def.time.rate.diff <- function(
   dataInp,
   numDate,
   PrdWndwAgr, 
-  PrdIncrAgr
+  PrdIncrAgr,
+  Date,
+  qfqmFlag = FALSE
 ){
   
   
@@ -58,32 +62,36 @@ def.time.rate.diff <- function(
   
   
   rpt <- list()
-  rpt$data <- list()
-  rpt$qfqm <- ist()
-  
+ 
   for(idxAgr in c(1:(length(wrk$whrData$Bgn) - 1))) {
     #idxAgr <- 1
-    rpt$data[[idxAgr]] <- list()
-    rpt$qfqm[[idxAgr]] <- list()
+    rpt[[idxAgr]] <- list()
     
-    rpt$data[[idxAgr]]$mean[[paste0("rate", capitalize(idxVar))]] <- (mean(tmpItpl[wrk$whrData$Bgn[idxAgr + 1]:wrk$whrData$End[idxAgr + 1]], na.rm=T) - 
-                                                                                               mean(tmpItpl[wrk$whrData$Bgn[idxAgr]:wrk$whrData$End[idxAgr]], na.rm=T))/(resoTimeDp02[[idxDp]]*60)
     
-    #determine qfFinl
-    rpt$qfqm[[idxAgr]]$qfFinl[[paste0("rate", capitalize(idxVar))]] <- as.integer(ifelse((any(tmpQfqmItpl[wrk$whrData$Bgn[idxAgr + 1]:wrk$whrData$End[idxAgr + 1]] == 1) |
-                                                                                                                       any(tmpQfqmItpl[wrk$whrData$Bgn[idxAgr]:wrk$whrData$End[idxAgr]] == 1)), 1, 0))
+    if(qfqmFlag){
+      #determine qfFinl
+      rpt[[idxAgr]]$qfFinl[[paste0("rate", capitalize(idxVar))]] <- as.integer(ifelse((any(dataInp[wrk$whrData$Bgn[idxAgr + 1]:wrk$whrData$End[idxAgr + 1]] == 1) |
+                                                                                              any(dataInp[wrk$whrData$Bgn[idxAgr]:wrk$whrData$End[idxAgr]] == 1)), 1, 0))
+    } else {
+      rpt[[idxAgr]]$mean[[paste0("rate", capitalize(idxVar))]] <- (mean(dataInp[wrk$whrData$Bgn[idxAgr + 1]:wrk$whrData$End[idxAgr + 1]], na.rm=T) - 
+                                                                          mean(dataInp[wrk$whrData$Bgn[idxAgr]:wrk$whrData$End[idxAgr]], na.rm=T))/PrdIncrAgr
+    }
+    
     
     #grab and add both time begin and time end to rpt
-    rpt$data[[idxAgr]]$timeBgn <- list()
-    rpt$data[[idxAgr]]$timeEnd <- list()
-    rpt$qfqm[[idxAgr]]$timeBgn <- list()
-    rpt$qfqm[[idxAgr]]$timeEnd <- list()
+    rpt[[idxAgr]]$timeBgn <- list()
+    rpt[[idxAgr]]$timeEnd <- list()
     
-    rpt$data[[idxAgr]]$timeBgn[[paste0("rate", capitalize(idxVar))]] <- format(timeDp02[wrk$whrData$End[idxAgr] - 1], format = "%Y-%m-%d %H:%M:%S")
-    rpt$data[[idxAgr]]$timeEnd[[paste0("rate", capitalize(idxVar))]] <- timeDp02[(wrk$whrData$End[idxAgr] - 1) + (resoTimeDp02[[idxDp]] - 1)] + 59
-    rpt$qfqm[[idxAgr]]$timeBgn[[paste0("rate", capitalize(idxVar))]] <- format(timeDp02[wrk$whrData$End[idxAgr] - 1], format = "%Y-%m-%d %H:%M:%S")
-    rpt$qfqm[[idxAgr]]$timeEnd[[paste0("rate", capitalize(idxVar))]] <- timeDp02[(wrk$whrData$End[idxAgr] - 1) + (resoTimeDp02[[idxDp]] - 1)] + 59
+    #assign output standard time
+    timeOut <- as.POSIXlt(seq.POSIXt(
+      from = as.POSIXlt(paste(Date, " 00:00:00", sep=""), format="%Y-%m-%d %H:%M:%OS", tz="UTC"),
+      to = as.POSIXlt(paste(Date, " 23:59:00", sep=""), format="%Y-%m-%d %H:%M:%OS", tz="UTC"),
+      by = 60
+    ), tz="UTC")
     
+    rpt[[idxAgr]]$timeBgn[[paste0("rate", capitalize(idxVar))]] <- format(timeOut[wrk$whrData$End[idxAgr] - 1], format = "%Y-%m-%d %H:%M:%S")
+    rpt[[idxAgr]]$timeEnd[[paste0("rate", capitalize(idxVar))]] <- timeOut[(wrk$whrData$End[idxAgr] - 1) + (PrdIncrAgr / 60 - 1)] + 59
+     
   }
   
   return(rpt)
