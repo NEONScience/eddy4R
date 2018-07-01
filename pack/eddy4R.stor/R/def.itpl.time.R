@@ -9,8 +9,7 @@
 
 #' @param \code{dataInp} Input data. 
 #' @param \code{methItpl} intepolation method: linear intepolation is the default method. 
-#' @param \code{resoTimeOut} the output temporal resolution
-#' @param \code{gapMax} maximum gap for intepolation. Gaps exist this parameter won't be intepolated due to long missing data [s]. 
+#' @param \code{WndwMax} maximum gap for intepolation. Gaps exist this parameter won't be intepolated due to long missing data [s]. 
 
 #' @return \code{rpt} is list returned that consists of the intepolated data. 
 
@@ -38,7 +37,7 @@
 def.itpl.time <- function(
   dataInp,
   methItpl,
-  gapMax
+  WndwMax
 ){
      
   
@@ -54,7 +53,7 @@ def.itpl.time <- function(
   #fractional UTC time [h UTC]
   timeFracOut <- timeOut$hour + timeOut$min / 60 + timeOut$sec / 3600
   #fractional day of year [DOY]
-  DOYFracOut <- timeOut$yday + 1 +  timeFracOut / 24
+  timeDoy <- timeOut$yday + 1 +  timeFracOut / 24
   #     #make sure that all entries are sorted ascending  
   #       DATA$tmpOut <- DATA$tmpOut[order(DATA$tmpOut$UTC, decreasing=FALSE),]
   #clean up  
@@ -99,7 +98,7 @@ def.itpl.time <- function(
       rpt <- zoo::na.approx(object=as.vector(dataInp$mean), x=#dataInp$timeFrac
                                   as.integer(dataInp$timeFrac * 60)
                                 , xout=as.integer(timeFracOut * 60)
-                                , method = "linear", maxgap=(gapMax/60), na.rm=FALSE, rule=1, f=0)
+                                , method = "linear", maxgap=(WndwMax/60), na.rm=FALSE, rule=1, f=0)
       
     }
     
