@@ -4,7 +4,7 @@
 \alias{def.itpl.time}
 \title{Definition function: temporal intepolation from discontinous data points into temporally continous data}
 \usage{
-def.itpl.time(dataInp, methItpl, gapMax)
+def.itpl.time(dataInp, methItpl, WndwMax)
 }
 \arguments{
 \item{\code{dataInp}}{Input data.}
@@ -13,7 +13,7 @@ def.itpl.time(dataInp, methItpl, gapMax)
 
 \item{\code{resoTimeOut}}{the output temporal resolution}
 
-\item{\code{gapMax}}{maximum gap for intepolation. Gaps exist this parameter won't be intepolated due to long missing data [s].}
+\item{\code{WndwMax}}{maximum gap for intepolation. Gaps exist this parameter won't be intepolated due to long missing data [s].}
 }
 \value{
 \code{rpt} is list returned that consists of the intepolated data.
