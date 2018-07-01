@@ -4,11 +4,11 @@
 \alias{def.dspk.br86}
 \title{Definition function: Median filter de-spiking}
 \usage{
-def.dspk.br86(dataIn, WndwFilt = 9, NumBin = 2, ThshReso = 10,
+def.dspk.br86(dataInp, WndwFilt = 9, NumBin = 2, ThshReso = 10,
   FracRealMin = 0.025)
 }
 \arguments{
-\item{dataIn}{Required. A univariate vector of integers or numerics of Input data}
+\item{dataInp}{Required. A univariate vector of integers or numerics of Input data}
 
 \item{WndwFilt}{Optional. A single integer value of filter width. Default = 9}
 
@@ -21,7 +21,7 @@ def.dspk.br86(dataIn, WndwFilt = 9, NumBin = 2, ThshReso = 10,
 \value{
 A list of:
 
-\code{dataIn} Same as input.
+\code{dataInp} Same as input.
 
 \code{WndwFilt} Same as input.
 
@@ -39,7 +39,7 @@ A list of:
 
 \code{dataNorm} Numeric vector of input data normalized to mean 0 and standard deviation of 1
 
-\code{dataNormDiff} Numeric vector of differences between subsequent values of \code{dataNorm}. Length = 1-length(dataIn)
+\code{dataNormDiff} Numeric vector of differences between subsequent values of \code{dataNorm}. Length = 1-length(dataInp)
 
 \code{resoDataNorm} Numeric value. Measurement resolution (assumed to be smallest recorded change in \code{dataNorm})
 
@@ -71,9 +71,9 @@ A list of:
 
 \code{idxThshBinMaxFinl} Integer. Final maximum threshold index of histogram bin within \code{histDiffFinl} for spike determination
 
-\code{setSpk} Indices of determined spikes within \code{dataIn}
+\code{setSpk} Indices of determined spikes within \code{dataInp}
 
-\code{qfSpk} Integer. Quality flag values [-1,0,1] for despike test, matching same size as \code{dataIn}
+\code{qfSpk} Integer. Quality flag values [-1,0,1] for despike test, matching same size as \code{dataInp}
 }
 \description{
 Function definition. Median filter de-spiking\cr

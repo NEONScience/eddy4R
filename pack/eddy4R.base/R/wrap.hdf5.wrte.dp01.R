@@ -8,7 +8,7 @@
 #' Wrapper function. To write NEON Level 1 data product descriptive statistics (mean, minimum, maximum, variance, number of non-NA points), quality flags and quality metrics, and uncertainty quantification to an output HDF5 file. 
 
 #' @param inpList A list of including dp01 data, quality flags and quality metrics, and uncertainty calculations to package and write to an output HDF5 file
-#' @param FileIn The file name for the input dp0p HDF5 file to grab metadata
+#' @param FileInp The file name for the input dp0p HDF5 file to grab metadata
 #' @param FileOut The file name for the output HDF5 file
 #' @param SiteLoca Character: Site location.
 #' @param LvlTowr The tower level that the sensor data is being collected in NEON data product convention (HOR_VER)
@@ -48,6 +48,12 @@
 #     applied term name convention; replace LevlTowr by LvlTowr
 #   Natchaya P-Durden (2018-04-12)
 #    applied eddy4R term name convention; replaced fid by idFile
+#   Ke Xu (2018-04-19)
+#     applied term name convention; replaced FileIn by FileInp
+#    Natchaya P-Durden (2018-05-11)
+#     rename function from def.hdf5.dp01.pack() to def.hdf5.pack.dp01()
+#    Natchaya P-Durden (2018-05-22)
+#     rename function from def.para.hdf5.dp01() to def.hdf5.copy.para()
 ##############################################################################################
 
 
@@ -55,7 +61,7 @@
 
 wrap.hdf5.wrte.dp01 <- function(
   inpList,
-  FileIn,
+  FileInp,
   FileOut,
   SiteLoca,
   LvlTowr,
@@ -72,20 +78,20 @@ outList <- list()
 
 
 #Packaging 30-min dp01 data output for writing to HDF5 file
-outList$data <- sapply(names(inpList$data), function(x) eddy4R.base::def.hdf5.dp01.pack(inpList = inpList$data, time = inpList$time, Dp01 = x))
+outList$data <- sapply(names(inpList$data), function(x) eddy4R.base::def.hdf5.pack.dp01(inpList = inpList$data, time = inpList$time, Dp01 = x))
 
 #Unit conversion for dp01 30 min data
 outList$data <- eddy4R.base::wrap.unit.conv.out.ec(inpList = outList$data, MethType = "data") 
 
 #Packaging 30-min dp01 qfqm output for writing to HDF5 file
-outList$qfqm <- sapply(names(inpList$qfqm), function(x) eddy4R.base::def.hdf5.dp01.pack(inpList = inpList$qfqm, time = inpList$time, Dp01 = x))
+outList$qfqm <- sapply(names(inpList$qfqm), function(x) eddy4R.base::def.hdf5.pack.dp01(inpList = inpList$qfqm, time = inpList$time, Dp01 = x))
 
 #Applying units to each output in dp01 30 min qfqm
 outList$qfqm <- eddy4R.base::wrap.unit.conv.out.ec(inpList = outList$qfqm, MethType = "qfqm")
 
 if(MethUcrt == TRUE){
 #Packaging 30-min dp01 ucrt output for writing to HDF5 file
-outList$ucrt <- sapply(names(inpList$ucrt), function(x) eddy4R.base::def.hdf5.dp01.pack(inpList = inpList$ucrt, time = inpList$time, Dp01 = x))
+outList$ucrt <- sapply(names(inpList$ucrt), function(x) eddy4R.base::def.hdf5.pack.dp01(inpList = inpList$ucrt, time = inpList$time, Dp01 = x))
 
 #Unit conversion for dp01 30 min ucrt values
 outList$ucrt <- eddy4R.base::wrap.unit.conv.out.ec(inpList = outList$ucrt, MethType = "ucrt") 
@@ -93,20 +99,20 @@ outList$ucrt <- eddy4R.base::wrap.unit.conv.out.ec(inpList = outList$ucrt, MethT
 
 if(MethSubAgr == TRUE){
   #Packaging sub-aggregated (e.g.1-min) dp01 data for writing to HDF5 file
-  outList$dp01AgrSub$data <- sapply(names(inpList$dp01AgrSub$data), function(x) eddy4R.base::def.hdf5.dp01.pack(inpList = inpList$dp01AgrSub$data, time = inpList$dp01AgrSub$time, Dp01 = x))
+  outList$dp01AgrSub$data <- sapply(names(inpList$dp01AgrSub$data), function(x) eddy4R.base::def.hdf5.pack.dp01(inpList = inpList$dp01AgrSub$data, time = inpList$dp01AgrSub$time, Dp01 = x))
 
   #Unit conversion for dp01 sub-aggregated data
   outList$dp01AgrSub$data <- eddy4R.base::wrap.unit.conv.out.ec(inpList = outList$dp01AgrSub$data, MethType = "data") 
   
   #Packaging sub-aggregated (e.g.1-min) dp01 qfqm for writing to HDF5 file
-  outList$dp01AgrSub$qfqm <- sapply(names(inpList$dp01AgrSub$qfqm), function(x) eddy4R.base::def.hdf5.dp01.pack(inpList = inpList$dp01AgrSub$qfqm, time = inpList$dp01AgrSub$time, Dp01 = x))
+  outList$dp01AgrSub$qfqm <- sapply(names(inpList$dp01AgrSub$qfqm), function(x) eddy4R.base::def.hdf5.pack.dp01(inpList = inpList$dp01AgrSub$qfqm, time = inpList$dp01AgrSub$time, Dp01 = x))
   
   #Applying units to each output in dp01 sub-aggregrated qfqm
   outList$dp01AgrSub$qfqm <- eddy4R.base::wrap.unit.conv.out.ec(inpList = outList$dp01AgrSub$qfqm, MethType = "qfqm")
   
   if(MethUcrt == TRUE){
   #Packaging sub-aggregated (e.g.1-min) dp01 ucrt for writing to HDF5 file
-  outList$dp01AgrSub$ucrt <- sapply(names(inpList$dp01AgrSub$ucrt), function(x) eddy4R.base::def.hdf5.dp01.pack(inpList = inpList$dp01AgrSub$ucrt, time = inpList$dp01AgrSub$time, Dp01 = x))
+  outList$dp01AgrSub$ucrt <- sapply(names(inpList$dp01AgrSub$ucrt), function(x) eddy4R.base::def.hdf5.pack.dp01(inpList = inpList$dp01AgrSub$ucrt, time = inpList$dp01AgrSub$time, Dp01 = x))
   
   #Unit conversion for dp01 sub-aggregated ucrt values
   outList$dp01AgrSub$ucrt <- eddy4R.base::wrap.unit.conv.out.ec(inpList = outList$dp01AgrSub$ucrt, MethType = "ucrt")
@@ -185,6 +191,6 @@ if(MethDp04 == TRUE){
 ######################################################################
 #Writing metadata from input dp0p file to output dp01 file
 ######################################################################
-eddy4R.base::def.para.hdf5.dp01(FileIn = FileIn, FileOut = FileOut)
+eddy4R.base::def.hdf5.copy.para(FileInp = FileInp, FileOut = FileOut)
 
 }
