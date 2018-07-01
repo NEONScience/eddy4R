@@ -4,7 +4,8 @@
 \alias{def.time.rate.diff}
 \title{Definition function: calculate time rate of change for ecse dp02 data and qfqm}
 \usage{
-def.time.rate.diff(dataInp, numDate, PrdWndwAgr, PrdIncrAgr)
+def.time.rate.diff(dataInp, numDate, PrdWndwAgr, PrdIncrAgr, Date,
+  qfqmFlag = FALSE)
 }
 \arguments{
 \item{\code{dataInp}}{Input data.}
@@ -14,6 +15,10 @@ def.time.rate.diff(dataInp, numDate, PrdWndwAgr, PrdIncrAgr)
 \item{\code{PrdWndwAgr}}{window period, 240 s as the default}
 
 \item{\code{PrdIncrAgr}}{incremental period, 30 min, 1800 s as the default}
+
+\item{\code{Date}}{Date of the dataInp}
+
+\item{\code{qfqmFlag}}{whether the input data is actual data or qfqm, FALSE as default}
 }
 \value{
 \code{rpt} is list returned that consists of the time rate of change of data and qfqm.
