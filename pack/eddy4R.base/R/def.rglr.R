@@ -24,7 +24,7 @@
 #' is documented in NEON.DOC.001069.\cr
 #' Method "zoo" implements the regularization method using the zoo::na.approx function. This method can only handle up to millisecond precision (PrcsSec=3)
 #' @param WndwRglr Position of the window for binning in the "CybiEc" method. \code{WndwRglr} can be centered [Cntr], leading [Lead], or trailing [Trlg] (defaults to centered).\cr
-#' @param PosWndw Determines which observation to allocate to a bin if multiple observations fall into a single bin when using the "CybiEc" method.. \code{PosWndw} can be set to closest [Clst], first [PosWndwMin], or last [PosWndwMax] (defaults to closest).\cr
+#' @param IdxWndw Determines which observation to allocate to a bin if multiple observations fall into a single bin when using the "CybiEc" method.. \code{IdxWndw} can be set to closest [Clst], first [IdxWndwMin], or last [IdxWndwMax] (defaults to closest).\cr
 #' @param PrcsSec A single numeric (integer) value indicating the operational precision of the seconds field of time vectors. Defaults to 6 (microsecond-precision). Values higher than 6 cannot be guaranteed to produce desired results.
 
 
@@ -74,7 +74,7 @@
 #'   FreqRglr = 10,
 #'   MethRglr = "CybiEc",
 #'   WndwRglr = "Cntr",
-#'   PosWndw = "Clst"
+#'   IdxWndw = "Clst"
 #' )  
 
 #' @seealso ?zoo:na.approx, ?stats::approx
@@ -102,6 +102,8 @@
 #     added more complete error checking
 #   Cove Sturtevant (2017-12-22)
 #     Added error checking for empty data when using cybiDflt method
+#   Cove Sturtevant (2018-05-23)
+#     Changed term 'pos' to 'idx' for single indices, to 'set' for multiple indices
 ##############################################################################################
 
 def.rglr <- function(
@@ -114,7 +116,7 @@ def.rglr <- function(
   FreqRglr,
   MethRglr= c("CybiEc", "cybiDflt", "zoo")[1],
   WndwRglr = c("Cntr", "Lead", "Trlg")[1],
-  PosWndw = c("Clst","PosWndwMin","PosWndwMax")[1],
+  IdxWndw = c("Clst","IdxWndwMin","IdxWndwMax")[1],
   PrcsSec = 6
 ){
   
@@ -125,8 +127,8 @@ def.rglr <- function(
   }
 
   # Error-check
-  if(!(PosWndw %in% c("Clst","PosWndwMin","PosWndwMax"))){
-    stop(base::paste0('Unrecognized value for input PosWndw. Options are "Clst","PosWndwMin","PosWndwMax" (case-sensitive). This parameter is used only for MethRglr=CybiEc.'))
+  if(!(IdxWndw %in% c("Clst","IdxWndwMin","IdxWndwMax"))){
+    stop(base::paste0('Unrecognized value for input IdxWndw. Options are "Clst","IdxWndwMin","IdxWndwMax" (case-sensitive). This parameter is used only for MethRglr=CybiEc.'))
   }
   
   # Error-check
@@ -183,9 +185,9 @@ def.rglr <- function(
       stop("Input 'TzRglr' is required for the 'CybiEc' method")
     }
     
-    #Check if PosWndw is set to "closest" the WndwRglr must be set to "centered"
-    if(PosWndw == "Clst" & !(WndwRglr == "Cntr")){
-      stop("If PosWndw is set to closest the WndwRglr must be set to centered")
+    #Check if IdxWndw is set to "closest" the WndwRglr must be set to "centered"
+    if(IdxWndw == "Clst" & !(WndwRglr == "Cntr")){
+      stop("If IdxWndw is set to closest the WndwRglr must be set to centered")
     }
   }
  
@@ -317,11 +319,11 @@ def.rglr <- function(
   if(MethRglr == "cybiDflt") {
     
     # Which time bin does each measurement time fit into?
-    posRglr <- base::.bincode(timeMeasNumc,timeRglrNumc,right=FALSE) # which bin?
-    dataMeas <- base::subset(dataMeas,!base::is.na(posRglr),select=1:numVar) # Get rid of anomalous times/data not fitting in any bin
-    timeMeasNumc <- base::subset(timeMeasNumc,!base::is.na(posRglr))
-    posRglr <- base::subset(posRglr,!base::is.na(posRglr))
-    dupl <- base::duplicated(posRglr) # which fall into an already occupied bin?
+    idxRglr <- base::.bincode(timeMeasNumc,timeRglrNumc,right=FALSE) # which bin?
+    dataMeas <- base::subset(dataMeas,!base::is.na(idxRglr),select=1:numVar) # Get rid of anomalous times/data not fitting in any bin
+    timeMeasNumc <- base::subset(timeMeasNumc,!base::is.na(idxRglr))
+    idxRglr <- base::subset(idxRglr,!base::is.na(idxRglr))
+    dupl <- base::duplicated(idxRglr) # which fall into an already occupied bin?
     
     # intialize regularized timeseries
     if(base::is.character(dataMeas$data) || base::is.factor(dataMeas$data)){
@@ -333,7 +335,7 @@ def.rglr <- function(
     # Pull the first value that falls within each bin
     for(idxVar in 1:numVar){
       # place the first value falling into each bin
-      dataRglr[posRglr[!dupl],idxVar] <- dataMeas[which(!dupl),idxVar]
+      dataRglr[idxRglr[!dupl],idxVar] <- dataMeas[which(!dupl),idxVar]
     }
     dataRglr <- base::as.data.frame(dataRglr,stringsAsFactors=FALSE) # Make data frame
     base::names(dataRglr) <- nameVar # Assign names same as dataMeas
@@ -354,19 +356,19 @@ def.rglr <- function(
   if(MethRglr == "CybiEc") {
     
     # delete rows with times that are duplicates of rows with smaller indices
-    pos01 <- !base::duplicated(timeMeasNumc)
-    if(base::sum(!pos01) != 0) {
-      dataMeas <- base::subset(x=dataMeas,subset=pos01,select=base::rep(TRUE,numVar))
-      timeMeasNumc <- timeMeasNumc[pos01]
-    }; base::rm(pos01)
+    set01 <- !base::duplicated(timeMeasNumc)
+    if(base::sum(!set01) != 0) {
+      dataMeas <- base::subset(x=dataMeas,subset=set01,select=base::rep(TRUE,numVar))
+      timeMeasNumc <- timeMeasNumc[set01]
+    }; base::rm(set01)
     
     
     # reduce dataMeas to variables that are of type double or integer (not character!)
-    pos02 <- base::sapply(1:base::ncol(dataMeas), function(x) base::typeof(dataMeas[[x]]))
-    pos02 <- which((pos02 %in% c("double", "integer")))
-    dataMeas <- base::subset(dataMeas, select = pos02)
-    unitMeas <- unitMeas[pos02]
-    base::rm(pos02)
+    set02 <- base::sapply(1:base::ncol(dataMeas), function(x) base::typeof(dataMeas[[x]]))
+    set02 <- which((set02 %in% c("double", "integer")))
+    dataMeas <- base::subset(dataMeas, select = set02)
+    unitMeas <- unitMeas[set02]
+    base::rm(set02)
     
     # Number of variables in dataframe
     numVar <- base::ncol(dataMeas)
@@ -388,42 +390,42 @@ def.rglr <- function(
     # Which time bin does each measurement time fit into? Allocating times to bins.
     if(WndwRglr == "Lead"){
       # If the window is leading, include values equal to the right edge of the bin
-      posRglr <- base::.bincode(timeMeasNumc,timeWndw,right=TRUE) # which bin?
+      idxRglr <- base::.bincode(timeMeasNumc,timeWndw,right=TRUE) # which bin?
     } else {
       # If the window is trailing or centered, do not include values at the right edge of the bin
-      posRglr <- base::.bincode(timeMeasNumc,timeWndw,right=FALSE) # which bin?
+      idxRglr <- base::.bincode(timeMeasNumc,timeWndw,right=FALSE) # which bin?
       
     }
     
     # Get rid of anomalous times/data not fitting in any bin
-    dataMeas <- base::subset(dataMeas,!base::is.na(posRglr),select=1:numVar) # Get rid of anomalous times/data not fitting in any bin
-    timeMeasNumc <- base::subset(timeMeasNumc,!base::is.na(posRglr)) 
-    posRglr <- base::subset(posRglr,!base::is.na(posRglr))
+    dataMeas <- base::subset(dataMeas,!base::is.na(idxRglr),select=1:numVar) # Get rid of anomalous times/data not fitting in any bin
+    timeMeasNumc <- base::subset(timeMeasNumc,!base::is.na(idxRglr)) 
+    idxRglr <- base::subset(idxRglr,!base::is.na(idxRglr))
     
     # Checking for multiple values in a single bin with a logic vector 
-    if(anyDuplicated(posRglr) > 0){
-      if(PosWndw == "Clst"){
+    if(anyDuplicated(idxRglr) > 0){
+      if(IdxWndw == "Clst"){
         #Determin all duplicates both forward and backward. Otherwise, only duplicates after the first observation of a value are flagged.
-        dupl <- base::duplicated(posRglr)|duplicated(posRglr,fromLast = TRUE)
+        dupl <- base::duplicated(idxRglr)|duplicated(idxRglr,fromLast = TRUE)
         #Determine vector positions for the duplicate positions
-        posDupl <- which(duplicated(posRglr)|duplicated(posRglr,fromLast = TRUE))
-        #Determine unique values of Wndw from posRglr for the duplicate positions
-        WndwDupl <- posRglr[posDupl]
+        setDupl <- which(duplicated(idxRglr)|duplicated(idxRglr,fromLast = TRUE))
+        #Determine unique values of Wndw from idxRglr for the duplicate positions
+        WndwDupl <- idxRglr[setDupl]
         WndwDupl <- unique(WndwDupl)
         #Determine the closest values to the regularized timestamp by minimum absolute deviation and change the value in the logic vector.
-        posGood <- sapply(WndwDupl, function(x) posDupl[which.min(abs(timeRglrNumc[x]-timeMeasNumc[posDupl]))])
-        dupl[posGood] <- FALSE
-      } else if(PosWndw == "PosWndwMin"){
-        dupl <- base::duplicated(posRglr) # which fall into an already occupied bin with higher indices flagged as duplicates.
-      } else if(PosWndw == "PosWndwMax"){
-        dupl <- base::duplicated(posRglr, fromLast = TRUE) # which fall into an already occupied bin with lower indices flagged as duplicates.
-      }}else{dupl <- rep(FALSE, length(posRglr))} #If no duplicates exist, all equal FALSE
+        idxGood <- sapply(WndwDupl, function(x) setDupl[which.min(abs(timeRglrNumc[x]-timeMeasNumc[setDupl]))])
+        dupl[idxGood] <- FALSE
+      } else if(IdxWndw == "IdxWndwMin"){
+        dupl <- base::duplicated(idxRglr) # which fall into an already occupied bin with higher indices flagged as duplicates.
+      } else if(IdxWndw == "IdxWndwMax"){
+        dupl <- base::duplicated(idxRglr, fromLast = TRUE) # which fall into an already occupied bin with lower indices flagged as duplicates.
+      }}else{dupl <- rep(FALSE, length(idxRglr))} #If no duplicates exist, all equal FALSE
     
-    # Pull the value that chosen by PosWndw within each bin 
+    # Pull the value that chosen by IdxWndw within each bin 
     dataRglr <- base::data.frame(base::matrix(data=NA*1.5,nrow=length(timeRglrNumc),ncol=numVar)) # initialize, mulitply by 1.5 to give numeric
     for(idxVar in 1:numVar){
       # place the value falling into each bin
-      dataRglr[posRglr[!dupl],idxVar] <- dataMeas[which(!dupl),idxVar]
+      dataRglr[idxRglr[!dupl],idxVar] <- dataMeas[which(!dupl),idxVar]
     }
     base::names(dataRglr) <- nameVar # Assign names same as dataMeas
 

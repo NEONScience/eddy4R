@@ -56,6 +56,8 @@
 #    applied eddy4R term name convention; replaced posQf by setQf
 #   Natchaya P-Durden (2018-04-11)
 #    applied eddy4R term name convention; replaced pos by set
+#   Natchaya P-Durden (2018-05-22)
+#     rename function from def.neon.dp01() to def.dp01()
 ##############################################################################################
 
 wrap.dp01.qfqm <- function (
@@ -244,7 +246,7 @@ wrap.dp01.qfqm <- function (
       }
       
       # Summary statistics
-      statSmmy <- eddy4R.base::def.neon.dp01(data=data[[idxVar]][setData])
+      statSmmy <- eddy4R.base::def.dp01(data=data[[idxVar]][setData])
       
       # Quality metrics
       qm <- eddy4R.qaqc::def.qm(qf=qf[[idxVar]][setData,])
