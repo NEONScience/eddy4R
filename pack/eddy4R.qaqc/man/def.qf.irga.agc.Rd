@@ -4,7 +4,7 @@
 \alias{def.qf.irga.agc}
 \title{Definition function: Signal strength flag for IRGA}
 \usage{
-def.qf.irga.agc(qfIrgaAgc, critThsh = 0.5)
+def.qf.irga.agc(qfIrgaAgc, critThsh = 5e-01)
 }
 \arguments{
 \item{qfIrgaAgc}{The quality metric derived from the IRGA diagnostics to determine signal strength. Presented as a dimensionless fraction. [-]}
