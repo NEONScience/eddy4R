@@ -33,7 +33,7 @@
 #Start of function call
 ##############################################################################################################
 
-def.ecse.dp04 <- function(
+def.flux.stor <- function(
   dataInp,
   lvlTowr
 ){
