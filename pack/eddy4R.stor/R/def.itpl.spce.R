@@ -9,7 +9,7 @@
 
 #' @param \code{dataInp} Input data. 
 #' @param \code{methItpl} intepolation method: linear intepolation is the default method. 
-#' @param \code{resoSpacOut} the output spatial resolution
+#' @param \code{resoSpceOut} the output spatial resolution
 #' @param \code{lvlTowr} the tower levels
 
 #' @return \code{rpt} is list returned that consists of the intepolated data. 
@@ -35,10 +35,10 @@
 #Start of function call
 ##############################################################################################################
 
-def.itpl.spac <- function(
+def.itpl.spce <- function(
   dataInp,
   methItpl,
-  resoSpacOut,
+  resoSpceOut,
   lvlTowr
 ){
   
@@ -47,33 +47,33 @@ def.itpl.spac <- function(
   
   #dp03 output vertical standard
   #vertical resolution is 0.1 m
-  spacStad <- c(1:(max(lvlTowr)/resoSpacOut)) * resoSpacOut
+  spceStad <- c(1:(max(lvlTowr)/resoSpceOut)) * resoSpceOut
   
   
   #determine which datapoints to assess     
-  whrLgth <- length(which(!is.na(dataInp)))
+  setLgth <- length(which(!is.na(dataInp)))
   
   #more than 2 values (minimum required by approx() function)
-  if(whrLgth >= 2) {
+  if(setLgth >= 2) {
     
     if(methItpl == "linear"){
       rpt <- zoo::na.approx(object=as.vector(dataInp), x=#dataInp$timeFrac
                                   lvlTowr
-                                , xout=spacStad
+                                , xout=spceStad
                                 , method = "linear", 
                                 na.rm=TRUE#,#if you want begining and end to be constant fitted, na.rm=TRUE
                                 #rule=1, f=0
       )
       
-      rpt <- c(rep(rpt[1], length(spacStad) - length(rpt)), rpt)
+      rpt <- c(rep(rpt[1], length(spceStad) - length(rpt)), rpt)
     }
     
     
   } else {
     
-    if(whrLgth == 1) rpt <- rep(dataInp[which(!is.na(dataInp))], length(spacStad))
+    if(setLgth == 1) rpt <- rep(dataInp[which(!is.na(dataInp))], length(spceStad))
     
-    if(whrLgth == 0) rpt <- rep(NaN, length(spacStad))
+    if(setLgth == 0) rpt <- rep(NaN, length(spceStad))
   }
   
   return(rpt)

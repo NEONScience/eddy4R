@@ -48,7 +48,7 @@ def.time.rate.diff <- function(
   
   
   #identify idx for 4 minute average----------
-  whrData <- eddy4R.base::def.idx.diff(
+  setData <- eddy4R.base::def.idx.diff(
     PrdWndwAgr=PrdWndwAgr,
     PrdIncrAgr=PrdIncrAgr,
     numDate=numDate
@@ -58,19 +58,19 @@ def.time.rate.diff <- function(
   
   rpt <- list()
  
-  for(idxAgr in c(1:(length(whrData$Bgn) - 1))) {
+  for(idxAgr in c(1:(length(setData$Bgn) - 1))) {
     #idxAgr <- 1
     rpt[[idxAgr]] <- list()
     
     #qfqm or data
     if(qfqmFlag){
       #determine qfFinl
-      rpt[[idxAgr]]$qfFinl[[paste0("rate", capitalize(idxVar))]] <- as.integer(ifelse((any(dataInp[whrData$Bgn[idxAgr + 1]:whrData$End[idxAgr + 1]] == 1) |
-                                                                                              any(dataInp[whrData$Bgn[idxAgr]:whrData$End[idxAgr]] == 1)), 1, 0))
+      rpt[[idxAgr]]$qfFinl[[paste0("rate", capitalize(idxVar))]] <- as.integer(ifelse((any(dataInp[setData$Bgn[idxAgr + 1]:setData$End[idxAgr + 1]] == 1) |
+                                                                                              any(dataInp[setData$Bgn[idxAgr]:setData$End[idxAgr]] == 1)), 1, 0))
     } else {
       #calculate time rate of change
-      rpt[[idxAgr]]$mean[[paste0("rate", capitalize(idxVar))]] <- (mean(dataInp[whrData$Bgn[idxAgr + 1]:whrData$End[idxAgr + 1]], na.rm=T) - 
-                                                                          mean(dataInp[whrData$Bgn[idxAgr]:whrData$End[idxAgr]], na.rm=T))/PrdIncrAgr
+      rpt[[idxAgr]]$mean[[paste0("rate", capitalize(idxVar))]] <- (mean(dataInp[setData$Bgn[idxAgr + 1]:setData$End[idxAgr + 1]], na.rm=T) - 
+                                                                          mean(dataInp[setData$Bgn[idxAgr]:setData$End[idxAgr]], na.rm=T))/PrdIncrAgr
     }
     
     
@@ -85,8 +85,8 @@ def.time.rate.diff <- function(
       by = 60
     ), tz="UTC")
     
-    rpt[[idxAgr]]$timeBgn[[paste0("rate", capitalize(idxVar))]] <- format(timeOut[whrData$End[idxAgr] - 1], format = "%Y-%m-%d %H:%M:%S")
-    rpt[[idxAgr]]$timeEnd[[paste0("rate", capitalize(idxVar))]] <- timeOut[(whrData$End[idxAgr] - 1) + (PrdIncrAgr / 60 - 1)] + 59
+    rpt[[idxAgr]]$timeBgn[[paste0("rate", capitalize(idxVar))]] <- format(timeOut[setData$End[idxAgr] - 1], format = "%Y-%m-%d %H:%M:%S")
+    rpt[[idxAgr]]$timeEnd[[paste0("rate", capitalize(idxVar))]] <- timeOut[(setData$End[idxAgr] - 1) + (PrdIncrAgr / 60 - 1)] + 59
      
   }
   

@@ -85,11 +85,11 @@ def.itpl.time <- function(
   
   
   #data: determine which datapoints to assess            
-  whrLgth <- length(which(!is.na(dataInp$mean)))
+  setLgth <- length(which(!is.na(dataInp$mean)))
   
   
   #less than 2 values (minimum required by approx() function)
-  if(whrLgth < 2) {
+  if(setLgth < 2) {
     
     rpt <- as.numeric(rep(NA, length(timeOut)))
     
