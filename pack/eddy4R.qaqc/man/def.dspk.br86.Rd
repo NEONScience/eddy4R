@@ -5,7 +5,7 @@
 \title{Definition function: Median filter de-spiking}
 \usage{
 def.dspk.br86(dataInp, WndwFilt = 9, NumBin = 2, ThshReso = 10,
-  FracRealMin = 2.5e-02)
+  FracRealMin = 0.025)
 }
 \arguments{
 \item{dataInp}{Required. A univariate vector of integers or numerics of Input data}
