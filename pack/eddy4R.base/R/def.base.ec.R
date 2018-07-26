@@ -53,7 +53,7 @@ if(AlgBase == "mean") {
   
 # linear trend:
 if(AlgBase == "trnd") {
-  var<-approx(idxTime, var, xout=idxTime)[[2]]	#get rid of NAs in var
+  var <- stats::approx(x = idxTime, y = var, xout = idxTime, method = "linear", rule = 2)[[2]]	#get rid of NAs in var
   trnd<-lm(var~idxTime)
   varBase<- fitted.values(trnd)
 #coefficients(trnd)[1]+
