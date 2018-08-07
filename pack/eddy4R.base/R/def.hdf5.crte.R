@@ -80,7 +80,8 @@ def.hdf5.crte <- function(
   MethExpd = TRUE,
   MethDp04 = FALSE,
   FileNameReadMe = NULL,
-  FileNameObjDesc = NULL
+  FileNameObjDesc = NULL,
+  LevlGasRefe = c("702_000", "704_000","705_000", "706_000")
   ) {
   
   #Determine basic vs. expanded
@@ -165,8 +166,8 @@ def.hdf5.crte <- function(
   ########################################################################### 
   #Creating level 0' file structures########################################
   #Create a list of all the L0 DPs for creation of group hierarchy (fard)
-  grpListDp0p <- c("irgaTurb","soni","amrs","mfcSampTurb","valvValiNemaTurb")
-  #              ,"irgaGasCyl","mfcValiTurb",
+  grpListDp0p <- c("irgaTurb","soni","amrs","mfcSampTurb","valvValiNemaTurb","mfcValiTurb","valvLeakHeatTurb","gasRefe")
+  #              ,"irgaGasCyl"
   #              "presTrap","presValiLineTurb","presValiRegInTurb",
   #              "presValiRegOutTurb","pumpTurb","valvLeakHeatTurb",
   #              "valvValiHutTurb","valvValiNemaTurb",)
@@ -175,7 +176,7 @@ def.hdf5.crte <- function(
   
   #Creating level 0p file structures
   lapply(grpListDp0p, function(x) rhdf5::H5Gcreate(idDataLvlDp0p, x))
-  lapply(grpListDp0p, function(x) rhdf5::H5Gcreate(idQfqmLvlDp0p, x))
+  lapply(grpListDp0p[grep(pattern = "valv", x = grpListDp0p, invert = T)], function(x) rhdf5::H5Gcreate(idQfqmLvlDp0p, x))
 
   ###########################################################################     
   #Creating level 1 file structures########################################
@@ -269,14 +270,38 @@ def.hdf5.crte <- function(
   idQfqmHorVer <- rhdf5::H5Gcreate(idQfqm,LevlTowr)
   #lapply(seq_len(nrow(attrDataList)), function(x) h5writeAttribute(attrDataList[x,"Field Description"], h5obj = idDataHorVer, name = attrDataList[x,"fieldName"]))
   
+  #Creating structure for mfcValiTurb
+  idData <- rhdf5::H5Oopen(idDataLvlDp0p,"mfcValiTurb")
+  idQfqm <- rhdf5::H5Oopen(idQfqmLvlDp0p,"mfcValiTurb")
+  #h5writeDataset.data.frame(obj = qfIrgaMfcSampOut, h5loc = idQfqm, name = LevlTowr, DataFrameAsCompound = FALSE)
+  #h5writeAttribute(attributes(dataList$mfcSampTurb)$unit, h5obj = idData, name = "unit")
+  #h5writeAttribute(attributes(dataList$mfcSampTurb)$names, h5obj = idData, name = "names")
+  #lapply(seq_along(nrow(attrDpNameList)), function(x) h5writeAttribute(attrDpNameList[x,"Field Description"], h5obj = idData, name = attrDpNameList[x,"fieldName"]))
+  idDataHorVer <- rhdf5::H5Gcreate(idData,LevlTowr)
+  idQfqmHorVer <- rhdf5::H5Gcreate(idQfqm,LevlTowr)
   
+  # Creating structure for valvValiNemaTurb
   idData <- rhdf5::H5Oopen(idDataLvlDp0p,"valvValiNemaTurb") #Open H5 connection
   idQfqm <- rhdf5::H5Oopen(idQfqmLvlDp0p,"valvValiNemaTurb")
   #h5writeAttribute(attributes(dataList$irgaTurb)$unit, h5obj = idData, name = "unit")
   #h5writeAttribute(attributes(dataList$irgaTurb)$names, h5obj = idData, name = "names")
   #lapply(seq_along(nrow(attrDpNameList)), function(x) h5writeAttribute(attrDpNameList[x,"Field Description"], h5obj = idData, name = attrDpNameList[x,"fieldName"]))
   idDataHorVer <- rhdf5::H5Gcreate(idData,LevlTowr)
-  idQfqmHorVer <- rhdf5::H5Gcreate(idQfqm,LevlTowr)
+
+  # Creating structure for valvLeakHeatTurb 
+  idData <- rhdf5::H5Oopen(idDataLvlDp0p,"valvLeakHeatTurb") #Open H5 connection
+  #h5writeAttribute(attributes(dataList$irgaTurb)$unit, h5obj = idData, name = "unit")
+  #h5writeAttribute(attributes(dataList$irgaTurb)$names, h5obj = idData, name = "names")
+  #lapply(seq_along(nrow(attrDpNameList)), function(x) h5writeAttribute(attrDpNameList[x,"Field Description"], h5obj = idData, name = attrDpNameList[x,"fieldName"]))
+  idDataHorVer <- rhdf5::H5Gcreate(idData,LevlTowr)
+
+  
+  # Creating structure for gasRefe
+  idData <- rhdf5::H5Oopen(idDataLvlDp0p,"gasRefe") #Open H5 connection
+  idQfqm <- rhdf5::H5Oopen(idQfqmLvlDp0p,"gasRefe") 
+  #Creating gasRefe HORVER level structures
+  lapply(LvlGasRefe, function(x) rhdf5::H5Gcreate(idData, x))
+  lapply(LvlGasRefe, function(x) rhdf5::H5Gcreate(idQfqm, x))
   
   #Close all the connections to the file before exiting
   rhdf5::H5Gclose(idData)
