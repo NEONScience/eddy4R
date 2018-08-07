@@ -64,6 +64,8 @@
 #     Changing function to work with new workflow parameters
 #   Dave Durden (2017-12-13)
 #     Updating naming conventions for ECTE and removing dp0p rev numbers
+#   Dave Durden (2018-08-05)
+#     Adding irga validation system sensors for ECTE
 
 ##############################################################################################################
 #Start of function call to generate NEON HDF5 files
