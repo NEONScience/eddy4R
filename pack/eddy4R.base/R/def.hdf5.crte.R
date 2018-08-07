@@ -16,6 +16,7 @@
 #' @param MethDp04 logical indicating if ECTE dp04 HDF5 folder structure should be included.
 #' @param FileNameReadMe character indicating the filename incl. absolute path to the ReadMe file for inclusion in the output HDF5 file. Defaults to \code{NULL}, which downloads the readme file from a web location.
 #' @param FileNameObjDesc character indicating the filename incl. absolute path to the object description file for inclusion in the output HDF5 file. Defaults to \code{NULL}, which downloads the object description file from a web location.
+#' @param LvlGasRefe character string indicating the NEON measurement horizontal and vertical location (HORVER) number as described in the NEON DP naming convention.
 
 #' @return A NEON formatted HDF5 file that is output to /code{DirOut} with a readme and object description included.
 

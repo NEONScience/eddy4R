@@ -6,7 +6,8 @@
 \usage{
 def.hdf5.crte(Date, Site = "SERC", LevlTowr, DirOut, FileOutBase = NULL,
   MethExpd = TRUE, MethDp04 = FALSE, FileNameReadMe = NULL,
-  FileNameObjDesc = NULL)
+  FileNameObjDesc = NULL, LvlGasRefe = c("702_000", "704_000", "705_000",
+  "706_000"))
 }
 \arguments{
 \item{Date}{is the date for the output file being generated.}
@@ -26,6 +27,8 @@ def.hdf5.crte(Date, Site = "SERC", LevlTowr, DirOut, FileOutBase = NULL,
 \item{FileNameReadMe}{character indicating the filename incl. absolute path to the ReadMe file for inclusion in the output HDF5 file. Defaults to \code{NULL}, which downloads the readme file from a web location.}
 
 \item{FileNameObjDesc}{character indicating the filename incl. absolute path to the object description file for inclusion in the output HDF5 file. Defaults to \code{NULL}, which downloads the object description file from a web location.}
+
+\item{LvlGasRefe}{character string indicating the NEON measurement horizontal and vertical location (HORVER) number as described in the NEON DP naming convention.}
 }
 \value{
 A NEON formatted HDF5 file that is output to /code{DirOut} with a readme and object description included.
