@@ -282,7 +282,6 @@ def.hdf5.crte <- function(
   
   # Creating structure for valvValiNemaTurb
   idData <- rhdf5::H5Oopen(idDataLvlDp0p,"valvValiNemaTurb") #Open H5 connection
-  idQfqm <- rhdf5::H5Oopen(idQfqmLvlDp0p,"valvValiNemaTurb")
   #h5writeAttribute(attributes(dataList$irgaTurb)$unit, h5obj = idData, name = "unit")
   #h5writeAttribute(attributes(dataList$irgaTurb)$names, h5obj = idData, name = "names")
   #lapply(seq_along(nrow(attrDpNameList)), function(x) h5writeAttribute(attrDpNameList[x,"Field Description"], h5obj = idData, name = attrDpNameList[x,"fieldName"]))
