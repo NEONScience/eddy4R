@@ -71,7 +71,7 @@ wrap.hdf5.read <- function(
   Rglr = FALSE,
   Diag = FALSE,
   Rng = FALSE,
-  RngLoca,
+  RngLoca=NULL,
   DespLoca,
   MethMeas = c("ecte", "ecse")[1]
 ) {
