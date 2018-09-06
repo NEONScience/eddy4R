@@ -59,6 +59,8 @@
 #     rename function from wrap.neon.read.hdf5.eddy() to wrap.hdf5.read()
 #   Cove Sturtevant (2018-05-23)
 #     Changed term 'Pos' to 'Set' for multiple indices
+#   Ke Xu (2018-09-06)
+#     Add NULL as default for RngLoca to enable the application of this function when despiking and diagnose are not necessary and RngLoca is not given from the calling workflow
 ##############################################################################################
         
 wrap.hdf5.read <- function(
