@@ -8,7 +8,7 @@
 #' Definition function. Function spatial intepolation of data at discontinous levels into spatially continous data 
 
 #' @param \code{dataInp} Input data. 
-#' @param \code{methItpl} intepolation method: "linear" or "constant", linear intepolation is the default method. 
+#' @param \code{methItpl} intepolation method: "linear" or "constant", linear intepolation is the default method. Reference for constant spatial intepolation: Montagnani et al., 2018, Estimating the storage term in eddy covariance measurements: the ICOS methodology 
 #' @param \code{resoSpceOut} the output spatial resolution
 #' @param \code{lvlTowr} the tower levels
 
@@ -34,7 +34,7 @@
 #   Ke Xu (2018-07-07)
 #     apply eddy4R terms: whr-> set; spac -> spce
 #   Ke Xu (2018-08-30)
-#     add rectangular interpolation method
+#     add rectangular interpolation method (Montagnani et al., 2018, Estimating the storage term in eddy covariance measurements: the ICOS methodology)
 ##############################################################################################################
 #Start of function call
 ##############################################################################################################
