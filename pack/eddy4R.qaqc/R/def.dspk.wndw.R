@@ -270,6 +270,7 @@ def.dspk.wndw <- function (
   
         #plotting
         	if(Cntl$Plot == TRUE) {
+        	  par(mar=c(1,1,1,1))
         	  plot(log10(crit), type="p", ylim=c(-10,10), main=paste(dimnames(mat)[[2]][idxVar], ", step ", iter, ", window ", numPtsWndw, sep=""))
         	  abline(h=log10(Trt$ThshStd * (1 + (iter - 1) * Trt$Infl)))
         	}
