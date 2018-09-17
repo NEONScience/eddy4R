@@ -39,6 +39,8 @@
 #     rename function to def.met.body()
 #   David Durden (2017-06-10)
 #    Adapt function to eddy4R terms
+#   David Durden (2018-09-16)
+#    Adding unit reattribution upon output
 ##############################################################################################
 
 def.met.body <- function(
@@ -81,7 +83,10 @@ def.met.body <- function(
   #perform actual rotation
     veloMet$veloXaxs <- veloBody$veloXaxs * cos(AngZaxsMet) - veloBody$veloYaxs * sin(AngZaxsMet)  
     veloMet$veloYaxs <- veloBody$veloXaxs * sin(AngZaxsMet) + veloBody$veloYaxs * cos(AngZaxsMet)
-
+    
+    #Apply unit attributes on input dataframe to output dataframe
+    veloMet <- eddy4R.base::def.unit.var(samp = veloMet, refe = veloBody)
+    
   #return results
     return(veloMet)
     
