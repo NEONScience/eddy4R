@@ -4,7 +4,7 @@
 \alias{def.hdf5.crte}
 \title{Definition function: Create the ECTE HDF5 file structure}
 \usage{
-def.hdf5.crte(Date, Site = "SERC", LevlTowr, DirOut, FileOutBase = NULL,
+def.hdf5.crte(Date, Site = "SERC", LvlTowr, DirOut, FileOutBase = NULL,
   MethExpd = TRUE, MethDp04 = FALSE, FileNameReadMe = NULL,
   FileNameObjDesc = NULL, LvlGasRefe = c("702_000", "704_000", "705_000",
   "706_000"))
@@ -14,7 +14,7 @@ def.hdf5.crte(Date, Site = "SERC", LevlTowr, DirOut, FileOutBase = NULL,
 
 \item{Site}{is the site for which the output file is being generated.}
 
-\item{LevlTowr}{is the measurement level of the tower top to determine the VER number of the NEON DP naming convention.}
+\item{LvlTowr}{is the measurement level of the tower top to determine the VER number of the NEON DP naming convention.}
 
 \item{DirOut}{is the output directory where the file being generated is stored.}
 
@@ -40,7 +40,7 @@ Definition function. Function creates the standard NEON HDF5 file structure for 
 #Example run to create L0 gold files for 4/24/2016 at SERC
 #Setting Site
 Site <- "SERC"
-LevlTowr <- "000_060"
+LvlTowr <- "000_060"
 FileOutBase <- "NEON.D02.SERC.DP4.00200.001.ec-flux"
 MethExpd <- TRUE
 #Setting Date to be processed
@@ -48,7 +48,7 @@ Date <- "2016-04-24"
 #Set directory for example output to working directory
 DirOut <- getwd()
 #Running example
-def.hdf5.crte(Date = Date, Site = Site, LevlTowr = LevlTowr, DirOut = DirOut, FileOutBase = FileOutBase, MethExpd = MethExpd)
+def.hdf5.crte(Date = Date, Site = Site, LvlTowr = LvlTowr, DirOut = DirOut, FileOutBase = FileOutBase, MethExpd = MethExpd)
 }
 \references{
 License: GNU AFFERO GENERAL PUBLIC LICENSE Version 3, 19 November 2007. \cr

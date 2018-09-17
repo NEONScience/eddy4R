@@ -7,9 +7,9 @@
 def.rtio.mass.h2o.dens.mole(densMoleH2o, densMoleAirDry)
 }
 \arguments{
-\item{\code{densMoleH2o}}{A vector containing mole density of water vapor, of class "numeric". [molH2o m-3]}
+\item{densMoleH2o}{A vector containing mole density of water vapor, of class "numeric". [molH2o m-3]}
 
-\item{\code{densMoleAirDry}}{A vector containing the mole density of dry air, of class "numeric". [mol m-3]}
+\item{densMoleAirDry}{A vector containing the mole density of dry air, of class "numeric". [mol m-3]}
 }
 \value{
 The returned object is wet mass fraction (specific humidity)

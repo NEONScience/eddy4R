@@ -9,10 +9,10 @@ wrap.unit.conv.out.ec(inpList, MethType = c("Data", "Ucrt", "Qfqm")[1])
 \arguments{
 \item{inpList}{Required. A named list of data frames of type numeric, containing the data to be converted.}
 
-\item{MethType}{Required. A character string containing the type of data to be converted (Defauts to \code(MethType) = "data").}
+\item{MethType}{Required. A character string containing the type of data to be converted. Defauts to \code{MethType} = c("Data").}
 }
 \value{
-A list, \code(rpt), with data, qfqm, or uncertainty output with the correct output units
+A list, \code{rpt}, with data, qfqm, or uncertainty output with the correct output units
 }
 \description{
 Function wrapper. Convert a list of data to eddy4r output units using def.unit.conv function, with special attention to variable with the mean removed that are translated between units (i.e. variance for temperature when converting K to C).

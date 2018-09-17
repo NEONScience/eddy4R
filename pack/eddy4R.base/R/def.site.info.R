@@ -7,7 +7,7 @@
 
 #' @description Load pre-defined site specific information into the global environment.
 
-#' @param \code{loc} Parameter of class character. A parameter to choose the site for which site specific information is pulled.
+#' @param loc Parameter of class character. A parameter to choose the site for which site specific information is pulled.
 
 #' @return Site specific information provided as a list \code{SiteInfo}
 
@@ -34,6 +34,8 @@
 #     Adding site information for SERC
 #   Natchaya P-Durden (2016-11-27)
 #     rename function to def.site.info()
+#   Natchaya P-Durden (2018-04-03)
+#     update @param format
 ##############################################################################################
 
 

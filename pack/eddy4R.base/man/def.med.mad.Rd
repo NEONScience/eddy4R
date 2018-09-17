@@ -7,11 +7,11 @@
 def.med.mad(test, refe = 0, Perc = FALSE)
 }
 \arguments{
-\item{\code{test}}{A vector containing the test data. Of class "numeric" or "integer", and of the same length as \code{refe}. [same units as reference data]}
+\item{test}{A vector containing the test data. Of class "numeric" or "integer", and of the same length as \code{refe}. [same units as reference data]}
 
-\item{\code{refe}}{A vector containing the reference data. Of class "numeric" or "integer", and of the same length as \code{test}. Defaults to \code{refe = 0}. [same units as test data]}
+\item{refe}{A vector containing the reference data. Of class "numeric" or "integer", and of the same length as \code{test}. Defaults to \code{refe = 0}. [same units as test data]}
 
-\item{\code{Perc}}{Report results in the same units as \code{refe} and \code{test} (\code{Perc = FALSE}) or as percentages (\code{Perc = TRUE})? Of class "logical", defaults to \code{Perc = FALSE}.}
+\item{Perc}{Report results in the same units as \code{refe} and \code{test} (\code{Perc = FALSE}) or as percentages (\code{Perc = TRUE})? Of class "logical", defaults to \code{Perc = FALSE}.}
 }
 \value{
 Returns object of class "numeric" [1, 1:3] containing median, median absolute deviation, and sample size (NaNs not included).

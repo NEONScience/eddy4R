@@ -7,9 +7,9 @@
 def.pres.h2o.pres.h2o.sat.rh(presH2oSat, rh)
 }
 \arguments{
-\item{\code{presH2oSat}}{Either a vector or an object of class numeric of saturated water vapor pressure and of the same length as \code{rh}. [Pa]}
+\item{presH2oSat}{Either a vector or an object of class numeric of saturated water vapor pressure and of the same length as \code{rh}. [Pa]}
 
-\item{\code{rh}}{Either a vector or an object of class numeric of relative humidity and of the same length as \code{presH2oSat}. [-]}
+\item{rh}{Either a vector or an object of class numeric of relative humidity and of the same length as \code{presH2oSat}. [-]}
 }
 \value{
 Water vapor pressure and of the same length as \code{presH2oSat} and \code{rh}. [Pa]

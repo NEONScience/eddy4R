@@ -7,8 +7,8 @@
 
 #' @description Calculate specific humidity from water vapor pressure and static pressure.
 
-#' @param \code{presH2o} Either a vector or an object of class numeric of measured water vapor pressure and of the same length as \code{pres}. [Pa]
-#' @param \code{pres} Either a vector or an object of class numeric of static pressure and of the same length as \code{presH2o}. [Pa]
+#' @param presH2o Either a vector or an object of class numeric of measured water vapor pressure and of the same length as \code{pres}. [Pa]
+#' @param pres Either a vector or an object of class numeric of static pressure and of the same length as \code{presH2o}. [Pa]
 
 #' @return Specific humidity and of the same length as \code{presH2o} and \code{pres}. [kg kg-1]
 
@@ -34,6 +34,8 @@
 #     Initail naming convention for eddy4R
 #   Natchaya P-Durden (2016-11-30)
 #     rename function to def.rtio.mass.h2o.wet.pres.h2o.pres()
+#   Natchaya P-Durden (2018-04-03)
+#     update @param format
 ##############################################################################################
 
 def.rtio.mass.h2o.wet.pres.h2o.pres <- function(presH2o, pres)  {

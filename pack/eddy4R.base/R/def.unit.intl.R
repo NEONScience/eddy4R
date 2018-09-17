@@ -7,9 +7,9 @@
 #' @description Function definition. Given an arbitraty input unit string, find the corresponding 
 #' internal unit (string) used within the eddy4R family of functions. 
 
-#' @param \code{unit} Required. A single character string providing the compount unit, constructed
+#' @param unit Required. A single character string providing the compount unit, constructed
 #' with the rules specified in eddy4R.base::def.unit.info.R. \cr
-#' #' 
+ 
 #' @return A single character string specifying the corresponding eddy4R internal unit.
 
 #' @references 
@@ -31,13 +31,17 @@
 #     update all function calls to use double-colon operator
 #   Natchaya P-Durden
 #     rename function to def.unit.intl()
+#   Natchaya P-Durden (2018-04-03)
+#     update @param format
+#   Natchaya P-Durden (2018-04-11)
+#    applied eddy4R term name convention; replaced pos by set
 ##############################################################################################
 
 def.unit.intl <- function(unit) {
     
   # Parse input unit string
   infoUnit <- eddy4R.base::def.unit.info(unit)
-  if(base::sum(base::is.na(infoUnit$posBase)) > 0) {
+  if(base::sum(base::is.na(infoUnit$setBase)) > 0) {
     base::warning(paste("Cannot interpret input unit string. Check unit terms"))
     rpt <- NA
     base::return(rpt)
@@ -129,15 +133,15 @@ def.unit.intl <- function(unit) {
   # If we don't have any special cases, go through each base unit, converting to internal (SI) unit
   if (flagIntl == 0) {
     infoUnitIntl <- infoUnit # Intialize internal unit info
-    unitIntlTmp <- base::character(length=length(infoUnit$posBase))
-    for (idxBase in 1:base::length(infoUnit$posBase)) {
+    unitIntlTmp <- base::character(length=length(infoUnit$setBase))
+    for (idxBase in 1:base::length(infoUnit$setBase)) {
       infoUnitIntlIdx <- eddy4R.base::def.unit.info(eddy4R.base::IntlUnit$Intl[[infoUnit$type[idxBase]]])
       
       # Replace the unit base and prefix with the internal unit
       infoUnitIntl$base[idxBase] <- infoUnitIntlIdx$base
-      infoUnitIntl$posBase[idxBase] <- infoUnitIntlIdx$posBase
+      infoUnitIntl$setBase[idxBase] <- infoUnitIntlIdx$setBase
       infoUnitIntl$prfx[idxBase] <- infoUnitIntlIdx$prfx
-      infoUnitIntl$posPrfx[idxBase] <- infoUnitIntlIdx$posPrfx
+      infoUnitIntl$setPrfx[idxBase] <- infoUnitIntlIdx$setPrfx
       
       # Create unit character string
       if (infoUnitIntl$sufx[idxBase] == 1) {

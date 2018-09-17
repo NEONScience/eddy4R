@@ -7,7 +7,7 @@
 def.temp.soni(veloSoni)
 }
 \arguments{
-\item{\code{veloSoni}}{A vector containing speed of sound, of class "numeric". [m s-1]}
+\item{veloSoni}{A vector containing speed of sound, of class "numeric". [m s-1]}
 }
 \value{
 The returned object is sonic temperature

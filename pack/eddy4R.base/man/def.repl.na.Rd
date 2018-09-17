@@ -4,16 +4,16 @@
 \alias{def.repl.na}
 \title{Defination Function to combine two daily files into one file and replacing NA values with previous value.}
 \usage{
-def.repl.na(dataProcDate, dataBgnDate, Date, numCol)
+def.repl.na(dataCalcDate, dataBgnDate, Date, numCol)
 }
 \arguments{
-\item{\code{dataProcDate}}{A dataframe containing data and time in the processing date. [User-defined]}
+\item{dataCalcDate}{A dataframe containing data and time in the processing date. [User-defined]}
 
-\item{\code{dataBgnDate}}{A dataframe containing data and time in the day before processing date. [User-defined]}
+\item{dataBgnDate}{A dataframe containing data and time in the day before processing date. [User-defined]}
 
-\item{\code{Date}}{Character: Processing date e.g. "20170521". [-]}
+\item{Date}{Character: Processing date e.g. "20170521". [-]}
 
-\item{\code{numCol}}{Numeric: Define which column number in \code{dataProcDate} and \code{dataBgnDate} are being process. [-]}
+\item{numCol}{Numeric: Define which column number in \code{dataCalcDate} and \code{dataBgnDate} are being process. [-]}
 }
 \value{
 A dataframe including the data and time in the processing date which NA values have been replaced by previous value. [User-defined]
@@ -26,7 +26,7 @@ Specific for pump and soleniod valves.
 Currently none
 }
 \references{
-License: Terms of use of the NEON FIU algorithm repository dated 2015-01-16. \cr
+License: GNU AFFERO GENERAL PUBLIC LICENSE Version 3, 19 November 2007
 }
 \seealso{
 Currently none

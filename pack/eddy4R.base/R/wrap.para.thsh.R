@@ -6,10 +6,15 @@
 
 #' @description Workflow to read ECSE threshold table from CI-Parameter-Repo 
 
-#' @return A data.frame consisting of the threshold values to be used for the provided site.
+#' @param DpName Character: Name of data product. [-]
+#' @param DirInp Character: Input directory. [-]
+#' @param DirOut Character: Output directory. [-]
+#' @param FileWrte Logical: Determines if file is writing out. Default to FALSE. [-]
+
+#' @return A dataframe consisting of the threshold values to be used for the provided site.
 
 #' @references
-
+#' License: GNU AFFERO GENERAL PUBLIC LICENSE Version 3, 19 November 2007
 
 #' @keywords thresholds, QAQC, plausibility
 
@@ -28,6 +33,10 @@
 #     modularizing the code to grab all thresholds passed in the data.frame
 #   Dave Durden (2017-11-25)
 #     building a function that can be called by workflow
+#   Natchaya P-Durden (2018-03-28)
+#     updated the function header
+#   Ke Xu (2018-04-19)
+#     applied term name convention; replaced dataIn by dataInp
 ##############################################################################################
 wrap.para.thsh <- function(
   DpName = c("IrgaTurb","MfcSampTurb","Soni","Amrs"),
@@ -62,7 +71,7 @@ dataList <- lapply(fileList01, read.table, header = T,
 #using the data names provided with the data to name the lists
 names(dataList) <- varName
 dataOutList <- list()
-lapply(names(dataList), function(x) dataOutList[[x]] <<- eddy4R.base::def.para.thsh(dataIn=dataList[[x]], site="Neon"))
+lapply(names(dataList), function(x) dataOutList[[x]] <<- eddy4R.base::def.para.thsh(dataInp=dataList[[x]], site="Neon"))
 #assign name of data list
 names(dataOutList) <- varName
 

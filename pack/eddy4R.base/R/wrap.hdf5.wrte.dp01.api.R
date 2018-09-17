@@ -31,6 +31,8 @@
 # changelog and author contributions / copyrights 
 #   David Durden (2018-02-28)
 #     original creation
+#   Natchaya P-Durden (2018-03-30)
+#     applied term name convention; replace Levl by Lvl
 ##############################################################################################
 
 # date <- "20170901"

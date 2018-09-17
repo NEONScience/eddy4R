@@ -7,9 +7,9 @@
 def.qf.irga(diag01, MethQf = c("qfqm", "lico")[1])
 }
 \arguments{
-\item{\code{diag01}}{The 32-bit diagnostic stream that is output from the LI7200.}
+\item{diag01}{The 32-bit diagnostic stream that is output from the LI7200.}
 
-\item{\code{MethQf}}{Switch for quality flag determination for the LI7200, diag01 provides ones for passing quality by default the equals "lico". The "qfqm" method changes the ones to zeros to match the NEON QFQM logic.}
+\item{MethQf}{Switch for quality flag determination for the LI7200, diag01 provides ones for passing quality by default the equals "lico". The "qfqm" method changes the ones to zeros to match the NEON QFQM logic.}
 }
 \value{
 A dataframe (\code{qfIrgaTurb}) of sensor specific irga quality flags as described in NEON.DOC.000807.

@@ -12,14 +12,14 @@ def.conv.qf.not.vrbs(qf)
 \value{
 A named list of variables matching those in \code{qf}, each itself a named list of flags 
 (standard or user-defined names), with nested lists of $fail and $na vector positions of failed and na 
-quality test results for that variable and flag (eg. posQf$X$posQfStep$fail and posQf$Y$posQfStep$na).
+quality test results for that variable and flag (eg. setQf$X$setQfStep$fail and setQf$Y$setQfStep$na).
 }
 \description{
 Function definition. Convert from the verbose output of quality test algorithms (actual quality flag values) to the non-verbose option (vector positions of failed and na test results).
 }
 \examples{
 qf <- list(var01=data.frame(qfRng = c(0,1,-1,0,1,0,0,0,0,-1),qfStep = c(0,0,-1,-1,0,0,0,0,0,-1))) # Verbose output from quality testing
-posQf <- def.conv.qf.not.vrbs(qf=qf) # Convert to vector positions of failed and na quality tests
+setQf <- def.conv.qf.not.vrbs(qf=qf) # Convert to vector positions of failed and na quality tests
 }
 \references{
 License: GNU AFFERO GENERAL PUBLIC LICENSE Version 3, 19 November 2007

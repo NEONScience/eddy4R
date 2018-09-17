@@ -7,8 +7,8 @@
 
 #' @description Function definition. Calculation of total pressure from static pressure and differential pressure
 
-#' @param \code{presAtm} A vector containing the atmospheric pressure (or static pressure), of class "numeric". [Pa]
-#' @param \code{presDiff} A vector containing the differential pressure, of class "numeric". [Pa]
+#' @param presAtm A vector containing the atmospheric pressure (or static pressure), of class "numeric". [Pa]
+#' @param presDiff A vector containing the differential pressure, of class "numeric". [Pa]
 
 #' @return 
 #' The returned object is the total pressure calculated by summing the static pressure (presAtm) and the differential pressure (presDiff).  
@@ -39,6 +39,8 @@
 #     original creation
 #   Hongyan Luo (2016-10-13)
 #     adjust to eddy4R coding style
+#   Natchaya P-Durden (2018-04-03)
+#     update @param format
 ###############################################################################################
 # total pressure in irga cell
 def.pres.sum <- function(

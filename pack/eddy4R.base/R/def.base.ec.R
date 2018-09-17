@@ -8,9 +8,9 @@
 
 #' @description Function definition. Determine base state for eddy-covariance calculation.
 
-#' @param \code{pos} time index used for interpolation [-]
-#' @param \code{var} variable of interest []
-#' @param \code{AlgBase} c("mean", "trnd", "ord03") algorithm used to determine base state, where \cr
+#' @param idxTime time index used for interpolation [-]
+#' @param var variable of interest []
+#' @param AlgBase c("mean", "trnd", "ord03") algorithm used to determine base state, where \cr
 #' "mean" is the simple algorithmic mean, \cr
 #' "trnd" is the least squares linear (1st order) trend, and \cr
 #' "ord03" is the least squares 3rd order polynomial fit
@@ -37,11 +37,15 @@
 #     conformed code to EC TES coding convention (prev func name: base.state.r)
 #   Natchaya P-Durden (2016-11-27)
 #     rename function to def.base.ec()
+#   Natchaya P-Durden (2018-04-03)
+#     update @param format
+#   Natchaya P-Durden (2018-04-11)
+#    applied eddy4R term name convention; replaced pos by idxTime
 ##############################################################################################
 
 
 
-def.base.ec <- function(pos,var,AlgBase){
+def.base.ec <- function(idxTime,var,AlgBase){
 #average:
 if(AlgBase == "mean") {
   varBase<-mean(var,na.rm=TRUE)
@@ -49,22 +53,22 @@ if(AlgBase == "mean") {
   
 # linear trend:
 if(AlgBase == "trnd") {
-  var<-approx(pos, var, xout=pos)[[2]]	#get rid of NAs in var
-  trnd<-lm(var~pos)
+  var<-approx(idxTime, var, xout=idxTime)[[2]]	#get rid of NAs in var
+  trnd<-lm(var~idxTime)
   varBase<- fitted.values(trnd)
 #coefficients(trnd)[1]+
-#coefficients(trnd)[2]*pos
+#coefficients(trnd)[2]*idxTime
 }
   
 #third order polynomial:
 if(AlgBase == "ord03") {
-  var<-approx(pos, var, xout=pos)[[2]]	#get rid of NAs in var
-  fitPoly <- lm(var ~ pos + I(pos^2) + I(pos^3))
+  var<-approx(idxTime, var, xout=idxTime)[[2]]	#get rid of NAs in var
+  fitPoly <- lm(var ~ idxTime + I(idxTime^2) + I(idxTime^3))
   varBase<- fitted.values(fitPoly)
 #coefficients(poly)[1]+
-#coefficients(poly)[2]*pos+
-#coefficients(poly)[3]*pos^2+
-#coefficients(poly)[4]*pos^3
+#coefficients(poly)[2]*idxTime+
+#coefficients(poly)[3]*idxTime^2+
+#coefficients(poly)[4]*idxTime^3
 }
 return(varBase)
 }

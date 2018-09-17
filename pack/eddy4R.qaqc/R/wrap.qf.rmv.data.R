@@ -6,14 +6,14 @@
 
 #' @description 
 #' Wrapper function  to remove high frequency data points that have failed quality flags from a data.frame
-#' @param inpList List consisting of \code{ff::ffdf} file-backed objects, in the format provided by function \code{eddy4R.base::wrap.neon.read.hdf5.eddy()}. Of types numeric and integer.
+#' @param inpList List consisting of \code{ff::ffdf} file-backed objects, in the format provided by function \code{eddy4R.base::wrap.hdf5.read()}. Of types numeric and integer.
 #' @param Vrbs Optional. A logical {FALSE/TRUE} value indicating whether to:\cr
 #' \code{Vrbs = FALSE}: (Default) cleaned data set with the bad high frequency quality flagged data replaced with NaN's as part of the \code{inpList} in the same format., or \cr
-#' \code{Vrbs = TRUE}: cleaned data set with the bad high frequency quality flagged data replaced with NaN's as part of the \code{inpList} in the same format. In addition, a separate list  \code{qfqmAnal} will be added to the output list \code{rpt} with a list of variables assessed, a list of quality flags for each variable assessed, the number of each quality flag tripped for each variable and the total number of bad data per variable.
+#' \code{Vrbs = TRUE}: cleaned data set with the bad high frequency quality flagged data replaced with NaN's as part of the \code{inpList} in the same format. In addition, a separate list  \code{qfqmAnls} will be added to the output list \code{rpt} with a list of variables assessed, a list of quality flags for each variable assessed, the number of each quality flag tripped for each variable and the total number of bad data per variable.
 #' @param MethMeas A vector of class "character" containing the name of measurement method (eddy-covariance turbulent exchange or storage exchange), MethMeas = c("ecte", "ecse"). Defaults to "ecte". [-]
 
 #' 
-#' @return The returned object consistes of \code{inpList}, with the bad high frequency quality flagged data replaced with NaN's. Optionally, (\code{Vrbs = TRUE}) a separate list \code{qfqmAnal} will be added to the output list \code{rpt} with a list of variables assessed, a list of quality flags for each variable assessed, the number of each quality flag tripped for each variable and the total number of bad data per variable.
+#' @return The returned object consistes of \code{inpList}, with the bad high frequency quality flagged data replaced with NaN's. Optionally, (\code{Vrbs = TRUE}) a separate list \code{qfqmAnls} will be added to the output list \code{rpt} with a list of variables assessed, a list of quality flags for each variable assessed, the number of each quality flag tripped for each variable and the total number of bad data per variable.
 
 #' @references 
 #' License: GNU AFFERO GENERAL PUBLIC LICENSE Version 3, 19 November 2007. \cr
@@ -34,6 +34,9 @@
 #     original creation
 #   Natchaya Pingintha-Durden (2018-01-23)
 #     added MethMeas to paramerter and modified original function to work with ECSE
+#   Natchaya P-Durden (2018-04-13)
+#    applied eddy4R term name convention; replaced dfData by inpData
+#    replaced dfQf by inpQf
 ##############################################################################################
 
 
@@ -52,7 +55,7 @@ wrap.qf.rmv.data <- function(
   if(MethMeas == "ecte"){
   # Determine quality flags to apply to each stream, quantify flags, and remove bad data across all sensors
   outList <- base::lapply(sens, function(x){ 
-    eddy4R.qaqc::def.qf.rmv.data(dfData = inpList$data[[x]][], dfQf = inpList$qfqm[[x]], Sens = x, Vrbs = Vrbs) #Remove high frequency data that is flagged by sensor specific flags or plausibility tests flags
+    eddy4R.qaqc::def.qf.rmv.data(inpData = inpList$data[[x]][], inpQf = inpList$qfqm[[x]], Sens = x, Vrbs = Vrbs) #Remove high frequency data that is flagged by sensor specific flags or plausibility tests flags
   })
   
   #Apply names to the output list
@@ -61,7 +64,7 @@ wrap.qf.rmv.data <- function(
   #Applying the bad quality flags to the reported output data
   base::lapply(base::names(outList), function(x) {
     #Outputting the data ffdf's
-    rpt$data[[x]] <<- ff::as.ffdf(outList[[x]]$dfData) 
+    rpt$data[[x]] <<- ff::as.ffdf(outList[[x]]$inpData) 
     rpt$data[[x]] <<- eddy4R.base::def.unit.var(samp = rpt$data[[x]], refe = inpList$data[[x]]) #Copy units
   })
   
@@ -69,7 +72,7 @@ wrap.qf.rmv.data <- function(
   if(Vrbs == TRUE){
     base::lapply(base::names(outList), function(x) {
       #Write out qfqm analytics as a separate list to the output
-      rpt$qfqmAnal[[x]] <<- outList[[x]][!names(outList[[x]]) %in% "dfData"] 
+      rpt$qfqmAnls[[x]] <<- outList[[x]][!names(outList[[x]]) %in% "inpData"] 
     })}
   }#end of MethMeas == "ecte"
   
@@ -79,7 +82,7 @@ wrap.qf.rmv.data <- function(
     for(idxSens in sens){
     #for each measurement level
     outList[[idxSens]] <- base::lapply(base::names(inpList$data[[idxSens]]), function(x){ 
-      eddy4R.qaqc::def.qf.rmv.data(dfData = inpList$data[[idxSens]][[x]], dfQf = inpList$qfqm[[idxSens]][[x]], Sens = idxSens, Vrbs = Vrbs , TypeData = "real") #Remove high frequency data that is flagged by sensor specific flags or plausibility tests flags
+      eddy4R.qaqc::def.qf.rmv.data(inpData = inpList$data[[idxSens]][[x]], inpQf = inpList$qfqm[[idxSens]][[x]], Sens = idxSens, Vrbs = Vrbs , TypeData = "real") #Remove high frequency data that is flagged by sensor specific flags or plausibility tests flags
       })
     #Apply names to the each mesurement level
     base::names(outList[[idxSens]]) <- base::names(inpList$data[[idxSens]])
@@ -87,7 +90,7 @@ wrap.qf.rmv.data <- function(
     #Applying the bad quality flags to the reported output data
     base::lapply(base::names(inpList$data[[idxSens]]), function(x) {
       #Outputting the data ffdf's
-      rpt$data[[idxSens]][[x]] <<- outList[[idxSens]][[x]]$dfData
+      rpt$data[[idxSens]][[x]] <<- outList[[idxSens]][[x]]$inpData
       rpt$data[[idxSens]][[x]] <<- eddy4R.base::def.unit.var(samp = rpt$data[[idxSens]][[x]], refe = inpList$data[[idxSens]][[x]]) #Copy units
     })
     
@@ -95,7 +98,7 @@ wrap.qf.rmv.data <- function(
     if(Vrbs == TRUE){
       base::lapply(base::names(inpList$data[[idxSens]]), function(x) {
         #Write out qfqm analytics as a separate list to the output
-        rpt$qfqmAnal[[idxSens]][[x]] <<- outList[[idxSens]][[x]][!names(outList[[idxSens]][[x]]) %in% "dfData"] 
+        rpt$qfqmAnls[[idxSens]][[x]] <<- outList[[idxSens]][[x]][!names(outList[[idxSens]][[x]]) %in% "inpData"] 
       })}
     }#end of each sensor
   }#end of MethMeas == "ecse"

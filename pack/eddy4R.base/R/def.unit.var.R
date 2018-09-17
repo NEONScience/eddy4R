@@ -6,8 +6,8 @@
 
 #' @description Function defintion. eddy4R strives to provide a unit attribute individually for each physical parameter and variable in an object. However, most native R functions do not propagate an existing unit attribute in the returned object. The function \code{def.unit.var} fills this gap, by assigning the unit attribute of a parameter/variable that exists (by name) in \code{refe} to the corresponding parameter/variable in \code{samp}. \code{def.unit.var} currently only supports data.frames, but additional methods can be added for lists and ffdf objects.
 
-#' @param \code{samp} A data.frame containing variables that are missing the unit attribute.
-#' @param \code{refe} A data.frame containing all variables (by name) of \code{samp} incl. their corresponding unit attribute.
+#' @param samp A data.frame containing variables that are missing the unit attribute.
+#' @param refe A data.frame containing all variables (by name) of \code{samp} incl. their corresponding unit attribute.
 
 #' @return The function returns \code{samp} with the corresponding units from \code{refe} assigned to each of its variables.
 
@@ -51,6 +51,8 @@
 # changelog and author contributions / copyrights
 #   Stefan Metzger (2016-12-02)
 #     original creation
+#   Natchaya P-Durden (2018-04-03)
+#     update @param format
 ##############################################################################################
 
 

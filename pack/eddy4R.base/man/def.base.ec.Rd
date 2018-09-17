@@ -4,14 +4,14 @@
 \alias{def.base.ec}
 \title{Definition function: Base state for eddy-covariance calculation}
 \usage{
-def.base.ec(pos, var, AlgBase)
+def.base.ec(idxTime, var, AlgBase)
 }
 \arguments{
-\item{\code{pos}}{time index used for interpolation [-]}
+\item{idxTime}{time index used for interpolation [-]}
 
-\item{\code{var}}{variable of interest []}
+\item{var}{variable of interest []}
 
-\item{\code{AlgBase}}{c("mean", "trnd", "ord03") algorithm used to determine base state, where \cr
+\item{AlgBase}{c("mean", "trnd", "ord03") algorithm used to determine base state, where \cr
 "mean" is the simple algorithmic mean, \cr
 "trnd" is the least squares linear (1st order) trend, and \cr
 "ord03" is the least squares 3rd order polynomial fit}

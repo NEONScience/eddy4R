@@ -7,8 +7,8 @@
 
 #' @description Calculate absolute humidity from water vapor pressure and ambient temperature.
 
-#' @param \code{presH2o} Either a vector or an object of class numeric of measured water vapor pressure and of the same length as \code{temp}. [Pa]
-#' @param \code{temp} Either a vector or an object of class numeric of measured air temperature and of the same length as \code{presH2o}. [K]
+#' @param presH2o Either a vector or an object of class numeric of measured water vapor pressure and of the same length as \code{temp}. [Pa]
+#' @param temp Either a vector or an object of class numeric of measured air temperature and of the same length as \code{presH2o}. [K]
 
 #' @return Absolute humidity and of the same length as \code{presH2o} and \code{temp}. [kg m-3]
 
@@ -32,6 +32,8 @@
 #     re-formualtion as function() to allow packaging
 #   Natchaya P-Durden (2016-11-27)
 #   rename function to def.dens.mass.h2o.press.h2o.temp()
+#   Natchaya P-Durden (2018-04-03)
+#     update @param format
 ##############################################################################################
 
 def.dens.mass.h2o.press.h2o.temp <- function(presH2o, temp)  {

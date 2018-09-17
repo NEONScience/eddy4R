@@ -4,22 +4,22 @@
 \alias{def.conv.qf.vrbs}
 \title{Definition function: Convert from non-verbose to verbose output of quality tests}
 \usage{
-def.conv.qf.vrbs(posQf, numRow)
+def.conv.qf.vrbs(setQf, numRow)
 }
 \arguments{
-\item{posQf}{A named list of variables, each itself a named list of flags (standard or user-defined names), with nested lists of $fail and $na vector positions of failed and na quality tests for that variable and flag (eg. posQf$X$posQfStep$fail and posQf$Y$posQfStep$na).}
+\item{setQf}{A named list of variables, each itself a named list of flags (standard or user-defined names), with nested lists of $fail and $na vector positions of failed and na quality tests for that variable and flag (eg. setQf$X$setQfStep$fail and setQf$Y$setQfStep$na).}
 
-\item{numRow}{A single integer indicating the number of rows in the original data from which the quality test results in \code{posQf} were derived}
+\item{numRow}{A single integer indicating the number of rows in the original data from which the quality test results in \code{setQf} were derived}
 }
 \value{
-A list of variables matching those in \code{posQf}, each containing a data frame of quality flags for that variable. Number of rows match that of \code{numRow}
+A list of variables matching those in \code{setQf}, each containing a data frame of quality flags for that variable. Number of rows match that of \code{numRow}
 }
 \description{
 Function definition. Convert from the non-verbose option (vector positions of failed and na test results) of quality test algorithms to the verbose output (actual quality flag values).
 }
 \examples{
-posQf <- list(var01=list(qfRng = list(fail=c(2,5),na=c(3,10)),qfStep = list(fail=numeric(0),na=c(3,4,10)))) # non-verbose output from quality testing
-qf <- def.conv.qf.vrbs(posQf=posQf,numRow=10) # Convert to quality flag values
+setQf <- list(var01=list(qfRng = list(fail=c(2,5),na=c(3,10)),qfStep = list(fail=numeric(0),na=c(3,4,10)))) # non-verbose output from quality testing
+qf <- def.conv.qf.vrbs(setQf=setQf,numRow=10) # Convert to quality flag values
 }
 \references{
 License: GNU AFFERO GENERAL PUBLIC LICENSE Version 3, 19 November 2007

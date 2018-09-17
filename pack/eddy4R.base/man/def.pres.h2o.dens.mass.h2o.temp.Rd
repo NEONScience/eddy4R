@@ -7,9 +7,9 @@
 def.pres.h2o.dens.mass.h2o.temp(densMassH2o, temp)
 }
 \arguments{
-\item{\code{densMassH2o}}{Either a vector or an object of class numeric of absolute humidity and of the same length as \code{temp}. [kg m-3]}
+\item{densMassH2o}{Either a vector or an object of class numeric of absolute humidity and of the same length as \code{temp}. [kg m-3]}
 
-\item{\code{temp}}{Either a vector or an object of class numeric of measured air temperature and of the same length as \code{densMassH2o}. [K]}
+\item{temp}{Either a vector or an object of class numeric of measured air temperature and of the same length as \code{densMassH2o}. [K]}
 }
 \value{
 Water vapor pressure and of the same length as \code{densMassH2o} and \code{temp}. [Pa]

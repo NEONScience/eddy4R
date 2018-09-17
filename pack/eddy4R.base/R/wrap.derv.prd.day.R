@@ -4,12 +4,12 @@
 #' @author
 #' Stefan Metzger \email{eddy4R.info@gmail.com}
 
-#' @description Wrapper function. Reads the list \code{inpList} in the format provided by function \code{eddy4R.base::wrap.neon.read.hdf5.eddy()}. For the list entries in \code{inpList} the following derived quantities are calculated, each through the call to a separate definition function: \cr
+#' @description Wrapper function. Reads the list \code{inpList} in the format provided by function \code{eddy4R.base::wrap.hdf5.read()}. For the list entries in \code{inpList} the following derived quantities are calculated, each through the call to a separate definition function: \cr
 #' \code{inpList$data$time}: fractional UTC time, fractional day of year, local standard time;  \cr
 #' \code{inpList$data$irgaTurb}: average signal strength, delta signal strength, total pressure, average temperature, water vapor partial pressure, water vapor saturation pressure, relative humidity, molar density of air (dry air and water vapor), molar density of dry air, wet mass fraction (specific humidity);  \cr
 #' \code{inpList$data$soni}: sonic temperature.
 
-#' @param inpList List consisting of \code{ff::ffdf} file-backed objects, in the format provided by function \code{eddy4R.base::wrap.neon.read.hdf5.eddy()}. Of types numeric and integer.
+#' @param inpList List consisting of \code{ff::ffdf} file-backed objects, in the format provided by function \code{eddy4R.base::wrap.hdf5.read()}. Of types numeric and integer.
 #' @param SiteLoca List consisting of site-specific parameters. Of types numeric, integer and character.
 #' @param AngZaxsSoniInst  Parameter of class numeric. Azimuth (angle around z axis) direction against true north in which sonic anemometer installation (transducer array) is pointing [deg]
 #' 
@@ -133,7 +133,7 @@ wrap.derv.prd.day <- function(
   #Convert the angle of installation to radians
   AngZaxsSoniInst <- eddy4R.base::def.unit.conv(data=AngZaxsSoniInst,unitFrom="deg",unitTo="rad")
   # rotate wind vector into meteorological coordinate system (positive from west, south and below)
-  inpList$data$soni <- def.met.body(AngZaxsSoniInst = AngZaxsSoniInst, veloBody = inpList$data$soni)
+  inpList$data$soni <- eddy4R.base::def.met.body(AngZaxsSoniInst = AngZaxsSoniInst, veloBody = inpList$data$soni)
   
   # magnitude of horizontal wind speed
   inpList$data$soni$veloXaxsYaxsErth <- sqrt(inpList$data$soni$veloXaxs^2 + inpList$data$soni$veloYaxs^2)

@@ -7,8 +7,8 @@
 
 #' @description Calculate water vapor pressure from dry mole fraction and static pressure.
 
-#' @param \code{rtioMoleDryH2o} Either a vector or an object of class numeric of water dry mole fraction and of the same length as \code{pres}. [kmol kmol-1]
-#' @param \code{pres} Either a vector or an object of class numeric of static pressure and of the same length as \code{rtioMoleDryH2o}. [Pa]
+#' @param rtioMoleDryH2o Either a vector or an object of class numeric of water dry mole fraction and of the same length as \code{pres}. [kmol kmol-1]
+#' @param pres Either a vector or an object of class numeric of static pressure and of the same length as \code{rtioMoleDryH2o}. [Pa]
 
 #' @return Water vapor pressure and of the same length as \code{rtioMoleDryH2o} and \code{pres}. [Pa]
 
@@ -34,6 +34,8 @@
 #     initail naming convention for eddy4R
 #   Natchaya P-Durden (2016-11-27)
 #     rename function to def.pres.h2o.rtio.mole.h2o.dry.pres()
+#   Natchaya P-Durden (2018-04-03)
+#     update @param format
 ##############################################################################################
 
 def.pres.h2o.rtio.mole.h2o.dry.pres <- function(rtioMoleDryH2o, pres)  {

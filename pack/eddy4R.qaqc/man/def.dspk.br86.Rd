@@ -4,24 +4,24 @@
 \alias{def.dspk.br86}
 \title{Definition function: Median filter de-spiking}
 \usage{
-def.dspk.br86(dataIn, WndwFilt = 9, NumBin = 2, ThshReso = 10,
+def.dspk.br86(dataInp, WndwFilt = 9, NumBin = 2, ThshReso = 10,
   FracRealMin = 0.025)
 }
 \arguments{
-\item{\code{dataIn}}{Required. A univariate vector of integers or numerics of Input data}
+\item{dataInp}{Required. A univariate vector of integers or numerics of Input data}
 
-\item{\code{WndwFilt}}{Optional. A single integer value of filter width. Default = 9}
+\item{WndwFilt}{Optional. A single integer value of filter width. Default = 9}
 
-\item{\code{NumBin}}{Optional. A single integer value of the initial number/step size of histogram bins. Default = 2}
+\item{NumBin}{Optional. A single integer value of the initial number/step size of histogram bins. Default = 2}
 
-\item{\code{ThshReso}}{Optional. A single integer value of the resolution threshold for spike determination. Only considered spike only if difference larger than measurement resolution x ThshReso. Default = 10}
+\item{ThshReso}{Optional. A single integer value of the resolution threshold for spike determination. Only considered spike only if difference larger than measurement resolution x ThshReso. Default = 10}
 
-\item{\code{FracRealMin}}{Optional. A single numeric value of the minimum fraction of non-NA values required to perform median filter despiking. Default = 0.025 (2.5\%)}
+\item{FracRealMin}{Optional. A single numeric value of the minimum fraction of non-NA values required to perform median filter despiking. Default = 0.025 (2.5\%)}
 }
 \value{
 A list of:
 
-\code{dataIn} Same as input.
+\code{dataInp} Same as input.
 
 \code{WndwFilt} Same as input.
 
@@ -39,7 +39,7 @@ A list of:
 
 \code{dataNorm} Numeric vector of input data normalized to mean 0 and standard deviation of 1
 
-\code{dataNormDiff} Numeric vector of differences between subsequent values of \code{dataNorm}. Length = 1-length(dataIn)
+\code{dataNormDiff} Numeric vector of differences between subsequent values of \code{dataNorm}. Length = 1-length(dataInp)
 
 \code{resoDataNorm} Numeric value. Measurement resolution (assumed to be smallest recorded change in \code{dataNorm})
 
@@ -59,21 +59,21 @@ A list of:
 
 \code{histDiffFinl$breaks} Numeric vector. Bin edges for \code{histDiffFinl}
 
-\code{posBinMin} Integer. Index of histogram bin within \code{histDiffFinl} with minimum number of counts.
+\code{idxBinMin} Integer. Index of histogram bin within \code{histDiffFinl} with minimum number of counts.
 
-\code{posBinMax} Integer. Index of histogram bin within \code{histDiffFinl} with maximum number of counts.
+\code{idxBinMax} Integer. Index of histogram bin within \code{histDiffFinl} with maximum number of counts.
 
-\code{posThshBinMin} Integer. Current iteration of minimum threshold index of histogram bin within \code{histDiffFinl} for spike determination
+\code{idxThshBinMin} Integer. Current iteration of minimum threshold index of histogram bin within \code{histDiffFinl} for spike determination
 
-\code{posThshBinMax}  Integer. Current iteration of maximum threshold index of histogram bin within \code{histDiffFinl} for spike determination
+\code{idxThshBinMax}  Integer. Current iteration of maximum threshold index of histogram bin within \code{histDiffFinl} for spike determination
 
-\code{posThshBinMinFinl} Integer. Final minimum threshold index of histogram bin within \code{histDiffFinl} for spike determination
+\code{idxThshBinMinFinl} Integer. Final minimum threshold index of histogram bin within \code{histDiffFinl} for spike determination
 
-\code{posThshBinMaxFinl} Integer. Final maximum threshold index of histogram bin within \code{histDiffFinl} for spike determination
+\code{idxThshBinMaxFinl} Integer. Final maximum threshold index of histogram bin within \code{histDiffFinl} for spike determination
 
-\code{posSpk} Indices of determined spikes within \code{dataIn}
+\code{setSpk} Indices of determined spikes within \code{dataInp}
 
-\code{qfSpk} Integer. Quality flag values [-1,0,1] for despike test, matching same size as \code{dataIn}
+\code{qfSpk} Integer. Quality flag values [-1,0,1] for despike test, matching same size as \code{dataInp}
 }
 \description{
 Function definition. Median filter de-spiking\cr

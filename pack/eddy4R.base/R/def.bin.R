@@ -7,12 +7,12 @@
 
 #' @description Function definition. Smooth data using Binning method.
 
-#' @param \code{idep} Either a vector or matrix of class numeric or integer containing the independent variable and of the same length as \code{depe}. []
-#' @param \code{depe} Either a vector or matrix of class numeric or integer containing the dependent variable and of the same length as \code{idep}. []
-#' @param \code{RngMinMax} An object of class numeric or integer containing the minimum and maximum values of the independent variable. Defaults to NULL. []
-#' @param \code{NumBin} An object of class numeric or integer containing the number of bins. []
-#' @param \code{widtBin} An object of class string containing the functions ("lin", "log10", "exp10", "logExp", "expLog") to determine bin width distribution of the independent variable. []
-#' @param \code{meanFunc} An object of class string containing the arithmetic "mean" and "median". []
+#' @param idep Either a vector or matrix of class numeric or integer containing the independent variable and of the same length as \code{depe}. []
+#' @param depe Either a vector or matrix of class numeric or integer containing the dependent variable and of the same length as \code{idep}. []
+#' @param RngMinMax An object of class numeric or integer containing the minimum and maximum values of the independent variable. Defaults to NULL. []
+#' @param NumBin An object of class numeric or integer containing the number of bins. []
+#' @param widtBin An object of class string containing the functions ("lin", "log10", "exp10", "logExp", "expLog") to determine bin width distribution of the independent variable. []
+#' @param meanFunc An object of class string containing the arithmetic "mean" and "median". []
 
 #' @return \code{idep} A list object of class "numeric" containing the resulted binning of independent variable and of the same length as {widtBin} and \code{depe} a matrix containing the the resulted binning of dependent variable and of the same length as {widtBin}. \cr
 
@@ -36,6 +36,8 @@
 #     re-formualtion as function() to allow packaging
 #   Natchaya P-Durden (2016-04-28)
 #     Initail naming convention for eddy4R
+#   Natchaya P-Durden (2018-04-03)
+#     update @param format
 ##############################################################################################
 #BIN DATA
 

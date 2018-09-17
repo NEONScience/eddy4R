@@ -7,11 +7,11 @@
 def.smth(data, span, smthFunc = c("smthKern"))
 }
 \arguments{
-\item{\code{data}}{A vector containing the input data. Of class "numeric" or "integer". []}
+\item{data}{A vector containing the input data. Of class "numeric" or "integer". []}
 
-\item{\code{span}}{A Vector containing the span values. Of class "numeric" or "integer". The option \code{span} controls the degree of smoothing. For example; using span = c(15) to apply a long smoothing filter, or using spans = c(3,3) to apply two short filters in succession. [-]}
+\item{span}{A Vector containing the span values. Of class "numeric" or "integer". The option \code{span} controls the degree of smoothing. For example; using span = c(15) to apply a long smoothing filter, or using spans = c(3,3) to apply two short filters in succession. [-]}
 
-\item{\code{smthFunc}}{An object of class string containing the smooth functions ("smthKern"). []}
+\item{smthFunc}{An object of class string containing the smooth functions ("smthKern"). []}
 }
 \value{
 Estimated smooth values and of the same length as \code{data}. []

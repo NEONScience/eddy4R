@@ -6,8 +6,13 @@
 \usage{
 def.rot.enu.ned(angEnu, Meth = c("vec", "ang"))
 }
+\arguments{
+\item{angEnu}{Angle in east-north-up. [rad]}
+
+\item{Meth}{A vector of class "character" containing the method to use vector or angular, Meth = c("vec", "ang"). [-]}
+}
 \value{
-Azimuth angle in the North-east-down local coordinate system [rad]
+Azimuth angle in the North-east-down local coordinate system. [rad]
 }
 \description{
 Function defintion. Coordinate transformation from the east-north-up (Enu) coordiante system to the north-east-down (Ned) coordiante system, and vice versa.

@@ -8,7 +8,7 @@
 
 #' @description Function definition. Calculation of sonic temperature from speed of sound using Eq. (9) in Appendix C of CSAT3 Three Dimensional Sonic Anemometer Instruction manual
 
-#' @param \code{veloSoni} A vector containing speed of sound, of class "numeric". [m s-1]
+#' @param veloSoni A vector containing speed of sound, of class "numeric". [m s-1]
 
 #' @return 
 #' The returned object is sonic temperature  
@@ -37,6 +37,8 @@
 #     original creation
 #   Hongyan Luo (2016-11-17)
 #     adjust to eddy4R coding style
+#   Natchaya P-Durden (2018-04-03)
+#     update @param format
 ###############################################################################################
 
 # Function to calculate sonic temperature from speed of sound 

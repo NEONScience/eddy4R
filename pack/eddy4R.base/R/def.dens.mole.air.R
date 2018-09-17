@@ -8,8 +8,8 @@
 
 #' @description Function definition. Calculation of the molar density of the misxture of dry air and water vapor
 
-#' @param \code{presSum} A vector containing the total pressure of the air mixture, of class "numeric". [Pa]
-#' @param \code{tempMean} A vector containing the mean temperatrue of the air mixture, of class "numeric". [K]
+#' @param presSum A vector containing the total pressure of the air mixture, of class "numeric". [Pa]
+#' @param tempMean A vector containing the mean temperatrue of the air mixture, of class "numeric". [K]
 
 #' @return 
 #' The returned object is the the molar density of the mixture of dry air and water vapor  
@@ -39,6 +39,8 @@
 #     original creation
 #   Hongyan Luo (2016-11-14)
 #     adjust to eddy4R coding style
+#   Natchaya P-Durden (2018-04-03)
+#     update @param format
 ###############################################################################################
 
 # molar density of the mixture of dry air and water vapor

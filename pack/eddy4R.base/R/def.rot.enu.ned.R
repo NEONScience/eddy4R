@@ -6,8 +6,10 @@
 
 #' @description Function defintion. Coordinate transformation from the east-north-up (Enu) coordiante system to the north-east-down (Ned) coordiante system, and vice versa.
 
+#' @param angEnu Angle in east-north-up. [rad]
+#' @param Meth A vector of class "character" containing the method to use vector or angular, Meth = c("vec", "ang"). [-]
 
-#' @return Azimuth angle in the North-east-down local coordinate system [rad]
+#' @return Azimuth angle in the North-east-down local coordinate system. [rad]
 
 #' @references
 #' License: GNU AFFERO GENERAL PUBLIC LICENSE Version 3, 19 November 2007. 
@@ -23,7 +25,8 @@
 # changelog and author contributions / copyrights
 #   David Durden (2017-05-05)
 #     original creation
-
+#   Natchaya P-Durden (2018-04-03)
+#     add defined parameters in the function header
 ##############################################################################################
 
 # Rotation from East-North-Up to North-East-Down coordinates

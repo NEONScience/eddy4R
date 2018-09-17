@@ -7,10 +7,10 @@
 
 #' @description Poisson's equation (adiabatic change) - temperature as function of pressure change.
 
-#' @param \code{pres01} Measured air pressure [same unit as reference pressure]
-#' @param \code{pres02} Reference pressure [same unit as reference pressure]
-#' @param \code{temp01} Measured air temperature [K]
-#' @param \code{Kppa} Ratio of specific gas constant to specific heat at constant pressure. Default as KppaDry [-]
+#' @param pres01 Measured air pressure [same unit as reference pressure]
+#' @param pres02 Reference pressure [same unit as reference pressure]
+#' @param temp01 Measured air temperature [K]
+#' @param Kppa Ratio of specific gas constant to specific heat at constant pressure. Default as KppaDry [-]
 #' 
 #' @return Temperature at refernce pressure [K]
 
@@ -34,6 +34,8 @@
 #     initail naming convention for eddy4R
 #   Natchaya P-Durden (2016-11-27)
 #     rename function to def.temp.pres.pois()
+#   Natchaya P-Durden (2018-04-03)
+#     update @param format
 ##############################################################################################
 
 def.temp.pres.pois <- function(temp01, pres01, pres02, Kppa = eddy4R.base::IntlNatu$KppaDry)   temp02 = temp01 * (pres02/pres01)^Kppa

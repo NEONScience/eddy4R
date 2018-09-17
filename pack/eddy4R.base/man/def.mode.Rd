@@ -7,7 +7,7 @@
 def.mode(x)
 }
 \arguments{
-\item{\code{x}}{Either a vector or an object of class numeric of the data from which the estimate is to be computed.}
+\item{x}{Either a vector or an object of class numeric of the data from which the estimate is to be computed.}
 }
 \value{
 The estimated arithmetic mode of the values in \code{x}. \cr

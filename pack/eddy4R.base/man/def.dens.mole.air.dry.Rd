@@ -7,9 +7,9 @@
 def.dens.mole.air.dry(densMoleAir, densMoleH2o)
 }
 \arguments{
-\item{\code{densMoleAir}}{A vector containing the mole density of the air mixture (includes dry air and water vapor), of class "numeric". [mol m-3]}
+\item{densMoleAir}{A vector containing the mole density of the air mixture (includes dry air and water vapor), of class "numeric". [mol m-3]}
 
-\item{\code{densMoleH2o}}{A vector containing the water vapor mole density of the air mixture, of class "numeric". [molH2o m-3]}
+\item{densMoleH2o}{A vector containing the water vapor mole density of the air mixture, of class "numeric". [molH2o m-3]}
 }
 \value{
 The returned object is the the molar density of the dry air alone

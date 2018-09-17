@@ -7,7 +7,7 @@
 wrap.derv.prd.day(inpList, ZoneTime, AngZaxsSoniInst)
 }
 \arguments{
-\item{inpList}{List consisting of \code{ff::ffdf} file-backed objects, in the format provided by function \code{eddy4R.base::wrap.neon.read.hdf5.eddy()}. Of types numeric and integer.}
+\item{inpList}{List consisting of \code{ff::ffdf} file-backed objects, in the format provided by function \code{eddy4R.base::wrap.hdf5.read()}. Of types numeric and integer.}
 
 \item{AngZaxsSoniInst}{Parameter of class numeric. Azimuth (angle around z axis) direction against true north in which sonic anemometer installation (transducer array) is pointing [deg]}
 
@@ -17,7 +17,7 @@ wrap.derv.prd.day(inpList, ZoneTime, AngZaxsSoniInst)
 The returned object consistes of \code{inpList}, with the derived variables added to the respective list entry, and all list levels sorted alphabetically.
 }
 \description{
-Wrapper function. Reads the list \code{inpList} in the format provided by function \code{eddy4R.base::wrap.neon.read.hdf5.eddy()}. For the list entries in \code{inpList} the following derived quantities are calculated, each through the call to a separate definition function: \cr
+Wrapper function. Reads the list \code{inpList} in the format provided by function \code{eddy4R.base::wrap.hdf5.read()}. For the list entries in \code{inpList} the following derived quantities are calculated, each through the call to a separate definition function: \cr
 \code{inpList$data$time}: fractional UTC time, fractional day of year, local standard time;  \cr
 \code{inpList$data$irgaTurb}: average signal strength, delta signal strength, total pressure, average temperature, water vapor partial pressure, water vapor saturation pressure, relative humidity, molar density of air (dry air and water vapor), molar density of dry air, wet mass fraction (specific humidity);  \cr
 \code{inpList$data$soni}: sonic temperature.

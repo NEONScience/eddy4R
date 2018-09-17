@@ -9,9 +9,9 @@
 #' Function definition. Determine the final quality flag for individual level 1 data product following the method described in Smith et.al. (2014). The alpha and beta quality flags and metrics are also computed in this function. Performed for the entire set of input data.
 
 
-#' @param \code{qf} A data frame of quality flags, class integer, from which to compute the final quality flag. Each column contains the quality flag values [-1,0,1] for that flag. Note: This is the Vrbs output from def.plau, def.dspk.wndw, and def.dspk.br86. See def.conv.qf.vrbs for converting from non-verbose to verbose output.
-#' @param \code{WghtAlphBeta} A 2-element integer vector of weights to apply to the alpha and beta quality metrics, which will then be summed and evaluated against the threshold (\code{Thsh}) for determing the final quality flag. Default to WghtAlphBeta=c(2,1). [-] 
-#' @param \code{Thsh} Threshold for determine the condition (pass = 0 or failed = 1) of final quality flag. Default to 0.2 (0.2 percent). [fraction]
+#' @param qf A data frame of quality flags, class integer, from which to compute the final quality flag. Each column contains the quality flag values [-1,0,1] for that flag. Note: This is the Vrbs output from def.plau, def.dspk.wndw, and def.dspk.br86. See def.conv.qf.vrbs for converting from non-verbose to verbose output.
+#' @param WghtAlphBeta A 2-element integer vector of weights to apply to the alpha and beta quality metrics, which will then be summed and evaluated against the threshold (\code{Thsh}) for determing the final quality flag. Default to WghtAlphBeta=c(2,1). [-] 
+#' @param Thsh Threshold for determine the condition (pass = 0 or failed = 1) of final quality flag. Default to 0.2 (0.2 percent). [fraction]
 
 #' @return A list of: \cr
 #' \code{qaqcRpt} A dataframe containing alpha and beta quality flags at the same frequency as input \code{qf}. [-] \cr
@@ -47,6 +47,8 @@
 #     Added some error checking on inputs
 #     Changed units of qms from percent to fraction 
 #     Added exclusion of Null test failures from qmBeta (to avoid double-counting)
+#   Natchaya P-Durden (2018-04-03)
+#     update @param format
 ##############################################################################################
 def.qf.finl <- function (
   qf,
