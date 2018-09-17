@@ -133,7 +133,7 @@ wrap.derv.prd.day <- function(
   #Convert the angle of installation to radians
   AngZaxsSoniInst <- eddy4R.base::def.unit.conv(data=AngZaxsSoniInst,unitFrom="deg",unitTo="rad")
   # rotate wind vector into meteorological coordinate system (positive from west, south and below)
-  inpList$data$soni <- def.met.body(AngZaxsSoniInst = AngZaxsSoniInst, veloBody = inpList$data$soni)
+  inpList$data$soni <- eddy4R.base::def.met.body(AngZaxsSoniInst = AngZaxsSoniInst, veloBody = inpList$data$soni)
   
   # magnitude of horizontal wind speed
   inpList$data$soni$veloXaxsYaxsErth <- sqrt(inpList$data$soni$veloXaxs^2 + inpList$data$soni$veloYaxs^2)
