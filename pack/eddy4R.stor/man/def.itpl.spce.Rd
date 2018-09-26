@@ -4,12 +4,12 @@
 \alias{def.itpl.spce}
 \title{Definition function: spatial intepolation of data at discontinous levels into spatially continous data}
 \usage{
-def.itpl.spce(dataInp, methItpl, resoSpceOut, lvlTowr)
+def.itpl.spce(dataInp, methItpl = "linear", resoSpceOut, lvlTowr)
 }
 \arguments{
 \item{\code{dataInp}}{Input data.}
 
-\item{\code{methItpl}}{intepolation method: linear intepolation is the default method.}
+\item{\code{methItpl}}{intepolation method: "linear" or "constant", linear intepolation is the default method.}
 
 \item{\code{resoSpceOut}}{the output spatial resolution}
 

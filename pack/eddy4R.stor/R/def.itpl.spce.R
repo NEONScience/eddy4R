@@ -8,7 +8,7 @@
 #' Definition function. Function spatial intepolation of data at discontinous levels into spatially continous data 
 
 #' @param \code{dataInp} Input data. 
-#' @param \code{methItpl} intepolation method: linear intepolation is the default method. 
+#' @param \code{methItpl} intepolation method: "linear" or "constant", linear intepolation is the default method. Reference for constant spatial intepolation: Montagnani et al., 2018, Estimating the storage term in eddy covariance measurements: the ICOS methodology 
 #' @param \code{resoSpceOut} the output spatial resolution
 #' @param \code{lvlTowr} the tower levels
 
@@ -33,13 +33,15 @@
 #     original creation
 #   Ke Xu (2018-07-07)
 #     apply eddy4R terms: whr-> set; spac -> spce
+#   Ke Xu (2018-08-30)
+#     add rectangular interpolation method (Montagnani et al., 2018, Estimating the storage term in eddy covariance measurements: the ICOS methodology)
 ##############################################################################################################
 #Start of function call
 ##############################################################################################################
 
 def.itpl.spce <- function(
   dataInp,
-  methItpl,
+  methItpl = "linear",
   resoSpceOut,
   lvlTowr
 ){
@@ -60,15 +62,26 @@ def.itpl.spce <- function(
     
     if(methItpl == "linear"){
       rpt <- zoo::na.approx(object=as.vector(dataInp), x=#dataInp$timeFrac
-                                  lvlTowr
-                                , xout=spceStad
-                                , method = "linear", 
-                                na.rm=TRUE#,#if you want begining and end to be constant fitted, na.rm=TRUE
-                                #rule=1, f=0
+                              lvlTowr
+                            , xout=spceStad
+                            , method = "linear", 
+                            na.rm=TRUE,#if you want begining and end to be constant fitted, na.rm=TRUE
+                            rule=2#, f=0
       )
       
-      rpt <- c(rep(rpt[1], length(spceStad) - length(rpt)), rpt)
-    }
+      #rpt <- c(rep(rpt[1], length(spceStad) - length(rpt)), rpt)
+    } 
+    
+    if(methItpl == "constant"){
+      rpt <- rev(zoo::na.approx(object=rev(as.vector(dataInp)), x=#dataInp$timeFrac
+                                  lvlTowr
+                                , xout=spceStad
+                                , method = methItpl, 
+                                na.rm=TRUE,#if you want begining and end to be constant fitted, na.rm=TRUE, rule=2 set as the closest data
+                                rule=2#, f=0
+      ))
+      
+    } 
     
     
   } else {
