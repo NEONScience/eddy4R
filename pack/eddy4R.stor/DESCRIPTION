@@ -6,7 +6,7 @@ Authors@R: c( person("Ke", "Xu", email = "xuke2012abroad@gmail.com", role = c("a
               person("Stefan", "Metzger", email = "eddy4R.info@gmail.com", role = c("aut")),
               person("Natchaya", "Pingintha-Durden", email = "ndurden@battelleecology.org", role = c("aut"))
               )
-Description: Eddy-covariance calculation for R: Storage flux. 
+Description: Eddy-covariance calculation for R: Storage flux. Eddy-Covariance storage flux data processing includes extracting the valid sampling data and validation data (level 1 data products (dp01)), calculating temporally-continuous time rate of change (dp02), spatially-continuous profile (dp03), and storage flux (dp04). The Eddy-Covariance (EC) micrometeorological technique quantifies continuous storage fluxes of heat, water vapor, and CO2 between an ecosystem and the atmosphere. It is important for understanding ecosystem dynamics and upscaling exchange fluxes. (Aubinet (2008) <doi:10.1890/06-1336.1>). This package inputs pre-processed 1 Hz level 0p (dp0p) data and supports further processing (Xu et al., 2019). 
 Depends: R (>= 3.4.3)
 Imports:
     zoo (>= 1.8-1)
