@@ -3,8 +3,10 @@ Title: Eddy-covariance calculation for R: Storage flux
 Version: 0.0.0.9000
 Authors@R: c( person("Stefan", "Metzger", email = "eddy4R.info@gmail.com", role = c("aut", "cre")),
               person("Ke", "Xu", email = "xuke2012abroad@gmail.com", role = c("aut", "cre")))
-Description: Eddy-covariance calculation for R: Storage flux. 
+Description: Eddy-covariance calculation for R: Storage flux. Along with workflow, flow.stor.towr.neon.R, eddy4R.stor produces NEON storage flux (stor) level 1 to level 4 data products (dp01 to dp04) in hdf5. 
 Depends: R (>= 3.4.3)
+Imports:
+    zoo (>= 1.8-1)
 License: Terms of use of the NEON FIU algorithm repository dated 2015-01-16
 Encoding: UTF-8
 LazyData: true
