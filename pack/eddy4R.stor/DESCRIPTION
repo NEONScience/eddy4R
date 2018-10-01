@@ -1,10 +1,11 @@
 Package: eddy4R.stor
-Title: What the Package Does (one line, title case)
+Title: Eddy-covariance calculation for R: Storage flux
 Version: 0.0.0.9000
-Authors@R: person("First", "Last", email = "first.last@example.com", role = c("aut", "cre"))
-Description: What the package does (one paragraph).
+Authors@R: c( person("Stefan", "Metzger", email = "eddy4R.info@gmail.com", role = c("aut", "cre")),
+              person("Ke", "Xu", email = "xuke2012abroad@gmail.com", role = c("aut", "cre")))
+Description: Eddy-covariance calculation for R: Storage flux. 
 Depends: R (>= 3.4.3)
-License: What license is it under?
+License: Terms of use of the NEON FIU algorithm repository dated 2015-01-16
 Encoding: UTF-8
 LazyData: true
 RoxygenNote: 6.0.1
