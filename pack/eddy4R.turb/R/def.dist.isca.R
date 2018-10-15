@@ -36,6 +36,8 @@
 #     Add two arguments PltfEc and flagCh4 to adjust tower data
 #   Kenny Pratt(2017-02-03)
 #     Renaming in accordance with Eddy4R conventions
+#   Natchaya P-Durden (2018-04-11)
+#    applied eddy4R term name convention; replaced pos by idx
 ##############################################################################################
 def.dist.isca <- function(
   scalEddy,
@@ -109,15 +111,15 @@ def.dist.isca <- function(
   #a) integral over acf until first zero crossing (Bange, 2002);
   #b) first maximum of the integral (Lenschow, 1986);
   #find first zero crossing
-  #      posZero <- rptAcf$lag[zeroCross(rptAcf$acf, slope="negative")[1]]
-  #      posZero <- rptAcf$lag[GenKern::nearest(x=rptAcf$acf, xval=0)[1]]
+  #      idxZero <- rptAcf$lag[zeroCross(rptAcf$acf, slope="negative")[1]]
+  #      idxZero <- rptAcf$lag[GenKern::nearest(x=rptAcf$acf, xval=0)[1]]
   require(EMD)
   #data needs have extrema, otherwise it will not identify the zero crossing
   #hence attaching sin(1:10) to the end
-  posZero <- EMD::extrema(y=c(rptCorr$acf, sin(1:10)))$cross[1,2]
+  idxZero <- EMD::extrema(y=c(rptCorr$acf, sin(1:10)))$cross[1,2]
   
   #for each cell, weight distance increment with correlation coefficient
-  distIsca <- base::sum(rptCorr$acf[1:posZero]) * incr
+  distIsca <- base::sum(rptCorr$acf[1:idxZero]) * incr
   #alternatively: all in one, assume that correlation monotonously decreases after peak
   #distIsca <- base::max(base::cumsum(rptAcf$acf)) * incr
   
