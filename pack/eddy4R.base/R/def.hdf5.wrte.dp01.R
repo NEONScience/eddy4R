@@ -197,5 +197,5 @@ lapply(names(inpList$dp01AgrSub$ucrt[[Dp01]]), function(x) {
 }
 }
 #Close HDF5 connections
-rhdf5::H5close()
+rhdf5::h5closeAll()
 }

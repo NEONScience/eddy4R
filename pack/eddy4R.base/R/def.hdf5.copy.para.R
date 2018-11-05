@@ -88,5 +88,5 @@ lapply(names(listAttr), function(x){
    rhdf5::h5writeAttribute(attr = listAttr[[x]][[y]], h5obj = idData, name = y)})
 })
 
-H5close()
+h5closeAll()
 }
