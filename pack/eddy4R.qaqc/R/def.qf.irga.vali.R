@@ -10,6 +10,7 @@
 
 #' @param data A data.frame containing the L0p input IRGA sampling mass flow controller data or the IRGA validation soleniod valves data at native resolution. Of type numeric or integer. [User-defined]
 #' @param Sens A vector of class "character" containing the name of sensor used to determine the flag (IRGA sampling mass flow controller data or the IRGA validation soleniod valves), Sens = c("irgaMfcSamp", "irgaSndValiNema"). Defaults to "irgaMfcSamp". [-]
+#' @param qfGas A vector of class "character" containing the name of quality flag of reference gas, qfGas = c("qfGas01", "qfGas02", "qfGas03", "qfGas04", "qfGas05"). This parameter needs to provide when Sens = "irgaSndValiNema". Defaults to NULL. [-]
 
 #' @return A vector class of integer (\code{qfIrgaVali}) of IRGA validation flags. Flag indicating when the sensor is operated under validation period (1 = validation period, 0 = normal operating condition, -1 = NA) [-]
 
@@ -50,11 +51,14 @@
 #     revised the original by adding the sensor option to indicate qfIrgaVali
 #   David Durden (2017-04-26)
 #     Adapted to work with ff objects and output 20Hz flag if irgaSndValiNema is used
+#   Natchaya P-Durden (2018-11-09)
+#     Adjusted function to determine qf for each validation gas
 ##############################################################################################
 
 def.qf.irga.vali <- function(
   data,
-  Sens = c("irgaMfcSamp", "irgaSndValiNema") [1]
+  Sens = c("irgaMfcSamp", "irgaSndValiNema") [1],
+  qfGas = NULL
 ){
   
   if (Sens %in% "irgaMfcSamp"){
@@ -95,23 +99,21 @@ def.qf.irga.vali <- function(
     #Check if object passed is an ff object
     if(is.ffdf(data)){
       #create a vector of zero's
-      qfIrgaVali <- rep(0L, length(data$qfGas01))
+      qfIrgaVali <- rep(0L, length(data[[qfGas]]))
       #Find indices where validation solenoid are open qfGas.. == 1
-      idx <- ffwhich(data, qfGas01 == 1|qfGas02 == 1|qfGas03 == 1|qfGas04 == 1|qfGas05 == 1)
+      idx <- ffwhich(data, data[[qfGas]] == 1)
       #Find indices where qfGas.. is NA
-      idxNa <- ffwhich(data, is.na(qfGas01)|is.na(qfGas02)|is.na(qfGas03)|is.na(qfGas04)|is.na(qfGas05))
+      idxNa <- ffwhich(data, is.na(data[[qfGas]]))
       #Fill indices where qfGas.. is equal to 1 indicating open validation valves with a flag (qfIrgaVali = 1)
       qfIrgaVali[idx[]] <- 1L
       #fill the indices where irgaSndValiNema has missing data
       qfIrgaVali[idxNa[]] <- -1L
-    } else {
+      } else {
     
     
     #determine the flag (1=validation period, 0=normal operating condition, else = -1)
-    qfIrgaVali <- as.integer(ifelse(is.na(data$qfGas01) | is.na(data$qfGas02) |
-                                      is.na(data$qfGas03) | is.na(data$qfGas04) | is.na(data$qfGas05), -1,
-                                    ifelse(data$qfGas01 == 1| data$qfGas02 == 1|
-                                             data$qfGas03 == 1| data$qfGas04 == 1| data$qfGas05 == 1, 1, 0)))
+    qfIrgaVali <- as.integer(ifelse(is.na(data[[qfGas]]), -1,
+                                    ifelse(data[[qfGas]] == 1, 1, 0)))
     
     }
     
