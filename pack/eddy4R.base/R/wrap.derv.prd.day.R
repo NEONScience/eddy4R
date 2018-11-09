@@ -83,11 +83,11 @@ wrap.derv.prd.day <- function(
   #Run the test to output Validation flag
   inpList$qfqm$irgaTurb$qfIrgaTurbVali <- ff::as.ff(eddy4R.qaqc::def.qf.irga.vali(data = inpList$data$mfcSampTurb))#Use this one for MFC set point
   
-  inpList$qfqm$irgaTurb$qfIrgaTurbValiGas01 <- eddy4R.qaqc::def.qf.irga.vali(data = inpList$data$valvValiNemaTurb, Sens = "valvValiNemaTurb", qfGas = "qfGas01")
-  inpList$qfqm$irgaTurb$qfIrgaTurbValiGas02 <- eddy4R.qaqc::def.qf.irga.vali(data = inpList$data$valvValiNemaTurb, Sens = "valvValiNemaTurb", qfGas = "qfGas02")
-  inpList$qfqm$irgaTurb$qfIrgaTurbValiGas03 <- eddy4R.qaqc::def.qf.irga.vali(data = inpList$data$valvValiNemaTurb, Sens = "valvValiNemaTurb", qfGas = "qfGas03")
-  inpList$qfqm$irgaTurb$qfIrgaTurbValiGas04 <- eddy4R.qaqc::def.qf.irga.vali(data = inpList$data$valvValiNemaTurb, Sens = "valvValiNemaTurb", qfGas = "qfGas04")
-  inpList$qfqm$irgaTurb$qfIrgaTurbValiGas05 <- eddy4R.qaqc::def.qf.irga.vali(data = inpList$data$valvValiNemaTurb, Sens = "valvValiNemaTurb", qfGas = "qfGas05")
+  inpList$qfqm$irgaTurb$qfIrgaTurbValiGas01 <- ff::as.ff(eddy4R.qaqc::def.qf.irga.vali(data = inpList$data$valvValiNemaTurb, Sens = "valvValiNemaTurb", qfGas = "qfGas01"))
+  inpList$qfqm$irgaTurb$qfIrgaTurbValiGas02 <- ff::as.ff(eddy4R.qaqc::def.qf.irga.vali(data = inpList$data$valvValiNemaTurb, Sens = "valvValiNemaTurb", qfGas = "qfGas02"))
+  inpList$qfqm$irgaTurb$qfIrgaTurbValiGas03 <- ff::as.ff(eddy4R.qaqc::def.qf.irga.vali(data = inpList$data$valvValiNemaTurb, Sens = "valvValiNemaTurb", qfGas = "qfGas03"))
+  inpList$qfqm$irgaTurb$qfIrgaTurbValiGas04 <- ff::as.ff(eddy4R.qaqc::def.qf.irga.vali(data = inpList$data$valvValiNemaTurb, Sens = "valvValiNemaTurb", qfGas = "qfGas04"))
+  inpList$qfqm$irgaTurb$qfIrgaTurbValiGas05 <- ff::as.ff(eddy4R.qaqc::def.qf.irga.vali(data = inpList$data$valvValiNemaTurb, Sens = "valvValiNemaTurb", qfGas = "qfGas05"))
   ###############################################################     
 
 #irga
