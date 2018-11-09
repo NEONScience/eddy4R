@@ -9,8 +9,8 @@
 #' Definition function to generate the validation flags for IRGA from the IRGA sampling mass flow controller flow rate set point or from the IRGA validation soleniod valves. Flag indicating when the sensor is operated under validation period (1 = validation period, 0 = normal operating condition, -1 = NA).
 
 #' @param data A data.frame containing the L0p input IRGA sampling mass flow controller data or the IRGA validation soleniod valves data at native resolution. Of type numeric or integer. [User-defined]
-#' @param Sens A vector of class "character" containing the name of sensor used to determine the flag (IRGA sampling mass flow controller data or the IRGA validation soleniod valves), Sens = c("irgaMfcSamp", "irgaSndValiNema"). Defaults to "irgaMfcSamp". [-]
-#' @param qfGas A vector of class "character" containing the name of quality flag of reference gas, qfGas = c("qfGas01", "qfGas02", "qfGas03", "qfGas04", "qfGas05"). This parameter needs to provide when Sens = "irgaSndValiNema". Defaults to NULL. [-]
+#' @param Sens A vector of class "character" containing the name of sensor used to determine the flag (IRGA sampling mass flow controller data or the IRGA validation soleniod valves), Sens = c("irgaMfcSamp", "valvValiNemaTurb"). Defaults to "irgaMfcSamp". [-]
+#' @param qfGas A vector of class "character" containing the name of quality flag of reference gas, qfGas = c("qfGas01", "qfGas02", "qfGas03", "qfGas04", "qfGas05"). This parameter needs to provide when Sens = "valvValiNemaTurb". Defaults to NULL. [-]
 
 #' @return A vector class of integer (\code{qfIrgaVali}) of IRGA validation flags. Flag indicating when the sensor is operated under validation period (1 = validation period, 0 = normal operating condition, -1 = NA) [-]
 
@@ -27,16 +27,16 @@
 #' frtSet00 = c(0.00020, 0.00020, NA, NA, 0, 0), 
 #' presAtm = c(57200, 58500, NA, NA, 58600, 58600), 
 #' temp = c(300, 301, NA, NA, 299, 300))
-#' #generate test data for irgaSndValiNema
-#' data$irgaSndValiNema <- data.frame(qfGas01 = c(rep(0, 25)),
+#' #generate test data for valvValiNemaTurb
+#' data$valvValiNemaTurb <- data.frame(qfGas01 = c(rep(0, 25)),
 #' qfGas02 = c(rep(0, 5), rep(1, 5), rep(0, 15)),
 #' qfGas03 = c(rep(0, 10), rep(1, 5), rep(0, 10)),
 #' qfGas04 = c(rep(0, 15), rep(1, 5), rep(0, 5)),
 #' qfGas05 = c(rep(0, 20), rep(NA, 5)))
 #' #determine the flag using irgaMfcSamp
 #' data$qfqm$irga$qfIrgaVali <- def.qf.irga.vali(data = data$irgaMfcSamp, Sens = "irgaMfcSamp")
-#' #determine the flag using irgaSndValiNema
-#' data$qfqm$irga$qfIrgaVali <- def.qf.irga.vali(data = data$irgaSndValiNema, Sens = "irgaSndValiNema")
+#' #determine the flag using valvValiNemaTurb
+#' data$qfqm$irga$qfIrgaValiGas02 <- def.qf.irga.vali(data = data$valvValiNemaTurb, Sens = "valvValiNemaTurb", qfGas = "qfGas02")
 
 #' @seealso Currently none
 
@@ -53,11 +53,12 @@
 #     Adapted to work with ff objects and output 20Hz flag if irgaSndValiNema is used
 #   Natchaya P-Durden (2018-11-09)
 #     Adjusted function to determine qf for each validation gas
+#     updated irgaSndValiNema to valvValiNemaTurb
 ##############################################################################################
 
 def.qf.irga.vali <- function(
   data,
-  Sens = c("irgaMfcSamp", "irgaSndValiNema") [1],
+  Sens = c("irgaMfcSamp", "valvValiNemaTurb") [1],
   qfGas = NULL
 ){
   
@@ -90,7 +91,7 @@ def.qf.irga.vali <- function(
     
     }}#close if statement of Sens %in% "irgaMfcSamp"
   
-  if (Sens %in% "irgaSndValiNema"){
+  if (Sens %in% "valvValiNemaTurb"){
     #check if frtSet00 existing in the input data
     if (is.null(data$qfGas01 | data$qfGas02 | data$qfGas03 | data$qfGas04 | data$qfGas05)){
       base::stop("Missing the one or more of IRGA validation soleniod valves data")
@@ -106,7 +107,7 @@ def.qf.irga.vali <- function(
       idxNa <- ffwhich(data, is.na(data[[qfGas]]))
       #Fill indices where qfGas.. is equal to 1 indicating open validation valves with a flag (qfIrgaVali = 1)
       qfIrgaVali[idx[]] <- 1L
-      #fill the indices where irgaSndValiNema has missing data
+      #fill the indices where valvValiNemaTurb has missing data
       qfIrgaVali[idxNa[]] <- -1L
       } else {
     
@@ -117,12 +118,12 @@ def.qf.irga.vali <- function(
     
     }
     
-    #Test that input data for irgaSndValiNema was the right length
+    #Test that input data for valvValiNemaTurb was the right length
     if(!length(qfIrgaVali) == 17280) { stop("qfIrgaVali is not the appropriate length for 0.2 Hz input data")}
     #Convert from 0.2 Hz to 20 Hz
     qfIrgaVali <- rep(qfIrgaVali, each = 100) #TODO: this could be implemented better to handle different input data
     
-    }#close if statement of Sens %in% "irgaSndValiNema"
+    }#close if statement of Sens %in% "valvValiNemaTurb"
   
   
   
