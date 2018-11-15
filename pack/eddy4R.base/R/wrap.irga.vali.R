@@ -49,22 +49,36 @@ wrap.irga.vali <- function(
   #subset qfqmFlag
   subQfqmFlag <- qfqmFlag$irgaTurb[][min(idxSub):max(idxSub),]
   
-  #preparing the qfIrgaTurbValiGas01 to 05 data for def.idx.agr()
-  #replace NA to the qf which are not equal to 1
   nameQf <- c("qfIrgaTurbValiGas01", "qfIrgaTurbValiGas02", "qfIrgaTurbValiGas03", "qfIrgaTurbValiGas04", "qfIrgaTurbValiGas05")
-  for (idxNameQf in nameQf){
-  subQfqmFlag[[idxNameQf]] <- ifelse(subQfqmFlag[[idxNameQf]] != 1, NA, subQfqmFlag[[idxNameQf]])
+  #assign list
+  rpt <- list()
   
-  #determine when validation occur
-  #if there is at least one measurement
-  if(length(which(!is.na(subQfqmFlag[[idxNameQf]]))) > 0){
-    #determine the beginning and ending indicies of each validation
-    idxVali <- eddy4R.base::def.idx.agr(time = subData$time, PrdAgr = (90), FreqLoca = 20, MethIdx = "specEnd", data = subQfqmFlag[[idxNameQf]], CritTime = 0)
-    #delete row if last timeBgn and timeEnd is NA
-    idxVali <- idxVali[rowSums(is.na(idxVali)) != 2,]
-    #if last timeEnd is NA, replce that time to the last time value in data$time
-    idxVali$timeEnd <- as.POSIXct(ifelse(is.na(idxVali$timeEnd), subData$time[length(subData$time)], idxVali$timeEnd), origin = "1970-01-01", tz = "UTC")
+  for (idxNameQf in nameQf){
+    #preparing the qfIrgaTurbValiGas01 to 05 data for def.idx.agr()
+    #replace NA to the qf which are not equal to 1
+    subQfqmFlag[[idxNameQf]] <- ifelse(subQfqmFlag[[idxNameQf]] != 1, NA, subQfqmFlag[[idxNameQf]])
     
+    #determine when validation occur
+    #if there is at least one measurement
+    if(length(which(!is.na(subQfqmFlag[[idxNameQf]]))) > 0){
+      #determine the beginning and ending indicies of each validation
+      idxVali <- eddy4R.base::def.idx.agr(time = subData$time, PrdAgr = (90), FreqLoca = 20, MethIdx = "specEnd", data = subQfqmFlag[[idxNameQf]], CritTime = 0)
+      #delete row if last timeBgn and timeEnd is NA
+      idxVali <- idxVali[rowSums(is.na(idxVali)) != 2,]
+      #if last timeEnd is NA, replce that time to the last time value in data$time
+      idxVali$timeEnd <- as.POSIXct(ifelse(is.na(idxVali$timeEnd), subData$time[length(subData$time)], idxVali$timeEnd), origin = "1970-01-01", tz = "UTC")
+      
+      for (idxAgr in 1:length(idxVali$timeBgn)){
+        #idxAgr <- 1
+        inpData <- data.frame(rtioMoleDryCo2 = subData$rtioMoleDryCo2[idxVali$idxBgn[idxAgr]:idxVali$idxEnd[idxAgr]]) 
+        
+        #dp01 processing
+        rpt[[idxNameQf]][[idxAgr]] <- eddy4R.base::wrap.dp01(
+          # assign data: data.frame or list of type numeric or integer
+          data = inpData
+        )
+      }
+    }
   }#end of each qf in nameQf
 
 }
