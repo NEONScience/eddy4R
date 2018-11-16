@@ -82,6 +82,20 @@ wrap.irga.vali <- function(
         #units:
         attributes(tmp[[idxNameQf]][[idxAgr]]$mean$rtioMoleDryCo2)$unit <- attributes(data$irgaTurb$rtioMoleDryCo2)$unit
       }#end for each idxAgr
+      #report only validation which occured on DateProc
+      #assign time window 
+      timeMin <- base::as.POSIXlt(paste(DateProc, " ", "00:01:29.950", sep=""), format="%Y-%m-%d %H:%M:%OS", tz="UTC")
+      timeMax <- base::as.POSIXlt(paste(DateProc, " ", "23:59:59.950", sep=""), format="%Y-%m-%d %H:%M:%OS", tz="UTC")
+      #determine index when timeEnd fall in Date Proc
+      idxTime <- which(idxVali$timeEnd >= timeMin &  idxVali$timeEnd <= timeMax)
+      if (!is.na(idxTime)){
+        #report data
+        rpt[[idxNameQf]] <- tmp[[idxNameQf]][[idxTime]]
+        #report time
+
+        rpt[[idxNameQf]]$timeBgn <- data.frame(rtioMoleDryCo2 = idxVali$timeBgn[idxTime])
+        rpt[[idxNameQf]]$timeEnd <- data.frame(rtioMoleDryCo2 = idxVali$timeEnd[idxTime])
+      }
     }#end for at least there is one measurement
   }#end of each qf in nameQf
 
