@@ -49,6 +49,8 @@
 #     replace negative idxBgn to 1 in specEnd method
 #   Natchaya Pingintha-Durden (2018-03-09)
 #     replace negative idxEnd to 1 in specEnd method
+#   Natchaya Natchaya Pingintha-Durden (2018-11-16)
+#     fixed bug to accounting for FreqLoca
 ##############################################################################################
 
 def.idx.agr <- function(
@@ -99,7 +101,7 @@ def.idx.agr <- function(
       #Beginning time based on indices
       timeBgn <- time[idxBgn]
       #determine the Ending indices
-      idxEnd <- idxBgn + PrdAgr - 1
+      idxEnd <- idxBgn + ((PrdAgr*FreqLoca) - 1)
       #Ending time based on indices
       timeEnd <- time[idxEnd]
     }#close if statement of length(which(!is.na(data))) > 0 
@@ -151,7 +153,7 @@ def.idx.agr <- function(
     #cut off some of the last data point
     #CritTime <- 0
     #PrdAgr <- 120
-    idxBgn <- whrEnd - (CritTime*FreqLoca) - PrdAgr + 1
+    idxBgn <- whrEnd - (CritTime*FreqLoca) - ((PrdAgr*FreqLoca) + 1)
     #replace negative idxBgn to 1
     idxBgn <- ifelse(idxBgn <= 0, 1, idxBgn)
     #Beginning time based on indices
