@@ -54,6 +54,9 @@ wrap.irga.vali <- function(
   tmp <- list()
   rpt <- list()
   
+  #statistical names (will be used when no validation occured at all)
+  NameStat <- c("mean", "min", "max", "vari", "numSamp", "se")
+  
   for (idxNameQf in nameQf){
     #idxNameQf <- nameQf[2]
     #preparing the qfIrgaTurbValiGas01 to 05 data for def.idx.agr()
@@ -85,17 +88,25 @@ wrap.irga.vali <- function(
       #report only validation which occured on DateProc
       #assign time window 
       timeMin <- base::as.POSIXlt(paste(DateProc, " ", "00:01:29.950", sep=""), format="%Y-%m-%d %H:%M:%OS", tz="UTC")
-      timeMax <- base::as.POSIXlt(paste(DateProc, " ", "23:59:59.950", sep=""), format="%Y-%m-%d %H:%M:%OS", tz="UTC")
+      timeMax <- base::as.POSIXlt(paste(DatePost, " ", "00:01:29.950", sep=""), format="%Y-%m-%d %H:%M:%OS", tz="UTC")
       #determine index when timeEnd fall in Date Proc
-      idxTime <- which(idxVali$timeEnd >= timeMin &  idxVali$timeEnd <= timeMax)
+      idxTime <- which(idxVali$timeEnd >= timeMin &  idxVali$timeEnd < timeMax)
       if (!is.na(idxTime)){
         #report data
         rpt[[idxNameQf]] <- tmp[[idxNameQf]][[idxTime]]
         #report time
-
         rpt[[idxNameQf]]$timeBgn <- data.frame(rtioMoleDryCo2 = idxVali$timeBgn[idxTime])
         rpt[[idxNameQf]]$timeEnd <- data.frame(rtioMoleDryCo2 = idxVali$timeEnd[idxTime])
-      }
+      } else {
+        for(idxStat in NameStat){
+          #report data
+          rpt[[idxNameQf]][[idxStat]] <- data.frame(rtioMoleCo2 = NaN)
+          #report time
+          rpt[[idxNameQf]]$timeBgn <- data.frame(rtioMoleDryCo2 = base::as.POSIXlt(paste(DateProc, " ", "00:00:00.000", sep=""), format="%Y-%m-%d %H:%M:%OS", tz="UTC"))
+          rpt[[idxNameQf]]$timeEnd <- data.frame(rtioMoleDryCo2 = base::as.POSIXlt(paste(DateProc, " ", "23:59:59.950", sep=""), format="%Y-%m-%d %H:%M:%OS", tz="UTC"))
+        }#end idxStat
+        
+      }#end idxTime
     }#end for at least there is one measurement
   }#end of each qf in nameQf
 
