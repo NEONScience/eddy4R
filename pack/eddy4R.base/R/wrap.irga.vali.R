@@ -82,8 +82,6 @@ wrap.irga.vali <- function(
           # assign data: data.frame or list of type numeric or integer
           data = inpTmp
         )
-        #units:
-        attributes(tmp[[idxNameQf]][[idxAgr]]$mean$rtioMoleDryCo2)$unit <- attributes(data$irgaTurb$rtioMoleDryCo2)$unit
       }#end for each idxAgr
       #report only validation which occured on DateProc
       #assign time window 
@@ -97,6 +95,8 @@ wrap.irga.vali <- function(
         #report time
         rpt[[idxNameQf]]$timeBgn <- data.frame(rtioMoleDryCo2 = idxVali$timeBgn[idxTime])
         rpt[[idxNameQf]]$timeEnd <- data.frame(rtioMoleDryCo2 = idxVali$timeEnd[idxTime])
+        #units:
+        attributes(rpt[[idxNameQf]]$mean$rtioMoleDryCo2)$unit <- attributes(data$irgaTurb$rtioMoleDryCo2)$unit
       } else {
         for(idxStat in NameStat){
           #report data
@@ -104,6 +104,8 @@ wrap.irga.vali <- function(
           #report time
           rpt[[idxNameQf]]$timeBgn <- data.frame(rtioMoleDryCo2 = base::as.POSIXlt(paste(DateProc, " ", "00:00:00.000", sep=""), format="%Y-%m-%d %H:%M:%OS", tz="UTC"))
           rpt[[idxNameQf]]$timeEnd <- data.frame(rtioMoleDryCo2 = base::as.POSIXlt(paste(DateProc, " ", "23:59:59.950", sep=""), format="%Y-%m-%d %H:%M:%OS", tz="UTC"))
+          #units:
+          attributes(rpt[[idxNameQf]]$mean$rtioMoleDryCo2)$unit <- attributes(data$irgaTurb$rtioMoleDryCo2)$unit
         }#end idxStat
         
       }#end idxTime
