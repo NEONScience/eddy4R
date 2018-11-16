@@ -67,7 +67,7 @@ wrap.irga.vali <- function(
     #if there is at least one measurement
     if(length(which(!is.na(subQfqmFlag[[idxNameQf]]))) > 0){
       #determine the beginning and ending indicies of each validation
-      idxVali <- eddy4R.base::def.idx.agr(time = subData$time, PrdAgr = (90), FreqLoca = 20, MethIdx = "specEnd", data = subQfqmFlag[[idxNameQf]], CritTime = 0)
+      idxVali <- eddy4R.base::def.idx.agr(time = subData$time, PrdAgr = 90, FreqLoca = 20, MethIdx = "specEnd", data = subQfqmFlag[[idxNameQf]], CritTime = 0)
       #delete row if last timeBgn and timeEnd is NA
       idxVali <- idxVali[rowSums(is.na(idxVali)) != 2,]
       #if last timeEnd is NA, replce that time to the last time value in data$time
