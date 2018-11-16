@@ -51,9 +51,11 @@ wrap.irga.vali <- function(
   
   nameQf <- c("qfIrgaTurbValiGas01", "qfIrgaTurbValiGas02", "qfIrgaTurbValiGas03", "qfIrgaTurbValiGas04", "qfIrgaTurbValiGas05")
   #assign list
+  tmp <- list()
   rpt <- list()
   
   for (idxNameQf in nameQf){
+    #idxNameQf <- nameQf[2]
     #preparing the qfIrgaTurbValiGas01 to 05 data for def.idx.agr()
     #replace NA to the qf which are not equal to 1
     subQfqmFlag[[idxNameQf]] <- ifelse(subQfqmFlag[[idxNameQf]] != 1, NA, subQfqmFlag[[idxNameQf]])
@@ -70,15 +72,17 @@ wrap.irga.vali <- function(
       
       for (idxAgr in 1:length(idxVali$timeBgn)){
         #idxAgr <- 1
-        inpData <- data.frame(rtioMoleDryCo2 = subData$rtioMoleDryCo2[idxVali$idxBgn[idxAgr]:idxVali$idxEnd[idxAgr]]) 
+        inpTmp <- data.frame(rtioMoleDryCo2 = subData$rtioMoleDryCo2[idxVali$idxBgn[idxAgr]:idxVali$idxEnd[idxAgr]]) 
         
         #dp01 processing
-        rpt[[idxNameQf]][[idxAgr]] <- eddy4R.base::wrap.dp01(
+        tmp[[idxNameQf]][[idxAgr]] <- eddy4R.base::wrap.dp01(
           # assign data: data.frame or list of type numeric or integer
-          data = inpData
+          data = inpTmp
         )
-      }
-    }
+        #units:
+        attributes(tmp[[idxNameQf]][[idxAgr]]$mean$rtioMoleDryCo2)$unit <- attributes(data$irgaTurb$rtioMoleDryCo2)$unit
+      }#end for each idxAgr
+    }#end for at least there is one measurement
   }#end of each qf in nameQf
 
 }
