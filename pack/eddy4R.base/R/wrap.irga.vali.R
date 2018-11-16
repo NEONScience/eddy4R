@@ -107,7 +107,16 @@ wrap.irga.vali <- function(
         }#end idxStat
         
       }#end idxTime
-    }#end for at least there is one measurement
+      #end for at least there is one measurement
+    } else {
+      for(idxStat in NameStat){
+        #report data
+        rpt[[idxNameQf]][[idxStat]] <- data.frame(rtioMoleCo2 = NaN)
+        #report time
+        rpt[[idxNameQf]]$timeBgn <- data.frame(rtioMoleDryCo2 = base::as.POSIXlt(paste(DateProc, " ", "00:00:00.000", sep=""), format="%Y-%m-%d %H:%M:%OS", tz="UTC"))
+        rpt[[idxNameQf]]$timeEnd <- data.frame(rtioMoleDryCo2 = base::as.POSIXlt(paste(DateProc, " ", "23:59:59.950", sep=""), format="%Y-%m-%d %H:%M:%OS", tz="UTC"))
+      }#end idxStat
+    }
   }#end of each qf in nameQf
 
 }
