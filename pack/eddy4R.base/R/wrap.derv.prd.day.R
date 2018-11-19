@@ -39,6 +39,8 @@
 #     updating naming conventions
 #   Natchaya P-Durden (2018-11-09)
 #     adding logic to determine qf for each validation gas
+#   Natchaya P-Durden (2018-11-19)
+#     adding command to save irgaTurb data before removing the bad quality data   
 ##############################################################################################
     
     
@@ -77,6 +79,9 @@ wrap.derv.prd.day <- function(
   #Run the test to determine the irgaTurbAgc flag
   inpList$qfqm$irgaTurb$qfIrgaTurbAgc <- ff::as.ff(eddy4R.qaqc::def.qf.irga.agc(qfIrgaAgc = inpList$qfqm$irga$qfIrgaTurbAgc))
   
+  #Adding new dataframe which containning irgaTurb data before applying the bad qf
+  #These data will use later for validation processing
+  inpList$vali$irgaTurb <- ff::as.ff(inpList$data$irgaTurb)
   #Applying the bad quality flags to the reported output data
   inpList <- eddy4R.qaqc::wrap.qf.rmv.data(inpList = inpList, Vrbs = FALSE)
   
