@@ -121,4 +121,6 @@ wrap.irga.vali <- function(
     }
   }#end of each qf in nameQf
 
+  #return results
+  return(rpt)
 }
