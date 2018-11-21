@@ -52,6 +52,7 @@ wrap.irga.vali <- function(
   nameQf <- c("qfIrgaTurbValiGas01", "qfIrgaTurbValiGas02", "qfIrgaTurbValiGas03", "qfIrgaTurbValiGas04", "qfIrgaTurbValiGas05")
   #assign list
   tmp <- list()
+  rptTmp <- list()
   rpt <- list()
   
   #statistical names (will be used when no validation occured at all)
@@ -91,21 +92,21 @@ wrap.irga.vali <- function(
       idxTime <- which(idxVali$timeEnd >= timeMin &  idxVali$timeEnd < timeMax)
       if (!is.na(idxTime)){
         #report data
-        rpt[[idxNameQf]] <- tmp[[idxNameQf]][[idxTime]]
+        rptTmp[[idxNameQf]] <- tmp[[idxNameQf]][[idxTime]]
         #report time
-        rpt[[idxNameQf]]$timeBgn <- data.frame(rtioMoleDryCo2 = idxVali$timeBgn[idxTime])
-        rpt[[idxNameQf]]$timeEnd <- data.frame(rtioMoleDryCo2 = idxVali$timeEnd[idxTime])
+        rptTmp[[idxNameQf]]$timeBgn <- data.frame(rtioMoleDryCo2 = idxVali$timeBgn[idxTime])
+        rptTmp[[idxNameQf]]$timeEnd <- data.frame(rtioMoleDryCo2 = idxVali$timeEnd[idxTime])
         #units:
-        attributes(rpt[[idxNameQf]]$mean$rtioMoleDryCo2)$unit <- attributes(data$irgaTurb$rtioMoleDryCo2)$unit
+        attributes(rptTmp[[idxNameQf]]$mean$rtioMoleDryCo2)$unit <- attributes(data$irgaTurb$rtioMoleDryCo2)$unit
       } else {
         for(idxStat in NameStat){
           #report data
-          rpt[[idxNameQf]][[idxStat]] <- data.frame(rtioMoleCo2 = NaN)
+          rptTmp[[idxNameQf]][[idxStat]] <- data.frame(rtioMoleCo2 = NaN)
           #report time
-          rpt[[idxNameQf]]$timeBgn <- data.frame(rtioMoleDryCo2 = base::as.POSIXlt(paste(DateProc, " ", "00:00:00.000", sep=""), format="%Y-%m-%d %H:%M:%OS", tz="UTC"))
-          rpt[[idxNameQf]]$timeEnd <- data.frame(rtioMoleDryCo2 = base::as.POSIXlt(paste(DateProc, " ", "23:59:59.950", sep=""), format="%Y-%m-%d %H:%M:%OS", tz="UTC"))
+          rptTmp[[idxNameQf]]$timeBgn <- data.frame(rtioMoleDryCo2 = base::as.POSIXlt(paste(DateProc, " ", "00:00:00.000", sep=""), format="%Y-%m-%d %H:%M:%OS", tz="UTC"))
+          rptTmp[[idxNameQf]]$timeEnd <- data.frame(rtioMoleDryCo2 = base::as.POSIXlt(paste(DateProc, " ", "23:59:59.950", sep=""), format="%Y-%m-%d %H:%M:%OS", tz="UTC"))
           #units:
-          attributes(rpt[[idxNameQf]]$mean$rtioMoleDryCo2)$unit <- attributes(data$irgaTurb$rtioMoleDryCo2)$unit
+          attributes(rptTmp[[idxNameQf]]$mean$rtioMoleDryCo2)$unit <- attributes(data$irgaTurb$rtioMoleDryCo2)$unit
         }#end idxStat
         
       }#end idxTime
@@ -113,14 +114,36 @@ wrap.irga.vali <- function(
     } else {
       for(idxStat in NameStat){
         #report data
-        rpt[[idxNameQf]][[idxStat]] <- data.frame(rtioMoleCo2 = NaN)
+        rptTmp[[idxNameQf]][[idxStat]] <- data.frame(rtioMoleDryCo2 = NaN)
         #report time
-        rpt[[idxNameQf]]$timeBgn <- data.frame(rtioMoleDryCo2 = base::as.POSIXlt(paste(DateProc, " ", "00:00:00.000", sep=""), format="%Y-%m-%d %H:%M:%OS", tz="UTC"))
-        rpt[[idxNameQf]]$timeEnd <- data.frame(rtioMoleDryCo2 = base::as.POSIXlt(paste(DateProc, " ", "23:59:59.950", sep=""), format="%Y-%m-%d %H:%M:%OS", tz="UTC"))
+        rptTmp[[idxNameQf]]$timeBgn <- data.frame(rtioMoleDryCo2 = base::as.POSIXlt(paste(DateProc, " ", "00:00:00.000", sep=""), format="%Y-%m-%d %H:%M:%OS", tz="UTC"))
+        rptTmp[[idxNameQf]]$timeEnd <- data.frame(rtioMoleDryCo2 = base::as.POSIXlt(paste(DateProc, " ", "23:59:59.950", sep=""), format="%Y-%m-%d %H:%M:%OS", tz="UTC"))
       }#end idxStat
     }
   }#end of each qf in nameQf
-
+  
+  #return results as dataframe
+  outTmp00 <-list()
+  outTmp01 <- list()
+  for (idxGas in names(rptTmp)){
+  #for (idxGas in c("qfIrgaTurbValiGas02", "qfIrgaTurbValiGas03", "qfIrgaTurbValiGas04")){
+    #idxGas <- names(rptTmp)[2]
+    for (idxStat in names(rptTmp[[idxGas]])){
+      #idxStat <- names(rptTmp[[idxGas]])[1]
+      outTmp00[[idxStat]] <- data.frame(rptTmp[[idxGas]][[idxStat]]$rtioMoleDryCo2)
+     }
+    outTmp01[[idxGas]] <- do.call(cbind, outTmp00)
+  }
+  rpt$rtioMoleDryCo2Vali <- do.call(rbind, outTmp01)
+  
+  #remove
+  rm(outTmp00, outTmp01)
+  
+  #assign column names
+  colnames(rpt$rtioMoleDryCo2Vali) <- c("mean", "min", "max", "vari", "numSamp", "se", "timeBgn", "timeEnd")
+  #remove row names
+  rownames(rpt$rtioMoleDryCo2Vali) <- NULL
+ 
   #return results
   return(rpt)
 }
