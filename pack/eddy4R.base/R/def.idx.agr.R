@@ -153,7 +153,7 @@ def.idx.agr <- function(
     #cut off some of the last data point
     #CritTime <- 0
     #PrdAgr <- 120
-    idxBgn <- whrEnd - (CritTime*FreqLoca) - ((PrdAgr*FreqLoca) + 1)
+    idxBgn <- whrEnd - (CritTime*FreqLoca) - ((PrdAgr*FreqLoca)-1)
     #replace negative idxBgn to 1
     idxBgn <- ifelse(idxBgn <= 0, 1, idxBgn)
     #Beginning time based on indices
