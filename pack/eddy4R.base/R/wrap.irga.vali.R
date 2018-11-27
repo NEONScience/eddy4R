@@ -8,10 +8,11 @@
 
 #' @param data List consisting of \code{ff::ffdf} file-backed objects containing the dp0p input IRGA.
 #' @param qfqmFlag List consisting of \code{ff::ffdf} file-backed objects containing the IRGA quality flags.
+#' @param gasRefe List containing the values of the reference gases. [mol mol-1] 
 #' @param DateProc A vector of class "character" containing the processing date.
 
 #' @return 
-#' The returned object consistes of \code{inpList}, with the derived variables added to the respective list entry, and all list levels sorted alphabetically.
+#' The returned object consistes of descriptive statistics (mean, min, max, vari, numSamp, se) of CO2 dry mole concentration during performing validation and CO2 dry mole concentration of reference gases.
 
 #' @references
 #' License: GNU AFFERO GENERAL PUBLIC LICENSE Version 3, 19 November 2007.
@@ -28,11 +29,14 @@
 # changelog and author contributions / copyrights
 #   Natchaya P-Durden (2018-11-14)
 #     original creation
+#   Natchaya P-Durden (2018-11-27)  
+#     including the reference gases into the output 
 ##############################################################################################
 
 wrap.irga.vali <- function(
   data,
   qfqmFlag,
+  gasRefe,
   DateProc
 ) {
   #pre-processing date
@@ -115,10 +119,10 @@ wrap.irga.vali <- function(
       for(idxStat in NameStat){
         #report data
         rptTmp[[idxNameQf]][[idxStat]] <- data.frame(rtioMoleDryCo2 = NaN)
-        #report time
-        rptTmp[[idxNameQf]]$timeBgn <- data.frame(rtioMoleDryCo2 = base::as.POSIXlt(paste(DateProc, " ", "00:00:00.000", sep=""), format="%Y-%m-%d %H:%M:%OS", tz="UTC"))
-        rptTmp[[idxNameQf]]$timeEnd <- data.frame(rtioMoleDryCo2 = base::as.POSIXlt(paste(DateProc, " ", "23:59:59.950", sep=""), format="%Y-%m-%d %H:%M:%OS", tz="UTC"))
       }#end idxStat
+      #report time
+      rptTmp[[idxNameQf]]$timeBgn <- data.frame(rtioMoleDryCo2 = base::as.POSIXlt(paste(DateProc, " ", "00:00:00.000", sep=""), format="%Y-%m-%d %H:%M:%OS", tz="UTC"))
+      rptTmp[[idxNameQf]]$timeEnd <- data.frame(rtioMoleDryCo2 = base::as.POSIXlt(paste(DateProc, " ", "23:59:59.950", sep=""), format="%Y-%m-%d %H:%M:%OS", tz="UTC"))
     }
   }#end of each qf in nameQf
   
@@ -137,13 +141,47 @@ wrap.irga.vali <- function(
   rpt$rtioMoleDryCo2Vali <- do.call(rbind, outTmp01)
   
   #remove
-  rm(outTmp00, outTmp01)
+  rm(outTmp00, outTmp01, rptTmp)
   
   #assign column names
   colnames(rpt$rtioMoleDryCo2Vali) <- c("mean", "min", "max", "vari", "numSamp", "se", "timeBgn", "timeEnd")
   #remove row names
   rownames(rpt$rtioMoleDryCo2Vali) <- NULL
+  
+  #add gasRefe values into rpt
+  #create temporary dataframe
+  tmpGasRefe <- data.frame(matrix(ncol = 1, nrow = 5))
+  #assign column name
+  colnames(tmpGasRefe) <- "rtioMoleDryCo2Refe"
+  #add values to tmpGasRefe
+  for (idxRow in 1:nrow(tmpGasRefe)){
+    if (idxRow == 2){
+      #add zero gas
+      tmpGasRefe[idxRow,1] <- 0
+    }else{
+      #get location in gasRefe
+      if (idxRow == 1){
+        loc <- idxRow
+      } else{
+        loc <- idxRow-1
+      }
+      #test time condition for picking the right value
+      if (gasRefe$rtioMoleDryCo2RefeTime01[[DateProc]][[loc]] == gasRefe$rtioMoleDryCo2RefeTime02[[DateProc]][[loc]]){
+        tmpGasRefe[idxRow,1] <- gasRefe$rtioMoleDryCo2Refe01[[DateProc]][[loc]]
+      } else {
+        if (rpt$rtioMoleDryCo2Vali$timeBgn[idxRow] >= gasRefe$rtioMoleDryCo2RefeTime02[[DateProc]][[loc]]){
+          tmpGasRefe[idxRow,1] <- gasRefe$rtioMoleDryCo2Refe02[[DateProc]][[loc]]
+        } else {
+          tmpGasRefe[idxRow,1] <- gasRefe$rtioMoleDryCo2Refe01[[DateProc]][[loc]]
+        }
+      }
+    }
+  }# end for loop
  
+  #add gasRefe values into rpt
+  rpt$rtioMoleDryCo2Vali <- cbind(rpt$rtioMoleDryCo2Vali, tmpGasRefe)
+  #reorder column
+  rpt$rtioMoleDryCo2Vali <- rpt$rtioMoleDryCo2Vali[,c(1:6, 9, 7, 8)]
   #return results
   return(rpt)
 }
