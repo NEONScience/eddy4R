@@ -31,7 +31,9 @@
 #     original creation
 #   Natchaya P-Durden (2018-11-27)  
 #     including the reference gases into the output 
-#     removes standard error from report value
+#   Natchaya P-Durden (2018-11-28)  
+#     removing standard error from report value
+#     adding unit attributes
 ##############################################################################################
 
 wrap.irga.vali <- function(
@@ -102,7 +104,7 @@ wrap.irga.vali <- function(
         rptTmp[[idxNameQf]]$timeBgn <- data.frame(rtioMoleDryCo2 = idxVali$timeBgn[idxTime])
         rptTmp[[idxNameQf]]$timeEnd <- data.frame(rtioMoleDryCo2 = idxVali$timeEnd[idxTime])
         #units:
-        attributes(rptTmp[[idxNameQf]]$mean$rtioMoleDryCo2)$unit <- attributes(data$irgaTurb$rtioMoleDryCo2)$unit
+        #attributes(rptTmp[[idxNameQf]]$mean$rtioMoleDryCo2)$unit <- attributes(data$irgaTurb$rtioMoleDryCo2)$unit
       } else {
         for(idxStat in NameStat){
           #report data
@@ -111,7 +113,7 @@ wrap.irga.vali <- function(
           rptTmp[[idxNameQf]]$timeBgn <- data.frame(rtioMoleDryCo2 = base::as.POSIXlt(paste(DateProc, " ", "00:00:00.000", sep=""), format="%Y-%m-%d %H:%M:%OS", tz="UTC"))
           rptTmp[[idxNameQf]]$timeEnd <- data.frame(rtioMoleDryCo2 = base::as.POSIXlt(paste(DateProc, " ", "23:59:59.950", sep=""), format="%Y-%m-%d %H:%M:%OS", tz="UTC"))
           #units:
-          attributes(rptTmp[[idxNameQf]]$mean$rtioMoleDryCo2)$unit <- attributes(data$irgaTurb$rtioMoleDryCo2)$unit
+          #attributes(rptTmp[[idxNameQf]]$mean$rtioMoleDryCo2)$unit <- attributes(data$irgaTurb$rtioMoleDryCo2)$unit
         }#end idxStat
         
       }#end idxTime
@@ -130,6 +132,7 @@ wrap.irga.vali <- function(
   #return results as dataframe
   outTmp00 <-list()
   outTmp01 <- list()
+  
   for (idxGas in names(rptTmp)){
   #for (idxGas in c("qfIrgaTurbValiGas02", "qfIrgaTurbValiGas03", "qfIrgaTurbValiGas04")){
     #idxGas <- names(rptTmp)[2]
@@ -146,6 +149,7 @@ wrap.irga.vali <- function(
   
   #assign column names
   colnames(rpt$rtioMoleDryCo2Vali) <- c("mean", "min", "max", "vari", "numSamp", "se", "timeBgn", "timeEnd")
+  
   #remove row names
   rownames(rpt$rtioMoleDryCo2Vali) <- NULL
   
@@ -181,8 +185,25 @@ wrap.irga.vali <- function(
  
   #add gasRefe values into rpt
   rpt$rtioMoleDryCo2Vali <- cbind(rpt$rtioMoleDryCo2Vali, tmpGasRefe)
+  
+  #assign unit attributes
+  for(idxVar in 1:lengths(rpt$rtioMoleDryCo2Val)){
+    attributes(rpt$rtioMoleDryCo2Val[[idxVar]] <- )
+  }
   #reorder column
   rpt$rtioMoleDryCo2Vali <- rpt$rtioMoleDryCo2Vali[,c(1:5, 9, 7, 8)]
+  #unit attributes
+  unitRtioMoleDryCo2Vali <- attributes(data$irgaTurb$rtioMoleDryCo2)$unit
+  
+  attributes(rpt$rtioMoleDryCo2Vali)$unit <- c(unitRtioMoleDryCo2Vali, #"mean"
+                                               unitRtioMoleDryCo2Vali, #"min"
+                                               unitRtioMoleDryCo2Vali, #"max" 
+                                               unitRtioMoleDryCo2Vali,#"vari"  
+                                               "NA", #"numSamp" 
+                                               "NA", #"timeBgn"
+                                               "NA",#"timeEnd"
+                                               attributes(gasRefe$rtioMoleDryCo2Refe01[[DateProc]]$`702_000`)$unit)#"rtioMoleDryCo2Refe" = 
+
   #return results
   return(rpt)
 }
