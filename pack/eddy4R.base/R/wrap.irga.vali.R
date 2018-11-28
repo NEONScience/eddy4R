@@ -31,6 +31,7 @@
 #     original creation
 #   Natchaya P-Durden (2018-11-27)  
 #     including the reference gases into the output 
+#     removes standard error from report value
 ##############################################################################################
 
 wrap.irga.vali <- function(
@@ -181,7 +182,7 @@ wrap.irga.vali <- function(
   #add gasRefe values into rpt
   rpt$rtioMoleDryCo2Vali <- cbind(rpt$rtioMoleDryCo2Vali, tmpGasRefe)
   #reorder column
-  rpt$rtioMoleDryCo2Vali <- rpt$rtioMoleDryCo2Vali[,c(1:6, 9, 7, 8)]
+  rpt$rtioMoleDryCo2Vali <- rpt$rtioMoleDryCo2Vali[,c(1:5, 9, 7, 8)]
   #return results
   return(rpt)
 }
