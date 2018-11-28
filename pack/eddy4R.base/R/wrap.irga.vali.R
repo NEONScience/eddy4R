@@ -186,10 +186,6 @@ wrap.irga.vali <- function(
   #add gasRefe values into rpt
   rpt$rtioMoleDryCo2Vali <- cbind(rpt$rtioMoleDryCo2Vali, tmpGasRefe)
   
-  #assign unit attributes
-  for(idxVar in 1:lengths(rpt$rtioMoleDryCo2Val)){
-    attributes(rpt$rtioMoleDryCo2Val[[idxVar]] <- )
-  }
   #reorder column
   rpt$rtioMoleDryCo2Vali <- rpt$rtioMoleDryCo2Vali[,c(1:5, 9, 7, 8)]
   #unit attributes
