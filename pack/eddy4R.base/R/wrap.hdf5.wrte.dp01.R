@@ -110,13 +110,16 @@ if(MethSubAgr == TRUE){
   outList$dp01AgrSub$data <- eddy4R.base::wrap.unit.conv.out.ec(inpList = outList$dp01AgrSub$data, MethType = "data") 
   
   #adding irgaTurb validation data
-  outList$dp01AgrSub$data$co2Turb$rtioMoleDryCo2Vali <- inpList$vali$data$co2Turb
+  outList$vali$data$co2Turb <- inpList$vali$data$co2Turb
   
   #If values come in as Posix, they must first be converted to characters
   for (idxTime in c("timeBgn", "timeEnd")){
-    if(!is.character(outList$dp01AgrSub$data$co2Turb$rtioMoleDryCo2Vali[[idxTime]])){
-      outList$dp01AgrSub$data$co2Turb$rtioMoleDryCo2Vali[[idxTime]] <- strftime(outList$dp01AgrSub$data$co2Turb$rtioMoleDryCo2Vali[[idxTime]], format="%Y-%m-%dT%H:%M:%OSZ", tz="UTC")} 
+    if(!is.character(outList$vali$data$co2Turb$rtioMoleDryCo2Vali[[idxTime]])){
+      outList$vali$data$co2Turb$rtioMoleDryCo2Vali[[idxTime]] <- strftime(outList$vali$data$co2Turb$rtioMoleDryCo2Vali[[idxTime]], format="%Y-%m-%dT%H:%M:%OSZ", tz="UTC")} 
   }
+  
+  #Unit conversion for dp01 sub-aggregated irgaTurb validation data
+  outList$vali$data <- eddy4R.base::wrap.unit.conv.out.ec(inpList = outList$vali$data, MethType = "vali") 
   
   #Packaging sub-aggregated (e.g.1-min) dp01 qfqm for writing to HDF5 file
   outList$dp01AgrSub$qfqm <- sapply(names(inpList$dp01AgrSub$qfqm), function(x) eddy4R.base::def.hdf5.pack.dp01(inpList = inpList$dp01AgrSub$qfqm, time = inpList$dp01AgrSub$time, Dp01 = x))
