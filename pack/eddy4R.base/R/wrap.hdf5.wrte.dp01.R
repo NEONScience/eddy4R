@@ -50,10 +50,12 @@
 #    applied eddy4R term name convention; replaced fid by idFile
 #   Ke Xu (2018-04-19)
 #     applied term name convention; replaced FileIn by FileInp
-#    Natchaya P-Durden (2018-05-11)
+#   Natchaya P-Durden (2018-05-11)
 #     rename function from def.hdf5.dp01.pack() to def.hdf5.pack.dp01()
-#    Natchaya P-Durden (2018-05-22)
+#   Natchaya P-Durden (2018-05-22)
 #     rename function from def.para.hdf5.dp01() to def.hdf5.copy.para()
+#   Natchaya P-Durden (2018-11-28)
+#     adding irgaTurb validation data
 ##############################################################################################
 
 
@@ -83,6 +85,9 @@ outList$data <- sapply(names(inpList$data), function(x) eddy4R.base::def.hdf5.pa
 #Unit conversion for dp01 30 min data
 outList$data <- eddy4R.base::wrap.unit.conv.out.ec(inpList = outList$data, MethType = "data") 
 
+#Adding time to output dataframe
+rpt <- lapply(rpt, cbind, timeBgn = time[[Dp01]]$timeBgn, timeEnd = time[[Dp01]]$timeEnd, stringsAsFactors = FALSE)
+
 #Packaging 30-min dp01 qfqm output for writing to HDF5 file
 outList$qfqm <- sapply(names(inpList$qfqm), function(x) eddy4R.base::def.hdf5.pack.dp01(inpList = inpList$qfqm, time = inpList$time, Dp01 = x))
 
@@ -103,6 +108,15 @@ if(MethSubAgr == TRUE){
 
   #Unit conversion for dp01 sub-aggregated data
   outList$dp01AgrSub$data <- eddy4R.base::wrap.unit.conv.out.ec(inpList = outList$dp01AgrSub$data, MethType = "data") 
+  
+  #adding irgaTurb validation data
+  outList$dp01AgrSub$data$co2Turb$rtioMoleDryCo2Vali <- inpList$vali$data$co2Turb
+  
+  #If values come in as Posix, they must first be converted to characters
+  for (idxTime in c("timeBgn", "timeEnd")){
+    if(!is.character(outList$dp01AgrSub$data$co2Turb$rtioMoleDryCo2Vali[[idxTime]])){
+      outList$dp01AgrSub$data$co2Turb$rtioMoleDryCo2Vali[[idxTime]] <- strftime(outList$dp01AgrSub$data$co2Turb$rtioMoleDryCo2Vali[[idxTime]], format="%Y-%m-%dT%H:%M:%OSZ", tz="UTC")} 
+  }
   
   #Packaging sub-aggregated (e.g.1-min) dp01 qfqm for writing to HDF5 file
   outList$dp01AgrSub$qfqm <- sapply(names(inpList$dp01AgrSub$qfqm), function(x) eddy4R.base::def.hdf5.pack.dp01(inpList = inpList$dp01AgrSub$qfqm, time = inpList$dp01AgrSub$time, Dp01 = x))
