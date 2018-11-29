@@ -77,7 +77,7 @@ MethExpd <- grepl(pattern = "expanded", x = FileOut)
   
 #Initializing output list
 outList <- list()
-
+rpt <- list()
 
 #Packaging 30-min dp01 data output for writing to HDF5 file
 outList$data <- sapply(names(inpList$data), function(x) eddy4R.base::def.hdf5.pack.dp01(inpList = inpList$data, time = inpList$time, Dp01 = x))
@@ -120,6 +120,9 @@ if(MethSubAgr == TRUE){
   
   #Unit conversion for dp01 sub-aggregated irgaTurb validation data
   outList$vali$data <- eddy4R.base::wrap.unit.conv.out.ec(inpList = outList$vali$data, MethType = "vali") 
+  
+  #adding validation data to dp01AgrSub
+  outList$dp01AgrSub$data$co2Turb$rtioMoleDryCo2Vali <- outList$vali$data$co2Turb$rtioMoleDryCo2Vali
   
   #Packaging sub-aggregated (e.g.1-min) dp01 qfqm for writing to HDF5 file
   outList$dp01AgrSub$qfqm <- sapply(names(inpList$dp01AgrSub$qfqm), function(x) eddy4R.base::def.hdf5.pack.dp01(inpList = inpList$dp01AgrSub$qfqm, time = inpList$dp01AgrSub$time, Dp01 = x))
