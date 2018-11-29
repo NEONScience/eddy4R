@@ -194,12 +194,12 @@ wrap.irga.vali <- function(
   attributes(rpt$rtioMoleDryCo2Vali)$unit <- c(unitRtioMoleDryCo2Vali, #"mean"
                                                unitRtioMoleDryCo2Vali, #"min"
                                                unitRtioMoleDryCo2Vali, #"max" 
-                                               unitRtioMoleDryCo2Vali,#"vari"  
-                                               "NA", #"numSamp" 
+                                               unitRtioMoleDryCo2Vali,#"vari"
+                                               "NA", #"numSamp"
+                                               attributes(gasRefe$rtioMoleDryCo2Refe01[[DateProc]]$`702_000`)$unit,#"rtioMoleDryCo2Refe"
                                                "NA", #"timeBgn"
-                                               "NA",#"timeEnd"
-                                               attributes(gasRefe$rtioMoleDryCo2Refe01[[DateProc]]$`702_000`)$unit)#"rtioMoleDryCo2Refe" = 
-
+                                               "NA")#"timeEnd"
+                                                
   #return results
   return(rpt)
 }
