@@ -34,6 +34,9 @@
 #   Natchaya P-Durden (2018-11-28)  
 #     removing standard error from report value
 #     adding unit attributes
+#   Natchaya P-Durden (2018-12-04)
+#     adding standard deviation calculation
+#     adding maximum-likelihood fitting of a functional relationship (MLFR) 
 ##############################################################################################
 
 wrap.irga.vali <- function(
@@ -42,6 +45,8 @@ wrap.irga.vali <- function(
   gasRefe,
   DateProc
 ) {
+  #adding library
+  library(deming)
   #pre-processing date
   DatePre <- base::as.Date(DateProc) - 1
   #post-processing date
@@ -155,14 +160,15 @@ wrap.irga.vali <- function(
   
   #add gasRefe values into rpt
   #create temporary dataframe
-  tmpGasRefe <- data.frame(matrix(ncol = 1, nrow = 5))
+  tmpGasRefe <- data.frame(matrix(ncol = 2, nrow = 5))
   #assign column name
-  colnames(tmpGasRefe) <- "rtioMoleDryCo2Refe"
-  #add values to tmpGasRefe
+  colnames(tmpGasRefe) <- c("rtioMoleDryCo2Refe", "rtioMoleDryCo2RefeSd")
+  #add values of gasRefe and their sd to tmpGasRefe
   for (idxRow in 1:nrow(tmpGasRefe)){
     if (idxRow == 2){
       #add zero gas
       tmpGasRefe[idxRow,1] <- 0
+      tmpGasRefe[idxRow,2] <- NA
     }else{
       #get location in gasRefe
       if (idxRow == 1){
@@ -173,11 +179,20 @@ wrap.irga.vali <- function(
       #test time condition for picking the right value
       if (gasRefe$rtioMoleDryCo2RefeTime01[[DateProc]][[loc]] == gasRefe$rtioMoleDryCo2RefeTime02[[DateProc]][[loc]]){
         tmpGasRefe[idxRow,1] <- gasRefe$rtioMoleDryCo2Refe01[[DateProc]][[loc]]
+        tmpGasRefe[idxRow,2] <- eddy4R.base::def.unit.conv(data = gasRefe$rtioMoleDryCo2RefeSd01[[DateProc]][[loc]],
+                                                           unitFrom = "umol mol-1",
+                                                           unitTo = "intl")
       } else {
         if (rpt$rtioMoleDryCo2Vali$timeBgn[idxRow] >= gasRefe$rtioMoleDryCo2RefeTime02[[DateProc]][[loc]]){
           tmpGasRefe[idxRow,1] <- gasRefe$rtioMoleDryCo2Refe02[[DateProc]][[loc]]
+          tmpGasRefe[idxRow,2] <- eddy4R.base::def.unit.conv(data = gasRefe$rtioMoleDryCo2RefeSd02[[DateProc]][[loc]],
+                                                             unitFrom = "umol mol-1",
+                                                             unitTo = "intl")
         } else {
           tmpGasRefe[idxRow,1] <- gasRefe$rtioMoleDryCo2Refe01[[DateProc]][[loc]]
+          tmpGasRefe[idxRow,2] <- eddy4R.base::def.unit.conv(data = gasRefe$rtioMoleDryCo2RefeSd01[[DateProc]][[loc]],
+                                                             unitFrom = "umol mol-1",
+                                                             unitTo = "intl")
         }
       }
     }
@@ -186,6 +201,24 @@ wrap.irga.vali <- function(
   #add gasRefe values into rpt
   rpt$rtioMoleDryCo2Vali <- cbind(rpt$rtioMoleDryCo2Vali, tmpGasRefe)
   
+  #calculate standard deviation from se
+  rpt$rtioMoleDryCo2Vali$sd <- (rpt$rtioMoleDryCo2Vali$se)*(sqrt(rpt$rtioMoleDryCo2Vali$numSamp))
+  
+  #calculate linear regression between validation gas standard and sensor reading values
+  #using maximum-likelihood fitting of a functional relationship (MLFR)
+  #create empty dataframe to keep intercept and slope output from MLFR
+  rpt$rtioMoleDryCo2Mlf <- data.frame(matrix(ncol = 2, nrow = 2))
+  #assign column name
+  colnames(rpt$rtioMoleDryCo2Mlf) <- c("coef", "se")
+  
+  #test if all inputs are NA
+  if (all(is.na(rpt$rtioMoleDryCo2Vali$mean)) | all(is.na(rpt$rtioMoleDryCo2Vali$se)) |
+      all(is.na(rpt$rtioMoleDryCo2Vali$rtioMoleDryCo2Refe)) | all(is.na(rpt$rtioMoleDryCo2Vali$rtioMoleDryCo2RefeSd))){
+    rpt$rtioMoleDryCo2Mlf[,] <- NA
+    } else{
+      rtioMoleDryCo2Mlfr <- deming::deming(mean[2:5]~rtioMoleDryCo2Refe[2:5], data = rpt$rtioMoleDryCo2Vali,
+                                           xstd = rtioMoleDryCo2RefeSd[2:5], ystd = sd[2:5])      
+                                           }
   #reorder column
   rpt$rtioMoleDryCo2Vali <- rpt$rtioMoleDryCo2Vali[,c(1:5, 9, 7, 8)]
   #unit attributes
