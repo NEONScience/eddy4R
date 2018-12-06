@@ -47,16 +47,17 @@ wrap.irga.vali <- function(
 ) {
   #adding library
   library(deming)
+  library(zoo)
   
   #assign list
   rpt <- list()
   
   #dates that will be used in determination of slope and ofset (DatePro and DateProc+1)
-  Date <- c(base::as.Date(DateProc), base::as.Date(DateProc) + 1)
+  Date <- c(base::as.Date(DateProc) - 1, base::as.Date(DateProc), base::as.Date(DateProc) + 1)
   Date <- as.character(Date)
   #calculation for each date in Date
   for (idxDate in Date){
-    #idxDate <- Date[2]
+    #idxDate <- Date[1]
     #processing date
     DateProc <- base::as.Date(idxDate)
     #pre-processing date
@@ -259,6 +260,41 @@ wrap.irga.vali <- function(
                                                             "NA")#"timeEnd"
   }#end of idxDate
                                                 
+  #applying the calculated coefficiences to measured data
+  #Calculate time-series (20Hz) of slope and zero offset 
+  #measurement frequency (20 Hz)
+  Freq <- 20
+  for (idx in 1:2){
+    #idx <- 1
+    #time begin and time End to apply coefficience
+    #time when performing of high gas is done
+    timeBgn <- as.POSIXlt(rpt[[Date[idx]]]$rtioMoleDryCo2Vali$timeEnd[5])
+    #time when performing of zero gas is started
+    timeEnd <- as.POSIXlt(rpt[[Date[idx+1]]]$rtioMoleDryCo2Vali$timeBgn[2])
+    #output time
+    timeOut <- as.POSIXlt(seq.POSIXt(
+      from = as.POSIXlt(timeBgn, format="%Y-%m-%d %H:%M:%OS", tz="UTC"),
+      to = as.POSIXlt(timeEnd, format="%Y-%m-%d %H:%M:%OS", tz="UTC"),
+      by = 60*1/Freq
+    ), tz="UTC")
+    
+    #fractional
+    timeFracOut <- timeOut$hour + timeOut$min / 60 + timeOut$sec / 3600
+    #calculate doy
+    timeDoy <- timeOut$yday + 1 +  timeFracOut / 24
+    #create object for reference values
+    #ofset
+    ofst <- zoo::zoo(c(rpt[[Date[idx]]]$rtioMoleDryCo2Mlf$coef[1], rpt[[Date[idx+1]]]$rtioMoleDryCo2Mlf$coef[1]), 
+                     c(timeDoy[1], timeDoy[length(timeDoy)]))
+    #slope
+    slp <- zoo::zoo(c(rpt[[Date[idx]]]$rtioMoleDryCo2Mlf$coef[2], rpt[[Date[idx+1]]]$rtioMoleDryCo2Mlf$coef[2]), 
+                    c(timeDoy[1], timeDoy[length(timeDoy)]))
+    #interpolation
+    ofstLin <- zoo::na.approx(object = ofst, xout = timeDoy, na.rm=FALSE)
+    slpLin <- zoo::na.approx(object = slp, xout = timeDoy, na.rm=FALSE)
+  }
+  
+  
   #return results
   return(rpt)
 }
