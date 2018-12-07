@@ -263,7 +263,9 @@ wrap.irga.vali <- function(
   #applying the calculated coefficients to measured data
   #Calculate time-series (20Hz) of slope and zero offset 
   #measurement frequency (20 Hz)
+  #need to add logic when coefficients are NA
   Freq <- 20
+  outSub <- list()
   for (idx in 1:2){
     #idx <- 1
     #time begin and time End to apply coefficient
@@ -275,7 +277,7 @@ wrap.irga.vali <- function(
     timeOut <- as.POSIXlt(seq.POSIXt(
       from = as.POSIXlt(timeBgn, format="%Y-%m-%d %H:%M:%OS", tz="UTC"),
       to = as.POSIXlt(timeEnd, format="%Y-%m-%d %H:%M:%OS", tz="UTC"),
-      by = 60*1/Freq
+      by = 1/Freq
     ), tz="UTC")
     
     #fractional
@@ -292,8 +294,18 @@ wrap.irga.vali <- function(
     #interpolation
     ofstLin <- zoo::na.approx(object = ofst, xout = timeDoy, na.rm=FALSE)
     slpLin <- zoo::na.approx(object = slp, xout = timeDoy, na.rm=FALSE)
+    
+    #get subset data from timeBgn to timeEnd
+    #get indecies
+    idxSub <- which(as.POSIXlt(data$irgaTurb$time[]) >= timeBgn &  as.POSIXlt(data$irgaTurb$time[]) < timeEnd)
+    #subset data
+    subData <- data$irgaTurb[][min(idxSub):max(idxSub),]
+    #applying the interpolated coefficients to measured data
+    subData$rtioMoleDryCo2Cor <- as.numeric(ofstLin + subData$rtioMoleDryCo2*slpLin)
+    outSub[[idx]] <- subData
   }
-  
+  #append dataframe
+  outTmp02 <- do.call(rbind,outSub)
   
   #return results
   return(rpt)
