@@ -73,18 +73,20 @@ wrap.hdf5.wrte.dp01 <- function(
 #Determine if the output file should be expanded or basic by creating a logical determined from the filename
 MethExpd <- grepl(pattern = "expanded", x = FileOut)  
   
+
+
 #Initializing output list
 outList <- list()
 
 
 #Packaging 30-min dp01 data output for writing to HDF5 file
-outList$data <- sapply(names(inpList$data), function(x) eddy4R.base::def.hdf5.pack.dp01(inpList = inpList$data, time = inpList$time, Dp01 = x))
+outList$data <- sapply(names(inpList$data), function(x) eddy4R.base::def.hdf5.pack(inpList = inpList$data, time = inpList$time, Dp = x))
 
 #Unit conversion for dp01 30 min data
 outList$data <- eddy4R.base::wrap.unit.conv.out.ec(inpList = outList$data, MethType = "data") 
 
 #Packaging 30-min dp01 qfqm output for writing to HDF5 file
-outList$qfqm <- sapply(names(inpList$qfqm), function(x) eddy4R.base::def.hdf5.pack.dp01(inpList = inpList$qfqm, time = inpList$time, Dp01 = x))
+outList$qfqm <- sapply(names(inpList$qfqm), function(x) eddy4R.base::def.hdf5.pack(inpList = inpList$qfqm, time = inpList$time, Dp = x))
 
 #Applying units to each output in dp01 30 min qfqm
 outList$qfqm <- eddy4R.base::wrap.unit.conv.out.ec(inpList = outList$qfqm, MethType = "qfqm")
