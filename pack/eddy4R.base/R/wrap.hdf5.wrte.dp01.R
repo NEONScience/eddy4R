@@ -54,6 +54,8 @@
 #     rename function from def.hdf5.dp01.pack() to def.hdf5.pack.dp01()
 #    Natchaya P-Durden (2018-05-22)
 #     rename function from def.para.hdf5.dp01() to def.hdf5.copy.para()
+#   David Durden (2018-12-09)
+#     changing to use a the updated def.hdf5.pack() function
 ##############################################################################################
 
 
