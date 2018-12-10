@@ -35,13 +35,14 @@
 #     added MethMeas and rename function to def.hdf5.dp.pack()
 #   Natchaya P-Durden (2018-05-11)
 #     rename function from def.hdf5.dp.pack() to def.hdf5.pack()
+#   David Durden (2018-12-09)
+#     Adding mechanism to deal with quality metrics to be output for Expanded files
 ##############################################################################################
 
 def.hdf5.pack <- function(
   inpList,
   MethMeas = c("ecte", "ecse")[1],
   time,
-  MethExpd = FALSE,
   Dp
 ){
   
@@ -54,7 +55,7 @@ if(MethMeas %in% "ecte"){
   
   #Check if qm is part of the input list
   if(exists('qm', where = inpList[[Dp]]) == TRUE){
-  
+
   # Add the qm's to tmp list    
   tmp <- lapply(names(inpList[[Dp]]$qm), function(x){
     inpList[[Dp]]$qm[[x]]
