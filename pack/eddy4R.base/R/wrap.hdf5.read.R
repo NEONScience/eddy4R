@@ -61,8 +61,10 @@
 #     Changed term 'Pos' to 'Set' for multiple indices
 #   Ke Xu (2018-09-06)
 #     Add NULL as default for RngLoca to enable the application of this function when despiking and diagnose are not necessary and RngLoca is not given from the calling workflow
-#   Natchaya P-Durden
+#   Natchaya P-Durden (2018-12-04)
 #     adding to write out standard deviation for gasRefe
+#   Natchaya P-Durden (2019-01-02)
+#     bug fixed on attributes of standard deviation for gasRefe
 ##############################################################################################
         
 wrap.hdf5.read <- function(
@@ -230,13 +232,13 @@ if(!(DateLoca %in% file)) {
 
     # assign variable names to units to enable sorting
     base::names(attr$Unit) <- attr$Name
-    base::names(attr$Sd) <- attr$Name
 
     # sort and assign unit descriptions in same order as data
     base::attributes(data)$unit <- attr$Unit[base::names(data)]
     
     # sd assign attribute to gasRefe
     if (VarLoca == "gasRefe"){
+      base::names(attr$Sd) <- attr$Name
       base::attributes(data)$sd <- attr$Sd[base::names(data)] 
     }
     rm(attr) 
