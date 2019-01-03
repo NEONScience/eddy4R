@@ -61,7 +61,7 @@ wrap.irga.vali <- function(
   for (idxDate in Date){
     #idxDate <- Date[1]
     #processing date
-    DateProc <- base::as.Date(idxDate)
+    DateBgn <- base::as.Date(idxDate)
     #pre-processing date
     DatePre <- base::as.Date(idxDate) - 1
     #post-processing date
@@ -69,7 +69,7 @@ wrap.irga.vali <- function(
     #grab 3 days window of irga data and qfqmFlag (pre-processing, processing, and post-processing date)
     #get indecies
     idxSub <- which(as.Date(data$irgaTurb$time[]) == DatePre |
-                      as.Date(data$irgaTurb$time[]) == DateProc |
+                      as.Date(data$irgaTurb$time[]) == DateBgn |
                       as.Date(data$irgaTurb$time[]) == DatePost)
     #subset data
     subData <- data$irgaTurb[][min(idxSub):max(idxSub),]
@@ -113,9 +113,9 @@ wrap.irga.vali <- function(
             data = inpTmp
           )
         }#end for each idxAgr
-        #report only validation which occured on DateProc
+        #report only validation which occured on DateBgn
         #assign time window 
-        timeMin <- base::as.POSIXlt(paste(DateProc, " ", "00:01:29.950", sep=""), format="%Y-%m-%d %H:%M:%OS", tz="UTC")
+        timeMin <- base::as.POSIXlt(paste(DateBgn, " ", "00:01:29.950", sep=""), format="%Y-%m-%d %H:%M:%OS", tz="UTC")
         timeMax <- base::as.POSIXlt(paste(DatePost, " ", "00:01:29.950", sep=""), format="%Y-%m-%d %H:%M:%OS", tz="UTC")
         #determine index when timeEnd fall in Date Proc
         idxTime <- which(idxVali$timeEnd >= timeMin &  idxVali$timeEnd < timeMax)
@@ -132,8 +132,8 @@ wrap.irga.vali <- function(
             #report data
             rptTmp[[idxNameQf]][[idxStat]] <- data.frame(rtioMoleCo2 = NaN)
             #report time
-            rptTmp[[idxNameQf]]$timeBgn <- data.frame(rtioMoleDryCo2 = base::as.POSIXlt(paste(DateProc, " ", "00:00:00.000", sep=""), format="%Y-%m-%d %H:%M:%OS", tz="UTC"))
-            rptTmp[[idxNameQf]]$timeEnd <- data.frame(rtioMoleDryCo2 = base::as.POSIXlt(paste(DateProc, " ", "23:59:59.950", sep=""), format="%Y-%m-%d %H:%M:%OS", tz="UTC"))
+            rptTmp[[idxNameQf]]$timeBgn <- data.frame(rtioMoleDryCo2 = base::as.POSIXlt(paste(DateBgn, " ", "00:00:00.000", sep=""), format="%Y-%m-%d %H:%M:%OS", tz="UTC"))
+            rptTmp[[idxNameQf]]$timeEnd <- data.frame(rtioMoleDryCo2 = base::as.POSIXlt(paste(DateBgn, " ", "23:59:59.950", sep=""), format="%Y-%m-%d %H:%M:%OS", tz="UTC"))
             #units:
             #attributes(rptTmp[[idxNameQf]]$mean$rtioMoleDryCo2)$unit <- attributes(data$irgaTurb$rtioMoleDryCo2)$unit
           }#end idxStat
@@ -146,8 +146,8 @@ wrap.irga.vali <- function(
           rptTmp[[idxNameQf]][[idxStat]] <- data.frame(rtioMoleDryCo2 = NaN)
         }#end idxStat
         #report time
-        rptTmp[[idxNameQf]]$timeBgn <- data.frame(rtioMoleDryCo2 = base::as.POSIXlt(paste(DateProc, " ", "00:00:00.000", sep=""), format="%Y-%m-%d %H:%M:%OS", tz="UTC"))
-        rptTmp[[idxNameQf]]$timeEnd <- data.frame(rtioMoleDryCo2 = base::as.POSIXlt(paste(DateProc, " ", "23:59:59.950", sep=""), format="%Y-%m-%d %H:%M:%OS", tz="UTC"))
+        rptTmp[[idxNameQf]]$timeBgn <- data.frame(rtioMoleDryCo2 = base::as.POSIXlt(paste(DateBgn, " ", "00:00:00.000", sep=""), format="%Y-%m-%d %H:%M:%OS", tz="UTC"))
+        rptTmp[[idxNameQf]]$timeEnd <- data.frame(rtioMoleDryCo2 = base::as.POSIXlt(paste(DateBgn, " ", "23:59:59.950", sep=""), format="%Y-%m-%d %H:%M:%OS", tz="UTC"))
       }
     }#end of each qf in nameQf
     
@@ -268,7 +268,7 @@ wrap.irga.vali <- function(
   Freq <- 20
   outSub <- list()
   for (idx in 1:2){
-    #idx <- 1
+    #idx <- 2
     #time begin and time End to apply coefficient
     #time when performing of high gas is done
     timeBgn <- as.POSIXlt(rpt[[Date[idx]]]$rtioMoleDryCo2Vali$timeEnd[5])
@@ -329,7 +329,29 @@ wrap.irga.vali <- function(
   }
   #append dataframe
   outTmp02 <- do.call(rbind,outSub)
+  #return data only the processing date
+  #report time
+  options(digits.secs=3) 
+  rptTimeBgn <- base::as.POSIXlt(paste(DateProc, " ", "00:00:00.0001", sep=""), format="%Y-%m-%d %H:%M:%OS", tz="UTC")
+  rptTimeEnd <- base::as.POSIXlt(paste(DateProc, " ", "23:59:59.9502", sep=""), format="%Y-%m-%d %H:%M:%OS", tz="UTC")
+  outTmp03<- data.frame(outTmp02[which(outTmp02$time >= rptTimeBgn & outTmp02$time < rptTimeEnd),])
+  #generate time according to frequency
+  timeRglr <- seq.POSIXt(
+    from = base::as.POSIXlt(rptTimeBgn, format="%Y-%m-%d %H:%M:%OS", tz="UTC"),
+    to = base::as.POSIXlt(rptTimeEnd, format="%Y-%m-%d %H:%M:%OS", tz="UTC"),
+    by = 1/Freq
+  )
   
+  rpt[[DateProc]]$rtioMoleDryCo2Cor <- eddy4R.base::def.rglr(timeMeas = base::as.POSIXlt(outTmp03$time, format="%Y-%m-%d %H:%M:%OS", tz="UTC"),
+                                dataMeas = outTmp03,
+                                BgnRglr = as.POSIXlt(min(timeRglr)),
+                                EndRglr = as.POSIXlt(max(timeRglr)+0.0002),
+                                FreqRglr = Freq,
+                                MethRglr = "CybiEc"
+  )$dataRglr
+  
+  #replace time to regularize time
+  rpt[[DateProc]]$rtioMoleDryCo2Cor$time <- timeRglr
   #return results
   return(rpt)
 }
