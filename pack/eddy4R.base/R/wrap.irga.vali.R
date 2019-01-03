@@ -37,6 +37,8 @@
 #   Natchaya P-Durden (2018-12-04)
 #     adding standard deviation calculation
 #     adding maximum-likelihood fitting of a functional relationship (MLFR) 
+#   Natchaya P-Durden (2019-01-03)
+#     adding logic when coefficients are NAs
 ##############################################################################################
 
 wrap.irga.vali <- function(
@@ -263,7 +265,6 @@ wrap.irga.vali <- function(
   #applying the calculated coefficients to measured data
   #Calculate time-series (20Hz) of slope and zero offset 
   #measurement frequency (20 Hz)
-  #need to add logic when coefficients are NA
   Freq <- 20
   outSub <- list()
   for (idx in 1:2){
@@ -284,24 +285,54 @@ wrap.irga.vali <- function(
     timeFracOut <- timeOut$hour + timeOut$min / 60 + timeOut$sec / 3600
     #calculate doy
     timeDoy <- timeOut$yday + 1 +  timeFracOut / 24
-    #create object for reference values
-    #offset
-    ofst <- zoo::zoo(c(rpt[[Date[idx]]]$rtioMoleDryCo2Mlf$coef[1], rpt[[Date[idx+1]]]$rtioMoleDryCo2Mlf$coef[1]), 
-                     c(timeDoy[1], timeDoy[length(timeDoy)]))
-    #slope
-    slp <- zoo::zoo(c(rpt[[Date[idx]]]$rtioMoleDryCo2Mlf$coef[2], rpt[[Date[idx+1]]]$rtioMoleDryCo2Mlf$coef[2]), 
-                    c(timeDoy[1], timeDoy[length(timeDoy)]))
-    #interpolation
-    ofstLin <- zoo::na.approx(object = ofst, xout = timeDoy, na.rm=FALSE)
-    slpLin <- zoo::na.approx(object = slp, xout = timeDoy, na.rm=FALSE)
     
+    #when coefficients are not NAs
+    if (!is.na(rpt[[Date[idx]]]$rtioMoleDryCo2Mlf$coef[1]) & !is.na(rpt[[Date[idx]]]$rtioMoleDryCo2Mlf$coef[2]) &
+        !is.na(rpt[[Date[idx+1]]]$rtioMoleDryCo2Mlf$coef[1]) & !is.na(rpt[[Date[idx+1]]]$rtioMoleDryCo2Mlf$coef[2])){
+      #create object for reference values
+      #offset
+      ofst <- zoo::zoo(c(rpt[[Date[idx]]]$rtioMoleDryCo2Mlf$coef[1], rpt[[Date[idx+1]]]$rtioMoleDryCo2Mlf$coef[1]), 
+                       c(timeDoy[1], timeDoy[length(timeDoy)]))
+      #slope
+      slp <- zoo::zoo(c(rpt[[Date[idx]]]$rtioMoleDryCo2Mlf$coef[2], rpt[[Date[idx+1]]]$rtioMoleDryCo2Mlf$coef[2]), 
+                      c(timeDoy[1], timeDoy[length(timeDoy)]))
+      #interpolation
+      ofstLin <- zoo::na.approx(object = ofst, xout = timeDoy, na.rm=FALSE)
+      slpLin <- zoo::na.approx(object = slp, xout = timeDoy, na.rm=FALSE)
+    } # ending the logic when coefficients are not NAs
+    
+    #when coefficients in Date[idx] are not NAs but Date[idx+1] are not NAs
+    if ((!is.na(rpt[[Date[idx]]]$rtioMoleDryCo2Mlf$coef[1]) & !is.na(rpt[[Date[idx]]]$rtioMoleDryCo2Mlf$coef[2])) &
+        (is.na(rpt[[Date[idx+1]]]$rtioMoleDryCo2Mlf$coef[1]) | is.na(rpt[[Date[idx+1]]]$rtioMoleDryCo2Mlf$coef[2]))){
+      #create object for reference values
+      #offset
+      ofst <- zoo::zoo(c(rpt[[Date[idx]]]$rtioMoleDryCo2Mlf$coef[1], rpt[[Date[idx]]]$rtioMoleDryCo2Mlf$coef[1]), 
+                       c(timeDoy[1], timeDoy[length(timeDoy)]))
+      #slope
+      slp <- zoo::zoo(c(rpt[[Date[idx]]]$rtioMoleDryCo2Mlf$coef[2], rpt[[Date[idx]]]$rtioMoleDryCo2Mlf$coef[2]), 
+                      c(timeDoy[1], timeDoy[length(timeDoy)]))
+      #interpolation
+      ofstLin <- zoo::na.approx(object = ofst, xout = timeDoy, na.rm=FALSE)
+      slpLin <- zoo::na.approx(object = slp, xout = timeDoy, na.rm=FALSE)
+    } # ending the logic when coefficients in Date[idx] are not NAs but Date[idx+1] are not NAs
+    
+    #when coefficients in Date[idx] are NAs
+    if (is.na(rpt[[Date[idx]]]$rtioMoleDryCo2Mlf$coef[1]) & is.na(rpt[[Date[idx]]]$rtioMoleDryCo2Mlf$coef[2])){
+      ofstLin <- NA
+      slpLin <- NA
+    }
     #get subset data from timeBgn to timeEnd
     #get indecies
     idxSub <- which(as.POSIXlt(data$irgaTurb$time[]) >= timeBgn &  as.POSIXlt(data$irgaTurb$time[]) < timeEnd)
     #subset data
     subData <- data$irgaTurb[][min(idxSub):max(idxSub),]
     #applying the interpolated coefficients to measured data
+    if (all(is.na(ofstLin)) & all(is.na(slpLin))){
+      subData$rtioMoleDryCo2Cor <- as.numeric(subData$rtioMoleDryCo2)
+    } else {
     subData$rtioMoleDryCo2Cor <- as.numeric(ofstLin + subData$rtioMoleDryCo2*slpLin)
+    }
+    
     outSub[[idx]] <- subData
   }
   #append dataframe
