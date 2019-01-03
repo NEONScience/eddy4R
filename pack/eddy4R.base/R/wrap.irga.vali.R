@@ -304,16 +304,8 @@ wrap.irga.vali <- function(
     #when coefficients in Date[idx] are not NAs but Date[idx+1] are not NAs
     if ((!is.na(rpt[[Date[idx]]]$rtioMoleDryCo2Mlf$coef[1]) & !is.na(rpt[[Date[idx]]]$rtioMoleDryCo2Mlf$coef[2])) &
         (is.na(rpt[[Date[idx+1]]]$rtioMoleDryCo2Mlf$coef[1]) | is.na(rpt[[Date[idx+1]]]$rtioMoleDryCo2Mlf$coef[2]))){
-      #create object for reference values
-      #offset
-      ofst <- zoo::zoo(c(rpt[[Date[idx]]]$rtioMoleDryCo2Mlf$coef[1], rpt[[Date[idx]]]$rtioMoleDryCo2Mlf$coef[1]), 
-                       c(timeDoy[1], timeDoy[length(timeDoy)]))
-      #slope
-      slp <- zoo::zoo(c(rpt[[Date[idx]]]$rtioMoleDryCo2Mlf$coef[2], rpt[[Date[idx]]]$rtioMoleDryCo2Mlf$coef[2]), 
-                      c(timeDoy[1], timeDoy[length(timeDoy)]))
-      #interpolation
-      ofstLin <- zoo::na.approx(object = ofst, xout = timeDoy, na.rm=FALSE)
-      slpLin <- zoo::na.approx(object = slp, xout = timeDoy, na.rm=FALSE)
+      ofstLin <- rpt[[Date[idx]]]$rtioMoleDryCo2Mlf$coef[1]
+      slpLin <- rpt[[Date[idx]]]$rtioMoleDryCo2Mlf$coef[2]
     } # ending the logic when coefficients in Date[idx] are not NAs but Date[idx+1] are not NAs
     
     #when coefficients in Date[idx] are NAs
