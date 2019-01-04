@@ -39,6 +39,8 @@
 #     adding maximum-likelihood fitting of a functional relationship (MLFR) 
 #   Natchaya P-Durden (2019-01-03)
 #     adding logic when coefficients are NAs
+#   Natchaya P-Durden (2019-01-04)
+#     adding unit attributes to the reported outputs
 ##############################################################################################
 
 wrap.irga.vali <- function(
@@ -352,6 +354,21 @@ wrap.irga.vali <- function(
   
   #replace time to regularize time
   rpt[[DateProc]]$rtioMoleDryCo2Cor$time <- timeRglr
-  #return results
+  #Creating the index to organize the variables in alphabetical order
+  idxIrga <- order(names(rpt[[DateProc]]$rtioMoleDryCo2Cor))
+  #Changing the order of the variables to alphabetical order using the index
+  rpt[[DateProc]]$rtioMoleDryCo2Cor <- rpt[[DateProc]]$rtioMoleDryCo2Cor[,idxIrga]
+  
+  attrUnit <- c("-", "-", "molCo2 m-3", "molH2o m-3", "NA", "V", "W", "W", "W", "W", "Pa", "Pa", "Pa", "molCo2 mol-1Dry", "molCo2 mol-1Dry",
+                                                                "molH2o mol-1Dry", "-", "-", "K", "K", "K", "K", "NA")
+  
+  for(idxVar in 1:length(attrUnit)) {
+    
+    base::attr(x = rpt[[DateProc]]$rtioMoleDryCo2Cor[[idxVar]], which = "unit") <-
+      attrUnit[idxVar]
+    
+  }; rm(idxVar)
+  
+#return results
   return(rpt)
 }
