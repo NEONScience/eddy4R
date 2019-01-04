@@ -31,6 +31,8 @@
 #     adding unit conversion for irgaTurb validation data
 #   Natchaya P-Durden (2018-11-29)
 #     update if else logic
+#   Natchaya P-Durden (2019-01-04)
+#     adding units for rtioMoleDryCo2Cor and rtioMoleDryCo2Raw
 ############################################################################################
 
 wrap.unit.conv.out.ec <- function(
@@ -61,6 +63,8 @@ outAttr$amrs <- base::list(
 
 outAttr$co2Turb <- base::list(
   "rtioMoleDryCo2"= c("mean" = "umolCo2 mol-1Dry", "min" = "umolCo2 mol-1Dry", "max" = "umolCo2 mol-1Dry", "vari" = "umolCo2 mol-1Dry", "numSamp" = "NA", "timeBgn" = "NA", "timeEnd" = "NA"), 
+  "rtioMoleDryCo2Cor"= c("mean" = "umolCo2 mol-1Dry", "min" = "umolCo2 mol-1Dry", "max" = "umolCo2 mol-1Dry", "vari" = "umolCo2 mol-1Dry", "numSamp" = "NA", "timeBgn" = "NA", "timeEnd" = "NA"),
+  "rtioMoleDryCo2Raw"= c("mean" = "umolCo2 mol-1Dry", "min" = "umolCo2 mol-1Dry", "max" = "umolCo2 mol-1Dry", "vari" = "umolCo2 mol-1Dry", "numSamp" = "NA", "timeBgn" = "NA", "timeEnd" = "NA"),
   "densMoleCo2"= c("mean" = "umolCo2 m-3", "min" = "umolCo2 m-3", "max" = "umolCo2 m-3", "vari" = "umolCo2 m-3", "numSamp" = "NA", "timeBgn" = "NA", "timeEnd" = "NA"), 
   "presAtm"= c("mean" = "kPa", "min" = "kPa", "max" = "kPa", "vari" = "kPa", "numSamp" = "NA", "timeBgn" = "NA", "timeEnd" = "NA"), 
   "presSum"= c("mean" = "kPa", "min" = "kPa", "max" = "kPa", "vari" = "kPa", "numSamp" = "NA", "timeBgn" = "NA", "timeEnd" = "NA"), 
@@ -94,6 +98,8 @@ if(MethType == "ucrt"){
   
   outAttr$co2Turb <- base::list(
     "rtioMoleDryCo2"= c("mean" = "umolCo2 mol-1Dry", "vari" = "umolCo2 mol-1Dry", "se" = "umolCo2 mol-1Dry", "timeBgn" = "NA", "timeEnd" = "NA"), 
+    "rtioMoleDryCo2Cor"= c("mean" = "umolCo2 mol-1Dry", "vari" = "umolCo2 mol-1Dry", "se" = "umolCo2 mol-1Dry", "timeBgn" = "NA", "timeEnd" = "NA"), 
+    "rtioMoleDryCo2Raw"= c("mean" = "umolCo2 mol-1Dry", "vari" = "umolCo2 mol-1Dry", "se" = "umolCo2 mol-1Dry", "timeBgn" = "NA", "timeEnd" = "NA"), 
     "densMoleCo2"= c("mean" = "umolCo2 m-3", "vari" = "umolCo2 m-3", "se" = "umolCo2 m-3", "timeBgn" = "NA", "timeEnd" = "NA"), 
     "presAtm"= c("mean" = "kPa", "vari" = "kPa", "se" = "kPa", "timeBgn" = "NA", "timeEnd" = "NA"), 
     "presSum"= c("mean" = "kPa", "vari" = "kPa", "se" = "kPa", "timeBgn" = "NA", "timeEnd" = "NA"), 
@@ -128,6 +134,8 @@ outAttr$vari <- base::list(
   "angNedYaxs"= "deg2", 
   "angNedZaxs"= "deg2",
   "rtioMoleDryCo2"= "umol2Co2 mol-2Dry", 
+  "rtioMoleDryCo2Cor"= "umol2Co2 mol-2Dry",
+  "rtioMoleDryCo2Raw"= "umol2Co2 mol-2Dry",
   "rtioMoleDryCo2Vali"= "umol2Co2 mol-2Dry", 
   "densMoleCo2"= "umol2Co2 m-6", 
   "presAtm"= "kPa2", 
