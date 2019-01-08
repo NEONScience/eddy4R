@@ -41,6 +41,9 @@
 #     applied term name convention; replace LevlTowr by LvlTowr
 #   Natchaya P-Durden (2018-04-12)
 #    applied eddy4R term name convention; replaced fid by idFile
+#   Natchaya P-Durden (2019-01-08)
+#    adding logic to do not to report rtioMoleDryCo2Cor and 
+#    rtioMoleDryCo2Raw data and ucrt in the basic file
 ##############################################################################################
 
 
@@ -58,6 +61,12 @@ def.hdf5.wrte.dp01 <- function(
   
 #Determine if the output file should be expanded or basic by creating a logical determined from the filename
 MethExpd <- grepl(pattern = "expanded", x = FileOut)
+
+#remove rtioMoleDryCo2Cor and rtioMoleDryCo2Raw data from inpList when writing out the basic file
+if(MethExpd == FALSE){
+  inpList$data$co2Turb$rtioMoleDryCo2Cor <- NULL
+  inpList$data$co2Turb$rtioMoleDryCo2Raw <- NULL
+}
 
 #Create HDF5 connection to the output file  
 idFile <- rhdf5::H5Fopen(FileOut)
@@ -96,15 +105,20 @@ lapply(names(inpList$data[[Dp01]]), function(x) {
   }})
 
 if(MethSubAgr == TRUE){
-#Writing sub-aggregated (e.g.1-min) data to output HDF5 file
-lapply(names(inpList$dp01AgrSub$data[[Dp01]]), function(x) rhdf5::h5writeDataset.data.frame(obj = inpList$dp01AgrSub$data[[Dp01]][[x]], h5loc = idData01, name = x, DataFrameAsCompound = TRUE))
-
-#Writing sub-aggregated (e.g.1-min) data unit attributes to output HDF5 file
-lapply(names(inpList$dp01AgrSub$data[[Dp01]]), function(x) {
-  if (!is.null(attributes(inpList$dp01AgrSub$data[[Dp01]][[x]])$unit) == TRUE){
-    dgid <- rhdf5::H5Dopen(idData01, x)
-    rhdf5::h5writeAttribute(attributes(inpList$dp01AgrSub$data[[Dp01]][[x]])$unit, h5obj = dgid, name = "unit")
-  }})
+  #remove rtioMoleDryCo2Cor and rtioMoleDryCo2Raw data from inpList when writing out the basic file
+  if(MethExpd == FALSE){
+    inpList$dp01AgrSub$data$co2Turb$rtioMoleDryCo2Cor <- NULL
+    inpList$dp01AgrSub$data$co2Turb$rtioMoleDryCo2Raw <- NULL
+  }
+  #Writing sub-aggregated (e.g.1-min) data to output HDF5 file
+  lapply(names(inpList$dp01AgrSub$data[[Dp01]]), function(x) rhdf5::h5writeDataset.data.frame(obj = inpList$dp01AgrSub$data[[Dp01]][[x]], h5loc = idData01, name = x, DataFrameAsCompound = TRUE))
+  
+  #Writing sub-aggregated (e.g.1-min) data unit attributes to output HDF5 file
+  lapply(names(inpList$dp01AgrSub$data[[Dp01]]), function(x) {
+    if (!is.null(attributes(inpList$dp01AgrSub$data[[Dp01]][[x]])$unit) == TRUE){
+      dgid <- rhdf5::H5Dopen(idData01, x)
+      rhdf5::h5writeAttribute(attributes(inpList$dp01AgrSub$data[[Dp01]][[x]])$unit, h5obj = dgid, name = "unit")
+    }})
 }
 ##########################################################################################
 #QFQM
@@ -173,27 +187,36 @@ lapply(names(inpList$dp01AgrSub$qfqm[[Dp01]]), function(x) {
 #Ucrt
 ##########################################################################################
 if(MethUcrt == TRUE){
-
-#Writing 30-min ucrt to output HDF5 file
-lapply(names(inpList$ucrt[[Dp01]]), function(x) rhdf5::h5writeDataset.data.frame(obj = inpList$ucrt[[Dp01]][[x]], h5loc = idUcrt30, name = x, DataFrameAsCompound = TRUE))
+  #remove rtioMoleDryCo2Cor and rtioMoleDryCo2Raw data from inpList when writing out the basic file
+  if(MethExpd == FALSE){
+    inpList$ucrt$co2Turb$rtioMoleDryCo2Cor <- NULL
+    inpList$ucrt$co2Turb$rtioMoleDryCo2Raw <- NULL
+  }
+  #Writing 30-min ucrt to output HDF5 file
+  lapply(names(inpList$ucrt[[Dp01]]), function(x) rhdf5::h5writeDataset.data.frame(obj = inpList$ucrt[[Dp01]][[x]], h5loc = idUcrt30, name = x, DataFrameAsCompound = TRUE))
   
-#Writing 30-min ucrt unit attributes to output HDF5 file
-lapply(names(inpList$ucrt[[Dp01]]), function(x) {
-  if (!is.null(attributes(inpList$ucrt[[Dp01]][[x]])$unit) == TRUE){
-    dgid <- rhdf5::H5Dopen(idUcrt30, x)
-    rhdf5::h5writeAttribute(attributes(inpList$ucrt[[Dp01]][[x]])$unit, h5obj = dgid, name = "unit")
-  }})
+  #Writing 30-min ucrt unit attributes to output HDF5 file
+  lapply(names(inpList$ucrt[[Dp01]]), function(x) {
+    if (!is.null(attributes(inpList$ucrt[[Dp01]][[x]])$unit) == TRUE){
+      dgid <- rhdf5::H5Dopen(idUcrt30, x)
+      rhdf5::h5writeAttribute(attributes(inpList$ucrt[[Dp01]][[x]])$unit, h5obj = dgid, name = "unit")
+    }})
   
 if(MethSubAgr == TRUE){
-#Writing sub-aggregated (e.g.1-min) ucrt to output HDF5 file
-lapply(names(inpList$dp01AgrSub$ucrt[[Dp01]]), function(x) rhdf5::h5writeDataset.data.frame(obj = inpList$dp01AgrSub$ucrt[[Dp01]][[x]], h5loc = idUcrt01, name = x, DataFrameAsCompound = TRUE))
-
-#Writing sub-aggregated (e.g.1-min) ucrt unit attributes to output HDF5 file
-lapply(names(inpList$dp01AgrSub$ucrt[[Dp01]]), function(x) {
-  if (!is.null(attributes(inpList$dp01AgrSub$ucrt[[Dp01]][[x]])$unit) == TRUE){
-    dgid <- rhdf5::H5Dopen(idUcrt01, x)
-    rhdf5::h5writeAttribute(attributes(inpList$dp01AgrSub$ucrt[[Dp01]][[x]])$unit, h5obj = dgid, name = "unit")
-  }})
+  #remove rtioMoleDryCo2Cor and rtioMoleDryCo2Raw ucrt from inpList when writing out the basic file
+  if(MethExpd == FALSE){
+    inpList$dp01AgrSub$ucrt$co2Turb$rtioMoleDryCo2Cor <- NULL
+    inpList$dp01AgrSub$ucrt$co2Turb$rtioMoleDryCo2Raw <- NULL
+  }
+  #Writing sub-aggregated (e.g.1-min) ucrt to output HDF5 file
+  lapply(names(inpList$dp01AgrSub$ucrt[[Dp01]]), function(x) rhdf5::h5writeDataset.data.frame(obj = inpList$dp01AgrSub$ucrt[[Dp01]][[x]], h5loc = idUcrt01, name = x, DataFrameAsCompound = TRUE))
+  
+  #Writing sub-aggregated (e.g.1-min) ucrt unit attributes to output HDF5 file
+  lapply(names(inpList$dp01AgrSub$ucrt[[Dp01]]), function(x) {
+    if (!is.null(attributes(inpList$dp01AgrSub$ucrt[[Dp01]][[x]])$unit) == TRUE){
+      dgid <- rhdf5::H5Dopen(idUcrt01, x)
+      rhdf5::h5writeAttribute(attributes(inpList$dp01AgrSub$ucrt[[Dp01]][[x]])$unit, h5obj = dgid, name = "unit")
+    }})
 }
 }
 #Close HDF5 connections
