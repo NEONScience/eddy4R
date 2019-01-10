@@ -41,6 +41,8 @@
 #     adding logic when coefficients are NAs
 #   Natchaya P-Durden (2019-01-04)
 #     adding unit attributes to the reported outputs
+#   Natchaya P-Durden (2019-01-10)
+#     adding logic to handle when there is only one day of input data
 ##############################################################################################
 
 wrap.irga.vali <- function(
