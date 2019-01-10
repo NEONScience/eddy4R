@@ -59,6 +59,8 @@ wrap.irga.vali <- function(
   #dates that will be used in determination of slope and offset (DatePro and DateProc+1)
   Date <- c(base::as.Date(DateProc) - 1, base::as.Date(DateProc), base::as.Date(DateProc) + 1)
   Date <- as.character(Date)
+  Freq <- 20  #measurement frequency (20 Hz)
+  
   #calculation for each date in Date
   for (idxDate in Date){
     #idxDate <- Date[1]
@@ -69,14 +71,49 @@ wrap.irga.vali <- function(
     #post-processing date
     DatePost <- base::as.Date(idxDate) + 1
     #grab 3 days window of irga data and qfqmFlag (pre-processing, processing, and post-processing date)
-    #get indecies
-    idxSub <- which(as.Date(data$irgaTurb$time[]) == DatePre |
-                      as.Date(data$irgaTurb$time[]) == DateBgn |
-                      as.Date(data$irgaTurb$time[]) == DatePost)
+    #check if there are data and qfqmFlag
+    allDate <- c(DatePre, DateBgn, DatePost)
+    subDataList <- list()
+    subQfqmList <- list()
+    
+    for (idxAllDate in allDate){
+      #idxAllDate <- allDate[1]
+      locDate <- which(as.Date(data$irgaTurb$time[]) == as.Date(idxAllDate))
+      #locDate <- which(as.Date(data$irgaTurb$time[]) == as.Date(as.POSIXlt(idxAllDate, " ", "00:00:00.0001", sep=""), format="%Y-%m-%d %H:%M:%OS", tz="UTC"))
+      if(length(locDate) == 0){
+        #create the empty dataframe
+        subData <- data.frame(matrix(ncol = length(data$irgaTurb), nrow = length(data$irgaTurb[[1]])))
+        subQfqmFlag <- data.frame(matrix(ncol = length(qfqmFlag$irgaTurb), nrow = length(qfqmFlag$irgaTurb[[1]])))
+        colnames(subData) <- names(data$irgaTurb)
+        colnames(subQfqmFlag) <- names(qfqmFlag$irgaTurb)
+        #add time
+        #output time
+        options(digits.secs=3) 
+        subTimeBgn <- base::as.POSIXlt(paste(base::as.Date(idxAllDate), " ", "00:00:00.0001", sep=""), format="%Y-%m-%d %H:%M:%OS", tz="UTC")
+        subTimeEnd <- base::as.POSIXlt(paste(base::as.Date(idxAllDate), " ", "23:59:59.9502", sep=""), format="%Y-%m-%d %H:%M:%OS", tz="UTC")
+        time <- as.POSIXlt(seq.POSIXt(
+          from = as.POSIXlt(subTimeBgn, format="%Y-%m-%d %H:%M:%OS", tz="UTC"),
+          to = as.POSIXlt(subTimeEnd, format="%Y-%m-%d %H:%M:%OS", tz="UTC"),
+          by = 1/Freq), tz="UTC")
+        subData$time <- time
+      }else{
+        subData <- data$irgaTurb[][min(locDate):max(locDate),]
+        subQfqmFlag <- qfqmFlag$irgaTurb[][min(locDate):max(locDate),]
+      }
+      subDataList[[idxAllDate]] <- subData
+      subQfqmList[[idxAllDate]] <- subQfqmFlag
+      }#end loop for of idxAllDate
+    #combine dataframe from each loop
+    allSubData <- do.call(rbind, subDataList)
+    allSubQfqm <- do.call(rbind, subQfqmList)
+    # #get indecies
+    # idxSub <- which(as.Date(data$irgaTurb$time[]) == DatePre |
+    #                   as.Date(data$irgaTurb$time[]) == DateBgn |
+    #                   as.Date(data$irgaTurb$time[]) == DatePost)
     #subset data
-    subData <- data$irgaTurb[][min(idxSub):max(idxSub),]
+    #subData <- data$irgaTurb[][min(idxSub):max(idxSub),]
     #subset qfqmFlag
-    subQfqmFlag <- qfqmFlag$irgaTurb[][min(idxSub):max(idxSub),]
+    #subQfqmFlag <- qfqmFlag$irgaTurb[][min(idxSub):max(idxSub),]
     
     nameQf <- c("qfIrgaTurbValiGas01", "qfIrgaTurbValiGas02", "qfIrgaTurbValiGas03", "qfIrgaTurbValiGas04", "qfIrgaTurbValiGas05")
     
@@ -93,21 +130,21 @@ wrap.irga.vali <- function(
       print(idxNameQf)
       #preparing the qfIrgaTurbValiGas01 to 05 data for def.idx.agr()
       #replace NA to the qf which are not equal to 1
-      subQfqmFlag[[idxNameQf]] <- ifelse(subQfqmFlag[[idxNameQf]] != 1, NA, subQfqmFlag[[idxNameQf]])
+      allSubQfqm[[idxNameQf]] <- ifelse(allSubQfqm[[idxNameQf]] != 1, NA, allSubQfqm[[idxNameQf]])
       
       #determine when validation occur
       #if there is at least one measurement
-      if(length(which(!is.na(subQfqmFlag[[idxNameQf]]))) > 0){
+      if(length(which(!is.na(allSubQfqm[[idxNameQf]]))) > 0){
         #determine the beginning and ending indicies of each validation
-        idxVali <- eddy4R.base::def.idx.agr(time = subData$time, PrdAgr = 90, FreqLoca = 20, MethIdx = "specEnd", data = subQfqmFlag[[idxNameQf]], CritTime = 0)
+        idxVali <- eddy4R.base::def.idx.agr(time = allSubData$time, PrdAgr = 90, FreqLoca = 20, MethIdx = "specEnd", data = allSubQfqm[[idxNameQf]], CritTime = 0)
         #delete row if last timeBgn and timeEnd is NA
         idxVali <- idxVali[rowSums(is.na(idxVali)) != 2,]
         #if last timeEnd is NA, replce that time to the last time value in data$time
-        idxVali$timeEnd <- as.POSIXct(ifelse(is.na(idxVali$timeEnd), subData$time[length(subData$time)], idxVali$timeEnd), origin = "1970-01-01", tz = "UTC")
+        idxVali$timeEnd <- as.POSIXct(ifelse(is.na(idxVali$timeEnd), allSubData$time[length(allSubData$time)], idxVali$timeEnd), origin = "1970-01-01", tz = "UTC")
         
         for (idxAgr in 1:length(idxVali$timeBgn)){
           #idxAgr <- 1
-          inpTmp <- data.frame(rtioMoleDryCo2 = subData$rtioMoleDryCo2[idxVali$idxBgn[idxAgr]:idxVali$idxEnd[idxAgr]]) 
+          inpTmp <- data.frame(rtioMoleDryCo2 = allSubData$rtioMoleDryCo2[idxVali$idxBgn[idxAgr]:idxVali$idxEnd[idxAgr]]) 
           
           #dp01 processing
           tmp[[idxNameQf]][[idxAgr]] <- eddy4R.base::wrap.dp01(
@@ -121,7 +158,7 @@ wrap.irga.vali <- function(
         timeMax <- base::as.POSIXlt(paste(DatePost, " ", "00:01:29.950", sep=""), format="%Y-%m-%d %H:%M:%OS", tz="UTC")
         #determine index when timeEnd fall in Date Proc
         idxTime <- which(idxVali$timeEnd >= timeMin &  idxVali$timeEnd < timeMax)
-        if (!is.na(idxTime)){
+        if (length(idxTime) != 0){
           #report data
           rptTmp[[idxNameQf]] <- tmp[[idxNameQf]][[idxTime]]
           #report time
@@ -132,7 +169,7 @@ wrap.irga.vali <- function(
         } else {
           for(idxStat in NameStat){
             #report data
-            rptTmp[[idxNameQf]][[idxStat]] <- data.frame(rtioMoleCo2 = NaN)
+            rptTmp[[idxNameQf]][[idxStat]] <- data.frame(rtioMoleDryCo2 = NaN)
             #report time
             rptTmp[[idxNameQf]]$timeBgn <- data.frame(rtioMoleDryCo2 = base::as.POSIXlt(paste(DateBgn, " ", "00:00:00.000", sep=""), format="%Y-%m-%d %H:%M:%OS", tz="UTC"))
             rptTmp[[idxNameQf]]$timeEnd <- data.frame(rtioMoleDryCo2 = base::as.POSIXlt(paste(DateBgn, " ", "23:59:59.950", sep=""), format="%Y-%m-%d %H:%M:%OS", tz="UTC"))
@@ -199,6 +236,10 @@ wrap.irga.vali <- function(
         } else{
           loc <- idxRow-1
         }
+        #if no gasRefe and sd for idxDate
+        if (is.null(gasRefe$rtioMoleDryCo2Refe01[[idxDate]])){
+          tmpGasRefe <- tmpGasRefe
+        } else {
         #test time condition for picking the right value
         if (gasRefe$rtioMoleDryCo2RefeTime01[[idxDate]][[loc]] == gasRefe$rtioMoleDryCo2RefeTime02[[idxDate]][[loc]]){
           tmpGasRefe[idxRow,1] <- gasRefe$rtioMoleDryCo2Refe01[[idxDate]][[loc]]
@@ -217,6 +258,7 @@ wrap.irga.vali <- function(
                                                                unitFrom = "umol mol-1",
                                                                unitTo = "intl")
           }
+        }
         }
       }
     }# end for loop
@@ -266,8 +308,6 @@ wrap.irga.vali <- function(
                                                 
   #applying the calculated coefficients to measured data
   #Calculate time-series (20Hz) of slope and zero offset 
-  #measurement frequency (20 Hz)
-  Freq <- 20
   outSub <- list()
   for (idx in 1:2){
     #idx <- 2
