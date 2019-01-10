@@ -343,7 +343,7 @@ wrap.irga.vali <- function(
       slpLin <- zoo::na.approx(object = slp, xout = timeDoy, na.rm=FALSE)
     } # ending the logic when coefficients are not NAs
     
-    #when coefficients in Date[idx] are not NAs but Date[idx+1] are not NAs
+    #when coefficients in Date[idx] are not NAs but Date[idx+1] are NAs
     if ((!is.na(rpt[[Date[idx]]]$rtioMoleDryCo2Mlf$coef[1]) & !is.na(rpt[[Date[idx]]]$rtioMoleDryCo2Mlf$coef[2])) &
         (is.na(rpt[[Date[idx+1]]]$rtioMoleDryCo2Mlf$coef[1]) | is.na(rpt[[Date[idx+1]]]$rtioMoleDryCo2Mlf$coef[2]))){
       ofstLin <- rpt[[Date[idx]]]$rtioMoleDryCo2Mlf$coef[1]
@@ -362,7 +362,8 @@ wrap.irga.vali <- function(
     subData <- data$irgaTurb[][min(idxSub):max(idxSub),]
     #applying the interpolated coefficients to measured data
     if (all(is.na(ofstLin)) & all(is.na(slpLin))){
-      subData$rtioMoleDryCo2Cor <- as.numeric(subData$rtioMoleDryCo2)
+      #subData$rtioMoleDryCo2Cor <- as.numeric(subData$rtioMoleDryCo2)
+      subData$rtioMoleDryCo2Cor <- NA
     } else {
     subData$rtioMoleDryCo2Cor <- as.numeric(ofstLin + subData$rtioMoleDryCo2*slpLin)
     }
