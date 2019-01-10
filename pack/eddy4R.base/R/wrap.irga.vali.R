@@ -80,7 +80,7 @@ wrap.irga.vali <- function(
     
     for (idxAllDate in allDate){
       #idxAllDate <- allDate[1]
-      locDate <- which(as.Date(data$irgaTurb$time[]) == as.Date(idxAllDate))
+      locDate <- which(as.Date(data$irgaTurb$time[]) == as.Date(idxAllDate, origin = "1970-01-01"))
       #locDate <- which(as.Date(data$irgaTurb$time[]) == as.Date(as.POSIXlt(idxAllDate, " ", "00:00:00.0001", sep=""), format="%Y-%m-%d %H:%M:%OS", tz="UTC"))
       if(length(locDate) == 0){
         #create the empty dataframe
