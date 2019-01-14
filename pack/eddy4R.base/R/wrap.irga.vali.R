@@ -74,7 +74,7 @@ wrap.irga.vali <- function(
     DatePost <- base::as.Date(idxDate) + 1
     #grab 3 days window of irga data and qfqmFlag (pre-processing, processing, and post-processing date)
     #check if there are data and qfqmFlag
-    allDate <- c(DatePre, DateBgn, DatePost)
+    allDate <- c(base::as.Date(DatePre), base::as.Date(DateBgn), base::as.Date(DatePost))
     subDataList <- list()
     subQfqmList <- list()
     
