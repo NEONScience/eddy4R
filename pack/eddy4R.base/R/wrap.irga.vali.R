@@ -79,7 +79,7 @@ wrap.irga.vali <- function(
     subQfqmList <- list()
     
     for (idxAllDate in allDate){
-      #idxAllDate <- allDate[1]
+      idxAllDate <- as.Date(idxAllDate, origin = "1970-01-01")
       locDate <- which(as.Date(data$irgaTurb$time[]) == as.Date(idxAllDate, origin = "1970-01-01"))
       #locDate <- which(as.Date(data$irgaTurb$time[]) == as.Date(as.POSIXlt(idxAllDate, " ", "00:00:00.0001", sep=""), format="%Y-%m-%d %H:%M:%OS", tz="UTC"))
       if(length(locDate) == 0){
@@ -91,8 +91,8 @@ wrap.irga.vali <- function(
         #add time
         #output time
         options(digits.secs=3) 
-        subTimeBgn <- base::as.POSIXlt(paste(base::as.Date(idxAllDate), " ", "00:00:00.0001", sep=""), format="%Y-%m-%d %H:%M:%OS", tz="UTC")
-        subTimeEnd <- base::as.POSIXlt(paste(base::as.Date(idxAllDate), " ", "23:59:59.9502", sep=""), format="%Y-%m-%d %H:%M:%OS", tz="UTC")
+        subTimeBgn <- base::as.POSIXlt(paste(base::as.Date(idxAllDate, origin = "1970-01-01"), " ", "00:00:00.0001", sep=""), format="%Y-%m-%d %H:%M:%OS", tz="UTC")
+        subTimeEnd <- base::as.POSIXlt(paste(base::as.Date(idxAllDate, origin = "1970-01-01"), " ", "23:59:59.9502", sep=""), format="%Y-%m-%d %H:%M:%OS", tz="UTC")
         time <- as.POSIXlt(seq.POSIXt(
           from = as.POSIXlt(subTimeBgn, format="%Y-%m-%d %H:%M:%OS", tz="UTC"),
           to = as.POSIXlt(subTimeEnd, format="%Y-%m-%d %H:%M:%OS", tz="UTC"),
