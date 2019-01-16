@@ -160,6 +160,10 @@ wrap.irga.vali <- function(
         timeMax <- base::as.POSIXlt(paste(DatePost, " ", "00:01:29.950", sep=""), format="%Y-%m-%d %H:%M:%OS", tz="UTC")
         #determine index when timeEnd fall in Date Proc
         idxTime <- which(idxVali$timeEnd >= timeMin &  idxVali$timeEnd < timeMax)
+        #fail safe; if there are more than one validation occured within one day (valve problem); pick the latest one
+        if (length(idxTime) > 1){
+          locIdxTime <- length(idxTime)
+          idxTime <- idxTime[locIdxTime]}
         if (length(idxTime) != 0){
           #report data
           rptTmp[[idxNameQf]] <- tmp[[idxNameQf]][[idxTime]]
