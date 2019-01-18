@@ -198,7 +198,7 @@ wrap.irga.vali <- function(
     rpt[[idxDate]]$rtioMoleDryCo2Vali <- do.call(rbind, outTmp02)
     
     #remove
-    rm(outTmp00, outTmp01, outTmp02, rptTmp)
+    rm(outTmp00, outTmp01, outTmp02, rptTmp, idxGas)
     
     #assign column names
     colnames(rpt[[idxDate]]$rtioMoleDryCo2Vali) <- c("mean", "min", "max", "vari", "numSamp", "se", "timeBgn", "timeEnd", "gasType")
@@ -259,14 +259,70 @@ wrap.irga.vali <- function(
     #add gas type
     tmpGasRefe$gasType <- nameQf
     #add gasRefe values into rpt
-    for (idxRow in 1:nrow(rpt[[idxDate]])){
+    for (idxRow in 1:nrow(rpt[[idxDate]]$rtioMoleDryCo2Vali)){
       locGas <- which(tmpGasRefe$gasType == rpt[[idxDate]]$rtioMoleDryCo2Vali$gasType[idxRow])
       rpt[[idxDate]]$rtioMoleDryCo2Vali$rtioMoleDryCo2Refe[idxRow] <- tmpGasRefe$rtioMoleDryCo2Refe[locGas]
+      rpt[[idxDate]]$rtioMoleDryCo2Vali$rtioMoleDryCo2RefeSd[idxRow] <- tmpGasRefe$rtioMoleDryCo2RefeSd[locGas]
     }
-    rpt[[idxDate]]$rtioMoleDryCo2Vali$rtioMoleDryCo2Refe <- cbind(rpt[[idxDate]]$rtioMoleDryCo2Vali, tmpGasRefe)
+    #rpt[[idxDate]]$rtioMoleDryCo2Vali$rtioMoleDryCo2Refe <- cbind(rpt[[idxDate]]$rtioMoleDryCo2Vali, tmpGasRefe)
     
     #calculate standard deviation from se
     rpt[[idxDate]]$rtioMoleDryCo2Vali$sd <- (rpt[[idxDate]]$rtioMoleDryCo2Vali$se)*(sqrt(rpt[[idxDate]]$rtioMoleDryCo2Vali$numSamp))
+    
+    #check if there are more than one validation occurred within one day
+    if (length(which(rpt[[idxDate]]$rtioMoleDryCo2Vali$gasType == "qfIrgaTurbValiGas02")) == 2 &
+        length(which(rpt[[idxDate]]$rtioMoleDryCo2Vali$gasType == "qfIrgaTurbValiGas03")) == 2&
+        length(which(rpt[[idxDate]]$rtioMoleDryCo2Vali$gasType == "qfIrgaTurbValiGas04")) == 2&
+        length(which(rpt[[idxDate]]$rtioMoleDryCo2Vali$gasType == "qfIrgaTurbValiGas05"))== 2){
+      valiCrit <- TRUE
+    } else{
+      valiCrit <- FALSE
+    }
+    
+    #if valiCrit = TRUE, separate the data into 2 table
+    valiData <- list()
+    if (valiCrit == TRUE){
+      locGas <- which(rpt[[idxDate]]$rtioMoleDryCo2Vali$gasType == "qfIrgaTurbValiGas02")
+      #defined the critical time by adding 30 min after the end of running zero gas
+      timeCrit00 <- as.POSIXlt(rpt[[idxDate]]$rtioMoleDryCo2Vali$timeEnd[locGas[1]] + 30*60,format="%Y-%m-%d %H:%M:%OS", tz="UTC") 
+      timeCrit01 <- as.POSIXlt(rpt[[idxDate]]$rtioMoleDryCo2Vali$timeEnd[locGas[2]] + 30*60,format="%Y-%m-%d %H:%M:%OS", tz="UTC")
+      #get rid of archive gas
+      valiData$data00 <- rpt[[idxDate]]$rtioMoleDryCo2Vali[-which(rpt[[idxDate]]$rtioMoleDryCo2Vali$gasType == "qfIrgaTurbValiGas01"),]
+      valiData$data01 <- rpt[[idxDate]]$rtioMoleDryCo2Vali[-which(rpt[[idxDate]]$rtioMoleDryCo2Vali$gasType == "qfIrgaTurbValiGas01"),]
+      #select data within timeCrit
+      valiData$data00 <- valiData$data00[which(valiData$data00$timeEnd < timeCrit00),]
+      valiData$data01 <- valiData$data01[which(valiData$data01$timeEnd < timeCrit01),]
+    }; rm (locGas, timeCrit00, timeCrit01)
+    
+    if (valiCrit == FALSE){
+      #get rid of archive gas
+      valiData$data00 <- rpt[[idxDate]]$rtioMoleDryCo2Vali[-which(rpt[[idxDate]]$rtioMoleDryCo2Vali$gasType == "qfIrgaTurbValiGas01"),]
+      if (length(valiData$data00) == 4){
+        valiData$data00 <- valiData$data00
+      }else{
+      #incase of more data than expacted; due to valves problem
+        locGas00 <- which(valiData$data00$gasType == "qfIrgaTurbValiGas02")
+        #defined the critical time by adding 30 min after the end of running zero gas
+        timeCrit00 <- as.POSIXlt(valiData$data00$timeEnd[locGas00[1]] + 30*60,format="%Y-%m-%d %H:%M:%OS", tz="UTC") 
+        #select data within timeCrit
+        valiData$data00 <- valiData$data00[which(valiData$data00$timeEnd < timeCrit00),]
+        #check if there are all data as expected
+        if (length(valiData$data00) == 4){
+          valiData$data00 <- valiData$data00
+        }else{
+          #incase of valves malfunction
+          for (idxGas in c("qfIrgaTurbValiGas02", "qfIrgaTurbValiGas03", "qfIrgaTurbValiGas04", "qfIrgaTurbValiGas05")){
+            locGas01 <- which(valiData$data00$gasType == idxGas)
+            if (length(locGas01) == 1){
+              valiData$data00 <- valiData$data00
+            }else{
+              #keep the last value
+              valiData$data00 <- valiData$data00[-c(1:length(locGas01)-1),]
+            }#end else
+          }#end for
+        }#end else
+        }#end else
+    }
     
     #calculate linear regression between validation gas standard and sensor reading values
     #using maximum-likelihood fitting of a functional relationship (MLFR)
