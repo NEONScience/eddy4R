@@ -59,6 +59,9 @@ wrap.irga.vali <- function(
   
   #assign list
   rpt <- list()
+  valiData <- list()
+  #create temporary place to host coeficience values
+  tmpCoef <- list()
   
   #dates that will be used in determination of slope and offset (DatePro and DateProc+1)
   Date <- c(base::as.Date(DateProc) - 1, base::as.Date(DateProc), base::as.Date(DateProc) + 1)
@@ -280,74 +283,80 @@ wrap.irga.vali <- function(
     }
     
     #if valiCrit = TRUE, separate the data into 2 table
-    valiData <- list()
     if (valiCrit == TRUE){
       locGas <- which(rpt[[idxDate]]$rtioMoleDryCo2Vali$gasType == "qfIrgaTurbValiGas02")
       #defined the critical time by adding 30 min after the end of running zero gas
       timeCrit00 <- as.POSIXlt(rpt[[idxDate]]$rtioMoleDryCo2Vali$timeEnd[locGas[1]] + 30*60,format="%Y-%m-%d %H:%M:%OS", tz="UTC") 
       timeCrit01 <- as.POSIXlt(rpt[[idxDate]]$rtioMoleDryCo2Vali$timeEnd[locGas[2]] + 30*60,format="%Y-%m-%d %H:%M:%OS", tz="UTC")
       #get rid of archive gas
-      valiData$data00 <- rpt[[idxDate]]$rtioMoleDryCo2Vali[-which(rpt[[idxDate]]$rtioMoleDryCo2Vali$gasType == "qfIrgaTurbValiGas01"),]
-      valiData$data01 <- rpt[[idxDate]]$rtioMoleDryCo2Vali[-which(rpt[[idxDate]]$rtioMoleDryCo2Vali$gasType == "qfIrgaTurbValiGas01"),]
+      valiData[[idxDate]]$data00 <- rpt[[idxDate]]$rtioMoleDryCo2Vali[-which(rpt[[idxDate]]$rtioMoleDryCo2Vali$gasType == "qfIrgaTurbValiGas01"),]
+      valiData[[idxDate]]$data01 <- rpt[[idxDate]]$rtioMoleDryCo2Vali[-which(rpt[[idxDate]]$rtioMoleDryCo2Vali$gasType == "qfIrgaTurbValiGas01"),]
       #select data within timeCrit
-      valiData$data00 <- valiData$data00[which(valiData$data00$timeEnd < timeCrit00),]
-      valiData$data01 <- valiData$data01[which(valiData$data01$timeEnd < timeCrit01),]
+      valiData[[idxDate]]$data00 <- valiData[[idxDate]]$data00[which(valiData[[idxDate]]$data00$timeEnd < timeCrit00),]
+      valiData[[idxDate]]$data01 <- valiData[[idxDate]]$data01[which(valiData[[idxDate]]$data01$timeEnd < timeCrit01),]
     }; rm (locGas, timeCrit00, timeCrit01)
     
     if (valiCrit == FALSE){
       #get rid of archive gas
-      valiData$data00 <- rpt[[idxDate]]$rtioMoleDryCo2Vali[-which(rpt[[idxDate]]$rtioMoleDryCo2Vali$gasType == "qfIrgaTurbValiGas01"),]
-      if (length(valiData$data00) == 4){
-        valiData$data00 <- valiData$data00
+      valiData[[idxDate]]$data00 <- rpt[[idxDate]]$rtioMoleDryCo2Vali[-which(rpt[[idxDate]]$rtioMoleDryCo2Vali$gasType == "qfIrgaTurbValiGas01"),]
+      if (length(valiData[[idxDate]]$data00) == 4){
+        valiData[[idxDate]]$data00 <- valiData[[idxDate]]$data00
       }else{
-      #incase of more data than expacted; due to valves problem
-        locGas00 <- which(valiData$data00$gasType == "qfIrgaTurbValiGas02")
+      #incase of more data than expected; due to valves problem
+        locGas00 <- which(valiData[[idxDate]]$data00$gasType == "qfIrgaTurbValiGas02")
         #defined the critical time by adding 30 min after the end of running zero gas
-        timeCrit00 <- as.POSIXlt(valiData$data00$timeEnd[locGas00[1]] + 30*60,format="%Y-%m-%d %H:%M:%OS", tz="UTC") 
+        timeCrit00 <- as.POSIXlt(valiData[[idxDate]]$data00$timeEnd[locGas00[1]] + 30*60,format="%Y-%m-%d %H:%M:%OS", tz="UTC") 
         #select data within timeCrit
-        valiData$data00 <- valiData$data00[which(valiData$data00$timeEnd < timeCrit00),]
+        valiData[[idxDate]]$data00 <- valiData[[idxDate]]$data00[which(valiData[[idxDate]]$data00$timeEnd < timeCrit00),]
         #check if there are all data as expected
-        if (length(valiData$data00) == 4){
-          valiData$data00 <- valiData$data00
+        if (length(valiData[[idxDate]]$data00) == 4){
+          valiData[[idxDate]]$data00 <- valiData[[idxDate]]$data00
         }else{
           #incase of valves malfunction
           for (idxGas in c("qfIrgaTurbValiGas02", "qfIrgaTurbValiGas03", "qfIrgaTurbValiGas04", "qfIrgaTurbValiGas05")){
-            locGas01 <- which(valiData$data00$gasType == idxGas)
+            locGas01 <- which(valiData[[idxDate]]$data00$gasType == idxGas)
             if (length(locGas01) == 1){
-              valiData$data00 <- valiData$data00
+              valiData[[idxDate]]$data00 <- valiData[[idxDate]]$data00
             }else{
               #keep the last value
-              valiData$data00 <- valiData$data00[-c(1:length(locGas01)-1),]
+              valiData[[idxDate]]$data00 <- valiData[[idxDate]]$data00[-c(1:length(locGas01)-1),]
             }#end else
           }#end for
         }#end else
         }#end else
+      valiData[[idxDate]]$data01 <- valiData[[idxDate]]$data00
     }
     
     #calculate linear regression between validation gas standard and sensor reading values
     #using maximum-likelihood fitting of a functional relationship (MLFR)
-    #create empty dataframe to keep intercept and slope output from MLFR
-    rpt[[idxDate]]$rtioMoleDryCo2Mlf <- data.frame(matrix(ncol = 2, nrow = 2))
-    #assign column name
-    colnames(rpt[[idxDate]]$rtioMoleDryCo2Mlf) <- c("coef", "se")
-    
+    #calculate linear regression for each of valiData[[idxDate]]$data01 and valiData[[idxDate]]$data00
     #test if all inputs are NA
-    if (all(is.na(rpt[[idxDate]]$rtioMoleDryCo2Vali$mean)) | all(is.na(rpt[[idxDate]]$rtioMoleDryCo2Vali$se)) |
-        all(is.na(rpt[[idxDate]]$rtioMoleDryCo2Vali$rtioMoleDryCo2Refe)) | all(is.na(rpt[[idxDate]]$rtioMoleDryCo2Vali$rtioMoleDryCo2RefeSd))){
-      rpt[[idxDate]]$rtioMoleDryCo2Mlf[,] <- NA
+    for (idxData in names(valiData[[idxDate]])){
+      #create empty dataframe to keep intercept and slope output from MLFR
+      tmpCoef[[idxDate]][[idxData]] <- data.frame(matrix(ncol = 2, nrow = 2)) 
+      #assign column name
+      colnames(tmpCoef[[idxDate]][[idxData]]) <- c("coef", "se")
+      
+    if (all(is.na(valiData[[idxDate]][[idxData]]$mean)) | all(is.na(valiData[[idxDate]][[idxData]]$se)) |
+        all(is.na(valiData[[idxDate]][[idxData]]$rtioMoleDryCo2Refe)) | all(is.na(valiData[[idxDate]][[idxData]]$rtioMoleDryCo2RefeSd))){
+      tmpCoef[[idxDate]][[idxData]][,] <- NA
     } else{
-      rtioMoleDryCo2Mlfr <- deming::deming(mean[2:5]~rtioMoleDryCo2Refe[2:5], data = rpt[[idxDate]]$rtioMoleDryCo2Vali,
-                                           xstd = rtioMoleDryCo2RefeSd[2:5], ystd = sd[2:5]) 
+      rtioMoleDryCo2Mlfr <- deming::deming(mean[1:4]~rtioMoleDryCo2Refe[1:4], data = valiData[[idxDate]][[idxData]],
+                                           xstd = rtioMoleDryCo2RefeSd[1:4], ystd = sd[1:4]) 
       #write output to table
       #intercept
-      rpt[[idxDate]]$rtioMoleDryCo2Mlf[1,1] <- rtioMoleDryCo2Mlfr$coefficients[[1]]
+      tmpCoef[[idxDate]][[idxData]][1,1] <- rtioMoleDryCo2Mlfr$coefficients[[1]]
       #slope
-      rpt[[idxDate]]$rtioMoleDryCo2Mlf[2,1] <- rtioMoleDryCo2Mlfr$coefficients[[2]]
+      tmpCoef[[idxDate]][[idxData]][2,1] <- rtioMoleDryCo2Mlfr$coefficients[[2]]
       #se
-      rpt[[idxDate]]$rtioMoleDryCo2Mlf[,2] <- rtioMoleDryCo2Mlfr$se
+      tmpCoef[[idxDate]][[idxData]][,2] <- rtioMoleDryCo2Mlfr$se
     }
+    }#end of for loop of idxData
+    
+    #report output
+    rpt[[idxDate]]$rtioMoleDryCo2Mlf <- tmpCoef[[idxDate]]$data00
     #reorder column
-    rpt[[idxDate]]$rtioMoleDryCo2Vali <- rpt[[idxDate]]$rtioMoleDryCo2Vali[,c(1:5, 9, 7, 8)]
+    rpt[[idxDate]]$rtioMoleDryCo2Vali <- rpt[[idxDate]]$rtioMoleDryCo2Vali[,c(1:5, 10, 7, 8)]
     #unit attributes
     unitRtioMoleDryCo2Vali <- attributes(data$irgaTurb$rtioMoleDryCo2)$unit
     
@@ -359,32 +368,51 @@ wrap.irga.vali <- function(
                                                             attributes(gasRefe$rtioMoleDryCo2Refe01[[idxDate]]$`702_000`)$unit,#"rtioMoleDryCo2Refe"
                                                             "NA", #"timeBgn"
                                                             "NA")#"timeEnd"
-  }#end of idxDate
-                                                
+    
+    }; rm(valiCrit)#end of idxDate
+  
+
   #applying the calculated coefficients to measured data
   #Calculate time-series (20Hz) of slope and zero offset 
   outSub <- list()
   for (idx in 1:2){
     #idx <- 2
-    #time begin and time End to apply coefficient
-    #time when performing of high gas is done
-    timeBgn <- as.POSIXlt(rpt[[Date[idx]]]$rtioMoleDryCo2Vali$timeEnd[5])
-    #time when performing of zero gas is started
-    timeEnd <- as.POSIXlt(rpt[[Date[idx+1]]]$rtioMoleDryCo2Vali$timeBgn[2])
-    #output time
-    timeOut <- as.POSIXlt(seq.POSIXt(
-      from = as.POSIXlt(timeBgn, format="%Y-%m-%d %H:%M:%OS", tz="UTC"),
-      to = as.POSIXlt(timeEnd, format="%Y-%m-%d %H:%M:%OS", tz="UTC"),
-      by = 1/Freq
-    ), tz="UTC")
+    #check if there are more than one validation occurred within one day
+    if (length(which(rpt[[Date[idx]]]$rtioMoleDryCo2Vali$gasType == "qfIrgaTurbValiGas02")) == 2 &
+        length(which(rpt[[Date[idx]]]$rtioMoleDryCo2Vali$gasType == "qfIrgaTurbValiGas03")) == 2&
+        length(which(rpt[[Date[idx]]]$rtioMoleDryCo2Vali$gasType == "qfIrgaTurbValiGas04")) == 2&
+        length(which(rpt[[Date[idx]]]$rtioMoleDryCo2Vali$gasType == "qfIrgaTurbValiGas05"))== 2){
+      valiCrit <- TRUE
+    } else{
+      valiCrit <- FALSE
+    }
     
-    #fractional
-    timeFracOut <- timeOut$hour + timeOut$min / 60 + timeOut$sec / 3600
-    #calculate doy
-    timeDoy <- timeOut$yday + 1 +  timeFracOut / 24
+    if (valiCrit == TRUE){
+      #time when performing of zero gas is started
+      timeEnd <- as.POSIXlt(valiData[[Date[idx]]]$data01$timeBgn[which(valiData[[Date[idx]]]$data01$gasType == "qfIrgaTurbValiGas02")])
+    }else{
+      #time when performing of zero gas is started
+      timeEnd <- as.POSIXlt(valiData[[Date[idx+1]]]$data01$timeBgn[which(valiData[[Date[idx+1]]]$data01$gasType == "qfIrgaTurbValiGas02")])
+    }
+      #time begin and time End to apply coefficient
+      #time when performing of high gas is done
+      timeBgn <- as.POSIXlt(valiData[[Date[idx]]]$data01$timeBgn[which(valiData[[Date[idx+1]]]$data01$gasType == "qfIrgaTurbValiGas05")])
+      #output time
+      timeOut <- as.POSIXlt(seq.POSIXt(
+        from = as.POSIXlt(timeBgn, format="%Y-%m-%d %H:%M:%OS", tz="UTC"),
+        to = as.POSIXlt(timeEnd, format="%Y-%m-%d %H:%M:%OS", tz="UTC"),
+        by = 1/Freq
+      ), tz="UTC")
+      
+      #fractional
+      timeFracOut <- timeOut$hour + timeOut$min / 60 + timeOut$sec / 3600
+      #calculate doy
+      timeDoy <- timeOut$yday + 1 +  timeFracOut / 24
+
+    
     
     #when coefficients are not NAs
-    if (!is.na(rpt[[Date[idx]]]$rtioMoleDryCo2Mlf$coef[1]) & !is.na(rpt[[Date[idx]]]$rtioMoleDryCo2Mlf$coef[2]) &
+    if (!is.na(tmpCoef[[Date[idx]]]$coef[1]) & !is.na(rpt[[Date[idx]]]$rtioMoleDryCo2Mlf$coef[2]) &
         !is.na(rpt[[Date[idx+1]]]$rtioMoleDryCo2Mlf$coef[1]) & !is.na(rpt[[Date[idx+1]]]$rtioMoleDryCo2Mlf$coef[2])){
       #create object for reference values
       #offset
