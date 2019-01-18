@@ -43,6 +43,8 @@
 #     adding unit attributes to the reported outputs
 #   Natchaya P-Durden (2019-01-10)
 #     adding logic to handle when there is only one day of input data
+#   Natchaya P-Durden (2019-01-17)
+#     adding the logic to handle when there are more than one validation occurred within one day
 ##############################################################################################
 
 wrap.irga.vali <- function(
@@ -153,76 +155,62 @@ wrap.irga.vali <- function(
             # assign data: data.frame or list of type numeric or integer
             data = inpTmp
           )
-        }#end for each idxAgr
-        #report only validation which occured on DateBgn
-        #assign time window 
-        timeMin <- base::as.POSIXlt(paste(DateBgn, " ", "00:01:29.950", sep=""), format="%Y-%m-%d %H:%M:%OS", tz="UTC")
-        timeMax <- base::as.POSIXlt(paste(DatePost, " ", "00:01:29.950", sep=""), format="%Y-%m-%d %H:%M:%OS", tz="UTC")
-        #determine index when timeEnd fall in Date Proc
-        idxTime <- which(idxVali$timeEnd >= timeMin &  idxVali$timeEnd < timeMax)
-        #fail safe; if there are more than one validation occured within one day (valve problem); pick the latest one
-        if (length(idxTime) > 1){
-          locIdxTime <- length(idxTime)
-          idxTime <- idxTime[locIdxTime]}
-        if (length(idxTime) != 0){
           #report data
-          rptTmp[[idxNameQf]] <- tmp[[idxNameQf]][[idxTime]]
+          rptTmp[[idxNameQf]][[idxAgr]] <- tmp[[idxNameQf]][[idxAgr]]
           #report time
-          rptTmp[[idxNameQf]]$timeBgn <- data.frame(rtioMoleDryCo2 = idxVali$timeBgn[idxTime])
-          rptTmp[[idxNameQf]]$timeEnd <- data.frame(rtioMoleDryCo2 = idxVali$timeEnd[idxTime])
-          #units:
-          #attributes(rptTmp[[idxNameQf]]$mean$rtioMoleDryCo2)$unit <- attributes(data$irgaTurb$rtioMoleDryCo2)$unit
-        } else {
-          for(idxStat in NameStat){
-            #report data
-            rptTmp[[idxNameQf]][[idxStat]] <- data.frame(rtioMoleDryCo2 = NaN)
-            #report time
-            rptTmp[[idxNameQf]]$timeBgn <- data.frame(rtioMoleDryCo2 = base::as.POSIXlt(paste(DateBgn, " ", "00:00:00.000", sep=""), format="%Y-%m-%d %H:%M:%OS", tz="UTC"))
-            rptTmp[[idxNameQf]]$timeEnd <- data.frame(rtioMoleDryCo2 = base::as.POSIXlt(paste(DateBgn, " ", "23:59:59.950", sep=""), format="%Y-%m-%d %H:%M:%OS", tz="UTC"))
-            #units:
-            #attributes(rptTmp[[idxNameQf]]$mean$rtioMoleDryCo2)$unit <- attributes(data$irgaTurb$rtioMoleDryCo2)$unit
-          }#end idxStat
-          
-        }#end idxTime
+          rptTmp[[idxNameQf]][[idxAgr]]$timeBgn <- data.frame(rtioMoleDryCo2 = idxVali$timeBgn[[idxAgr]])
+          rptTmp[[idxNameQf]][[idxAgr]]$timeEnd <- data.frame(rtioMoleDryCo2 = idxVali$timeEnd[[idxAgr]])
+        }#end for each idxAgr
         #end for at least there is one measurement
       } else {
         for(idxStat in NameStat){
           #report data
-          rptTmp[[idxNameQf]][[idxStat]] <- data.frame(rtioMoleDryCo2 = NaN)
+          rptTmp[[idxNameQf]][[1]][[idxStat]] <- data.frame(rtioMoleDryCo2 = NaN)
         }#end idxStat
         #report time
-        rptTmp[[idxNameQf]]$timeBgn <- data.frame(rtioMoleDryCo2 = base::as.POSIXlt(paste(DateBgn, " ", "00:00:00.000", sep=""), format="%Y-%m-%d %H:%M:%OS", tz="UTC"))
-        rptTmp[[idxNameQf]]$timeEnd <- data.frame(rtioMoleDryCo2 = base::as.POSIXlt(paste(DateBgn, " ", "23:59:59.950", sep=""), format="%Y-%m-%d %H:%M:%OS", tz="UTC"))
+        rptTmp[[idxNameQf]][[1]]$timeBgn <- data.frame(rtioMoleDryCo2 = base::as.POSIXlt(paste(DateBgn, " ", "00:00:00.000", sep=""), format="%Y-%m-%d %H:%M:%OS", tz="UTC"))
+        rptTmp[[idxNameQf]][[1]]$timeEnd <- data.frame(rtioMoleDryCo2 = base::as.POSIXlt(paste(DateBgn, " ", "23:59:59.950", sep=""), format="%Y-%m-%d %H:%M:%OS", tz="UTC"))
       }
     }#end of each qf in nameQf
     
     #return results as dataframe
     outTmp00 <-list()
     outTmp01 <- list()
+    outTmp02 <- list()
     
     for (idxGas in names(rptTmp)){
       #for (idxGas in c("qfIrgaTurbValiGas02", "qfIrgaTurbValiGas03", "qfIrgaTurbValiGas04")){
       #idxGas <- names(rptTmp)[2]
-      for (idxStat in names(rptTmp[[idxGas]])){
+      for (idxLoc in 1:length(rptTmp[[idxGas]])){
+      for (idxStat in names(rptTmp[[idxGas]][[idxLoc]])){
         #idxStat <- names(rptTmp[[idxGas]])[1]
-        outTmp00[[idxStat]] <- data.frame(rptTmp[[idxGas]][[idxStat]]$rtioMoleDryCo2)
+        outTmp00[[idxStat]] <- data.frame(rptTmp[[idxGas]][[idxLoc]][[idxStat]]$rtioMoleDryCo2)
       }
-      outTmp01[[idxGas]] <- do.call(cbind, outTmp00)
+       outTmp01[[idxLoc]] <- do.call(cbind, outTmp00)
+      }
+       outTmp02[[idxGas]] <- do.call(rbind, outTmp01)
+       outTmp02[[idxGas]]$gasType <- idxGas
     }
     
     #convert idxDate to character
     #idxDate <- as.character(idxDate)
     #combine row
-    rpt[[idxDate]]$rtioMoleDryCo2Vali <- do.call(rbind, outTmp01)
+    rpt[[idxDate]]$rtioMoleDryCo2Vali <- do.call(rbind, outTmp02)
     
     #remove
-    rm(outTmp00, outTmp01, rptTmp)
+    rm(outTmp00, outTmp01, outTmp02, rptTmp)
     
     #assign column names
-    colnames(rpt[[idxDate]]$rtioMoleDryCo2Vali) <- c("mean", "min", "max", "vari", "numSamp", "se", "timeBgn", "timeEnd")
+    colnames(rpt[[idxDate]]$rtioMoleDryCo2Vali) <- c("mean", "min", "max", "vari", "numSamp", "se", "timeBgn", "timeEnd", "gasType")
     
     #remove row names
     rownames(rpt[[idxDate]]$rtioMoleDryCo2Vali) <- NULL
+    
+    #assign time window 
+    timeMin <- base::as.POSIXlt(paste(DateBgn, " ", "00:01:29.950", sep=""), format="%Y-%m-%d %H:%M:%OS", tz="UTC")
+    timeMax <- base::as.POSIXlt(paste(DatePost, " ", "00:01:29.950", sep=""), format="%Y-%m-%d %H:%M:%OS", tz="UTC")
+    #determine index when timeEnd fall in Date Proc
+    rpt[[idxDate]]$rtioMoleDryCo2Vali <- rpt[[idxDate]]$rtioMoleDryCo2Vali[which(rpt[[idxDate]]$rtioMoleDryCo2Vali$timeEnd >= timeMin &  rpt[[idxDate]]$rtioMoleDryCo2Vali$timeBgn < timeMax),]
     
     #add gasRefe values into rpt
     #create temporary dataframe
@@ -267,10 +255,15 @@ wrap.irga.vali <- function(
         }
         }
       }
-    }# end for loop
-    
+    }; rm(idxRow)# end for loop
+    #add gas type
+    tmpGasRefe$gasType <- nameQf
     #add gasRefe values into rpt
-    rpt[[idxDate]]$rtioMoleDryCo2Vali <- cbind(rpt[[idxDate]]$rtioMoleDryCo2Vali, tmpGasRefe)
+    for (idxRow in 1:nrow(rpt[[idxDate]])){
+      locGas <- which(tmpGasRefe$gasType == rpt[[idxDate]]$rtioMoleDryCo2Vali$gasType[idxRow])
+      rpt[[idxDate]]$rtioMoleDryCo2Vali$rtioMoleDryCo2Refe[idxRow] <- tmpGasRefe$rtioMoleDryCo2Refe[locGas]
+    }
+    rpt[[idxDate]]$rtioMoleDryCo2Vali$rtioMoleDryCo2Refe <- cbind(rpt[[idxDate]]$rtioMoleDryCo2Vali, tmpGasRefe)
     
     #calculate standard deviation from se
     rpt[[idxDate]]$rtioMoleDryCo2Vali$sd <- (rpt[[idxDate]]$rtioMoleDryCo2Vali$se)*(sqrt(rpt[[idxDate]]$rtioMoleDryCo2Vali$numSamp))
