@@ -12,7 +12,7 @@
 #' @param coef List consists of linear regression coefficients (slope and offset) for DateProc - 1, DateProc, and DateProc + 1. 
 #' @param valiCrit A logical stating if there are more than one validation occurred within DateProc. Defaut to FALSE.
 #' @return 
-#' The returned object consists of the correction IRGA sub data products.
+#' The returned dataframe consists of the correction IRGA sub data products.
 
 #' @references
 #' License: GNU AFFERO GENERAL PUBLIC LICENSE Version 3, 19 November 2007.
@@ -141,7 +141,7 @@ timeRglr <- seq.POSIXt(
   by = 1/Freq
 )
 
-rpt$rtioMoleDryCo2Cor <- eddy4R.base::def.rglr(timeMeas = base::as.POSIXlt(outTmp01$time, format="%Y-%m-%d %H:%M:%OS", tz="UTC"),
+rpt <- eddy4R.base::def.rglr(timeMeas = base::as.POSIXlt(outTmp01$time, format="%Y-%m-%d %H:%M:%OS", tz="UTC"),
                                                            dataMeas = outTmp01,
                                                            BgnRglr = as.POSIXlt(min(timeRglr)),
                                                            EndRglr = as.POSIXlt(max(timeRglr)+0.0002),
@@ -150,18 +150,18 @@ rpt$rtioMoleDryCo2Cor <- eddy4R.base::def.rglr(timeMeas = base::as.POSIXlt(outTm
 )$dataRglr
 
 #replace time to regularize time
-rpt$rtioMoleDryCo2Cor$time <- timeRglr
+rpt$time <- timeRglr
 #Creating the index to organize the variables in alphabetical order
-idxIrga <- order(names(rpt$rtioMoleDryCo2Cor))
+idxIrga <- order(names(rpt))
 #Changing the order of the variables to alphabetical order using the index
-rpt$rtioMoleDryCo2Cor <- rpt$rtioMoleDryCo2Cor[,idxIrga]
+rpt <- rpt[,idxIrga]
 
 attrUnit <- c("-", "-", "molCo2 m-3", "molH2o m-3", "NA", "V", "W", "W", "W", "W", "Pa", "Pa", "Pa", "molCo2 mol-1Dry", "molCo2 mol-1Dry",
               "molH2o mol-1Dry", "-", "-", "K", "K", "K", "K", "NA")
 
 for(idxVar in 1:length(attrUnit)) {
   
-  base::attr(x = rpt$rtioMoleDryCo2Cor[[idxVar]], which = "unit") <-
+  base::attr(x = rpt[[idxVar]], which = "unit") <-
     attrUnit[idxVar]
   
 }; rm(idxVar, outSub, outTmp00, outTmp01)
