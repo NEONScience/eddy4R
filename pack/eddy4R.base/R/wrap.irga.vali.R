@@ -12,7 +12,10 @@
 #' @param DateProc A vector of class "character" containing the processing date.
 
 #' @return 
-#' The returned object consistes of descriptive statistics (mean, min, max, vari, numSamp, se) of CO2 dry mole concentration during performing validation and CO2 dry mole concentration of reference gases.
+#' The returned object consists of:\cr
+#' \code{rtioMoleDryCo2Vali} scriptive statistics (mean, min, max, vari, numSamp, se) of CO2 dry mole concentration during performing validation and CO2 dry mole concentration of reference gases.\cr
+#' \code{rtioMoleDryCo2Mlf} linear regression coefficients resulted from the maximum-likelihood fitting of a functional relationship. \cr
+#' \code{rtioMoleDryCo2Cor} dataframe consists of the correction IRGA sub data products.
 
 #' @references
 #' License: GNU AFFERO GENERAL PUBLIC LICENSE Version 3, 19 November 2007.
@@ -45,6 +48,8 @@
 #     adding logic to handle when there is only one day of input data
 #   Natchaya P-Durden (2019-01-17)
 #     adding the logic to handle when there are more than one validation occurred within one day
+#   Natchaya P-Durden (2019-01-22)
+#     replace command lines to apply the correction value by the definition function
 ##############################################################################################
 
 wrap.irga.vali <- function(
@@ -63,7 +68,7 @@ wrap.irga.vali <- function(
   #create temporary place to host coeficience values
   tmpCoef <- list()
   
-  #dates that will be used in determination of slope and offset (DatePro and DateProc+1)
+  #dates that will be used in determination of slope and offset
   Date <- c(base::as.Date(DateProc) - 1, base::as.Date(DateProc), base::as.Date(DateProc) + 1)
   Date <- as.character(Date)
   Freq <- 20  #measurement frequency (20 Hz)
@@ -370,128 +375,20 @@ wrap.irga.vali <- function(
                                                             "NA")#"timeEnd"
     
     }; rm(valiCrit)#end of idxDate
-  
-
-  #applying the calculated coefficients to measured data
-  #Calculate time-series (20Hz) of slope and zero offset 
-  outSub <- list()
-  for (idx in 1:2){
-    #idx <- 2
-    #check if there are more than one validation occurred within one day
-    if (length(which(rpt[[Date[idx]]]$rtioMoleDryCo2Vali$gasType == "qfIrgaTurbValiGas02")) == 2 &
-        length(which(rpt[[Date[idx]]]$rtioMoleDryCo2Vali$gasType == "qfIrgaTurbValiGas03")) == 2&
-        length(which(rpt[[Date[idx]]]$rtioMoleDryCo2Vali$gasType == "qfIrgaTurbValiGas04")) == 2&
-        length(which(rpt[[Date[idx]]]$rtioMoleDryCo2Vali$gasType == "qfIrgaTurbValiGas05"))== 2){
-      valiCrit <- TRUE
-    } else{
-      valiCrit <- FALSE
-    }
-    
-    if (valiCrit == TRUE){
-      #time when performing of zero gas is started
-      timeEnd <- as.POSIXlt(valiData[[Date[idx]]]$data01$timeBgn[which(valiData[[Date[idx]]]$data01$gasType == "qfIrgaTurbValiGas02")])
-    }else{
-      #time when performing of zero gas is started
-      timeEnd <- as.POSIXlt(valiData[[Date[idx+1]]]$data01$timeBgn[which(valiData[[Date[idx+1]]]$data01$gasType == "qfIrgaTurbValiGas02")])
-    }
-      #time begin and time End to apply coefficient
-      #time when performing of high gas is done
-      timeBgn <- as.POSIXlt(valiData[[Date[idx]]]$data01$timeBgn[which(valiData[[Date[idx+1]]]$data01$gasType == "qfIrgaTurbValiGas05")])
-      #output time
-      timeOut <- as.POSIXlt(seq.POSIXt(
-        from = as.POSIXlt(timeBgn, format="%Y-%m-%d %H:%M:%OS", tz="UTC"),
-        to = as.POSIXlt(timeEnd, format="%Y-%m-%d %H:%M:%OS", tz="UTC"),
-        by = 1/Freq
-      ), tz="UTC")
-      
-      #fractional
-      timeFracOut <- timeOut$hour + timeOut$min / 60 + timeOut$sec / 3600
-      #calculate doy
-      timeDoy <- timeOut$yday + 1 +  timeFracOut / 24
-
-    
-    
-    #when coefficients are not NAs
-    if (!is.na(tmpCoef[[Date[idx]]]$coef[1]) & !is.na(rpt[[Date[idx]]]$rtioMoleDryCo2Mlf$coef[2]) &
-        !is.na(rpt[[Date[idx+1]]]$rtioMoleDryCo2Mlf$coef[1]) & !is.na(rpt[[Date[idx+1]]]$rtioMoleDryCo2Mlf$coef[2])){
-      #create object for reference values
-      #offset
-      ofst <- zoo::zoo(c(rpt[[Date[idx]]]$rtioMoleDryCo2Mlf$coef[1], rpt[[Date[idx+1]]]$rtioMoleDryCo2Mlf$coef[1]), 
-                       c(timeDoy[1], timeDoy[length(timeDoy)]))
-      #slope
-      slp <- zoo::zoo(c(rpt[[Date[idx]]]$rtioMoleDryCo2Mlf$coef[2], rpt[[Date[idx+1]]]$rtioMoleDryCo2Mlf$coef[2]), 
-                      c(timeDoy[1], timeDoy[length(timeDoy)]))
-      #interpolation
-      ofstLin <- zoo::na.approx(object = ofst, xout = timeDoy, na.rm=FALSE)
-      slpLin <- zoo::na.approx(object = slp, xout = timeDoy, na.rm=FALSE)
-    } # ending the logic when coefficients are not NAs
-    
-    #when coefficients in Date[idx] are not NAs but Date[idx+1] are NAs
-    if ((!is.na(rpt[[Date[idx]]]$rtioMoleDryCo2Mlf$coef[1]) & !is.na(rpt[[Date[idx]]]$rtioMoleDryCo2Mlf$coef[2])) &
-        (is.na(rpt[[Date[idx+1]]]$rtioMoleDryCo2Mlf$coef[1]) | is.na(rpt[[Date[idx+1]]]$rtioMoleDryCo2Mlf$coef[2]))){
-      ofstLin <- rpt[[Date[idx]]]$rtioMoleDryCo2Mlf$coef[1]
-      slpLin <- rpt[[Date[idx]]]$rtioMoleDryCo2Mlf$coef[2]
-    } # ending the logic when coefficients in Date[idx] are not NAs but Date[idx+1] are not NAs
-    
-    #when coefficients in Date[idx] are NAs
-    if (is.na(rpt[[Date[idx]]]$rtioMoleDryCo2Mlf$coef[1]) & is.na(rpt[[Date[idx]]]$rtioMoleDryCo2Mlf$coef[2])){
-      ofstLin <- NA
-      slpLin <- NA
-    }
-    #get subset data from timeBgn to timeEnd
-    #get indecies
-    idxSub <- which(as.POSIXlt(data$irgaTurb$time[]) >= timeBgn &  as.POSIXlt(data$irgaTurb$time[]) < timeEnd)
-    #subset data
-    subData <- data$irgaTurb[][min(idxSub):max(idxSub),]
-    #applying the interpolated coefficients to measured data
-    if (all(is.na(ofstLin)) & all(is.na(slpLin))){
-      #subData$rtioMoleDryCo2Cor <- as.numeric(subData$rtioMoleDryCo2)
-      subData$rtioMoleDryCo2Cor <- NA
-    } else {
-    subData$rtioMoleDryCo2Cor <- as.numeric(ofstLin + subData$rtioMoleDryCo2*slpLin)
-    }
-    
-    outSub[[idx]] <- subData
+   
+  #check if there are more than one validation occurred in DateProc
+  if (length(which(rpt[[DateProc]]$rtioMoleDryCo2Vali$gasType == "qfIrgaTurbValiGas02")) == 2 &
+      length(which(rpt[[DateProc]]$rtioMoleDryCo2Vali$gasType == "qfIrgaTurbValiGas03")) == 2&
+      length(which(rpt[[DateProc]]$rtioMoleDryCo2Vali$gasType == "qfIrgaTurbValiGas04")) == 2&
+      length(which(rpt[[DateProc]]$rtioMoleDryCo2Vali$gasType == "qfIrgaTurbValiGas05"))== 2){
+    valiCrit <- TRUE
+  } else{
+    valiCrit <- FALSE
   }
-  #append dataframe
-  outTmp02 <- do.call(rbind,outSub)
-  #return data only the processing date
-  #report time
-  options(digits.secs=3) 
-  rptTimeBgn <- base::as.POSIXlt(paste(DateProc, " ", "00:00:00.0001", sep=""), format="%Y-%m-%d %H:%M:%OS", tz="UTC")
-  rptTimeEnd <- base::as.POSIXlt(paste(DateProc, " ", "23:59:59.9502", sep=""), format="%Y-%m-%d %H:%M:%OS", tz="UTC")
-  outTmp03<- data.frame(outTmp02[which(outTmp02$time >= rptTimeBgn & outTmp02$time < rptTimeEnd),])
-  #generate time according to frequency
-  timeRglr <- seq.POSIXt(
-    from = base::as.POSIXlt(rptTimeBgn, format="%Y-%m-%d %H:%M:%OS", tz="UTC"),
-    to = base::as.POSIXlt(rptTimeEnd, format="%Y-%m-%d %H:%M:%OS", tz="UTC"),
-    by = 1/Freq
-  )
   
-  rpt[[DateProc]]$rtioMoleDryCo2Cor <- eddy4R.base::def.rglr(timeMeas = base::as.POSIXlt(outTmp03$time, format="%Y-%m-%d %H:%M:%OS", tz="UTC"),
-                                dataMeas = outTmp03,
-                                BgnRglr = as.POSIXlt(min(timeRglr)),
-                                EndRglr = as.POSIXlt(max(timeRglr)+0.0002),
-                                FreqRglr = Freq,
-                                MethRglr = "CybiEc"
-  )$dataRglr
-  
-  #replace time to regularize time
-  rpt[[DateProc]]$rtioMoleDryCo2Cor$time <- timeRglr
-  #Creating the index to organize the variables in alphabetical order
-  idxIrga <- order(names(rpt[[DateProc]]$rtioMoleDryCo2Cor))
-  #Changing the order of the variables to alphabetical order using the index
-  rpt[[DateProc]]$rtioMoleDryCo2Cor <- rpt[[DateProc]]$rtioMoleDryCo2Cor[,idxIrga]
-  
-  attrUnit <- c("-", "-", "molCo2 m-3", "molH2o m-3", "NA", "V", "W", "W", "W", "W", "Pa", "Pa", "Pa", "molCo2 mol-1Dry", "molCo2 mol-1Dry",
-                                                                "molH2o mol-1Dry", "-", "-", "K", "K", "K", "K", "NA")
-  
-  for(idxVar in 1:length(attrUnit)) {
-    
-    base::attr(x = rpt[[DateProc]]$rtioMoleDryCo2Cor[[idxVar]], which = "unit") <-
-      attrUnit[idxVar]
-    
-  }; rm(idxVar)
+  #applying the calculated coefficients to measured data
+  #Calculate time-series (20Hz) of slope and zero offset
+  rpt[[DateProc]]$rtioMoleDryCo2Cor <- eddy4R.base::def.irga.vali.cor(data = data, DateProc = DateProc, coef = tmpCoef, valiData = valiData, valiCrit = valiCrit)
   
 #return results
   return(rpt)
