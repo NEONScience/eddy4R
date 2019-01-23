@@ -21,6 +21,7 @@ Imports:
     robfilter (>= 4.1),
     signal (>= 0.7-6),
     zoo (>= 1.8-1)
+    deming (>= 1.4)
 License: GNU AFFERO GENERAL PUBLIC LICENSE Version 3, 19 November 2007
 LazyData: true
 RoxygenNote: 6.0.1
