@@ -191,14 +191,20 @@ wrap.irga.vali <- function(
       #idxGas <- names(rptTmp)[2]
       for (idxLoc in 1:length(rptTmp[[idxGas]])){
       for (idxStat in names(rptTmp[[idxGas]][[idxLoc]])){
-        #idxStat <- names(rptTmp[[idxGas]])[1]
+        #idxStat <- names(rptTmp[[idxGas]][[idxLoc]])[1]
         outTmp00[[idxStat]] <- data.frame(rptTmp[[idxGas]][[idxLoc]][[idxStat]]$rtioMoleDryCo2)
       }
        outTmp01[[idxLoc]] <- do.call(cbind, outTmp00)
       }
        outTmp02[[idxGas]] <- do.call(rbind, outTmp01)
        outTmp02[[idxGas]]$gasType <- idxGas
+       
+       #empty lists
+       outTmp00 <-list()
+       outTmp01 <- list()
+       
     }
+    
     
     #convert idxDate to character
     #idxDate <- as.character(idxDate)
@@ -219,6 +225,13 @@ wrap.irga.vali <- function(
     timeMax <- base::as.POSIXlt(paste(DatePost, " ", "00:01:29.950", sep=""), format="%Y-%m-%d %H:%M:%OS", tz="UTC")
     #determine index when timeEnd fall in Date Proc
     rpt[[idxDate]]$rtioMoleDryCo2Vali <- rpt[[idxDate]]$rtioMoleDryCo2Vali[which(rpt[[idxDate]]$rtioMoleDryCo2Vali$timeEnd >= timeMin &  rpt[[idxDate]]$rtioMoleDryCo2Vali$timeBgn < timeMax),]
+    
+    #fail safe: fill in dataframe with NaN values when there is only qfIrgaTurbValiGas01 
+    if (length(rpt[[idxDate]]$rtioMoleDryCo2Vali$mean) == 1){
+      rpt[[idxDate]]$rtioMoleDryCo2Vali[2:5,] <-  rpt[[idxDate]]$rtioMoleDryCo2Vali[1,]
+      #replace gasType
+      rpt[[idxDate]]$rtioMoleDryCo2Vali$gasType <- nameQf
+    }
     
     #add gasRefe values into rpt
     #create temporary dataframe
