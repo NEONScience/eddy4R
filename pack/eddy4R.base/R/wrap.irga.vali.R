@@ -50,6 +50,8 @@
 #     adding the logic to handle when there are more than one validation occurred within one day
 #   Natchaya P-Durden (2019-01-22)
 #     replace command lines to apply the correction value by the definition function
+#   Natchaya P-Durden (2019-01-24)
+#     revise the MLFR code
 ##############################################################################################
 
 wrap.irga.vali <- function(
@@ -359,8 +361,9 @@ wrap.irga.vali <- function(
         all(is.na(valiData[[idxDate]][[idxData]]$rtioMoleDryCo2Refe)) | all(is.na(valiData[[idxDate]][[idxData]]$rtioMoleDryCo2RefeSd))){
       tmpCoef[[idxDate]][[idxData]][,] <- NA
     } else{
-      rtioMoleDryCo2Mlfr <- deming::deming(mean[1:4]~rtioMoleDryCo2Refe[1:4], data = valiData[[idxDate]][[idxData]],
-                                           xstd = rtioMoleDryCo2RefeSd[1:4], ystd = sd[1:4]) 
+      #x are sensor readings; y are reference gas values
+      rtioMoleDryCo2Mlfr <- deming::deming(rtioMoleDryCo2Refe[1:4] ~ mean[1:4], data = valiData[[idxDate]][[idxData]],
+                                           xstd = sd[1:4], ystd = rtioMoleDryCo2RefeSd[1:4]) 
       #write output to table
       #intercept
       tmpCoef[[idxDate]][[idxData]][1,1] <- rtioMoleDryCo2Mlfr$coefficients[[1]]
