@@ -357,8 +357,9 @@ wrap.irga.vali <- function(
       #assign column name
       colnames(tmpCoef[[idxDate]][[idxData]]) <- c("coef", "se")
       
-    if (all(is.na(valiData[[idxDate]][[idxData]]$mean)) | all(is.na(valiData[[idxDate]][[idxData]]$se)) |
-        all(is.na(valiData[[idxDate]][[idxData]]$rtioMoleDryCo2Refe)) | all(is.na(valiData[[idxDate]][[idxData]]$rtioMoleDryCo2RefeSd))){
+    if (length(valiData[[idxDate]][[idxData]]$mean) < 4 |
+        sum(is.na(valiData[[idxDate]][[idxData]]$mean)) > 0 | sum(is.na(valiData[[idxDate]][[idxData]]$se)) >0 |
+        sum(is.na(valiData[[idxDate]][[idxData]]$rtioMoleDryCo2Refe)) > 0 | sum(is.na(valiData[[idxDate]][[idxData]]$rtioMoleDryCo2RefeSd)) > 1){
       tmpCoef[[idxDate]][[idxData]][,] <- NA
     } else{
       #x are sensor readings; y are reference gas values
