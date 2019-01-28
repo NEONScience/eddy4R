@@ -68,9 +68,19 @@ def.irga.vali.cor <- function(
   for (idx in 1:length(dateBgn)){
     #time begin and time End to apply coefficient
     #time when performing of high gas is done
-    timeBgn <- as.POSIXlt(valiData[[dateBgn[idx]]][[coefBgn[idx]]]$timeEnd[which(valiData[[dateBgn[idx]]][[coefBgn[idx]]]$gasType == "qfIrgaTurbValiGas05")])
+    if (length(valiData[[dateBgn[idx]]][[coefBgn[idx]]]$timeEnd[which(valiData[[dateBgn[idx]]][[coefBgn[idx]]]$gasType == "qfIrgaTurbValiGas05")]) == 0){
+      timeBgn <- as.POSIXlt(paste(dateBgn[idx], " ", "23:59:59.950", sep=""), format="%Y-%m-%d %H:%M:%OS", tz="UTC")
+    } else {
+      timeBgn <- as.POSIXlt(valiData[[dateBgn[idx]]][[coefBgn[idx]]]$timeEnd[which(valiData[[dateBgn[idx]]][[coefBgn[idx]]]$gasType == "qfIrgaTurbValiGas05")])
+    }
+    
     #time when performing of zero gas is started
-    timeEnd <- as.POSIXlt(valiData[[dateEnd[idx]]][[coefEnd[idx]]]$timeBgn[which(valiData[[dateEnd[idx]]][[coefEnd[idx]]]$gasType == "qfIrgaTurbValiGas02")])
+    if (length(valiData[[dateEnd[idx]]][[coefEnd[idx]]]$timeBgn[which(valiData[[dateEnd[idx]]][[coefEnd[idx]]]$gasType == "qfIrgaTurbValiGas02")]) == 0){
+      timeEnd <- as.POSIXlt(paste(dateEnd[idx], " ", "", sep="00:00:00.000"), format="%Y-%m-%d %H:%M:%OS", tz="UTC")
+    } else {
+      timeEnd <- as.POSIXlt(valiData[[dateEnd[idx]]][[coefEnd[idx]]]$timeBgn[which(valiData[[dateEnd[idx]]][[coefEnd[idx]]]$gasType == "qfIrgaTurbValiGas02")])
+    }
+    
     #output time
     timeOut <- as.POSIXlt(seq.POSIXt(
       from = as.POSIXlt(timeBgn, format="%Y-%m-%d %H:%M:%OS", tz="UTC"),
