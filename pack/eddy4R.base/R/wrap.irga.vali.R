@@ -319,7 +319,7 @@ wrap.irga.vali <- function(
     if (valiCrit == FALSE){
       #get rid of archive gas
       valiData[[idxDate]]$data00 <- rpt[[idxDate]]$rtioMoleDryCo2Vali[-which(rpt[[idxDate]]$rtioMoleDryCo2Vali$gasType == "qfIrgaTurbValiGas01"),]
-      if (length(valiData[[idxDate]]$data00) == 4){
+      if (length(valiData[[idxDate]]$data00$timeBgn) <= 4){
         valiData[[idxDate]]$data00 <- valiData[[idxDate]]$data00
       }else{
       #incase of more data than expected; due to valves problem
@@ -329,7 +329,7 @@ wrap.irga.vali <- function(
         #select data within timeCrit
         valiData[[idxDate]]$data00 <- valiData[[idxDate]]$data00[which(valiData[[idxDate]]$data00$timeEnd < timeCrit00),]
         #check if there are all data as expected
-        if (length(valiData[[idxDate]]$data00) == 4){
+        if (length(valiData[[idxDate]]$data00$timeBgn) <= 4){
           valiData[[idxDate]]$data00 <- valiData[[idxDate]]$data00
         }else{
           #incase of valves malfunction
