@@ -19,6 +19,8 @@
 #' @param lagAll TRUE - consider positive and negative correlations when finding lag time; FALSE - consider positive correlations only when finding lag time. Defaults to TRUE. Of class logical. [-]
 #' @param hpf TRUE - apply Butterworth high-pass filter; FALSE - use raw data. Defaults to TRUE. Of class logical. [-]
 #' @param fracMin Minimum fraction of data to attempt lag determination. Defaults to 0.1. Of class numeric. [-]
+#' @param plot TRUE - will output cross-correlation plots to set working directory; FALSE - no cross-correlation plot will be generated. Defaults to FALSE. Of class logical. [-]
+#' @param plot_dir A string defining the Directory to output cross-correlation plots to, if plot = TRUE. Defaults to NULL. Of class integer or character. [-]
 
 #' @return Lagged input data and calculation results in a list consisting of:\cr
 #' \code{dataRefe} The reference data.
@@ -50,6 +52,8 @@
 #     update @param format
 #   Natchaya P-Durden (2018-04-11)
 #    applied eddy4R term name convention; replaced pos by idx
+#   Adam Vaughan (2019-01-29)
+#     added PDF plotting ability to function
 ##############################################################################################
 
 
@@ -66,7 +70,9 @@ def.lag <- function(
   lagNgtvPstv = c("n", "p", "np")[3],
   lagAll = TRUE,
   hpf = TRUE,
-  fracMin = 0.1
+  fracMin = 0.1,
+  plot = F,
+  plot_dir = NULL
 ) {
   
   ###
@@ -144,6 +150,9 @@ def.lag <- function(
       
     }
     
+    #plot cross-corrections for each value
+    if(plot)
+      pdf(file=paste(plot_dir, "/", var, "_cross_correlation.pdf", sep=""), width = 14, height = 5)
     
     #find correct lag time    
     #for hard lagMax argument
