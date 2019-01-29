@@ -78,6 +78,31 @@
 #   Cove Sturtevant (2018-01-15)
 #     Fixed some minor differences in pressure conversion factors to match the National Physical 
 #        Laboratory (http://www.npl.co.uk/reference/faqs/pressure-units)
+#   Adam Vaughan (2019-01-29)
+#     Added extended chemical species molecular masses
+#        IntlNatu$MolmNO      -   Nitrogen monoxide
+#        IntlNatu$MolmNO2     -   Nitrogen dioxide
+#        IntlNatu$MolmHONO    -   Nitrous acid
+#        IntlNatu$MolmO3      -   Ozone
+#        IntlNatu$MolmCO      -   Carbon monoxide
+#        IntlNatu$MolmCH3OH   -   Methanol
+#        IntlNatu$MolmC2H4O   -   Acetaldehyde
+#        IntlNatu$MolmC2H5OH  -   Ethanol
+#        IntlNatu$MolmC2H6    -   Ethane
+#        IntlNatu$MolmC3H6O   -   Propanal
+#        IntlNatu$MolmC3H8    -   Propane
+#        IntlNatu$MolmC4H6O   -   Methyl vinyl ketone
+#        IntlNatu$MolmC4H8O   -   Butanone
+#        IntlNatu$MolmC4H10   -   Butane
+#        IntlNatu$MolmC5H8    -   Isoprene
+#        IntlNatu$MolmC5H10O  -   Methyl isopropyl ketone
+#        IntlNatu$MolmC5H12O  -   Pentanol
+#        IntlNatu$MolmC6H12O  -   Hexanal
+#        IntlNatu$MolmC6H6    -   Benzene
+#        IntlNatu$MolmC7H8    -   Toluene
+#        IntlNatu$MolmC8H10   -   Xylene
+#        IntlNatu$MolmC9H12   -   1,2,4-Trimethyl benzene
+
 ##############################################################################################
 
 library(devtools)
@@ -203,7 +228,29 @@ IntlNatu <- list() # Natural constants
       "Co2",
       "H2o",
       "Ch4",
-      "Dry"
+      "Dry",
+      "NO",
+      "NO2",
+      "HONO",
+      "O3",
+      "CO",
+      "CH3OH",
+      "C2H4O",
+      "C2H5OH",
+      "C2H6",
+      "C3H6O",
+      "C3H8",
+      "C4H6O",
+      "C4H8O",
+      "C4H10",
+      "C5H8",
+      "C5H10O",
+      "C5H12O",
+      "C6H12O",
+      "C6H6",
+      "C7H8",
+      "C8H10",
+      "C9H12"
       )
       
 # Define internal units. List names should be selected from the entries in IntlUnit$Base$Type.
