@@ -56,6 +56,8 @@
 #     rename function from def.para.hdf5.dp01() to def.hdf5.copy.para()
 #   Natchaya P-Durden (2018-11-28)
 #     adding irgaTurb validation data
+#   Natchaya P-Durden (2019-01-29)
+#     deleted dp04 of fluxCor and fluxRaw out when writing the basic file
 ##############################################################################################
 
 
@@ -186,6 +188,11 @@ if(MethDp04 == TRUE){
       }
       
     } else {
+    #output only flux for fluxCo2 in basic file
+      if (idxDp04 == c("fluxCo2") & MethExpd == FALSE){
+        inpList$dp04$data[[idxDp04]]$turb$fluxCor <- NULL
+        inpList$dp04$data[[idxDp04]]$turb$fluxRaw <- NULL
+      }
     #Adding time to output dataframe
     rptDp04 <-  cbind(timeBgn = outList$data$soni$veloXaxsErth$timeBgn, timeEnd = outList$data$soni$veloXaxsErth$timeEnd, inpList$dp04$data[[idxDp04]]$turb, stringsAsFactors = FALSE)
   
