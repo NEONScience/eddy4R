@@ -61,6 +61,7 @@
 #     rename function from wrap.neon.dp01.qfqm() to wrap.dp01.qfqm.eddy()
 #   Natchaya P-Durden (2019-01-30)
 #     bugs fixed to report qfValiH2o when no h2oRefe data
+#   Natchaya P-Durden (2019-01-31)
 #     using injNum instate of qfRngTmp to determine missing data
 ##############################################################################################
 wrap.dp01.qfqm.ecse <- function(
