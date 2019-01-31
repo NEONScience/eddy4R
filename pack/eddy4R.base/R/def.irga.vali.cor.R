@@ -29,6 +29,8 @@
 # changelog and author contributions / copyrights
 #   Natchaya P-Durden (2019-01-21)
 #     original creation
+#   Natchaya P-Durden (2019-01-31)
+#     bugs fix to add all NA data of rtioMoleDryCo2Cor in rpt when no validation occurred
 ##############################################################################################
 def.irga.vali.cor <- function(
  data,
@@ -80,6 +82,13 @@ def.irga.vali.cor <- function(
     } else {
       timeEnd <- as.POSIXlt(valiData[[dateEnd[idx]]][[coefEnd[idx]]]$timeBgn[which(valiData[[dateEnd[idx]]][[coefEnd[idx]]]$gasType == "qfIrgaTurbValiGas02")])
     }
+    
+    # #replace timeBgn and timeEnd when no validation happened at all in dateBgn and dateEnd
+    # if (timeBgn == as.POSIXlt(paste(dateBgn[idx], " ", "23:59:59.950", sep=""), format="%Y-%m-%d %H:%M:%OS", tz="UTC") &
+    #     timeEnd == as.POSIXlt(paste(dateEnd[idx], " ", "", sep="00:00:00.000"), format="%Y-%m-%d %H:%M:%OS", tz="UTC")){
+    #   timeBgn <- as.POSIXlt(paste(dateBgn[idx], " ", "00:00:00.000", sep=""), format="%Y-%m-%d %H:%M:%OS", tz="UTC")
+    #   timeEnd <- as.POSIXlt(paste(dateEnd[idx], " ", "", sep="00:00:00.000"), format="%Y-%m-%d %H:%M:%OS", tz="UTC")
+    # }
     
     #output time
     timeOut <- as.POSIXlt(seq.POSIXt(
@@ -161,6 +170,10 @@ rpt <- eddy4R.base::def.rglr(timeMeas = base::as.POSIXlt(outTmp01$time, format="
 
 #replace time to regularize time
 rpt$time <- timeRglr
+#check if rtioMoleDryCo2Cor in rpt if not add them with all NA
+if (length(rpt$rtioMoleDryCo2Corr) == 0){
+  rpt$rtioMoleDryCo2Corr <- NA
+}
 #Creating the index to organize the variables in alphabetical order
 idxIrga <- order(names(rpt))
 #Changing the order of the variables to alphabetical order using the index
