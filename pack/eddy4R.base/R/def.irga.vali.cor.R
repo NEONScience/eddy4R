@@ -31,6 +31,8 @@
 #     original creation
 #   Natchaya P-Durden (2019-01-31)
 #     bugs fix to add all NA data of rtioMoleDryCo2Cor in rpt when no validation occurred
+#   Natchaya P-Durden (2019-02-04)
+#     bugs fix on typo of rtioMoleDryCo2Cor
 ##############################################################################################
 def.irga.vali.cor <- function(
  data,
@@ -171,8 +173,8 @@ rpt <- eddy4R.base::def.rglr(timeMeas = base::as.POSIXlt(outTmp01$time, format="
 #replace time to regularize time
 rpt$time <- timeRglr
 #check if rtioMoleDryCo2Cor in rpt if not add them with all NA
-if (length(rpt$rtioMoleDryCo2Corr) == 0){
-  rpt$rtioMoleDryCo2Corr <- NA
+if (length(rpt$rtioMoleDryCo2Cor) == 0){
+  rpt$rtioMoleDryCo2Cor <- NA
 }
 #Creating the index to organize the variables in alphabetical order
 idxIrga <- order(names(rpt))
@@ -180,7 +182,7 @@ idxIrga <- order(names(rpt))
 rpt <- rpt[,idxIrga]
 
 attrUnit <- c("-", "-", "molCo2 m-3", "molH2o m-3", "NA", "V", "W", "W", "W", "W", "Pa", "Pa", "Pa", "molCo2 mol-1Dry", "molCo2 mol-1Dry",
-              "molH2o mol-1Dry", "-", "-", "K", "K", "K", "K", "NA")
+              "-", "-", "K", "K", "K", "K", "NA")
 
 for(idxVar in 1:length(attrUnit)) {
   
