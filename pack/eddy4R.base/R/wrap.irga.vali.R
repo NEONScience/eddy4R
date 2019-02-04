@@ -52,6 +52,8 @@
 #     replace command lines to apply the correction value by the definition function
 #   Natchaya P-Durden (2019-01-24)
 #     revise the MLFR code
+#   Natchaya P-Durden (2019-02-04)
+#     bugs fixed to retrieve the last value when valve malfunction
 ##############################################################################################
 
 wrap.irga.vali <- function(
@@ -316,14 +318,20 @@ wrap.irga.vali <- function(
       valiData[[idxDate]]$data01 <- valiData[[idxDate]]$data01[which(valiData[[idxDate]]$data01$timeEnd < timeCrit01),]
     }; rm (locGas, timeCrit00, timeCrit01)
     
+    subVali <- list()
+    subVali01 <- list()
     if (valiCrit == FALSE){
       #get rid of archive gas
       valiData[[idxDate]]$data00 <- rpt[[idxDate]]$rtioMoleDryCo2Vali[-which(rpt[[idxDate]]$rtioMoleDryCo2Vali$gasType == "qfIrgaTurbValiGas01"),]
       if (length(valiData[[idxDate]]$data00$timeBgn) <= 4){
         valiData[[idxDate]]$data00 <- valiData[[idxDate]]$data00
       }else{
-      #incase of more data than expected; due to valves problem
+      #in case of more data than expected; due to valves problem
         locGas00 <- which(valiData[[idxDate]]$data00$gasType == "qfIrgaTurbValiGas02")
+        #in case of more then one location for locGas00, select the last one
+        if (length(locGas00) > 1) {
+          locGas00 <- locGas00[length(locGas00)]
+        }
         #defined the critical time by adding 30 min after the end of running zero gas
         timeCrit00 <- as.POSIXlt(valiData[[idxDate]]$data00$timeEnd[locGas00[1]] + 30*60,format="%Y-%m-%d %H:%M:%OS", tz="UTC") 
         #select data within timeCrit
@@ -336,12 +344,14 @@ wrap.irga.vali <- function(
           for (idxGas in c("qfIrgaTurbValiGas02", "qfIrgaTurbValiGas03", "qfIrgaTurbValiGas04", "qfIrgaTurbValiGas05")){
             locGas01 <- which(valiData[[idxDate]]$data00$gasType == idxGas)
             if (length(locGas01) == 1){
-              valiData[[idxDate]]$data00 <- valiData[[idxDate]]$data00
+              subVali <- valiData[[idxDate]]$data00[locGas01,]
             }else{
               #keep the last value
-              valiData[[idxDate]]$data00 <- valiData[[idxDate]]$data00[-c(1:length(locGas01)-1),]
+              subVali <- valiData[[idxDate]]$data00[locGas01[length(locGas01)],]
             }#end else
+            subVali01[[idxGas]] <- subVali
           }#end for
+          valiData[[idxDate]]$data00 <- do.call(rbind, subVali01)
         }#end else
         }#end else
       valiData[[idxDate]]$data01 <- valiData[[idxDate]]$data00
