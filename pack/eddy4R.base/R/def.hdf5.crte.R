@@ -309,5 +309,5 @@ def.hdf5.crte <- function(
   rhdf5::H5Gclose(idData)
   rhdf5::H5Gclose(idSite)
   rhdf5::H5Fclose(idFile)
-  rhdf5::H5close()
+  rhdf5::h5closeAll()
 }

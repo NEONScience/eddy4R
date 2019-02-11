@@ -108,7 +108,7 @@ def.hdf5.read.para <- function(
   })
   
   # close h5 file and clean up
-  rhdf5::H5close()
+  rhdf5::h5closeAll()
   rm(Set01)
   
   # return result

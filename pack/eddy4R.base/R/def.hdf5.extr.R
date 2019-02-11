@@ -202,7 +202,7 @@ if(!is.null(FileOut)) {
   
   
 # close the HDF5 file connection
-rhdf5::H5close()
+rhdf5::h5closeAll()
 }
   
   
