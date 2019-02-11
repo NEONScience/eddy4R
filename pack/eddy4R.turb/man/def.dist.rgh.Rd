@@ -4,8 +4,8 @@
 \alias{def.dist.rgh}
 \title{Definition function: Aerodynamic roughness length}
 \usage{
-def.dist.rgh(distZaxsMeas, distObkv, veloXaxs, veloFric, RngStblObkv = c(-2,
-  1))
+def.dist.rgh(distZaxsMeas, distObkv, veloXaxs, veloFric,
+  RngStblObkv = c(-2, 1))
 }
 \arguments{
 \item{\code{distZaxsMeas}}{Measurement height and of class "numeric". [m]}
