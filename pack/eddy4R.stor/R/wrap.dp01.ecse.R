@@ -62,6 +62,8 @@
 #   Natchaya P-Durden (2018-05-22)
 #     rename function from wrap.neon.dp01() to wrap.dp01()
 #     rename function from wrap.neon.dp01.ecse() to wrap.dp01.ecse()
+#   Natchaya P-Durden (2019-01-31)
+#     using injNum instate of qfRngTmp to determine missing data
 ##############################################################################################
 wrap.dp01.ecse <- function(
   dp01 = c("co2Stor", "h2oStor", "tempAirLvl", "tempAirTop", "isoCo2", "isoH2o")[1],
@@ -1141,13 +1143,22 @@ wrap.dp01.ecse <- function(
       wrk$qfqm <- list()
       wrk$qfqm$crdH2o <- qfInp$crdH2o[[lvl]]
       #replace injNum to NaN when they are not measured at that period
-      wrk$data$injNum <- ifelse(is.na(wrk$qfqm$crdH2o$qfRngTemp), NaN, wrk$data$injNum)
+      if (lvl == "h2oHigh") {
+        wrk$data$injNum <- ifelse(wrk$data$injNum %in% c(1:6), wrk$data$injNum, NaN)
+      }
+      if (lvl == "h2oMed") {
+        wrk$data$injNum <- ifelse(wrk$data$injNum %in% c(7:12), wrk$data$injNum, NaN)
+      }
+      if (lvl == "h2oLow") {
+        wrk$data$injNum <- ifelse(wrk$data$injNum %in% c(13:18), wrk$data$injNum, NaN)
+      }
+      
       if (PrdMeas == PrdAgr) {        
         #idxLvLPrdAgr <- paste0(lvl, "_", sprintf("%02d", PrdAgr), "m")
         #rpt[[dp01]][[idxLvLPrdAgr]] <- list()
         
         #if there is at least one measurement
-        if(length(which(!is.na(wrk$qfqm$crdH2o$qfRngTemp))) > 0){
+        if(length(which(!is.na(wrk$data$injNum))) > 0){
           #determine the end time of each measurement
           wrk$idx <- eddy4R.base::def.idx.agr(time = data$time, PrdAgr = (PrdMeas*60), FreqLoca = 1, MethIdx = "specEnd", crdH2oVali = TRUE, data = wrk$data$injNum, CritTime = 15)
           #delete row if last timeBgn and timeEnd is NA
