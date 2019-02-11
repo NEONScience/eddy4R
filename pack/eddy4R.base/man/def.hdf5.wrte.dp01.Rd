@@ -4,8 +4,8 @@
 \alias{def.hdf5.wrte.dp01}
 \title{Definition function: Write NEON Level 1 data, qfqm, and uncertainty to output HDF5}
 \usage{
-def.hdf5.wrte.dp01(inpList, FileOut, SiteLoca, LvlTowr, Dp01, MethUcrt = TRUE,
-  MethSubAgr = TRUE)
+def.hdf5.wrte.dp01(inpList, FileOut, SiteLoca, LvlTowr, Dp01,
+  MethUcrt = TRUE, MethSubAgr = TRUE)
 }
 \arguments{
 \item{inpList}{A list of including dp01 data, quality flags and quality metrics, and uncertainty calculations to package and write to an output HDF5 file.}

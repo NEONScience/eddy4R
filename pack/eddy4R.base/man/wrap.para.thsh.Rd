@@ -6,7 +6,8 @@
 \usage{
 wrap.para.thsh(DpName = c("IrgaTurb", "MfcSampTurb", "Soni", "Amrs"),
   DirInp = "~/eddy/data/Thresholds_EC/CI-Parameter-Repo/ParaSci/Ecte/Dp0p",
-  DirOut = "~/eddy/data/Thresholds_EC/threshold_ecte", FileWrte = FALSE)
+  DirOut = "~/eddy/data/Thresholds_EC/threshold_ecte",
+  FileWrte = FALSE)
 }
 \arguments{
 \item{DpName}{Character: Name of data product. [-]}
