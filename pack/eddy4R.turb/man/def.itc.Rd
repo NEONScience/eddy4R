@@ -4,8 +4,8 @@
 \alias{def.itc}
 \title{Definition function: Integral turbulence characteristics}
 \usage{
-def.itc(stblObkv, lat, VarInp = c("veloXaxs", "veloZaxs", "temp", "all")[4],
-  sd, varScal)
+def.itc(stblObkv, lat, VarInp = c("veloXaxs", "veloZaxs", "temp",
+  "all")[4], sd, varScal)
 }
 \arguments{
 \item{\code{stblObkv}}{Stability parameter and of class "numeric". [dimensionless]}
