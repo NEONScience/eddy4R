@@ -65,6 +65,8 @@
 #     adding to write out standard deviation for gasRefe
 #   Natchaya P-Durden (2019-01-02)
 #     bug fixed on attributes of standard deviation for gasRefe
+#   Natchaya P-Durden (2019-02-14)
+#     adding to write out DfSd of gasRefe
 ##############################################################################################
         
 wrap.hdf5.read <- function(
@@ -239,7 +241,9 @@ if(!(DateLoca %in% file)) {
     # sd assign attribute to gasRefe
     if (VarLoca == "gasRefe"){
       base::names(attr$Sd) <- attr$Name
+      base::names(attr$DfSd) <- attr$Name
       base::attributes(data)$sd <- attr$Sd[base::names(data)] 
+      base::attributes(data)$DfSd <- attr$DfSd[base::names(data)] 
     }
     rm(attr) 
     
