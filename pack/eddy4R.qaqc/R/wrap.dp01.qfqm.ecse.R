@@ -1170,15 +1170,18 @@ wrap.dp01.qfqm.ecse <- function(
       wrk$qfqm$envHut <- qfInp$envHut[[lvlEnvHut]]
       
       #replace injNum to NaN when they are not measured at that period
-      if (lvl == "h2oHigh") {
-        wrk$data$injNum <- ifelse(wrk$data$injNum %in% c(1:6), wrk$data$injNum, NaN)
-      }
-      if (lvl == "h2oMed") {
-        wrk$data$injNum <- ifelse(wrk$data$injNum %in% c(7:12), wrk$data$injNum, NaN)
-      }
-      if (lvl == "h2oLow") {
-        wrk$data$injNum <- ifelse(wrk$data$injNum %in% c(13:18), wrk$data$injNum, NaN)
-      }
+      wrk$data$injNum <- ifelse(is.na(wrk$qfqm$crdH2o$qfRngTemp), NaN, wrk$data$injNum)
+      
+      #TODO: ND added this previously, but we need to change back till a merged solution can be created
+      # if (lvl == "h2oHigh") {
+      #   wrk$data$injNum <- ifelse(wrk$data$injNum %in% c(1:6), wrk$data$injNum, NaN)
+      # }
+      # if (lvl == "h2oMed") {
+      #   wrk$data$injNum <- ifelse(wrk$data$injNum %in% c(7:12), wrk$data$injNum, NaN)
+      # }
+      # if (lvl == "h2oLow") {
+      #   wrk$data$injNum <- ifelse(wrk$data$injNum %in% c(13:18), wrk$data$injNum, NaN)
+      # }
       
       #calculated the qfValiH2o: injNum 1, 2, 3, 7, 8, 9, 13, 14, and 15 set to 1
       #threshold to determine qfValiH2o (default to reference water +/- 30% of reference water)
