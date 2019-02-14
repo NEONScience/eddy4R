@@ -54,6 +54,11 @@
 #     revise the MLFR code
 #   Natchaya P-Durden (2019-02-04)
 #     bugs fixed to retrieve the last value when valve malfunction
+#   Natchaya P-Durden (2019-02-13)
+#     changed the rtioMoleDryCo2RefeSd of zero gas to 0.1 ppm
+#     bugs fixed on the output of standard error of coefficients
+#   Natchaya P-Durden (2019-02-14)
+#     using standard error in MFL instead of standard deviation
 ##############################################################################################
 
 wrap.irga.vali <- function(
@@ -239,15 +244,16 @@ wrap.irga.vali <- function(
     
     #add gasRefe values into rpt
     #create temporary dataframe
-    tmpGasRefe <- data.frame(matrix(ncol = 2, nrow = 5))
+    tmpGasRefe <- data.frame(matrix(ncol = 3, nrow = 5))
     #assign column name
-    colnames(tmpGasRefe) <- c("rtioMoleDryCo2Refe", "rtioMoleDryCo2RefeSd")
+    colnames(tmpGasRefe) <- c("rtioMoleDryCo2Refe", "rtioMoleDryCo2RefeSd", "rtioMoleDryCo2RefeDf")
     #add values of gasRefe and their sd to tmpGasRefe
     for (idxRow in 1:nrow(tmpGasRefe)){
       if (idxRow == 2){
         #add zero gas
-        tmpGasRefe[idxRow,1] <- 0
-        tmpGasRefe[idxRow,2] <- NA
+        tmpGasRefe[idxRow,"rtioMoleDryCo2Refe"] <- 0
+        tmpGasRefe[idxRow,"rtioMoleDryCo2RefeSd"] <- NA
+        tmpGasRefe[idxRow,"rtioMoleDryCo2RefeDf"] <- NA
       }else{
         #get location in gasRefe
         if (idxRow == 1){
@@ -261,38 +267,45 @@ wrap.irga.vali <- function(
         } else {
         #test time condition for picking the right value
         if (gasRefe$rtioMoleDryCo2RefeTime01[[idxDate]][[loc]] == gasRefe$rtioMoleDryCo2RefeTime02[[idxDate]][[loc]]){
-          tmpGasRefe[idxRow,1] <- gasRefe$rtioMoleDryCo2Refe01[[idxDate]][[loc]]
-          tmpGasRefe[idxRow,2] <- eddy4R.base::def.unit.conv(data = gasRefe$rtioMoleDryCo2RefeSd01[[idxDate]][[loc]],
+          tmpGasRefe[idxRow,"rtioMoleDryCo2Refe"] <- gasRefe$rtioMoleDryCo2Refe01[[idxDate]][[loc]]
+          tmpGasRefe[idxRow,"rtioMoleDryCo2RefeSd"] <- eddy4R.base::def.unit.conv(data = gasRefe$rtioMoleDryCo2RefeSd01[[idxDate]][[loc]],
                                                              unitFrom = "umol mol-1",
                                                              unitTo = "intl")
+          tmpGasRefe[idxRow,"rtioMoleDryCo2RefeDf"] <- gasRefe$rtioMoleDryCo2RefeDf01[[idxDate]][[loc]]
         } else {
           if (rpt[[idxDate]]$rtioMoleDryCo2Vali$timeBgn[idxRow] >= gasRefe$rtioMoleDryCo2RefeTime02[[idxDate]][[loc]]){
-            tmpGasRefe[idxRow,1] <- gasRefe$rtioMoleDryCo2Refe02[[idxDate]][[loc]]
-            tmpGasRefe[idxRow,2] <- eddy4R.base::def.unit.conv(data = gasRefe$rtioMoleDryCo2RefeSd02[[idxDate]][[loc]],
+            tmpGasRefe[idxRow,"rtioMoleDryCo2Refe"] <- gasRefe$rtioMoleDryCo2Refe02[[idxDate]][[loc]]
+            tmpGasRefe[idxRow,"rtioMoleDryCo2RefeSd"] <- eddy4R.base::def.unit.conv(data = gasRefe$rtioMoleDryCo2RefeSd02[[idxDate]][[loc]],
                                                                unitFrom = "umol mol-1",
                                                                unitTo = "intl")
+            tmpGasRefe[idxRow,"rtioMoleDryCo2RefeDf"] <- gasRefe$rtioMoleDryCo2RefeDf02[[idxDate]][[loc]]
           } else {
-            tmpGasRefe[idxRow,1] <- gasRefe$rtioMoleDryCo2Refe01[[idxDate]][[loc]]
-            tmpGasRefe[idxRow,2] <- eddy4R.base::def.unit.conv(data = gasRefe$rtioMoleDryCo2RefeSd01[[idxDate]][[loc]],
+            tmpGasRefe[idxRow,"rtioMoleDryCo2Refe"] <- gasRefe$rtioMoleDryCo2Refe01[[idxDate]][[loc]]
+            tmpGasRefe[idxRow,"rtioMoleDryCo2RefeSd"] <- eddy4R.base::def.unit.conv(data = gasRefe$rtioMoleDryCo2RefeSd01[[idxDate]][[loc]],
                                                                unitFrom = "umol mol-1",
                                                                unitTo = "intl")
+            tmpGasRefe[idxRow,"rtioMoleDryCo2RefeDf"] <- gasRefe$rtioMoleDryCo2RefeDf01[[idxDate]][[loc]]
           }
         }
         }
       }
     }; rm(idxRow)# end for loop
+    #calculate rtioMoleDryCo2RefeSe from rtioMoleDryCo2RefeSd
+    tmpGasRefe$rtioMoleDryCo2RefeSe <- tmpGasRefe$rtioMoleDryCo2RefeSd/(sqrt(tmpGasRefe$rtioMoleDryCo2RefeDf+1))
+    #replace the rtioMoleDryCo2RefeSe of zero gas to 0.1 ppm
+    tmpGasRefe$rtioMoleDryCo2RefeSe[2] <- 0.1*10^(-6)
     #add gas type
     tmpGasRefe$gasType <- nameQf
     #add gasRefe values into rpt
     for (idxRow in 1:nrow(rpt[[idxDate]]$rtioMoleDryCo2Vali)){
       locGas <- which(tmpGasRefe$gasType == rpt[[idxDate]]$rtioMoleDryCo2Vali$gasType[idxRow])
       rpt[[idxDate]]$rtioMoleDryCo2Vali$rtioMoleDryCo2Refe[idxRow] <- tmpGasRefe$rtioMoleDryCo2Refe[locGas]
-      rpt[[idxDate]]$rtioMoleDryCo2Vali$rtioMoleDryCo2RefeSd[idxRow] <- tmpGasRefe$rtioMoleDryCo2RefeSd[locGas]
+      rpt[[idxDate]]$rtioMoleDryCo2Vali$rtioMoleDryCo2RefeSe[idxRow] <- tmpGasRefe$rtioMoleDryCo2RefeSe[locGas]
     }
     #rpt[[idxDate]]$rtioMoleDryCo2Vali$rtioMoleDryCo2Refe <- cbind(rpt[[idxDate]]$rtioMoleDryCo2Vali, tmpGasRefe)
     
     #calculate standard deviation from se
-    rpt[[idxDate]]$rtioMoleDryCo2Vali$sd <- (rpt[[idxDate]]$rtioMoleDryCo2Vali$se)*(sqrt(rpt[[idxDate]]$rtioMoleDryCo2Vali$numSamp))
+    #rpt[[idxDate]]$rtioMoleDryCo2Vali$sd <- (rpt[[idxDate]]$rtioMoleDryCo2Vali$se)*(sqrt(rpt[[idxDate]]$rtioMoleDryCo2Vali$numSamp))
     
     #check if there are more than one validation occurred within one day
     if (length(which(rpt[[idxDate]]$rtioMoleDryCo2Vali$gasType == "qfIrgaTurbValiGas02")) == 2 &
@@ -369,19 +382,19 @@ wrap.irga.vali <- function(
       
     if (length(valiData[[idxDate]][[idxData]]$mean) < 4 |
         sum(is.na(valiData[[idxDate]][[idxData]]$mean)) > 0 | sum(is.na(valiData[[idxDate]][[idxData]]$se)) >0 |
-        sum(is.na(valiData[[idxDate]][[idxData]]$rtioMoleDryCo2Refe)) > 0 | sum(is.na(valiData[[idxDate]][[idxData]]$rtioMoleDryCo2RefeSd)) > 1){
+        sum(is.na(valiData[[idxDate]][[idxData]]$rtioMoleDryCo2Refe)) > 0 | sum(is.na(valiData[[idxDate]][[idxData]]$rtioMoleDryCo2RefeSe)) > 1){
       tmpCoef[[idxDate]][[idxData]][,] <- NA
     } else{
       #x are sensor readings; y are reference gas values
       rtioMoleDryCo2Mlfr <- deming::deming(rtioMoleDryCo2Refe[1:4] ~ mean[1:4], data = valiData[[idxDate]][[idxData]],
-                                           xstd = sd[1:4], ystd = rtioMoleDryCo2RefeSd[1:4]) 
+                                           xstd = se[1:4], ystd = rtioMoleDryCo2RefeSe[1:4]) 
       #write output to table
       #intercept
       tmpCoef[[idxDate]][[idxData]][1,1] <- rtioMoleDryCo2Mlfr$coefficients[[1]]
       #slope
       tmpCoef[[idxDate]][[idxData]][2,1] <- rtioMoleDryCo2Mlfr$coefficients[[2]]
       #se
-      tmpCoef[[idxDate]][[idxData]][,2] <- rtioMoleDryCo2Mlfr$se
+      tmpCoef[[idxDate]][[idxData]][,2] <- sqrt(diag(rtioMoleDryCo2Mlfr$variance))
     }
     }#end of for loop of idxData
     
