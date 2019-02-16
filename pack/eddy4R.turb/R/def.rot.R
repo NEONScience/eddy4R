@@ -60,7 +60,7 @@ def.rot = function(data,
     
     ret = list(data,
                mn)
-    
+    return(ret)
   }
   
   data$u_hor <- Urot[1,]
