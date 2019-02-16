@@ -19,6 +19,9 @@
 #' @param lagAll TRUE - consider positive and negative correlations when finding lag time; FALSE - consider positive correlations only when finding lag time. Defaults to TRUE. Of class logical. [-]
 #' @param hpf TRUE - apply Butterworth high-pass filter; FALSE - use raw data. Defaults to TRUE. Of class logical. [-]
 #' @param fracMin Minimum fraction of data to attempt lag determination. Defaults to 0.1. Of class numeric. [-]
+#' @param plot Switch to turn ON/OFF plotting of cross-correlation output to PDF.
+#' @param plot_dir Output directory for cross-correlation plot.
+
 
 #' @return Lagged input data and calculation results in a list consisting of:\cr
 #' \code{dataRefe} The reference data.
@@ -50,6 +53,8 @@
 #     update @param format
 #   Natchaya P-Durden (2018-04-11)
 #    applied eddy4R term name convention; replaced pos by idx
+#   Adam Vaughan (2019-01-23)
+#     added PDF plotting ability to function
 ##############################################################################################
 
 
@@ -66,10 +71,11 @@ def.lag <- function(
   lagNgtvPstv = c("n", "p", "np")[3],
   lagAll = TRUE,
   hpf = TRUE,
-  fracMin = 0.1
+  fracMin = 0.1,
+  plot = F,
+  plot_dir = NULL
 ) {
-  
-  ###
+
   #start escape if too few non-NAs in period
   if(length(na.omit(cbind(refe, meas))) / length(refe) < 0.1) {
     ###
@@ -143,14 +149,16 @@ def.lag <- function(
       rm(filtTmp)
       
     }
-    
+    #plot immidiate wavelet variances and covariances
+    if(plot)
+      pdf(file=paste(plot_dir, "/", var, "_cross_correlation.pdf", sep=""), width = 14, height = 5)
     
     #find correct lag time    
     #for hard lagMax argument
     if(lagCnst == TRUE) {
       
       #calculate autocorrelation
-      corr <- ccf(refe, meas, lag.max = lagMax, plot = FALSE, na.action = na.pass)
+      corr <- ccf(refe, meas, lag.max = lagMax, plot = plot, na.action = na.pass)
       #consider negative lag times only: set correlations for positive lag time to zero
       if(lagNgtvPstv == "n") corr$acf[which(corr$lag > 0)] <- 0          
       #consider positive lag times only: set correlations for negative lag time to zero
@@ -172,7 +180,7 @@ def.lag <- function(
         #increase lagMax argument
         if(count > 1) lagMax <- 2 * lagMax
         #calculate autocorrelation
-        corr <- ccf(refe, meas, lag.max = lagMax, plot = FALSE, na.action = na.pass)
+        corr <- ccf(refe, meas, lag.max = lagMax, plot = plot, na.action = na.pass)
         #consider negative lag times only: set correlations for positive lag time to zero
         if(lagNgtvPstv == "n") corr$acf[which(corr$lag > 0)] <- 0          
         #consider positive lag times only: set correlations for negative lag time to zero
@@ -186,6 +194,9 @@ def.lag <- function(
       }
       
     }
+    
+    if(plot)
+      dev.off()
     
     #adjust entire dataMeas time series to dataRefe time (assuming constant timing offset over all variables)
     #refe <- lag(refe, k=lag*freq)
@@ -219,7 +230,8 @@ def.lag <- function(
       dataRefe=refeOut,
       dataMeas=measOut,
       lag=lag,
-      corrCros=ifelse(lagAll==TRUE, max(abs(corr$acf)), max(corr$acf))
+      corrCros=ifelse(lagAll==TRUE, max(abs(corr$acf)), max(corr$acf)),
+      corr = corr
     )
     return(rpt)
     
