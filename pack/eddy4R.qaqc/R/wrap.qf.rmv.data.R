@@ -2,7 +2,7 @@
 #' @title Wrapper function: to remove high frequency data points that have failed quality flags
 
 #' @author 
-#' Dave Durden \email{ddurden@battelleecology.org}
+#' Dave Durden \email{ddurden@@battelleecology.org}
 
 #' @description 
 #' Wrapper function  to remove high frequency data points that have failed quality flags from a data.frame
@@ -17,7 +17,7 @@
 
 #' @references 
 #' License: GNU AFFERO GENERAL PUBLIC LICENSE Version 3, 19 November 2007. \cr
-#' NEON Algorithm Theoretical Basis Document:Eddy Covariance Turbulent Exchange Subsystem Level 0 to Level 0’ data product conversions and calculations (NEON.DOC.000807) \cr
+#' NEON Algorithm Theoretical Basis Document:Eddy Covariance Turbulent Exchange Subsystem Level 0 to Level 0' data product conversions and calculations (NEON.DOC.000807) \cr
 #' Licor LI7200 reference manual
 
 #' @keywords NEON, qfqm, quality
