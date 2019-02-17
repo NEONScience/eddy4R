@@ -141,7 +141,7 @@ def.mean.med.mode <- function(test, refe = 0, Perc = FALSE) {
 #   #     idep        -0.99409    0.11513  -8.635   <2e-16 ***
 #   #     I(idep^2)    0.31366    0.01619  19.368   <2e-16 ***
 #   #     ---
-#   #     Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1
+#   #     Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
 #   #   
 #   #   Residual standard error: 0.6823 on 498 degrees of freedom
 #   #   Multiple R-squared:  0.879,	Adjusted R-squared:  0.8786 
