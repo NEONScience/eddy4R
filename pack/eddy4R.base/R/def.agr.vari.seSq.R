@@ -2,8 +2,8 @@
 #' @title Definition function: Determining mean, external, internal and total variance, and squared standard error
 
 #' @author
-#' Ke Xu \email{xuke2012abroad@gmail.com} \cr
-#' Stefan Metzger \email{eddy4R.info@gmail.com}
+#' Ke Xu \email{xuke2012abroad@@gmail.com} \cr
+#' Stefan Metzger \email{eddy4R.info@@gmail.com}
 
 #' @description 
 #' Function defintion. Calculates the mean, external, internal and total variance, and the squared standard error over all supplied input values. Useful e.g. to aggregate from daily to monthly resolution by using all provided values, or similar.

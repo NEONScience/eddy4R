@@ -23,4 +23,4 @@ Imports:
     zoo (>= 1.8-1)
 License: GNU AFFERO GENERAL PUBLIC LICENSE Version 3, 19 November 2007
 LazyData: true
-RoxygenNote: 6.1.0
+RoxygenNote: 6.1.1
