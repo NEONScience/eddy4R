@@ -18,4 +18,4 @@ Suggests:
     DataCombine (>= 0.2.21),
 License: Terms of use of the NEON FIU algorithm repository dated 2015-01-16
 LazyData: true
-RoxygenNote: 6.1.0
+RoxygenNote: 6.1.1
