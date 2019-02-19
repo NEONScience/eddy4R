@@ -59,6 +59,8 @@
 #     bugs fixed on the output of standard error of coefficients
 #   Natchaya P-Durden (2019-02-14)
 #     using standard error in MFL instead of standard deviation
+#   Natchaya P-Durden (2019-02-19)
+#     output scale from MLFR
 ##############################################################################################
 
 wrap.irga.vali <- function(
@@ -81,6 +83,8 @@ wrap.irga.vali <- function(
   Date <- c(base::as.Date(DateProc) - 1, base::as.Date(DateProc), base::as.Date(DateProc) + 1)
   Date <- as.character(Date)
   Freq <- 20  #measurement frequency (20 Hz)
+  #standard error of zero gas (unit in mol mol-1)
+  zeroRefeSe <- 0.1*10^(-6)
   
   #calculation for each date in Date
   for (idxDate in Date){
@@ -293,7 +297,7 @@ wrap.irga.vali <- function(
     #calculate rtioMoleDryCo2RefeSe from rtioMoleDryCo2RefeSd
     tmpGasRefe$rtioMoleDryCo2RefeSe <- tmpGasRefe$rtioMoleDryCo2RefeSd/(sqrt(tmpGasRefe$rtioMoleDryCo2RefeDf+1))
     #replace the rtioMoleDryCo2RefeSe of zero gas to 0.1 ppm
-    tmpGasRefe$rtioMoleDryCo2RefeSe[2] <- 0.1*10^(-6)
+    tmpGasRefe$rtioMoleDryCo2RefeSe[2] <- zeroRefeSe
     #add gas type
     tmpGasRefe$gasType <- nameQf
     #add gasRefe values into rpt
@@ -376,9 +380,9 @@ wrap.irga.vali <- function(
     #test if all inputs are NA
     for (idxData in names(valiData[[idxDate]])){
       #create empty dataframe to keep intercept and slope output from MLFR
-      tmpCoef[[idxDate]][[idxData]] <- data.frame(matrix(ncol = 2, nrow = 2)) 
+      tmpCoef[[idxDate]][[idxData]] <- data.frame(matrix(ncol = 3, nrow = 2)) 
       #assign column name
-      colnames(tmpCoef[[idxDate]][[idxData]]) <- c("coef", "se")
+      colnames(tmpCoef[[idxDate]][[idxData]]) <- c("coef", "se", "scal")
       
     if (length(valiData[[idxDate]][[idxData]]$mean) < 4 |
         sum(is.na(valiData[[idxDate]][[idxData]]$mean)) > 0 | sum(is.na(valiData[[idxDate]][[idxData]]$se)) >0 |
@@ -395,6 +399,8 @@ wrap.irga.vali <- function(
       tmpCoef[[idxDate]][[idxData]][2,1] <- rtioMoleDryCo2Mlfr$coefficients[[2]]
       #se
       tmpCoef[[idxDate]][[idxData]][,2] <- sqrt(diag(rtioMoleDryCo2Mlfr$variance))
+      #scale
+      tmpCoef[[idxDate]][[idxData]][1,3] <- rtioMoleDryCo2Mlfr$sigma
     }
     }#end of for loop of idxData
     
