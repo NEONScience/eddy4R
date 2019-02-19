@@ -33,6 +33,8 @@
 #     bugs fix to add all NA data of rtioMoleDryCo2Cor in rpt when no validation occurred
 #   Natchaya P-Durden (2019-02-04)
 #     bugs fix on typo of rtioMoleDryCo2Cor
+#   Natchaya P-Durden (2019-02-19)
+#     not apply the correction when slope and scale greater than thresholds
 ##############################################################################################
 def.irga.vali.cor <- function(
  data,
@@ -53,6 +55,23 @@ def.irga.vali.cor <- function(
   Date <- as.character(Date)
   Freq <- 20  #measurement frequency (20 Hz)
   
+  #check if the slope and scale are meet the criteria if not replace them with NA
+  #default slope less than or equal to +/-10% (0.9 <= slope <=1.10)
+  for (idxDate in Date){
+    #idxDate <- Date[1]
+    for (idxData in names(coef[[idxDate]])){
+      #idxData <- names(coef[[idxDate]])[1]
+      if (coef[[idxDate]][[idxData]]$coef[2] >= 0.9 & coef[[idxDate]][[idxData]]$coef[2] <= 1.10 & coef[[idxDate]][[idxData]]$scal[1] <= 500){
+        coef[[idxDate]][[idxData]] <- coef[[idxDate]][[idxData]] 
+      }else{
+        coef[[idxDate]][[idxData]]$coef <- NA
+        coef[[idxDate]][[idxData]]$se <- NA
+        coef[[idxDate]][[idxData]]$scal <- NA
+      }
+    }
+  }
+  
+  #organize input coefficient table 
   if (valiCrit == TRUE){
     dateBgn <- c(base::as.Date(DateProc) - 1, base::as.Date(DateProc), base::as.Date(DateProc))
     dateBgn <- as.character(dateBgn)
