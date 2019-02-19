@@ -6,7 +6,7 @@
 #' Natchaya Pingintha-Durden
 
 #' @description 
-#' Function defintion. Calculation of the integral over the universal function after Businger et. al. (1971) in the form of Högström (1988).
+#' Function defintion. Calculation of the integral over the universal function after Businger et. al. (1971) in the form of Hogstrom (1988).
 
 #' @param \code{distZaxsMeas} Measurement height and of class "numeric". [m]
 #' @param \code{distObkv} Monin-Obukhov length and of class "numeric". [m]
@@ -17,9 +17,9 @@
 #' flagStblObkv = A list object of class "numeric" containing the flag which indicate how the universal function being calculated (0 = calculated using the stability parameter within defined in \code{RngStblObkv}, 1 = calculated using the minimum stability parameter defined in \code{RngStblObkv}, and -1 = calculated using the maximum stability parameter defined in \code{RngStblObkv}). \cr
 
 #' @references 
-#' Businger, J. A., Wyngaard, J. C., Izumi, Y., and Bradley, E. F.: Flux-proﬁle relationships in the atmospheric surface layer, Journal of the Atmospheric Sciences, 28, 181–189, 1971. \cr
+#' Businger, J. A., Wyngaard, J. C., Izumi, Y., and Bradley, E. F.: Flux-profile relationships in the atmospheric surface layer, Journal of the Atmospheric Sciences, 28, 181-189, 1971. \cr
 #' Foken, T.: Micrometeorology, Springer, Berlin, Heidelberg, 2008. \cr
-#' Högström, U.: Non-dimensional wind and temperature proﬁles in the atmospheric surface layer: a re-evaluation, Boundary-Layer Meteorology, 42, 55–78, 1988. \cr
+#' Hogstrom, U.: Non-dimensional wind and temperature profiles in the atmospheric surface layer: a re-evaluation, Boundary-Layer Meteorology, 42, 55-78, 1988. \cr
 
 #' @keywords eddy-covariance, turbulent flux, universal function
 
