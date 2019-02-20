@@ -61,6 +61,7 @@
 #     using standard error in MFL instead of standard deviation
 #   Natchaya P-Durden (2019-02-19)
 #     output scale from MLFR
+#     revise code due to the values in Para$Cal are standard error not standard deviation
 ##############################################################################################
 
 wrap.irga.vali <- function(
@@ -84,7 +85,7 @@ wrap.irga.vali <- function(
   Date <- as.character(Date)
   Freq <- 20  #measurement frequency (20 Hz)
   #standard error of zero gas (unit in mol mol-1)
-  zeroRefeSe <- 0.1*10^(-6)
+  zeroRefeSe <- 1*10^(-6)
   
   #calculation for each date in Date
   for (idxDate in Date){
@@ -250,13 +251,13 @@ wrap.irga.vali <- function(
     #create temporary dataframe
     tmpGasRefe <- data.frame(matrix(ncol = 3, nrow = 5))
     #assign column name
-    colnames(tmpGasRefe) <- c("rtioMoleDryCo2Refe", "rtioMoleDryCo2RefeSd", "rtioMoleDryCo2RefeDf")
+    colnames(tmpGasRefe) <- c("rtioMoleDryCo2Refe", "rtioMoleDryCo2RefeSe", "rtioMoleDryCo2RefeDf")
     #add values of gasRefe and their sd to tmpGasRefe
     for (idxRow in 1:nrow(tmpGasRefe)){
       if (idxRow == 2){
         #add zero gas
         tmpGasRefe[idxRow,"rtioMoleDryCo2Refe"] <- 0
-        tmpGasRefe[idxRow,"rtioMoleDryCo2RefeSd"] <- NA
+        tmpGasRefe[idxRow,"rtioMoleDryCo2RefeSe"] <- NA
         tmpGasRefe[idxRow,"rtioMoleDryCo2RefeDf"] <- NA
       }else{
         #get location in gasRefe
@@ -272,20 +273,20 @@ wrap.irga.vali <- function(
         #test time condition for picking the right value
         if (gasRefe$rtioMoleDryCo2RefeTime01[[idxDate]][[loc]] == gasRefe$rtioMoleDryCo2RefeTime02[[idxDate]][[loc]]){
           tmpGasRefe[idxRow,"rtioMoleDryCo2Refe"] <- gasRefe$rtioMoleDryCo2Refe01[[idxDate]][[loc]]
-          tmpGasRefe[idxRow,"rtioMoleDryCo2RefeSd"] <- eddy4R.base::def.unit.conv(data = gasRefe$rtioMoleDryCo2RefeSd01[[idxDate]][[loc]],
+          tmpGasRefe[idxRow,"rtioMoleDryCo2RefeSe"] <- eddy4R.base::def.unit.conv(data = gasRefe$rtioMoleDryCo2RefeSe01[[idxDate]][[loc]],
                                                              unitFrom = "umol mol-1",
                                                              unitTo = "intl")
           tmpGasRefe[idxRow,"rtioMoleDryCo2RefeDf"] <- gasRefe$rtioMoleDryCo2RefeDf01[[idxDate]][[loc]]
         } else {
           if (rpt[[idxDate]]$rtioMoleDryCo2Vali$timeBgn[idxRow] >= gasRefe$rtioMoleDryCo2RefeTime02[[idxDate]][[loc]]){
             tmpGasRefe[idxRow,"rtioMoleDryCo2Refe"] <- gasRefe$rtioMoleDryCo2Refe02[[idxDate]][[loc]]
-            tmpGasRefe[idxRow,"rtioMoleDryCo2RefeSd"] <- eddy4R.base::def.unit.conv(data = gasRefe$rtioMoleDryCo2RefeSd02[[idxDate]][[loc]],
+            tmpGasRefe[idxRow,"rtioMoleDryCo2RefeSe"] <- eddy4R.base::def.unit.conv(data = gasRefe$rtioMoleDryCo2RefeSe02[[idxDate]][[loc]],
                                                                unitFrom = "umol mol-1",
                                                                unitTo = "intl")
             tmpGasRefe[idxRow,"rtioMoleDryCo2RefeDf"] <- gasRefe$rtioMoleDryCo2RefeDf02[[idxDate]][[loc]]
           } else {
             tmpGasRefe[idxRow,"rtioMoleDryCo2Refe"] <- gasRefe$rtioMoleDryCo2Refe01[[idxDate]][[loc]]
-            tmpGasRefe[idxRow,"rtioMoleDryCo2RefeSd"] <- eddy4R.base::def.unit.conv(data = gasRefe$rtioMoleDryCo2RefeSd01[[idxDate]][[loc]],
+            tmpGasRefe[idxRow,"rtioMoleDryCo2RefeSe"] <- eddy4R.base::def.unit.conv(data = gasRefe$rtioMoleDryCo2RefeSe01[[idxDate]][[loc]],
                                                                unitFrom = "umol mol-1",
                                                                unitTo = "intl")
             tmpGasRefe[idxRow,"rtioMoleDryCo2RefeDf"] <- gasRefe$rtioMoleDryCo2RefeDf01[[idxDate]][[loc]]
@@ -295,7 +296,7 @@ wrap.irga.vali <- function(
       }
     }; rm(idxRow)# end for loop
     #calculate rtioMoleDryCo2RefeSe from rtioMoleDryCo2RefeSd
-    tmpGasRefe$rtioMoleDryCo2RefeSe <- tmpGasRefe$rtioMoleDryCo2RefeSd/(sqrt(tmpGasRefe$rtioMoleDryCo2RefeDf+1))
+    #tmpGasRefe$rtioMoleDryCo2RefeSe <- tmpGasRefe$rtioMoleDryCo2RefeSd/(sqrt(tmpGasRefe$rtioMoleDryCo2RefeDf+1))
     #replace the rtioMoleDryCo2RefeSe of zero gas to 0.1 ppm
     tmpGasRefe$rtioMoleDryCo2RefeSe[2] <- zeroRefeSe
     #add gas type
