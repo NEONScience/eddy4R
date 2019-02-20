@@ -59,6 +59,10 @@
 #   Natchaya P-Durden (2018-05-23)
 #     rename function from wrap.neon.dp01.qfqm.ecse() to wrap.dp01.qfqm.ecse()
 #     rename function from wrap.neon.dp01.qfqm() to wrap.dp01.qfqm.eddy()
+#   Natchaya P-Durden (2019-01-30)
+#     bugs fixed to report qfValiH2o when no h2oRefe data
+#   Natchaya P-Durden (2019-01-31)
+#     using injNum instate of qfRngTmp to determine missing data
 ##############################################################################################
 wrap.dp01.qfqm.ecse <- function(
   dp01 = c("co2Stor", "h2oStor", "tempAirLvl", "tempAirTop", "isoCo2", "isoH2o")[1],
@@ -1168,10 +1172,21 @@ wrap.dp01.qfqm.ecse <- function(
       #replace injNum to NaN when they are not measured at that period
       wrk$data$injNum <- ifelse(is.na(wrk$qfqm$crdH2o$qfRngTemp), NaN, wrk$data$injNum)
       
+      #TODO: ND added this previously, but we need to change back till a merged solution can be created
+      # if (lvl == "h2oHigh") {
+      #   wrk$data$injNum <- ifelse(wrk$data$injNum %in% c(1:6), wrk$data$injNum, NaN)
+      # }
+      # if (lvl == "h2oMed") {
+      #   wrk$data$injNum <- ifelse(wrk$data$injNum %in% c(7:12), wrk$data$injNum, NaN)
+      # }
+      # if (lvl == "h2oLow") {
+      #   wrk$data$injNum <- ifelse(wrk$data$injNum %in% c(13:18), wrk$data$injNum, NaN)
+      # }
+      
       #calculated the qfValiH2o: injNum 1, 2, 3, 7, 8, 9, 13, 14, and 15 set to 1
       #threshold to determine qfValiH2o (default to reference water +/- 30% of reference water)
       Thsh <- 0.3
-      wrk$qfqm$crdH2o$qfValiH2o <- ifelse(is.na(wrk$data$injNum) | is.na(wrk$data$dlta18OH2o) | is.na(wrk$data$dlta2HH2o), -1,
+      wrk$qfqm$crdH2o$qfValiH2o <- ifelse(is.na(wrk$data$injNum) | is.na(wrk$data$dlta18OH2o) | is.na(wrk$data$dlta2HH2o) | is.na(wrk$data$dlta18OH2oRefe) | is.na(wrk$data$dlta2HH2oRefe), -1,
                                           ifelse((wrk$data$injNum %in% c(1, 2, 3, 7, 8, 9, 13, 14, 15)) | 
                                                    (wrk$data$injNum %in% c(4, 5, 6, 10, 11, 12, 16, 17, 18) & (wrk$data$dlta18OH2o < (wrk$data$dlta18OH2oRefe + Thsh*wrk$data$dlta18OH2oRefe) | wrk$data$dlta18OH2o > (wrk$data$dlta18OH2oRefe - Thsh*wrk$data$dlta18OH2oRefe))) |
                                                    (wrk$data$injNum %in% c(4, 5, 6, 10, 11, 12, 16, 17, 18) & (wrk$data$dlta2HH2o < (wrk$data$dlta2HH2oRefe + Thsh*wrk$data$dlta2HH2oRefe) | wrk$data$dlta2HH2o > (wrk$data$dlta2HH2oRefe - Thsh*wrk$data$dlta2HH2oRefe))), 1, 0))
@@ -1181,7 +1196,7 @@ wrap.dp01.qfqm.ecse <- function(
         #rpt[[dp01]][[idxLvLPrdAgr]] <- list()
         
         #if there is at least one measurement
-        if(length(which(!is.na(wrk$qfqm$crdH2o$qfRngTemp))) > 0){
+        if(length(which(!is.na(wrk$data$injNum))) > 0){
           #determine the end time of each measurement
           wrk$idx <- eddy4R.base::def.idx.agr(time = data$time, PrdAgr = (PrdMeas*60), FreqLoca = 1, MethIdx = "specEnd", crdH2oVali = TRUE, data = wrk$data$injNum, CritTime = 15)
           #delete row if last timeBgn and timeEnd is NA

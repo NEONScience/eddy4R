@@ -72,7 +72,7 @@
 #' UrlOutRefe = "https://www.dropbox.com/s/j0zhjfolx4k9ugm/outRefe_20170918.zip?dl=1")
 
 #' @seealso
-#' NEON Algorithm Theoretical Basis Document:Eddy Covariance Turbulent Exchange Subsystem Level 0 to Level 0’ data product conversions and calculations (NEON.DOC.000823) \cr \cr
+#' NEON Algorithm Theoretical Basis Document:Eddy Covariance Turbulent Exchange Subsystem Level 0 to Level 0' data product conversions and calculations (NEON.DOC.000823) \cr \cr
 #' NEON Algorithm Theoretical Basis Document:Eddy Covariance Turbulent Exchange Subsystem Level 1 data product calculations (NEON.DOC.000807)
 
 #' @export
@@ -86,15 +86,16 @@
 ##############################################################################################################
 #Start of function call to determine workflow parameters
 ##############################################################################################################
+
 def.para.flow.ecte <- function(
   ParaFlow,
   UrlInpRefe,
   UrlOutRefe,
   ...
-){
+) {
 
-  
-  # error messages ensuring that ParaFlow$Meth is present and one of "dflt",  "host", or "slct"
+
+# error messages ensuring that ParaFlow$Meth is present and one of "dflt",  "host", or "slct"
   
     # ParaFlow$Meth present?
     if(is.null(ParaFlow$Meth)) base::stop('please provide Para$Flow$Meth.')

@@ -4,7 +4,8 @@
 \alias{wrap.qf.rmv.data}
 \title{Wrapper function: to remove high frequency data points that have failed quality flags}
 \usage{
-wrap.qf.rmv.data(inpList, Vrbs = FALSE, MethMeas = c("ecte", "ecse")[1])
+wrap.qf.rmv.data(inpList, Vrbs = FALSE, MethMeas = c("ecte",
+  "ecse")[1])
 }
 \arguments{
 \item{inpList}{List consisting of \code{ff::ffdf} file-backed objects, in the format provided by function \code{eddy4R.base::wrap.hdf5.read()}. Of types numeric and integer.}
@@ -26,7 +27,7 @@ Currently none
 }
 \references{
 License: GNU AFFERO GENERAL PUBLIC LICENSE Version 3, 19 November 2007. \cr
-NEON Algorithm Theoretical Basis Document:Eddy Covariance Turbulent Exchange Subsystem Level 0 to Level 0’ data product conversions and calculations (NEON.DOC.000807) \cr
+NEON Algorithm Theoretical Basis Document:Eddy Covariance Turbulent Exchange Subsystem Level 0 to Level 0' data product conversions and calculations (NEON.DOC.000807) \cr
 Licor LI7200 reference manual
 }
 \seealso{

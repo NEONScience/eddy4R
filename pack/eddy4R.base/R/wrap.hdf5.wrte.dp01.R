@@ -212,7 +212,7 @@ if(MethDp04 == TRUE){
   rhdf5::h5writeAttribute(attributes(rptDp04)$unit, h5obj = idDataDp04Df, name = "unit")
     }                                
   } 
-  rhdf5::H5close()                                           
+  rhdf5::h5closeAll()                                           
 }
 
 ######################################################################

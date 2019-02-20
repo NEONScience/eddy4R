@@ -43,6 +43,8 @@
 #    applied eddy4R term name convention; replaced val by valu
 #   Cove Sturtevant (2018-05-23)
 #     Changed term 'Pos' to 'Set' for multiple indices
+#   David Durden (2019-02-05)
+#     Fixing bug with Rmisc::multiplot and POSIXlt
 ##############################################################################################
 
 
@@ -80,7 +82,7 @@ def.plot.dp01.qfqm <- function (
     
     # Pull out data to plot
     dataIdx <- dataDp01$dataAgr[[idxVar]]
-    dataIdx$time <- dataDp01$timeAgrBgn
+    dataIdx$time <- as.POSIXct(dataDp01$timeAgrBgn)
 
     # Set of plots for basic stats: Mean, min, max, var, num,se 
     dataIdxQf <- base::data.frame(time=dataIdx$time,valu=dataIdx$mean,valuQfFinlFail=dataIdx$mean)

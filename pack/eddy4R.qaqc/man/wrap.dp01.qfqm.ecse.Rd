@@ -4,11 +4,11 @@
 \alias{wrap.dp01.qfqm.ecse}
 \title{Wrapper function:  Preprocessing and calculating quality metrics, alpha and beta quality metrics, and final quality flag for the NEON eddy-covariance stroage exchange L1 data products}
 \usage{
-wrap.dp01.qfqm.ecse(dp01 = c("co2Stor", "h2oStor", "tempAirLvl", "tempAirTop",
-  "isoCo2", "isoH2o")[1], lvl, lvlMfcSampStor = NULL, lvlEnvHut = NULL,
-  lvlValv = NULL, lvlValvAux = NULL, lvlCrdH2oValvVali = NULL,
-  data = list(), qfInp = list(), TypeMeas = c("samp", "vali")[1], PrdMeas,
-  PrdAgr, idxTime = list())
+wrap.dp01.qfqm.ecse(dp01 = c("co2Stor", "h2oStor", "tempAirLvl",
+  "tempAirTop", "isoCo2", "isoH2o")[1], lvl, lvlMfcSampStor = NULL,
+  lvlEnvHut = NULL, lvlValv = NULL, lvlValvAux = NULL,
+  lvlCrdH2oValvVali = NULL, data = list(), qfInp = list(),
+  TypeMeas = c("samp", "vali")[1], PrdMeas, PrdAgr, idxTime = list())
 }
 \arguments{
 \item{dp01}{A vector of class "character" containing the name of NEON ECSE dp01 which descriptive statistics are being calculated, \cr

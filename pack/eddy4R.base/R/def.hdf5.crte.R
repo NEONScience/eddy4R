@@ -2,8 +2,8 @@
 #' @title Definition function: Create the ECTE HDF5 file structure
 
 #' @author 
-#' David Durden \email{ddurden@battelleecology.org} \cr
-#' Stefan Metzger \email{eddy4R.info@gmail.com}
+#' David Durden \email{ddurden@@battelleecology.org} \cr
+#' Stefan Metzger \email{eddy4R.info@@gmail.com}
 
 #' @description 
 #' Definition function. Function creates the standard NEON HDF5 file structure for the ECTE data products.
@@ -18,11 +18,11 @@
 #' @param FileNameObjDesc character indicating the filename incl. absolute path to the object description file for inclusion in the output HDF5 file. Defaults to \code{NULL}, which downloads the object description file from a web location.
 #' @param LvlGasRefe character string indicating the NEON measurement horizontal and vertical location (HORVER) number as described in the NEON DP naming convention.
 
-#' @return A NEON formatted HDF5 file that is output to /code{DirOut} with a readme and object description included.
+#' @return A NEON formatted HDF5 file that is output to \code{DirOut} with a readme and object description included.
 
 #' @references
 #' License: GNU AFFERO GENERAL PUBLIC LICENSE Version 3, 19 November 2007. \cr
-#' NEON Algorithm Theoretical Basis Document:Eddy Covariance Turbulent Exchange Subsystem Level 0 to Level 0’ data product conversions and calculations (NEON.DOC.000807)
+#' NEON Algorithm Theoretical Basis Document:Eddy Covariance Turbulent Exchange Subsystem Level 0 to Level 0' data product conversions and calculations (NEON.DOC.000807)
 
 #' @keywords NEON, HDF5, eddy-covariance, ECTE
 
@@ -309,5 +309,5 @@ def.hdf5.crte <- function(
   rhdf5::H5Gclose(idData)
   rhdf5::H5Gclose(idSite)
   rhdf5::H5Fclose(idFile)
-  rhdf5::H5close()
+  rhdf5::h5closeAll()
 }
