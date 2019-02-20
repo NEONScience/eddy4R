@@ -66,7 +66,7 @@ def.irga.vali.cor <- function(
     #idxDate <- Date[1]
     for (idxData in names(coef[[idxDate]])){
       #idxData <- names(coef[[idxDate]])[1]
-      if (coef[[idxDate]][[idxData]]$coef[2] >= minSlp & coef[[idxDate]][[idxData]]$coef[2] <= maxSlp & coef[[idxDate]][[idxData]]$scal[1] <= critScal){
+      if (!is.na(coef[[idxDate]][[idxData]]$coef[2]) & !is.na(coef[[idxDate]][[idxData]]$scal[1]) & coef[[idxDate]][[idxData]]$coef[2] >= minSlp & coef[[idxDate]][[idxData]]$coef[2] <= maxSlp & coef[[idxDate]][[idxData]]$scal[1] <= critScal){
         coef[[idxDate]][[idxData]] <- coef[[idxDate]][[idxData]] 
       }else{
         coef[[idxDate]][[idxData]]$coef <- NA
