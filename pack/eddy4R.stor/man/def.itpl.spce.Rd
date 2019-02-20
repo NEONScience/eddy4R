@@ -9,7 +9,7 @@ def.itpl.spce(dataInp, methItpl = "linear", resoSpceOut, lvlTowr)
 \arguments{
 \item{\code{dataInp}}{Input data.}
 
-\item{\code{methItpl}}{intepolation method: "linear" or "constant", linear intepolation is the default method.}
+\item{\code{methItpl}}{intepolation method: "linear" or "constant", linear intepolation is the default method. Reference for constant spatial intepolation: Montagnani et al., 2018, Estimating the storage term in eddy covariance measurements: the ICOS methodology}
 
 \item{\code{resoSpceOut}}{the output spatial resolution}
 
