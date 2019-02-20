@@ -17,9 +17,9 @@
 #' @return Estimated aerodynamic roughness length. [m]
 
 #' @references
-#' Businger, J. A., Wyngaard, J. C., Izumi, Y., and Bradley, E. F.: Flux-proﬁle relationships in the atmospheric surface layer, Journal of the Atmospheric Sciences, 28, 181–189, 1971. \cr
+#' Businger, J. A., Wyngaard, J. C., Izumi, Y., and Bradley, E. F.: Flux-profile relationships in the atmospheric surface layer, Journal of the Atmospheric Sciences, 28, 181-189, 1971. \cr
 #' Foken, T.: Micrometeorology, Springer, Berlin, Heidelberg, 2008. \cr
-#' Högström, U.: Non-dimensional wind and temperature proﬁles in the atmospheric surface layer: a re-evaluation, Boundary-Layer Meteorology, 42, 55–78, 1988. \cr
+#' Hogstrom, U.: Non-dimensional wind and temperature profiles in the atmospheric surface layer: a re-evaluation, Boundary-Layer Meteorology, 42, 55-78, 1988. \cr
 
 #' @keywords eddy-covariance, roughness length, turbulent flux
 
@@ -48,7 +48,7 @@ def.dist.rgh <- function(
   RngStblObkv = c(-2, 1)
 ) {
   
-  #integral over the universal function after Businger (1971) in the form of Högström (1988)
+  #integral over the universal function after Businger (1971) in the form of Hogstrom (1988)
   #Foken (2008) Eq. (2.85) - (2.88)
   tmp <- sapply(1:length(distObkv), function(x) def.func.univ(distZaxsMeas = distZaxsMeas[x],
                                                              distObkv = distObkv[x],
