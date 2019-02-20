@@ -54,14 +54,19 @@ def.irga.vali.cor <- function(
   Date <- c(base::as.Date(DateProc) - 1, base::as.Date(DateProc), base::as.Date(DateProc) + 1)
   Date <- as.character(Date)
   Freq <- 20  #measurement frequency (20 Hz)
-  
+  #threshold
+  #minimum and maximum slope
+  minSlp <- 0.90
+  maxSlp <- 1.10
+  #scale
+  critScal <- 20
   #check if the slope and scale are meet the criteria if not replace them with NA
   #default slope less than or equal to +/-10% (0.9 <= slope <=1.10)
   for (idxDate in Date){
     #idxDate <- Date[1]
     for (idxData in names(coef[[idxDate]])){
       #idxData <- names(coef[[idxDate]])[1]
-      if (coef[[idxDate]][[idxData]]$coef[2] >= 0.9 & coef[[idxDate]][[idxData]]$coef[2] <= 1.10 & coef[[idxDate]][[idxData]]$scal[1] <= 500){
+      if (coef[[idxDate]][[idxData]]$coef[2] >= minSlp & coef[[idxDate]][[idxData]]$coef[2] <= maxSlp & coef[[idxDate]][[idxData]]$scal[1] <= critScal){
         coef[[idxDate]][[idxData]] <- coef[[idxDate]][[idxData]] 
       }else{
         coef[[idxDate]][[idxData]]$coef <- NA
