@@ -1,10 +1,16 @@
 Package: eddy4R.stor
-Title: What the Package Does (one line, title case)
-Version: 0.0.0.9000
-Authors@R: person("First", "Last", email = "first.last@example.com", role = c("aut", "cre"))
-Description: What the package does (one paragraph).
+Title: Eddy-covariance calculation for R: Storage flux
+Version: 0.0.1
+Authors@R: c( person("Ke", "Xu", email = "xuke2012abroad@gmail.com", role = c("aut", "cre")),
+              person("David", "Durden", email = "ddurden@battelleecology.org", role = c("aut")),
+              person("Stefan", "Metzger", email = "eddy4R.info@gmail.com", role = c("aut")),
+              person("Natchaya", "Pingintha-Durden", email = "ndurden@battelleecology.org", role = c("aut"))
+              )
+Description: Eddy-covariance calculation for R: Storage flux. Eddy-Covariance storage flux data processing includes extracting the valid sampling data and validation data (level 1 data products (dp01)), calculating temporally-continuous time rate of change (dp02), spatially-continuous profile (dp03), and storage flux (dp04). The Eddy-Covariance (EC) micrometeorological technique quantifies continuous storage fluxes of heat, water vapor, and CO2 between an ecosystem and the atmosphere. It is important for understanding ecosystem dynamics and upscaling exchange fluxes. (Aubinet (2008) <doi:10.1890/06-1336.1>). This package inputs pre-processed 1 Hz level 0p (dp0p) data and supports further processing (Xu et al., 2019). 
 Depends: R (>= 3.4.3)
-License: What license is it under?
+Imports:
+    zoo (>= 1.8-1)
+License: GNU AFFERO GENERAL PUBLIC LICENSE Version 3, 19 November 2007
 Encoding: UTF-8
 LazyData: true
-RoxygenNote: 6.0.1
+RoxygenNote: 6.1.1
