@@ -46,6 +46,8 @@
 #    rtioMoleDryCo2Raw data and ucrt in the basic file
 #   Natchaya P-Durden (2019-01-23)
 #    adding linear regression coefficients and its se to the attribute of rtioMoleDryCo2Vali
+#   Natchaya P-Durden (2019-02-21)
+#    adding results from MLF (scale) to the attribute of rtioMoleDryCo2Vali
 ##############################################################################################
 
 
@@ -127,6 +129,7 @@ if(MethSubAgr == TRUE){
     dgid <- rhdf5::H5Dopen(idData01, "rtioMoleDryCo2Vali")
     rhdf5::h5writeAttribute(attributes(inpList$dp01AgrSub$data$co2Turb$rtioMoleDryCo2Vali)$coef, h5obj = dgid, name = "coef")
     rhdf5::h5writeAttribute(attributes(inpList$dp01AgrSub$data$co2Turb$rtioMoleDryCo2Vali)$coefSe, h5obj = dgid, name = "coefSe")
+    rhdf5::h5writeAttribute(attributes(inpList$dp01AgrSub$data$co2Turb$rtioMoleDryCo2Vali)$scal, h5obj = dgid, name = "scal")
   }}
 }
 ##########################################################################################
