@@ -8,10 +8,11 @@
 #' @description 
 #' Function defintion. Integral turbulence characteristics.
 
-#' @param \code{REYN} Output list from eddy4R.turb REYNflux function. [-]
-#' @param \code{WAVE} Output list from eddy4R.turb Wavelet analysis. [-]
-#' @param \code{SiteInfo} Site Information list.
-#' @param \code{VarInp} A vector of class "character" containing the name of variables to be performed integral turbulence characteristics test. VarInp = c("veloXaxs","veloZaxs","temp","all"), where "veloXaxs" is along-axis horizontal wind speed, "veloZaxs" is vertical-axis wind speed, "temp" is air temperature, and "all" is all three variables. Defaults to "all".[-]
+#' @param \code{stblObkv} Stability parameter and of class "numeric". [dimensionless]
+#' @param \code{lat} Latitude and of class "numeric". [degrees North]
+#' @param \code{VarInp} A vector of class "character" containing the name of variables to be performed integral turbulence characteristics test. \code{VarInp} = c("veloXaxs","veloZaxs","temp","all"), where "veloXaxs" is along-axis horizontal wind speed, "veloZaxs" is vertical-axis wind speed, "temp" is air temperature, and "all" is all three variables. Defaults to "all".[-]
+#' @param \code{sd} A vector or data frame containing standard deviation of \code{VarInp} and of class "numeric". If \code{VarInp} = "all",  \code{sd} shall contain in the follwing orders, standard deviation of along-axis horizontal wind speed, standard deviation of vertical-axis wind speed, and standard deviation of air temperature. [user-defined]
+#' @param \code{varScal} A vector or data frame containing the scaling variables of \code{VarInp} and of class "numeric". If \code{VarInp} = "all", \code{varScal} shall contain in the follwing orders, scaling variable of wind speed (friction velocity will be used for both "veloXaxs" and "veloZaxs") and scaling variable of air temperature.  [user-defined]
 
 #' @return Data frame of integral turbulence characteristics test results of \code{VarInp}. If \code{VarInp} = "all", it includes test results for individual variable, i.e., along-axis horizontal wind speed, vertical-axis wind speed, and air temperature and also combined variables, i.e., friction velocity and sensible heat flux. [percent]
 
@@ -21,6 +22,13 @@
 #' @keywords eddy-covariance, integral turbulence characteristics, turbulent flux
 
 #' @examples 
+#' #input
+#'sd <- data.frame(veloXaxs=0.5254, veloZaxs=0.2570, temp=0.1405)
+#'varScal <- data.frame(veloFric=0.1918, tempScal=0.0268)
+#'#call function
+#'def.itc(stblObkv=0.0255, lat=70.4214, VarInp=c("all"), sd=sd, varScal=varScal)
+#'#single entry
+#'def.itc(stblObkv=0.0255, lat=70.4214, VarInp=c("veloXaxs"), sd=0.5254, varScal=0.1918)
 
 #' @seealso Currently none
 
@@ -34,41 +42,15 @@
 #   Natchaya P-Durden (2016-07-22)
 #     initail naming convention for eddy4R
 #     modified function by adding the input variable options
-#   Adam Vaughan
-#     updated function to work with siteinfo data and WAVE output from wavelet analysis
-#   Will Drysdale (2019-01-29)
-#     Removed SiteInfo dependance, added switches as explicit variables
 ##############################################################################################
 #INTEGRAL TURBULENCE CHARACTERISTICS
 def.itc <- function(
-  REYN=NULL,
-  WAVE=NULL,
-  PltfEc = "towr",
-  Lat = NULL,
-  VarInp=VarInp
+  stblObkv,
+  lat,
+  VarInp=c("veloXaxs","veloZaxs","temp","all")[4],
+  sd,
+  varScal
 ) {
-  
-  if(is.null(WAVE) == TRUE){
-    if(PltfEc=="towr"){
-      lat <- Lat
-    }
-    if(PltfEc=="airc"){
-      lat <- mean(REYN$data$lat_a,na.rm=T)
-    }
-    stblObkv <- REYN$mn$sigma
-    sd <- data.frame(u_hor=REYN$sd$u_hor,w_hor=REYN$sd$w_hor,T_air=REYN$sd$T_air)
-    varScal <- data.frame(u_star=REYN$mn$u_star,T_star_SL=REYN$mn$T_star_SL)}
-  else {
-    if(PltfEc=="towr"){
-      lat <- Lat
-    }
-    if(PltfEc=="airc"){
-      lat <- mean(REYN$data$REYN,na.rm=T)
-    }
-    stblObkv <- WAVE$mn$sigma
-    sd <- data.frame(u_hor=WAVE$sd$u_hor,w_hor=WAVE$sd$w_hor,T_air=WAVE$sd$T_air)
-    varScal <- data.frame(u_star=WAVE$mn$u_star,T_star_SL=WAVE$mn$T_star_SL)}
-  
   #constants for stability parameter
   CnstLocStblObkv <- list(Cnst01 = -0.032, Cnst02 = -1, Cnst03 = -0.062, Cnst04 = 0.02, Cnst05 = -0.2, Cnst06 = 0.4)
   
