@@ -11,7 +11,7 @@
 
 def.spec.name = function(species,type = c("mole","mass","kin")[1]){
   
-  if(is.null(species))
+  if(is.null(species) | length(species) == 0)
     return(NULL)
   
   if(type == "mole")
