@@ -13,7 +13,7 @@
 #' 
 #' @export
 
-def.rot = function(data,
+wrap.rot = function(data,
                    mn,
                    rotType = c("single","double","planarFit")[1],
                    plnrFitCoef = NULL)

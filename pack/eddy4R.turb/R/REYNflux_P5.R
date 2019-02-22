@@ -194,7 +194,7 @@ REYNflux_FD_mole_dry <- function(
   ############################################################
   #ROTATION INTO THE MEAN WIND
   ############################################################
-  rotOut = def.rot(data = data,
+  rotOut = wrap.rot(data = data,
                    mn = mn,
                    rotType = rotType)
   
