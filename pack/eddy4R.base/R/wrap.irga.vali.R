@@ -71,8 +71,8 @@ wrap.irga.vali <- function(
   DateProc
 ) {
   #adding library
-  library(deming)
-  library(zoo)
+  #library(deming)
+  #library(zoo)
   
   #assign list
   rpt <- list()

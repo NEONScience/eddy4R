@@ -44,7 +44,7 @@ def.irga.vali.cor <- function(
  valiCrit = FALSE
 ){
   #adding library
-  library(deming)
+  #library(deming)
 
   #assign list
   rpt <- list()
