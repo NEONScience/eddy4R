@@ -4,12 +4,15 @@
 \alias{def.qf.irga.vali}
 \title{Definition function: Validation flag for IRGA}
 \usage{
-def.qf.irga.vali(data, Sens = c("irgaMfcSamp", "irgaSndValiNema")[1])
+def.qf.irga.vali(data, Sens = c("irgaMfcSamp", "valvValiNemaTurb")[1],
+  qfGas = NULL)
 }
 \arguments{
 \item{data}{A data.frame containing the L0p input IRGA sampling mass flow controller data or the IRGA validation soleniod valves data at native resolution. Of type numeric or integer. [User-defined]}
 
-\item{Sens}{A vector of class "character" containing the name of sensor used to determine the flag (IRGA sampling mass flow controller data or the IRGA validation soleniod valves), Sens = c("irgaMfcSamp", "irgaSndValiNema"). Defaults to "irgaMfcSamp". [-]}
+\item{Sens}{A vector of class "character" containing the name of sensor used to determine the flag (IRGA sampling mass flow controller data or the IRGA validation soleniod valves), Sens = c("irgaMfcSamp", "valvValiNemaTurb"). Defaults to "irgaMfcSamp". [-]}
+
+\item{qfGas}{A vector of class "character" containing the name of quality flag of reference gas, qfGas = c("qfGas01", "qfGas02", "qfGas03", "qfGas04", "qfGas05"). This parameter needs to provide when Sens = "valvValiNemaTurb". Defaults to NULL. [-]}
 }
 \value{
 A vector class of integer (\code{qfIrgaVali}) of IRGA validation flags. Flag indicating when the sensor is operated under validation period (1 = validation period, 0 = normal operating condition, -1 = NA) [-]
@@ -25,16 +28,16 @@ frt00 = c(0.00020, 0.0001983, NA, NA, 0, 0),
 frtSet00 = c(0.00020, 0.00020, NA, NA, 0, 0), 
 presAtm = c(57200, 58500, NA, NA, 58600, 58600), 
 temp = c(300, 301, NA, NA, 299, 300))
-#generate test data for irgaSndValiNema
-data$irgaSndValiNema <- data.frame(qfGas01 = c(rep(0, 25)),
+#generate test data for valvValiNemaTurb
+data$valvValiNemaTurb <- data.frame(qfGas01 = c(rep(0, 25)),
 qfGas02 = c(rep(0, 5), rep(1, 5), rep(0, 15)),
 qfGas03 = c(rep(0, 10), rep(1, 5), rep(0, 10)),
 qfGas04 = c(rep(0, 15), rep(1, 5), rep(0, 5)),
 qfGas05 = c(rep(0, 20), rep(NA, 5)))
 #determine the flag using irgaMfcSamp
 data$qfqm$irga$qfIrgaVali <- def.qf.irga.vali(data = data$irgaMfcSamp, Sens = "irgaMfcSamp")
-#determine the flag using irgaSndValiNema
-data$qfqm$irga$qfIrgaVali <- def.qf.irga.vali(data = data$irgaSndValiNema, Sens = "irgaSndValiNema")
+#determine the flag using valvValiNemaTurb
+data$qfqm$irga$qfIrgaValiGas02 <- def.qf.irga.vali(data = data$valvValiNemaTurb, Sens = "valvValiNemaTurb", qfGas = "qfGas02")
 }
 \references{
 License: GNU AFFERO GENERAL PUBLIC LICENSE Version 3, 19 November 2007.
