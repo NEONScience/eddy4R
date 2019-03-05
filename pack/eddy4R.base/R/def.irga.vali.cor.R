@@ -35,6 +35,8 @@
 #     bugs fix on typo of rtioMoleDryCo2Cor
 #   Natchaya P-Durden (2019-02-19)
 #     not apply the correction when slope and scale greater than thresholds
+#   Natchaya P-Durden (2019-03-05)
+#     apply ff object to dataframe to save the memory
 ##############################################################################################
 def.irga.vali.cor <- function(
  data,
@@ -92,8 +94,9 @@ def.irga.vali.cor <- function(
     coefBgn <- c("data01", "data01")
     coefEnd <- c("data00", "data00")
   }
-  
+  numDate <- 0
   for (idx in 1:length(dateBgn)){
+    numDate <- numDate + 1
     #time begin and time End to apply coefficient
     #time when performing of high gas is done
     if (length(valiData[[dateBgn[idx]]][[coefBgn[idx]]]$timeEnd[which(valiData[[dateBgn[idx]]][[coefBgn[idx]]]$gasType == "qfIrgaTurbValiGas05")]) == 0){
@@ -168,17 +171,24 @@ def.irga.vali.cor <- function(
       subData$rtioMoleDryCo2Cor <- as.numeric(ofstLin + subData$rtioMoleDryCo2*slpLin)
     }
     
-    outSub[[idx]] <- subData
+    #outSub[[idx]] <- subData
+    # case #1: first day (creation)
+    if(numDate == 1) {
+      allSubData <- as.ffdf(data.frame(subData))
+    }else{
+      # case #2: subsequent day (appending)
+      allSubData <- ffbase::ffdfappend(allSubData, subData)
+    }
 }
 #append dataframe
-outTmp00 <- do.call(rbind,outSub)
+#outTmp00 <- do.call(rbind,outSub)
 
 #return data only the processing date
 #report time
 options(digits.secs=3) 
 rptTimeBgn <- base::as.POSIXlt(paste(DateProc, " ", "00:00:00.0001", sep=""), format="%Y-%m-%d %H:%M:%OS", tz="UTC")
 rptTimeEnd <- base::as.POSIXlt(paste(DateProc, " ", "23:59:59.9502", sep=""), format="%Y-%m-%d %H:%M:%OS", tz="UTC")
-outTmp01<- data.frame(outTmp00[which(outTmp00$time >= rptTimeBgn & outTmp00$time < rptTimeEnd),])
+outTmp01<- data.frame(allSubData[][which(allSubData$time[] >= rptTimeBgn & allSubData$time[] < rptTimeEnd),])
 #generate time according to frequency
 timeRglr <- seq.POSIXt(
   from = base::as.POSIXlt(rptTimeBgn, format="%Y-%m-%d %H:%M:%OS", tz="UTC"),
@@ -215,6 +225,7 @@ for(idxVar in 1:length(attrUnit)) {
   
 }; rm(idxVar, outSub, outTmp00, outTmp01)
 
+invisible(gc())
 #return results
 return(rpt)
 

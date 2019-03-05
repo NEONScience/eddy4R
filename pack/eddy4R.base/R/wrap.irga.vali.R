@@ -62,6 +62,8 @@
 #   Natchaya P-Durden (2019-02-19)
 #     output scale from MLFR
 #     revise code due to the values in Para$Cal are standard error not standard deviation
+#   Natchaya P-Durden (2019-03-05)
+#     apply ff object to dataframe to save the memory
 ##############################################################################################
 
 wrap.irga.vali <- function(
@@ -99,10 +101,12 @@ wrap.irga.vali <- function(
     #grab 3 days window of irga data and qfqmFlag (pre-processing, processing, and post-processing date)
     #check if there are data and qfqmFlag
     allDate <- c(base::as.Date(DatePre), base::as.Date(DateBgn), base::as.Date(DatePost))
-    subDataList <- list()
-    subQfqmList <- list()
+    #subDataList <- list()
+    #subQfqmList <- list()
+    numDate <- 0
     
     for (idxAllDate in allDate){
+      numDate <- numDate + 1
       idxAllDate <- as.Date(idxAllDate, origin = "1970-01-01")
       locDate <- which(as.Date(data$irgaTurb$time[]) == as.Date(idxAllDate, origin = "1970-01-01"))
       #locDate <- which(as.Date(data$irgaTurb$time[]) == as.Date(as.POSIXlt(idxAllDate, " ", "00:00:00.0001", sep=""), format="%Y-%m-%d %H:%M:%OS", tz="UTC"))
@@ -121,17 +125,29 @@ wrap.irga.vali <- function(
           from = as.POSIXlt(subTimeBgn, format="%Y-%m-%d %H:%M:%OS", tz="UTC"),
           to = as.POSIXlt(subTimeEnd, format="%Y-%m-%d %H:%M:%OS", tz="UTC"),
           by = 1/Freq), tz="UTC")
-        subData$time <- time
+        subTime <- data.frame(time = as.POSIXlt(time))
       }else{
         subData <- data$irgaTurb[][min(locDate):max(locDate),]
         subQfqmFlag <- qfqmFlag$irgaTurb[][min(locDate):max(locDate),]
+        subTime <- data.frame(time = as.POSIXlt(subData$time))
       }
-      subDataList[[idxAllDate]] <- subData
-      subQfqmList[[idxAllDate]] <- subQfqmFlag
+      #subDataList[[idxAllDate]] <- subData
+      #subQfqmList[[idxAllDate]] <- subQfqmFlag
+      # case #1: first day (creation)
+      if(numDate == 1) {
+        allSubData <- as.ffdf(data.frame(subData))
+        allSubQfqm <- as.ffdf(data.frame(subQfqmFlag))
+        allSubTime <- as.ffdf(data.frame(subTime))
+      }else{
+        # case #2: subsequent day (appending)
+        allSubData <- ffbase::ffdfappend(allSubData, subData)
+        allSubQfqm <- ffbase::ffdfappend(allSubQfqm, subQfqmFlag)
+        allSubTime <- ffbase::ffdfappend(allSubTime, subTime)
+      }
       }#end loop for of idxAllDate
     #combine dataframe from each loop
-    allSubData <- do.call(rbind, subDataList)
-    allSubQfqm <- do.call(rbind, subQfqmList)
+    #allSubData <- do.call(rbind, subDataList)
+    #allSubQfqm <- do.call(rbind, subQfqmList)
     # #get indecies
     # idxSub <- which(as.Date(data$irgaTurb$time[]) == DatePre |
     #                   as.Date(data$irgaTurb$time[]) == DateBgn |
@@ -156,13 +172,13 @@ wrap.irga.vali <- function(
       print(idxNameQf)
       #preparing the qfIrgaTurbValiGas01 to 05 data for def.idx.agr()
       #replace NA to the qf which are not equal to 1
-      allSubQfqm[[idxNameQf]] <- ifelse(allSubQfqm[[idxNameQf]] != 1, NA, allSubQfqm[[idxNameQf]])
+      allSubQfqm[[idxNameQf]][] <- ifelse(allSubQfqm[[idxNameQf]][] != 1, NA, allSubQfqm[[idxNameQf]][])
       
       #determine when validation occur
       #if there is at least one measurement
-      if(length(which(!is.na(allSubQfqm[[idxNameQf]]))) > 0){
+      if(length(which(!is.na(allSubQfqm[[idxNameQf]][]))) > 0){
         #determine the beginning and ending indicies of each validation
-        idxVali <- eddy4R.base::def.idx.agr(time = allSubData$time, PrdAgr = 90, FreqLoca = 20, MethIdx = "specEnd", data = allSubQfqm[[idxNameQf]], CritTime = 0)
+        idxVali <- eddy4R.base::def.idx.agr(time = allSubTime$time[], PrdAgr = 90, FreqLoca = 20, MethIdx = "specEnd", data = allSubQfqm[[idxNameQf]][], CritTime = 0)
         #delete row if last timeBgn and timeEnd is NA
         idxVali <- idxVali[rowSums(is.na(idxVali)) != 2,]
         #if last timeEnd is NA, replce that time to the last time value in data$time
@@ -421,8 +437,9 @@ wrap.irga.vali <- function(
                                                             "NA", #"timeBgn"
                                                             "NA")#"timeEnd"
     
-    }; rm(valiCrit)#end of idxDate
-   
+    }; rm(valiCrit, allSubData, allSubQfqm, allSubTime)#end of idxDate
+  
+  invisible(gc())
   #check if there are more than one validation occurred in DateProc
   if (length(which(rpt[[DateProc]]$rtioMoleDryCo2Vali$gasType == "qfIrgaTurbValiGas02")) == 2 &
       length(which(rpt[[DateProc]]$rtioMoleDryCo2Vali$gasType == "qfIrgaTurbValiGas03")) == 2&
