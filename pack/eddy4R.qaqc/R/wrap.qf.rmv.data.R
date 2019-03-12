@@ -7,6 +7,8 @@
 #' @description 
 #' Wrapper function  to remove high frequency data points that have failed quality flags from a data.frame
 #' @param inpList List consisting of \code{ff::ffdf} file-backed objects, in the format provided by function \code{eddy4R.base::wrap.hdf5.read()}. Of types numeric and integer.
+#' @param Sens Character string indicating which sensor will remove high frequency data points that have failed quality flags. Defaults to NULL.
+#' @param qfRmv Character string indicating which quality flag will exclude in the processing. Defaults to NULL.
 #' @param Vrbs Optional. A logical {FALSE/TRUE} value indicating whether to:\cr
 #' \code{Vrbs = FALSE}: (Default) cleaned data set with the bad high frequency quality flagged data replaced with NaN's as part of the \code{inpList} in the same format., or \cr
 #' \code{Vrbs = TRUE}: cleaned data set with the bad high frequency quality flagged data replaced with NaN's as part of the \code{inpList} in the same format. In addition, a separate list  \code{qfqmAnls} will be added to the output list \code{rpt} with a list of variables assessed, a list of quality flags for each variable assessed, the number of each quality flag tripped for each variable and the total number of bad data per variable.
@@ -37,11 +39,15 @@
 #   Natchaya P-Durden (2018-04-13)
 #    applied eddy4R term name convention; replaced dfData by inpData
 #    replaced dfQf by inpQf
+#   Natchaya P-Durden (2019-03-12)
+#    added Sens and qfRmv into the function parameter list
 ##############################################################################################
 
 
 wrap.qf.rmv.data <- function(
-  inpList, 
+  inpList,
+  Sens = NULL,
+  qfRmv = NULL,
   Vrbs = FALSE, 
   MethMeas = c("ecte",  "ecse")[1]){
   
@@ -50,16 +56,18 @@ wrap.qf.rmv.data <- function(
   outList <- list()
   
   #Determine the sensors that have data and quality flags
-  sens <- base::intersect(base::names(inpList$data), base::names(inpList$qfqm))
+  if (is.null(Sens)){
+  Sens <- base::intersect(base::names(inpList$data), base::names(inpList$qfqm))
+  }
   
   if(MethMeas == "ecte"){
   # Determine quality flags to apply to each stream, quantify flags, and remove bad data across all sensors
-  outList <- base::lapply(sens, function(x){ 
-    eddy4R.qaqc::def.qf.rmv.data(inpData = inpList$data[[x]][], inpQf = inpList$qfqm[[x]], Sens = x, Vrbs = Vrbs) #Remove high frequency data that is flagged by sensor specific flags or plausibility tests flags
+  outList <- base::lapply(Sens, function(x){ 
+    eddy4R.qaqc::def.qf.rmv.data(inpData = inpList$data[[x]][], inpQf = inpList$qfqm[[x]], Sens = x, qfRmv = qfRmv, Vrbs = Vrbs) #Remove high frequency data that is flagged by sensor specific flags or plausibility tests flags
   })
   
   #Apply names to the output list
-  base::names(outList) <- sens
+  base::names(outList) <- Sens
   
   #Applying the bad quality flags to the reported output data
   base::lapply(base::names(outList), function(x) {
@@ -82,7 +90,7 @@ wrap.qf.rmv.data <- function(
     for(idxSens in sens){
     #for each measurement level
     outList[[idxSens]] <- base::lapply(base::names(inpList$data[[idxSens]]), function(x){ 
-      eddy4R.qaqc::def.qf.rmv.data(inpData = inpList$data[[idxSens]][[x]], inpQf = inpList$qfqm[[idxSens]][[x]], Sens = idxSens, Vrbs = Vrbs , TypeData = "real") #Remove high frequency data that is flagged by sensor specific flags or plausibility tests flags
+      eddy4R.qaqc::def.qf.rmv.data(inpData = inpList$data[[idxSens]][[x]], inpQf = inpList$qfqm[[idxSens]][[x]], Sens = idxSens, qfRmv = qfRmv, Vrbs = Vrbs, TypeData = "real") #Remove high frequency data that is flagged by sensor specific flags or plausibility tests flags
       })
     #Apply names to the each mesurement level
     base::names(outList[[idxSens]]) <- base::names(inpList$data[[idxSens]])
