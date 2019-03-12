@@ -41,6 +41,8 @@
 #     adding logic to determine qf for each validation gas
 #   Natchaya P-Durden (2018-11-19)
 #     adding command to save irgaTurb data before removing the bad quality data   
+#   Natchaya P-Durden (2019-03-12)
+#     applying the function to remove bad quality data (excluded qfCal and qfRng) to validation data
 ##############################################################################################
     
     
@@ -79,11 +81,15 @@ wrap.derv.prd.day <- function(
   #Run the test to determine the irgaTurbAgc flag
   inpList$qfqm$irgaTurb$qfIrgaTurbAgc <- ff::as.ff(eddy4R.qaqc::def.qf.irga.agc(qfIrgaAgc = inpList$qfqm$irga$qfIrgaTurbAgc))
   
-  #Adding new dataframe which containning irgaTurb data before applying the bad qf
+  #Applying the bad quality flags (excluded qfCal and qfRng) to the irgaTurb
   #These data will use later for validation processing
-  inpList$vali$irgaTurb <- inpList$data$irgaTurb
+  vali <- eddy4R.qaqc::wrap.qf.rmv.data(inpList = inpList, Vrbs = FALSE, Sens = "irgaTurb", qfRmv = c("qfCal", "qfRng"))
+  inpList$vali$irgaTurb <- vali$irgaTurb
+  #remove vali
+  rm(vali)
+  
   #Applying the bad quality flags to the reported output data
-  inpList <- eddy4R.qaqc::wrap.qf.rmv.data(inpList = inpList, Vrbs = FALSE)
+  inpList <- eddy4R.qaqc::wrap.qf.rmv.data(inpList = inpList, Vrbs = FALSE, Sens = NULL, qfRmv = "qfCal")
   
   #Run the test to output Validation flag
   inpList$qfqm$irgaTurb$qfIrgaTurbVali <- ff::as.ff(eddy4R.qaqc::def.qf.irga.vali(data = inpList$data$mfcSampTurb))#Use this one for MFC set point
