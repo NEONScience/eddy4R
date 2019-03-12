@@ -84,7 +84,7 @@ wrap.derv.prd.day <- function(
   #Applying the bad quality flags (excluded qfCal and qfRng) to the irgaTurb
   #These data will use later for validation processing
   vali <- eddy4R.qaqc::wrap.qf.rmv.data(inpList = inpList, Vrbs = FALSE, Sens = "irgaTurb", qfRmv = c("qfCal", "qfRng"))
-  inpList$vali$irgaTurb <- vali$irgaTurb
+  inpList$vali$irgaTurb <- vali$data$irgaTurb
   #remove vali
   rm(vali)
   
