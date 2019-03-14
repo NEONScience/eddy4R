@@ -87,7 +87,7 @@ wrap.qf.rmv.data <- function(
   if(MethMeas == "ecse"){
     # Determine quality flags to apply to each stream, quantify flags, and remove bad data across all sensors
     # start loop around instruments
-    for(idxSens in sens){
+    for(idxSens in Sens){
     #for each measurement level
     outList[[idxSens]] <- base::lapply(base::names(inpList$data[[idxSens]]), function(x){ 
       eddy4R.qaqc::def.qf.rmv.data(inpData = inpList$data[[idxSens]][[x]], inpQf = inpList$qfqm[[idxSens]][[x]], Sens = idxSens, qfRmv = qfRmv, Vrbs = Vrbs, TypeData = "real") #Remove high frequency data that is flagged by sensor specific flags or plausibility tests flags
