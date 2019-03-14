@@ -32,6 +32,8 @@
 #     move ECSE de-spiking from wrap.neon.read.hdf5.eddy() to wrap.prd.day.ecse()
 #   Ke Xu (2018-04-19)
 #     applied term name convention; replaced dataIn by dataInp
+#   Natchaya P-Durden (2019-03-14)
+#     update input parameters in wrap.qf.rmv.data function
 ##############################################################################################
 
 wrap.prd.day.ecse <- function(
@@ -46,7 +48,7 @@ wrap.prd.day.ecse <- function(
   
   #Removing high frequency flagged data
   #Applying the bad quality flags to the reported output data
-  rpt <- eddy4R.qaqc::wrap.qf.rmv.data(inpList = inpList, Vrbs = FALSE, MethMeas = "ecse")
+  rpt <- eddy4R.qaqc::wrap.qf.rmv.data(inpList = inpList, Vrbs = FALSE, MethMeas = "ecse", Sens = NULL, qfRmv = c("qfCal", "qfRh", "qfTemp"))
   
   
   # perform de-spiking
