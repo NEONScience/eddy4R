@@ -11,6 +11,10 @@
 #' @param valiData List consisting of descriptive statistics (mean, min, max, vari, numSamp, se) of CO2 dry mole concentration during performing validation and CO2 dry mole concentration of reference gases.
 #' @param coef List consists of linear regression coefficients (slope and offset) for DateProc - 1, DateProc, and DateProc + 1. 
 #' @param valiCrit A logical stating if there are more than one validation occurred within DateProc. Defaut to FALSE.
+#' @param ScalMax Maximum scale value (resulted from maximum-likelihood fitting of a functional relationship (MLFR)). Defaults to 20.
+#' @param FracSlpMax Maximum fraction of slope value (resulted from maximum-likelihood fitting of a functional relationship (MLFR)). Defaults to 0.1.
+#' @param Freq Measurement frequency. Defaults to 20. [Hz]
+
 #' @return 
 #' The returned dataframe consists of the correction IRGA sub data products.
 
@@ -37,13 +41,18 @@
 #     not apply the correction when slope and scale greater than thresholds
 #   Natchaya P-Durden (2019-03-05)
 #     apply ff object to dataframe to save the memory
+#   Natchaya P-Durden (2019-03-15)
+#     added ScalMax, FracSlpMax, and Freq into input function parameters
 ##############################################################################################
 def.irga.vali.cor <- function(
  data,
  DateProc,
  coef,
  valiData,
- valiCrit = FALSE
+ valiCrit = FALSE,
+ ScalMax = 20,
+ FracSlpMax = 0.1,
+ Freq = 20
 ){
   #adding library
   #library(deming)
@@ -55,20 +64,20 @@ def.irga.vali.cor <- function(
   #dates that will be used in determination of slope and offset
   Date <- c(base::as.Date(DateProc) - 1, base::as.Date(DateProc), base::as.Date(DateProc) + 1)
   Date <- as.character(Date)
-  Freq <- 20  #measurement frequency (20 Hz)
+  Freq <- Freq  #measurement frequency (20 Hz)
   #threshold
   #minimum and maximum slope
-  minSlp <- 0.90
-  maxSlp <- 1.10
+  minSlp <- 1 - FracSlpMax
+  maxSlp <- 1 + FracSlpMax
   #scale
-  critScal <- 20
+  ScalMax <- ScalMax
   #check if the slope and scale are meet the criteria if not replace them with NA
   #default slope less than or equal to +/-10% (0.9 <= slope <=1.10)
   for (idxDate in Date){
     #idxDate <- Date[1]
     for (idxData in names(coef[[idxDate]])){
       #idxData <- names(coef[[idxDate]])[1]
-      if (!is.na(coef[[idxDate]][[idxData]]$coef[2]) & !is.na(coef[[idxDate]][[idxData]]$scal[1]) & coef[[idxDate]][[idxData]]$coef[2] >= minSlp & coef[[idxDate]][[idxData]]$coef[2] <= maxSlp & coef[[idxDate]][[idxData]]$scal[1] <= critScal){
+      if (!is.na(coef[[idxDate]][[idxData]]$coef[2]) & !is.na(coef[[idxDate]][[idxData]]$scal[1]) & coef[[idxDate]][[idxData]]$coef[2] >= minSlp & coef[[idxDate]][[idxData]]$coef[2] <= maxSlp & coef[[idxDate]][[idxData]]$scal[1] <= ScalMax){
         coef[[idxDate]][[idxData]] <- coef[[idxDate]][[idxData]] 
       }else{
         coef[[idxDate]][[idxData]]$coef <- NA
@@ -112,13 +121,6 @@ def.irga.vali.cor <- function(
       timeEnd <- as.POSIXlt(valiData[[dateEnd[idx]]][[coefEnd[idx]]]$timeBgn[which(valiData[[dateEnd[idx]]][[coefEnd[idx]]]$gasType == "qfIrgaTurbValiGas02")])
     }
     
-    # #replace timeBgn and timeEnd when no validation happened at all in dateBgn and dateEnd
-    # if (timeBgn == as.POSIXlt(paste(dateBgn[idx], " ", "23:59:59.950", sep=""), format="%Y-%m-%d %H:%M:%OS", tz="UTC") &
-    #     timeEnd == as.POSIXlt(paste(dateEnd[idx], " ", "", sep="00:00:00.000"), format="%Y-%m-%d %H:%M:%OS", tz="UTC")){
-    #   timeBgn <- as.POSIXlt(paste(dateBgn[idx], " ", "00:00:00.000", sep=""), format="%Y-%m-%d %H:%M:%OS", tz="UTC")
-    #   timeEnd <- as.POSIXlt(paste(dateEnd[idx], " ", "", sep="00:00:00.000"), format="%Y-%m-%d %H:%M:%OS", tz="UTC")
-    # }
-    
     #output time
     timeOut <- as.POSIXlt(seq.POSIXt(
       from = as.POSIXlt(timeBgn, format="%Y-%m-%d %H:%M:%OS", tz="UTC"),
@@ -131,7 +133,8 @@ def.irga.vali.cor <- function(
     #calculate doy
     timeDoy <- timeOut$yday + 1 +  timeFracOut / 24
     
-    #when coefficients are not NAs
+    #Calculate time-series (20Hz) of slope and zero offset
+    #case1: when coefficients are not NAs
     if (!is.na(coef[[dateBgn[idx]]][[coefBgn[idx]]]$coef[1]) & !is.na(coef[[dateBgn[idx]]][[coefBgn[idx]]]$coef[2]) &
         !is.na(coef[[dateEnd[idx]]][[coefEnd[idx]]]$coef[1]) & !is.na(coef[[dateEnd[idx]]][[coefEnd[idx]]]$coef[2])){
       #create object for reference values
@@ -146,14 +149,14 @@ def.irga.vali.cor <- function(
       slpLin <- zoo::na.approx(object = slp, xout = timeDoy, na.rm=FALSE)
     } # ending the logic when coefficients are not NAs
     
-    #when coefficients in Date[idx] are not NAs but Date[idx+1] are NAs
+    #case2: when coefficients in Date[idx] are not NAs but Date[idx+1] are NAs
     if ((!is.na(coef[[dateBgn[idx]]][[coefBgn[idx]]]$coef[1]) & !is.na(coef[[dateBgn[idx]]][[coefBgn[idx]]]$coef[2])) &
         (is.na(coef[[dateEnd[idx]]][[coefEnd[idx]]]$coef[1]) | is.na(coef[[dateEnd[idx]]][[coefEnd[idx]]]$coef[2]))){
       ofstLin <- coef[[dateBgn[idx]]][[coefBgn[idx]]]$coef[1]
       slpLin <- coef[[dateBgn[idx]]][[coefBgn[idx]]]$coef[2]
     } # ending the logic when coefficients in Date[idx] are not NAs but Date[idx+1] are not NAs
     
-    #when coefficients in Date[idx] are NAs
+    #case3: when coefficients in Date[idx] are NAs
     if (is.na(coef[[dateBgn[idx]]][[coefBgn[idx]]]$coef[1]) & is.na(coef[[dateBgn[idx]]][[coefBgn[idx]]]$coef[2])){
       ofstLin <- NA
       slpLin <- NA
@@ -196,6 +199,7 @@ timeRglr <- seq.POSIXt(
   by = 1/Freq
 )
 
+#regularize the data
 rpt <- eddy4R.base::def.rglr(timeMeas = base::as.POSIXlt(outTmp01$time, format="%Y-%m-%d %H:%M:%OS", tz="UTC"),
                                                            dataMeas = outTmp01,
                                                            BgnRglr = as.POSIXlt(min(timeRglr)),
@@ -214,7 +218,7 @@ if (length(rpt$rtioMoleDryCo2Cor) == 0){
 idxIrga <- order(names(rpt))
 #Changing the order of the variables to alphabetical order using the index
 rpt <- rpt[,idxIrga]
-
+#adding unit attributes
 attrUnit <- c("-", "-", "molCo2 m-3", "molH2o m-3", "NA", "V", "W", "W", "W", "W", "Pa", "Pa", "Pa", "molCo2 mol-1Dry", "molCo2 mol-1Dry",
               "-", "-", "K", "K", "K", "K", "NA")
 
