@@ -64,6 +64,8 @@
 #     revise code due to the values in Para$Cal are standard error not standard deviation
 #   Natchaya P-Durden (2019-03-05)
 #     apply ff object to dataframe to save the memory
+#   Natchaya P-Durden (2019-03-15)
+#     clean up workflow and updated def.irga.vali.cor()
 ##############################################################################################
 
 wrap.irga.vali <- function(
@@ -98,18 +100,17 @@ wrap.irga.vali <- function(
     DatePre <- base::as.Date(idxDate) - 1
     #post-processing date
     DatePost <- base::as.Date(idxDate) + 1
-    #grab 3 days window of irga data and qfqmFlag (pre-processing, processing, and post-processing date)
-    #check if there are data and qfqmFlag
+    #define 3 days which data will be used 
     allDate <- c(base::as.Date(DatePre), base::as.Date(DateBgn), base::as.Date(DatePost))
-    #subDataList <- list()
-    #subQfqmList <- list()
+    
+    #grab 3 days window of irga data and qfqmFlag (pre-processing, processing, and post-processing date)
     numDate <- 0
     
     for (idxAllDate in allDate){
       numDate <- numDate + 1
       idxAllDate <- as.Date(idxAllDate, origin = "1970-01-01")
       locDate <- which(as.Date(data$irgaTurb$time[]) == as.Date(idxAllDate, origin = "1970-01-01"))
-      #locDate <- which(as.Date(data$irgaTurb$time[]) == as.Date(as.POSIXlt(idxAllDate, " ", "00:00:00.0001", sep=""), format="%Y-%m-%d %H:%M:%OS", tz="UTC"))
+      #check if there are data and qfqmFlag
       if(length(locDate) == 0){
         #create the empty dataframe
         subData <- data.frame(matrix(ncol = length(data$irgaTurb), nrow = length(data$irgaTurb[[1]])))
@@ -131,8 +132,7 @@ wrap.irga.vali <- function(
         subQfqmFlag <- qfqmFlag$irgaTurb[][min(locDate):max(locDate),]
         subTime <- data.frame(time = as.POSIXlt(subData$time))
       }
-      #subDataList[[idxAllDate]] <- subData
-      #subQfqmList[[idxAllDate]] <- subQfqmFlag
+
       # case #1: first day (creation)
       if(numDate == 1) {
         allSubData <- as.ffdf(data.frame(subData))
@@ -145,20 +145,8 @@ wrap.irga.vali <- function(
         allSubTime <- ffbase::ffdfappend(allSubTime, subTime)
       }
       }#end loop for of idxAllDate
-    #combine dataframe from each loop
-    #allSubData <- do.call(rbind, subDataList)
-    #allSubQfqm <- do.call(rbind, subQfqmList)
-    # #get indecies
-    # idxSub <- which(as.Date(data$irgaTurb$time[]) == DatePre |
-    #                   as.Date(data$irgaTurb$time[]) == DateBgn |
-    #                   as.Date(data$irgaTurb$time[]) == DatePost)
-    #subset data
-    #subData <- data$irgaTurb[][min(idxSub):max(idxSub),]
-    #subset qfqmFlag
-    #subQfqmFlag <- qfqmFlag$irgaTurb[][min(idxSub):max(idxSub),]
-    
+    #define qf for each gas cylinder
     nameQf <- c("qfIrgaTurbValiGas01", "qfIrgaTurbValiGas02", "qfIrgaTurbValiGas03", "qfIrgaTurbValiGas04", "qfIrgaTurbValiGas05")
-    
     
     #statistical names (will be used when no validation occured at all)
     NameStat <- c("mean", "min", "max", "vari", "numSamp", "se")
@@ -167,6 +155,7 @@ wrap.irga.vali <- function(
     tmp <- list()
     rptTmp <- list()
     
+    #calculate statistical for each gas
     for (idxNameQf in nameQf){
       #idxNameQf <- nameQf[2]
       print(idxNameQf)
@@ -188,11 +177,8 @@ wrap.irga.vali <- function(
           #idxAgr <- 1
           inpTmp <- data.frame(rtioMoleDryCo2 = allSubData$rtioMoleDryCo2[idxVali$idxBgn[idxAgr]:idxVali$idxEnd[idxAgr]]) 
           
-          #dp01 processing
-          tmp[[idxNameQf]][[idxAgr]] <- eddy4R.base::wrap.dp01(
-            # assign data: data.frame or list of type numeric or integer
-            data = inpTmp
-          )
+          #statistical processing
+          tmp[[idxNameQf]][[idxAgr]] <- eddy4R.base::wrap.dp01(data = inpTmp)
           #report data
           rptTmp[[idxNameQf]][[idxAgr]] <- tmp[[idxNameQf]][[idxAgr]]
           #report time
@@ -200,7 +186,7 @@ wrap.irga.vali <- function(
           rptTmp[[idxNameQf]][[idxAgr]]$timeEnd <- data.frame(rtioMoleDryCo2 = idxVali$timeEnd[[idxAgr]])
         }#end for each idxAgr
         #end for at least there is one measurement
-      } else {
+      } else {#if there is no measurement
         for(idxStat in NameStat){
           #report data
           rptTmp[[idxNameQf]][[1]][[idxStat]] <- data.frame(rtioMoleDryCo2 = NaN)
@@ -216,6 +202,7 @@ wrap.irga.vali <- function(
     outTmp01 <- list()
     outTmp02 <- list()
     
+    #Transform rptTmp into report dataframe format
     for (idxGas in names(rptTmp)){
       #for (idxGas in c("qfIrgaTurbValiGas02", "qfIrgaTurbValiGas03", "qfIrgaTurbValiGas04")){
       #idxGas <- names(rptTmp)[2]
@@ -235,14 +222,8 @@ wrap.irga.vali <- function(
        
     }
     
-    
-    #convert idxDate to character
-    #idxDate <- as.character(idxDate)
-    #combine row
+    #combine row and save statistical outputs into rpt[[idxDate]]$rtioMoleDryCo2Vali
     rpt[[idxDate]]$rtioMoleDryCo2Vali <- do.call(rbind, outTmp02)
-    
-    #remove
-    rm(outTmp00, outTmp01, outTmp02, rptTmp, idxGas)
     
     #assign column names
     colnames(rpt[[idxDate]]$rtioMoleDryCo2Vali) <- c("mean", "min", "max", "vari", "numSamp", "se", "timeBgn", "timeEnd", "gasType")
@@ -250,10 +231,14 @@ wrap.irga.vali <- function(
     #remove row names
     rownames(rpt[[idxDate]]$rtioMoleDryCo2Vali) <- NULL
     
+    #remove unuse objects
+    rm(outTmp00, outTmp01, outTmp02, rptTmp, idxGas)
+    
+    #select only data fall in DateProc
     #assign time window 
     timeMin <- base::as.POSIXlt(paste(DateBgn, " ", "00:01:29.950", sep=""), format="%Y-%m-%d %H:%M:%OS", tz="UTC")
     timeMax <- base::as.POSIXlt(paste(DatePost, " ", "00:01:29.950", sep=""), format="%Y-%m-%d %H:%M:%OS", tz="UTC")
-    #determine index when timeEnd fall in Date Proc
+    #determine index when timeEnd fall in DateProc
     rpt[[idxDate]]$rtioMoleDryCo2Vali <- rpt[[idxDate]]$rtioMoleDryCo2Vali[which(rpt[[idxDate]]$rtioMoleDryCo2Vali$timeEnd >= timeMin &  rpt[[idxDate]]$rtioMoleDryCo2Vali$timeBgn < timeMax),]
     
     #fail safe: fill in dataframe with NaN values when there is only qfIrgaTurbValiGas01 
@@ -268,7 +253,7 @@ wrap.irga.vali <- function(
     tmpGasRefe <- data.frame(matrix(ncol = 3, nrow = 5))
     #assign column name
     colnames(tmpGasRefe) <- c("rtioMoleDryCo2Refe", "rtioMoleDryCo2RefeSe", "rtioMoleDryCo2RefeDf")
-    #add values of gasRefe and their sd to tmpGasRefe
+    #add values of gasRefe and their se to tmpGasRefe
     for (idxRow in 1:nrow(tmpGasRefe)){
       if (idxRow == 2){
         #add zero gas
@@ -282,7 +267,7 @@ wrap.irga.vali <- function(
         } else{
           loc <- idxRow-1
         }
-        #if no gasRefe and sd for idxDate
+        #if no gasRefe and se for idxDate
         if (is.null(gasRefe$rtioMoleDryCo2Refe01[[idxDate]])){
           tmpGasRefe <- tmpGasRefe
         } else {
@@ -311,8 +296,7 @@ wrap.irga.vali <- function(
         }
       }
     }; rm(idxRow)# end for loop
-    #calculate rtioMoleDryCo2RefeSe from rtioMoleDryCo2RefeSd
-    #tmpGasRefe$rtioMoleDryCo2RefeSe <- tmpGasRefe$rtioMoleDryCo2RefeSd/(sqrt(tmpGasRefe$rtioMoleDryCo2RefeDf+1))
+    
     #replace the rtioMoleDryCo2RefeSe of zero gas to 0.1 ppm
     tmpGasRefe$rtioMoleDryCo2RefeSe[2] <- zeroRefeSe
     #add gas type
@@ -323,11 +307,8 @@ wrap.irga.vali <- function(
       rpt[[idxDate]]$rtioMoleDryCo2Vali$rtioMoleDryCo2Refe[idxRow] <- tmpGasRefe$rtioMoleDryCo2Refe[locGas]
       rpt[[idxDate]]$rtioMoleDryCo2Vali$rtioMoleDryCo2RefeSe[idxRow] <- tmpGasRefe$rtioMoleDryCo2RefeSe[locGas]
     }
-    #rpt[[idxDate]]$rtioMoleDryCo2Vali$rtioMoleDryCo2Refe <- cbind(rpt[[idxDate]]$rtioMoleDryCo2Vali, tmpGasRefe)
     
-    #calculate standard deviation from se
-    #rpt[[idxDate]]$rtioMoleDryCo2Vali$sd <- (rpt[[idxDate]]$rtioMoleDryCo2Vali$se)*(sqrt(rpt[[idxDate]]$rtioMoleDryCo2Vali$numSamp))
-    
+    #preparing data tables for calculating the regression
     #check if there are more than one validation occurred within one day
     if (length(which(rpt[[idxDate]]$rtioMoleDryCo2Vali$gasType == "qfIrgaTurbValiGas02")) == 2 &
         length(which(rpt[[idxDate]]$rtioMoleDryCo2Vali$gasType == "qfIrgaTurbValiGas03")) == 2&
@@ -452,7 +433,7 @@ wrap.irga.vali <- function(
   
   #applying the calculated coefficients to measured data
   #Calculate time-series (20Hz) of slope and zero offset
-  rpt[[DateProc]]$rtioMoleDryCo2Cor <- eddy4R.base::def.irga.vali.cor(data = data, DateProc = DateProc, coef = tmpCoef, valiData = valiData, valiCrit = valiCrit)
+  rpt[[DateProc]]$rtioMoleDryCo2Cor <- eddy4R.base::def.irga.vali.cor(data = data, DateProc = DateProc, coef = tmpCoef, valiData = valiData, valiCrit = valiCrit, ScalMax = 20, FracSlpMax = 0.1, Freq = 20)
   
 #return results
   return(rpt)
