@@ -1245,6 +1245,10 @@ if (MethMeas == "ecse") {
         rpt$rhEnvHut <- na.omit(data.frame (setQf$rhEnvHut))
         rpt$tempEnvHut <- na.omit(data.frame (setQf$tempEnvHut))
         rpt$rtioMoleWetH2oEnvHut <- na.omit(data.frame (setQf$rtioMoleWetH2oEnvHut))
+        #remove idGas column
+        lapply(names(rpt), function(x){
+          rpt[[x]] <<- rpt[[x]][, ! names(rpt[[x]]) %in% "idGas", drop = F]
+        })
         #remove tmp
         rm(tmp)
       } else {
@@ -1403,6 +1407,12 @@ if (MethMeas == "ecse") {
         rpt$rhEnvHut <- na.omit(data.frame (setQf$rhEnvHut))
         rpt$tempEnvHut <- na.omit(data.frame (setQf$tempEnvHut))
         rpt$rtioMoleWetH2oEnvHut <- na.omit(data.frame (setQf$rtioMoleWetH2oEnvHut))
+        #remove idGas column
+        lapply(names(rpt), function(x){
+          rpt[[x]] <<- rpt[[x]][, ! names(rpt[[x]]) %in% "idGas", drop = F]
+        })
+        #remove tmp
+        rm(tmp)
       } else {
         #grouping qulity flags that related to isoCo2 L1 sub-data product  
         rpt$rtioMoleWetCo2 <- na.omit(data.frame(setQf$rtioMoleWetCo2, setQf$dlta13CCo2,
