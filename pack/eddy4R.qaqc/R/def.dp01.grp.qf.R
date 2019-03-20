@@ -1169,7 +1169,7 @@ if (MethMeas == "ecse") {
       #temporary list
       tmp <- list()
       #if not all idGas = NA or all qfRngTemp = NA
-      if (length(which(!is.na(qfInp$crdCo2$qfRngTemp))) > 0){
+      if (length(which(!is.na(idGas))) > 0){
         #grouping qulity flags that related to isoCo2 L1 sub-data product  
         tmp$rtioMoleWetCo2 <- data.frame(setQf$rtioMoleWetCo2, setQf$dlta13CCo2,
                                          setQf$rtioMoleWet12CCo2, setQf$presCrdCo2, 
@@ -1324,7 +1324,7 @@ if (MethMeas == "ecse") {
       #temporary list
       tmp <- list()
       #if not all idGas = NA or all qfRngTemp = NA
-      if (length(which(!is.na(qfInp$crdCo2$qfRngTemp))) == 0){
+      if (length(which(!is.na(idGas))) > 0){
         #grouping qulity flags that related to isoCo2 L1 sub-data product
         tmp$rtioMoleWetCo2 <- data.frame(setQf$rtioMoleWetCo2, setQf$dlta13CCo2,
                                           setQf$rtioMoleWet12CCo2, setQf$presCrdCo2, 
