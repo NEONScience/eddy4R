@@ -6,8 +6,8 @@
 \usage{
 def.hdf5.crte(Date, Site = "SERC", LvlTowr, DirOut, FileOutBase = NULL,
   MethExpd = TRUE, MethDp04 = FALSE, FileNameReadMe = NULL,
-  FileNameObjDesc = NULL, LvlGasRefe = c("702_000", "704_000", "705_000",
-  "706_000"))
+  FileNameObjDesc = NULL, LvlGasRefe = c("702_000", "704_000",
+  "705_000", "706_000"))
 }
 \arguments{
 \item{Date}{is the date for the output file being generated.}
@@ -31,7 +31,7 @@ def.hdf5.crte(Date, Site = "SERC", LvlTowr, DirOut, FileOutBase = NULL,
 \item{LvlGasRefe}{character string indicating the NEON measurement horizontal and vertical location (HORVER) number as described in the NEON DP naming convention.}
 }
 \value{
-A NEON formatted HDF5 file that is output to /code{DirOut} with a readme and object description included.
+A NEON formatted HDF5 file that is output to \code{DirOut} with a readme and object description included.
 }
 \description{
 Definition function. Function creates the standard NEON HDF5 file structure for the ECTE data products.
@@ -52,7 +52,7 @@ def.hdf5.crte(Date = Date, Site = Site, LvlTowr = LvlTowr, DirOut = DirOut, File
 }
 \references{
 License: GNU AFFERO GENERAL PUBLIC LICENSE Version 3, 19 November 2007. \cr
-NEON Algorithm Theoretical Basis Document:Eddy Covariance Turbulent Exchange Subsystem Level 0 to Level 0’ data product conversions and calculations (NEON.DOC.000807)
+NEON Algorithm Theoretical Basis Document:Eddy Covariance Turbulent Exchange Subsystem Level 0 to Level 0' data product conversions and calculations (NEON.DOC.000807)
 }
 \seealso{
 Currently none

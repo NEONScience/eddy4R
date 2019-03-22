@@ -1,8 +1,9 @@
 ##############################################################################################
 #' @title Definition function: Wind direction mean and variance calculation using vector averaging
-#' 
+#'
+#'  
 #' @author
-#' David Durden \email{ddurden@battelleecology.org} 
+#' David Durden \email{ddurden@@battelleecology.org} 
 
 #' @description Function defintion. Calculate the mean and variance of the wind direction.
 #' 
@@ -15,7 +16,7 @@
 
 #' @references
 #' License: GNU AFFERO GENERAL PUBLIC LICENSE Version 3, 19 November 2007. \cr
-#' Yamartino, R. J. (1984) A Comparison of Several “Single-Pass” Estimators of the Standard Deviation of Wind Direction. Journal of Applied Meteorology and Climatology, 23, 1362-1366.
+#' Yamartino, R. J. (1984) A Comparison of Several "Single-Pass" Estimators of the Standard Deviation of Wind Direction. Journal of Applied Meteorology and Climatology, 23, 1362-1366.
 
 
 #' @keywords wind direction, sonic anemometer, vector averaging
@@ -35,11 +36,10 @@
 
 ##############################################################################################
 
-
 def.dir.wind <- function(
   inp,
   MethVari = c("02StepRad", "DistAngMin", "Yama")[3]
-  ) {
+){
   
   
   # check whether data is numeric

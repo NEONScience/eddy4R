@@ -27,15 +27,21 @@
 #     original creation
 #   Natchaya P-Durden (2018-03-28)
 #     updated function header
+#   Natchaya P-Durden (2018-11-28)
+#     adding unit conversion for irgaTurb validation data
+#   Natchaya P-Durden (2018-11-29)
+#     update if else logic
+#   Natchaya P-Durden (2019-01-04)
+#     adding units for rtioMoleDryCo2Cor and rtioMoleDryCo2Raw
 ############################################################################################
 
 wrap.unit.conv.out.ec <- function(
   inpList,
-  MethType = c("Data","Ucrt","Qfqm")[1]
+  MethType = c("Data","Ucrt","Qfqm", "Vali")[1]
   ){
 
 #Putting MethType to lowercase always
-  MethType <- base::tolower(MethType)
+MethType <- base::tolower(MethType)
   
 rpt <- inpList 
 
@@ -57,6 +63,8 @@ outAttr$amrs <- base::list(
 
 outAttr$co2Turb <- base::list(
   "rtioMoleDryCo2"= c("mean" = "umolCo2 mol-1Dry", "min" = "umolCo2 mol-1Dry", "max" = "umolCo2 mol-1Dry", "vari" = "umolCo2 mol-1Dry", "numSamp" = "NA", "timeBgn" = "NA", "timeEnd" = "NA"), 
+  "rtioMoleDryCo2Cor"= c("mean" = "umolCo2 mol-1Dry", "min" = "umolCo2 mol-1Dry", "max" = "umolCo2 mol-1Dry", "vari" = "umolCo2 mol-1Dry", "numSamp" = "NA", "timeBgn" = "NA", "timeEnd" = "NA"),
+  "rtioMoleDryCo2Raw"= c("mean" = "umolCo2 mol-1Dry", "min" = "umolCo2 mol-1Dry", "max" = "umolCo2 mol-1Dry", "vari" = "umolCo2 mol-1Dry", "numSamp" = "NA", "timeBgn" = "NA", "timeEnd" = "NA"),
   "densMoleCo2"= c("mean" = "umolCo2 m-3", "min" = "umolCo2 m-3", "max" = "umolCo2 m-3", "vari" = "umolCo2 m-3", "numSamp" = "NA", "timeBgn" = "NA", "timeEnd" = "NA"), 
   "presAtm"= c("mean" = "kPa", "min" = "kPa", "max" = "kPa", "vari" = "kPa", "numSamp" = "NA", "timeBgn" = "NA", "timeEnd" = "NA"), 
   "presSum"= c("mean" = "kPa", "min" = "kPa", "max" = "kPa", "vari" = "kPa", "numSamp" = "NA", "timeBgn" = "NA", "timeEnd" = "NA"), 
@@ -72,8 +80,8 @@ outAttr$h2oTurb <- base::list(
   "frt00Samp"= c("mean" = "dm3 min-1", "min" = "dm3 min-1", "max" = "dm3 min-1", "vari" = "dm3 min-1", "numSamp" = "NA", "timeBgn" = "NA", "timeEnd" = "NA"), 
   "tempAve"= c("mean" = "C", "min" = "C", "max" = "C", "vari" = "C", "numSamp" = "NA", "timeBgn" = "NA", "timeEnd" = "NA"))
 }
-else if(MethType == "ucrt"){
-  
+
+if(MethType == "ucrt"){
   outAttr$soni <- base::list(
     "veloXaxsErth"= c("mean" = "m s-1", "vari" = "m s-1", "se" = "m s-1", "timeBgn" = "NA", "timeEnd" = "NA"), 
     "veloYaxsErth"= c("mean" = "m s-1", "vari" = "m s-1", "se" = "m s-1", "timeBgn" = "NA", "timeEnd" = "NA"), 
@@ -90,6 +98,8 @@ else if(MethType == "ucrt"){
   
   outAttr$co2Turb <- base::list(
     "rtioMoleDryCo2"= c("mean" = "umolCo2 mol-1Dry", "vari" = "umolCo2 mol-1Dry", "se" = "umolCo2 mol-1Dry", "timeBgn" = "NA", "timeEnd" = "NA"), 
+    "rtioMoleDryCo2Cor"= c("mean" = "umolCo2 mol-1Dry", "vari" = "umolCo2 mol-1Dry", "se" = "umolCo2 mol-1Dry", "timeBgn" = "NA", "timeEnd" = "NA"), 
+    "rtioMoleDryCo2Raw"= c("mean" = "umolCo2 mol-1Dry", "vari" = "umolCo2 mol-1Dry", "se" = "umolCo2 mol-1Dry", "timeBgn" = "NA", "timeEnd" = "NA"), 
     "densMoleCo2"= c("mean" = "umolCo2 m-3", "vari" = "umolCo2 m-3", "se" = "umolCo2 m-3", "timeBgn" = "NA", "timeEnd" = "NA"), 
     "presAtm"= c("mean" = "kPa", "vari" = "kPa", "se" = "kPa", "timeBgn" = "NA", "timeEnd" = "NA"), 
     "presSum"= c("mean" = "kPa", "vari" = "kPa", "se" = "kPa", "timeBgn" = "NA", "timeEnd" = "NA"), 
@@ -106,6 +116,12 @@ else if(MethType == "ucrt"){
     "tempAve"= c("mean" = "C", "vari" = "C", "se" = "C", "timeBgn" = "NA", "timeEnd" = "NA"))
 }
 
+if(MethType == "vali"){
+  outAttr$co2Turb <- base::list(
+    "rtioMoleDryCo2Vali"= c("mean" = "umolCo2 mol-1Dry", "min" = "umolCo2 mol-1Dry", "max" = "umolCo2 mol-1Dry", "vari" = "umolCo2 mol-1Dry", "numSamp" = "NA", "rtioMoleDryCo2Refe" = "umolCo2 mol-1Dry", "timeBgn" = "NA", "timeEnd" = "NA")) 
+}
+
+#assign output attributes
 outAttr$vari <- base::list(
   "veloXaxsErth"= "m2 s-2", 
   "veloYaxsErth"= "m2 s-2", 
@@ -118,6 +134,9 @@ outAttr$vari <- base::list(
   "angNedYaxs"= "deg2", 
   "angNedZaxs"= "deg2",
   "rtioMoleDryCo2"= "umol2Co2 mol-2Dry", 
+  "rtioMoleDryCo2Cor"= "umol2Co2 mol-2Dry",
+  "rtioMoleDryCo2Raw"= "umol2Co2 mol-2Dry",
+  "rtioMoleDryCo2Vali"= "umol2Co2 mol-2Dry", 
   "densMoleCo2"= "umol2Co2 m-6", 
   "presAtm"= "kPa2", 
   "presSum"= "kPa2", 
@@ -136,7 +155,10 @@ for(idxDp in base::names(rpt)){
   #idxDp <- names(rpt)[1] #for testing
   for(idxVar in base::names(rpt[[idxDp]])){
     #idxVar <- names(rpt[[idxDp]])[7] #for testing
-    baseAttr <- base::attributes(rpt[[idxDp]][[idxVar]])$unit
+    if (MethType != "vali"){
+    baseAttr <- base::attributes(rpt[[idxDp]][[idxVar]])$unit} else{
+      baseAttr <- base::attributes(rpt[[idxDp]][[idxVar]])$unit[1]
+    }
     
     if(MethType == "data"){
       wrkAttr[[idxDp]][[idxVar]] <- c("mean"= baseAttr, "min" = baseAttr, "max" = baseAttr, "vari" = baseAttr, "numSamp" = "NA", "timeBgn" = "NA", "timeEnd" = "NA")
@@ -144,12 +166,14 @@ for(idxDp in base::names(rpt)){
     #Only variables with conversion factors (i.e. multiplied differences should be converted using the unit conversion tool. Temp has an offset applied, this should not be performed for any variable with the mean removed, i.e. vari, se, etc.)
     if(base::grepl(pattern = "temp", x = idxVar)){wrkAttr[[idxDp]][[idxVar]]["vari"] <- "C"}
     }
-    else if(MethType == "ucrt"){
+    
+    if(MethType == "ucrt"){
       wrkAttr[[idxDp]][[idxVar]] <- c("mean"= baseAttr, "vari" = baseAttr, "se" = baseAttr, "timeBgn" = "NA", "timeEnd" = "NA")
 #Only variables with conversion factors (i.e. multiplied differences should be converted using the unit conversion tool. Temp has an offset applied, this should not be performed for any variable with the mean removed, i.e. vari, se, etc.)
       if(base::grepl(pattern = "temp", x = idxVar)){wrkAttr[[idxDp]][[idxVar]][wrkAttr[[idxDp]][[idxVar]] == baseAttr] <- "C"}
     }
-    else if(MethType == "qfqm"){
+    
+    if(MethType == "qfqm"){
       # Create qfqm list of units
       wrkAttr[[idxDp]][[idxVar]] <- base::rep_len(baseAttr, length.out = length(rpt[[idxDp]][[idxVar]]))
       # Add names to units vector
@@ -163,6 +187,15 @@ for(idxDp in base::names(rpt)){
       outAttr[[idxDp]][[idxVar]] <- wrkAttr[[idxDp]][[idxVar]]
       
     }
+    
+    if(MethType == "vali"){
+      #refeName <- names(outAttr[[idxDp]][[idxVar]][6])
+      nameAttr <- c("mean", "min", "max", "vari", "numSamp" , names(outAttr[[idxDp]][[idxVar]][6]), "timeBgn", "timeEnd" )
+      #wrkAttr[[idxDp]][[idxVar]] <- c("mean"= baseAttr, "min" = baseAttr, "max" = baseAttr, "vari" = baseAttr, "numSamp" = baseAttr,  refeName = baseAttr, "timeBgn" = "NA", "timeEnd" = "NA")
+      wrkAttr[[idxDp]][[idxVar]] <- c(baseAttr, baseAttr, baseAttr, baseAttr, baseAttr,  baseAttr, "NA", "NA")
+      names(wrkAttr[[idxDp]][[idxVar]]) <- nameAttr
+    }
+    
     #To apply unit conversion to variance, we need to take sqrt first
     base::try(rpt[[idxDp]][[idxVar]]$vari <- base::sqrt(rpt[[idxDp]][[idxVar]]$vari), silent = TRUE)
     base::attributes(rpt[[idxDp]][[idxVar]])$unit <- wrkAttr[[idxDp]][[idxVar]]

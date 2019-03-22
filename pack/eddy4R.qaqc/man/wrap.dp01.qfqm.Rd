@@ -8,8 +8,9 @@ wrap.dp01.qfqm(data, time = base::as.POSIXlt(base::seq.POSIXt(from =
   base::Sys.time(), by = "sec", length.out = base::length(data[, 1]))),
   setQf = base::vector("list", base::length(data)),
   qf = base::vector("list", base::length(data)), WndwAgr = 1800 *
-  stats::median(base::abs(base::diff(time)), na.rm = TRUE), TimeBgn = NULL,
-  TimeEnd = NULL, NameQfExcl = base::as.list(base::character(length =
+  stats::median(base::abs(base::diff(time)), na.rm = TRUE),
+  TimeBgn = NULL, TimeEnd = NULL,
+  NameQfExcl = base::as.list(base::character(length =
   base::length(data))))
 }
 \arguments{

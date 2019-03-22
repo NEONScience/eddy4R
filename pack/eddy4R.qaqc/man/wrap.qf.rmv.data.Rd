@@ -4,10 +4,15 @@
 \alias{wrap.qf.rmv.data}
 \title{Wrapper function: to remove high frequency data points that have failed quality flags}
 \usage{
-wrap.qf.rmv.data(inpList, Vrbs = FALSE, MethMeas = c("ecte", "ecse")[1])
+wrap.qf.rmv.data(inpList, Sens = NULL, qfRmv = NULL, Vrbs = FALSE,
+  MethMeas = c("ecte", "ecse")[1])
 }
 \arguments{
 \item{inpList}{List consisting of \code{ff::ffdf} file-backed objects, in the format provided by function \code{eddy4R.base::wrap.hdf5.read()}. Of types numeric and integer.}
+
+\item{Sens}{Character string indicating which sensor will remove high frequency data points that have failed quality flags. Defaults to NULL.}
+
+\item{qfRmv}{Character string indicating which quality flag will exclude in the processing. Defaults to NULL.}
 
 \item{Vrbs}{Optional. A logical {FALSE/TRUE} value indicating whether to:\cr
 \code{Vrbs = FALSE}: (Default) cleaned data set with the bad high frequency quality flagged data replaced with NaN's as part of the \code{inpList} in the same format., or \cr
@@ -26,7 +31,7 @@ Currently none
 }
 \references{
 License: GNU AFFERO GENERAL PUBLIC LICENSE Version 3, 19 November 2007. \cr
-NEON Algorithm Theoretical Basis Document:Eddy Covariance Turbulent Exchange Subsystem Level 0 to Level 0’ data product conversions and calculations (NEON.DOC.000807) \cr
+NEON Algorithm Theoretical Basis Document:Eddy Covariance Turbulent Exchange Subsystem Level 0 to Level 0' data product conversions and calculations (NEON.DOC.000807) \cr
 Licor LI7200 reference manual
 }
 \seealso{

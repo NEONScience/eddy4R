@@ -4,11 +4,11 @@
 \alias{def.dspk.wndw}
 \title{Definition function: Determine spike locations using window-based statistics}
 \usage{
-def.dspk.wndw(data, Trt = list(AlgClas = c("mean", "median")[2], NumPtsWndw =
-  c(11, 101)[2], NumPtsSlid = 1, ThshStd = c(3.5, 20)[2], NaFracMax = 0.1, Infl
-  = 0, IterMax = Inf, NumPtsGrp = c(4, 10)[2], NaTrt = c("approx", "omit")[2]),
-  Cntl = list(NaOmit = c(TRUE, FALSE)[2], Prnt = c(TRUE, FALSE)[1], Plot =
-  c(TRUE, FALSE)[1]), Vrbs = FALSE)
+def.dspk.wndw(data, Trt = list(AlgClas = c("mean", "median")[2],
+  NumPtsWndw = c(11, 101)[2], NumPtsSlid = 1, ThshStd = c(3.5, 20)[2],
+  NaFracMax = 0.1, Infl = 0, IterMax = Inf, NumPtsGrp = c(4, 10)[2], NaTrt
+  = c("approx", "omit")[2]), Cntl = list(NaOmit = c(TRUE, FALSE)[2], Prnt
+  = c(TRUE, FALSE)[1], Plot = c(TRUE, FALSE)[1]), Vrbs = FALSE)
 }
 \arguments{
 \item{data}{Required input. A data frame or matrix containing the data to be evaluated.}

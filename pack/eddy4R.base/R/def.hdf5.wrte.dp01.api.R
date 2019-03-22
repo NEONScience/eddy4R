@@ -329,7 +329,7 @@ if(!is.null(attributes(rpt$qfqm[[names(LvlMeasOut[idx])]])$unit) == TRUE){
 } #End of for loop around measurement levels
 
 #Close all the HDF5 connections
-H5close()
+h5closeAll()
 
 return(rpt)
 

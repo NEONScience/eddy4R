@@ -2,7 +2,7 @@
 #' @title Definition function: Copy metadata from HDF5 input file to another HDF5 output file
 
 #' @author 
-#' David Durden \email{ddurden@battelleecology.org}
+#' David Durden \email{ddurden@@battelleecology.org}
 
 #' @description 
 #' Definition function. Function recreates the metadata from an HDF5 file to another HDF5 file with the same group heirarchy structure.
@@ -15,7 +15,7 @@
 
 #' @references
 #' License: GNU AFFERO GENERAL PUBLIC LICENSE Version 3, 19 November 2007. \cr
-#' NEON Algorithm Theoretical Basis Document:Eddy Covariance Turbulent Exchange Subsystem Level 0 to Level 0’ data product conversions and calculations (NEON.DOC.000823) \cr
+#' NEON Algorithm Theoretical Basis Document:Eddy Covariance Turbulent Exchange Subsystem Level 0 to Level 0' data product conversions and calculations (NEON.DOC.000823) \cr
 #' NEON Algorithm Theoretical Basis Document:Eddy Covariance Turbulent Exchange Subsystem Level 1 data product calculations (NEON.DOC.000807)
 
 #' @keywords NEON, HDF5, eddy-covariance, ECTE
@@ -88,5 +88,5 @@ lapply(names(listAttr), function(x){
    rhdf5::h5writeAttribute(attr = listAttr[[x]][[y]], h5obj = idData, name = y)})
 })
 
-H5close()
+h5closeAll()
 }

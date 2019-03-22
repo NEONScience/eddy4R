@@ -50,12 +50,16 @@
 #    applied eddy4R term name convention; replaced fid by idFile
 #   Ke Xu (2018-04-19)
 #     applied term name convention; replaced FileIn by FileInp
-#    Natchaya P-Durden (2018-05-11)
+#   Natchaya P-Durden (2018-05-11)
 #     rename function from def.hdf5.dp01.pack() to def.hdf5.pack.dp01()
-#    Natchaya P-Durden (2018-05-22)
+#   Natchaya P-Durden (2018-05-22)
 #     rename function from def.para.hdf5.dp01() to def.hdf5.copy.para()
 #   David Durden (2018-12-09)
 #     changing to use a the updated def.hdf5.pack() function
+#   Natchaya P-Durden (2018-11-28)
+#     adding irgaTurb validation data
+#   Natchaya P-Durden (2019-01-29)
+#     deleted dp04 of fluxCor and fluxRaw out when writing the basic file
 ##############################################################################################
 
 
@@ -79,13 +83,16 @@ MethExpd <- grepl(pattern = "expanded", x = FileOut)
 
 #Initializing output list
 outList <- list()
-
+rpt <- list()
 
 #Packaging 30-min dp01 data output for writing to HDF5 file
 outList$data <- sapply(names(inpList$data), function(x) eddy4R.base::def.hdf5.pack(inpList = inpList$data, time = inpList$time, Dp = x))
 
 #Unit conversion for dp01 30 min data
 outList$data <- eddy4R.base::wrap.unit.conv.out.ec(inpList = outList$data, MethType = "data") 
+
+#Adding time to output dataframe
+rpt <- lapply(rpt, cbind, timeBgn = time[[Dp01]]$timeBgn, timeEnd = time[[Dp01]]$timeEnd, stringsAsFactors = FALSE)
 
 #Packaging 30-min dp01 qfqm output for writing to HDF5 file
 outList$qfqm <- sapply(names(inpList$qfqm), function(x) eddy4R.base::def.hdf5.pack(inpList = inpList$qfqm, time = inpList$time, Dp = x))
@@ -107,6 +114,21 @@ if(MethSubAgr == TRUE){
 
   #Unit conversion for dp01 sub-aggregated data
   outList$dp01AgrSub$data <- eddy4R.base::wrap.unit.conv.out.ec(inpList = outList$dp01AgrSub$data, MethType = "data") 
+  
+  #adding irgaTurb validation data
+  outList$vali$data$co2Turb <- inpList$vali$data$co2Turb
+  
+  #If values come in as Posix, they must first be converted to characters
+  for (idxTime in c("timeBgn", "timeEnd")){
+    if(!is.character(outList$vali$data$co2Turb$rtioMoleDryCo2Vali[[idxTime]])){
+      outList$vali$data$co2Turb$rtioMoleDryCo2Vali[[idxTime]] <- strftime(outList$vali$data$co2Turb$rtioMoleDryCo2Vali[[idxTime]], format="%Y-%m-%dT%H:%M:%OSZ", tz="UTC")} 
+  }
+  
+  #Unit conversion for dp01 sub-aggregated irgaTurb validation data
+  outList$vali$data <- eddy4R.base::wrap.unit.conv.out.ec(inpList = outList$vali$data, MethType = "vali") 
+  
+  #adding validation data to dp01AgrSub
+  outList$dp01AgrSub$data$co2Turb$rtioMoleDryCo2Vali <- outList$vali$data$co2Turb$rtioMoleDryCo2Vali
   
   #Packaging sub-aggregated (e.g.1-min) dp01 qfqm for writing to HDF5 file
   outList$dp01AgrSub$qfqm <- sapply(names(inpList$dp01AgrSub$qfqm), function(x) eddy4R.base::def.hdf5.pack(inpList = inpList$dp01AgrSub$qfqm, time = inpList$dp01AgrSub$time, Dp = x))
@@ -170,6 +192,11 @@ if(MethDp04 == TRUE){
       }
       
     } else {
+    #output only flux for fluxCo2 in basic file
+      if (idxDp04 == c("fluxCo2") & MethExpd == FALSE){
+        inpList$dp04$data[[idxDp04]]$turb$fluxCor <- NULL
+        inpList$dp04$data[[idxDp04]]$turb$fluxRaw <- NULL
+      }
     #Adding time to output dataframe
     rptDp04 <-  cbind(timeBgn = outList$data$soni$veloXaxsErth$timeBgn, timeEnd = outList$data$soni$veloXaxsErth$timeEnd, inpList$dp04$data[[idxDp04]]$turb, stringsAsFactors = FALSE)
   
@@ -189,7 +216,7 @@ if(MethDp04 == TRUE){
   rhdf5::h5writeAttribute(attributes(rptDp04)$unit, h5obj = idDataDp04Df, name = "unit")
     }                                
   } 
-  rhdf5::H5close()                                           
+  rhdf5::h5closeAll()                                           
 }
 
 ######################################################################

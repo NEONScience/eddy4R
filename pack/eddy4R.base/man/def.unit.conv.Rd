@@ -5,8 +5,8 @@
 \title{Definition function: Unit conversion}
 \usage{
 def.unit.conv(data, unitFrom = "arb", unitTo = "arb",
-  coefPoly = base::lapply(base::as.data.frame(data), function(x) c(0, 1)),
-  vrbs = FALSE, MethGc = TRUE)
+  coefPoly = base::lapply(base::as.data.frame(data), function(x) c(0,
+  1)), vrbs = FALSE, MethGc = TRUE)
 }
 \arguments{
 \item{data}{Required. A named data frame of type numeric, containing the data to be converted. 

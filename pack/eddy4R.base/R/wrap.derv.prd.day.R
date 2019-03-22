@@ -37,6 +37,12 @@
 #     removing high frequency data that have failed high frequency quality flags
 #   David Durden (2017-12-12)
 #     updating naming conventions
+#   Natchaya P-Durden (2018-11-09)
+#     adding logic to determine qf for each validation gas
+#   Natchaya P-Durden (2018-11-19)
+#     adding command to save irgaTurb data before removing the bad quality data   
+#   Natchaya P-Durden (2019-03-12)
+#     applying the function to remove bad quality data (excluded qfCal and qfRng) to validation data
 ##############################################################################################
     
     
@@ -75,14 +81,24 @@ wrap.derv.prd.day <- function(
   #Run the test to determine the irgaTurbAgc flag
   inpList$qfqm$irgaTurb$qfIrgaTurbAgc <- ff::as.ff(eddy4R.qaqc::def.qf.irga.agc(qfIrgaAgc = inpList$qfqm$irga$qfIrgaTurbAgc))
   
+  #Applying the bad quality flags (excluded qfCal and qfRng) to the irgaTurb
+  #These data will use later for validation processing
+  vali <- eddy4R.qaqc::wrap.qf.rmv.data(inpList = inpList, Vrbs = FALSE, Sens = "irgaTurb", qfRmv = c("qfCal", "qfRng"))
+  inpList$vali$irgaTurb <- vali$data$irgaTurb
+  #remove vali
+  rm(vali)
+  
   #Applying the bad quality flags to the reported output data
-  inpList <- eddy4R.qaqc::wrap.qf.rmv.data(inpList = inpList, Vrbs = FALSE)
+  inpList <- eddy4R.qaqc::wrap.qf.rmv.data(inpList = inpList, Vrbs = FALSE, Sens = NULL, qfRmv = "qfCal")
   
   #Run the test to output Validation flag
   inpList$qfqm$irgaTurb$qfIrgaTurbVali <- ff::as.ff(eddy4R.qaqc::def.qf.irga.vali(data = inpList$data$mfcSampTurb))#Use this one for MFC set point
   
-  #  inpList$qfqm$irgaTurb$qfIrgaTurbVali <- eddy4R.qaqc::def.qf.irga.vali(data = inpList$data$valvValiNemaTurb, Sens = "valvValiNemaTurb")
-  
+  inpList$qfqm$irgaTurb$qfIrgaTurbValiGas01 <- ff::as.ff(eddy4R.qaqc::def.qf.irga.vali(data = inpList$data$valvValiNemaTurb, Sens = "valvValiNemaTurb", qfGas = "qfGas01"))
+  inpList$qfqm$irgaTurb$qfIrgaTurbValiGas02 <- ff::as.ff(eddy4R.qaqc::def.qf.irga.vali(data = inpList$data$valvValiNemaTurb, Sens = "valvValiNemaTurb", qfGas = "qfGas02"))
+  inpList$qfqm$irgaTurb$qfIrgaTurbValiGas03 <- ff::as.ff(eddy4R.qaqc::def.qf.irga.vali(data = inpList$data$valvValiNemaTurb, Sens = "valvValiNemaTurb", qfGas = "qfGas03"))
+  inpList$qfqm$irgaTurb$qfIrgaTurbValiGas04 <- ff::as.ff(eddy4R.qaqc::def.qf.irga.vali(data = inpList$data$valvValiNemaTurb, Sens = "valvValiNemaTurb", qfGas = "qfGas04"))
+  inpList$qfqm$irgaTurb$qfIrgaTurbValiGas05 <- ff::as.ff(eddy4R.qaqc::def.qf.irga.vali(data = inpList$data$valvValiNemaTurb, Sens = "valvValiNemaTurb", qfGas = "qfGas05"))
   ###############################################################     
 
 #irga
