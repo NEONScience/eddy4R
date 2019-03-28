@@ -66,6 +66,8 @@
 #     apply ff object to dataframe to save the memory
 #   Natchaya P-Durden (2019-03-15)
 #     clean up workflow and updated def.irga.vali.cor()
+#   Natchaya P-Durden (2019-03-27)
+#     changing the logic to determine the critical time when 2 validation occurred within one day
 ##############################################################################################
 
 wrap.irga.vali <- function(
@@ -324,13 +326,13 @@ wrap.irga.vali <- function(
       locGas <- which(rpt[[idxDate]]$rtioMoleDryCo2Vali$gasType == "qfIrgaTurbValiGas02")
       #defined the critical time by adding 30 min after the end of running zero gas
       timeCrit00 <- as.POSIXlt(rpt[[idxDate]]$rtioMoleDryCo2Vali$timeEnd[locGas[1]] + 30*60,format="%Y-%m-%d %H:%M:%OS", tz="UTC") 
-      timeCrit01 <- as.POSIXlt(rpt[[idxDate]]$rtioMoleDryCo2Vali$timeEnd[locGas[2]] + 30*60,format="%Y-%m-%d %H:%M:%OS", tz="UTC")
+      #timeCrit01 <- as.POSIXlt(rpt[[idxDate]]$rtioMoleDryCo2Vali$timeEnd[locGas[2]] + 30*60,format="%Y-%m-%d %H:%M:%OS", tz="UTC")
       #get rid of archive gas
       valiData[[idxDate]]$data00 <- rpt[[idxDate]]$rtioMoleDryCo2Vali[-which(rpt[[idxDate]]$rtioMoleDryCo2Vali$gasType == "qfIrgaTurbValiGas01"),]
       valiData[[idxDate]]$data01 <- rpt[[idxDate]]$rtioMoleDryCo2Vali[-which(rpt[[idxDate]]$rtioMoleDryCo2Vali$gasType == "qfIrgaTurbValiGas01"),]
       #select data within timeCrit
       valiData[[idxDate]]$data00 <- valiData[[idxDate]]$data00[which(valiData[[idxDate]]$data00$timeEnd < timeCrit00),]
-      valiData[[idxDate]]$data01 <- valiData[[idxDate]]$data01[which(valiData[[idxDate]]$data01$timeEnd < timeCrit01),]
+      valiData[[idxDate]]$data01 <- valiData[[idxDate]]$data01[which(valiData[[idxDate]]$data01$timeEnd > timeCrit00),]
     }; rm (locGas, timeCrit00, timeCrit01)
     
     subVali <- list()
