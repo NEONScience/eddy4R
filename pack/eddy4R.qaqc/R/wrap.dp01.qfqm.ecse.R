@@ -11,6 +11,7 @@
 #' c("co2Stor", "h2oStor", "tempAirLvl", "tempAirTop", "isoCo2", "isoH2o"). Defaults to "co2Stor". [-] 
 #' @param lvl  Measurement level of dp01 which descriptive statistics are being calculated. Of type character. [-]
 #' @param lvlMfcSampStor Measurement level of mfcSampStor which apply to only  dp01 equal to "co2Stor" or "h2oStor". Defaults to NULL. Of type character. [-]
+#' @param lvlMfcValiStor Measurement level of mfcValiStor which apply to only  dp01 equal to "co2Stor", "h2oStor", or "isoCo2. Defaults to NULL. Of type character. [-]
 #' @param lvlEnvHut Measurement level of envHut. Defaults to NULL. Of type character. [-]
 #' @param lvlValv Measurement level of irgaValvLvl, crdCo2ValvLvl, or crdH2oValvLvl. Defaults to NULL. Of type character. [-]
 #' @param lvlValvAux Location of valvAux which apply to only  dp01 equal to "co2Stor" or "h2oStor". Defaults to NULL. Of type character. [-]
@@ -63,11 +64,14 @@
 #     bugs fixed to report qfValiH2o when no h2oRefe data
 #   Natchaya P-Durden (2019-01-31)
 #     using injNum instate of qfRngTmp to determine missing data
+#   Natchaya p-Durden (2019-04-09)
+#     adding lvlMfcValiStor into input parameter
 ##############################################################################################
 wrap.dp01.qfqm.ecse <- function(
   dp01 = c("co2Stor", "h2oStor", "tempAirLvl", "tempAirTop", "isoCo2", "isoH2o")[1],
   lvl,
   lvlMfcSampStor = NULL,
+  lvlMfcValiStor = NULL,
   lvlEnvHut = NULL,
   lvlValv = NULL,
   lvlValvAux = NULL,
@@ -361,6 +365,7 @@ wrap.dp01.qfqm.ecse <- function(
       wrk$qfqm$mfcSampStor <- qfInp$mfcSampStor[[lvlMfcSampStor]]
       wrk$qfqm$envHut <- qfInp$envHut[[lvlEnvHut]]
       wrk$qfqm$valvAux <- qfInp$valvAux[[lvlValvAux]]
+      wrk$qfqm$mfcValiStor <- qfInp$mfcValiStor[[lvlMfcValiStor]]
       
       if (PrdMeas == PrdAgr) {
         #PrdAgr <- 2
@@ -473,6 +478,7 @@ wrap.dp01.qfqm.ecse <- function(
           wrk$qfqm$mfcSampStor[-whrSamp, 1:length(wrk$qfqm$mfcSampStor)] <- NaN
           wrk$qfqm$envHut[-whrSamp, 1:length(wrk$qfqm$envHut)] <- NaN
           wrk$qfqm$valvAux[-whrSamp, 1:length(wrk$qfqm$valvAux)] <- NaN
+          wrk$qfqm$mfcValiStor[-whrSamp, 1:length(wrk$qfqm$mfcValiStor)] <- NaN
         } #else {#end of if no measurement data at all in the whole day
         #   wrk$data$frt00 <- NaN #assign NaN to frt00 data
         # }
@@ -792,6 +798,7 @@ wrap.dp01.qfqm.ecse <- function(
       wrk$qfqm <- list()
       wrk$qfqm$crdCo2 <- qfInp$crdCo2[[lvl]]
       wrk$qfqm$envHut <- qfInp$envHut[[lvlEnvHut]]
+      wrk$qfqm$mfcValiStor <- qfInp$mfcValiStor[[lvlMfcValiStor]]
       
       if (PrdMeas == PrdAgr) {
         #PrdAgr <- 9
