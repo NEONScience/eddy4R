@@ -5,15 +5,17 @@
 \title{Wrapper function:  Preprocessing and calculating quality metrics, alpha and beta quality metrics, and final quality flag for the NEON eddy-covariance stroage exchange L1 data products}
 \usage{
 wrap.dp01.qfqm.ecse(dp01 = c("co2Stor", "h2oStor", "tempAirLvl",
-  "tempAirTop", "isoCo2", "isoH2o")[1], lvl, lvlMfcSampStor = NULL,
-  lvlMfcValiStor = NULL, lvlEnvHut = NULL, lvlValv = NULL,
-  lvlValvAux = NULL, lvlCrdH2oValvVali = NULL, data = list(),
-  qfInp = list(), TypeMeas = c("samp", "vali")[1], PrdMeas, PrdAgr,
-  idxTime = list())
+  "tempAirTop", "isoCo2", "isoH2o")[1], RptExpd = FALSE, lvl,
+  lvlMfcSampStor = NULL, lvlMfcValiStor = NULL, lvlEnvHut = NULL,
+  lvlValv = NULL, lvlValvAux = NULL, lvlCrdH2oValvVali = NULL,
+  data = list(), qfInp = list(), TypeMeas = c("samp", "vali")[1],
+  PrdMeas, PrdAgr, idxTime = list())
 }
 \arguments{
 \item{dp01}{A vector of class "character" containing the name of NEON ECSE dp01 which descriptive statistics are being calculated, \cr
 c("co2Stor", "h2oStor", "tempAirLvl", "tempAirTop", "isoCo2", "isoH2o"). Defaults to "co2Stor". [-]}
+
+\item{RptExpd}{A logical parameter that determines if the full quality metric \code{qm} is output in the returned list (defaults to FALSE).}
 
 \item{lvl}{Measurement level of dp01 which descriptive statistics are being calculated. Of type character. [-]}
 
