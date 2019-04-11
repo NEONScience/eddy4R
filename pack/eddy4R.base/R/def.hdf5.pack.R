@@ -141,10 +141,7 @@ if(MethMeas %in% "ecse"){
         
         # assign names to data.frames      
         names(tmp01[[idxDp]][[idxLvLReso]]) <- names(inpList[[idxDp]][[idxLvLReso]][[1]])
-        # #copy tmp00 to tmp01
-        # if(!is.null(tmp00[[idxDp]])) {
-        #   tmp01[[idxDp]][[idxLvLReso]]$qm <- tmp00[[idxDp]][[idxLvLReso]]$qm
-        # }
+        
       }
       
     }
@@ -211,11 +208,17 @@ if(MethMeas %in% "ecse"){
           rpt[[idxDp]][[idxLvLReso]][[idxVar]]$timeBgn <- format(as.POSIXct(tmpBgn, format= "%Y-%m-%d %H:%M:%OS"), "%Y-%m-%dT%H:%M:%OSZ")
           rpt[[idxDp]][[idxLvLReso]][[idxVar]]$timeEnd <- format(as.POSIXct(tmpEnd, format= "%Y-%m-%d %H:%M:%OS"), "%Y-%m-%dT%H:%M:%OSZ")
           
+          #copy tmp00 to rpt
+          if(!is.null(tmp00[[idxDp]])) {
+            rpt[[idxDp]][[idxLvLReso]][[idxVar]]$qm <- tmp00[[idxDp]][[idxLvLReso]]$qm[[idxVar]]
+          }
         }; rm(idxVar)
         
       }; rm(idxLvLReso)
       
     }; rm(idxDp)
+    
+    #adding quality metric (qm) into rpt
     
     #rpt <- rpt 
     
