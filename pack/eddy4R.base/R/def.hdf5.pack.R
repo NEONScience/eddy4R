@@ -37,6 +37,8 @@
 #     rename function from def.hdf5.dp.pack() to def.hdf5.pack()
 #   David Durden (2018-12-09)
 #     Adding mechanism to deal with quality metrics to be output for Expanded files
+#   Natchaya P-Durden (2019-04-11)
+#     Adding mechanism to deal with quality metrics to be output for Expanded files for ecse
 ##############################################################################################
 
 def.hdf5.pack <- function(
@@ -208,19 +210,19 @@ if(MethMeas %in% "ecse"){
           rpt[[idxDp]][[idxLvLReso]][[idxVar]]$timeBgn <- format(as.POSIXct(tmpBgn, format= "%Y-%m-%d %H:%M:%OS"), "%Y-%m-%dT%H:%M:%OSZ")
           rpt[[idxDp]][[idxLvLReso]][[idxVar]]$timeEnd <- format(as.POSIXct(tmpEnd, format= "%Y-%m-%d %H:%M:%OS"), "%Y-%m-%dT%H:%M:%OSZ")
           
-          #copy tmp00 to rpt
-          if(!is.null(tmp00[[idxDp]])) {
-            rpt[[idxDp]][[idxLvLReso]][[idxVar]]$qm <- tmp00[[idxDp]][[idxLvLReso]]$qm[[idxVar]]
-          }
+          # #adding quality metric (qm) into rpt; copy tmp00 to rpt
+          # if(!is.null(tmp00[[idxDp]])) {
+          #   rpt[[idxDp]][[idxLvLReso]][[idxVar]]$qm <- tmp00[[idxDp]][[idxLvLReso]]$qm[[idxVar]]
+          # }
+          
+          #covert list to dataframe
+          rpt[[idxDp]][[idxLvLReso]][[idxVar]] <- base::data.frame(rpt[[idxDp]][[idxLvLReso]][[idxVar]])
         }; rm(idxVar)
         
       }; rm(idxLvLReso)
       
     }; rm(idxDp)
     
-    #adding quality metric (qm) into rpt
-    
-    #rpt <- rpt 
     
   }#end of Dp01 and Dp02 #################################################################
 
