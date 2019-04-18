@@ -191,7 +191,7 @@ wrap.dp01.qfqm.ecse <- function(
               qfInp = wrk$inpMask$qfqm, 
               MethMeas = "ecse",
               TypeMeas = "samp",
-              RptExpd = RptExpd,
+              RptExpd = FALSE,
               dp01 = dp01
             )
             
@@ -398,7 +398,7 @@ wrap.dp01.qfqm.ecse <- function(
               qfInp = wrk$inpMask$qfqm, 
               MethMeas = "ecse",
               TypeMeas = "vali",
-              RptExpd = RptExpd,
+              RptExpd = FALSE,
               dp01 = dp01
             )
             
@@ -654,7 +654,7 @@ wrap.dp01.qfqm.ecse <- function(
               qfInp = wrk$inpMask$qfqm, 
               MethMeas = "ecse",
               TypeMeas = "samp",
-              RptExpd = RptExpd,
+              RptExpd = FALSE,
               dp01 = dp01,
               idGas = wrk$inpMask$data$idGas
             )
@@ -834,7 +834,7 @@ wrap.dp01.qfqm.ecse <- function(
               qfInp = wrk$inpMask$qfqm, 
               MethMeas = "ecse",
               TypeMeas = "vali",
-              RptExpd = RptExpd,
+              RptExpd = FALSE,
               dp01 = dp01,
               idGas = wrk$inpMask$data$idGas
             )
@@ -1025,7 +1025,7 @@ wrap.dp01.qfqm.ecse <- function(
               qfInp = wrk$inpMask$qfqm, 
               MethMeas = "ecse",
               TypeMeas = "samp",
-              RptExpd = RptExpd,
+              RptExpd = FALSE,
               dp01 = dp01
             )
             
@@ -1232,7 +1232,7 @@ wrap.dp01.qfqm.ecse <- function(
               qfInp = wrk$inpMask$qfqm, 
               MethMeas = "ecse",
               TypeMeas = "vali",
-              RptExpd = RptExpd,
+              RptExpd = FALSE,
               dp01 = dp01
             )
             
