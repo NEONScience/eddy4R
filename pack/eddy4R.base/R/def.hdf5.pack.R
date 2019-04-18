@@ -210,13 +210,13 @@ if(MethMeas %in% "ecse"){
           rpt[[idxDp]][[idxLvLReso]][[idxVar]]$timeBgn <- format(as.POSIXct(tmpBgn, format= "%Y-%m-%d %H:%M:%OS"), "%Y-%m-%dT%H:%M:%OSZ")
           rpt[[idxDp]][[idxLvLReso]][[idxVar]]$timeEnd <- format(as.POSIXct(tmpEnd, format= "%Y-%m-%d %H:%M:%OS"), "%Y-%m-%dT%H:%M:%OSZ")
           
-          # #adding quality metric (qm) into rpt; copy tmp00 to rpt
-          # if(!is.null(tmp00[[idxDp]])) {
-          #   rpt[[idxDp]][[idxLvLReso]][[idxVar]]$qm <- tmp00[[idxDp]][[idxLvLReso]]$qm[[idxVar]]
-          # }
-          
           #covert list to dataframe
           rpt[[idxDp]][[idxLvLReso]][[idxVar]] <- base::data.frame(rpt[[idxDp]][[idxLvLReso]][[idxVar]])
+          
+          #adding quality metric (qm) into rpt; copy tmp00 to rpt
+          if(!is.null(tmp00[[idxDp]])) {
+            rpt[[idxDp]][[idxLvLReso]][[idxVar]] <- cbind(tmp00[[idxDp]][[idxLvLReso]]$qm[[idxVar]], rpt[[idxDp]][[idxLvLReso]][[idxVar]])
+          }
         }; rm(idxVar)
         
       }; rm(idxLvLReso)
