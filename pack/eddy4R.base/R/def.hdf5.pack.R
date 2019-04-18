@@ -183,13 +183,13 @@ if(MethMeas %in% "ecse"){
     
     #adjust timeBgn and timeEnd
     for(idxDp in names(rpt)) {
-      # idxDp <- names(tmp)[2]
+      # idxDp <- names(rpt)[1]
       
       for (idxLvLReso in names(rpt[[idxDp]])){
-        #idxLvLReso <- names(tmp[[idxDp]])[1] 
+        #idxLvLReso <- names(rpt[[idxDp]])[1] 
         
         for(idxVar in names(rpt[[idxDp]][[idxLvLReso]])) {
-          #idxVar <- names(rpt[[idxDp]][[idxLvLReso]])
+          #idxVar <- names(rpt[[idxDp]][[idxLvLReso]])[1]
           
           for(idxAgr in c(1:length(rpt[[idxDp]][[idxLvLReso]][[idxVar]][[1]]))){
             
@@ -214,7 +214,7 @@ if(MethMeas %in% "ecse"){
           rpt[[idxDp]][[idxLvLReso]][[idxVar]] <- base::data.frame(rpt[[idxDp]][[idxLvLReso]][[idxVar]])
           
           #adding quality metric (qm) into rpt; copy tmp00 to rpt
-          if(!is.null(tmp00[[idxDp]])) {
+          if(length(tmp00[[idxDp]][[idxLvLReso]]) != 0) {
             rpt[[idxDp]][[idxLvLReso]][[idxVar]] <- cbind(tmp00[[idxDp]][[idxLvLReso]]$qm[[idxVar]], rpt[[idxDp]][[idxLvLReso]][[idxVar]])
           }
         }; rm(idxVar)
