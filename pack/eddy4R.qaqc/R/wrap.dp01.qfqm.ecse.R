@@ -918,6 +918,7 @@ wrap.dp01.qfqm.ecse <- function(
           wrk$data[-whrSamp, ] <- NaN
           wrk$qfqm$crdCo2[-whrSamp, 1:length(wrk$qfqm$crdCo2)] <- NaN
           wrk$qfqm$envHut[-whrSamp, 1:length(wrk$qfqm$envHut)] <- NaN
+          wrk$qfqm$mfcValiStor[-whrSamp, 1:length(wrk$qfqm$mfcValiStor)] <- NaN
         } 
         
         for(idxAgr in c(1:length(idxTime[[paste0(PrdAgr, "min")]]$Bgn))) {
