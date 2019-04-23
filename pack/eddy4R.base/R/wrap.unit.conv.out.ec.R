@@ -40,7 +40,7 @@
 
 wrap.unit.conv.out.ec <- function(
   inpList,
-  MethMeas = c("ecte", "ecse")[1]
+  MethMeas = c("ecte", "ecse")[1],
   MethType = c("Data","Ucrt","Qfqm", "Vali")[1]
   ){
 
@@ -220,6 +220,30 @@ for(idxDp in base::names(rpt)){
 
 #unit conversion for ecse#################################################################################
 if(MethMeas == "ecse"){
+  #unit for vari
+  outAttr$vari <- c("frt00" = "dm6 min-2",
+                    "pres" = "kPa2", 
+                    "presEnvHut" = "kPa2", 
+                    "rhEnvHut" = "%", 
+                    "rtioMoleDryCo2" = "umol2Co2 mol-2", 
+                    "rtioMoleWetCo2" = "umol2Co2 mol-2", 
+                    "rtioMoleDryCo2Refe" = "umol2Co2 mol-2", 
+                    "temp" = "C2", 
+                    "tempEnvHut" = "C2", 
+                    "rtioMoleDryH2o" = "mmol2H2o mol-2", 
+                    "rtioMoleWetH2o" = "mmol2H2o mol-2", 
+                    "rtioMoleWetH2oEnvHut" = "mmol2H2o mol-2", 
+                    "rtioMoleWet12CCo2"  = "umol2Co2 mol-2", 
+                    "rtioMoleDry12CCo2" = "umol2Co2 mol-2", 
+                    "rtioMoleWet13CCo2" = "umol2Co2 mol-2", 
+                    "rtioMoleDry13CCo2" = "umol2Co2 mol-2", 
+                    "dlta13CCo2" = "permill2", 
+                    "dlta13CCo2Refe" = "permill2", 
+                    "dlta18OH2o" = "permill2", 
+                    "dlta2HH2o" = "permill2", 
+                    "dlta18OH2oRefe" = "permill2", 
+                    "dlta2HH2oRefe" = "permill2") 
+  
   if(MethType == "data"){
     #define working unit attributes
     #dp01
@@ -294,29 +318,6 @@ if(MethMeas == "ecse"){
     outAttr$fluxCo2 <- c("mean" = "umolCo2 mol-1 m s-1", "timeBgn" = "NA", "timeEnd" = "NA")
     outAttr$fluxH2o <- c("mean" = "mmolH2o mol-1 m s-1", "timeBgn" = "NA", "timeEnd" = "NA")
     outAttr$fluxTemp <- c("mean" = "K m s-1", "timeBgn" = "NA", "timeEnd" = "NA")
-    #unit for vari
-    outAttr$vari <- c("frt00" = "dm6 min-2",
-                      "pres" = "kPa2", 
-                      "presEnvHut" = "kPa2", 
-                      "rhEnvHut" = "%", 
-                      "rtioMoleDryCo2" = "umol2Co2 mol-2", 
-                      "rtioMoleWetCo2" = "umol2Co2 mol-2", 
-                      "rtioMoleDryCo2Refe" = "umol2Co2 mol-2", 
-                      "temp" = "C2", 
-                      "tempEnvHut" = "C2", 
-                      "rtioMoleDryH2o" = "mmol2H2o mol-2", 
-                      "rtioMoleWetH2o" = "mmol2H2o mol-2", 
-                      "rtioMoleWetH2oEnvHut" = "mmol2H2o mol-2", 
-                      "rtioMoleWet12CCo2"  = "umol2Co2 mol-2", 
-                      "rtioMoleDry12CCo2" = "umol2Co2 mol-2", 
-                      "rtioMoleWet13CCo2" = "umol2Co2 mol-2", 
-                      "rtioMoleDry13CCo2" = "umol2Co2 mol-2", 
-                      "dlta13CCo2" = "permill2", 
-                      "dlta13CCo2Refe" = "permill2", 
-                      "dlta18OH2o" = "permill2", 
-                      "dlta2HH2o" = "permill2", 
-                      "dlta18OH2oRefe" = "permill2", 
-                      "dlta2HH2oRefe" = "permill2") 
     
     #performing dp01 unit conversion
     print(paste0(format(Sys.time(), "%F %T"), ": dataset ", Date, ": performing dp01 unit conversion")) 
@@ -326,7 +327,6 @@ if(MethMeas == "ecse"){
       for(idxLvl in base::names(rpt$dp01$data[[idxDp]])){
         #idxLvl <- base::names(rpt$dp01$data[[idxDp]])[1]
         for(idxVar in base::names(rpt$dp01$data[[idxDp]][[idxLvl]])){
-          #print(paste0(format(Sys.time(), "%F %T"), ": dataset ", Date, ": performing dp01 unit conversion", " ", idxDp, " ", idxLvl, " ", idxVar)) 
           #idxVar <- base::names(rpt$dp01$data[[idxDp]][[idxLvl]])[2]
           #Add a fix here to remove se in /data
           rpt$dp01$data[[idxDp]][[idxLvl]][[idxVar]]$se <- NULL
@@ -492,6 +492,87 @@ if(MethMeas == "ecse"){
       }; rm(idxVar)
     }#end of dp03 and dp04
   }#End of MethType == "qfqm"
+  
+  if(MethType == "ucrt"){
+    #dp01
+    wrkAttr$frt00 <- c("mean" = "m3 s-1", "vari" = "m3 s-1", "se" = "m3 s-1", "timeBgn" = "NA", "timeEnd" = "NA")
+    wrkAttr$pres <- c("mean" = "Pa", "vari" = "Pa", "se" = "Pa", "timeBgn" = "NA", "timeEnd" = "NA")
+    wrkAttr$presEnvHut <- c("mean" = "Pa", "vari" = "Pa", "se" = "Pa", "timeBgn" = "NA", "timeEnd" = "NA")
+    wrkAttr$rhEnvHut <- c("mean" = "-", "vari" = "-", "se" = "-", "timeBgn" = "NA", "timeEnd" = "NA")
+    wrkAttr$rtioMoleDryCo2 <- c("mean" = "molCo2 mol-1", "vari" = "molCo2 mol-1", "se" = "molCo2 mol-1", "timeBgn" = "NA", "timeEnd" = "NA")
+    wrkAttr$rtioMoleWetCo2 <- c("mean" = "molCo2 mol-1", "vari" = "molCo2 mol-1", "se" = "molCo2 mol-1", "timeBgn" = "NA", "timeEnd" = "NA")
+    wrkAttr$temp <- c("mean" = "C", "vari" = "C", "se" = "C", "NA", "NA")#with means removed unit of wrk mean, vari, and se of temp is equal to out
+    wrkAttr$tempEnvHut <- c("mean" = "C", "vari" = "C", "se" = "C", "timeBgn" = "NA", "timeEnd" = "NA")
+    wrkAttr$rtioMoleDryH2o <- c("mean" = "molH2o mol-1", "vari" = "molH2o mol-1", "se" = "molH2o mol-1", "timeBgn" = "NA", "timeEnd" = "NA")
+    wrkAttr$rtioMoleWetH2o <- c("mean" = "molH2o mol-1", "vari" = "molH2o mol-1", "se" = "molH2o mol-1", "timeBgn" = "NA", "timeEnd" = "NA")
+    wrkAttr$rtioMoleWetH2oEnvHut <- c("mean" = "molH2o mol-1", "vari" = "molH2o mol-1", "se" = "molH2o mol-1", "timeBgn" = "NA", "timeEnd" = "NA")
+    wrkAttr$rtioMoleWet12CCo2 <- c("mean" = "molCo2 mol-1", "vari" = "molCo2 mol-1", "se" = "molCo2 mol-1", "timeBgn" = "NA", "timeEnd" = "NA")
+    wrkAttr$rtioMoleDry12CCo2 <- c("mean" = "molCo2 mol-1", "vari" = "molCo2 mol-1", "se" = "molCo2 mol-1", "timeBgn" = "NA", "timeEnd" = "NA")
+    wrkAttr$rtioMoleWet13CCo2 <- c("mean" = "molCo2 mol-1", "vari" = "molCo2 mol-1", "se" = "molCo2 mol-1", "timeBgn" = "NA", "timeEnd" = "NA")
+    wrkAttr$rtioMoleDry13CCo2 <- c("mean" = "molCo2 mol-1", "vari" = "molCo2 mol-1", "se" = "molCo2 mol-1", "timeBgn" = "NA", "timeEnd" = "NA")
+    wrkAttr$dlta13CCo2 <- c("mean" = "permill", "vari" = "permill", "se" = "permill", "timeBgn" = "NA", "timeEnd" = "NA")
+    wrkAttr$dlta18OH2o <- c("mean" = "permill", "vari" = "permill", "se" = "permill", "timeBgn" = "NA", "timeEnd" = "NA")
+    wrkAttr$dlta2HH2o <- c("mean" = "permill", "vari" = "permill", "se" = "permill", "timeBgn" = "NA", "timeEnd" = "NA")
+    
+    #define output unit attributes
+    #dp01
+    outAttr$frt00 <- c("mean" = "dm3 min-1", "vari" = "dm3 min-1", "se" = "dm3 min-1", "timeBgn" = "NA", "timeEnd" = "NA")
+    outAttr$pres <- c("mean" = "kPa", "vari" = "kPa", "se" = "kPa", "timeBgn" = "NA", "timeEnd" = "NA")
+    outAttr$presEnvHut <- c("mean" = "kPa", "vari" = "kPa", "se" = "kPa", "timeBgn" = "NA", "timeEnd" = "NA")
+    outAttr$rhEnvHut <- c("mean" = "%", "vari" = "%", "se" = "%", "timeBgn" = "NA", "timeEnd" = "NA")
+    outAttr$rtioMoleDryCo2 <- c("mean" = "umolCo2 mol-1", "vari" = "umolCo2 mol-1", "se" = "umolCo2 mol-1", "timeBgn" = "NA", "timeEnd" = "NA")
+    outAttr$rtioMoleWetCo2 <- c("mean" = "umolCo2 mol-1", "vari" = "umolCo2 mol-1", "se" = "umolCo2 mol-1", "timeBgn" = "NA", "timeEnd" = "NA")
+    outAttr$temp <- c("mean" = "C", "vari" = "C", "se" = "C", "timeBgn" = "NA", "timeEnd" = "NA")
+    outAttr$tempEnvHut <- c("mean" = "C", "vari" = "C", "se" = "C", "timeBgn" = "NA", "timeEnd" = "NA")
+    outAttr$rtioMoleDryH2o <- c("mean" = "mmolH2o mol-1", "vari" = "mmolH2o mol-1", "se" = "mmolH2o mol-1", "timeBgn" = "NA", "timeEnd" = "NA")
+    outAttr$rtioMoleWetH2o <- c("mean" = "mmolH2o mol-1", "vari" = "mmolH2o mol-1", "se" = "mmolH2o mol-1", "timeBgn" = "NA", "timeEnd" = "NA")
+    outAttr$rtioMoleWetH2oEnvHut <- c("mean" = "mmolH2o mol-1", "vari" = "mmolH2o mol-1", "se" = "mmolH2o mol-1", "timeBgn" = "NA", "timeEnd" = "NA")
+    outAttr$rtioMoleWet12CCo2 <- c("mean" = "umolCo2 mol-1", "vari" = "umolCo2 mol-1", "se" = "umolCo2 mol-1", "timeBgn" = "NA", "timeEnd" = "NA")
+    outAttr$rtioMoleDry12CCo2 <- c("mean" = "umolCo2 mol-1", "vari" = "umolCo2 mol-1", "se" = "umolCo2 mol-1", "timeBgn" = "NA", "timeEnd" = "NA")
+    outAttr$rtioMoleWet13CCo2 <- c("mean" = "umolCo2 mol-1", "vari" = "umolCo2 mol-1", "se" = "umolCo2 mol-1", "timeBgn" = "NA", "timeEnd" = "NA")
+    outAttr$rtioMoleDry13CCo2 <- c("mean" = "umolCo2 mol-1", "vari" = "umolCo2 mol-1", "se" = "umolCo2 mol-1", "timeBgn" = "NA", "timeEnd" = "NA")
+    outAttr$dlta13CCo2 <- c("mean" = "permill", "vari" = "permill", "se" = "permill", "timeBgn" = "NA", "timeEnd" = "NA")
+    outAttr$dlta18OH2o <- c("mean" = "permill", "vari" = "permill", "se" = "permill", "timeBgn" = "NA", "timeEnd" = "NA")
+    outAttr$dlta2HH2o <- c("mean" = "permill", "vari" = "permill", "se" = "permill", "timeBgn" = "NA", "timeEnd" = "NA")
+    
+    #performing dp01 ucrt unit conversion
+    print(paste0(format(Sys.time(), "%F %T"), ": dataset ", Date, ": performing dp01 ucrt unit conversion")) 
+    #transfer units
+    for(idxDp in base::names(rpt$dp01$ucrt)) {
+      #idxDp <- base::names(rpt$dp01$ucrt)[1]
+      
+      for(idxLvl in base::names(rpt$dp01$ucrt[[idxDp]])){
+        #idxLvl <- base::names(rpt$dp01$ucrt[[idxDp]])[1]
+        for(idxVar in base::names(rpt$dp01$ucrt[[idxDp]][[idxLvl]])){
+          #idxVar <- base::names(rpt$dp01$ucrt[[idxDp]][[idxLvl]])[2]
+          #square root varince data before convert the unit
+          rpt$dp01$ucrt[[idxDp]][[idxLvl]][[idxVar]]$vari <- sqrt(rpt$dp01$ucrt[[idxDp]][[idxLvl]][[idxVar]]$vari)
+          #Apply unit attributes to mean, min, max, vari, numSamp, timeBgn, timeEnd
+          attributes(rpt$dp01$ucrt[[idxDp]][[idxLvl]][[idxVar]])$unit <- wrkAttr[[idxVar]]
+          names(attributes(rpt$dp01$ucrt[[idxDp]][[idxLvl]][[idxVar]])$unit) <- attributes(rpt$dp01$ucrt[[idxDp]][[idxLvl]][[idxVar]])$names
+          # perform unit conversion
+          rpt$dp01$ucrt[[idxDp]][[idxLvl]][[idxVar]] <- base::suppressWarnings(eddy4R.base::def.unit.conv(data = rpt$dp01$ucrt[[idxDp]][[idxLvl]][[idxVar]],
+                                                                                                          unitFrom = attributes(rpt$dp01$ucrt[[idxDp]][[idxLvl]][[idxVar]])$unit,
+                                                                                                          unitTo = outAttr[[idxVar]],
+                                                                                                          MethGc = FALSE))
+          
+          
+          #calculate variance
+          rpt$dp01$ucrt[[idxDp]][[idxLvl]][[idxVar]]$vari <- (rpt$dp01$ucrt[[idxDp]][[idxLvl]][[idxVar]]$vari)^2
+          #format time
+          rpt$dp01$ucrt[[idxDp]][[idxLvl]][[idxVar]]$timeBgn <- as.character(rpt$dp01$ucrt[[idxDp]][[idxLvl]][[idxVar]]$timeBgn)
+          rpt$dp01$ucrt[[idxDp]][[idxLvl]][[idxVar]]$timeEnd <- as.character(rpt$dp01$ucrt[[idxDp]][[idxLvl]][[idxVar]]$timeEnd)
+          #unit transfer
+          attributes(rpt$dp01$ucrt[[idxDp]][[idxLvl]][[idxVar]])$unit <-
+            attributes(rpt$dp01$ucrt[[idxDp]][[idxLvl]][[idxVar]])$unit
+          #apply variance units
+          base::try(attributes(rpt$dp01$ucrt[[idxDp]][[idxLvl]][[idxVar]])$unit[names(attributes(rpt$dp01$ucrt[[idxDp]][[idxLvl]][[idxVar]])$unit) == "vari"] <- outAttr$vari[[idxVar]], silent = TRUE)
+          
+        }
+      }
+      base::gc(verbose=FALSE) # clean up memory  
+    }; rm(idxVar)
+  }#end of ucrt
 }#End of ecse
 base::return(rpt) #Returning list from function
 } #End of wrapper function
