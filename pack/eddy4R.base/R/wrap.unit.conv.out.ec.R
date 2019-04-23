@@ -449,23 +449,48 @@ if(MethMeas == "ecse"){
   }#end of MethType = "data"
   
   if(MethType == "qfqm"){
-    #performing dp01 unit transfer
-    print(paste0(format(Sys.time(), "%F %T"), ": dataset ", Date, ": transfering dp01 qfqm unit ")) 
-    for(idxDp in base::names(rpt$dp01$data)[which(!(names(rpt$dp01$data) %in% c("tempAirTop", "tempAirLvl")))]) {
-      for(idxLvl in base::names(rpt$dp01$data[[idxDp]])){
-        for(idxVar in base::names(rpt$dp01$data[[idxDp]][[idxLvl]])){
+    #performing dp01 and dp02 unit transfer
+    print(paste0(format(Sys.time(), "%F %T"), ": dataset ", Date, ": transfering dp01 and dp02 qfqm unit ")) 
+    for(idxDataLvl in c("dp01", "dp02")){
+    for(idxDp in base::names(rpt[[idxDataLvl]]$qfqm)[which(!(names(rpt[[idxDataLvl]]$data) %in% c("tempAirTop", "tempAirLvl")))]) {
+      for(idxLvl in base::names(rpt[[idxDataLvl]]$qfqm[[idxDp]])){
+        for(idxVar in base::names(rpt[[idxDataLvl]]$qfqm[[idxDp]][[idxLvl]])){
           # Create qfqm list of units
-          wrkAttr[[idxVar]] <- c(rep("-", time = length(rpt$dp01$qfqm[[idxDp]][[idxLvl]][[idxVar]])))
+          wrkAttr[[idxVar]] <- c(rep("-", time = length(rpt[[idxDataLvl]]$qfqm[[idxDp]][[idxLvl]][[idxVar]])))
           #Add names to units vector
-          names(wrkAttr[[idxVar]]) <- names(rpt$dp01$qfqm[[idxDp]][[idxLvl]][[idxVar]])
+          names(wrkAttr[[idxVar]]) <- names(rpt[[idxDataLvl]]$qfqm[[idxDp]][[idxLvl]][[idxVar]])
           #Apply NA for all qf and time variables
           wrkAttr[[idxVar]][base::grep(pattern = "qf|time", x = names(wrkAttr[[idxVar]]))] <- "NA"
           #Apply unit attributes to rpt
-          attributes(rpt$dp01$qfqm[[idxDp]][[idxLvl]][[idxVar]])$unit <- wrkAttr[[idxVar]]
+          attributes(rpt[[idxDataLvl]]$qfqm[[idxDp]][[idxLvl]][[idxVar]])$unit <- wrkAttr[[idxVar]]
         }
       }
       base::gc(verbose=FALSE) # clean up memory 
     }; rm(idxVar)
+    }#end of dp01 and dp02
+    
+    #performing dp03 and dp04 unit transfer
+    print(paste0(format(Sys.time(), "%F %T"), ": dataset ", Date, ": transfering dp01 and dp02 qfqm unit ")) 
+    for(idxDataLvl in c("dp03", "dp04")){
+      for(idxDp in base::names(rpt[[idxDataLvl]]$qfqm)) {
+        for(idxVar in base::names(rpt[[idxDataLvl]]$qfqm[[idxDp]])){
+          #Apply unit attributes to rpt
+          if(idxDataLvl == "dp03"){
+            attributes(rpt[[idxDataLvl]]$qfqm[[idxDp]][[idxVar]])$unit <- "NA"  
+          }else{
+            # Create qfqm list of units
+            wrkAttr[[idxVar]] <- c(rep("-", time = length(rpt[[idxDataLvl]]$qfqm[[idxDp]][[idxVar]])))
+            #Add names to units vector
+            names(wrkAttr[[idxVar]]) <- names(rpt[[idxDataLvl]]$qfqm[[idxDp]][[idxVar]])
+            #Apply NA for all qf and time variables
+            wrkAttr[[idxVar]][base::grep(pattern = "qf|time", x = names(wrkAttr[[idxVar]]))] <- "NA"
+            #Apply unit attributes to rpt
+            attributes(rpt[[idxDataLvl]]$qfqm[[idxDp]][[idxVar]])$unit <- wrkAttr[[idxVar]]
+          }
+        }
+        base::gc(verbose=FALSE) # clean up memory 
+      }; rm(idxVar)
+    }#end of dp03 and dp04
   }#End of MethType == "qfqm"
 }#End of ecse
 base::return(rpt) #Returning list from function
