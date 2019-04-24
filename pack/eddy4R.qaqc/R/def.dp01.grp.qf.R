@@ -72,6 +72,8 @@
 #     rename function from def.neon.dp01.qf.grp() to def.dp01.grp.qf()
 #   Natchaya P-Durden (2019-03-20)
 #     bug fix to not include qf from other gas speices during grouping qf for isoCo2
+#   Natchaya P-Durden (2019-04-24)
+#     remove qfStep from rtioMoleDryH2o and rtioMoleWetH2o in isoCo2
 ##############################################################################################
 
 def.dp01.grp.qf <- function(
@@ -1081,7 +1083,7 @@ if (MethMeas == "ecse") {
                                           "qfCalRtioMoleDry13CCo2" = qfInp$crdCo2$qfCalRtioMoleDry13CCo2)
     
     setQf$rtioMoleDryH2o <- data.frame("qfRngRtioMoleDryH2o" = qfInp$crdCo2$qfRngRtioMoleDryH2o, 
-                                       "qfStepRtioMoleDryH2o" = qfInp$crdCo2$qfStepRtioMoleDryH2o,
+                                       #"qfStepRtioMoleDryH2o" = qfInp$crdCo2$qfStepRtioMoleDryH2o,
                                        "qfPersRtioMoleDryH2o" = qfInp$crdCo2$qfPersRtioMoleDryH2o, 
                                        "qfCalRtioMoleDryH2o" = qfInp$crdCo2$qfCalRtioMoleDryH2o)
     
@@ -1101,7 +1103,7 @@ if (MethMeas == "ecse") {
                                           "qfCalRtioMoleWet13CCo2 " = qfInp$crdCo2$qfCalRtioMoleWet13CCo2)
     
     setQf$rtioMoleWetH2o <- data.frame("qfRngRtioMoleWetH2o" = qfInp$crdCo2$qfRngRtioMoleWetH2o, 
-                                       "qfStepRtioMoleWetH2o" = qfInp$crdCo2$qfStepRtioMoleWetH2o,
+                                       #"qfStepRtioMoleWetH2o" = qfInp$crdCo2$qfStepRtioMoleWetH2o,
                                        "qfPersRtioMoleWetH2o" = qfInp$crdCo2$qfPersRtioMoleWetH2o, 
                                        "qfCalRtioMoleWetH2o" = qfInp$crdCo2$qfCalRtioMoleWetH2o)
     
