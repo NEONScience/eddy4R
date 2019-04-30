@@ -32,7 +32,7 @@
 #' @export
 
 # changelog and author contributions / copyrights 
-#   David Durden (2017-04-30)
+#   David Durden (2019-04-30)
 ##############################################################################################
 
 
