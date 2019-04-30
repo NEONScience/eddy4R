@@ -124,7 +124,7 @@ for (idxDp in dp) {
     else rpt <- NULL #Return NULL if no bad qf's are reported
     
     #Final test if it should be summarized or full report
-    ifelse(!is.null(rpt) & Vrbs == FALSE, rpt <- rptSmmy, rpt <- rpt)
+    if(!is.null(rpt) & Vrbs == FALSE) rpt <- rptSmmy
     
     #Return reported values
     return(rpt)
@@ -136,4 +136,7 @@ for (idxDp in dp) {
   {rptQfqm[[idxDp]][sapply(rptQfqm[[idxDp]], is.null)] <- NULL}
   if(length(rptQfqm[[idxDp]]) == 0){rptQfqm[[idxDp]] <- NULL}
 }# End of loop around dp's
+
+#Return quality report
+return(rptQfqm)
 }# End of function
