@@ -39,16 +39,16 @@
 # start function wrap.qfqm.rpt()
 wrap.qfqm.rpt <- function(
   File,
-  dp = NULL,
+  Dp = NULL,
   Vrbs = FALSE
 ) {
   
 #Check if dp's are provided for quality report, otherwise check all dp's in qfqm portion of HDF5 file
-if(is.null(dp)){
+if(is.null(Dp)){
   # List of objects in the HDF5 file
   listObj <- rhdf5::h5ls(file = fileName, datasetinfo = FALSE)
   #Vector of data product names in the qfqm tabs in the HDF5 file
-  dp <- listObj[grep(pattern = "/qfqm$", x = listObj$group),"name"]
+  Dp <- listObj[grep(pattern = "/qfqm$", x = listObj$group),"name"]
 } # End of if statement is.null(dp) if statement
 
 #Base quality metric variable names for creating order of variables
@@ -62,7 +62,7 @@ qfqm <- list()
 rptQfqm <- list()
 
 #Loop around data products to create quality report
-for (idxDp in dp) {
+for (idxDp in Dp) {
   #idxDp <- "soni"
   #Create character string for regular expression search
   charSlct <- paste0("/qfqm/",idxDp,".*_30m")
