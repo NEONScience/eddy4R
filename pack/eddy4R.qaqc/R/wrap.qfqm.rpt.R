@@ -100,7 +100,7 @@ for (idxDp in dp) {
       qmMean <- as.data.frame(t(colMeans(rpt[,grep(pattern = "qm", names(rpt))], na.rm = TRUE)))
       
       #Convert units to percent
-      if(length(qmMean) > 0) qmMean <- eddy4R.base::def.unit.conv(qmMean, unitFrom = "-", unitTo = "%")
+      if(length(qmMean) > 0) qmMean <- eddy4R.base::def.unit.conv(qmMean, unitFrom = "-", unitTo = "%", MethGc = FALSE)
       
       #Check if qmAlph and qmBeta are present to order the quality metrics
       if("qmAlph" %in% names(qmMean) & "qmBeta" %in% names(qmMean)){
