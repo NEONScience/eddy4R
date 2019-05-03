@@ -13,7 +13,7 @@
 #' @param Vrbs A logical parameter that determines if all failed quality times should be reported (defaults to FALSE).
 
 #' @return A list for all dp's provided including either summary or verbose quality report: \cr
-#' \code{qm's}   quality metrics (percent) passed sub-data products if Vrbs = TRUE. [percent] \cr
+#' \code{qm}   quality metrics (percent) passed sub-data products if Vrbs = TRUE. [percent] \cr
 #' \code{qmAlph} In dataframe column as "numeric" containing the alpha quality metric for sub-data products. [percent] \cr
 #' \code{qmBeta} In dataframe column as "numeric" containing the beta quality metric for sub-data products. [percent] \cr
 #' \code{qfFinl} In dataframe column as class "integer", [0,1], containing the final quality flag for sub-data products. [-] \cr
