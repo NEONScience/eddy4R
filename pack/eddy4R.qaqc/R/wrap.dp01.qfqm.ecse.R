@@ -123,8 +123,7 @@ wrap.dp01.qfqm.ecse <- function(
                                "rtioMoleWetH2oEnvHut" = data$envHut[[lvlEnvHut]]$rtioMoleWetH2o,
                                "temp" = data$irgaStor[[lvl]]$temp,
                                "tempEnvHut" = data$envHut[[lvlEnvHut]]$temp,
-                               "lvlIrga" = data$irgaValvLvl[[lvlValv]]$lvlIrga,
-                               "frt00Mfm" = data$mfm[[lvlMfm]]$frt00
+                               "lvlIrga" = data$irgaValvLvl[[lvlValv]]$lvlIrga
                                
         )
       }
@@ -1010,8 +1009,7 @@ wrap.dp01.qfqm.ecse <- function(
                              "rtioMoleWetH2oEnvHut" = data$envHut[[lvlEnvHut]]$rtioMoleWetH2o,
                              "temp" = data$crdH2o[[lvl]]$temp,
                              "tempEnvHut" = data$envHut[[lvlEnvHut]]$temp,
-                             "lvlCrdH2o" = data$crdH2oValvLvl[[lvlValv]]$lvlCrdH2o,
-                             "frt00Mfm" = data$mfm[[lvlMfm]]$frt00
+                             "lvlCrdH2o" = data$crdH2oValvLvl[[lvlValv]]$lvlCrdH2o
                              
       )
       
