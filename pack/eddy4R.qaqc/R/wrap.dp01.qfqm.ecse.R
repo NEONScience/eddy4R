@@ -69,6 +69,8 @@
 #     adding lvlMfcValiStor into input parameter
 #   Natchaya P-Durden (2019-04-11)
 #     adding RptExpd into input parameter
+#   Natchaya P-Durden (2019-05-06)
+#     assign lvlMfm in data flow
 ##############################################################################################
 wrap.dp01.qfqm.ecse <- function(
   dp01 = c("co2Stor", "h2oStor", "tempAirLvl", "tempAirTop", "isoCo2", "isoH2o")[1],
@@ -139,7 +141,8 @@ wrap.dp01.qfqm.ecse <- function(
                                "rtioMoleWetH2oEnvHut" = data$envHut[[lvlEnvHut]]$rtioMoleWetH2o,
                                "temp" = data$irgaStor[[lvl]]$temp,
                                "tempEnvHut" = data$envHut[[lvlEnvHut]]$temp,
-                               "lvlIrga" = data$irgaValvLvl[[lvlValv]]$lvlIrga
+                               "lvlIrga" = data$irgaValvLvl[[lvlValv]]$lvlIrga,
+                               "frt00Mfm" = data$mfm[[lvlMfm]]$frt00
                                
         )
       }
@@ -150,12 +153,6 @@ wrap.dp01.qfqm.ecse <- function(
       wrk$qfqm$envHut <- qfInp$envHut[[lvlEnvHut]]
       wrk$qfqm$valvAux <- qfInp$valvAux[[lvlValvAux]]
       wrk$qfqm$mfm <- qfInp$mfm[[lvlMfm]]
-      
-      #generate qfFrt00 for mfm to indicate when low flow pass through (pump failure)
-      #critical value for flow rate during pump failure; default as 3 dm3 min-1
-      critFrt00 <- eddy4R.base::def.unit.conv(data=3, unitFrom = "dm3 min-1", unitTo = "intl")
-      wrk$qfqm$mfm$qfFrt00 <- ifelse(is.na(wrk$data$frt00Mfm), -1,
-                                     ifelse(wrk$data$frt00Mfm <= critFrt00, 1, 0))
         
         if (PrdMeas == PrdAgr) {
         #PrdAgr <- 2
@@ -194,6 +191,9 @@ wrap.dp01.qfqm.ecse <- function(
             }
             for (tmp in 1:length(wrk$inpMask$qfqm$valvAux)){
               wrk$inpMask$qfqm$valvAux[[tmp]][wrk$inpMask$data$lvlIrga != lvlIrga] <- -1
+            }
+            for (tmp in 1:length(wrk$inpMask$qfqm$mfm)){
+              wrk$inpMask$qfqm$mfm[[tmp]][wrk$inpMask$data$lvlIrga != lvlIrga] <- -1
             }
             
             #qfqm processing
@@ -289,11 +289,15 @@ wrap.dp01.qfqm.ecse <- function(
           for (tmp in 1:length(wrk$qfqm$valvAux)){
             wrk$qfqm$valvAux[[tmp]][wrk$data$lvlIrga != lvlIrga] <- -1
           }
+          for (tmp in 1:length(wrk$qfqm$mfm)){
+            wrk$qfqm$mfm[[tmp]][wrk$data$lvlIrga != lvlIrga] <- -1
+          }
           #replace all qf that not belong to that measurement level by NaN
           wrk$qfqm$irgaStor[-whrSamp, 1:length(wrk$qfqm$irgaStor)] <- NaN
           wrk$qfqm$mfcSampStor[-whrSamp, 1:length(wrk$qfqm$mfcSampStor)] <- NaN
           wrk$qfqm$envHut[-whrSamp, 1:length(wrk$qfqm$envHut)] <- NaN
           wrk$qfqm$valvAux[-whrSamp, 1:length(wrk$qfqm$valvAux)] <- NaN
+          wrk$qfqm$mfm[-whrSamp, 1:length(wrk$qfqm$mfm)] <- NaN
           
           #replace qf from mfcSampStor data with -1 when irga got kick out to measure the new measurement level
           #wrk$qfqm$mfcSampStor <- as.data.frame(sapply(wrk$qfqm$mfcSampStor, function(x) ifelse(wrk$data$lvlIrga == lvlIrga, x, -1)))
@@ -629,6 +633,7 @@ wrap.dp01.qfqm.ecse <- function(
       #subset only
       wrk$qfqm$crdCo2 <- qfInp$crdCo2[[lvl]]
       wrk$qfqm$envHut <- qfInp$envHut[[lvlEnvHut]]
+      wrk$qfqm$mfm <- qfInp$mfm[[lvlMfm]]
       
       if (PrdMeas == PrdAgr) {
         #PrdAgr <- 9
@@ -659,6 +664,9 @@ wrap.dp01.qfqm.ecse <- function(
             }
             for (tmp in 1:length(wrk$inpMask$qfqm$envHut)){
               wrk$inpMask$qfqm$envHut[[tmp]][wrk$inpMask$data$lvlCrdCo2 != lvlCrdCo2] <- -1
+            }
+            for (tmp in 1:length(wrk$inpMask$qfqm$mfm)){
+              wrk$inpMask$qfqm$mfm[[tmp]][wrk$inpMask$data$lvlCrdCo2 != lvlCrdCo2] <- -1
             }
             
             #qfqm processing
@@ -745,9 +753,13 @@ wrap.dp01.qfqm.ecse <- function(
           for (tmp in 1:length(wrk$qfqm$envHut)){
             wrk$qfqm$envHut[[tmp]][wrk$data$lvlCrdCo2 != lvlCrdCo2] <- -1
           }
+          for (tmp in 1:length(wrk$qfqm$mfm)){
+            wrk$qfqm$mfm[[tmp]][wrk$data$lvlCrdCo2 != lvlCrdCo2] <- -1
+          }
           #replace all qf that not belong to that measurement level by NaN
           wrk$qfqm$crdCo2[-whrSamp, 1:length(wrk$qfqm$crdCo2)] <- NaN
           wrk$qfqm$envHut[-whrSamp, 1:length(wrk$qfqm$envHut)] <- NaN
+          wrk$qfqm$mfm[-whrSamp, 1:length(wrk$qfqm$mfm)] <- NaN
         } 
         
         
@@ -984,6 +996,8 @@ wrap.dp01.qfqm.ecse <- function(
       if (lvl == "000_060") {lvlCrdH2o <- "lvl06"}
       if (lvl == "000_070") {lvlCrdH2o <- "lvl07"}
       if (lvl == "000_080") {lvlCrdH2o <- "lvl08"}
+      #assign lvlMfm
+      lvlMfm <- paste0("700_", strsplit(lvl, "_")[[1]][2])
       
       wrk$data <- data.frame(stringsAsFactors = FALSE,
                              "dlta18OH2o" = data$crdH2o[[lvl]]$dlta18OH2o,
@@ -996,7 +1010,8 @@ wrap.dp01.qfqm.ecse <- function(
                              "rtioMoleWetH2oEnvHut" = data$envHut[[lvlEnvHut]]$rtioMoleWetH2o,
                              "temp" = data$crdH2o[[lvl]]$temp,
                              "tempEnvHut" = data$envHut[[lvlEnvHut]]$temp,
-                             "lvlCrdH2o" = data$crdH2oValvLvl[[lvlValv]]$lvlCrdH2o
+                             "lvlCrdH2o" = data$crdH2oValvLvl[[lvlValv]]$lvlCrdH2o,
+                             "frt00Mfm" = data$mfm[[lvlMfm]]$frt00
                              
       )
       
@@ -1004,6 +1019,7 @@ wrap.dp01.qfqm.ecse <- function(
       wrk$qfqm <- list()
       wrk$qfqm$crdH2o <- qfInp$crdH2o[[lvl]]
       wrk$qfqm$envHut <- qfInp$envHut[[lvlEnvHut]]
+      wrk$qfqm$mfm <- qfInp$mfm[[lvlMfm]]
       
       if (PrdMeas == PrdAgr) {
         #PrdAgr <- 9
@@ -1031,6 +1047,9 @@ wrap.dp01.qfqm.ecse <- function(
             }
             for (tmp in 1:length(wrk$inpMask$qfqm$envHut)){
               wrk$inpMask$qfqm$envHut[[tmp]][wrk$inpMask$data$lvlCrdH2o != lvlCrdH2o] <- -1
+            }
+            for (tmp in 1:length(wrk$inpMask$qfqm$mfm)){
+              wrk$inpMask$qfqm$mfm[[tmp]][wrk$inpMask$data$lvlCrdH2o != lvlCrdH2o] <- -1
             }
             
             #qfqm processing
@@ -1117,8 +1136,12 @@ wrap.dp01.qfqm.ecse <- function(
           for (tmp in 1:length(wrk$qfqm$envHut)){
             wrk$qfqm$envHut[[tmp]][wrk$data$lvlCrdH2o != lvlCrdH2o] <- -1
           }
+          for (tmp in 1:length(wrk$qfqm$mfm)){
+            wrk$qfqm$mfm[[tmp]][wrk$data$lvlCrdH2o != lvlCrdH2o] <- -1
+          }
           wrk$qfqm$crdH2o[-whrSamp, 1:length(wrk$qfqm$crdH2o)] <- NaN
           wrk$qfqm$envHut[-whrSamp, 1:length(wrk$qfqm$envHut)] <- NaN
+          wrk$qfqm$mfm[-whrSamp, 1:length(wrk$qfqm$mfm)] <- NaN
         } 
         
         
