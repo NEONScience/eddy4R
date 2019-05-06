@@ -17,7 +17,6 @@
 #' @param lvlValv Measurement level of irgaValvLvl, crdCo2ValvLvl, or crdH2oValvLvl. Defaults to NULL. Of type character. [-]
 #' @param lvlValvAux Location of valvAux which apply to only  dp01 equal to "co2Stor" or "h2oStor". Defaults to NULL. Of type character. [-]
 #' @param lvlCrdH2oValvVali Measurement level of crdH2oValvVali which apply to only  dp01 equal to "isoH2o". Defaults to NULL. Of type character. [-]
-#' @param lvlMfm Measurement level of mfm. Defaults to NULL. Of type character. [-]
 #' @param data A list of data frame containing the input dp0p data that related to dp01 which qfqm are being calculated. Of class integer". [User defined] 
 #' @param qfInp A list of data frame containing the input quality flag data that related to dp01 are being grouped. Of class integer". [-] 
 #' @param TypeMeas A vector of class "character" containing the name of measurement type (sampling or validation), TypeMeas = c("samp", "vali"). Defaults to "samp". [-]
@@ -81,7 +80,6 @@ wrap.dp01.qfqm.ecse <- function(
   lvlValv = NULL,
   lvlValvAux = NULL,
   lvlCrdH2oValvVali = NULL,
-  lvlMfm = NULL,
   data = list(),
   qfInp = list(),
   TypeMeas = c("samp", "vali")[1],
@@ -107,6 +105,8 @@ wrap.dp01.qfqm.ecse <- function(
       if (lvl == "000_060") {lvlIrga <- "lvl06"}
       if (lvl == "000_070") {lvlIrga <- "lvl07"}
       if (lvl == "000_080") {lvlIrga <- "lvl08"}
+      #assign lvlMfm
+      lvlMfm <- paste0("700_", strsplit(lvl, "_")[[1]][2])
       
       #input the whole day data
       if(dp01 == "co2Stor"){
@@ -149,8 +149,15 @@ wrap.dp01.qfqm.ecse <- function(
       wrk$qfqm$mfcSampStor <- qfInp$mfcSampStor[[lvlMfcSampStor]]
       wrk$qfqm$envHut <- qfInp$envHut[[lvlEnvHut]]
       wrk$qfqm$valvAux <- qfInp$valvAux[[lvlValvAux]]
+      wrk$qfqm$mfm <- qfInp$mfm[[lvlMfm]]
       
-      if (PrdMeas == PrdAgr) {
+      #generate qfFrt00 for mfm to indicate when low flow pass through (pump failure)
+      #critical value for flow rate during pump failure; default as 3 dm3 min-1
+      critFrt00 <- eddy4R.base::def.unit.conv(data=3, unitFrom = "dm3 min-1", unitTo = "intl")
+      wrk$qfqm$mfm$qfFrt00 <- ifelse(is.na(wrk$data$frt00Mfm), -1,
+                                     ifelse(wrk$data$frt00Mfm <= critFrt00, 1, 0))
+        
+        if (PrdMeas == PrdAgr) {
         #PrdAgr <- 2
         #2 minutely sampling data
         #idxLvLPrdAgr <- paste0(lvl, "_", sprintf("%02d", PrdAgr), "m")
@@ -592,6 +599,8 @@ wrap.dp01.qfqm.ecse <- function(
       if (lvl == "000_060") {lvlCrdCo2 <- "lvl06"}
       if (lvl == "000_070") {lvlCrdCo2 <- "lvl07"}
       if (lvl == "000_080") {lvlCrdCo2 <- "lvl08"}
+      #assign lvlMfm
+      lvlMfm <- paste0("700_", strsplit(lvl, "_")[[1]][2])
       
       #input the whole day data
       wrk$data <- data.frame(stringsAsFactors = FALSE,
