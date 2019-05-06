@@ -1457,7 +1457,7 @@ if (MethMeas == "ecse") {
                                                     setQf$tempCrdCo2, setQf$tempWbox,
                                                     setQf$sensCrdCo2, setQf$frt00Mfm, 
                                                     setQf$frtMfm, setQf$presAtmMfm, 
-                                                    setQf$tempMfm, setQf$sensMfm,
+                                                    setQf$tempMfm, setQf$sensMfm
                                                     #, setQf$heatInlt
                                                     ))
         
@@ -1474,7 +1474,7 @@ if (MethMeas == "ecse") {
                                              setQf$tempCrdCo2, setQf$tempWbox,
                                              setQf$sensCrdCo2, setQf$frt00Mfm, 
                                              setQf$frtMfm, setQf$presAtmMfm, 
-                                             setQf$tempMfm, setQf$sensMfm,
+                                             setQf$tempMfm, setQf$sensMfm
                                              #, setQf$heatInlt
                                              ))
         
@@ -1482,7 +1482,7 @@ if (MethMeas == "ecse") {
                                                  setQf$tempCrdCo2, setQf$tempWbox,
                                                  setQf$sensCrdCo2, setQf$frt00Mfm, 
                                                  setQf$frtMfm, setQf$presAtmMfm, 
-                                                 setQf$tempMfm, setQf$sensMfm,
+                                                 setQf$tempMfm, setQf$sensMfm
                                                  #, setQf$heatInlt
                                                  ))
         
