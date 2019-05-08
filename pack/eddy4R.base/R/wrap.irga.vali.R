@@ -243,11 +243,25 @@ wrap.irga.vali <- function(
     #determine index when timeEnd fall in DateProc
     rpt[[idxDate]]$rtioMoleDryCo2Vali <- rpt[[idxDate]]$rtioMoleDryCo2Vali[which(rpt[[idxDate]]$rtioMoleDryCo2Vali$timeEnd >= timeMin &  rpt[[idxDate]]$rtioMoleDryCo2Vali$timeBgn < timeMax),]
     
-    #fail safe: fill in dataframe with NaN values when there is only qfIrgaTurbValiGas01 
-    if (length(rpt[[idxDate]]$rtioMoleDryCo2Vali$mean) == 1){
-      rpt[[idxDate]]$rtioMoleDryCo2Vali[2:5,] <-  rpt[[idxDate]]$rtioMoleDryCo2Vali[1,]
-      #replace gasType
-      rpt[[idxDate]]$rtioMoleDryCo2Vali$gasType <- nameQf
+    #fail safe: fill in dataframe with NaN values when there is only qfIrgaTurbValiGas01 or no validation at all
+    if (length(rpt[[idxDate]]$rtioMoleDryCo2Vali$mean) <= 1){
+      if(length(rpt[[idxDate]]$rtioMoleDryCo2Vali$mean) == 1 & rpt[[idxDate]]$rtioMoleDryCo2Vali$gasType[1] == "qfIrgaTurbValiGas01"){
+        rpt[[idxDate]]$rtioMoleDryCo2Vali[2:5,] <-  NA 
+        rpt[[idxDate]]$rtioMoleDryCo2Vali$timeBgn[2:5] <- base::as.POSIXlt(paste(idxDate, " ", "00:00:00.000", sep=""), format="%Y-%m-%d %H:%M:%OS", tz="UTC")
+        rpt[[idxDate]]$rtioMoleDryCo2Vali$timeEnd[2:5] <- base::as.POSIXlt(paste(idxDate, " ", "23:59:59.950", sep=""), format="%Y-%m-%d %H:%M:%OS", tz="UTC")
+        #replace gasType
+        rpt[[idxDate]]$rtioMoleDryCo2Vali$gasType <- nameQf
+        }else{
+        if(length(rpt[[idxDate]]$rtioMoleDryCo2Vali$mean) == 0){
+          rpt[[idxDate]]$rtioMoleDryCo2Vali[1:5,] <-  NA
+          rpt[[idxDate]]$rtioMoleDryCo2Vali$timeBgn <- base::as.POSIXlt(paste(idxDate, " ", "00:00:00.000", sep=""), format="%Y-%m-%d %H:%M:%OS", tz="UTC")
+          rpt[[idxDate]]$rtioMoleDryCo2Vali$timeEnd <- base::as.POSIXlt(paste(idxDate, " ", "23:59:59.950", sep=""), format="%Y-%m-%d %H:%M:%OS", tz="UTC")
+          #replace gasType
+          rpt[[idxDate]]$rtioMoleDryCo2Vali$gasType <- nameQf
+          }else{
+          rpt[[idxDate]]$rtioMoleDryCo2Vali <- rpt[[idxDate]]$rtioMoleDryCo2Vali
+        }
+      }
     }
     
     #add gasRefe values into rpt
