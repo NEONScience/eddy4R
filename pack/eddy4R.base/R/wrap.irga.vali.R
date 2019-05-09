@@ -149,7 +149,7 @@ wrap.irga.vali <- function(
         allSubQfqm <- ffbase::ffdfappend(allSubQfqm, subQfqmFlag)
         allSubTime <- ffbase::ffdfappend(allSubTime, subTime)
       }
-      }#end loop for of idxAllDate
+      };rm(subData, subQfqmFlag, subTime)#end loop for of idxAllDate
     #define qf for each gas cylinder
     nameQf <- c("qfIrgaTurbValiGas01", "qfIrgaTurbValiGas02", "qfIrgaTurbValiGas03", "qfIrgaTurbValiGas04", "qfIrgaTurbValiGas05")
     
@@ -356,7 +356,7 @@ wrap.irga.vali <- function(
     subVali01 <- list()
     if (valiCrit == FALSE){
       #get rid of archive gas
-      valiData[[idxDate]]$data00 <- rpt[[idxDate]]$rtioMoleDryCo2Vali[-which(rpt[[idxDate]]$rtioMoleDryCo2Vali$gasType == "qfIrgaTurbValiGas01"),]
+      valiData[[idxDate]]$data00 <- rpt[[idxDate]]$rtioMoleDryCo2Vali[rpt[[idxDate]]$rtioMoleDryCo2Vali$gasType != "qfIrgaTurbValiGas01",]
       if (length(valiData[[idxDate]]$data00$timeBgn) <= 4){
         valiData[[idxDate]]$data00 <- valiData[[idxDate]]$data00
       }else{
