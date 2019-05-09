@@ -68,6 +68,9 @@
 #     clean up workflow and updated def.irga.vali.cor()
 #   Natchaya P-Durden (2019-03-27)
 #     changing the logic to determine the critical time when 2 validation occurred within one day
+#   Natchaya P-Durden (2019-05-09)
+#     updating logic in fail-safe to fill in dataframe with NaN when there is only archive gas or no validation at all
+#     bug fix on selecting the validation gas based on timeCrit
 ##############################################################################################
 
 wrap.irga.vali <- function(
@@ -366,7 +369,8 @@ wrap.irga.vali <- function(
         #defined the critical time by adding 30 min after the end of running zero gas
         timeCrit00 <- as.POSIXlt(valiData[[idxDate]]$data00$timeEnd[locGas00[1]] + 30*60,format="%Y-%m-%d %H:%M:%OS", tz="UTC") 
         #select data within timeCrit
-        valiData[[idxDate]]$data00 <- valiData[[idxDate]]$data00[which(valiData[[idxDate]]$data00$timeEnd < timeCrit00),]
+        valiData[[idxDate]]$data00 <- valiData[[idxDate]]$data00[which(valiData[[idxDate]]$data00$timeEnd >= valiData[[idxDate]]$data00$timeEnd[locGas00[1]] & 
+                                                                         valiData[[idxDate]]$data00$timeEnd < timeCrit00),]
         #check if there are all data as expected
         if (length(valiData[[idxDate]]$data00$timeBgn) <= 4){
           valiData[[idxDate]]$data00 <- valiData[[idxDate]]$data00
