@@ -85,7 +85,7 @@ def.hdf5.crte <- function(
   MethDp04 = FALSE,
   FileNameReadMe = NULL,
   FileNameObjDesc = NULL,
-  LvlGasRefe = c("702_000", "703_000", "704_000","705_000", "706_000"),
+  LvlGasRefe = c("702_000", "703_000", "704_000","705_000", "706_000")
   ) {
   
   #Determine basic vs. expanded
