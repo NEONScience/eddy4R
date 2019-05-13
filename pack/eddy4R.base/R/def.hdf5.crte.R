@@ -69,6 +69,8 @@
 #     applied term name convention; replace Levl by Lvl
 #   Dave Durden (2018-08-05)
 #     Adding irga validation system sensors for ECTE
+#   Dave Durden (2019-05-13)
+#     Adding irga validation system sensors for ECTE (pressure sensors)
 ##############################################################################################################
 #Start of function call to generate NEON HDF5 files
 ##############################################################################################################
@@ -83,7 +85,7 @@ def.hdf5.crte <- function(
   MethDp04 = FALSE,
   FileNameReadMe = NULL,
   FileNameObjDesc = NULL,
-  LvlGasRefe = c("702_000", "704_000","705_000", "706_000")
+  LvlGasRefe = c("702_000", "703_000", "704_000","705_000", "706_000"),
   ) {
   
   #Determine basic vs. expanded
@@ -168,10 +170,10 @@ def.hdf5.crte <- function(
   ########################################################################### 
   #Creating level 0' file structures########################################
   #Create a list of all the L0 DPs for creation of group hierarchy (fard)
-  grpListDp0p <- c("irgaTurb","soni","amrs","mfcSampTurb","valvValiNemaTurb","mfcValiTurb","valvLeakHeatTurb","gasRefe")
+  grpListDp0p <- c("irgaTurb","soni","amrs","mfcSampTurb","valvValiNemaTurb","mfcValiTurb","valvLeakHeatTurb","gasRefe","presTrap","presValiLineTurb","presValiRegInTurb","presValiRegOutTurb")
   #              ,"irgaGasCyl"
-  #              "presTrap","presValiLineTurb","presValiRegInTurb",
-  #              "presValiRegOutTurb","pumpTurb","valvLeakHeatTurb",
+  #              
+  #              ,"pumpTurb","valvLeakHeatTurb",
   #              "valvValiHutTurb","valvValiNemaTurb",)
   #The DP level, the data product ID and the Rev number
   #grpListDp0p <- base::paste(grpListDp0p, "_001", sep = "")
@@ -302,8 +304,38 @@ def.hdf5.crte <- function(
   idData <- rhdf5::H5Oopen(idDataLvlDp0p,"gasRefe") #Open H5 connection
   idQfqm <- rhdf5::H5Oopen(idQfqmLvlDp0p,"gasRefe") 
   #Creating gasRefe HORVER level structures
+  lapply(LvlGasRefe[!LvlGasRefe %in% c("703_000")], function(x) rhdf5::H5Gcreate(idData, x))
+  lapply(LvlGasRefe[!LvlGasRefe %in% c("703_000")], function(x) rhdf5::H5Gcreate(idQfqm, x))
+  
+  
+  
+  # Creating structure for presValiLineTurb
+  idData <- rhdf5::H5Oopen(idDataLvlDp0p,"presValiLineTurb") #Open H5 connection
+  idQfqm <- rhdf5::H5Oopen(idQfqmLvlDp0p,"presValiLineTurb") 
+  #Creating gasRefe HORVER level structures
   lapply(LvlGasRefe, function(x) rhdf5::H5Gcreate(idData, x))
   lapply(LvlGasRefe, function(x) rhdf5::H5Gcreate(idQfqm, x))
+  
+  # Creating structure for presValiRegInTurb
+  idData <- rhdf5::H5Oopen(idDataLvlDp0p,"presValiRegInTurb") #Open H5 connection
+  idQfqm <- rhdf5::H5Oopen(idQfqmLvlDp0p,"presValiRegInTurb") 
+  #Creating gasRefe HORVER level structures
+  lapply(LvlGasRefe, function(x) rhdf5::H5Gcreate(idData, x))
+  lapply(LvlGasRefe, function(x) rhdf5::H5Gcreate(idQfqm, x))
+  
+  # Creating structure for presValiRegOutTurb
+  idData <- rhdf5::H5Oopen(idDataLvlDp0p,"presValiRegOutTurb") #Open H5 connection
+  idQfqm <- rhdf5::H5Oopen(idQfqmLvlDp0p,"presValiRegOutTurb") 
+  #Creating gasRefe HORVER level structures
+  lapply(LvlGasRefe, function(x) rhdf5::H5Gcreate(idData, x))
+  lapply(LvlGasRefe, function(x) rhdf5::H5Gcreate(idQfqm, x))
+  
+  #Creating structure for presTrap
+  idData <- rhdf5::H5Oopen(idDataLvlDp0p,"presTrap")
+  idQfqm <- rhdf5::H5Oopen(idQfqmLvlDp0p,"presTrap")
+  #Create HORVER structure
+  idDataHorVer <- rhdf5::H5Gcreate(idData,LvlTowr)
+  idQfqmHorVer <- rhdf5::H5Gcreate(idQfqm,LvlTowr)
   
   #Close all the connections to the file before exiting
   rhdf5::H5Gclose(idData)
