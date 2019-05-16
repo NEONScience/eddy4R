@@ -14,7 +14,6 @@
 #' @param \code{coefCorr} Flux correlation coefficient
 #' @param \code{distMean} Average flight length
 #' @param \code{timeFold} e-folding time
-#' @param \code{SiteInfo} site information list
 
 #' @return Statistical Errors for scalars, variances, and fluxes
 
@@ -53,7 +52,7 @@ def.ucrt.samp <- function(
   coefCorr,		      #flux correlation coefficient
   distMean,		      #averaging distance ()
   timeFold = 0 ,    #e-folding time for the autocorrelation of wavelet power at
-  species = NULL
+  spcs = NULL
   #each scale (Torrence and Compo, 1998, Table 1). This e-folding time is chosen
   #so that the wavelet power for a discontinuity at the
   #edge drops by a factor e-2 and ensures that the edge
@@ -67,7 +66,7 @@ def.ucrt.samp <- function(
   #scalar length scales
   distScalIsca <- distIsca$scal
   #lookup table for matching scalar length scales to flux correlation coefficients
-  if(is.null(species)){
+  if(is.null(spcs)){
     whrDistIsca <- base::rbind(  
       c("u_star2_x", "u_hor"),
       c("u_star2_y", "v_hor"),
@@ -79,9 +78,9 @@ def.ucrt.samp <- function(
                                c("u_star2_y", "v_hor"),
                                c("F_H_en", "T_air"))
     
-    for(i in 1:length(species)){
-      F_species_var <- def.spec.name(species[i],"mole")
-      F_species_mass <- def.spec.name(species[i],"mass")
+    for(i in 1:length(spcs)){
+      F_species_var <- def.spec.name(spcs[i],"mole")
+      F_species_mass <- def.spec.name(spcs[i],"mass")
       
       whrDistIsca = base::rbind(whrDistIsca,
                                 c(F_species_mass,F_species_var))}
