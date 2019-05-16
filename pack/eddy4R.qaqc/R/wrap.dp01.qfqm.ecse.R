@@ -9,6 +9,7 @@
 
 #' @param dp01 A vector of class "character" containing the name of NEON ECSE dp01 which descriptive statistics are being calculated, \cr
 #' c("co2Stor", "h2oStor", "tempAirLvl", "tempAirTop", "isoCo2", "isoH2o"). Defaults to "co2Stor". [-] 
+#' @param RptExpd A logical parameter that determines if the full quality metric \code{qm} is output in the returned list (defaults to FALSE).
 #' @param lvl  Measurement level of dp01 which descriptive statistics are being calculated. Of type character. [-]
 #' @param lvlMfcSampStor Measurement level of mfcSampStor which apply to only  dp01 equal to "co2Stor" or "h2oStor". Defaults to NULL. Of type character. [-]
 #' @param lvlMfcValiStor Measurement level of mfcValiStor which apply to only  dp01 equal to "co2Stor", "h2oStor", or "isoCo2. Defaults to NULL. Of type character. [-]
@@ -64,11 +65,14 @@
 #     bugs fixed to report qfValiH2o when no h2oRefe data
 #   Natchaya P-Durden (2019-01-31)
 #     using injNum instate of qfRngTmp to determine missing data
-#   Natchaya p-Durden (2019-04-09)
+#   Natchaya P-Durden (2019-04-09)
 #     adding lvlMfcValiStor into input parameter
+#   Natchaya P-Durden (2019-04-11)
+#     adding RptExpd into input parameter
 ##############################################################################################
 wrap.dp01.qfqm.ecse <- function(
   dp01 = c("co2Stor", "h2oStor", "tempAirLvl", "tempAirTop", "isoCo2", "isoH2o")[1],
+  RptExpd = FALSE,
   lvl,
   lvlMfcSampStor = NULL,
   lvlMfcValiStor = NULL,
@@ -304,7 +308,7 @@ wrap.dp01.qfqm.ecse <- function(
             qfInp = wrk$inpMask$qfqm, 
             MethMeas = "ecse",
             TypeMeas = "samp",
-            RptExpd = FALSE,
+            RptExpd = RptExpd,
             dp01 = dp01
           )
           
@@ -496,7 +500,7 @@ wrap.dp01.qfqm.ecse <- function(
             qfInp = wrk$inpMask$qfqm, 
             MethMeas = "ecse",
             TypeMeas = "vali",
-            RptExpd = FALSE,
+            RptExpd = RptExpd,
             dp01 = dp01
           )
           #grab and add both time begin and time end to rpt
@@ -555,7 +559,7 @@ wrap.dp01.qfqm.ecse <- function(
         qfInp = wrk$inpMask$qfqm, 
         MethMeas = "ecse",
         TypeMeas = "samp",
-        RptExpd = FALSE,
+        RptExpd = RptExpd,
         dp01 = dp01
       )
       
@@ -751,7 +755,7 @@ wrap.dp01.qfqm.ecse <- function(
             qfInp = wrk$inpMask$qfqm, 
             MethMeas = "ecse",
             TypeMeas = "samp",
-            RptExpd = FALSE,
+            RptExpd = RptExpd,
             dp01 = dp01,
             idGas = wrk$inpMask$data$idGas
           )
@@ -914,6 +918,7 @@ wrap.dp01.qfqm.ecse <- function(
           wrk$data[-whrSamp, ] <- NaN
           wrk$qfqm$crdCo2[-whrSamp, 1:length(wrk$qfqm$crdCo2)] <- NaN
           wrk$qfqm$envHut[-whrSamp, 1:length(wrk$qfqm$envHut)] <- NaN
+          wrk$qfqm$mfcValiStor[-whrSamp, 1:length(wrk$qfqm$mfcValiStor)] <- NaN
         } 
         
         for(idxAgr in c(1:length(idxTime[[paste0(PrdAgr, "min")]]$Bgn))) {
@@ -934,7 +939,7 @@ wrap.dp01.qfqm.ecse <- function(
             qfInp = wrk$inpMask$qfqm, 
             MethMeas = "ecse",
             TypeMeas = "vali",
-            RptExpd = FALSE,
+            RptExpd = RptExpd,
             dp01 = dp01,
             idGas = wrk$inpMask$data$idGas
           )
@@ -1122,7 +1127,7 @@ wrap.dp01.qfqm.ecse <- function(
             qfInp = wrk$inpMask$qfqm, 
             MethMeas = "ecse",
             TypeMeas = "samp",
-            RptExpd = FALSE,
+            RptExpd = RptExpd,
             dp01 = dp01
           )
           
@@ -1329,7 +1334,7 @@ wrap.dp01.qfqm.ecse <- function(
             qfInp = wrk$inpMask$qfqm, 
             MethMeas = "ecse",
             TypeMeas = "vali",
-            RptExpd = FALSE,
+            RptExpd = RptExpd,
             dp01 = dp01
           )
           

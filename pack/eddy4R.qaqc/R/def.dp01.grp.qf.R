@@ -72,6 +72,10 @@
 #     rename function from def.neon.dp01.qf.grp() to def.dp01.grp.qf()
 #   Natchaya P-Durden (2019-03-20)
 #     bug fix to not include qf from other gas speices during grouping qf for isoCo2
+#   Natchaya P-Durden (2019-04-24)
+#     remove qfStep from rtioMoleDryH2o and rtioMoleWetH2o in isoCo2
+#   Natchaya P-Durden (2019-04-29)
+#     adding the sensor name to ECSE quality flags 
 ##############################################################################################
 
 def.dp01.grp.qf <- function(
@@ -864,6 +868,17 @@ if (MethMeas == "ecse") {
                                   "qfStepTemp" = qfInp$irgaStor$qfStepTemp,
                                   "qfPersTemp" = qfInp$irgaStor$qfPersTemp, 
                                   "qfCalTemp" = qfInp$irgaStor$qfCalTemp)
+    
+    #change column names
+    names(setQf$asrpCo2) <- paste0(colnames(setQf$asrpCo2), "IrgaStor")
+    names(setQf$asrpH2o) <- paste0(colnames(setQf$asrpH2o), "IrgaStor")
+    names(setQf$rtioMoleDryCo2) <- paste0(colnames(setQf$rtioMoleDryCo2), "IrgaStor")
+    names(setQf$rtioMoleDryH2o) <- paste0(colnames(setQf$rtioMoleDryH2o), "IrgaStor")
+    names(setQf$rtioMoleWetCo2) <- paste0(colnames(setQf$rtioMoleWetCo2), "IrgaStor")
+    names(setQf$rtioMoleWetH2o) <- paste0(colnames(setQf$rtioMoleWetH2o), "IrgaStor")
+    names(setQf$presIrga) <- paste0(colnames(setQf$presIrga), "IrgaStor")
+    names(setQf$tempIrga) <- paste0(colnames(setQf$tempIrga), "IrgaStor")
+    
     #external quality flags from envHut
     setQf$envHut <- data.frame("qfTemp" = qfInp$envHut$qfTemp)
     setQf$presEnvHut <- data.frame("qfRngPres" = qfInp$envHut$qfRngPres, 
@@ -882,27 +897,41 @@ if (MethMeas == "ecse") {
                                    "qfStepTemp" = qfInp$envHut$qfStepTemp,
                                    "qfPersTemp" = qfInp$envHut$qfPersTemp)
     
+    #change column names
+    names(setQf$envHut) <- paste0(colnames(setQf$envHut), "EnvHut")
+    names(setQf$presEnvHut) <- paste0(colnames(setQf$presEnvHut), "EnvHut")
+    names(setQf$rhEnvHut) <- paste0(colnames(setQf$rhEnvHut), "EnvHut")
+    names(setQf$rtioMoleWetH2oEnvHut) <- paste0(colnames(setQf$rtioMoleWetH2oEnvHut), "EnvHut")
+    names(setQf$tempEnvHut) <- paste0(colnames(setQf$tempEnvHut), "EnvHut")
+    
     #external quality flags from valvAux
     setQf$valvAux <- data.frame("qfValvIrga" = qfInp$valvAux$qfValvIrga)
     ##external quality flags from heatInlt
     # setQf$heatInlt <- data.frame("qfHeat" = qfInp$heatInlt$qfHeat)
     #external quality flags from mfcSampStor
-    setQf$frt00MfcSampTurb <- data.frame("qfRngFrt00" = qfInp$mfcSampStor$qfRngFrt00,
+    setQf$frt00MfcSampStor <- data.frame("qfRngFrt00" = qfInp$mfcSampStor$qfRngFrt00,
                                          "qfStepFrt00" = qfInp$mfcSampStor$qfStepFrt00)
     
-    setQf$frtMfcSampTurb <- data.frame("qfRngFrt" = qfInp$mfcSampStor$qfRngFrt,
+    setQf$frtMfcSampStor <- data.frame("qfRngFrt" = qfInp$mfcSampStor$qfRngFrt,
                                        "qfStepFrt" = qfInp$mfcSampStor$qfStepFrt,
                                        "qfPersFrt" = qfInp$mfcSampStor$qfPersFrt)
     
-    setQf$presAtmMfcSampTurb <- data.frame("qfRngPresAtm" = qfInp$mfcSampStor$qfRngPresAtm,
+    setQf$presAtmMfcSampStor <- data.frame("qfRngPresAtm" = qfInp$mfcSampStor$qfRngPresAtm,
                                            "qfStepPresAtm" = qfInp$mfcSampStor$qfStepPresAtm,
                                            "qfPersPresAtm" = qfInp$mfcSampStor$qfPersPresAtm)
     
-    setQf$tempMfcSampTurb <- data.frame("qfRngTemp" = qfInp$mfcSampStor$qfRngTemp,
+    setQf$tempMfcSampStor <- data.frame("qfRngTemp" = qfInp$mfcSampStor$qfRngTemp,
                                         "qfStepTemp" = qfInp$mfcSampStor$qfStepTemp,
                                         "qfPersTemp" = qfInp$mfcSampStor$qfPersTemp)
     
-    setQf$sensMfcSampTurb <- data.frame("qfFrt00" = qfInp$mfcSampStor$qfFrt00)
+    setQf$sensMfcSampStor <- data.frame("qfFrt00" = qfInp$mfcSampStor$qfFrt00)
+    
+    #change column names
+    names(setQf$frt00MfcSampStor) <- paste0(colnames(setQf$frt00MfcSampStor), "MfcSampStor")
+    names(setQf$frtMfcSampStor) <- paste0(colnames(setQf$frtMfcSampStor), "MfcSampStor")
+    names(setQf$presAtmMfcSampStor) <- paste0(colnames(setQf$presAtmMfcSampStor), "MfcSampStor")
+    names(setQf$tempMfcSampStor) <- paste0(colnames(setQf$tempMfcSampStor), "MfcSampStor")
+    names(setQf$sensMfcSampStor) <- paste0(colnames(setQf$sensMfcSampStor), "MfcSampStor")
     
     #external quality flags from mfcValiStor
     setQf$frt00MfcVali <- data.frame("qfRngFrt00" = qfInp$mfcValiStor$qfRngFrt00,
@@ -922,6 +951,12 @@ if (MethMeas == "ecse") {
     
     setQf$sensMfcVali <- data.frame("qfFrt00" = qfInp$mfcValiStor$qfFrt00)
     
+    #change column names
+    names(setQf$frt00MfcVali) <- paste0(colnames(setQf$frt00MfcVali), "MfcValiStor")
+    names(setQf$frtMfcVali) <- paste0(colnames(setQf$frtMfcVali), "MfcValiStor")
+    names(setQf$presAtmMfcVali) <- paste0(colnames(setQf$presAtmMfcVali), "MfcValiStor")
+    names(setQf$tempMfcVali) <- paste0(colnames(setQf$tempMfcVali), "MfcValiStor")
+    names(setQf$sensMfcVali) <- paste0(colnames(setQf$sensMfcVali), "MfcValiStor")
     
     #grouping qulity flags that related to co2Stor L1 sub-data product
     if (dp01 == "co2Stor"){
@@ -932,18 +967,18 @@ if (MethMeas == "ecse") {
                                                  setQf$tempIrga, setQf$envHut, 
                                                  setQf$valvAux, 
                                                  #setQf$heatInlt,
-                                                 setQf$frt00MfcSampTurb, setQf$frtMfcSampTurb, 
-                                                 setQf$presAtmMfcSampTurb, setQf$tempMfcSampTurb,
-                                                 setQf$sensMfcSampTurb))
+                                                 setQf$frt00MfcSampStor, setQf$frtMfcSampStor, 
+                                                 setQf$presAtmMfcSampStor, setQf$tempMfcSampStor,
+                                                 setQf$sensMfcSampStor))
         
         rpt$rtioMoleWetCo2 <- na.omit(data.frame(setQf$rtioMoleWetCo2, setQf$asrpCo2,
                                                  setQf$asrpH2o, setQf$rtioMoleWetH2o, 
                                                  setQf$presIrga, setQf$tempIrga, 
                                                  setQf$envHut, setQf$valvAux, 
                                                  #setQf$heatInlt, 
-                                                 setQf$frt00MfcSampTurb, 
-                                                 setQf$frtMfcSampTurb, setQf$presAtmMfcSampTurb, 
-                                                 setQf$tempMfcSampTurb, setQf$sensMfcSampTurb))
+                                                 setQf$frt00MfcSampStor, 
+                                                 setQf$frtMfcSampStor, setQf$presAtmMfcSampStor, 
+                                                 setQf$tempMfcSampStor, setQf$sensMfcSampStor))
       }#close if statement of TypeMeas == "samp"
       
       if (TypeMeas == "vali"){
@@ -951,9 +986,9 @@ if (MethMeas == "ecse") {
                                                  setQf$asrpH2o, setQf$rtioMoleWetCo2,
                                                  setQf$rtioMoleWetH2o, setQf$presIrga,
                                                  setQf$tempIrga, setQf$envHut, 
-                                                 setQf$valvAux, setQf$frt00MfcSampTurb, 
-                                                 setQf$frtMfcSampTurb, setQf$presAtmMfcSampTurb, 
-                                                 setQf$tempMfcSampTurb, setQf$sensMfcSampTurb,
+                                                 setQf$valvAux, setQf$frt00MfcSampStor, 
+                                                 setQf$frtMfcSampStor, setQf$presAtmMfcSampStor, 
+                                                 setQf$tempMfcSampStor, setQf$sensMfcSampStor,
                                                  setQf$frt00MfcVali, setQf$frtMfcVali, 
                                                  setQf$presAtmMfcVali, setQf$tempMfcVali, 
                                                  setQf$sensMfcVali))
@@ -962,17 +997,17 @@ if (MethMeas == "ecse") {
                                                  setQf$asrpH2o, setQf$rtioMoleWetH2o, 
                                                  setQf$presIrga, setQf$tempIrga, 
                                                  setQf$envHut, setQf$valvAux, 
-                                                 setQf$frt00MfcSampTurb, setQf$frtMfcSampTurb, 
-                                                 setQf$presAtmMfcSampTurb, setQf$tempMfcSampTurb, 
-                                                 setQf$sensMfcSampTurb,setQf$frt00MfcVali, 
+                                                 setQf$frt00MfcSampStor, setQf$frtMfcSampStor, 
+                                                 setQf$presAtmMfcSampStor, setQf$tempMfcSampStor, 
+                                                 setQf$sensMfcSampStor,setQf$frt00MfcVali, 
                                                  setQf$frtMfcVali, setQf$presAtmMfcVali, 
                                                  setQf$tempMfcVali, setQf$sensMfcVali))
       }#close if statement of TypeMeas == "vali"
       
       rpt$pres <- na.omit(data.frame(setQf$presIrga))
-      rpt$frt00 <- na.omit(data.frame (setQf$frt00MfcSampTurb, setQf$frtMfcSampTurb,
-                                       setQf$presAtmMfcSampTurb, setQf$tempMfcSampTurb,
-                                       setQf$sensMfcSampTurb))
+      rpt$frt00 <- na.omit(data.frame (setQf$frt00MfcSampStor, setQf$frtMfcSampStor,
+                                       setQf$presAtmMfcSampStor, setQf$tempMfcSampStor,
+                                       setQf$sensMfcSampStor))
       rpt$temp <- na.omit(data.frame (setQf$tempIrga))
       rpt$presEnvHut <- na.omit(data.frame(setQf$presEnvHut))
       rpt$rhEnvHut <- na.omit(data.frame (setQf$rhEnvHut))
@@ -988,26 +1023,26 @@ if (MethMeas == "ecse") {
                                                  setQf$tempIrga, setQf$envHut, 
                                                  setQf$valvAux, 
                                                  #setQf$heatInlt, 
-                                                 setQf$frt00MfcSampTurb, setQf$frtMfcSampTurb, 
-                                                 setQf$presAtmMfcSampTurb, setQf$tempMfcSampTurb, 
-                                                 setQf$sensMfcSampTurb))
+                                                 setQf$frt00MfcSampStor, setQf$frtMfcSampStor, 
+                                                 setQf$presAtmMfcSampStor, setQf$tempMfcSampStor, 
+                                                 setQf$sensMfcSampStor))
         
         rpt$rtioMoleWetH2o <- na.omit(data.frame(setQf$rtioMoleWetH2o, setQf$asrpH2o,
                                                  setQf$presIrga, setQf$tempIrga,
                                                  setQf$envHut, setQf$valvAux, 
                                                  #setQf$heatInlt, 
-                                                 setQf$frt00MfcSampTurb, 
-                                                 setQf$frtMfcSampTurb, setQf$presAtmMfcSampTurb, 
-                                                 setQf$tempMfcSampTurb, setQf$sensMfcSampTurb))
+                                                 setQf$frt00MfcSampStor, 
+                                                 setQf$frtMfcSampStor, setQf$presAtmMfcSampStor, 
+                                                 setQf$tempMfcSampStor, setQf$sensMfcSampStor))
       }#close if statement of TypeMeas == "samp"
       
       if (TypeMeas == "vali"){
         rpt$rtioMoleDryH2o <- na.omit(data.frame(setQf$rtioMoleDryH2o, setQf$asrpH2o,
                                                  setQf$rtioMoleWetH2o, setQf$presIrga,
                                                  setQf$tempIrga, setQf$envHut, 
-                                                 setQf$valvAux, setQf$frt00MfcSampTurb, 
-                                                 setQf$frtMfcSampTurb, setQf$presAtmMfcSampTurb, 
-                                                 setQf$tempMfcSampTurb, setQf$sensMfcSampTurb,
+                                                 setQf$valvAux, setQf$frt00MfcSampStor, 
+                                                 setQf$frtMfcSampStor, setQf$presAtmMfcSampStor, 
+                                                 setQf$tempMfcSampStor, setQf$sensMfcSampStor,
                                                  setQf$frt00MfcVali, setQf$frtMfcVali, 
                                                  setQf$presAtmMfcVali, setQf$tempMfcVali, 
                                                  setQf$sensMfcVali))
@@ -1015,17 +1050,17 @@ if (MethMeas == "ecse") {
         rpt$rtioMoleWetH2o <- na.omit(data.frame(setQf$rtioMoleWetH2o, setQf$asrpH2o,
                                                  setQf$presIrga, setQf$tempIrga, 
                                                  setQf$envHut, setQf$valvAux, 
-                                                 setQf$frt00MfcSampTurb, setQf$frtMfcSampTurb, 
-                                                 setQf$presAtmMfcSampTurb, setQf$tempMfcSampTurb, 
-                                                 setQf$sensMfcSampTurb,setQf$frt00MfcVali, 
+                                                 setQf$frt00MfcSampStor, setQf$frtMfcSampStor, 
+                                                 setQf$presAtmMfcSampStor, setQf$tempMfcSampStor, 
+                                                 setQf$sensMfcSampStor,setQf$frt00MfcVali, 
                                                  setQf$frtMfcVali, setQf$presAtmMfcVali, 
                                                  setQf$tempMfcVali, setQf$sensMfcVali))
         
       }#close if statement of TypeMeas == "vali"
       rpt$pres <- na.omit(data.frame(setQf$presIrga))
-      rpt$frt00 <- na.omit(data.frame(setQf$frt00MfcSampTurb, setQf$frtMfcSampTurb, 
-                                      setQf$presAtmMfcSampTurb, setQf$tempMfcSampTurb, 
-                                      setQf$sensMfcSampTurb)) 
+      rpt$frt00 <- na.omit(data.frame(setQf$frt00MfcSampStor, setQf$frtMfcSampStor, 
+                                      setQf$presAtmMfcSampStor, setQf$tempMfcSampStor, 
+                                      setQf$sensMfcSampStor)) 
       rpt$temp <- na.omit(data.frame(setQf$tempIrga))
       rpt$presEnvHut <- na.omit(data.frame(setQf$presEnvHut))
       rpt$rhEnvHut <- na.omit(data.frame (setQf$rhEnvHut))
@@ -1081,7 +1116,7 @@ if (MethMeas == "ecse") {
                                           "qfCalRtioMoleDry13CCo2" = qfInp$crdCo2$qfCalRtioMoleDry13CCo2)
     
     setQf$rtioMoleDryH2o <- data.frame("qfRngRtioMoleDryH2o" = qfInp$crdCo2$qfRngRtioMoleDryH2o, 
-                                       "qfStepRtioMoleDryH2o" = qfInp$crdCo2$qfStepRtioMoleDryH2o,
+                                       #"qfStepRtioMoleDryH2o" = qfInp$crdCo2$qfStepRtioMoleDryH2o,
                                        "qfPersRtioMoleDryH2o" = qfInp$crdCo2$qfPersRtioMoleDryH2o, 
                                        "qfCalRtioMoleDryH2o" = qfInp$crdCo2$qfCalRtioMoleDryH2o)
     
@@ -1101,7 +1136,7 @@ if (MethMeas == "ecse") {
                                           "qfCalRtioMoleWet13CCo2 " = qfInp$crdCo2$qfCalRtioMoleWet13CCo2)
     
     setQf$rtioMoleWetH2o <- data.frame("qfRngRtioMoleWetH2o" = qfInp$crdCo2$qfRngRtioMoleWetH2o, 
-                                       "qfStepRtioMoleWetH2o" = qfInp$crdCo2$qfStepRtioMoleWetH2o,
+                                       #"qfStepRtioMoleWetH2o" = qfInp$crdCo2$qfStepRtioMoleWetH2o,
                                        "qfPersRtioMoleWetH2o" = qfInp$crdCo2$qfPersRtioMoleWetH2o, 
                                        "qfCalRtioMoleWetH2o" = qfInp$crdCo2$qfCalRtioMoleWetH2o)
     
@@ -1126,6 +1161,21 @@ if (MethMeas == "ecse") {
                                  "qfCalTempWbox" = qfInp$crdCo2$qfCalTempWbox)
     setQf$sensCrdCo2 <- data.frame("qfSensStus" = qfInp$crdCo2$qfSensStus)
     
+    #change column names
+    names(setQf$rtioMoleDryCo2) <- paste0(colnames(setQf$rtioMoleDryCo2), "CrdCo2")
+    names(setQf$rtioMoleDry12CCo2) <- paste0(colnames(setQf$rtioMoleDry12CCo2), "CrdCo2")
+    names(setQf$rtioMoleDry13CCo2) <- paste0(colnames(setQf$rtioMoleDry13CCo2), "CrdCo2")
+    names(setQf$rtioMoleDryH2o) <- paste0(colnames(setQf$rtioMoleDryH2o), "CrdCo2")
+    names(setQf$rtioMoleWetCo2) <- paste0(colnames(setQf$rtioMoleWetCo2), "CrdCo2")
+    names(setQf$rtioMoleWet12CCo2) <- paste0(colnames(setQf$rtioMoleWet12CCo2), "CrdCo2")
+    names(setQf$rtioMoleWet13CCo2) <- paste0(colnames(setQf$rtioMoleWet13CCo2), "CrdCo2")
+    names(setQf$rtioMoleWetH2o) <- paste0(colnames(setQf$rtioMoleWetH2o), "CrdCo2")
+    names(setQf$dlta13CCo2) <- paste0(colnames(setQf$dlta13CCo2), "CrdCo2")
+    names(setQf$presCrdCo2) <- paste0(colnames(setQf$presCrdCo2), "CrdCo2")
+    names(setQf$tempCrdCo2) <- paste0(colnames(setQf$tempCrdCo2), "CrdCo2")
+    names(setQf$tempWbox) <- paste0(colnames(setQf$tempWbox), "CrdCo2")
+    names(setQf$sensCrdCo2) <- paste0(colnames(setQf$sensCrdCo2), "CrdCo2")
+    
     #external quality flags from envHut
     setQf$presEnvHut <- data.frame("qfRngPres" = qfInp$envHut$qfRngPres, 
                                    "qfStepPres" = qfInp$envHut$qfStepPres,
@@ -1142,6 +1192,13 @@ if (MethMeas == "ecse") {
     setQf$tempEnvHut <- data.frame("qfRngTemp" = qfInp$envHut$qfRngTemp, 
                                    "qfStepTemp" = qfInp$envHut$qfStepTemp,
                                    "qfPersTemp" = qfInp$envHut$qfPersTemp)
+    
+    #change column names
+    names(setQf$presEnvHut) <- paste0(colnames(setQf$presEnvHut), "EnvHut")
+    names(setQf$rhEnvHut) <- paste0(colnames(setQf$rhEnvHut), "EnvHut")
+    names(setQf$rtioMoleWetH2oEnvHut) <- paste0(colnames(setQf$rtioMoleWetH2oEnvHut), "EnvHut")
+    names(setQf$tempEnvHut) <- paste0(colnames(setQf$tempEnvHut), "EnvHut")
+    
     # #setQf from heatInlt
     # setQf$heatInlt <- data.frame("qfHeat" = qfInp$heatInlt$qfHeat)
     
@@ -1163,6 +1220,12 @@ if (MethMeas == "ecse") {
     
     setQf$sensMfcVali <- data.frame("qfFrt00" = qfInp$mfcValiStor$qfFrt00)
     
+    #change column names
+    names(setQf$frt00MfcVali) <- paste0(colnames(setQf$frt00MfcVali), "MfcValiStor")
+    names(setQf$frtMfcVali) <- paste0(colnames(setQf$frtMfcVali), "MfcValiStor")
+    names(setQf$presAtmMfcVali) <- paste0(colnames(setQf$presAtmMfcVali), "MfcValiStor")
+    names(setQf$tempMfcVali) <- paste0(colnames(setQf$tempMfcVali), "MfcValiStor")
+    names(setQf$sensMfcVali) <- paste0(colnames(setQf$sensMfcVali), "MfcValiStor")
     
     #define qf which use only sampling period
     if (TypeMeas == "samp") {
@@ -1553,6 +1616,18 @@ if (MethMeas == "ecse") {
     setQf$sensCrdH2o <- data.frame("qfSensStus" = qfInp$crdH2o$qfSensStus,
                                    "qfStusN2" = qfInp$crdH2o$qfStusN2)
     setQf$valiCrdH2o <- data.frame("qfValiH2o" = qfInp$crdH2o$qfValiH2o)
+    
+    #change column names
+    names(setQf$rtioMoleDryH2o) <- paste0(colnames(setQf$rtioMoleDryH2o), "CrdH2o")
+    names(setQf$rtioMoleWetH2o) <- paste0(colnames(setQf$rtioMoleWetH2o), "CrdH2o")
+    names(setQf$dlta18OH2o) <- paste0(colnames(setQf$dlta18OH2o), "CrdH2o")
+    names(setQf$dlta2HH2o) <- paste0(colnames(setQf$dlta2HH2o), "CrdH2o")
+    names(setQf$presCrdH2o) <- paste0(colnames(setQf$presCrdH2o), "CrdH2o")
+    names(setQf$tempCrdH2o) <- paste0(colnames(setQf$tempCrdH2o), "CrdH2o")
+    names(setQf$tempWbox) <- paste0(colnames(setQf$tempWbox), "CrdH2o")
+    names(setQf$sensCrdH2o) <- paste0(colnames(setQf$sensCrdH2o), "CrdH2o")
+    names(setQf$valiCrdH2o) <- paste0(colnames(setQf$valiCrdH2o), "CrdH2o")
+    
     #setQf of envHut
     setQf$envHut <- data.frame("qfRh" = qfInp$envHut$qfRh)
     setQf$presEnvHut <- data.frame("qfRngPres" = qfInp$envHut$qfRngPres, 
@@ -1570,6 +1645,12 @@ if (MethMeas == "ecse") {
     setQf$tempEnvHut <- data.frame("qfRngTemp" = qfInp$envHut$qfRngTemp, 
                                    "qfStepTemp" = qfInp$envHut$qfStepTemp,
                                    "qfPersTemp" = qfInp$envHut$qfPersTemp)
+    #change column names
+    names(setQf$envHut) <- paste0(colnames(setQf$envHut), "EnvHut")
+    names(setQf$presEnvHut) <- paste0(colnames(setQf$presEnvHut), "EnvHut")
+    names(setQf$rhEnvHut) <- paste0(colnames(setQf$rhEnvHut), "EnvHut")
+    names(setQf$rtioMoleWetH2oEnvHut) <- paste0(colnames(setQf$rtioMoleWetH2oEnvHut), "EnvHut")
+    names(setQf$tempEnvHut) <- paste0(colnames(setQf$tempEnvHut), "EnvHut")
     
     # #setQf of heatInlt
     # setQf$heatInlt <- data.frame("qfHeat" = qfInp$heatInlt$qfHeat)
@@ -1663,6 +1744,12 @@ if (MethMeas == "ecse") {
     setQf$rtioMoleWetH2o <- data.frame("qfRngRtioMoleWetH2o" = qfInp$envHut$qfRngRtioMoleWetH2o, 
                                        "qfStepRtioMoleWetH2o" = qfInp$envHut$qfStepRtioMoleWetH2o,
                                        "qfPersRtioMoleWetH2o" = qfInp$envHut$qfPersRtioMoleWetH2o)
+    
+    #change column names
+    names(setQf$tempEnvHut) <- paste0(colnames(setQf$tempEnvHut), "EnvHut")
+    names(setQf$rh) <- paste0(colnames(setQf$rh), "EnvHut")
+    names(setQf$presEnvHut) <- paste0(colnames(setQf$presEnvHut), "EnvHut")
+    names(setQf$rtioMoleWetH2o) <- paste0(colnames(setQf$rtioMoleWetH2o), "EnvHut")
     
     #grouping qulity flags that related to envHut L1 sub-data product
     rpt$temp <- data.frame(setQf$tempEnvHut)
