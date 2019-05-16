@@ -20,7 +20,7 @@
 #' @param hpf TRUE - apply Butterworth high-pass filter; FALSE - use raw data. Defaults to TRUE. Of class logical. [-]
 #' @param fracMin Minimum fraction of data to attempt lag determination. Defaults to 0.1. Of class numeric. [-]
 #' @param plot Switch to turn ON/OFF plotting of cross-correlation output to PDF.
-#' @param plot_dir Output directory for cross-correlation plot.
+#' @param DirPlot Output directory for cross-correlation plot.
 
 
 #' @return Lagged input data and calculation results in a list consisting of:\cr
@@ -73,7 +73,7 @@ def.lag <- function(
   hpf = TRUE,
   fracMin = 0.1,
   plot = F,
-  plot_dir = NULL
+  DirPlot = NULL
 ) {
 
   #start escape if too few non-NAs in period
@@ -151,7 +151,7 @@ def.lag <- function(
     }
     #plot immidiate wavelet variances and covariances
     if(plot)
-      pdf(file=paste(plot_dir, "/", var, "_cross_correlation.pdf", sep=""), width = 14, height = 5)
+      pdf(file=paste(DirPlot, "/", var, "_cross_correlation.pdf", sep=""), width = 14, height = 5)
     
     #find correct lag time    
     #for hard lagMax argument
