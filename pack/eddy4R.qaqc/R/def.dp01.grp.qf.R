@@ -78,6 +78,8 @@
 #     adding the sensor name to ECSE quality flags 
 #   Natchaya P-Durden (2019-05-06)
 #     adding the mfm quality flags to ECSE
+#   Natchaya P-Durden (2019-05-22)
+#     adding the presInlt quality flags to ECSE
 ##############################################################################################
 
 def.dp01.grp.qf <- function(
@@ -830,13 +832,18 @@ if (MethMeas == "ecse") {
       names(qfInp$mfm) <- c("qfRngFrt00", "qfStepFrt00", "qfPersFrt00", "qfRngFrt", "qfStepFrt", "qfPersFrt",
                                     "qfRngPresAtm", "qfStepPresAtm", "qfPersPresAtm", "qfRngTemp", "qfStepTemp", "qfPersTemp",
                                     "qfFrt00")}
+    
+    #external quality flags from presInlt
+    if (!("presInlt" %in% names(qfInp)) || length(which(!is.na(qfInp$irgaStor$qfRngTemp))) == 0){
+      qfInp$presInlt <- as.data.frame(matrix(-1, ncol = 4, nrow = length(qfInp$irgaStor$qfRngAsrpCo2)))
+      names(qfInp$presInlt) <- c("qfPersPresDiff", "qfPresDiff", "qfRngPresDiff", "qfStepPresDiff")}
+    
     #replace -1 if all qf in irga are NA
     if (length(which(!is.na(qfInp$irgaStor$qfRngTemp))) == 0){
       qfInp$irgaStor[,1:length(qfInp$irgaStor)] <- -1
     }
     
     #grouping the flags
-    
     setQf$asrpCo2 <- data.frame("qfRngAsrpCo2" = qfInp$irgaStor$qfRngAsrpCo2, 
                                 "qfStepAsrpCo2" = qfInp$irgaStor$qfStepAsrpCo2, 
                                 "qfPersAsrpCo2" = qfInp$irgaStor$qfPersAsrpCo2, 
@@ -992,6 +999,11 @@ if (MethMeas == "ecse") {
     names(setQf$tempMfm) <- paste0(colnames(setQf$tempMfm), "Mfm")
     names(setQf$sensMfm) <- paste0(colnames(setQf$sensMfm), "Mfm")
     
+    #external quality flags from presInlt
+    setQf$presInlt <- data.frame("qfPresDiff" = qfInp$presInlt$qfPresDiff)
+    #change column names
+    names(setQf$presInlt) <- paste0(colnames(setQf$presInlt), "PresInlt")
+    
     #grouping qulity flags that related to co2Stor L1 sub-data product
     if (dp01 == "co2Stor"){
       if (TypeMeas == "samp"){
@@ -1006,7 +1018,7 @@ if (MethMeas == "ecse") {
                                                  setQf$sensMfcSampStor,
                                                  setQf$frt00Mfm, setQf$frtMfm, 
                                                  setQf$presAtmMfm, setQf$tempMfm,
-                                                 setQf$sensMfm))
+                                                 setQf$sensMfm, setQf$presInl))
         
         rpt$rtioMoleWetCo2 <- na.omit(data.frame(setQf$rtioMoleWetCo2, setQf$asrpCo2,
                                                  setQf$asrpH2o, setQf$rtioMoleWetH2o, 
@@ -1018,7 +1030,7 @@ if (MethMeas == "ecse") {
                                                  setQf$tempMfcSampStor, setQf$sensMfcSampStor,
                                                  setQf$frt00Mfm, setQf$frtMfm, 
                                                  setQf$presAtmMfm, setQf$tempMfm,
-                                                 setQf$sensMfm))
+                                                 setQf$sensMfm, setQf$presInl))
       }#close if statement of TypeMeas == "samp"
       
       if (TypeMeas == "vali"){
@@ -1068,7 +1080,7 @@ if (MethMeas == "ecse") {
                                                  setQf$sensMfcSampStor,
                                                  setQf$frt00Mfm, setQf$frtMfm, 
                                                  setQf$presAtmMfm, setQf$tempMfm,
-                                                 setQf$sensMfm))
+                                                 setQf$sensMfm, setQf$presInl))
         
         rpt$rtioMoleWetH2o <- na.omit(data.frame(setQf$rtioMoleWetH2o, setQf$asrpH2o,
                                                  setQf$presIrga, setQf$tempIrga,
@@ -1079,7 +1091,7 @@ if (MethMeas == "ecse") {
                                                  setQf$tempMfcSampStor, setQf$sensMfcSampStor,
                                                  setQf$frt00Mfm, setQf$frtMfm, 
                                                  setQf$presAtmMfm, setQf$tempMfm,
-                                                 setQf$sensMfm))
+                                                 setQf$sensMfm, setQf$presInl))
       }#close if statement of TypeMeas == "samp"
       
       if (TypeMeas == "vali"){
