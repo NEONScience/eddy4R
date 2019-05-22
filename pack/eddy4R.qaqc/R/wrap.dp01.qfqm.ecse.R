@@ -71,6 +71,8 @@
 #     adding RptExpd into input parameter
 #   Natchaya P-Durden (2019-05-06)
 #     assign lvlMfm in data flow
+#   Natchaya P-Durden (2019-05-21)
+#     pull in the qf from presInlt
 ##############################################################################################
 wrap.dp01.qfqm.ecse <- function(
   dp01 = c("co2Stor", "h2oStor", "tempAirLvl", "tempAirTop", "isoCo2", "isoH2o")[1],
@@ -151,8 +153,9 @@ wrap.dp01.qfqm.ecse <- function(
       wrk$qfqm$envHut <- qfInp$envHut[[lvlEnvHut]]
       wrk$qfqm$valvAux <- qfInp$valvAux[[lvlValvAux]]
       wrk$qfqm$mfm <- qfInp$mfm[[lvlMfm]]
+      if ("presInlt" %in% names(qfInp)) wrk$qfqm$presInlt <- qfInp$presInlt[[lvl]]  
         
-        if (PrdMeas == PrdAgr) {
+      if (PrdMeas == PrdAgr) {
         #PrdAgr <- 2
         #2 minutely sampling data
         #idxLvLPrdAgr <- paste0(lvl, "_", sprintf("%02d", PrdAgr), "m")
@@ -178,20 +181,9 @@ wrap.dp01.qfqm.ecse <- function(
             #assign name to wrk$inpMask$qfqm
             lapply(names(wrk$qfqm), function (x) wrk$inpMask$qfqm[[x]] <<- wrk$qfqm[[x]][wrk$idx$idxBgn[idxAgr]:wrk$idx$idxEnd[idxAgr], ,drop=FALSE] )
             #replace qfqm$irgaStor with -1 when irga got kick out to measure the new measurement level
-            for (tmp in 1:length(wrk$inpMask$qfqm$irgaStor)){
-              wrk$inpMask$qfqm$irgaStor[[tmp]][wrk$inpMask$data$lvlIrga != lvlIrga] <- -1
-            }
-            for (tmp in 1:length(wrk$inpMask$qfqm$mfcSampStor)){
-              wrk$inpMask$qfqm$mfcSampStor[[tmp]][wrk$inpMask$data$lvlIrga != lvlIrga] <- -1
-            }
-            for (tmp in 1:length(wrk$inpMask$qfqm$envHut)){
-              wrk$inpMask$qfqm$envHut[[tmp]][wrk$inpMask$data$lvlIrga != lvlIrga] <- -1
-            }
-            for (tmp in 1:length(wrk$inpMask$qfqm$valvAux)){
-              wrk$inpMask$qfqm$valvAux[[tmp]][wrk$inpMask$data$lvlIrga != lvlIrga] <- -1
-            }
-            for (tmp in 1:length(wrk$inpMask$qfqm$mfm)){
-              wrk$inpMask$qfqm$mfm[[tmp]][wrk$inpMask$data$lvlIrga != lvlIrga] <- -1
+            for (idxSens in names(wrk$inpMask$qfqm)){
+            for (tmp in 1:length(wrk$inpMask$qfqm[[idxSens]])){
+              wrk$inpMask$qfqm[[idxSens]][[tmp]][wrk$inpMask$data$lvlIrga != lvlIrga] <- -1
             }
             
             #qfqm processing
