@@ -607,6 +607,7 @@ wrap.dp01.qfqm.ecse <- function(
       wrk$qfqm$crdCo2 <- qfInp$crdCo2[[lvl]]
       wrk$qfqm$envHut <- qfInp$envHut[[lvlEnvHut]]
       wrk$qfqm$mfm <- qfInp$mfm[[lvlMfm]]
+      if ("presInlt" %in% names(qfInp)) wrk$qfqm$presInlt <- qfInp$presInlt[[lvl]] 
       
       if (PrdMeas == PrdAgr) {
         #PrdAgr <- 9
@@ -620,6 +621,8 @@ wrap.dp01.qfqm.ecse <- function(
           wrk$idx <- eddy4R.base::def.idx.agr(time = data$time, PrdAgr = (PrdMeas*60), FreqLoca = 1, MethIdx = "specBgn", data = wrk$qfqm$crdCo2$qfRngTemp, CritTime = 60)
           #delete row if last timeBgn and timeEnd is NA
           wrk$idx <- wrk$idx[rowSums(is.na(wrk$idx)) != 2,]
+          #replace last idxEnd > 86400 by 86400
+          wrk$idx$idxEnd <- ifelse(wrk$idx$idxEnd > 86400, 86400, wrk$idx$idxEnd)
           #if last timeEnd is NA, replce that time to the last time value in data$time
           wrk$idx$timeEnd <- as.POSIXct(ifelse(is.na(wrk$idx$timeEnd), data$time[length(data$time)], wrk$idx$timeEnd), origin = "1970-01-01", tz = "UTC")
           #idxAgr2 <- 0
@@ -631,15 +634,10 @@ wrap.dp01.qfqm.ecse <- function(
             #wrk$inpMask for qfqm
             wrk$inpMask$qfqm <- list()
             lapply(names(wrk$qfqm), function (x) wrk$inpMask$qfqm[[x]] <<- wrk$qfqm[[x]][wrk$idx$idxBgn[idxAgr]:wrk$idx$idxEnd[idxAgr],] )
-            #replace qfqm$crdCo2 with -1 when valve switch to measure to next level before schedule time (9 min)
-            for (tmp in 1:length(wrk$inpMask$qfqm$crdCo2)){
-              wrk$inpMask$qfqm$crdCo2[[tmp]][wrk$inpMask$data$lvlCrdCo2 != lvlCrdCo2] <- -1
-            }
-            for (tmp in 1:length(wrk$inpMask$qfqm$envHut)){
-              wrk$inpMask$qfqm$envHut[[tmp]][wrk$inpMask$data$lvlCrdCo2 != lvlCrdCo2] <- -1
-            }
-            for (tmp in 1:length(wrk$inpMask$qfqm$mfm)){
-              wrk$inpMask$qfqm$mfm[[tmp]][wrk$inpMask$data$lvlCrdCo2 != lvlCrdCo2] <- -1
+            
+            for (idxSens in names(wrk$inpMask$qfqm)){
+              #replace qfqm with -1 when valve switch to measure to next level before schedule time (9 min)
+              wrk$inpMask$qfqm[[idxSens]][wrk$inpMask$data$lvlCrdCo2 != lvlCrdCo2, 1:length(wrk$inpMask$qfqm[[idxSens]])] <- -1
             }
             
             #qfqm processing
@@ -719,23 +717,14 @@ wrap.dp01.qfqm.ecse <- function(
             }
           }
           wrk$data[-whrSamp, 1:16] <- NaN
-          #replace qfqm$crdCo2 with -1 when valve switch to measure to next level before schedule time (9 min)
-          for (tmp in 1:length(wrk$qfqm$crdCo2)){
-            wrk$qfqm$crdCo2[[tmp]][wrk$data$lvlCrdCo2 != lvlCrdCo2] <- -1
+         
+          for (idxSens in names(wrk$qfqm)){
+            #replace qfqm with -1 when valve switch to measure to next level before schedule time (9 min)
+            wrk$qfqm[[idxSens]][wrk$data$lvlCrdCo2 != lvlCrdCo2, 1:length(wrk$qfqm[[idxSens]])] <- -1
+            #replace all qf that not belong to that measurement level by NaN
+            wrk$qfqm[[idxSens]][-whrSamp, 1:length(wrk$qfqm[[idxSens]])] <- NaN
           }
-          for (tmp in 1:length(wrk$qfqm$envHut)){
-            wrk$qfqm$envHut[[tmp]][wrk$data$lvlCrdCo2 != lvlCrdCo2] <- -1
-          }
-          for (tmp in 1:length(wrk$qfqm$mfm)){
-            wrk$qfqm$mfm[[tmp]][wrk$data$lvlCrdCo2 != lvlCrdCo2] <- -1
-          }
-          #replace all qf that not belong to that measurement level by NaN
-          wrk$qfqm$crdCo2[-whrSamp, 1:length(wrk$qfqm$crdCo2)] <- NaN
-          wrk$qfqm$envHut[-whrSamp, 1:length(wrk$qfqm$envHut)] <- NaN
-          wrk$qfqm$mfm[-whrSamp, 1:length(wrk$qfqm$mfm)] <- NaN
-        } 
-        
-        
+          
         for(idxAgr in c(1:length(idxTime[[paste0(PrdAgr, "min")]]$Bgn))) {
           #idxAgr <- 48
           #get data for each idxAgr
