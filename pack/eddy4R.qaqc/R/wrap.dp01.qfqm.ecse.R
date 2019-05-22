@@ -167,6 +167,8 @@ wrap.dp01.qfqm.ecse <- function(
           wrk$idx <- eddy4R.base::def.idx.agr(time = data$time, PrdAgr = (PrdMeas*60), FreqLoca = 1, MethIdx = "specBgn", data = wrk$qfqm$irgaStor$qfRngTemp, CritTime = 60)
           #delete row if last timeBgn and timeEnd is NA
           wrk$idx <- wrk$idx[rowSums(is.na(wrk$idx)) != 2,]
+          #replace last idxEnd > 86400 by 86400
+          wrk$idx$idxEnd <- ifelse(wrk$idx$idxEnd > 86400, 86400, wrk$idx$idxEnd)
           #if last timeEnd is NA, replce that time to the last time value in data$time
           wrk$idx$timeEnd <- as.POSIXct(ifelse(is.na(wrk$idx$timeEnd), data$time[length(data$time)], wrk$idx$timeEnd), origin = "1970-01-01", tz = "UTC")
           #idxAgr2 <- 0
@@ -180,10 +182,9 @@ wrap.dp01.qfqm.ecse <- function(
             wrk$inpMask$data <- wrk$data[wrk$idx$idxBgn[idxAgr]:wrk$idx$idxEnd[idxAgr],] 
             #assign name to wrk$inpMask$qfqm
             lapply(names(wrk$qfqm), function (x) wrk$inpMask$qfqm[[x]] <<- wrk$qfqm[[x]][wrk$idx$idxBgn[idxAgr]:wrk$idx$idxEnd[idxAgr], ,drop=FALSE] )
-            #replace qfqm$irgaStor with -1 when irga got kick out to measure the new measurement level
             for (idxSens in names(wrk$inpMask$qfqm)){
-            for (tmp in 1:length(wrk$inpMask$qfqm[[idxSens]])){
-              wrk$inpMask$qfqm[[idxSens]][[tmp]][wrk$inpMask$data$lvlIrga != lvlIrga] <- -1
+              #replace qfqm with -1 when irga got kick out to measure the new measurement level
+              wrk$inpMask$qfqm[[idxSens]][wrk$inpMask$data$lvlIrga != lvlIrga, 1:length(wrk$inpMask$qfqm[[idxSens]])] <- -1
             }
             
             #qfqm processing
@@ -266,32 +267,14 @@ wrap.dp01.qfqm.ecse <- function(
             }
           }
           wrk$data[-whrSamp, 1:9] <- NaN
-          #replace qfqm$irgaStor with -1 when irga got kick out to measure the new measurement level
-          for (tmp in 1:length(wrk$qfqm$irgaStor)){
-            wrk$qfqm$irgaStor[[tmp]][wrk$data$lvlIrga != lvlIrga] <- -1
-          }
-          for (tmp in 1:length(wrk$qfqm$mfcSampStor)){
-            wrk$qfqm$mfcSampStor[[tmp]][wrk$data$lvlIrga != lvlIrga] <- -1
-          }
-          for (tmp in 1:length(wrk$qfqm$envHut)){
-            wrk$qfqm$envHut[[tmp]][wrk$data$lvlIrga != lvlIrga] <- -1
-          }
-          for (tmp in 1:length(wrk$qfqm$valvAux)){
-            wrk$qfqm$valvAux[[tmp]][wrk$data$lvlIrga != lvlIrga] <- -1
-          }
-          for (tmp in 1:length(wrk$qfqm$mfm)){
-            wrk$qfqm$mfm[[tmp]][wrk$data$lvlIrga != lvlIrga] <- -1
-          }
-          #replace all qf that not belong to that measurement level by NaN
-          wrk$qfqm$irgaStor[-whrSamp, 1:length(wrk$qfqm$irgaStor)] <- NaN
-          wrk$qfqm$mfcSampStor[-whrSamp, 1:length(wrk$qfqm$mfcSampStor)] <- NaN
-          wrk$qfqm$envHut[-whrSamp, 1:length(wrk$qfqm$envHut)] <- NaN
-          wrk$qfqm$valvAux[-whrSamp, 1:length(wrk$qfqm$valvAux)] <- NaN
-          wrk$qfqm$mfm[-whrSamp, 1:length(wrk$qfqm$mfm)] <- NaN
           
-          #replace qf from mfcSampStor data with -1 when irga got kick out to measure the new measurement level
-          #wrk$qfqm$mfcSampStor <- as.data.frame(sapply(wrk$qfqm$mfcSampStor, function(x) ifelse(wrk$data$lvlIrga == lvlIrga, x, -1)))
-        } 
+          for (idxSens in names(wrk$qfqm)){
+            #replace qfqm with -1 when irga got kick out to measure the new measurement level
+            wrk$qfqm[[idxSens]][wrk$data$lvlIrga != lvlIrga, 1:length(wrk$qfqm[[idxSens]])] <- -1
+            #replace all qf that not belong to that measurement level by NaN
+            wrk$qfqm[[idxSens]][-whrSamp, 1:length(wrk$qfqm[[idxSens]])] <- NaN
+            }
+          } 
         
         
         for(idxAgr in c(1:length(idxTime[[paste0(PrdAgr, "min")]]$Bgn))) {
