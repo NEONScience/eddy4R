@@ -321,14 +321,14 @@ wrap.dp01.qfqm.ecse <- function(
     
     #during validation period
     if (TypeMeas %in% "vali"){
+      #assign lvlPresValiRegInStor for each gas
+      if (lvl == "co2Zero") lvlPresValiRegInStor <- "709_000"
+      if (lvl == "co2Arch") lvlPresValiRegInStor <- "710_000"
+      if (lvl == "co2Low") lvlPresValiRegInStor <- "712_000"
+      if (lvl == "co2Med") lvlPresValiRegInStor <- "713_000"
+      if (lvl == "co2High") lvlPresValiRegInStor <- "714_000"
+      
       if(dp01 == "co2Stor"){
-        #assign lvlPresValiRegInStor for each gas
-        if (lvl == "co2Zero") lvlPresValiRegInStor <- "709_000"
-        if (lvl == "co2Arch") lvlPresValiRegInStor <- "710_000"
-        if (lvl == "co2Low") lvlPresValiRegInStor <- "712_000"
-        if (lvl == "co2Med") lvlPresValiRegInStor <- "713_000"
-        if (lvl == "co2High") lvlPresValiRegInStor <- "714_000"
-        
         wrk$data <- data.frame(stringsAsFactors = FALSE,
                                "frt00" = data$mfcSampStor[[lvlMfcSampStor]]$frt00,
                                #wrk$data$mfcSampStor[[paste0(Para$Flow$LevlTowr$mfcSampStor, "_", sprintf("%02d", PrdAgr), "m")]]$frt00,
