@@ -1024,9 +1024,9 @@ if (MethMeas == "ecse") {
     names(setQf$pumpStor) <- paste0(colnames(setQf$pumpStor), "PumpStor")
     
     #external quality flags from pumpIrgaStor
-    setQf$pumpIrgaStor <- data.frame("qfPersPumpVolt" = qfInp$pumpStor$qfPersPumpVolt,
-                                 "qfRngPumpVolt" = qfInp$pumpStor$qfRngPumpVolt,
-                                 "qfStepPumpVolt" = qfInp$pumpStor$qfStepPumpVolt)
+    setQf$pumpIrgaStor <- data.frame("qfPersPumpVolt" = qfInp$pumpIrgaStor$qfPersPumpVolt,
+                                 "qfRngPumpVolt" = qfInp$pumpIrgaStor$qfRngPumpVolt,
+                                 "qfStepPumpVolt" = qfInp$pumpIrgaStor$qfStepPumpVolt)
     #change column names
     names(setQf$pumpIrgaStor) <- paste0(colnames(setQf$pumpStor), "PumpIrgaStor")
     
@@ -1191,6 +1191,11 @@ if (MethMeas == "ecse") {
     if (!("presInlt" %in% names(qfInp)) || length(which(!is.na(qfInp$crdCo2$qfRngTemp))) == 0){
       qfInp$presInlt <- as.data.frame(matrix(-1, ncol = 4, nrow = length(qfInp$crdCo2$qfRngRtioMoleDryCo2)))
       names(qfInp$presInlt) <- c("qfPersPresDiff", "qfPresDiff", "qfRngPresDiff", "qfStepPresDiff")}
+    
+    #external quality flags from pumpStor
+    if (!("pumpStor" %in% names(qfInp)) || length(which(!is.na(qfInp$crdCo2$qfRngTemp))) == 0){
+      qfInp$pumpStor <- as.data.frame(matrix(-1, ncol = 3, nrow = length(qfInp$crdCo2$qfRngRtioMoleDryCo2)))
+      names(qfInp$pumpStor) <- c("qfPersPumpVolt", "qfRngPumpVolt", "qfStepPumpVolt")}
     
     #replace -1 if all qf in crdCo2 are NA
     if (length(which(!is.na(qfInp$crdCo2$qfRngTemp))) == 0){
@@ -1359,6 +1364,13 @@ if (MethMeas == "ecse") {
     #change column names
     names(setQf$presInlt) <- paste0(colnames(setQf$presInlt), "PresInlt")
     
+    #external quality flags from pumpStor
+    setQf$pumpStor <- data.frame("qfPersPumpVolt" = qfInp$pumpStor$qfPersPumpVolt,
+                                 "qfRngPumpVolt" = qfInp$pumpStor$qfRngPumpVolt,
+                                 "qfStepPumpVolt" = qfInp$pumpStor$qfStepPumpVolt)
+    #change column names
+    names(setQf$pumpStor) <- paste0(colnames(setQf$pumpStor), "PumpStor")
+    
     #define qf which use only sampling period
     if (TypeMeas == "samp") {
       #temporary list
@@ -1372,7 +1384,8 @@ if (MethMeas == "ecse") {
                                          setQf$sensCrdCo2, setQf$frt00Mfm, 
                                          setQf$frtMfm, setQf$presAtmMfm, 
                                          setQf$tempMfm,setQf$sensMfm,
-                                         setQf$presInlt, idGas = idGas
+                                         setQf$presInlt, setQf$pumpStor,
+                                         idGas = idGas
                                          #, setQf$heatInlt
         )
         rpt$rtioMoleWetCo2 <- na.omit(tmp$rtioMoleWetCo2[which(tmp$rtioMoleWetCo2$idGas == 105 | (is.na(tmp$rtioMoleWetCo2$idGas) & tmp$rtioMoleWetCo2$qfSensStus == -1)),])
@@ -1383,7 +1396,8 @@ if (MethMeas == "ecse") {
                                          setQf$sensCrdCo2, setQf$frt00Mfm, 
                                          setQf$frtMfm, setQf$presAtmMfm, 
                                          setQf$tempMfm, setQf$sensMfm,
-                                         setQf$presInlt, idGas = idGas
+                                         setQf$presInlt, setQf$pumpStor,
+                                         idGas = idGas
                                           #, setQf$heatInlt
         )
         rpt$rtioMoleDryCo2 <- na.omit(tmp$rtioMoleDryCo2[which(tmp$rtioMoleDryCo2$idGas == 105 | (is.na(tmp$rtioMoleDryCo2$idGas) & tmp$rtioMoleDryCo2$qfSensStus == -1)),])
@@ -1393,7 +1407,8 @@ if (MethMeas == "ecse") {
                                            setQf$sensCrdCo2, setQf$frt00Mfm, 
                                            setQf$frtMfm, setQf$presAtmMfm, 
                                            setQf$tempMfm, setQf$sensMfm,
-                                           setQf$presInlt, idGas = idGas
+                                           setQf$presInlt, setQf$pumpStor,
+                                           idGas = idGas
                                             #, setQf$heatInlt
         )
         rpt$rtioMoleWet12CCo2 <- na.omit(tmp$rtioMoleWet12CCo2[which(tmp$rtioMoleWet12CCo2$idGas == 105 | (is.na(tmp$rtioMoleWet12CCo2$idGas) & tmp$rtioMoleWet12CCo2$qfSensStus == -1)),])
@@ -1404,7 +1419,7 @@ if (MethMeas == "ecse") {
                                             setQf$frt00Mfm, setQf$frtMfm, 
                                             setQf$presAtmMfm, setQf$tempMfm,
                                             setQf$sensMfm, setQf$presInlt,
-                                            idGas = idGas
+                                            setQf$pumpStor, idGas = idGas
                                             #, setQf$heatInlt, 
         )
         rpt$rtioMoleDry12CCo2 <- na.omit(tmp$rtioMoleDry12CCo2[which(tmp$rtioMoleDry12CCo2$idGas == 105 | (is.na(tmp$rtioMoleDry12CCo2$idGas) & tmp$rtioMoleDry12CCo2$qfSensStus == -1)),])
@@ -1414,7 +1429,8 @@ if (MethMeas == "ecse") {
                                           setQf$sensCrdCo2, setQf$frt00Mfm, 
                                           setQf$frtMfm, setQf$presAtmMfm, 
                                           setQf$tempMfm, setQf$sensMfm,
-                                          setQf$presInlt, idGas = idGas
+                                          setQf$presInlt, setQf$pumpStor,
+                                          idGas = idGas
                                           #, setQf$heatInlt
         )
         rpt$rtioMoleWet13CCo2 <- na.omit(tmp$rtioMoleWet13CCo2[which(tmp$rtioMoleWet13CCo2$idGas == 105 | (is.na(tmp$rtioMoleWet13CCo2$idGas) & tmp$rtioMoleWet13CCo2$qfSensStus == -1)),])
@@ -1425,7 +1441,7 @@ if (MethMeas == "ecse") {
                                           setQf$frt00Mfm, setQf$frtMfm, 
                                           setQf$presAtmMfm, setQf$tempMfm,
                                           setQf$sensMfm, setQf$presInlt,
-                                          idGas = idGas
+                                          setQf$pumpStor, idGas = idGas
                                           #setQf$heatInlt
         )
         rpt$rtioMoleDry13CCo2 <- na.omit(tmp$rtioMoleDry13CCo2[which(tmp$rtioMoleDry13CCo2$idGas == 105 | (is.na(tmp$rtioMoleDry13CCo2$idGas) & tmp$rtioMoleDry13CCo2$qfSensStus == -1)),])
@@ -1435,7 +1451,8 @@ if (MethMeas == "ecse") {
                                      setQf$sensCrdCo2, setQf$frt00Mfm, 
                                      setQf$frtMfm, setQf$presAtmMfm, 
                                      setQf$tempMfm, setQf$sensMfm,
-                                     setQf$presInlt, idGas = idGas
+                                     setQf$presInlt, setQf$pumpStor,
+                                     idGas = idGas
                                       #, setQf$heatInlt
         )
         rpt$dlta13CCo2 <- na.omit(tmp$dlta13CCo2[which(tmp$dlta13CCo2$idGas == 105 | (is.na(tmp$dlta13CCo2$idGas) & tmp$dlta13CCo2$qfSensStus == -1)),])
@@ -1445,7 +1462,8 @@ if (MethMeas == "ecse") {
                                          setQf$sensCrdCo2, setQf$frt00Mfm, 
                                          setQf$frtMfm, setQf$presAtmMfm, 
                                          setQf$tempMfm, setQf$sensMfm,
-                                         setQf$presInlt, idGas = idGas
+                                         setQf$presInlt, setQf$pumpStor,
+                                         idGas = idGas
                                           #, setQf$heatInlt
         )
         rpt$rtioMoleWetH2o <- na.omit(tmp$rtioMoleWetH2o[which(tmp$rtioMoleWetH2o$idGas == 11 | (is.na(tmp$rtioMoleWetH2o$idGas) & tmp$rtioMoleWetH2o$qfSensStus == -1)),])
@@ -1456,7 +1474,7 @@ if (MethMeas == "ecse") {
                                          setQf$frt00Mfm, setQf$frtMfm, 
                                          setQf$presAtmMfm, setQf$tempMfm,
                                          setQf$sensMfm, setQf$presInlt,
-                                         idGas = idGas
+                                         setQf$pumpStor, idGas = idGas
                                           #, setQf$heatInlt
         )                             
         rpt$rtioMoleDryH2o <- na.omit(tmp$rtioMoleDryH2o[which(tmp$rtioMoleDryH2o$idGas == 11 | (is.na(tmp$rtioMoleDryH2o$idGas) & tmp$rtioMoleDryH2o$qfSensStus == -1)),])
@@ -1481,7 +1499,7 @@ if (MethMeas == "ecse") {
                                                  setQf$sensCrdCo2, setQf$frt00Mfm, 
                                                  setQf$frtMfm, setQf$presAtmMfm, 
                                                  setQf$tempMfm,setQf$sensMfm,
-                                                 setQf$presInlt
+                                                 setQf$presInlt, setQf$pumpStor
                                                  #, setQf$heatInlt
                                                  ))
         
@@ -1491,7 +1509,7 @@ if (MethMeas == "ecse") {
                                                  setQf$sensCrdCo2, setQf$frt00Mfm, 
                                                  setQf$frtMfm, setQf$presAtmMfm, 
                                                  setQf$tempMfm, setQf$sensMfm,
-                                                 setQf$presInlt
+                                                 setQf$presInlt, setQf$pumpStor
                                                  #, setQf$heatInlt
                                                  ))
         
@@ -1500,7 +1518,7 @@ if (MethMeas == "ecse") {
                                                     setQf$sensCrdCo2, setQf$frt00Mfm, 
                                                     setQf$frtMfm, setQf$presAtmMfm, 
                                                     setQf$tempMfm, setQf$sensMfm,
-                                                    setQf$presInlt
+                                                    setQf$presInlt, setQf$pumpStor
                                                     #, setQf$heatInlt
                                                     ))
         
@@ -1509,7 +1527,8 @@ if (MethMeas == "ecse") {
                                                     setQf$tempWbox, setQf$sensCrdCo2,
                                                     setQf$frt00Mfm, setQf$frtMfm, 
                                                     setQf$presAtmMfm, setQf$tempMfm,
-                                                    setQf$sensMfm, setQf$presInlt
+                                                    setQf$sensMfm, setQf$presInlt,
+                                                    setQf$pumpStor
                                                     #, setQf$heatInlt,
                                                     ))
         
@@ -1518,7 +1537,7 @@ if (MethMeas == "ecse") {
                                                     setQf$sensCrdCo2, setQf$frt00Mfm, 
                                                     setQf$frtMfm, setQf$presAtmMfm, 
                                                     setQf$tempMfm, setQf$sensMfm,
-                                                    setQf$presInlt
+                                                    setQf$presInlt, setQf$pumpStor
                                                     #, setQf$heatInlt
                                                     ))
         
@@ -1527,7 +1546,8 @@ if (MethMeas == "ecse") {
                                                     setQf$tempWbox, setQf$sensCrdCo2,
                                                     setQf$frt00Mfm, setQf$frtMfm, 
                                                     setQf$presAtmMfm, setQf$tempMfm,
-                                                    setQf$sensMfm, setQf$presInlt
+                                                    setQf$sensMfm, setQf$presInlt,
+                                                    setQf$pumpStor
                                                     #setQf$heatInlt
                                                     ))
         
@@ -1536,7 +1556,7 @@ if (MethMeas == "ecse") {
                                              setQf$sensCrdCo2, setQf$frt00Mfm, 
                                              setQf$frtMfm, setQf$presAtmMfm, 
                                              setQf$tempMfm, setQf$sensMfm,
-                                             setQf$presInlt
+                                             setQf$presInlt, setQf$pumpStor
                                              #, setQf$heatInlt
                                              ))
         
@@ -1545,7 +1565,7 @@ if (MethMeas == "ecse") {
                                                  setQf$sensCrdCo2, setQf$frt00Mfm, 
                                                  setQf$frtMfm, setQf$presAtmMfm, 
                                                  setQf$tempMfm, setQf$sensMfm,
-                                                 setQf$presInlt
+                                                 setQf$presInlt, setQf$pumpStor
                                                  #, setQf$heatInlt
                                                  ))
         
@@ -1554,7 +1574,8 @@ if (MethMeas == "ecse") {
                                                  setQf$tempWbox, setQf$sensCrdCo2,
                                                  setQf$frt00Mfm, setQf$frtMfm, 
                                                  setQf$presAtmMfm, setQf$tempMfm,
-                                                 setQf$sensMfm, setQf$presInlt
+                                                 setQf$sensMfm, setQf$presInlt,
+                                                 setQf$pumpStor
                                                  #, setQf$heatInlt
                                                  ))
         
@@ -1756,6 +1777,11 @@ if (MethMeas == "ecse") {
       qfInp$presInlt <- as.data.frame(matrix(-1, ncol = 4, nrow = length(qfInp$crdH2o$qfRngRtioMoleDryH2o)))
       names(qfInp$presInlt) <- c("qfPersPresDiff", "qfPresDiff", "qfRngPresDiff", "qfStepPresDiff")}
     
+    #external quality flags from pumpStor
+    if (!("pumpStor" %in% names(qfInp)) || length(which(!is.na(qfInp$crdH2o$qfRngTemp))) == 0){
+      qfInp$pumpStor <- as.data.frame(matrix(-1, ncol = 3, nrow = length(qfInp$crdH2o$qfRngRtioMoleDryH2o)))
+      names(qfInp$pumpStor) <- c("qfPersPumpVolt", "qfRngPumpVolt", "qfStepPumpVolt")}
+    
     # #external quality flags from heatInlt
     # if (!("heatInlt" %in% names(qfInp)) || length(which(!is.na(qfInp$crdH2o$qfRngTemp))) == 0){
     #   qfInp$heatInlt <- as.data.frame(matrix(-1, ncol = 1, nrow = length(qfInp$crdH2o$qfRngRtioMoleDryH2o)))
@@ -1879,6 +1905,13 @@ if (MethMeas == "ecse") {
     #change column names
     names(setQf$presInlt) <- paste0(colnames(setQf$presInlt), "PresInlt")
     
+    #external quality flags from pumpStor
+    setQf$pumpStor <- data.frame("qfPersPumpVolt" = qfInp$pumpStor$qfPersPumpVolt,
+                                 "qfRngPumpVolt" = qfInp$pumpStor$qfRngPumpVolt,
+                                 "qfStepPumpVolt" = qfInp$pumpStor$qfStepPumpVolt)
+    #change column names
+    names(setQf$pumpStor) <- paste0(colnames(setQf$pumpStor), "PumpStor")
+    
     # #setQf of heatInlt
     # setQf$heatInlt <- data.frame("qfHeat" = qfInp$heatInlt$qfHeat)
     
@@ -1891,7 +1924,7 @@ if (MethMeas == "ecse") {
                                                setQf$envHut, setQf$frt00Mfm, 
                                                setQf$frtMfm, setQf$presAtmMfm, 
                                                setQf$tempMfm, setQf$sensMfm,
-                                               setQf$presInlt
+                                               setQf$presInlt, setQf$pumpStor
                                                #, setQf$heatInlt
                                                ))
       
@@ -1900,7 +1933,8 @@ if (MethMeas == "ecse") {
                                                setQf$sensCrdH2o, setQf$envHut,
                                                setQf$frt00Mfm, setQf$frtMfm, 
                                                setQf$presAtmMfm, setQf$tempMfm,
-                                               setQf$sensMfm, setQf$presInlt
+                                               setQf$sensMfm, setQf$presInlt,
+                                               setQf$pumpStor
                                                #, setQf$heatInlt
                                                ))
       
@@ -1909,7 +1943,8 @@ if (MethMeas == "ecse") {
                                            setQf$sensCrdH2o, setQf$envHut,
                                            setQf$frt00Mfm, setQf$frtMfm, 
                                            setQf$presAtmMfm, setQf$tempMfm,
-                                           setQf$sensMfm, setQf$presInlt
+                                           setQf$sensMfm, setQf$presInlt,
+                                           setQf$pumpStor
                                            #, setQf$heatInlt
                                            ))
       
@@ -1918,7 +1953,8 @@ if (MethMeas == "ecse") {
                                           setQf$sensCrdH2o, setQf$envHut,
                                           setQf$frt00Mfm, setQf$frtMfm, 
                                           setQf$presAtmMfm, setQf$tempMfm,
-                                          setQf$sensMfm, setQf$presInlt
+                                          setQf$sensMfm, setQf$presInlt,
+                                          setQf$pumpStor
                                           #, setQf$heatInlt
                                           ))
       
