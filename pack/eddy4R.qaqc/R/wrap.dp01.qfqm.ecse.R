@@ -73,6 +73,8 @@
 #     assign lvlMfm in data flow
 #   Natchaya P-Durden (2019-05-21)
 #     pull in the qf from presInlt
+#   Natchaya P-Durden (2019-05-23)
+#     pull in the qf from pumpStor
 ##############################################################################################
 wrap.dp01.qfqm.ecse <- function(
   dp01 = c("co2Stor", "h2oStor", "tempAirLvl", "tempAirTop", "isoCo2", "isoH2o")[1],
@@ -154,7 +156,11 @@ wrap.dp01.qfqm.ecse <- function(
       wrk$qfqm$valvAux <- qfInp$valvAux[[lvlValvAux]]
       wrk$qfqm$mfm <- qfInp$mfm[[lvlMfm]]
       if ("presInlt" %in% names(qfInp)) wrk$qfqm$presInlt <- qfInp$presInlt[[lvl]]  
-        
+      #measurement level pump
+      if ("pumpStor" %in% names(qfInp)) wrk$qfqm$pumpStor <- qfInp$pumpStor[[lvlMfm]] 
+      #irga pump
+      if ("pumpStor" %in% names(qfInp)) wrk$qfqm$pumpIrgaStor <- qfInp$pumpStor[["700_000"]] 
+      
       if (PrdMeas == PrdAgr) {
         #PrdAgr <- 2
         #2 minutely sampling data
@@ -608,6 +614,7 @@ wrap.dp01.qfqm.ecse <- function(
       wrk$qfqm$envHut <- qfInp$envHut[[lvlEnvHut]]
       wrk$qfqm$mfm <- qfInp$mfm[[lvlMfm]]
       if ("presInlt" %in% names(qfInp)) wrk$qfqm$presInlt <- qfInp$presInlt[[lvl]] 
+      if ("pumpStor" %in% names(qfInp)) wrk$qfqm$pumpStor <- qfInp$pumpStor[[lvlMfm]] 
       
       if (PrdMeas == PrdAgr) {
         #PrdAgr <- 9
@@ -983,6 +990,7 @@ wrap.dp01.qfqm.ecse <- function(
       wrk$qfqm$envHut <- qfInp$envHut[[lvlEnvHut]]
       wrk$qfqm$mfm <- qfInp$mfm[[lvlMfm]]
       if ("presInlt" %in% names(qfInp)) wrk$qfqm$presInlt <- qfInp$presInlt[[lvl]]
+      if ("pumpStor" %in% names(qfInp)) wrk$qfqm$pumpStor <- qfInp$pumpStor[[lvlMfm]] 
       
       if (PrdMeas == PrdAgr) {
         #PrdAgr <- 9
