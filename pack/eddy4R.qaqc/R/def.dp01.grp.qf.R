@@ -1719,6 +1719,11 @@ if (MethMeas == "ecse") {
       names(qfInp$mfm) <- c("qfRngFrt00", "qfStepFrt00", "qfPersFrt00", "qfRngFrt", "qfStepFrt", "qfPersFrt",
                             "qfRngPresAtm", "qfStepPresAtm", "qfPersPresAtm", "qfRngTemp", "qfStepTemp", "qfPersTemp",
                             "qfFrt00")}
+    #external quality flags from presInlt
+    if (!("presInlt" %in% names(qfInp)) || length(which(!is.na(qfInp$crdH2o$qfRngTemp))) == 0){
+      qfInp$presInlt <- as.data.frame(matrix(-1, ncol = 4, nrow = length(qfInp$crdH2o$qfRngRtioMoleDryH2o)))
+      names(qfInp$presInlt) <- c("qfPersPresDiff", "qfPresDiff", "qfRngPresDiff", "qfStepPresDiff")}
+    
     # #external quality flags from heatInlt
     # if (!("heatInlt" %in% names(qfInp)) || length(which(!is.na(qfInp$crdH2o$qfRngTemp))) == 0){
     #   qfInp$heatInlt <- as.data.frame(matrix(-1, ncol = 1, nrow = length(qfInp$crdH2o$qfRngRtioMoleDryH2o)))
@@ -1837,6 +1842,11 @@ if (MethMeas == "ecse") {
     names(setQf$tempMfm) <- paste0(colnames(setQf$tempMfm), "Mfm")
     names(setQf$sensMfm) <- paste0(colnames(setQf$sensMfm), "Mfm")
     
+    #external quality flags from presInlt
+    setQf$presInlt <- data.frame("qfPresDiff" = qfInp$presInlt$qfPresDiff)
+    #change column names
+    names(setQf$presInlt) <- paste0(colnames(setQf$presInlt), "PresInlt")
+    
     # #setQf of heatInlt
     # setQf$heatInlt <- data.frame("qfHeat" = qfInp$heatInlt$qfHeat)
     
@@ -1848,7 +1858,8 @@ if (MethMeas == "ecse") {
                                                setQf$tempWbox,  setQf$sensCrdH2o,
                                                setQf$envHut, setQf$frt00Mfm, 
                                                setQf$frtMfm, setQf$presAtmMfm, 
-                                               setQf$tempMfm, setQf$sensMfm
+                                               setQf$tempMfm, setQf$sensMfm,
+                                               setQf$presInlt
                                                #, setQf$heatInlt
                                                ))
       
@@ -1857,7 +1868,7 @@ if (MethMeas == "ecse") {
                                                setQf$sensCrdH2o, setQf$envHut,
                                                setQf$frt00Mfm, setQf$frtMfm, 
                                                setQf$presAtmMfm, setQf$tempMfm,
-                                               setQf$sensMfm
+                                               setQf$sensMfm, setQf$presInlt
                                                #, setQf$heatInlt
                                                ))
       
@@ -1866,7 +1877,7 @@ if (MethMeas == "ecse") {
                                            setQf$sensCrdH2o, setQf$envHut,
                                            setQf$frt00Mfm, setQf$frtMfm, 
                                            setQf$presAtmMfm, setQf$tempMfm,
-                                           setQf$sensMfm
+                                           setQf$sensMfm, setQf$presInlt
                                            #, setQf$heatInlt
                                            ))
       
@@ -1875,7 +1886,7 @@ if (MethMeas == "ecse") {
                                           setQf$sensCrdH2o, setQf$envHut,
                                           setQf$frt00Mfm, setQf$frtMfm, 
                                           setQf$presAtmMfm, setQf$tempMfm,
-                                          setQf$sensMfm
+                                          setQf$sensMfm, setQf$presInlt
                                           #, setQf$heatInlt
                                           ))
       
