@@ -1189,8 +1189,8 @@ wrap.dp01.qfqm.ecse <- function(
       wrk$qfqm <- list()
       wrk$qfqm$crdH2o <- qfInp$crdH2o[[lvl]]
       wrk$qfqm$envHut <- qfInp$envHut[[lvlEnvHut]]
-      if ("presValiRegInStor" %in% names(qfInp)) wrk$qfqm$presValiRegInStor <- qfInp$presValiRegInStor[[presValiReg]] 
-      if ("presValiRegOutStor" %in% names(qfInp)) wrk$qfqm$presValiRegOutStor <- qfInp$presValiRegOutStor[[presValiReg]] 
+      if ("presValiRegInStor" %in% names(qfInp)) wrk$qfqm$presValiRegInStor <- qfInp$presValiRegInStor[[lvlPresValiReg]] 
+      if ("presValiRegOutStor" %in% names(qfInp)) wrk$qfqm$presValiRegOutStor <- qfInp$presValiRegOutStor[[lvlPresValiReg]] 
       
       #replace injNum to NaN when they are not measured at that period
       wrk$data$injNum <- ifelse(is.na(wrk$qfqm$crdH2o$qfRngTemp), NaN, wrk$data$injNum)
