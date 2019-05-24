@@ -1033,7 +1033,7 @@ if (MethMeas == "ecse") {
                                  "qfRngPumpVolt" = qfInp$pumpIrgaStor$qfRngPumpVolt,
                                  "qfStepPumpVolt" = qfInp$pumpIrgaStor$qfStepPumpVolt)
     #change column names
-    names(setQf$pumpIrgaStor) <- paste0(colnames(setQf$pumpStor), "PumpIrgaStor")
+    names(setQf$pumpIrgaStor) <- paste0(colnames(setQf$pumpIrgaStor), "PumpIrgaStor")
     
     #external quality flags from presValiRegInStor
     setQf$presValiRegInStor <- data.frame("qfPresDiff" = qfInp$presValiRegInStor$qfPresDiff)
