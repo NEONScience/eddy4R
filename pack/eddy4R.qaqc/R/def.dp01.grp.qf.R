@@ -816,7 +816,7 @@ if (MethMeas == "ecse") {
       names(qfInp$valvAux) <- "qfValvIrga"}
     
     #heater flag
-    if (!("qfHeat" %in% names(qfInp$irgaStor))) == 0){
+    if (!("qfHeat" %in% names(qfInp$irgaStor))){
       qfInp$irgaStor$qfHeat <- -1}
     
     #external quality flags from mfcSampStor
@@ -1189,7 +1189,7 @@ if (MethMeas == "ecse") {
                                  "qfRngTemp", "qfStepTemp", "qfPersTemp", "qfTemp", "qfRh")}
     
     #heater flag
-    if (!("qfHeat" %in% names(qfInp$crdCo2))) == 0){
+    if (!("qfHeat" %in% names(qfInp$crdCo2))){
       qfInp$crdCo2$qfHeat <- -1}
     
     #external quality flags from mfcValiStor
@@ -1826,7 +1826,7 @@ if (MethMeas == "ecse") {
       names(qfInp$presValiRegOutStor) <- c("qfPersPresDiff", "qfPresDiff", "qfRngPresDiff", "qfStepPresDiff")}
     
     #heater flag
-    if (!("qfHeat" %in% names(qfInp$crdH2o))) == 0){
+    if (!("qfHeat" %in% names(qfInp$crdH2o))){
       qfInp$crdH2o$qfHeat <- -1}
     
     #replace -1 if all qf in crdH2o are NA
