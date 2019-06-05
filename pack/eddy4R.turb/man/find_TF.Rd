@@ -4,13 +4,14 @@
 \alias{find_TF}
 \title{Definition function: Determine half-power / cut-off frequency}
 \usage{
-find_TF(F0 = 0.5, FX = fx_out$par * mean(SPEout$fr_obs/SPEout$fr_nor, na.rm
-  = TRUE),
-  IDE = SPEout$fr_obs[SPEout$fr_whr][which(SPEout$fr_obs[SPEout$fr_whr] >=
-  0.01)], DEP = SPEout$FScosp[SPEout$fr_whr,
-  fpo][which(SPEout$fr_obs[SPEout$fr_whr] >= 0.01)], SC = c("spe", "cos")[2],
-  SI = OUT$REYN$mn$sigma[FILE], WEIGHT = FALSE, WHR_CRIT = c(0.01, 10),
-  corfac = corfac_out, BINS = 1000, plot_path = NULL)
+find_TF(F0 = 0.5, FX = fx_out$par * mean(SPEout$fr_obs/SPEout$fr_nor,
+  na.rm = TRUE),
+  IDE = SPEout$fr_obs[SPEout$fr_whr][which(SPEout$fr_obs[SPEout$fr_whr]
+  >= 0.01)], DEP = SPEout$FScosp[SPEout$fr_whr,
+  fpo][which(SPEout$fr_obs[SPEout$fr_whr] >= 0.01)], SC = c("spe",
+  "cos")[2], SI = OUT$REYN$mn$sigma[FILE], WEIGHT = FALSE,
+  WHR_CRIT = c(0.01, 10), corfac = corfac_out, BINS = 1000,
+  plot_path = NULL)
 }
 \arguments{
 \item{Currently}{none}
