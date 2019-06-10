@@ -70,6 +70,15 @@ timeBgn <- date - lubridate::seconds(1)
 
 timeEnd <- date + lubridate::days(1) 
 
+#assign data unit attributes
+outAttr <- base::list()
+outAttr$data$tempAirLvl <- c("NA","NA","C","C","C","NA","C2")
+outAttr$data$tempAirTop <- outAttr$data$tempAirLvl
+outAttr$data$fluxHeatSoil <- c("NA","NA","W m-2","W m-2","W m-2","NA","W2 m-4")
+#assign uncertainty unit attributes
+outAttr$ucrt$tempAirLvl <- c("NA","NA","C","C")
+outAttr$ucrt$tempAirTop <- outAttr$ucrt$tempAirLvl
+outAttr$ucrt$fluxHeatSoil <- c("NA","NA","W m-2","W m-2")
 
 #List of DP numbers by eddy4R DP names
 listDpNum <- c("tempAirLvl" = "DP1.00002.001", "tempAirTop" = "DP1.00003.001", "fluxHeatSoil" = "DP1.00040.001")
@@ -121,7 +130,7 @@ if(class(data) == "try-error"){
   dataOut <- data.frame("timeBgn" = strftime(as.character(timeBgnOut), format= "%Y-%m-%dT%H:%M:%OSZ", tz="UTC"), "timeEnd" = strftime(as.character(timeEndOut), format= "%Y-%m-%dT%H:%M:%OSZ", tz="UTC"), "max" = dataNa, "mean" = dataNa, "min" = dataNa, "numSamp" = dataNa, "vari"= dataNa, stringsAsFactors = FALSE) 
   
   #Adding unit attributes and naming them
-  attributes(dataOut)$unit <- c("NA","NA","C","C","C","NA","C2")
+  attributes(dataOut)$unit <- outAttr$data[[DpName]]
   names(attributes(dataOut)$unit) <- names(dataOut)
   
   #Create the output dataframe for qfqm values
@@ -135,7 +144,7 @@ if(class(data) == "try-error"){
   ucrtOut <- data.frame("timeBgn" = strftime(as.character(timeBgnOut), format= "%Y-%m-%dT%H:%M:%OSZ", tz="UTC"), "timeEnd" = strftime(as.character(timeEndOut), format= "%Y-%m-%dT%H:%M:%OSZ", tz="UTC"), "ucrtCal95" = dataNa, "se" = dataNa, stringsAsFactors = FALSE) 
   
   #Adding unit attributes and naming them
-  attributes(ucrtOut)$unit <- c("NA","NA","C","C")
+  attributes(ucrtOut)$unit <- outAttr$ucrt[[DpName]]
   names(attributes(ucrtOut)$unit) <- names(ucrtOut)
   
   #Create list structure for the return output (type>>HOR_VER>>output_dataframes)
