@@ -97,22 +97,13 @@ if(class(data) == "try-error"){
   #Initialize lists
   rpt <- list(data = list(), qfqm = list(), ucrt = list())
   
-  #get tower top level
-  #LvlTop <- strsplit(LvlTowr,"")
-  #LvlTop <- base::as.numeric(LvlTop[[1]][6])
   #get vertical and horizontal measurement location
   tmpLoc <- subset(names(data), grepl("Maximum",names(data)))
   LocMeas <- gsub("[a-zA-Z]", "", tmpLoc)
   LocMeas <- substring(LocMeas, 2)
   LvlMeas <- gsub("\\.", "_", LocMeas)
-  
-  #get the sequence from top to first level
-  #LvlMeas<- base::seq(from = LvlTop, to = 1, by = -1)
-  #LvlMeas <- paste0("000_0",LvlMeas,"0",sep="")
-  
+
   #Grabbing the measurement levels based on the sensor assembly
-  #if(DpName == "tempAirTop"){LvlMeasOut <- LvlTowr}
-  #if(DpName == "tempAirLvl"){LvlMeasOut <- LvlMeas[!LvlMeas == LvlTowr]}
   LvlMeasOut <- LvlMeas
   #Create names for LevlMeasOut
   names(LvlMeasOut) <- LvlMeasOut
@@ -205,19 +196,16 @@ names(nameVar$TimeOut) <- c("timeEnd", "timeBgn")
 
 #Grabbing the tower measurement levels for a given dp01 product
 ###############################################################################
-#get tower top level
-LvlTop <- strsplit(LvlTowr,"")
-LvlTop <- base::as.numeric(LvlTop[[1]][6])
-
-#get the sequence from top to first level
-LvlMeas<- base::seq(from = LvlTop, to = 1, by = -1)
-LvlMeas <- paste0("000.0",LvlMeas,"0",sep="")
+#get vertical and horizontal measurement location
+tmpLoc <- subset(names(data), grepl("Maximum",names(data)))
+LocMeas <- gsub("[a-zA-Z]", "", tmpLoc)
+LocMeas <- substring(LocMeas, 2)
+LvlMeas <- gsub("\\.", "_", LocMeas)
 
 #Determine the output levels
-LvlMeasOut <- grep(pattern = paste(unique(sub(".*\\.", "",nameVar$Data)), collapse = "|"), x = LvlMeas, value = TRUE )
-
+LvlMeasOut <- LocMeas
 #Name for HDF5 output
-names(LvlMeasOut) <- gsub(pattern = "\\.", replacement = "_", LvlMeasOut)
+names(LvlMeasOut) <- LvlMeas
 
 #####################################################################################
 
@@ -234,7 +222,7 @@ rpt$data  <- lapply(LvlMeasOut, function(x){
     # Adding time to output
     tmp<- data.frame("timeBgn" = strftime(as.character(data$startDateTime), format= "%Y-%m-%dT%H:%M:%OSZ", tz="UTC"), "timeEnd" = strftime(as.character(data$endDateTime), format= "%Y-%m-%dT%H:%M:%OSZ", tz="UTC"), tmp, stringsAsFactors = FALSE)
     #Adding unit attributes and naming them
-    attributes(tmp)$unit <- c("NA","NA","C","C","C","NA","C2")
+    attributes(tmp)$unit <- outAttr$data[[DpName]]
     names(attributes(tmp)$unit) <- names(tmp)
     #Return output
     return(tmp)
@@ -275,7 +263,7 @@ rpt$ucrt <- lapply(LvlMeasOut, function(x){
   # Adding time to output
   tmp<- data.frame("timeBgn" = strftime(as.character(data$startDateTime), format= "%Y-%m-%dT%H:%M:%OSZ", tz="UTC"), "timeEnd" = strftime(as.character(data$endDateTime), format= "%Y-%m-%dT%H:%M:%OSZ", tz="UTC"), tmp, stringsAsFactors = FALSE)
   #Adding unit attributes and naming them
-  attributes(tmp)$unit <- c("NA","NA","C","C")
+  attributes(tmp)$unit <- outAttr$ucrt[[DpName]]
   names(attributes(tmp)$unit) <- names(tmp)
   
   #Return output
