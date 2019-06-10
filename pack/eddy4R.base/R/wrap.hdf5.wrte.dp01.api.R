@@ -33,6 +33,8 @@
 #     original creation
 #   Natchaya P-Durden (2018-03-30)
 #     applied term name convention; replace Levl by Lvl
+#   Natchaya P-Durden (2019-06-10)
+#     adding additional data products
 ##############################################################################################
 
 # date <- "20170901"
@@ -51,7 +53,7 @@ wrap.hdf5.wrte.dp01.api <- function(
   date,
   FileOut,
   SiteLoca,
-  DpName = c("tempAirLvl", "tempAirTop"),
+  DpName = c("tempAirLvl", "tempAirTop", "fluxHeatSoil"),
   LvlTowr,
   TimeAgr = c(1,30)
 ){

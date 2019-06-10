@@ -42,6 +42,8 @@
 #     #TODO: 
 #     - Create check if group level exists and create if not
 #     - Add other dp01's and remove hardcoded units
+#   Natchaya P-Durden (2019-06-10)
+#     adding additional data products
 ##############################################################################################
 
 def.hdf5.wrte.dp01.api <- function(
@@ -70,11 +72,13 @@ timeEnd <- date + lubridate::days(1)
 
 
 #List of DP numbers by eddy4R DP names
-listDpNum <- c("tempAirLvl" = "DP1.00002.001", "tempAirTop" = "DP1.00003.001")
+listDpNum <- c("tempAirLvl" = "DP1.00002.001", "tempAirTop" = "DP1.00003.001", "fluxHeatSoil" = "DP1.00040.001")
 #Determine DP number
 DpNum <- listDpNum[DpName]
 
+#assign table name for each DP
 if(substr(DpName, 1, 4) == "temp"){TblName <- substr(DpName, 1, 4)}
+if(DpName == "fluxHeatSoil") TblName <- "fluxHeatSoil"
 
 # Grab 30 minute data to be written
 data <- try(expr = Noble::pull.date(site = SiteLoca, dpID = DpNum, bgn.date = timeBgn, end.date = timeEnd, package = "expanded", time.agr = TimeAgr), silent = TRUE) #Currently requires to subtract 1 minute otherwise (1 index will be cut from the beginning)
@@ -85,17 +89,22 @@ if(class(data) == "try-error"){
   rpt <- list(data = list(), qfqm = list(), ucrt = list())
   
   #get tower top level
-  LvlTop <- strsplit(LvlTowr,"")
-  LvlTop <- base::as.numeric(LvlTop[[1]][6])
+  #LvlTop <- strsplit(LvlTowr,"")
+  #LvlTop <- base::as.numeric(LvlTop[[1]][6])
+  #get vertical and horizontal measurement location
+  tmpLoc <- subset(names(data), grepl("Maximum",names(data)))
+  LocMeas <- gsub("[a-zA-Z]", "", tmpLoc)
+  LocMeas <- substring(LocMeas, 2)
+  LvlMeas <- gsub("\\.", "_", LocMeas)
   
   #get the sequence from top to first level
-  LvlMeas<- base::seq(from = LvlTop, to = 1, by = -1)
-  LvlMeas <- paste0("000_0",LvlMeas,"0",sep="")
+  #LvlMeas<- base::seq(from = LvlTop, to = 1, by = -1)
+  #LvlMeas <- paste0("000_0",LvlMeas,"0",sep="")
   
   #Grabbing the measurement levels based on the sensor assembly
-  if(DpName == "tempAirTop"){LvlMeasOut <- LvlTowr}
-  if(DpName == "tempAirLvl"){LvlMeasOut <- LvlMeas[!LvlMeas == LvlTowr]}
-  
+  #if(DpName == "tempAirTop"){LvlMeasOut <- LvlTowr}
+  #if(DpName == "tempAirLvl"){LvlMeasOut <- LvlMeas[!LvlMeas == LvlTowr]}
+  LvlMeasOut <- LvlMeas
   #Create names for LevlMeasOut
   names(LvlMeasOut) <- LvlMeasOut
   
