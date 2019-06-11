@@ -75,21 +75,25 @@ outAttr <- base::list()
 outAttr$data$tempAirLvl <- c("NA","NA","C","C","C","NA","C2")
 outAttr$data$tempAirTop <- outAttr$data$tempAirLvl
 outAttr$data$fluxHeatSoil <- c("NA","NA","W m-2","W m-2","W m-2","NA","W2 m-4")
+outAttr$data$radiNet <- c("NA","NA","W m-2","W m-2","W m-2","NA","W2 m-4")
 #assign uncertainty unit attributes
 outAttr$ucrt$tempAirLvl <- c("NA","NA","C","C")
 outAttr$ucrt$tempAirTop <- outAttr$ucrt$tempAirLvl
 outAttr$ucrt$fluxHeatSoil <- c("NA","NA","W m-2","W m-2")
+outAttr$ucrt$radiNet <- c("NA","NA","W m-2","W m-2")
 
 #List of DP numbers by eddy4R DP names
-listDpNum <- c("tempAirLvl" = "DP1.00002.001", "tempAirTop" = "DP1.00003.001", "fluxHeatSoil" = "DP1.00040.001")
+listDpNum <- c("tempAirLvl" = "DP1.00002.001", "tempAirTop" = "DP1.00003.001", "fluxHeatSoil" = "DP1.00040.001",
+               "radiNet" = "DP1.00023.001")
 #Determine DP number
 DpNum <- listDpNum[DpName]
 
 #assign table name for each DP
 if(substr(DpName, 1, 4) == "temp"){TblName <- substr(DpName, 1, 4)}
 if(DpName == "fluxHeatSoil") TblName <- "fluxHeatSoil"
+if(DpName == "radiNet") TblName <- c("radiLwIn", "radiSwIn", "radiLwOut", "radiSwOut")
 
-# Grab 30 minute data to be written
+#Grab 30 minute data to be written
 data <- try(expr = Noble::pull.date(site = SiteLoca, dpID = DpNum, bgn.date = timeBgn, end.date = timeEnd, package = "expanded", time.agr = TimeAgr), silent = TRUE) #Currently requires to subtract 1 minute otherwise (1 index will be cut from the beginning)
 
 #Failsafe test if API pull produced an error
@@ -185,11 +189,11 @@ nameVar$Data <- nameVar$Data[!nameVar$Data %in% nameVar$Ucrt]
 
 #Align eddy4R names with DP names, i.e. dp name mapping
 nameVar$DataOut <- sort(unique(sub("[.](.*)", "", nameVar$Data)))
-names(nameVar$DataOut) <- c("max", "mean", "min", "numSamp", "vari") 
+names(nameVar$DataOut) <- rep(c("max", "mean", "min", "numSamp", "vari"), length(nameVar$DataOut)/5)
 nameVar$QfqmOut <- sort(unique(sub("[.](.*)", "", nameVar$Qfqm)))
-names(nameVar$QfqmOut) <- c("qmAlph", "qmBeta", "qfFinl", "qfSci") 
+names(nameVar$QfqmOut) <- rep(c("qmAlph", "qmBeta", "qfFinl", "qfSci"), length(nameVar$QfqmOut)/4)
 nameVar$UcrtOut <- sort(unique(sub("[.](.*)", "", nameVar$Ucrt)))
-names(nameVar$UcrtOut) <- c("ucrtCal95", "se") 
+names(nameVar$UcrtOut) <- rep(c("ucrtCal95", "se"), length(nameVar$UcrtOut)/2)
 nameVar$TimeOut <- sort(nameVar$Time)
 names(nameVar$TimeOut) <- c("timeEnd", "timeBgn") 
 
@@ -197,10 +201,14 @@ names(nameVar$TimeOut) <- c("timeEnd", "timeBgn")
 #Grabbing the tower measurement levels for a given dp01 product
 ###############################################################################
 #get vertical and horizontal measurement location
-tmpLoc <- subset(names(data), grepl("Maximum",names(data)))
-LocMeas <- gsub("[a-zA-Z]", "", tmpLoc)
-LocMeas <- substring(LocMeas, 2)
-LvlMeas <- gsub("\\.", "_", LocMeas)
+if (DpName %in% "radiNet"){
+  LocMeas <- gsub("\\_", ".", LvlTowr)
+  LvlMeas <- LvlTowr
+} else {
+  tmpLoc <- subset(names(data), grepl("Maximum",names(data)))
+  LocMeas <- gsub("[a-zA-Z]", "", tmpLoc)
+  LocMeas <- substring(LocMeas, 2)
+  LvlMeas <- gsub("\\.", "_", LocMeas) }
 
 #Determine the output levels
 LvlMeasOut <- LocMeas
@@ -210,7 +218,7 @@ names(LvlMeasOut) <- LvlMeas
 #####################################################################################
 
 #Sort output data and apply eddy4R naming conventions
-rpt$data  <- lapply(LvlMeasOut, function(x){
+tmp$data  <- lapply(LvlMeasOut, function(x){
   #Grab just the columns to be output  
   tmp <- data[,grep(pattern = paste(nameVar$DataOut, collapse = "|"), x = names(data))]
     #Sort the output columns to grab the HOR_VER level as separate lists of dataframes
@@ -219,16 +227,29 @@ rpt$data  <- lapply(LvlMeasOut, function(x){
     tmp <- tmp[order(names(tmp))]
     #Change the output column names to eddy4R terms
     colnames(tmp) <- names(nameVar$DataOut)
-    # Adding time to output
-    tmp<- data.frame("timeBgn" = strftime(as.character(data$startDateTime), format= "%Y-%m-%dT%H:%M:%OSZ", tz="UTC"), "timeEnd" = strftime(as.character(data$endDateTime), format= "%Y-%m-%dT%H:%M:%OSZ", tz="UTC"), tmp, stringsAsFactors = FALSE)
+    #Adding time to output
+    #tmp<- data.frame("timeBgn" = strftime(as.character(data$startDateTime), format= "%Y-%m-%dT%H:%M:%OSZ", tz="UTC"), "timeEnd" = strftime(as.character(data$endDateTime), format= "%Y-%m-%dT%H:%M:%OSZ", tz="UTC"), tmp, stringsAsFactors = FALSE)
     #Adding unit attributes and naming them
-    attributes(tmp)$unit <- outAttr$data[[DpName]]
-    names(attributes(tmp)$unit) <- names(tmp)
+    #attributes(tmp)$unit <- outAttr$data[[DpName]]
+    #names(attributes(tmp)$unit) <- names(tmp)
     #Return output
     return(tmp)
     })
 
-rpt$qfqm <- lapply(LvlMeasOut, function(x){
+#extract subdata products
+for (idxLvl in names(tmp$data)){
+  for (idxSupDp in 1:length(TblName)){
+    #determine begin and end columns
+    bgn <- (idxSupDp*(length(outAttr$data[[DpName]])-2)) - (((length(outAttr$data[[DpName]])-2))-1)
+    end <- idxSupDp*(length(outAttr$data[[DpName]])-2) 
+    rpt$data[[idxLvl]][[TblName[idxSupDp]]] <- data.frame("timeBgn" = strftime(as.character(data$startDateTime), format= "%Y-%m-%dT%H:%M:%OSZ", tz="UTC"), "timeEnd" = strftime(as.character(data$endDateTime), format= "%Y-%m-%dT%H:%M:%OSZ", tz="UTC"), tmp$data[[idxLvl]][,bgn:end], stringsAsFactors = FALSE)
+    #Adding unit attributes and naming them
+    attributes(rpt$data[[idxLvl]][[TblName[idxSupDp]]])$unit <- outAttr$data[[DpName]]
+    names(attributes(rpt$data[[idxLvl]][[TblName[idxSupDp]]])$unit) <- names(rpt$data[[idxLvl]][[TblName[idxSupDp]]])
+  }
+}
+
+tmp$qfqm <- lapply(LvlMeasOut, function(x){
   #Grab just the columns to be output  
   tmp <- data[,grep(pattern = paste(nameVar$QfqmOut, collapse = "|"), x = names(data))]
   #Sort the output columns to grab the HOR_VER level as separate lists of dataframes
@@ -237,21 +258,35 @@ rpt$qfqm <- lapply(LvlMeasOut, function(x){
   tmp <- tmp[order(names(tmp))]
   #Change the output column names to eddy4R terms
   colnames(tmp) <- names(nameVar$QfqmOut)
-  # Adding time to output
-  tmp<- data.frame("timeBgn" = strftime(as.character(data$startDateTime), format= "%Y-%m-%dT%H:%M:%OSZ", tz="UTC"), "timeEnd" = strftime(as.character(data$endDateTime), format= "%Y-%m-%dT%H:%M:%OSZ", tz="UTC"), tmp, stringsAsFactors = FALSE)
-  #Adding unit attributes and naming them
-  attributes(tmp)$unit <- base::rep_len(x = "NA", length.out = ncol(tmp))
-  names(attributes(tmp)$unit) <- names(tmp)
+  # # Adding time to output
+  # tmp<- data.frame("timeBgn" = strftime(as.character(data$startDateTime), format= "%Y-%m-%dT%H:%M:%OSZ", tz="UTC"), "timeEnd" = strftime(as.character(data$endDateTime), format= "%Y-%m-%dT%H:%M:%OSZ", tz="UTC"), tmp, stringsAsFactors = FALSE)
+  # #Adding unit attributes and naming them
+  # attributes(tmp)$unit <- base::rep_len(x = "NA", length.out = ncol(tmp))
+  # names(attributes(tmp)$unit) <- names(tmp)
   #Return output
   return(tmp)
 })
 
-#Convert all NaNs in the qfSci to 0
-lapply(names(rpt$qfqm), function(x){
-  rpt$qfqm[[x]][is.nan(rpt$qfqm[[x]]$qfSci),"qfSci"] <<- 0L
-})
+#extract subdata products
+for (idxLvl in names(tmp$qfqm)){
+  for (idxSupDp in 1:length(TblName)){
+    #determine begin and end columns
+    bgn <- (idxSupDp*4 - 3)
+    end <- idxSupDp*4 
+    rpt$qfqm[[idxLvl]][[TblName[idxSupDp]]] <- data.frame("timeBgn" = strftime(as.character(data$startDateTime), format= "%Y-%m-%dT%H:%M:%OSZ", tz="UTC"), "timeEnd" = strftime(as.character(data$endDateTime), format= "%Y-%m-%dT%H:%M:%OSZ", tz="UTC"), tmp$qfqm[[idxLvl]][,bgn:end], stringsAsFactors = FALSE)
+    #Adding unit attributes and naming them
+    attributes(rpt$qfqm[[idxLvl]][[TblName[idxSupDp]]])$unit <- base::rep_len(x = "NA", length.out = ncol(rpt$qfqm[[idxLvl]][[TblName[idxSupDp]]]))
+    names(attributes(rpt$qfqm[[idxLvl]][[TblName[idxSupDp]]])$unit) <- names(rpt$qfqm[[idxLvl]][[TblName[idxSupDp]]])
+    #Convert all NaNs in the qfSci to 0
+    rpt$qfqm[[idxLvl]][[TblName[idxSupDp]]][is.nan(rpt$qfqm[[idxLvl]][[TblName[idxSupDp]]]$qfSci),"qfSci"] <- 0L
+  }
+}
+# #Convert all NaNs in the qfSci to 0
+# lapply(names(rpt$qfqm), function(x){
+#   rpt$qfqm[[x]][is.nan(rpt$qfqm[[x]]$qfSci),"qfSci"] <<- 0L
+# })
 
-rpt$ucrt <- lapply(LvlMeasOut, function(x){
+tmp$ucrt <- lapply(LvlMeasOut, function(x){
   #Grab just the columns to be output  
   tmp <- data[,grep(pattern = paste(nameVar$UcrtOut, collapse = "|"), x = names(data))]
   #Sort the output columns to grab the HOR_VER level as separate lists of dataframes
@@ -261,15 +296,26 @@ rpt$ucrt <- lapply(LvlMeasOut, function(x){
   #Change the output column names to eddy4R terms
   colnames(tmp) <- names(nameVar$UcrtOut)
   # Adding time to output
-  tmp<- data.frame("timeBgn" = strftime(as.character(data$startDateTime), format= "%Y-%m-%dT%H:%M:%OSZ", tz="UTC"), "timeEnd" = strftime(as.character(data$endDateTime), format= "%Y-%m-%dT%H:%M:%OSZ", tz="UTC"), tmp, stringsAsFactors = FALSE)
+  #tmp<- data.frame("timeBgn" = strftime(as.character(data$startDateTime), format= "%Y-%m-%dT%H:%M:%OSZ", tz="UTC"), "timeEnd" = strftime(as.character(data$endDateTime), format= "%Y-%m-%dT%H:%M:%OSZ", tz="UTC"), tmp, stringsAsFactors = FALSE)
   #Adding unit attributes and naming them
-  attributes(tmp)$unit <- outAttr$ucrt[[DpName]]
-  names(attributes(tmp)$unit) <- names(tmp)
+  #attributes(tmp)$unit <- outAttr$ucrt[[DpName]]
+  #names(attributes(tmp)$unit) <- names(tmp)
   
   #Return output
   return(tmp)
 })
-
+#extract subdata products
+for (idxLvl in names(tmp$ucrt)){
+  for (idxSupDp in 1:length(TblName)){
+    #determine begin and end columns
+    bgn <- (idxSupDp*(length(outAttr$ucrt[[DpName]])-2)) - (((length(outAttr$ucrt[[DpName]])-2))-1)
+    end <- idxSupDp*(length(outAttr$ucrt[[DpName]])-2) 
+    rpt$ucrt[[idxLvl]][[TblName[idxSupDp]]] <- data.frame("timeBgn" = strftime(as.character(data$startDateTime), format= "%Y-%m-%dT%H:%M:%OSZ", tz="UTC"), "timeEnd" = strftime(as.character(data$endDateTime), format= "%Y-%m-%dT%H:%M:%OSZ", tz="UTC"), tmp$ucrt[[idxLvl]][,bgn:end], stringsAsFactors = FALSE)
+    #Adding unit attributes and naming them
+    attributes(rpt$ucrt[[idxLvl]][[TblName[idxSupDp]]])$unit <- outAttr$ucrt[[DpName]]
+    names(attributes(rpt$ucrt[[idxLvl]][[TblName[idxSupDp]]])$unit) <- names(rpt$ucrt[[idxLvl]][[TblName[idxSupDp]]])
+  }
+}
 } #End of else statement
 #############################################################################
 #Writing output to existing dp0p HDF5 file
@@ -305,31 +351,33 @@ idLvlMeasQfqm <- rhdf5::H5Oopen(idQfqmDp01,paste0(names(LvlMeasOut[idx]), "_",ba
 #write attribute to the data table level for each measurement level
 idLvlMeasUcrt <- rhdf5::H5Oopen(idUcrtDp01,paste0(names(LvlMeasOut[idx]), "_",base::formatC(TimeAgr, width=2, flag="0"),"m"))
 
+for (idxSupDp in TblName){
 #Write output data
-rhdf5::h5writeDataset.data.frame(obj = rpt$data[[names(LvlMeasOut[idx])]], h5loc = idLvlMeasData, name = TblName, DataFrameAsCompound = TRUE)
+rhdf5::h5writeDataset.data.frame(obj = rpt$data[[names(LvlMeasOut[idx])]][[idxSupDp]], h5loc = idLvlMeasData, name = idxSupDp, DataFrameAsCompound = TRUE)
 # Writing attributes to the data
-if(!is.null(attributes(rpt$data[[names(LvlMeasOut[idx])]])$unit) == TRUE){ 
-  dgid <- rhdf5::H5Dopen(idLvlMeasData, TblName)
-  rhdf5::h5writeAttribute(attributes(rpt$data[[names(LvlMeasOut[idx])]])$unit, h5obj = dgid, name = "unit")
+if(!is.null(attributes(rpt$data[[names(LvlMeasOut[idx])]][[idxSupDp]])$unit) == TRUE){ 
+  dgid <- rhdf5::H5Dopen(idLvlMeasData, idxSupDp)
+  rhdf5::h5writeAttribute(attributes(rpt$data[[names(LvlMeasOut[idx])]][[idxSupDp]])$unit, h5obj = dgid, name = "unit")
 }
 
 #Write output data
-rhdf5::h5writeDataset.data.frame(obj = rpt$qfqm[[names(LvlMeasOut[idx])]], h5loc = idLvlMeasQfqm, name = TblName, DataFrameAsCompound = TRUE)
+rhdf5::h5writeDataset.data.frame(obj = rpt$qfqm[[names(LvlMeasOut[idx])]][[idxSupDp]], h5loc = idLvlMeasQfqm, name = idxSupDp, DataFrameAsCompound = TRUE)
   
 # Writing attributes to the qfqm
-if(!is.null(attributes(rpt$qfqm[[names(LvlMeasOut[idx])]])$unit) == TRUE){ 
-  dgid <- rhdf5::H5Dopen(idLvlMeasQfqm, TblName)
-  rhdf5::h5writeAttribute(attributes(rpt$qfqm[[names(LvlMeasOut[idx])]])$unit, h5obj = dgid, name = "unit")
+if(!is.null(attributes(rpt$qfqm[[names(LvlMeasOut[idx])]][[idxSupDp]])$unit) == TRUE){ 
+  dgid <- rhdf5::H5Dopen(idLvlMeasQfqm, idxSupDp)
+  rhdf5::h5writeAttribute(attributes(rpt$qfqm[[names(LvlMeasOut[idx])]][[idxSupDp]])$unit, h5obj = dgid, name = "unit")
 }
   
   #Write output data
-  rhdf5::h5writeDataset.data.frame(obj = rpt$ucrt[[names(LvlMeasOut[idx])]], h5loc = idLvlMeasUcrt, name = TblName, DataFrameAsCompound = TRUE)
+  rhdf5::h5writeDataset.data.frame(obj = rpt$ucrt[[names(LvlMeasOut[idx])]][[idxSupDp]], h5loc = idLvlMeasUcrt, name = idxSupDp, DataFrameAsCompound = TRUE)
     
   # Writing attributes to the data
-  if(!is.null(attributes(rpt$ucrt[[names(LvlMeasOut[idx])]])$unit) == TRUE){ 
-    dgid <- rhdf5::H5Dopen(idLvlMeasUcrt, TblName)
-    rhdf5::h5writeAttribute(attributes(rpt$ucrt[[names(LvlMeasOut[idx])]])$unit, h5obj = dgid, name = "unit")
+  if(!is.null(attributes(rpt$ucrt[[names(LvlMeasOut[idx])]][[idxSupDp]])$unit) == TRUE){ 
+    dgid <- rhdf5::H5Dopen(idLvlMeasUcrt, idxSupDp)
+    rhdf5::h5writeAttribute(attributes(rpt$ucrt[[names(LvlMeasOut[idx])]][[idxSupDp]])$unit, h5obj = dgid, name = "unit")
   }
+}
 
 
 } #End of for loop around measurement levels
