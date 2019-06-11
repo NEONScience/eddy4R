@@ -53,7 +53,7 @@ wrap.hdf5.wrte.dp01.api <- function(
   date,
   FileOut,
   SiteLoca,
-  DpName = c("tempAirLvl", "tempAirTop", "fluxHeatSoil"),
+  DpName = c("tempAirLvl", "tempAirTop", "fluxHeatSoil", "radiNet", "tempSoil", "h2oSoilVol"),
   LvlTowr,
   TimeAgr = c(1,30)
 ){
