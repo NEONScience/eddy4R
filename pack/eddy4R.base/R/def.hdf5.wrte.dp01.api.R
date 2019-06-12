@@ -139,11 +139,17 @@ if(class(data) == "try-error"){
       ver <- unlist(lapply(1:length(tmpLoc), function(x) {
         if (nchar(tmpLoc[[x]][2]) == 2) {as.character(paste0(tmpLoc[[x]][2],"0"))} else{as.character(tmpLoc[[x]][2])}
       }))
-      #merge hor_ver
+      #merge hor.ver and hor_ver
+      LocMeas <- as.character(paste0(hor,".",ver))
       LvlMeas <- as.character(paste0(hor,"_",ver))
       #delete download folder
       print(unlink(DirDnld, recursive=TRUE))
       }#end else
+  
+  #Determine the output levels
+  LvlMeasOut <- LocMeas
+  #Name for HDF5 output
+  names(LvlMeasOut) <- LvlMeas
   
   #Create the timeBgn vector for aggregation period specified (1, 30 minutes)
   timeBgnOut <- seq(from = lubridate::ymd_hms(timeBgn) + lubridate::seconds(1), to = base::as.POSIXlt(timeEnd) - lubridate::minutes(TimeAgr), by = paste(TimeAgr, "mins", sep = " "))
