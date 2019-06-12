@@ -109,41 +109,41 @@ data <- try(expr = Noble::pull.date(site = SiteLoca, dpID = DpNum, bgn.date = ti
 if(class(data) == "try-error"){
   #Initialize lists
   rpt <- list(data = list(), qfqm = list(), ucrt = list())
-  #assign downloading directory
-  DirDnld <- paste0(dirname(FileOut), "/",DpName)
-  #Check if download directory exists and create if not
-  if(dir.exists(DirDnld) == FALSE) dir.create(DirDnld, recursive = TRUE)
-  
-  #download data from dataportal
-  neonUtilities::getPackage(dpID = DpNum, site_code = SiteLoca, year_month = yearMnth, package = "basic",savepath = DirDnld)
-  
-  #get the list of download zip file
-  fileList <- list.files(path = DirDnld, pattern= ".zip", all.files=FALSE,
-                         full.names=FALSE)
-  #unzip the download zip file
-  utils::unzip(zipfile = paste0(DirDnld,"/", fileList), exdir = DirDnld, overwrite = TRUE)
-  
-  #get sensor position file name
-  fileName <- list.files(path = DirDnld, pattern = paste0("sensor_positions"))
-  
-  #read in .csv file
-  sensLoc <- read.csv(paste0(DirDnld,"/", fileName), header=TRUE)
-  #get vertical and horizontal measurement location
-  tmpLoc <- strsplit(as.character(sensLoc$HOR.VER),split='.', fixed=TRUE)
-  hor <- unlist(lapply(1:length(tmpLoc), function(x) {
-    if (nchar(tmpLoc[[x]][1]) == 1) {as.character(paste0("00",tmpLoc[[x]][1]))} else{as.character(tmpLoc[[x]][1])}
-  }))
-  ver <- unlist(lapply(1:length(tmpLoc), function(x) {
-    if (nchar(tmpLoc[[x]][2]) == 2) {as.character(paste0(tmpLoc[[x]][2],"0"))} else{as.character(tmpLoc[[x]][2])}
-  }))
-  
-  LocMeas <- as.character(paste0(hor,".",ver))
-  LvlMeas <- as.character(paste0(hor,"_",ver))
-
-  #Grabbing the measurement levels based on the sensor assembly
-  LvlMeasOut <- LocMeas
-  #Create names for LevlMeasOut
-  names(LvlMeasOut) <- LvlMeas
+  #get sensor HOR and VER
+  if (DpName %in% "radiNet"){
+    LvlMeas <- LvlTowr} else{
+      #assign downloading directory
+      DirDnld <- paste0(dirname(FileOut), "/",DpName)
+      #Check if download directory exists and create if not
+      if(dir.exists(DirDnld) == FALSE) dir.create(DirDnld, recursive = TRUE)
+      
+      #download data from dataportal
+      neonUtilities::getPackage(dpID = DpNum, site_code = SiteLoca, year_month = yearMnth, package = "basic",savepath = DirDnld)
+      
+      #get the list of download zip file
+      fileList <- list.files(path = DirDnld, pattern= ".zip", all.files=FALSE,
+                             full.names=FALSE)
+      #unzip the download zip file
+      utils::unzip(zipfile = paste0(DirDnld,"/", fileList), exdir = DirDnld, overwrite = TRUE)
+      
+      #get sensor position file name
+      fileName <- list.files(path = DirDnld, pattern = paste0("sensor_positions"))
+      
+      #read in .csv file
+      sensLoc <- read.csv(paste0(DirDnld,"/", fileName), header=TRUE)
+      #get vertical and horizontal measurement location
+      tmpLoc <- strsplit(as.character(sensLoc$HOR.VER),split='.', fixed=TRUE)
+      hor <- unlist(lapply(1:length(tmpLoc), function(x) {
+        if (nchar(tmpLoc[[x]][1]) == 1) {as.character(paste0("00",tmpLoc[[x]][1]))} else{as.character(tmpLoc[[x]][1])}
+      }))
+      ver <- unlist(lapply(1:length(tmpLoc), function(x) {
+        if (nchar(tmpLoc[[x]][2]) == 2) {as.character(paste0(tmpLoc[[x]][2],"0"))} else{as.character(tmpLoc[[x]][2])}
+      }))
+      #merge hor_ver
+      LvlMeas <- as.character(paste0(hor,"_",ver))
+      #delete download folder
+      print(unlink(DirDnld, recursive=TRUE))
+      }#end else
   
   #Create the timeBgn vector for aggregation period specified (1, 30 minutes)
   timeBgnOut <- seq(from = lubridate::ymd_hms(timeBgn) + lubridate::seconds(1), to = base::as.POSIXlt(timeEnd) - lubridate::minutes(TimeAgr), by = paste(TimeAgr, "mins", sep = " "))
@@ -177,13 +177,18 @@ if(class(data) == "try-error"){
   
   #Create list structure for the return output (type>>HOR_VER>>output_dataframes)
   lapply(LvlMeas, function(x) {
-    rpt$data[[x]] <<- dataOut
-    rpt$qfqm[[x]] <<- qfqmOut
-    rpt$ucrt[[x]] <<- ucrtOut
-    }) #End of lapply around measurement levels
-  
-  #delete download folder
-  print(unlink(DirDnld, recursive=TRUE))
+    lapply (TblName, function(y) {
+    rpt$data[[x]][[y]] <<- dataOut
+    rpt$qfqm[[x]][[y]] <<- qfqmOut
+    rpt$ucrt[[x]][[y]] <<- ucrtOut
+    #replace unit for ionSoilVol
+    if (y %in% "ionSoilVol"){
+    attributes(rpt$data[[x]][[y]])$unit <<- outAttr$data[[y]]
+    attributes(rpt$ucrt[[x]][[y]])$unit <<- outAttr$ucrt[[y]]
+    names(attributes(rpt$data[[x]][[y]])$unit) <<- names(rpt$data[[x]][[y]])
+    names(attributes(rpt$ucrt[[x]][[y]])$unit) <<- names(rpt$ucrt[[x]][[y]])
+    }
+    })}) #End of lapply around measurement levels
 
 } else {
 
