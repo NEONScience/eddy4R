@@ -65,6 +65,8 @@ library(rhdf5)
 ############################################################################
 #Convert date to lubridate object
 date <- lubridate::as_datetime(date)
+#get only year and month
+yearMnth <- as.character.Date(date, format = "%Y-%m")
 
 timeBgn <- date - lubridate::seconds(1)
 
@@ -107,17 +109,41 @@ data <- try(expr = Noble::pull.date(site = SiteLoca, dpID = DpNum, bgn.date = ti
 if(class(data) == "try-error"){
   #Initialize lists
   rpt <- list(data = list(), qfqm = list(), ucrt = list())
+  #assign downloading directory
+  DirDnld <- paste0(dirname(FileOut), "/",DpName)
+  #Check if download directory exists and create if not
+  if(dir.exists(DirDnld) == FALSE) dir.create(DirDnld, recursive = TRUE)
   
+  #download data from dataportal
+  neonUtilities::getPackage(dpID = DpNum, site_code = SiteLoca, year_month = yearMnth, package = "basic",savepath = DirDnld)
+  
+  #get the list of download zip file
+  fileList <- list.files(path = DirDnld, pattern= ".zip", all.files=FALSE,
+                         full.names=FALSE)
+  #unzip the download zip file
+  utils::unzip(zipfile = paste0(DirDnld,"/", fileList), exdir = DirDnld, overwrite = TRUE)
+  
+  #get sensor position file name
+  fileName <- list.files(path = DirDnld, pattern = paste0("sensor_positions"))
+  
+  #read in .csv file
+  sensLoc <- read.csv(paste0(DirDnld,"/", fileName), header=TRUE)
   #get vertical and horizontal measurement location
-  tmpLoc <- subset(names(data), grepl("Maximum",names(data)))
-  LocMeas <- gsub("[a-zA-Z]", "", tmpLoc)
-  LocMeas <- substring(LocMeas, 2)
-  LvlMeas <- gsub("\\.", "_", LocMeas)
+  tmpLoc <- strsplit(as.character(sensLoc$HOR.VER),split='.', fixed=TRUE)
+  hor <- unlist(lapply(1:length(tmpLoc), function(x) {
+    if (nchar(tmpLoc[[x]][1]) == 1) {as.character(paste0("00",tmpLoc[[x]][1]))} else{as.character(tmpLoc[[x]][1])}
+  }))
+  ver <- unlist(lapply(1:length(tmpLoc), function(x) {
+    if (nchar(tmpLoc[[x]][2]) == 2) {as.character(paste0(tmpLoc[[x]][2],"0"))} else{as.character(tmpLoc[[x]][2])}
+  }))
+  
+  LocMeas <- as.character(paste0(hor,".",ver))
+  LvlMeas <- as.character(paste0(hor,"_",ver))
 
   #Grabbing the measurement levels based on the sensor assembly
-  LvlMeasOut <- LvlMeas
+  LvlMeasOut <- LocMeas
   #Create names for LevlMeasOut
-  names(LvlMeasOut) <- LvlMeasOut
+  names(LvlMeasOut) <- LvlMeas
   
   #Create the timeBgn vector for aggregation period specified (1, 30 minutes)
   timeBgnOut <- seq(from = lubridate::ymd_hms(timeBgn) + lubridate::seconds(1), to = base::as.POSIXlt(timeEnd) - lubridate::minutes(TimeAgr), by = paste(TimeAgr, "mins", sep = " "))
@@ -155,6 +181,9 @@ if(class(data) == "try-error"){
     rpt$qfqm[[x]] <<- qfqmOut
     rpt$ucrt[[x]] <<- ucrtOut
     }) #End of lapply around measurement levels
+  
+  #delete download folder
+  print(unlink(DirDnld, recursive=TRUE))
 
 } else {
 
