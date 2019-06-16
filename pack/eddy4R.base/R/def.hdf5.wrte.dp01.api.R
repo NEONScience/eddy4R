@@ -398,12 +398,26 @@ tmp$ucrt <- lapply(LvlMeasOut, function(x){
 for (idxLvl in names(tmp$ucrt)){
   for (idxSupDp in 1:length(TblName)){
     #determine begin and end columns
-    bgn <- (idxSupDp*(length(outAttr$ucrt[[DpName]])-2)) - (((length(outAttr$ucrt[[DpName]])-2))-1)
-    end <- idxSupDp*(length(outAttr$ucrt[[DpName]])-2) 
+    if (DpName %in% "presBaro"){
+      if (idxSupDp == 1){
+        bgn <- idxSupDp
+        end <- idxSupDp
+      } else {
+        bgn <- idxSupDp
+        end <- length(outAttr$ucrt[[DpName]])-1
+      }
+    } else {
+      bgn <- (idxSupDp*(length(outAttr$ucrt[[DpName]])-2)) - (((length(outAttr$ucrt[[DpName]])-2))-1)
+      end <- idxSupDp*(length(outAttr$ucrt[[DpName]])-2)
+    }
     rpt$ucrt[[idxLvl]][[TblName[idxSupDp]]] <- data.frame("timeBgn" = strftime(as.character(data$startDateTime), format= "%Y-%m-%dT%H:%M:%OSZ", tz="UTC"), "timeEnd" = strftime(as.character(data$endDateTime), format= "%Y-%m-%dT%H:%M:%OSZ", tz="UTC"), tmp$ucrt[[idxLvl]][,bgn:end], stringsAsFactors = FALSE)
+    #re column name for presCor
+    if (TblName[idxSupDp] %in% "presCor") { names(rpt$ucrt[[idxLvl]][[TblName[idxSupDp]]]) <- c("timeBgn", "timeEnd", "ucrtCal95")}
     #Adding unit attributes and naming them
-    if(TblName[idxSupDp] %in% "ionSoilVol") {attributes(rpt$ucrt[[idxLvl]][[TblName[idxSupDp]]])$unit <- outAttr$ucrt[[TblName[idxSupDp]]]}else{
-      attributes(rpt$ucrt[[idxLvl]][[TblName[idxSupDp]]])$unit <- outAttr$ucrt[[DpName]]}
+    if (TblName[idxSupDp] %in% c("ionSoilVol", "presCor")) {attributes(rpt$ucrt[[idxLvl]][[TblName[idxSupDp]]])$unit <- outAttr$ucrt[[TblName[idxSupDp]]]
+    } else {
+      attributes(rpt$ucrt[[idxLvl]][[TblName[idxSupDp]]])$unit <- outAttr$ucrt[[DpName]]
+      }
     names(attributes(rpt$ucrt[[idxLvl]][[TblName[idxSupDp]]])$unit) <- names(rpt$ucrt[[idxLvl]][[TblName[idxSupDp]]])
   }
 }
