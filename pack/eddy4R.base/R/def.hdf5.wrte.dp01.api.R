@@ -81,6 +81,8 @@ outAttr$data$radiNet <- c("NA","NA","W m-2","W m-2","W m-2","NA","W2 m-4")
 outAttr$data$tempSoil <- outAttr$data$tempAirLvl
 outAttr$data$h2oSoilVol <- c("NA","NA","cm3 cm-3","cm3 cm-3","cm3 cm-3","NA","cm6 cm-6")
 outAttr$data$ionSoilVol <- c("NA","NA","-","-","-","NA","-")
+outAttr$data$presBaro <- c("NA","NA","kPa","kPa","kPa","NA","kPa2")
+outAttr$data$presCor <- c("NA", "NA", "kPa")
 #assign uncertainty unit attributes
 outAttr$ucrt$tempAirLvl <- c("NA","NA","C","C")
 outAttr$ucrt$tempAirTop <- outAttr$ucrt$tempAirLvl
@@ -89,10 +91,13 @@ outAttr$ucrt$radiNet <- c("NA","NA","W m-2","W m-2")
 outAttr$ucrt$tempSoil <- outAttr$ucrt$tempAirLvl
 outAttr$ucrt$h2oSoilVol <- c("NA","NA","cm3 cm-3","cm3 cm-3")
 outAttr$ucrt$ionSoilVol <- c("NA","NA","-","-")
+outAttr$ucrt$presBaro <- c("NA","NA","kPa","kPa")
+outAttr$ucrt$presCor <- c("NA", "NA", "kPa")
 
 #List of DP numbers by eddy4R DP names
 listDpNum <- c("tempAirLvl" = "DP1.00002.001", "tempAirTop" = "DP1.00003.001", "fluxHeatSoil" = "DP1.00040.001",
-               "radiNet" = "DP1.00023.001", "tempSoil" = "DP1.00041.001", "h2oSoilVol" = "DP1.00094.001")
+               "radiNet" = "DP1.00023.001", "tempSoil" = "DP1.00041.001", "h2oSoilVol" = "DP1.00094.001",
+               "presBaro" = "DP1.00004.001")
 #Determine DP number
 DpNum <- listDpNum[DpName]
 
@@ -101,6 +106,7 @@ if(substr(DpName, 1, 4) == "temp"){TblName <- substr(DpName, 1, 4)}
 if(DpName == "fluxHeatSoil") TblName <- "fluxHeatSoil"
 if(DpName == "radiNet") TblName <- c("radiLwIn", "radiSwIn", "radiLwOut", "radiSwOut")
 if(DpName == "h2oSoilVol") TblName <- c("ionSoilVol", "h2oSoilVol")
+if(DpName == "presBaro") TblName <- c("presCor", "presAtm")
 
 #Grab 30 minute data to be written
 data <- try(expr = Noble::pull.date(site = SiteLoca, dpID = DpNum, bgn.date = timeBgn, end.date = timeEnd, package = "expanded", time.agr = TimeAgr), silent = TRUE) #Currently requires to subtract 1 minute otherwise (1 index will be cut from the beginning)
@@ -227,21 +233,39 @@ nameVar <- list()
 #Grab the names of variables for ucrt
 nameVar$Ucrt <- grep(pattern = "stdermean|expUncert", x = names(data), ignore.case = TRUE, value =  TRUE)
 #Grab the names of variables for qfqm
-nameVar$Qfqm <- grep(pattern = "alphaqm|betaqm|finalqf", x = names(data), ignore.case = TRUE, value =  TRUE)
-#Grab the names of variables for data
-nameVar$Data <- grep(pattern = "mean|variance|minimum|maximum|numpts", x = names(data), ignore.case = TRUE, value =  TRUE)
+if (DpName %in% "presBaro"){
+  nameVar$Qfqm <- grep(pattern = "alphaqm|betaqm|qf", x = names(data), ignore.case = TRUE, value =  TRUE)
+  #Grab the names of variables for data
+  nameVar$Data <- grep(pattern = "mean|variance|minimum|maximum|numpts|corPres", x = names(data), ignore.case = TRUE, value =  TRUE)
+  #Exclude corPres qfqm and ucrt from data
+  nameVar$Data <- nameVar$Data[!nameVar$Data %in% nameVar$Ucrt] 
+  nameVar$Data <- nameVar$Data[!nameVar$Data %in% nameVar$Qfqm]
+} else{
+  nameVar$Qfqm <- grep(pattern = "alphaqm|betaqm|finalqf", x = names(data), ignore.case = TRUE, value =  TRUE)
+  #Grab the names of variables for data
+  nameVar$Data <- grep(pattern = "mean|variance|minimum|maximum|numpts", x = names(data), ignore.case = TRUE, value =  TRUE)
+  #Exclude stdermean from data
+  nameVar$Data <- nameVar$Data[!nameVar$Data %in% nameVar$Ucrt]
+}
+
 #Grab the names of variables for time
 nameVar$Time <- grep(pattern = "time", x = names(data), ignore.case = TRUE, value =  TRUE)
-#Exclude stdermean from data
-nameVar$Data <- nameVar$Data[!nameVar$Data %in% nameVar$Ucrt]
 
 #Align eddy4R names with DP names, i.e. dp name mapping
 nameVar$DataOut <- sort(unique(sub("[.](.*)", "", nameVar$Data)))
-names(nameVar$DataOut) <- rep(c("max", "mean", "min", "numSamp", "vari"), length(nameVar$DataOut)/5)
 nameVar$QfqmOut <- sort(unique(sub("[.](.*)", "", nameVar$Qfqm)))
-names(nameVar$QfqmOut) <- rep(c("qmAlph", "qmBeta", "qfFinl", "qfSci"), length(nameVar$QfqmOut)/4)
 nameVar$UcrtOut <- sort(unique(sub("[.](.*)", "", nameVar$Ucrt)))
-names(nameVar$UcrtOut) <- rep(c("ucrtCal95", "se"), length(nameVar$UcrtOut)/2)
+
+if (DpName %in% "presBaro"){
+  names(nameVar$DataOut) <- c("mean", "max", "mean", "min", "numSamp", "vari")
+  names(nameVar$QfqmOut) <- c("qfDew", "qfFinl", "qfSci", "qfTemp", "qmAlph", "qmBeta", "qfFinl", "qfSci")
+  names(nameVar$UcrtOut) <- c("ucrtCal95", "ucrtCal95", "se")
+} else{
+  names(nameVar$DataOut) <- rep(c("max", "mean", "min", "numSamp", "vari"), length(nameVar$DataOut)/5)
+  names(nameVar$QfqmOut) <- rep(c("qmAlph", "qmBeta", "qfFinl", "qfSci"), length(nameVar$QfqmOut)/4)
+  names(nameVar$UcrtOut) <- rep(c("ucrtCal95", "se"), length(nameVar$UcrtOut)/2)
+}
+
 nameVar$TimeOut <- sort(nameVar$Time)
 names(nameVar$TimeOut) <- c("timeEnd", "timeBgn") 
 
@@ -269,6 +293,8 @@ names(LvlMeasOut) <- LvlMeas
 tmp$data  <- lapply(LvlMeasOut, function(x){
   #Grab just the columns to be output  
   tmp <- data[,grep(pattern = paste(nameVar$DataOut, collapse = "|"), x = names(data))]
+  if(DpName %in% "presBaro"){
+  tmp <- tmp[,-grep(pattern = "QF|Uncert", x = colnames(tmp))]}
     #Sort the output columns to grab the HOR_VER level as separate lists of dataframes
     tmp <- tmp[,grep(pattern = x, x = names(tmp))]
     #Order the column names
@@ -288,12 +314,27 @@ tmp$data  <- lapply(LvlMeasOut, function(x){
 for (idxLvl in names(tmp$data)){
   for (idxSupDp in 1:length(TblName)){
     #determine begin and end columns
-    bgn <- (idxSupDp*(length(outAttr$data[[DpName]])-2)) - (((length(outAttr$data[[DpName]])-2))-1)
-    end <- idxSupDp*(length(outAttr$data[[DpName]])-2) 
+    if (DpName %in% "presBaro"){
+      if (idxSupDp == 1){
+        bgn <- idxSupDp
+        end <- idxSupDp
+      } else {
+        bgn <- idxSupDp
+        end <- length(outAttr$data[[DpName]])-1
+      }
+    } else {
+      bgn <- (idxSupDp*(length(outAttr$data[[DpName]])-2)) - (((length(outAttr$data[[DpName]])-2))-1)
+      end <- idxSupDp*(length(outAttr$data[[DpName]])-2)
+    }
     rpt$data[[idxLvl]][[TblName[idxSupDp]]] <- data.frame("timeBgn" = strftime(as.character(data$startDateTime), format= "%Y-%m-%dT%H:%M:%OSZ", tz="UTC"), "timeEnd" = strftime(as.character(data$endDateTime), format= "%Y-%m-%dT%H:%M:%OSZ", tz="UTC"), tmp$data[[idxLvl]][,bgn:end], stringsAsFactors = FALSE)
+    #re column name for presCor
+    if (TblName[idxSupDp] %in% "presCor") { names(rpt$data[[idxLvl]][[TblName[idxSupDp]]]) <- c("timeBgn", "timeEnd", "mean")}
     #Adding unit attributes and naming them
-    if(TblName[idxSupDp] %in% "ionSoilVol") {attributes(rpt$data[[idxLvl]][[TblName[idxSupDp]]])$unit <- outAttr$data[[TblName[idxSupDp]]]}else{
-        attributes(rpt$data[[idxLvl]][[TblName[idxSupDp]]])$unit <- outAttr$data[[DpName]]}
+    if(TblName[idxSupDp] %in% c("ionSoilVol", "presCor")) {
+      attributes(rpt$data[[idxLvl]][[TblName[idxSupDp]]])$unit <- outAttr$data[[TblName[idxSupDp]]]
+    } else {
+      attributes(rpt$data[[idxLvl]][[TblName[idxSupDp]]])$unit <- outAttr$data[[DpName]]
+      }
     names(attributes(rpt$data[[idxLvl]][[TblName[idxSupDp]]])$unit) <- names(rpt$data[[idxLvl]][[TblName[idxSupDp]]])
   }
 }
