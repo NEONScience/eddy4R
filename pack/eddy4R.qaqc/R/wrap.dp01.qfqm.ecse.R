@@ -9,8 +9,10 @@
 
 #' @param dp01 A vector of class "character" containing the name of NEON ECSE dp01 which descriptive statistics are being calculated, \cr
 #' c("co2Stor", "h2oStor", "tempAirLvl", "tempAirTop", "isoCo2", "isoH2o"). Defaults to "co2Stor". [-] 
+#' @param RptExpd A logical parameter that determines if the full quality metric \code{qm} is output in the returned list (defaults to FALSE).
 #' @param lvl  Measurement level of dp01 which descriptive statistics are being calculated. Of type character. [-]
 #' @param lvlMfcSampStor Measurement level of mfcSampStor which apply to only  dp01 equal to "co2Stor" or "h2oStor". Defaults to NULL. Of type character. [-]
+#' @param lvlMfcValiStor Measurement level of mfcValiStor which apply to only  dp01 equal to "co2Stor", "h2oStor", or "isoCo2. Defaults to NULL. Of type character. [-]
 #' @param lvlEnvHut Measurement level of envHut. Defaults to NULL. Of type character. [-]
 #' @param lvlValv Measurement level of irgaValvLvl, crdCo2ValvLvl, or crdH2oValvLvl. Defaults to NULL. Of type character. [-]
 #' @param lvlValvAux Location of valvAux which apply to only  dp01 equal to "co2Stor" or "h2oStor". Defaults to NULL. Of type character. [-]
@@ -63,11 +65,19 @@
 #     bugs fixed to report qfValiH2o when no h2oRefe data
 #   Natchaya P-Durden (2019-01-31)
 #     using injNum instate of qfRngTmp to determine missing data
+#   Natchaya P-Durden (2019-04-09)
+#     adding lvlMfcValiStor into input parameter
+#   Natchaya P-Durden (2019-04-11)
+#     adding RptExpd into input parameter
+#   Natchaya P-Durden (2019-05-06)
+#     assign lvlMfm in data flow
 ##############################################################################################
 wrap.dp01.qfqm.ecse <- function(
   dp01 = c("co2Stor", "h2oStor", "tempAirLvl", "tempAirTop", "isoCo2", "isoH2o")[1],
+  RptExpd = FALSE,
   lvl,
   lvlMfcSampStor = NULL,
+  lvlMfcValiStor = NULL,
   lvlEnvHut = NULL,
   lvlValv = NULL,
   lvlValvAux = NULL,
@@ -97,6 +107,8 @@ wrap.dp01.qfqm.ecse <- function(
       if (lvl == "000_060") {lvlIrga <- "lvl06"}
       if (lvl == "000_070") {lvlIrga <- "lvl07"}
       if (lvl == "000_080") {lvlIrga <- "lvl08"}
+      #assign lvlMfm
+      lvlMfm <- paste0("700_", strsplit(lvl, "_")[[1]][2])
       
       #input the whole day data
       if(dp01 == "co2Stor"){
@@ -138,8 +150,9 @@ wrap.dp01.qfqm.ecse <- function(
       wrk$qfqm$mfcSampStor <- qfInp$mfcSampStor[[lvlMfcSampStor]]
       wrk$qfqm$envHut <- qfInp$envHut[[lvlEnvHut]]
       wrk$qfqm$valvAux <- qfInp$valvAux[[lvlValvAux]]
-      
-      if (PrdMeas == PrdAgr) {
+      wrk$qfqm$mfm <- qfInp$mfm[[lvlMfm]]
+        
+        if (PrdMeas == PrdAgr) {
         #PrdAgr <- 2
         #2 minutely sampling data
         #idxLvLPrdAgr <- paste0(lvl, "_", sprintf("%02d", PrdAgr), "m")
@@ -176,6 +189,9 @@ wrap.dp01.qfqm.ecse <- function(
             }
             for (tmp in 1:length(wrk$inpMask$qfqm$valvAux)){
               wrk$inpMask$qfqm$valvAux[[tmp]][wrk$inpMask$data$lvlIrga != lvlIrga] <- -1
+            }
+            for (tmp in 1:length(wrk$inpMask$qfqm$mfm)){
+              wrk$inpMask$qfqm$mfm[[tmp]][wrk$inpMask$data$lvlIrga != lvlIrga] <- -1
             }
             
             #qfqm processing
@@ -271,11 +287,15 @@ wrap.dp01.qfqm.ecse <- function(
           for (tmp in 1:length(wrk$qfqm$valvAux)){
             wrk$qfqm$valvAux[[tmp]][wrk$data$lvlIrga != lvlIrga] <- -1
           }
+          for (tmp in 1:length(wrk$qfqm$mfm)){
+            wrk$qfqm$mfm[[tmp]][wrk$data$lvlIrga != lvlIrga] <- -1
+          }
           #replace all qf that not belong to that measurement level by NaN
           wrk$qfqm$irgaStor[-whrSamp, 1:length(wrk$qfqm$irgaStor)] <- NaN
           wrk$qfqm$mfcSampStor[-whrSamp, 1:length(wrk$qfqm$mfcSampStor)] <- NaN
           wrk$qfqm$envHut[-whrSamp, 1:length(wrk$qfqm$envHut)] <- NaN
           wrk$qfqm$valvAux[-whrSamp, 1:length(wrk$qfqm$valvAux)] <- NaN
+          wrk$qfqm$mfm[-whrSamp, 1:length(wrk$qfqm$mfm)] <- NaN
           
           #replace qf from mfcSampStor data with -1 when irga got kick out to measure the new measurement level
           #wrk$qfqm$mfcSampStor <- as.data.frame(sapply(wrk$qfqm$mfcSampStor, function(x) ifelse(wrk$data$lvlIrga == lvlIrga, x, -1)))
@@ -300,7 +320,7 @@ wrap.dp01.qfqm.ecse <- function(
             qfInp = wrk$inpMask$qfqm, 
             MethMeas = "ecse",
             TypeMeas = "samp",
-            RptExpd = FALSE,
+            RptExpd = RptExpd,
             dp01 = dp01
           )
           
@@ -361,6 +381,7 @@ wrap.dp01.qfqm.ecse <- function(
       wrk$qfqm$mfcSampStor <- qfInp$mfcSampStor[[lvlMfcSampStor]]
       wrk$qfqm$envHut <- qfInp$envHut[[lvlEnvHut]]
       wrk$qfqm$valvAux <- qfInp$valvAux[[lvlValvAux]]
+      wrk$qfqm$mfcValiStor <- qfInp$mfcValiStor[[lvlMfcValiStor]]
       
       if (PrdMeas == PrdAgr) {
         #PrdAgr <- 2
@@ -473,6 +494,7 @@ wrap.dp01.qfqm.ecse <- function(
           wrk$qfqm$mfcSampStor[-whrSamp, 1:length(wrk$qfqm$mfcSampStor)] <- NaN
           wrk$qfqm$envHut[-whrSamp, 1:length(wrk$qfqm$envHut)] <- NaN
           wrk$qfqm$valvAux[-whrSamp, 1:length(wrk$qfqm$valvAux)] <- NaN
+          wrk$qfqm$mfcValiStor[-whrSamp, 1:length(wrk$qfqm$mfcValiStor)] <- NaN
         } #else {#end of if no measurement data at all in the whole day
         #   wrk$data$frt00 <- NaN #assign NaN to frt00 data
         # }
@@ -490,7 +512,7 @@ wrap.dp01.qfqm.ecse <- function(
             qfInp = wrk$inpMask$qfqm, 
             MethMeas = "ecse",
             TypeMeas = "vali",
-            RptExpd = FALSE,
+            RptExpd = RptExpd,
             dp01 = dp01
           )
           #grab and add both time begin and time end to rpt
@@ -549,7 +571,7 @@ wrap.dp01.qfqm.ecse <- function(
         qfInp = wrk$inpMask$qfqm, 
         MethMeas = "ecse",
         TypeMeas = "samp",
-        RptExpd = FALSE,
+        RptExpd = RptExpd,
         dp01 = dp01
       )
       
@@ -579,6 +601,8 @@ wrap.dp01.qfqm.ecse <- function(
       if (lvl == "000_060") {lvlCrdCo2 <- "lvl06"}
       if (lvl == "000_070") {lvlCrdCo2 <- "lvl07"}
       if (lvl == "000_080") {lvlCrdCo2 <- "lvl08"}
+      #assign lvlMfm
+      lvlMfm <- paste0("700_", strsplit(lvl, "_")[[1]][2])
       
       #input the whole day data
       wrk$data <- data.frame(stringsAsFactors = FALSE,
@@ -607,6 +631,7 @@ wrap.dp01.qfqm.ecse <- function(
       #subset only
       wrk$qfqm$crdCo2 <- qfInp$crdCo2[[lvl]]
       wrk$qfqm$envHut <- qfInp$envHut[[lvlEnvHut]]
+      wrk$qfqm$mfm <- qfInp$mfm[[lvlMfm]]
       
       if (PrdMeas == PrdAgr) {
         #PrdAgr <- 9
@@ -637,6 +662,9 @@ wrap.dp01.qfqm.ecse <- function(
             }
             for (tmp in 1:length(wrk$inpMask$qfqm$envHut)){
               wrk$inpMask$qfqm$envHut[[tmp]][wrk$inpMask$data$lvlCrdCo2 != lvlCrdCo2] <- -1
+            }
+            for (tmp in 1:length(wrk$inpMask$qfqm$mfm)){
+              wrk$inpMask$qfqm$mfm[[tmp]][wrk$inpMask$data$lvlCrdCo2 != lvlCrdCo2] <- -1
             }
             
             #qfqm processing
@@ -723,9 +751,13 @@ wrap.dp01.qfqm.ecse <- function(
           for (tmp in 1:length(wrk$qfqm$envHut)){
             wrk$qfqm$envHut[[tmp]][wrk$data$lvlCrdCo2 != lvlCrdCo2] <- -1
           }
+          for (tmp in 1:length(wrk$qfqm$mfm)){
+            wrk$qfqm$mfm[[tmp]][wrk$data$lvlCrdCo2 != lvlCrdCo2] <- -1
+          }
           #replace all qf that not belong to that measurement level by NaN
           wrk$qfqm$crdCo2[-whrSamp, 1:length(wrk$qfqm$crdCo2)] <- NaN
           wrk$qfqm$envHut[-whrSamp, 1:length(wrk$qfqm$envHut)] <- NaN
+          wrk$qfqm$mfm[-whrSamp, 1:length(wrk$qfqm$mfm)] <- NaN
         } 
         
         
@@ -745,7 +777,7 @@ wrap.dp01.qfqm.ecse <- function(
             qfInp = wrk$inpMask$qfqm, 
             MethMeas = "ecse",
             TypeMeas = "samp",
-            RptExpd = FALSE,
+            RptExpd = RptExpd,
             dp01 = dp01,
             idGas = wrk$inpMask$data$idGas
           )
@@ -792,6 +824,7 @@ wrap.dp01.qfqm.ecse <- function(
       wrk$qfqm <- list()
       wrk$qfqm$crdCo2 <- qfInp$crdCo2[[lvl]]
       wrk$qfqm$envHut <- qfInp$envHut[[lvlEnvHut]]
+      wrk$qfqm$mfcValiStor <- qfInp$mfcValiStor[[lvlMfcValiStor]]
       
       if (PrdMeas == PrdAgr) {
         #PrdAgr <- 9
@@ -907,6 +940,7 @@ wrap.dp01.qfqm.ecse <- function(
           wrk$data[-whrSamp, ] <- NaN
           wrk$qfqm$crdCo2[-whrSamp, 1:length(wrk$qfqm$crdCo2)] <- NaN
           wrk$qfqm$envHut[-whrSamp, 1:length(wrk$qfqm$envHut)] <- NaN
+          wrk$qfqm$mfcValiStor[-whrSamp, 1:length(wrk$qfqm$mfcValiStor)] <- NaN
         } 
         
         for(idxAgr in c(1:length(idxTime[[paste0(PrdAgr, "min")]]$Bgn))) {
@@ -927,7 +961,7 @@ wrap.dp01.qfqm.ecse <- function(
             qfInp = wrk$inpMask$qfqm, 
             MethMeas = "ecse",
             TypeMeas = "vali",
-            RptExpd = FALSE,
+            RptExpd = RptExpd,
             dp01 = dp01,
             idGas = wrk$inpMask$data$idGas
           )
@@ -960,6 +994,8 @@ wrap.dp01.qfqm.ecse <- function(
       if (lvl == "000_060") {lvlCrdH2o <- "lvl06"}
       if (lvl == "000_070") {lvlCrdH2o <- "lvl07"}
       if (lvl == "000_080") {lvlCrdH2o <- "lvl08"}
+      #assign lvlMfm
+      lvlMfm <- paste0("700_", strsplit(lvl, "_")[[1]][2])
       
       wrk$data <- data.frame(stringsAsFactors = FALSE,
                              "dlta18OH2o" = data$crdH2o[[lvl]]$dlta18OH2o,
@@ -980,6 +1016,7 @@ wrap.dp01.qfqm.ecse <- function(
       wrk$qfqm <- list()
       wrk$qfqm$crdH2o <- qfInp$crdH2o[[lvl]]
       wrk$qfqm$envHut <- qfInp$envHut[[lvlEnvHut]]
+      wrk$qfqm$mfm <- qfInp$mfm[[lvlMfm]]
       
       if (PrdMeas == PrdAgr) {
         #PrdAgr <- 9
@@ -1007,6 +1044,9 @@ wrap.dp01.qfqm.ecse <- function(
             }
             for (tmp in 1:length(wrk$inpMask$qfqm$envHut)){
               wrk$inpMask$qfqm$envHut[[tmp]][wrk$inpMask$data$lvlCrdH2o != lvlCrdH2o] <- -1
+            }
+            for (tmp in 1:length(wrk$inpMask$qfqm$mfm)){
+              wrk$inpMask$qfqm$mfm[[tmp]][wrk$inpMask$data$lvlCrdH2o != lvlCrdH2o] <- -1
             }
             
             #qfqm processing
@@ -1093,8 +1133,12 @@ wrap.dp01.qfqm.ecse <- function(
           for (tmp in 1:length(wrk$qfqm$envHut)){
             wrk$qfqm$envHut[[tmp]][wrk$data$lvlCrdH2o != lvlCrdH2o] <- -1
           }
+          for (tmp in 1:length(wrk$qfqm$mfm)){
+            wrk$qfqm$mfm[[tmp]][wrk$data$lvlCrdH2o != lvlCrdH2o] <- -1
+          }
           wrk$qfqm$crdH2o[-whrSamp, 1:length(wrk$qfqm$crdH2o)] <- NaN
           wrk$qfqm$envHut[-whrSamp, 1:length(wrk$qfqm$envHut)] <- NaN
+          wrk$qfqm$mfm[-whrSamp, 1:length(wrk$qfqm$mfm)] <- NaN
         } 
         
         
@@ -1115,7 +1159,7 @@ wrap.dp01.qfqm.ecse <- function(
             qfInp = wrk$inpMask$qfqm, 
             MethMeas = "ecse",
             TypeMeas = "samp",
-            RptExpd = FALSE,
+            RptExpd = RptExpd,
             dp01 = dp01
           )
           
@@ -1322,7 +1366,7 @@ wrap.dp01.qfqm.ecse <- function(
             qfInp = wrk$inpMask$qfqm, 
             MethMeas = "ecse",
             TypeMeas = "vali",
-            RptExpd = FALSE,
+            RptExpd = RptExpd,
             dp01 = dp01
           )
           

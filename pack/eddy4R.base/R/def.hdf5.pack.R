@@ -37,6 +37,8 @@
 #     rename function from def.hdf5.dp.pack() to def.hdf5.pack()
 #   David Durden (2018-12-09)
 #     Adding mechanism to deal with quality metrics to be output for Expanded files
+#   Natchaya P-Durden (2019-04-11)
+#     Adding mechanism to deal with quality metrics to be output for Expanded files for ecse
 ##############################################################################################
 
 def.hdf5.pack <- function(
@@ -49,6 +51,8 @@ def.hdf5.pack <- function(
   #Initializing lists
   rpt <- list()
   tmp <- list()
+  tmp00 <- list()
+  tmp01 <- list()
 
 ## ECTE #####################################################################################
 if(MethMeas %in% "ecte"){
@@ -109,19 +113,36 @@ if(MethMeas %in% "ecse"){
     
     for(idxDp in names(inpList)) {
       
-      tmp[[idxDp]] <- list()
+      tmp00[[idxDp]] <- list()
+      tmp01[[idxDp]] <- list()
       
       # first call to lapply, targeting the result data.frames to be created (data sub-products: mean, min, max, vari", numSamp)
       for(idxLvLReso in names(inpList[[idxDp]])) {
         #idxLvLReso <- names(inpList[[idxDp]])[1]
+        #Check if qm is part of the input list
+        if(exists('qm', where = inpList[[idxDp]][[idxLvLReso]][[1]]) == TRUE){
+
+          # Add the qm's to tmp list
+          tmp00[[idxDp]][[idxLvLReso]]$qm <- lapply(names(inpList[[idxDp]][[idxLvLReso]][[1]]$qm), function(idxStat)
+            # second call to lapply, targeting the observations to be combined into the result data.frames
+            do.call(rbind, lapply(1:length(inpList[[idxDp]][[idxLvLReso]]), function(idxt) {
+              inpList[[idxDp]][[idxLvLReso]][[idxt]]$qm[[idxStat]]
+              } )
+          ))
+          # assign names to data.frames      
+          names(tmp00[[idxDp]][[idxLvLReso]]$qm) <- names(inpList[[idxDp]][[idxLvLReso]][[1]]$qm)
+        }
         
-        tmp[[idxDp]][[idxLvLReso]] <- lapply(names(inpList[[idxDp]][[idxLvLReso]][[1]]), function(idxStat)
+        #Remove qm from the inpList
+        for(idx in 1:length(inpList[[idxDp]][[idxLvLReso]])) {inpList[[idxDp]][[idxLvLReso]][[idx]]$qm <- NULL}
+        
+        tmp01[[idxDp]][[idxLvLReso]] <- lapply(names(inpList[[idxDp]][[idxLvLReso]][[1]]), function(idxStat)
           # second call to lapply, targeting the observations to be combined into the result data.frames
           do.call(rbind, lapply(1:length(inpList[[idxDp]][[idxLvLReso]]), function(idxt) inpList[[idxDp]][[idxLvLReso]][[idxt]][[idxStat]] ))
         )
         
         # assign names to data.frames      
-        names(tmp[[idxDp]][[idxLvLReso]]) <- names(inpList[[idxDp]][[idxLvLReso]][[1]])
+        names(tmp01[[idxDp]][[idxLvLReso]]) <- names(inpList[[idxDp]][[idxLvLReso]][[1]])
         
       }
       
@@ -131,7 +152,7 @@ if(MethMeas %in% "ecse"){
     #rpt <- list()
     
     #loop around c("h2oStor", "co2Stor")
-    for(idxDp in names(tmp)) {
+    for(idxDp in names(tmp01)) {
       # idxDp <- names(tmp)[2]
       
       # create directory
@@ -139,17 +160,17 @@ if(MethMeas %in% "ecse"){
       
       rpt[[idxDp]] <- list()
       
-      for (idxLvLReso in names(tmp[[idxDp]])){
-        #idxLvLReso <- names(tmp[[idxDp]])[1] 
+      for (idxLvLReso in names(tmp01[[idxDp]])){
+        #idxLvLReso <- names(tmp01[[idxDp]])[1] 
         rpt[[idxDp]][[idxLvLReso]] <- list()
-        if (Dp == "Dp01") {tmpIdxVar <- names(tmp[[idxDp]][[idxLvLReso]][[1]])}
-        if (Dp == "Dp02") {tmpIdxVar <- dimnames(tmp[[idxDp]][[idxLvLReso]][[1]])[[2]]}
+        if (Dp == "Dp01") {tmpIdxVar <- names(tmp01[[idxDp]][[idxLvLReso]][[1]])}
+        if (Dp == "Dp02") {tmpIdxVar <- dimnames(tmp01[[idxDp]][[idxLvLReso]][[1]])[[2]]}
   
         for(idxVar in tmpIdxVar) {
           #idxVar <- names(tmp[[idxDp]][[idxLvLReso]][[1]])[1]
           #print(idxVar)  
-          lapply(names(tmp[[idxDp]][[idxLvLReso]]), function(idxStat) {
-            rpt[[idxDp]][[idxLvLReso]][[idxVar]][[idxStat]] <<- tmp[[idxDp]][[idxLvLReso]][[idxStat]][,idxVar]
+          lapply(names(tmp01[[idxDp]][[idxLvLReso]]), function(idxStat) {
+            rpt[[idxDp]][[idxLvLReso]][[idxVar]][[idxStat]] <<- tmp01[[idxDp]][[idxLvLReso]][[idxStat]][,idxVar]
             #return(tmpDataList)
             #dataTest <<- cbind(dataTest,idxTestOut)
           })
@@ -162,13 +183,13 @@ if(MethMeas %in% "ecse"){
     
     #adjust timeBgn and timeEnd
     for(idxDp in names(rpt)) {
-      # idxDp <- names(tmp)[2]
+      # idxDp <- names(rpt)[1]
       
       for (idxLvLReso in names(rpt[[idxDp]])){
-        #idxLvLReso <- names(tmp[[idxDp]])[1] 
+        #idxLvLReso <- names(rpt[[idxDp]])[1] 
         
         for(idxVar in names(rpt[[idxDp]][[idxLvLReso]])) {
-          #idxVar <- names(rpt[[idxDp]][[idxLvLReso]])
+          #idxVar <- names(rpt[[idxDp]][[idxLvLReso]])[1]
           
           for(idxAgr in c(1:length(rpt[[idxDp]][[idxLvLReso]][[idxVar]][[1]]))){
             
@@ -189,13 +210,19 @@ if(MethMeas %in% "ecse"){
           rpt[[idxDp]][[idxLvLReso]][[idxVar]]$timeBgn <- format(as.POSIXct(tmpBgn, format= "%Y-%m-%d %H:%M:%OS"), "%Y-%m-%dT%H:%M:%OSZ")
           rpt[[idxDp]][[idxLvLReso]][[idxVar]]$timeEnd <- format(as.POSIXct(tmpEnd, format= "%Y-%m-%d %H:%M:%OS"), "%Y-%m-%dT%H:%M:%OSZ")
           
+          #covert list to dataframe
+          rpt[[idxDp]][[idxLvLReso]][[idxVar]] <- base::data.frame(rpt[[idxDp]][[idxLvLReso]][[idxVar]])
+          
+          #adding quality metric (qm) into rpt; copy tmp00 to rpt
+          if(length(tmp00[[idxDp]][[idxLvLReso]]) != 0) {
+            rpt[[idxDp]][[idxLvLReso]][[idxVar]] <- cbind(tmp00[[idxDp]][[idxLvLReso]]$qm[[idxVar]], rpt[[idxDp]][[idxLvLReso]][[idxVar]])
+          }
         }; rm(idxVar)
         
       }; rm(idxLvLReso)
       
     }; rm(idxDp)
     
-    #rpt <- rpt 
     
   }#end of Dp01 and Dp02 #################################################################
 
