@@ -190,17 +190,27 @@ if(class(data) == "try-error"){
   #Create list structure for the return output (type>>HOR_VER>>output_dataframes)
   lapply(LvlMeas, function(x) {
     lapply (TblName, function(y) {
-    rpt$data[[x]][[y]] <<- dataOut
-    rpt$qfqm[[x]][[y]] <<- qfqmOut
-    rpt$ucrt[[x]][[y]] <<- ucrtOut
-    #replace unit for ionSoilVol
-    if (y %in% "ionSoilVol"){
-    attributes(rpt$data[[x]][[y]])$unit <<- outAttr$data[[y]]
-    attributes(rpt$ucrt[[x]][[y]])$unit <<- outAttr$ucrt[[y]]
-    names(attributes(rpt$data[[x]][[y]])$unit) <<- names(rpt$data[[x]][[y]])
-    names(attributes(rpt$ucrt[[x]][[y]])$unit) <<- names(rpt$ucrt[[x]][[y]])
-    }
-    })}) #End of lapply around measurement levels
+      if (y %in% "presCor"){
+        #Create the output dataframe for data values
+        dataOut <- data.frame("timeBgn" = strftime(as.character(timeBgnOut), format= "%Y-%m-%dT%H:%M:%OSZ", tz="UTC"), "timeEnd" = strftime(as.character(timeEndOut), format= "%Y-%m-%dT%H:%M:%OSZ", tz="UTC"), "mean" = dataNa, stringsAsFactors = FALSE) 
+        #Create the output dataframe for qfqm values
+        qfqmOut <- data.frame("timeBgn" = strftime(as.character(timeBgnOut), format= "%Y-%m-%dT%H:%M:%OSZ", tz="UTC"), "timeEnd" = strftime(as.character(timeEndOut), format= "%Y-%m-%dT%H:%M:%OSZ", tz="UTC"), "qfDew" = rep(x = -1.0, length = length(timeBgnOut)), "qfFinl" = rep(x = 1L, length = length(timeBgnOut)), "qfSci" = rep(x = 0L, length = length(timeBgnOut)), "qfTemp" = rep(x = -1.0, length = length(timeBgnOut)), stringsAsFactors = FALSE) 
+        #Create the output dataframe for ucrt values 
+        ucrtOut <- data.frame("timeBgn" = strftime(as.character(timeBgnOut), format= "%Y-%m-%dT%H:%M:%OSZ", tz="UTC"), "timeEnd" = strftime(as.character(timeEndOut), format= "%Y-%m-%dT%H:%M:%OSZ", tz="UTC"), "ucrtCal95" = dataNa, stringsAsFactors = FALSE) 
+      }
+      rpt$data[[x]][[y]] <<- dataOut
+      rpt$qfqm[[x]][[y]] <<- qfqmOut
+      rpt$ucrt[[x]][[y]] <<- ucrtOut
+      #replace unit for ionSoilVol and presCor
+      if (y %in% c("ionSoilVol", "presCor")){
+        attributes(rpt$data[[x]][[y]])$unit <<- outAttr$data[[y]]
+        attributes(rpt$qfqm[[x]][[y]])$unit <<- base::rep_len(x = "NA", length.out = ncol(rpt$qfqm[[x]][[y]]))
+        attributes(rpt$ucrt[[x]][[y]])$unit <<- outAttr$ucrt[[y]]
+        names(attributes(rpt$data[[x]][[y]])$unit) <<- names(rpt$data[[x]][[y]])
+        names(attributes(rpt$qfqm[[x]][[y]])$unit) <<- names(rpt$qfqm[[x]][[y]])
+        names(attributes(rpt$ucrt[[x]][[y]])$unit) <<- names(rpt$ucrt[[x]][[y]])
+        }
+      })}) #End of lapply around measurement levels
 
 } else {
 
