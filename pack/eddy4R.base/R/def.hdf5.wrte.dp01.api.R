@@ -290,6 +290,7 @@ if (DpName %in% "radiNet"){
   tmpLoc <- subset(names(data), grepl("Maximum",names(data)))
   LocMeas <- gsub("[a-zA-Z]", "", tmpLoc)
   LocMeas <- substring(LocMeas, 2)
+  LocMeas <- LocMeas[!duplicated(LocMeas)]
   LvlMeas <- gsub("\\.", "_", LocMeas) }
 
 #Determine the output levels
