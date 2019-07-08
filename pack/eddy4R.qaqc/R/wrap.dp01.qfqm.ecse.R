@@ -71,6 +71,10 @@
 #     adding RptExpd into input parameter
 #   Natchaya P-Durden (2019-05-06)
 #     assign lvlMfm in data flow
+#   Natchaya P-Durden (2019-05-21)
+#     pull in the qf from presInlt
+#   Natchaya P-Durden (2019-05-23)
+#     pull in the qf from pumpStor, presValiRegInStor and presValiRegOutStor
 ##############################################################################################
 wrap.dp01.qfqm.ecse <- function(
   dp01 = c("co2Stor", "h2oStor", "tempAirLvl", "tempAirTop", "isoCo2", "isoH2o")[1],
@@ -151,8 +155,13 @@ wrap.dp01.qfqm.ecse <- function(
       wrk$qfqm$envHut <- qfInp$envHut[[lvlEnvHut]]
       wrk$qfqm$valvAux <- qfInp$valvAux[[lvlValvAux]]
       wrk$qfqm$mfm <- qfInp$mfm[[lvlMfm]]
-        
-        if (PrdMeas == PrdAgr) {
+      if ("presInlt" %in% names(qfInp)) wrk$qfqm$presInlt <- qfInp$presInlt[[lvl]]  
+      #measurement level pump
+      if ("pumpStor" %in% names(qfInp)) wrk$qfqm$pumpStor <- qfInp$pumpStor[[lvlMfm]] 
+      #irga pump
+      if ("pumpStor" %in% names(qfInp)) wrk$qfqm$pumpIrgaStor <- qfInp$pumpStor[["700_000"]] 
+      
+      if (PrdMeas == PrdAgr) {
         #PrdAgr <- 2
         #2 minutely sampling data
         #idxLvLPrdAgr <- paste0(lvl, "_", sprintf("%02d", PrdAgr), "m")
@@ -164,6 +173,8 @@ wrap.dp01.qfqm.ecse <- function(
           wrk$idx <- eddy4R.base::def.idx.agr(time = data$time, PrdAgr = (PrdMeas*60), FreqLoca = 1, MethIdx = "specBgn", data = wrk$qfqm$irgaStor$qfRngTemp, CritTime = 60)
           #delete row if last timeBgn and timeEnd is NA
           wrk$idx <- wrk$idx[rowSums(is.na(wrk$idx)) != 2,]
+          #replace last idxEnd > 86400 by 86400
+          wrk$idx$idxEnd <- ifelse(wrk$idx$idxEnd > 86400, 86400, wrk$idx$idxEnd)
           #if last timeEnd is NA, replce that time to the last time value in data$time
           wrk$idx$timeEnd <- as.POSIXct(ifelse(is.na(wrk$idx$timeEnd), data$time[length(data$time)], wrk$idx$timeEnd), origin = "1970-01-01", tz = "UTC")
           #idxAgr2 <- 0
@@ -177,21 +188,9 @@ wrap.dp01.qfqm.ecse <- function(
             wrk$inpMask$data <- wrk$data[wrk$idx$idxBgn[idxAgr]:wrk$idx$idxEnd[idxAgr],] 
             #assign name to wrk$inpMask$qfqm
             lapply(names(wrk$qfqm), function (x) wrk$inpMask$qfqm[[x]] <<- wrk$qfqm[[x]][wrk$idx$idxBgn[idxAgr]:wrk$idx$idxEnd[idxAgr], ,drop=FALSE] )
-            #replace qfqm$irgaStor with -1 when irga got kick out to measure the new measurement level
-            for (tmp in 1:length(wrk$inpMask$qfqm$irgaStor)){
-              wrk$inpMask$qfqm$irgaStor[[tmp]][wrk$inpMask$data$lvlIrga != lvlIrga] <- -1
-            }
-            for (tmp in 1:length(wrk$inpMask$qfqm$mfcSampStor)){
-              wrk$inpMask$qfqm$mfcSampStor[[tmp]][wrk$inpMask$data$lvlIrga != lvlIrga] <- -1
-            }
-            for (tmp in 1:length(wrk$inpMask$qfqm$envHut)){
-              wrk$inpMask$qfqm$envHut[[tmp]][wrk$inpMask$data$lvlIrga != lvlIrga] <- -1
-            }
-            for (tmp in 1:length(wrk$inpMask$qfqm$valvAux)){
-              wrk$inpMask$qfqm$valvAux[[tmp]][wrk$inpMask$data$lvlIrga != lvlIrga] <- -1
-            }
-            for (tmp in 1:length(wrk$inpMask$qfqm$mfm)){
-              wrk$inpMask$qfqm$mfm[[tmp]][wrk$inpMask$data$lvlIrga != lvlIrga] <- -1
+            for (idxSens in names(wrk$inpMask$qfqm)){
+              #replace qfqm with -1 when irga got kick out to measure the new measurement level
+              wrk$inpMask$qfqm[[idxSens]][wrk$inpMask$data$lvlIrga != lvlIrga, 1:length(wrk$inpMask$qfqm[[idxSens]])] <- -1
             }
             
             #qfqm processing
@@ -274,32 +273,14 @@ wrap.dp01.qfqm.ecse <- function(
             }
           }
           wrk$data[-whrSamp, 1:9] <- NaN
-          #replace qfqm$irgaStor with -1 when irga got kick out to measure the new measurement level
-          for (tmp in 1:length(wrk$qfqm$irgaStor)){
-            wrk$qfqm$irgaStor[[tmp]][wrk$data$lvlIrga != lvlIrga] <- -1
-          }
-          for (tmp in 1:length(wrk$qfqm$mfcSampStor)){
-            wrk$qfqm$mfcSampStor[[tmp]][wrk$data$lvlIrga != lvlIrga] <- -1
-          }
-          for (tmp in 1:length(wrk$qfqm$envHut)){
-            wrk$qfqm$envHut[[tmp]][wrk$data$lvlIrga != lvlIrga] <- -1
-          }
-          for (tmp in 1:length(wrk$qfqm$valvAux)){
-            wrk$qfqm$valvAux[[tmp]][wrk$data$lvlIrga != lvlIrga] <- -1
-          }
-          for (tmp in 1:length(wrk$qfqm$mfm)){
-            wrk$qfqm$mfm[[tmp]][wrk$data$lvlIrga != lvlIrga] <- -1
-          }
-          #replace all qf that not belong to that measurement level by NaN
-          wrk$qfqm$irgaStor[-whrSamp, 1:length(wrk$qfqm$irgaStor)] <- NaN
-          wrk$qfqm$mfcSampStor[-whrSamp, 1:length(wrk$qfqm$mfcSampStor)] <- NaN
-          wrk$qfqm$envHut[-whrSamp, 1:length(wrk$qfqm$envHut)] <- NaN
-          wrk$qfqm$valvAux[-whrSamp, 1:length(wrk$qfqm$valvAux)] <- NaN
-          wrk$qfqm$mfm[-whrSamp, 1:length(wrk$qfqm$mfm)] <- NaN
           
-          #replace qf from mfcSampStor data with -1 when irga got kick out to measure the new measurement level
-          #wrk$qfqm$mfcSampStor <- as.data.frame(sapply(wrk$qfqm$mfcSampStor, function(x) ifelse(wrk$data$lvlIrga == lvlIrga, x, -1)))
-        } 
+          for (idxSens in names(wrk$qfqm)){
+            #replace qfqm with -1 when irga got kick out to measure the new measurement level
+            wrk$qfqm[[idxSens]][wrk$data$lvlIrga != lvlIrga, 1:length(wrk$qfqm[[idxSens]])] <- -1
+            #replace all qf that not belong to that measurement level by NaN
+            wrk$qfqm[[idxSens]][-whrSamp, 1:length(wrk$qfqm[[idxSens]])] <- NaN
+            }
+          } 
         
         
         for(idxAgr in c(1:length(idxTime[[paste0(PrdAgr, "min")]]$Bgn))) {
@@ -340,6 +321,13 @@ wrap.dp01.qfqm.ecse <- function(
     
     #during validation period
     if (TypeMeas %in% "vali"){
+      #assign lvlPresValiRegInStor for each gas
+      if (lvl == "co2Zero") lvlPresValiRegInStor <- "709_000"
+      if (lvl == "co2Arch") lvlPresValiRegInStor <- "710_000"
+      if (lvl == "co2Low") lvlPresValiRegInStor <- "712_000"
+      if (lvl == "co2Med") lvlPresValiRegInStor <- "713_000"
+      if (lvl == "co2High") lvlPresValiRegInStor <- "714_000"
+      
       if(dp01 == "co2Stor"){
         wrk$data <- data.frame(stringsAsFactors = FALSE,
                                "frt00" = data$mfcSampStor[[lvlMfcSampStor]]$frt00,
@@ -382,6 +370,7 @@ wrap.dp01.qfqm.ecse <- function(
       wrk$qfqm$envHut <- qfInp$envHut[[lvlEnvHut]]
       wrk$qfqm$valvAux <- qfInp$valvAux[[lvlValvAux]]
       wrk$qfqm$mfcValiStor <- qfInp$mfcValiStor[[lvlMfcValiStor]]
+      if ("presValiRegInStor" %in% names(qfInp)) wrk$qfqm$presValiRegInStor <- qfInp$presValiRegInStor[[lvlPresValiRegInStor]]
       
       if (PrdMeas == PrdAgr) {
         #PrdAgr <- 2
@@ -489,12 +478,11 @@ wrap.dp01.qfqm.ecse <- function(
               whrSamp <- c(whrSamp, wrk$idx$idxBgn[ii]:wrk$idx$idxEnd[ii])
             }
           }
-          #wrk$data[-whrSamp, ] <- NaN
-          wrk$qfqm$irgaStor[-whrSamp, 1:length(wrk$qfqm$irgaStor)] <- NaN
-          wrk$qfqm$mfcSampStor[-whrSamp, 1:length(wrk$qfqm$mfcSampStor)] <- NaN
-          wrk$qfqm$envHut[-whrSamp, 1:length(wrk$qfqm$envHut)] <- NaN
-          wrk$qfqm$valvAux[-whrSamp, 1:length(wrk$qfqm$valvAux)] <- NaN
-          wrk$qfqm$mfcValiStor[-whrSamp, 1:length(wrk$qfqm$mfcValiStor)] <- NaN
+          wrk$data[-whrSamp, ] <- NaN
+          for (idxSens in names(wrk$qfqm)){
+            #replace all qf that not belong to that measurement level by NaN
+            wrk$qfqm[[idxSens]][-whrSamp, 1:length(wrk$qfqm[[idxSens]])] <- NaN
+          }
         } #else {#end of if no measurement data at all in the whole day
         #   wrk$data$frt00 <- NaN #assign NaN to frt00 data
         # }
@@ -632,6 +620,8 @@ wrap.dp01.qfqm.ecse <- function(
       wrk$qfqm$crdCo2 <- qfInp$crdCo2[[lvl]]
       wrk$qfqm$envHut <- qfInp$envHut[[lvlEnvHut]]
       wrk$qfqm$mfm <- qfInp$mfm[[lvlMfm]]
+      if ("presInlt" %in% names(qfInp)) wrk$qfqm$presInlt <- qfInp$presInlt[[lvl]] 
+      if ("pumpStor" %in% names(qfInp)) wrk$qfqm$pumpStor <- qfInp$pumpStor[[lvlMfm]] 
       
       if (PrdMeas == PrdAgr) {
         #PrdAgr <- 9
@@ -645,6 +635,8 @@ wrap.dp01.qfqm.ecse <- function(
           wrk$idx <- eddy4R.base::def.idx.agr(time = data$time, PrdAgr = (PrdMeas*60), FreqLoca = 1, MethIdx = "specBgn", data = wrk$qfqm$crdCo2$qfRngTemp, CritTime = 60)
           #delete row if last timeBgn and timeEnd is NA
           wrk$idx <- wrk$idx[rowSums(is.na(wrk$idx)) != 2,]
+          #replace last idxEnd > 86400 by 86400
+          wrk$idx$idxEnd <- ifelse(wrk$idx$idxEnd > 86400, 86400, wrk$idx$idxEnd)
           #if last timeEnd is NA, replce that time to the last time value in data$time
           wrk$idx$timeEnd <- as.POSIXct(ifelse(is.na(wrk$idx$timeEnd), data$time[length(data$time)], wrk$idx$timeEnd), origin = "1970-01-01", tz = "UTC")
           #idxAgr2 <- 0
@@ -656,15 +648,10 @@ wrap.dp01.qfqm.ecse <- function(
             #wrk$inpMask for qfqm
             wrk$inpMask$qfqm <- list()
             lapply(names(wrk$qfqm), function (x) wrk$inpMask$qfqm[[x]] <<- wrk$qfqm[[x]][wrk$idx$idxBgn[idxAgr]:wrk$idx$idxEnd[idxAgr],] )
-            #replace qfqm$crdCo2 with -1 when valve switch to measure to next level before schedule time (9 min)
-            for (tmp in 1:length(wrk$inpMask$qfqm$crdCo2)){
-              wrk$inpMask$qfqm$crdCo2[[tmp]][wrk$inpMask$data$lvlCrdCo2 != lvlCrdCo2] <- -1
-            }
-            for (tmp in 1:length(wrk$inpMask$qfqm$envHut)){
-              wrk$inpMask$qfqm$envHut[[tmp]][wrk$inpMask$data$lvlCrdCo2 != lvlCrdCo2] <- -1
-            }
-            for (tmp in 1:length(wrk$inpMask$qfqm$mfm)){
-              wrk$inpMask$qfqm$mfm[[tmp]][wrk$inpMask$data$lvlCrdCo2 != lvlCrdCo2] <- -1
+            
+            for (idxSens in names(wrk$inpMask$qfqm)){
+              #replace qfqm with -1 when valve switch to measure to next level before schedule time (9 min)
+              wrk$inpMask$qfqm[[idxSens]][wrk$inpMask$data$lvlCrdCo2 != lvlCrdCo2, 1:length(wrk$inpMask$qfqm[[idxSens]])] <- -1
             }
             
             #qfqm processing
@@ -744,23 +731,15 @@ wrap.dp01.qfqm.ecse <- function(
             }
           }
           wrk$data[-whrSamp, 1:16] <- NaN
-          #replace qfqm$crdCo2 with -1 when valve switch to measure to next level before schedule time (9 min)
-          for (tmp in 1:length(wrk$qfqm$crdCo2)){
-            wrk$qfqm$crdCo2[[tmp]][wrk$data$lvlCrdCo2 != lvlCrdCo2] <- -1
+         
+          for (idxSens in names(wrk$qfqm)){
+            #replace qfqm with -1 when valve switch to measure to next level before schedule time (9 min)
+            wrk$qfqm[[idxSens]][wrk$data$lvlCrdCo2 != lvlCrdCo2, 1:length(wrk$qfqm[[idxSens]])] <- -1
+            #replace all qf that not belong to that measurement level by NaN
+            wrk$qfqm[[idxSens]][-whrSamp, 1:length(wrk$qfqm[[idxSens]])] <- NaN
           }
-          for (tmp in 1:length(wrk$qfqm$envHut)){
-            wrk$qfqm$envHut[[tmp]][wrk$data$lvlCrdCo2 != lvlCrdCo2] <- -1
-          }
-          for (tmp in 1:length(wrk$qfqm$mfm)){
-            wrk$qfqm$mfm[[tmp]][wrk$data$lvlCrdCo2 != lvlCrdCo2] <- -1
-          }
-          #replace all qf that not belong to that measurement level by NaN
-          wrk$qfqm$crdCo2[-whrSamp, 1:length(wrk$qfqm$crdCo2)] <- NaN
-          wrk$qfqm$envHut[-whrSamp, 1:length(wrk$qfqm$envHut)] <- NaN
-          wrk$qfqm$mfm[-whrSamp, 1:length(wrk$qfqm$mfm)] <- NaN
-        } 
-        
-        
+        }
+          
         for(idxAgr in c(1:length(idxTime[[paste0(PrdAgr, "min")]]$Bgn))) {
           #idxAgr <- 48
           #get data for each idxAgr
@@ -798,6 +777,11 @@ wrap.dp01.qfqm.ecse <- function(
     
     #during validation period 
     if (TypeMeas %in% "vali"){
+      #assign lvlPresValiRegInStor for each gas
+      if (lvl == "co2Arch") lvlPresValiRegInStor <- "710_000"
+      if (lvl == "co2Low") lvlPresValiRegInStor <- "712_000"
+      if (lvl == "co2Med") lvlPresValiRegInStor <- "713_000"
+      if (lvl == "co2High") lvlPresValiRegInStor <- "714_000"
       #input the whole day data
       wrk$data <- data.frame(stringsAsFactors = FALSE,
                              "dlta13CCo2" = data$crdCo2[[lvl]]$dlta13CCo2,
@@ -825,6 +809,7 @@ wrap.dp01.qfqm.ecse <- function(
       wrk$qfqm$crdCo2 <- qfInp$crdCo2[[lvl]]
       wrk$qfqm$envHut <- qfInp$envHut[[lvlEnvHut]]
       wrk$qfqm$mfcValiStor <- qfInp$mfcValiStor[[lvlMfcValiStor]]
+      if ("presValiRegInStor" %in% names(qfInp)) wrk$qfqm$presValiRegInStor <- qfInp$presValiRegInStor[[lvlPresValiRegInStor]]
       
       if (PrdMeas == PrdAgr) {
         #PrdAgr <- 9
@@ -938,9 +923,10 @@ wrap.dp01.qfqm.ecse <- function(
             }
           }
           wrk$data[-whrSamp, ] <- NaN
-          wrk$qfqm$crdCo2[-whrSamp, 1:length(wrk$qfqm$crdCo2)] <- NaN
-          wrk$qfqm$envHut[-whrSamp, 1:length(wrk$qfqm$envHut)] <- NaN
-          wrk$qfqm$mfcValiStor[-whrSamp, 1:length(wrk$qfqm$mfcValiStor)] <- NaN
+          for (idxSens in names(wrk$qfqm)){
+            #replace all qf that not belong to that measurement level by NaN
+            wrk$qfqm[[idxSens]][-whrSamp, 1:length(wrk$qfqm[[idxSens]])] <- NaN
+          }
         } 
         
         for(idxAgr in c(1:length(idxTime[[paste0(PrdAgr, "min")]]$Bgn))) {
@@ -996,7 +982,6 @@ wrap.dp01.qfqm.ecse <- function(
       if (lvl == "000_080") {lvlCrdH2o <- "lvl08"}
       #assign lvlMfm
       lvlMfm <- paste0("700_", strsplit(lvl, "_")[[1]][2])
-      
       wrk$data <- data.frame(stringsAsFactors = FALSE,
                              "dlta18OH2o" = data$crdH2o[[lvl]]$dlta18OH2o,
                              "dlta2HH2o" = data$crdH2o[[lvl]]$dlta2HH2o,
@@ -1017,6 +1002,8 @@ wrap.dp01.qfqm.ecse <- function(
       wrk$qfqm$crdH2o <- qfInp$crdH2o[[lvl]]
       wrk$qfqm$envHut <- qfInp$envHut[[lvlEnvHut]]
       wrk$qfqm$mfm <- qfInp$mfm[[lvlMfm]]
+      if ("presInlt" %in% names(qfInp)) wrk$qfqm$presInlt <- qfInp$presInlt[[lvl]]
+      if ("pumpStor" %in% names(qfInp)) wrk$qfqm$pumpStor <- qfInp$pumpStor[[lvlMfm]] 
       
       if (PrdMeas == PrdAgr) {
         #PrdAgr <- 9
@@ -1030,6 +1017,8 @@ wrap.dp01.qfqm.ecse <- function(
           wrk$idx <- eddy4R.base::def.idx.agr(time = data$time, PrdAgr = (PrdMeas*60), FreqLoca = 1, MethIdx = "specBgn", data = wrk$qfqm$crdH2o$qfRngTemp, CritTime = 60)
           #delete row if last timeBgn and timeEnd is NA
           wrk$idx <- wrk$idx[rowSums(is.na(wrk$idx)) != 2,]
+          #replace last idxEnd > 86400 by 86400
+          wrk$idx$idxEnd <- ifelse(wrk$idx$idxEnd > 86400, 86400, wrk$idx$idxEnd)
           #if last timeEnd is NA, replce that time to the last time value in data$time
           wrk$idx$timeEnd <- as.POSIXct(ifelse(is.na(wrk$idx$timeEnd), data$time[length(data$time)], wrk$idx$timeEnd), origin = "1970-01-01", tz = "UTC")
           #idxAgr2 <- 0
@@ -1039,14 +1028,9 @@ wrap.dp01.qfqm.ecse <- function(
             wrk$inpMask$qfqm <- list()
             lapply(names(wrk$qfqm), function (x) wrk$inpMask$qfqm[[x]] <<- wrk$qfqm[[x]][wrk$idx$idxBgn[idxAgr]:wrk$idx$idxEnd[idxAgr],] )
             #replace qfqm$crdH2o with -1 when valve switch to measure to next level before schedule time (9 min)
-            for (tmp in 1:length(wrk$inpMask$qfqm$crdH2o)){
-              wrk$inpMask$qfqm$crdH2o[[tmp]][wrk$inpMask$data$lvlCrdH2o != lvlCrdH2o] <- -1
-            }
-            for (tmp in 1:length(wrk$inpMask$qfqm$envHut)){
-              wrk$inpMask$qfqm$envHut[[tmp]][wrk$inpMask$data$lvlCrdH2o != lvlCrdH2o] <- -1
-            }
-            for (tmp in 1:length(wrk$inpMask$qfqm$mfm)){
-              wrk$inpMask$qfqm$mfm[[tmp]][wrk$inpMask$data$lvlCrdH2o != lvlCrdH2o] <- -1
+            for (idxSens in names(wrk$inpMask$qfqm)){
+              #replace qfqm with -1 when valve switch to measure to next level before schedule time (9 min)
+              wrk$inpMask$qfqm[[idxSens]][wrk$inpMask$data$lvlCrdH2o != lvlCrdH2o, 1:length(wrk$inpMask$qfqm[[idxSens]])] <- -1
             }
             
             #qfqm processing
@@ -1126,26 +1110,17 @@ wrap.dp01.qfqm.ecse <- function(
               whrSamp <- c(whrSamp, wrk$idx$idxBgn[ii]:wrk$idx$idxEnd[ii])
             }
           }
-          #replace qfqm$crdH2o with -1 when valve switch to measure to next level before schedule time (9 min)
-          for (tmp in 1:length(wrk$qfqm$crdH2o)){
-            wrk$qfqm$crdH2o[[tmp]][wrk$data$lvlCrdH2o != lvlCrdH2o] <- -1
+          
+          for (idxSens in names(wrk$qfqm)){
+            #replace qfqm with -1 when when valve switch to measure to next level before schedule time (9 min)
+            wrk$qfqm[[idxSens]][wrk$data$lvlCrdH2o != lvlCrdH2o, 1:length(wrk$qfqm[[idxSens]])] <- -1
+            #replace all qf that not belong to that measurement level by NaN
+            wrk$qfqm[[idxSens]][-whrSamp, 1:length(wrk$qfqm[[idxSens]])] <- NaN
           }
-          for (tmp in 1:length(wrk$qfqm$envHut)){
-            wrk$qfqm$envHut[[tmp]][wrk$data$lvlCrdH2o != lvlCrdH2o] <- -1
-          }
-          for (tmp in 1:length(wrk$qfqm$mfm)){
-            wrk$qfqm$mfm[[tmp]][wrk$data$lvlCrdH2o != lvlCrdH2o] <- -1
-          }
-          wrk$qfqm$crdH2o[-whrSamp, 1:length(wrk$qfqm$crdH2o)] <- NaN
-          wrk$qfqm$envHut[-whrSamp, 1:length(wrk$qfqm$envHut)] <- NaN
-          wrk$qfqm$mfm[-whrSamp, 1:length(wrk$qfqm$mfm)] <- NaN
         } 
-        
         
         for(idxAgr in c(1:length(idxTime[[paste0(PrdAgr, "min")]]$Bgn))) {
           #idxAgr <- 48
-          
-          
           ## grab data at the selected mask data
           
           idxLvLPrdAgr <- paste0(lvl, "_", sprintf("%02d", PrdAgr), "m")
@@ -1190,6 +1165,8 @@ wrap.dp01.qfqm.ecse <- function(
       if (lvl == "h2oMed") {
         tmpDlta18OH2oRefe <- "dlta18OH2oRefeMed"
         tmpDlta2HH2oRefe <- "dlta2HH2oRefeMed"}
+      #assign lvl for both presValiRegInStor and presValiRegOutStor
+      lvlPresValiReg <- "711_000"
       
       wrk$data <- data.frame(stringsAsFactors = FALSE,
                              "dlta18OH2o" = data$crdH2o[[lvl]]$dlta18OH2o,
@@ -1212,6 +1189,8 @@ wrap.dp01.qfqm.ecse <- function(
       wrk$qfqm <- list()
       wrk$qfqm$crdH2o <- qfInp$crdH2o[[lvl]]
       wrk$qfqm$envHut <- qfInp$envHut[[lvlEnvHut]]
+      if ("presValiRegInStor" %in% names(qfInp)) wrk$qfqm$presValiRegInStor <- qfInp$presValiRegInStor[[lvlPresValiReg]] 
+      if ("presValiRegOutStor" %in% names(qfInp)) wrk$qfqm$presValiRegOutStor <- qfInp$presValiRegOutStor[[lvlPresValiReg]] 
       
       #replace injNum to NaN when they are not measured at that period
       wrk$data$injNum <- ifelse(is.na(wrk$qfqm$crdH2o$qfRngTemp), NaN, wrk$data$injNum)
@@ -1338,8 +1317,10 @@ wrap.dp01.qfqm.ecse <- function(
             }
           }
           wrk$data[-whrSamp, ] <- NaN
-          wrk$qfqm$crdH2o[-whrSamp, 1:length(wrk$qfqm$crdH2o)] <- NaN
-          wrk$qfqm$envHut[-whrSamp, 1:length(wrk$qfqm$envHut)] <- NaN
+          for (idxSens in names(wrk$qfqm)){
+            #replace all qf that not belong to that measurement level by NaN
+            wrk$qfqm[[idxSens]][-whrSamp, 1:length(wrk$qfqm[[idxSens]])] <- NaN
+          }
         } 
         
         for(idxAgr in c(1:length(idxTime[[paste0(PrdAgr, "min")]]$Bgn))) {
