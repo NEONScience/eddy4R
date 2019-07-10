@@ -109,6 +109,7 @@ if(DpName == "h2oSoilVol") TblName <- c("ionSoilVol", "h2oSoilVol")
 if(DpName == "presBaro") TblName <- c("presCor", "presAtm")
 
 #Grab 30 minute data to be written
+print(paste0(format(Sys.time(), "%F %T"), " downloading ", TimeAgr, " min data from the portal"))
 data <- try(expr = Noble::pull.date(site = SiteLoca, dpID = DpNum, bgn.date = timeBgn, end.date = timeEnd, package = "expanded", time.agr = TimeAgr), silent = TRUE) #Currently requires to subtract 1 minute otherwise (1 index will be cut from the beginning)
 
 #Failsafe test if API pull produced an error
