@@ -60,6 +60,8 @@
 #     adding irgaTurb validation data
 #   Natchaya P-Durden (2019-01-29)
 #     deleted dp04 of fluxCor and fluxRaw out when writing the basic file
+#   David Durden (2019-05-30)
+#     Adding dp04 low resolution output on top of validation code
 ##############################################################################################
 
 
@@ -190,6 +192,28 @@ if(MethDp04 == TRUE){
         lapply(base::names(inpList$dp04$data[[idxDp04]]$grid$turb), function(x) {rhdf5::h5writeDataset.matrix(obj = inpList$dp04$data[[idxDp04]]$grid$turb[[x]], h5loc= idDataDp04ExpdGrid, name = x)})
         
       }
+      ########################################################################################################################
+      #Write dp04 QFQM output
+      ########################################################################################################################
+      
+      #Adding time to output dataframe
+      rptDp04Qfqm <-  cbind(timeBgn = outList$data$soni$veloXaxsErth$timeBgn, timeEnd = outList$data$soni$veloXaxsErth$timeEnd, inpList$dp04$qfqm[[idxDp04]]$turb, stringsAsFactors = FALSE)
+      
+      
+      #Writing unit attributes to each variable to the dataframe level
+      attributes(rptDp04Qfqm)$unit <- sapply(names(inpList$dp04$qfqm[[idxDp04]]$turb), function(x) attributes(inpList$dp04$qfqm[[idxDp04]]$turb[[x]])$unit)
+      
+      #Open connection to dp04 data level
+      idQfqmDp04 <- rhdf5::H5Gopen(idFile,paste0("/", SiteLoca, "/dp04/qfqm/",idxDp04))
+      
+      #Writing flux data to output HDF5 file
+      rhdf5::h5writeDataset.data.frame(obj = rptDp04Qfqm, h5loc = idQfqmDp04, name = "turb", DataFrameAsCompound = TRUE)
+      
+      #Connection to dataset
+      idQfqmDp04Df <- rhdf5::H5Dopen(idQfqmDp04, "turb")
+      #Output the attributes
+      rhdf5::h5writeAttribute(attributes(rptDp04Qfqm)$unit, h5obj = idQfqmDp04Df, name = "unit")
+      
       
     } else {
     #output only flux for fluxCo2 in basic file
@@ -214,6 +238,28 @@ if(MethDp04 == TRUE){
   idDataDp04Df <- rhdf5::H5Dopen(idDataDp04, "turb")
   #Output the attributes
   rhdf5::h5writeAttribute(attributes(rptDp04)$unit, h5obj = idDataDp04Df, name = "unit")
+ 
+  ########################################################################################################################
+  #Write dp04 QFQM output
+  ########################################################################################################################
+  
+  #Adding time to output dataframe
+  rptDp04Qfqm <-  cbind(timeBgn = outList$data$soni$veloXaxsErth$timeBgn, timeEnd = outList$data$soni$veloXaxsErth$timeEnd, inpList$dp04$qfqm[[idxDp04]]$turb, stringsAsFactors = FALSE)
+  
+  
+  #Writing unit attributes to each variable to the dataframe level
+  attributes(rptDp04Qfqm)$unit <- sapply(names(inpList$dp04$qfqm[[idxDp04]]$turb), function(x) attributes(inpList$dp04$qfqm[[idxDp04]]$turb[[x]])$unit)
+  
+  #Open connection to dp04 data level
+  idQfqmDp04 <- rhdf5::H5Gopen(idFile,paste0("/", SiteLoca, "/dp04/qfqm/",idxDp04))
+  
+  #Writing flux data to output HDF5 file
+  rhdf5::h5writeDataset.data.frame(obj = rptDp04Qfqm, h5loc = idQfqmDp04, name = "turb", DataFrameAsCompound = TRUE)
+  
+  #Connection to dataset
+  idQfqmDp04Df <- rhdf5::H5Dopen(idQfqmDp04, "turb")
+  #Output the attributes
+  rhdf5::h5writeAttribute(attributes(rptDp04Qfqm)$unit, h5obj = idQfqmDp04Df, name = "unit")
     }                                
   } 
   rhdf5::h5closeAll()                                           
