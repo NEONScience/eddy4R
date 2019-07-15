@@ -71,6 +71,8 @@
 #     Adding irga validation system sensors for ECTE
 #   Dave Durden (2019-05-13)
 #     Adding irga validation system sensors for ECTE (pressure sensors)
+#   Dave Durden (2019-07-14)
+#     Adding irga validation system sensors for ECTE (valve and pump)
 ##############################################################################################################
 #Start of function call to generate NEON HDF5 files
 ##############################################################################################################
@@ -170,11 +172,10 @@ def.hdf5.crte <- function(
   ########################################################################### 
   #Creating level 0' file structures########################################
   #Create a list of all the L0 DPs for creation of group hierarchy (fard)
-  grpListDp0p <- c("irgaTurb","soni","amrs","mfcSampTurb","valvValiNemaTurb","mfcValiTurb","valvLeakHeatTurb","gasRefe","presTrap","presValiLineTurb","presValiRegInTurb","presValiRegOutTurb")
+  grpListDp0p <- c("irgaTurb","soni","amrs","mfcSampTurb","valvValiNemaTurb","mfcValiTurb","valvLeakHeatTurb","gasRefe","presTrap","presValiLineTurb","presValiRegInTurb","presValiRegOutTurb","pumpTurb","valvValiHutTurb")
   #              ,"irgaGasCyl"
   #              
-  #              ,"pumpTurb","valvLeakHeatTurb",
-  #              "valvValiHutTurb","valvValiNemaTurb",)
+  #              ,)
   #The DP level, the data product ID and the Rev number
   #grpListDp0p <- base::paste(grpListDp0p, "_001", sep = "")
   
@@ -284,6 +285,12 @@ def.hdf5.crte <- function(
   idDataHorVer <- rhdf5::H5Gcreate(idData,LvlTowr)
   idQfqmHorVer <- rhdf5::H5Gcreate(idQfqm,LvlTowr)
   
+  #Creating structure for pumpTurb
+  idData <- rhdf5::H5Oopen(idDataLvlDp0p,"pumpTurb")
+  idQfqm <- rhdf5::H5Oopen(idQfqmLvlDp0p,"pumpTurb")
+  idDataHorVer <- rhdf5::H5Gcreate(idData,LvlTowr)
+  idQfqmHorVer <- rhdf5::H5Gcreate(idQfqm,LvlTowr)
+  
   # Creating structure for valvValiNemaTurb
   idData <- rhdf5::H5Oopen(idDataLvlDp0p,"valvValiNemaTurb") #Open H5 connection
   #h5writeAttribute(attributes(dataList$irgaTurb)$unit, h5obj = idData, name = "unit")
@@ -291,6 +298,11 @@ def.hdf5.crte <- function(
   #lapply(seq_along(nrow(attrDpNameList)), function(x) h5writeAttribute(attrDpNameList[x,"Field Description"], h5obj = idData, name = attrDpNameList[x,"fieldName"]))
 
   idDataHorVer <- rhdf5::H5Gcreate(idData,LvlTowr)
+  
+  # Creating structure for valvValiHutTurb
+  idData <- rhdf5::H5Oopen(idDataLvlDp0p,"valvValiHutTurb") #Open H5 connection
+  #Add HOR_VER level
+  idDataHorVer <- rhdf5::H5Gcreate(idData,LvlTowr)#HOR_VER under valvValiHutTurb
 
   # Creating structure for valvLeakHeatTurb 
   idData <- rhdf5::H5Oopen(idDataLvlDp0p,"valvLeakHeatTurb") #Open H5 connection
