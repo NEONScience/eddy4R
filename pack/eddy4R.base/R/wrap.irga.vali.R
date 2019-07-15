@@ -66,6 +66,11 @@
 #     apply ff object to dataframe to save the memory
 #   Natchaya P-Durden (2019-03-15)
 #     clean up workflow and updated def.irga.vali.cor()
+#   Natchaya P-Durden (2019-03-27)
+#     changing the logic to determine the critical time when 2 validation occurred within one day
+#   Natchaya P-Durden (2019-05-09)
+#     updating logic in fail-safe to fill in dataframe with NaN when there is only archive gas or no validation at all
+#     bug fix on selecting the validation gas based on timeCrit
 ##############################################################################################
 
 wrap.irga.vali <- function(
@@ -144,7 +149,7 @@ wrap.irga.vali <- function(
         allSubQfqm <- ffbase::ffdfappend(allSubQfqm, subQfqmFlag)
         allSubTime <- ffbase::ffdfappend(allSubTime, subTime)
       }
-      }#end loop for of idxAllDate
+      };rm(subData, subQfqmFlag, subTime)#end loop for of idxAllDate
     #define qf for each gas cylinder
     nameQf <- c("qfIrgaTurbValiGas01", "qfIrgaTurbValiGas02", "qfIrgaTurbValiGas03", "qfIrgaTurbValiGas04", "qfIrgaTurbValiGas05")
     
@@ -241,11 +246,27 @@ wrap.irga.vali <- function(
     #determine index when timeEnd fall in DateProc
     rpt[[idxDate]]$rtioMoleDryCo2Vali <- rpt[[idxDate]]$rtioMoleDryCo2Vali[which(rpt[[idxDate]]$rtioMoleDryCo2Vali$timeEnd >= timeMin &  rpt[[idxDate]]$rtioMoleDryCo2Vali$timeBgn < timeMax),]
     
-    #fail safe: fill in dataframe with NaN values when there is only qfIrgaTurbValiGas01 
-    if (length(rpt[[idxDate]]$rtioMoleDryCo2Vali$mean) == 1){
-      rpt[[idxDate]]$rtioMoleDryCo2Vali[2:5,] <-  rpt[[idxDate]]$rtioMoleDryCo2Vali[1,]
-      #replace gasType
-      rpt[[idxDate]]$rtioMoleDryCo2Vali$gasType <- nameQf
+    #fail safe: fill in dataframe with NaN values when there is only qfIrgaTurbValiGas01 or no validation at all
+    if (length(rpt[[idxDate]]$rtioMoleDryCo2Vali$mean) <= 1){
+      if(length(rpt[[idxDate]]$rtioMoleDryCo2Vali$mean) == 1 & rpt[[idxDate]]$rtioMoleDryCo2Vali$gasType[1] == "qfIrgaTurbValiGas01"){
+        rpt[[idxDate]]$rtioMoleDryCo2Vali[2:5,] <-  NA
+        rpt[[idxDate]]$rtioMoleDryCo2Vali$numSamp <- NaN
+        rpt[[idxDate]]$rtioMoleDryCo2Vali$timeBgn[2:5] <- base::as.POSIXlt(paste(idxDate, " ", "00:00:00.000", sep=""), format="%Y-%m-%d %H:%M:%OS", tz="UTC")
+        rpt[[idxDate]]$rtioMoleDryCo2Vali$timeEnd[2:5] <- base::as.POSIXlt(paste(idxDate, " ", "23:59:59.950", sep=""), format="%Y-%m-%d %H:%M:%OS", tz="UTC")
+        #replace gasType
+        rpt[[idxDate]]$rtioMoleDryCo2Vali$gasType <- nameQf
+        }else{
+        if(length(rpt[[idxDate]]$rtioMoleDryCo2Vali$mean) == 0){
+          rpt[[idxDate]]$rtioMoleDryCo2Vali[1:5,] <-  NA
+          rpt[[idxDate]]$rtioMoleDryCo2Vali$numSamp <- NaN
+          rpt[[idxDate]]$rtioMoleDryCo2Vali$timeBgn <- base::as.POSIXlt(paste(idxDate, " ", "00:00:00.000", sep=""), format="%Y-%m-%d %H:%M:%OS", tz="UTC")
+          rpt[[idxDate]]$rtioMoleDryCo2Vali$timeEnd <- base::as.POSIXlt(paste(idxDate, " ", "23:59:59.950", sep=""), format="%Y-%m-%d %H:%M:%OS", tz="UTC")
+          #replace gasType
+          rpt[[idxDate]]$rtioMoleDryCo2Vali$gasType <- nameQf
+          }else{
+          rpt[[idxDate]]$rtioMoleDryCo2Vali <- rpt[[idxDate]]$rtioMoleDryCo2Vali
+        }
+      }
     }
     
     #add gasRefe values into rpt
@@ -324,20 +345,20 @@ wrap.irga.vali <- function(
       locGas <- which(rpt[[idxDate]]$rtioMoleDryCo2Vali$gasType == "qfIrgaTurbValiGas02")
       #defined the critical time by adding 30 min after the end of running zero gas
       timeCrit00 <- as.POSIXlt(rpt[[idxDate]]$rtioMoleDryCo2Vali$timeEnd[locGas[1]] + 30*60,format="%Y-%m-%d %H:%M:%OS", tz="UTC") 
-      timeCrit01 <- as.POSIXlt(rpt[[idxDate]]$rtioMoleDryCo2Vali$timeEnd[locGas[2]] + 30*60,format="%Y-%m-%d %H:%M:%OS", tz="UTC")
+      #timeCrit01 <- as.POSIXlt(rpt[[idxDate]]$rtioMoleDryCo2Vali$timeEnd[locGas[2]] + 30*60,format="%Y-%m-%d %H:%M:%OS", tz="UTC")
       #get rid of archive gas
       valiData[[idxDate]]$data00 <- rpt[[idxDate]]$rtioMoleDryCo2Vali[-which(rpt[[idxDate]]$rtioMoleDryCo2Vali$gasType == "qfIrgaTurbValiGas01"),]
       valiData[[idxDate]]$data01 <- rpt[[idxDate]]$rtioMoleDryCo2Vali[-which(rpt[[idxDate]]$rtioMoleDryCo2Vali$gasType == "qfIrgaTurbValiGas01"),]
       #select data within timeCrit
       valiData[[idxDate]]$data00 <- valiData[[idxDate]]$data00[which(valiData[[idxDate]]$data00$timeEnd < timeCrit00),]
-      valiData[[idxDate]]$data01 <- valiData[[idxDate]]$data01[which(valiData[[idxDate]]$data01$timeEnd < timeCrit01),]
+      valiData[[idxDate]]$data01 <- valiData[[idxDate]]$data01[which(valiData[[idxDate]]$data01$timeEnd > timeCrit00),]
     }; rm (locGas, timeCrit00, timeCrit01)
     
     subVali <- list()
     subVali01 <- list()
     if (valiCrit == FALSE){
       #get rid of archive gas
-      valiData[[idxDate]]$data00 <- rpt[[idxDate]]$rtioMoleDryCo2Vali[-which(rpt[[idxDate]]$rtioMoleDryCo2Vali$gasType == "qfIrgaTurbValiGas01"),]
+      valiData[[idxDate]]$data00 <- rpt[[idxDate]]$rtioMoleDryCo2Vali[rpt[[idxDate]]$rtioMoleDryCo2Vali$gasType != "qfIrgaTurbValiGas01",]
       if (length(valiData[[idxDate]]$data00$timeBgn) <= 4){
         valiData[[idxDate]]$data00 <- valiData[[idxDate]]$data00
       }else{
@@ -350,7 +371,8 @@ wrap.irga.vali <- function(
         #defined the critical time by adding 30 min after the end of running zero gas
         timeCrit00 <- as.POSIXlt(valiData[[idxDate]]$data00$timeEnd[locGas00[1]] + 30*60,format="%Y-%m-%d %H:%M:%OS", tz="UTC") 
         #select data within timeCrit
-        valiData[[idxDate]]$data00 <- valiData[[idxDate]]$data00[which(valiData[[idxDate]]$data00$timeEnd < timeCrit00),]
+        valiData[[idxDate]]$data00 <- valiData[[idxDate]]$data00[which(valiData[[idxDate]]$data00$timeEnd >= valiData[[idxDate]]$data00$timeEnd[locGas00[1]] & 
+                                                                         valiData[[idxDate]]$data00$timeEnd < timeCrit00),]
         #check if there are all data as expected
         if (length(valiData[[idxDate]]$data00$timeBgn) <= 4){
           valiData[[idxDate]]$data00 <- valiData[[idxDate]]$data00
