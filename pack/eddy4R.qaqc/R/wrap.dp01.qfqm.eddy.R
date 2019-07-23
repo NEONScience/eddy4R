@@ -68,6 +68,8 @@
 #   Natchaya P-Durden (2018-05-23)
 #     rename function from def.neon.dp01.qf.grp() to def.dp01.grp.qf()
 #     rename function from wrap.neon.dp01.qfqm() to wrap.dp01.qfqm.eddy()
+#   Natchaya P-Durden (2019-07-23)
+#     adding one row with qf = -1 in the empty dataframe to eliminate code break in def.qf.finl()
 ##############################################################################################
 
 wrap.dp01.qfqm.eddy <- function(
@@ -84,6 +86,9 @@ wrap.dp01.qfqm.eddy <- function(
   tmp <- list()
   #grouping qf
   inp <- eddy4R.qaqc::def.dp01.grp.qf(qfInp = qfInp, MethMeas = MethMeas, TypeMeas = TypeMeas, dp01=dp01, idGas = idGas)
+  
+  #adding one row with qf = -1 in the empty dataframe to eliminate code break in def.qf.finl
+  lapply(names(inp), function(x) if (nrow(inp[[x]]) == 0) inp[[x]][1,] <<- -1)
   
   #calculate qmAlpha, qmBeta, qfFinl
   tmp <- lapply(inp, FUN = eddy4R.qaqc::def.qf.finl)
