@@ -36,6 +36,8 @@
 #     adding units for rtioMoleDryCo2Cor and rtioMoleDryCo2Raw
 #   Natchaya P-Durden (2019-04-23)
 #     adding units conversion for ecse
+#   Natchaya P-Durden (2019-07-23)
+#     converting time format in ecse qfqm
 ############################################################################################
 
 wrap.unit.conv.out.ec <- function(
@@ -463,6 +465,9 @@ if(MethMeas == "ecse"){
           wrkAttr[[idxVar]][base::grep(pattern = "qf|time", x = names(wrkAttr[[idxVar]]))] <- "NA"
           #Apply unit attributes to rpt
           attributes(rpt[[idxDataLvl]]$qfqm[[idxDp]][[idxLvl]][[idxVar]])$unit <- wrkAttr[[idxVar]]
+          #format time
+          rpt[[idxDataLvl]]$qfqm[[idxDp]][[idxLvl]][[idxVar]]$timeBgn <- as.character(rpt[[idxDataLvl]]$qfqm[[idxDp]][[idxLvl]][[idxVar]]$timeBgn)
+          rpt[[idxDataLvl]]$qfqm[[idxDp]][[idxLvl]][[idxVar]]$timeEnd <- as.character(rpt[[idxDataLvl]]$qfqm[[idxDp]][[idxLvl]][[idxVar]]$timeEnd)
         }
       }
       base::gc(verbose=FALSE) # clean up memory 
@@ -487,6 +492,9 @@ if(MethMeas == "ecse"){
             #Apply unit attributes to rpt
             attributes(rpt[[idxDataLvl]]$qfqm[[idxDp]][[idxVar]])$unit <- wrkAttr[[idxVar]]
           }
+          #format time
+          rpt[[idxDataLvl]]$qfqm[[idxDp]][[idxVar]]$timeBgn <- as.character(rpt[[idxDataLvl]]$qfqm[[idxDp]][[idxVar]]$timeBgn)
+          rpt[[idxDataLvl]]$qfqm[[idxDp]][[idxVar]]$timeEnd <- as.character(rpt[[idxDataLvl]]$qfqm[[idxDp]][[idxVar]]$timeEnd)
         }
         base::gc(verbose=FALSE) # clean up memory 
       }; rm(idxVar)
