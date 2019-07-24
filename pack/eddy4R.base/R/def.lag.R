@@ -50,6 +50,8 @@
 #     update @param format
 #   Natchaya P-Durden (2018-04-11)
 #    applied eddy4R term name convention; replaced pos by idx
+#   Natchaya P-Durden (2019-07-24)
+#    add fail safe when lag is equal to NA
 ##############################################################################################
 
 
@@ -161,7 +163,7 @@ def.lag <- function(
                     corr$lag[which(abs(corr$acf) == max(abs(corr$acf)))]
       )      
       #don't lag if determined lag equals lagMax
-      if(abs(lag) == lagMax) lag <- 0
+      if(!is.na(lag) & (abs(lag) == lagMax)) lag <- 0
       
       #for soft lagMax argument
     } else {
@@ -190,6 +192,7 @@ def.lag <- function(
     #adjust entire dataMeas time series to dataRefe time (assuming constant timing offset over all variables)
     #refe <- lag(refe, k=lag*freq)
     #meas data lags behind refe
+    if(!is.na(lag)){
     if(lag < 0) {
       dataRefe <- dataRefe[1:(nrow(dataRefe) + lag),]
       dataMeas <- dataMeas[(1 - lag):(nrow(dataMeas)),]
@@ -222,7 +225,16 @@ def.lag <- function(
       corrCros=ifelse(lagAll==TRUE, max(abs(corr$acf)), max(corr$acf))
     )
     return(rpt)
-    
+    #end if !is.na(lag)
+    }else{
+      rpt <- list(
+        dataRefe=dataRefe,
+        dataMeas=dataMeas,
+        lag=NA,
+        corrCros=NA
+      )
+      return(rpt)
+    }
     
     
     ###
