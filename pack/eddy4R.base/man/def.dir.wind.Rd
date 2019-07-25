@@ -24,7 +24,7 @@ def.dir.wind(windDirInst, MethVari = "DistAngMin")
 }
 \references{
 License: GNU AFFERO GENERAL PUBLIC LICENSE Version 3, 19 November 2007. \cr
-Yamartino, R. J. (1984) A Comparison of Several “Single-Pass” Estimators of the Standard Deviation of Wind Direction. Journal of Applied Meteorology and Climatology, 23, 1362-1366.
+Yamartino, R. J. (1984) A Comparison of Several "Single-Pass" Estimators of the Standard Deviation of Wind Direction. Journal of Applied Meteorology and Climatology, 23, 1362-1366.
 }
 \seealso{
 Currently none

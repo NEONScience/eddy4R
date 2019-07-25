@@ -9,6 +9,7 @@
 #' @param inpData Input data.frame for data to be removed from based on quality flags
 #' @param inpQf Input data.frame of quality flags (must be of class integer to be included in the processing)
 #' @param Sens Character string indicating the sensor the high frequency data come from to check for sensor specific flags
+#' @param qfRmv Character string indicating which quality flag will exclude in the processing. Defaults to NULL.
 #' @param Vrbs Optional. A logical {FALSE/TRUE} value indicating whether to:\cr
 #' \code{Vrbs = FALSE}: (Default) cleaned data set, list of variables assessed, list of quality flags for each variable assessed, and the total number of bad data per variable, or \cr
 #' \code{Vrbs = TRUE}: cleaned data set, list of variables assessed, list of quality flags for each variable assessed, the number of each quality flag tripped for each variable and the total number of bad data per variable
@@ -18,7 +19,7 @@
 
 #' @references 
 #' License: GNU AFFERO GENERAL PUBLIC LICENSE Version 3, 19 November 2007. \cr
-#' NEON Algorithm Theoretical Basis Document:Eddy Covariance Turbulent Exchange Subsystem Level 0 to Level 0’ data product conversions and calculations (NEON.DOC.000807) \cr
+#' NEON Algorithm Theoretical Basis Document:Eddy Covariance Turbulent Exchange Subsystem Level 0 to Level 0' data product conversions and calculations (NEON.DOC.000807) \cr
 
 #' @keywords NEON, qfqm, quality
 
@@ -45,6 +46,8 @@
 #   Natchaya P-Durden (2018-04-13)
 #    applied eddy4R term name convention; replaced dfData by inpData
 #    replaced dfQf by inpQf
+#   Natchaya P-Durden (2019-03-12)
+#    added qfRmv into the function parameter list
 ##############################################################################################
 
 
@@ -52,6 +55,7 @@ def.qf.rmv.data <- function(
   inpData,
   inpQf,
   Sens = NULL,
+  qfRmv = NULL,
   Vrbs = FALSE,
   TypeData = c("integer", "real")[1]){
   
@@ -90,11 +94,16 @@ def.qf.rmv.data <- function(
   # A list of all the flags to be included in the data removal  
   rpt$listQf  <- base::lapply(rpt$listVar, function(x){ 
     tmp <- base::subset(x = names(inpQf), subset = base::grepl(pattern = base::paste(x,qfSens, sep ="|"),x = qfName, ignore.case = TRUE))
-    #qfCal flags from consideration
-    tmp[base::grep(pattern = "qfCal", x = tmp, invert = TRUE), drop = FALSE]
+    #remove qfRmv flags from consideration
+    if(!is.null(qfRmv)){
+      qfRmv <- paste(qfRmv, collapse = "|")
+      tmp <-tmp[base::grep(pattern = qfRmv, x = tmp, invert = TRUE), drop = FALSE]
+    }else{
+      tmp <- tmp
+    }
     #take flag that generate for using in the other sensors out (i.e., qfRh and qfTemp in envHut)
-    tmpFlag <- paste0("qf",paste(toupper(substr(x, 1, 1)), substr(x, 2, nchar(x)), sep =""), sep = "")
-    tmp[base::grep(pattern = tmpFlag, x = tmp, invert = TRUE), drop = FALSE]
+    #tmpFlag <- paste0("qf",paste(toupper(substr(x, 1, 1)), substr(x, 2, nchar(x)), sep =""), sep = "")
+    #tmp <-tmp[base::grep(pattern = tmpFlag, x = tmp, invert = TRUE), drop = FALSE]
   })
   
   #Add list names
@@ -109,8 +118,13 @@ def.qf.rmv.data <- function(
     
     #Subset the set of flags to be used
     tmp <- inpQf[,base::grep(pattern = base::paste(x,qfSens, sep ="|"), x = qfName, ignore.case = TRUE, value = TRUE), drop = FALSE]
-    #Remove qfCal flags
-    tmp <- tmp[,base::grep(pattern = "qfCal", x = names(tmp), invert = TRUE), drop = FALSE]
+    #Remove flags defined in qfRmv 
+    if(!is.null(qfRmv)){
+      qfRmv <- paste(qfRmv, collapse = "|")
+      tmp <- tmp[,base::grep(pattern = qfRmv, x = names(tmp), invert = TRUE), drop = FALSE]
+    }else{
+      tmp <- tmp
+    }
     #Calculate the number of times each quality flag was set high (qf..= 1)
     if(Vrbs == TRUE) {if(ncol(tmp) > 1){rpt$fracQfBad[[x]] <<- base::apply(X = tmp, MARGIN = 2, FUN = function(x) base::length(which(x == 1))/base::length(which(!is.na(x))))}
       else{rpt$fracQfBad[[x]] <<- base::sum(tmp == 1, na.rm = TRUE)/base::sum(!is.na(tmp))

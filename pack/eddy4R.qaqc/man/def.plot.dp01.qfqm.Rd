@@ -6,7 +6,8 @@
 \usage{
 def.plot.dp01.qfqm(dataDp01, WndwTime = c(min(dataDp01$timeAgrBgn),
   max(dataDp01$timeAgrBgn)), NameQmPlot = sub("Pass", "",
-  names(dataDp01$dataAgr[[1]][grep("Pass", names(dataDp01$dataAgr[[1]]))])))
+  names(dataDp01$dataAgr[[1]][grep("Pass",
+  names(dataDp01$dataAgr[[1]]))])))
 }
 \arguments{
 \item{dataDp01}{Required input. A list output from wrap.dp01.qfqm.R of: \cr

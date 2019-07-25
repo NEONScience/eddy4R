@@ -4,10 +4,13 @@
 \alias{wrap.unit.conv.out.ec}
 \title{Wrapper function: Output unit conversion for ECTE}
 \usage{
-wrap.unit.conv.out.ec(inpList, MethType = c("Data", "Ucrt", "Qfqm")[1])
+wrap.unit.conv.out.ec(inpList, MethMeas = c("ecte", "ecse")[1],
+  MethType = c("Data", "Ucrt", "Qfqm", "Vali")[1])
 }
 \arguments{
 \item{inpList}{Required. A named list of data frames of type numeric, containing the data to be converted.}
+
+\item{MethMeas}{A vector of class "character" containing the name of measurement method (eddy-covariance turbulent exchange or storage exchange), MethMeas = c("ecte", "ecse"). Defaults to "ecse". [-]}
 
 \item{MethType}{Required. A character string containing the type of data to be converted. Defauts to \code{MethType} = c("Data").}
 }
