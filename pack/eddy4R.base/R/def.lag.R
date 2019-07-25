@@ -20,7 +20,7 @@
 #' @param hpf TRUE - apply Butterworth high-pass filter; FALSE - use raw data. Defaults to TRUE. Of class logical. [-]
 #' @param fracMin Minimum fraction of data to attempt lag determination. Defaults to 0.1. Of class numeric. [-]
 #' @param plot TRUE - will output cross-correlation plots to set working directory; FALSE - no cross-correlation plot will be generated. Defaults to FALSE. Of class logical. [-]
-#' @param plot_dir A string defining the Directory to output cross-correlation plots to, if plot = TRUE. Defaults to NULL. Of class integer or character. [-]
+#' @param DirPlot A string defining the Directory to output cross-correlation plots to, if plot = TRUE. Defaults to NULL. Of class integer or character. [-]
 
 #' @return Lagged input data and calculation results in a list consisting of:\cr
 #' \code{dataRefe} The reference data.
@@ -54,6 +54,8 @@
 #    applied eddy4R term name convention; replaced pos by idx
 #   Adam Vaughan (2019-01-29)
 #     added PDF plotting ability to function
+#   Natchaya P-Durden (2019-07-24)
+#    add fail safe when lag is equal to NA
 ##############################################################################################
 
 
@@ -71,8 +73,8 @@ def.lag <- function(
   lagAll = TRUE,
   hpf = TRUE,
   fracMin = 0.1,
-  plot = F,
-  plot_dir = NULL
+  plot = FALSE,
+  DirPlot = NULL
 ) {
   
   ###
@@ -151,8 +153,9 @@ def.lag <- function(
     }
     
     #plot cross-corrections for each value
-    if(plot)
-      pdf(file=paste(plot_dir, "/", var, "_cross_correlation.pdf", sep=""), width = 14, height = 5)
+    if(plot == TRUE){
+      pdf(file=paste(DirPlot, "/", var, "_cross_correlation.pdf", sep=""), width = 14, height = 5)
+    }
     
     #find correct lag time    
     #for hard lagMax argument
@@ -170,7 +173,7 @@ def.lag <- function(
                     corr$lag[which(abs(corr$acf) == max(abs(corr$acf)))]
       )      
       #don't lag if determined lag equals lagMax
-      if(abs(lag) == lagMax) lag <- 0
+      if(!is.na(lag) & (abs(lag) == lagMax)) lag <- 0
       
       #for soft lagMax argument
     } else {
@@ -199,6 +202,7 @@ def.lag <- function(
     #adjust entire dataMeas time series to dataRefe time (assuming constant timing offset over all variables)
     #refe <- lag(refe, k=lag*freq)
     #meas data lags behind refe
+    if(!is.na(lag)){
     if(lag < 0) {
       dataRefe <- dataRefe[1:(nrow(dataRefe) + lag),]
       dataMeas <- dataMeas[(1 - lag):(nrow(dataMeas)),]
@@ -231,7 +235,16 @@ def.lag <- function(
       corrCros=ifelse(lagAll==TRUE, max(abs(corr$acf)), max(corr$acf))
     )
     return(rpt)
-    
+    #end if !is.na(lag)
+    }else{
+      rpt <- list(
+        dataRefe=dataRefe,
+        dataMeas=dataMeas,
+        lag=NA,
+        corrCros=NA
+      )
+      return(rpt)
+    }
     
     
     ###
