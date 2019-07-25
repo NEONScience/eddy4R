@@ -4,8 +4,8 @@
 \alias{def.dist.rgh}
 \title{Definition function: Aerodynamic roughness length}
 \usage{
-def.dist.rgh(distZaxsMeas, distObkv, veloXaxs, veloFric, RngStblObkv = c(-2,
-  1))
+def.dist.rgh(distZaxsMeas, distObkv, veloXaxs, veloFric,
+  RngStblObkv = c(-2, 1))
 }
 \arguments{
 \item{\code{distZaxsMeas}}{Measurement height and of class "numeric". [m]}
@@ -28,9 +28,9 @@ Function defintion. Aerodynamic roughness length.
 def.dist.rgh (distZaxsMeas = 13.5, distObkv = 45, veloXaxs = 3, veloFric = 0.8, RngStblObkv = c(-2, 1))
 }
 \references{
-Businger, J. A., Wyngaard, J. C., Izumi, Y., and Bradley, E. F.: Flux-proﬁle relationships in the atmospheric surface layer, Journal of the Atmospheric Sciences, 28, 181–189, 1971. \cr
+Businger, J. A., Wyngaard, J. C., Izumi, Y., and Bradley, E. F.: Flux-profile relationships in the atmospheric surface layer, Journal of the Atmospheric Sciences, 28, 181-189, 1971. \cr
 Foken, T.: Micrometeorology, Springer, Berlin, Heidelberg, 2008. \cr
-Högström, U.: Non-dimensional wind and temperature proﬁles in the atmospheric surface layer: a re-evaluation, Boundary-Layer Meteorology, 42, 55–78, 1988. \cr
+Hogstrom, U.: Non-dimensional wind and temperature profiles in the atmospheric surface layer: a re-evaluation, Boundary-Layer Meteorology, 42, 55-78, 1988. \cr
 }
 \seealso{
 Currently none
