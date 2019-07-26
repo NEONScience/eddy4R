@@ -22,7 +22,6 @@
 #' @param plot Switch to turn ON/OFF plotting of cross-correlation output to PDF.
 #' @param DirPlot Output directory for cross-correlation plot.
 
-
 #' @return Lagged input data and calculation results in a list consisting of:\cr
 #' \code{dataRefe} The reference data.
 #' \code{dataMeas} The data that was lagged to coincide with the reference data.
@@ -53,8 +52,10 @@
 #     update @param format
 #   Natchaya P-Durden (2018-04-11)
 #    applied eddy4R term name convention; replaced pos by idx
-#   Adam Vaughan (2019-01-23)
+#   Adam Vaughan (2019-01-29)
 #     added PDF plotting ability to function
+#   Natchaya P-Durden (2019-07-24)
+#    add fail safe when lag is equal to NA
 ##############################################################################################
 
 
@@ -72,7 +73,7 @@ def.lag <- function(
   lagAll = TRUE,
   hpf = TRUE,
   fracMin = 0.1,
-  plot = F,
+  plot = FALSE,
   DirPlot = NULL
 ) {
 
@@ -149,9 +150,11 @@ def.lag <- function(
       rm(filtTmp)
       
     }
+    
     #plot immidiate wavelet variances and covariances
-    if(plot)
+    if(plot == TRUE){
       pdf(file=paste(DirPlot, "/", var, "_cross_correlation.pdf", sep=""), width = 14, height = 5)
+    }
     
     #find correct lag time    
     #for hard lagMax argument
@@ -169,7 +172,7 @@ def.lag <- function(
                     corr$lag[which(abs(corr$acf) == max(abs(corr$acf)))]
       )      
       #don't lag if determined lag equals lagMax
-      if(abs(lag) == lagMax) lag <- 0
+      if(!is.na(lag) & (abs(lag) == lagMax)) lag <- 0
       
       #for soft lagMax argument
     } else {
@@ -201,6 +204,7 @@ def.lag <- function(
     #adjust entire dataMeas time series to dataRefe time (assuming constant timing offset over all variables)
     #refe <- lag(refe, k=lag*freq)
     #meas data lags behind refe
+    if(!is.na(lag)){
     if(lag < 0) {
       dataRefe <- dataRefe[1:(nrow(dataRefe) + lag),]
       dataMeas <- dataMeas[(1 - lag):(nrow(dataMeas)),]
@@ -234,7 +238,16 @@ def.lag <- function(
       corr = corr
     )
     return(rpt)
-    
+    #end if !is.na(lag)
+    }else{
+      rpt <- list(
+        dataRefe=dataRefe,
+        dataMeas=dataMeas,
+        lag=NA,
+        corrCros=NA
+      )
+      return(rpt)
+    }
     
     
     ###
