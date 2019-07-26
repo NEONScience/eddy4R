@@ -78,6 +78,31 @@
 #   Cove Sturtevant (2018-01-15)
 #     Fixed some minor differences in pressure conversion factors to match the National Physical 
 #        Laboratory (http://www.npl.co.uk/reference/faqs/pressure-units)
+#   Adam Vaughan (2019-01-29)
+#     Added extended chemical species molecular masses
+#        IntlNatu$MolmNO      -   Nitrogen monoxide
+#        IntlNatu$MolmNO2     -   Nitrogen dioxide
+#        IntlNatu$MolmHONO    -   Nitrous acid
+#        IntlNatu$MolmO3      -   Ozone
+#        IntlNatu$MolmCO      -   Carbon monoxide
+#        IntlNatu$MolmCH3OH   -   Methanol
+#        IntlNatu$MolmC2H4O   -   Acetaldehyde
+#        IntlNatu$MolmC2H5OH  -   Ethanol
+#        IntlNatu$MolmC2H6    -   Ethane
+#        IntlNatu$MolmC3H6O   -   Propanal
+#        IntlNatu$MolmC3H8    -   Propane
+#        IntlNatu$MolmC4H6O   -   Methyl vinyl ketone
+#        IntlNatu$MolmC4H8O   -   Butanone
+#        IntlNatu$MolmC4H10   -   Butane
+#        IntlNatu$MolmC5H8    -   Isoprene
+#        IntlNatu$MolmC5H10O  -   Methyl isopropyl ketone
+#        IntlNatu$MolmC5H12O  -   Pentanol
+#        IntlNatu$MolmC6H12O  -   Hexanal
+#        IntlNatu$MolmC6H6    -   Benzene
+#        IntlNatu$MolmC7H8    -   Toluene
+#        IntlNatu$MolmC8H10   -   Xylene
+#        IntlNatu$MolmC9H12   -   1,2,4-Trimethyl benzene
+
 ##############################################################################################
 
 library(devtools)
@@ -203,7 +228,29 @@ IntlNatu <- list() # Natural constants
       "Co2",
       "H2o",
       "Ch4",
-      "Dry"
+      "Dry",
+      "NO",
+      "NO2",
+      "HONO",
+      "O3",
+      "CO",
+      "CH3OH",
+      "C2H4O",
+      "C2H5OH",
+      "C2H6",
+      "C3H6O",
+      "C3H8",
+      "C4H6O",
+      "C4H8O",
+      "C4H10",
+      "C5H8",
+      "C5H10O",
+      "C5H12O",
+      "C6H12O",
+      "C6H6",
+      "C7H8",
+      "C8H10",
+      "C9H12"
       )
       
 # Define internal units. List names should be selected from the entries in IntlUnit$Base$Type.
@@ -401,6 +448,53 @@ IntlNatu <- list() # Natural constants
       attr(IntlNatu$RtioMolmH2oDry,"unit") <- "kgH2o kgDry-1"
     IntlNatu$RtioMolmDryH2o <- IntlNatu$MolmDry / IntlNatu$MolmH2o		#molar mass ratio dry air / water vapour
       attr(IntlNatu$RtioMolmDryH2o,"unit") <- "kgDry kgH2o-1"
+    
+    #University of York Chemistry molar masses
+    IntlNatu$MolmNO <- 30.01e-3			#NO [kg mol-1]
+      attr(IntlNatu$MolmNO,"unit") <- "kgNO mol-1"
+    IntlNatu$MolmNO2 <- 46.01e-3			#NO2 [kg mol-1]
+      attr(IntlNatu$MolmNO2,"unit") <- "kgNO2 mol-1"
+    IntlNatu$MolmHONO <- 47.01e-3			#HONO [kg mol-1]
+      attr(IntlNatu$MolmHONO,"unit") <- "kgHONO mol-1"
+    IntlNatu$MolmO3 <- 48.00e-3			#O3 [kg mol-1]
+      attr(IntlNatu$MolmO3,"unit") <- "kgO3 mol-1"
+    IntlNatu$MolmCO <- 28.01e-3			#CO [kg mol-1]
+      attr(IntlNatu$MolmCO,"unit") <- "kgCO mol-1"
+    IntlNatu$MolmCH3OH <- 32.04e-3			#CH3OH [kg mol-1]
+      attr(IntlNatu$MolmCH3OH,"unit") <- "kgCH3OH mol-1"
+    IntlNatu$MolmC2H4O <- 44.05e-3			#C2H4O [kg mol-1]
+      attr(IntlNatu$MolmC2H4O,"unit") <- "kgC2H4O mol-1"
+    IntlNatu$MolmC2H5OH <- 46.07e-3			#C2H5OH [kg mol-1]
+      attr(IntlNatu$MolmC2H5OH,"unit") <- "kgC2H5OH mol-1"
+    IntlNatu$MolmC2H6 <- 30.07e-3			#C2H6 [kg mol-1]
+      attr(IntlNatu$MolmC2H6,"unit") <- "kgC2H6 mol-1"
+    IntlNatu$MolmC3H6O <- 58.08e-3			#C3H6O [kg mol-1]
+      attr(IntlNatu$MolmC3H6O,"unit") <- "kgC3H6O mol-1"
+    IntlNatu$MolmC3H8 <- 44.10e-3			#C3H8 [kg mol-1]
+      attr(IntlNatu$MolmC3H8,"unit") <- "kgC3H8 mol-1"
+    IntlNatu$MolmC4H6O <- 70.09e-3			#C4H6O [kg mol-1]
+      attr(IntlNatu$MolmC4H6O,"unit") <- "kgC4H6O mol-1"
+    IntlNatu$MolmC4H8O <- 71.22e-3			#C4H8O [kg mol-1]
+      attr(IntlNatu$MolmC4H8O,"unit") <- "kgC4H8O mol-1"
+    IntlNatu$MolmC4H10 <- 58.12e-3			#C4H10 [kg mol-1]
+      attr(IntlNatu$MolmC4H10,"unit") <- "kgC4H10 mol-1"
+    IntlNatu$MolmC5H8 <- 68.12e-3			#C5H8 [kg mol-1]
+      attr(IntlNatu$MolmC5H8,"unit") <- "kgC5H8 mol-1"
+    IntlNatu$MolmC5H10O <- 86.13e-3			#C5H10O [kg mol-1]
+      attr(IntlNatu$MolmC5H10O,"unit") <- "kgC5H10O mol-1"
+    IntlNatu$MolmC5H12O <- 88.15e-3			#C5H12O [kg mol-1]
+      attr(IntlNatu$MolmC5H12O,"unit") <- "kgC5H12O mol-1"
+    IntlNatu$MolmC6H12O <- 100.16e-3			#C6H12O [kg mol-1]
+      attr(IntlNatu$MolmC6H12O,"unit") <- "kgC6H12O mol-1"
+    IntlNatu$MolmC6H6 <- 78.11e-3			#C6H6 [kg mol-1]
+      attr(IntlNatu$MolmC6H6,"unit") <- "kgC6H6 mol-1"
+    IntlNatu$MolmC7H8 <- 92.14e-3			#C7H8 [kg mol-1]
+      attr(IntlNatu$MolmC7H8,"unit") <- "kgC7H8 mol-1"
+    IntlNatu$MolmC8H10 <- 106.16e-3			#C8H10 [kg mol-1]
+      attr(IntlNatu$MolmC8H10,"unit") <- "kgC8H10 mol-1"
+    IntlNatu$MolmC9H12 <- 120.19e-3			#C9H12 [kg mol-1]
+      attr(IntlNatu$MolmC9H12,"unit") <- "kgC9H12 mol-1"
+      
     
   #dry air (Dry)
     IntlNatu$CpDry <- 1004.64		#dry air specific heat at constant pressure 	[J kg-1 K-1]

@@ -72,7 +72,7 @@
 #' UrlOutRefe = "https://www.dropbox.com/s/j0zhjfolx4k9ugm/outRefe_20170918.zip?dl=1")
 
 #' @seealso
-#' NEON Algorithm Theoretical Basis Document:Eddy Covariance Turbulent Exchange Subsystem Level 0 to Level 0’ data product conversions and calculations (NEON.DOC.000823) \cr \cr
+#' NEON Algorithm Theoretical Basis Document:Eddy Covariance Turbulent Exchange Subsystem Level 0 to Level 0' data product conversions and calculations (NEON.DOC.000823) \cr \cr
 #' NEON Algorithm Theoretical Basis Document:Eddy Covariance Turbulent Exchange Subsystem Level 1 data product calculations (NEON.DOC.000807)
 
 #' @export
@@ -86,15 +86,16 @@
 ##############################################################################################################
 #Start of function call to determine workflow parameters
 ##############################################################################################################
+
 def.para.flow.ecte <- function(
   ParaFlow,
   UrlInpRefe,
   UrlOutRefe,
   ...
-){
+) {
 
-  
-  # error messages ensuring that ParaFlow$Meth is present and one of "dflt",  "host", or "slct"
+
+# error messages ensuring that ParaFlow$Meth is present and one of "dflt",  "host", or "slct"
   
     # ParaFlow$Meth present?
     if(is.null(ParaFlow$Meth)) base::stop('please provide Para$Flow$Meth.')
@@ -110,14 +111,14 @@ def.para.flow.ecte <- function(
     
     # assign defaults
     # for a detailed description of each workflow parameter see ?eddy4R.base::def.para.flow.ecte, section Overview of workflow parameters
-    ParaFlow$DateOut <- base::as.character(base::as.Date(base::as.character(20170925), format = "%Y%m%d"))
+    ParaFlow$DateOut <- base::as.character(base::as.Date(base::as.character(20181128), format = "%Y%m%d"))
     ParaFlow$DirInp <- base::paste0(base::tempdir(), "/inpRefe")
     ParaFlow$DirMnt <- NA
     ParaFlow$DirOut <- base::paste0(base::tempdir(), "/out")
     ParaFlow$DirTmp <- base::tempdir()
     ParaFlow$DirWrk <- base::tempdir()
     ParaFlow$FileInp <- NA
-    ParaFlow$FileOutBase <- "NEON.D10.CPER.DP4.00200.001.ecte"
+    ParaFlow$FileOutBase <- "NEON.D06.KONZ.DP4.00200.001.ecte"
     ParaFlow$NameDataExt <- NA
     ParaFlow$OutMeth <- c("hdf5", "diag")
     ParaFlow$OutSub <- 1:10

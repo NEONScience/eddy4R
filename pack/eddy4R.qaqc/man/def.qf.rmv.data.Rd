@@ -4,8 +4,8 @@
 \alias{def.qf.rmv.data}
 \title{Definition function: to remove high frequency data points that have failed quality flags}
 \usage{
-def.qf.rmv.data(inpData, inpQf, Sens = NULL, Vrbs = FALSE,
-  TypeData = c("integer", "real")[1])
+def.qf.rmv.data(inpData, inpQf, Sens = NULL, qfRmv = NULL,
+  Vrbs = FALSE, TypeData = c("integer", "real")[1])
 }
 \arguments{
 \item{inpData}{Input data.frame for data to be removed from based on quality flags}
@@ -13,6 +13,8 @@ def.qf.rmv.data(inpData, inpQf, Sens = NULL, Vrbs = FALSE,
 \item{inpQf}{Input data.frame of quality flags (must be of class integer to be included in the processing)}
 
 \item{Sens}{Character string indicating the sensor the high frequency data come from to check for sensor specific flags}
+
+\item{qfRmv}{Character string indicating which quality flag will exclude in the processing. Defaults to NULL.}
 
 \item{Vrbs}{Optional. A logical {FALSE/TRUE} value indicating whether to:\cr
 \code{Vrbs = FALSE}: (Default) cleaned data set, list of variables assessed, list of quality flags for each variable assessed, and the total number of bad data per variable, or \cr
@@ -31,7 +33,7 @@ Currently none
 }
 \references{
 License: GNU AFFERO GENERAL PUBLIC LICENSE Version 3, 19 November 2007. \cr
-NEON Algorithm Theoretical Basis Document:Eddy Covariance Turbulent Exchange Subsystem Level 0 to Level 0’ data product conversions and calculations (NEON.DOC.000807) \cr
+NEON Algorithm Theoretical Basis Document:Eddy Covariance Turbulent Exchange Subsystem Level 0 to Level 0' data product conversions and calculations (NEON.DOC.000807) \cr
 }
 \seealso{
 Currently none
