@@ -171,7 +171,7 @@ if(flag == 0) {
       # plot(log10(tst[idxFreqMax:idxPeak]) ~ log10(freq[idxFreqMax:idxPeak]))
       # points(LM$fitted.values ~ log10(freq[idxFreqMax:idxPeak]), col = 2)
   
-      # if the regression slope (power law coefficient) exceeds the bounds −1.8 ... −1.3, the conventional −5/3 slope is used as alternative
+      # if the regression slope (power law coefficient) exceeds the bounds -1.8 ... -1.3, the conventional -5/3 slope is used as alternative
       if(!(LM$coefficients[2] > -1.8 & LM$coefficients[2] < -1.3)) {
         LM$coefficients[1] <- mean(log10(spec[idxFreqMax:idxPeak]) - (-5/3 * log10(freq[idxFreqMax:idxPeak])), na.rm = TRUE)
         LM$coefficients[2] <- -5/3
