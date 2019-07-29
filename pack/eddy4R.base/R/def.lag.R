@@ -19,8 +19,8 @@
 #' @param lagAll TRUE - consider positive and negative correlations when finding lag time; FALSE - consider positive correlations only when finding lag time. Defaults to TRUE. Of class logical. [-]
 #' @param hpf TRUE - apply Butterworth high-pass filter; FALSE - use raw data. Defaults to TRUE. Of class logical. [-]
 #' @param fracMin Minimum fraction of data to attempt lag determination. Defaults to 0.1. Of class numeric. [-]
-#' @param plot Switch to turn ON/OFF plotting of cross-correlation output to PDF.
-#' @param DirPlot Output directory for cross-correlation plot.
+#' @param plot TRUE - will output cross-correlation plots to set working directory; FALSE - no cross-correlation plot will be generated. Defaults to FALSE. Of class logical. [-]
+#' @param DirPlot A string defining the Directory to output cross-correlation plots to, if plot = TRUE. Defaults to NULL. Of class integer or character. [-]
 
 #' @return Lagged input data and calculation results in a list consisting of:\cr
 #' \code{dataRefe} The reference data.
@@ -76,7 +76,8 @@ def.lag <- function(
   plot = FALSE,
   DirPlot = NULL
 ) {
-
+  
+  ###
   #start escape if too few non-NAs in period
   if(length(na.omit(cbind(refe, meas))) / length(refe) < 0.1) {
     ###
@@ -151,7 +152,7 @@ def.lag <- function(
       
     }
     
-    #plot immidiate wavelet variances and covariances
+    #plot cross-corrections for each value
     if(plot == TRUE){
       pdf(file=paste(DirPlot, "/", var, "_cross_correlation.pdf", sep=""), width = 14, height = 5)
     }
@@ -198,7 +199,7 @@ def.lag <- function(
       
     }
     
-    if(plot)
+    if(plot == TRUE)
       dev.off()
     
     #adjust entire dataMeas time series to dataRefe time (assuming constant timing offset over all variables)
@@ -244,7 +245,8 @@ def.lag <- function(
         dataRefe=dataRefe,
         dataMeas=dataMeas,
         lag=NA,
-        corrCros=NA
+        corrCros=NA,
+        corr = NA
       )
       return(rpt)
     }
