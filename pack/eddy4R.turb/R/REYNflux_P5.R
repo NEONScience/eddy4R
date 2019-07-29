@@ -60,8 +60,8 @@ REYNflux_FD_mole_dry <- function(
   PltfEc="airc",
   flagCh4 = TRUE,
   rotType = c("single","double","planarFit")[1],
-  species = NULL,
-  speciesRMM = NULL,
+  spcs = NULL,
+  spcsRMM = NULL,
   ...
 )
 {
@@ -195,8 +195,8 @@ REYNflux_FD_mole_dry <- function(
   #ROTATION INTO THE MEAN WIND
   ############################################################
   rotOut = wrap.rot(data = data,
-                   mn = mn,
-                   rotType = rotType)
+                    mn = mn,
+                    rotType = rotType)
   
   # tidy output
   # When REYNflux becomes wrapper - the arguments/return of this function should be changed such that both
@@ -388,10 +388,10 @@ REYNflux_FD_mole_dry <- function(
     # calculate flux
     fluxChem = def.flux.chem(imfl = imfl,
                              mn = mn,
-                             cor = cor,
+                             corr = cor,
                              base = base,
-                             species = species,
-                             speciesRMM = speciesRMM)
+                             spcs = spcs,
+                             spcsRMM = spcsRMM)
     
     # tidy output
     # When REYNflux becomes wrapper - the arguments/return of this function should be changed such that both
@@ -399,7 +399,7 @@ REYNflux_FD_mole_dry <- function(
     # more like how functions can operate on the REYN object (the result of REYNflux)
     imfl = fluxChem$imfl
     mn = fluxChem$mn
-    cor = fluxChem$cor
+    cor = fluxChem$corr
   }
   
   ############################################################
