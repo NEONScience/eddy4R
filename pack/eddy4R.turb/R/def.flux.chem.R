@@ -24,7 +24,7 @@ def.flux.chem = function(imfl,
                          spcs,
                          spcsRMM){
   
-  if(length(species) != length(spcsRMM))
+  if(length(spcs) != length(spcsRMM))
     stop("in def.flux.chem() length of spcs does not equal length of spcsRMM")
 
     for (i in 1:length(spcs)){
