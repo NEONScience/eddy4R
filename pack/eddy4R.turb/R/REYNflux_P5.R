@@ -384,7 +384,7 @@ REYNflux_FD_mole_dry <- function(
   ############################################################
   # CHEMISTRY FLUX
   ############################################################
-  if(!is.null(species) & !is.null(speciesRMM)){
+  if(!is.null(spcs) & !is.null(spcsRMM)){
     # calculate flux
     fluxChem = def.flux.chem(imfl = imfl,
                              mn = mn,
