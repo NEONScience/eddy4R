@@ -1,13 +1,17 @@
 #' Define Rotation of Wind Vectors
 #' 
-#' Perform either single or double rotation of wind vectors. TODO: include planar fit rotation based on suplied coefficients
+#' Perform either single or double rotation of wind vectors.
 #' 
 #' @param data input data to REYNflux [data.frame]
 #' @param mn mean of input data. created during "TIME SERIES AVERAGES" step [data.frame]
-#' @param rotType type of rotation to be performed, one of "single", "double" or "planarFit" (once implemented) [character vector]
-#' @param plnrFitCoef coefficients for planar fit [numeric vector]
+#' @param rotType type of rotation to be performed, one of "single", "double" or "planarFit" [character vector]
+#' @param plnrFitCoef coefficients for planar fit [numeric vector or data.frame]
+#' @param plnrFitType type of planar fit, "simple", "date" or "wind". [character vector] \itemize{
+#'                    \item simple - numeric vector constant of coefficeients, or coefficeients that are controlled from the workflow. c(al,be,b0)
+#'                    \item time - data.frame with columns date, al, be, b0. values with date nearest to mn$date are used
+#'                    \item time - data.frame with columns PSI_uv, al, be, b0. values with date nearest to mn$PSI_uv are used
 #' 
-#' @return list containing updated data and mn objects, also B and BT rotation matricies in single or double cases
+#' @return list containing updated data and mn objects
 #' 
 #' @author W. S. Drysdale
 #' 
@@ -15,11 +19,12 @@
 
 wrap.rot = function(data,
                    mn,
-                   rotType = c("single","double","planarFit")[1],
-                   plnrFitCoef = NULL)
-  {
+                   rotType = c("single","double","planarFit","none")[1],
+                   plnrFitCoef = NULL,
+                   plnrFitType = c("simple","time","wind")[1]){
+  
+  # rotation angle
   if(rotType %in% c("single","double")){
-    #rotation angle
     rotang <- (eddy4R.base::def.unit.conv(data=(mn$PSI_uv+180),unitFrom="deg",unitTo="rad")) %% (2*pi)
     
     B <- matrix(nrow=3, ncol=3)
@@ -53,31 +58,93 @@ wrap.rot = function(data,
       BT = t(B)
       Urot = B2 %*% Urot
     }
+    
+    data$u_hor <- Urot[1,]
+    data$v_hor <- -Urot[2,]
+    data$w_hor <- Urot[3,]
+    
+    mn$u_hor <- mean(Urot[1,], na.rm=TRUE)
+    mn$v_hor <- mean(Urot[2,], na.rm=TRUE)
+    mn$w_hor <- mean(Urot[3,], na.rm=TRUE)
+    
+  }
+  
+  if(rotType == "none"){
+    data$u_hor = data$u_met
+    data$v_hor = data$v_met
+    data$w_hor = data$w_met
+    
+    mn$u_hor = mean(data$u_met, na.rm = TRUE)
+    mn$v_hor = mean(data$v_met, na.rm = TRUE)
+    mn$w_hor = mean(data$w_met, na.rm = TRUE)
   }
   
   if(rotType == "planarFit"){
-    warning("Planar Fit is not yet implemented into def.rot - use existing planar fit code")
     
-    ret = list(data,
-               mn)
-    return(ret)
+    if(is.null(plnrFitCoef)){
+      stop("plnrFitCoef is NULL")
+    }
+    
+    data$v_met = -data$v_met # reverse the v wind vector as PFIT_apply() expects +ve left,front,below.
+    # workflow input should be +ve left,behind,below
+    
+    if(plnrFitType == "simple"){
+      
+      # Expect a vector for plnrFitCoef
+      if(class(plnrFitCoef) != "numeric")
+        stop("When plnrFitType == simple, plnrFitCoef must be a numeric vector")
+      
+      # Apply planar fit
+      plnrFitData = PFIT_apply(
+        u_m = data.frame(
+          xaxs = data$v_met,
+          yaxs = data$u_met,
+          zaxs = data$w_met
+        ),
+        al = plnrFitCoef[1],
+        be = plnrFitCoef[2],
+        b0 = plnrFitCoef[3]
+      )
+    }
+    
+    if(plnrFitType %in% c("time","wind")){
+      if(class(plnrFitCoef) != "data.frame")
+        stop("When plnrFitType == time or wind, plnrFitCoef must be a data.frame")
+      
+      # Filter plnrFitCoef
+      if(plnrFitType == "time")
+        plnrFitCoef = plnrFitCoef[which.min(plnrFitCoef$date-mn$date),] # for time, the nearest plnrFitCoef to the mean date is selected
+      if(plnrFitType == "wind")
+        min_dir = which.min(abs(plnrFitCoef$PSI_uv-mn$PSI_uv))
+      plnrFitCoef = plnrFitCoef[min_dir,] # for wind, the nearest plnrFitCoef to the mean PSI_uv is selected
+      
+      # Apply planar fit
+      plnrFitData = PFIT_apply(
+        u_m = data.frame(
+          xaxs = data$u_met,
+          yaxs = data$v_met,
+          zaxs = data$w_met
+        ),
+        al = plnrFitCoef$al,
+        be = plnrFitCoef$be,
+        b0 = plnrFitCoef$b0
+      )
+      
+    }
+    
+    # reassign vectors
+    data$u_hor = plnrFitData$xaxs
+    data$v_hor = -plnrFitData$yaxs # negative as inputs were reversed earlier
+    data$w_hor = plnrFitData$zaxs
+    
+    mn$u_hor = mean(plnrFitData$xaxs,na.rm = TRUE)
+    mn$v_hor = -mean(plnrFitData$yaxs,na.rm = TRUE)
+    mn$w_hor = mean(plnrFitData$zaxs,na.rm = TRUE)
   }
   
-  data$u_hor <- Urot[1,]
-  data$v_hor <- -Urot[2,]
-  data$w_hor <- Urot[3,]
-  mn$u_hor <- mean(Urot[1,], na.rm=TRUE)
-  mn$v_hor <- mean(Urot[2,], na.rm=TRUE)
-  mn$w_hor <- mean(Urot[3,], na.rm=TRUE)
-
-  #Construnt return list
+  #Construct return list
   ret = list(data = data,
-       mn = mn)
-  
-  if(rotType %in% c("single","double")){
-    ret$B = B
-    ret$BT = BT
-  }
+             mn = mn)
   
   #return
   ret
