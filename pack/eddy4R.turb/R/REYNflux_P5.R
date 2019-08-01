@@ -397,7 +397,7 @@ REYNflux_FD_mole_dry <- function(
   #surface layer
   mn$FD_mole_H2O_star_SL <- - mean(mn$F_LE_kin / base$rho_dry, na.rm=TRUE) / mn$u_star
   #mixed layer layer
-  mn$FD_mole_H2O_star_ML <-   mean(mn$F_LE_kin / base$rho_dry, na.rm=TRUE) / mn$w_star} 
+  mn$FD_mole_H2O_star_ML <-   mean(mn$F_LE_kin / base$rho_dry, na.rm=TRUE) / mn$w_star 
 
   #clean up
   rm(tot)
