@@ -2,15 +2,14 @@
 #' 
 #' Perform either single or double rotation of wind vectors.
 #' 
-#' @param data input data to REYNflux [data.frame]
-#' @param mn mean of input data. created during "TIME SERIES AVERAGES" step [data.frame]
+#' @param data data.frame containing u_met, v_met and w_met [data.frame]
 #' @param rotType type of rotation to be performed, one of "single", "double" or "planarFit" [character vector]
 #' @param plnrFitCoef coefficients for planar fit [numeric vector or data.frame]
 #' @param plnrFitType type of planar fit, "simple", "date" or "wind". [character vector] \itemize{
 #'                    \item simple - numeric vector constant of coefficeients, or coefficeients that are controlled from the workflow. c(al,be,b0)
 #'                    \item time - data.frame with columns date, al, be, b0. values with date nearest to mn$date are used
 #'                    \item time - data.frame with columns PSI_uv, al, be, b0. values with date nearest to mn$PSI_uv are used
-#' 
+#' }
 #' @return list containing updated data and mn objects
 #' 
 #' @author W. S. Drysdale
@@ -18,7 +17,6 @@
 #' @export
 
 wrap.rot = function(data,
-                   mn,
                    rotType = c("single","double","planarFit","none")[1],
                    plnrFitCoef = NULL,
                    plnrFitType = c("simple","time","wind")[1]){
@@ -63,20 +61,12 @@ wrap.rot = function(data,
     data$v_hor <- -Urot[2,]
     data$w_hor <- Urot[3,]
     
-    mn$u_hor <- mean(Urot[1,], na.rm=TRUE)
-    mn$v_hor <- mean(Urot[2,], na.rm=TRUE)
-    mn$w_hor <- mean(Urot[3,], na.rm=TRUE)
-    
   }
   
   if(rotType == "none"){
     data$u_hor = data$u_met
     data$v_hor = data$v_met
     data$w_hor = data$w_met
-    
-    mn$u_hor = mean(data$u_met, na.rm = TRUE)
-    mn$v_hor = mean(data$v_met, na.rm = TRUE)
-    mn$w_hor = mean(data$w_met, na.rm = TRUE)
   }
   
   if(rotType == "planarFit"){
@@ -136,17 +126,9 @@ wrap.rot = function(data,
     data$u_hor = plnrFitData$xaxs
     data$v_hor = -plnrFitData$yaxs # negative as inputs were reversed earlier
     data$w_hor = plnrFitData$zaxs
-    
-    mn$u_hor = mean(plnrFitData$xaxs,na.rm = TRUE)
-    mn$v_hor = -mean(plnrFitData$yaxs,na.rm = TRUE)
-    mn$w_hor = mean(plnrFitData$zaxs,na.rm = TRUE)
   }
   
-  #Construct return list
-  ret = list(data = data,
-             mn = mn)
-  
-  #return
-  ret
+  # Return
+  data
   
 }

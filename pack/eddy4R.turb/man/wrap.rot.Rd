@@ -4,23 +4,27 @@
 \alias{wrap.rot}
 \title{Define Rotation of Wind Vectors}
 \usage{
-wrap.rot(data, mn, rotType = c("single", "double", "planarFit")[1],
-  plnrFitCoef = NULL)
+wrap.rot(data, rotType = c("single", "double", "planarFit", "none")[1],
+  plnrFitCoef = NULL, plnrFitType = c("simple", "time", "wind")[1])
 }
 \arguments{
-\item{data}{input data to REYNflux [data.frame]}
+\item{data}{data.frame containing u_met, v_met and w_met [data.frame]}
 
-\item{mn}{mean of input data. created during "TIME SERIES AVERAGES" step [data.frame]}
+\item{rotType}{type of rotation to be performed, one of "single", "double" or "planarFit" [character vector]}
 
-\item{rotType}{type of rotation to be performed, one of "single", "double" or "planarFit" (once implemented) [character vector]}
+\item{plnrFitCoef}{coefficients for planar fit [numeric vector or data.frame]}
 
-\item{plnrFitCoef}{coefficients for planar fit [numeric vector]}
+\item{plnrFitType}{type of planar fit, "simple", "date" or "wind". [character vector] \itemize{
+                   \item simple - numeric vector constant of coefficeients, or coefficeients that are controlled from the workflow. c(al,be,b0)
+                   \item time - data.frame with columns date, al, be, b0. values with date nearest to mn$date are used
+                   \item time - data.frame with columns PSI_uv, al, be, b0. values with date nearest to mn$PSI_uv are used
+}}
 }
 \value{
-list containing updated data and mn objects, also B and BT rotation matricies in single or double cases
+list containing updated data and mn objects
 }
 \description{
-Perform either single or double rotation of wind vectors. TODO: include planar fit rotation based on suplied coefficients
+Perform either single or double rotation of wind vectors.
 }
 \author{
 W. S. Drysdale

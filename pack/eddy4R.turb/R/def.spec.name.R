@@ -2,8 +2,8 @@
 #' 
 #' generate eddy4r style names for chemical species
 #' 
-#' @param species
-#' @param type
+#' @param species species name such that FD_mole_species corresponds to a column header in data [character]
+#' @param type one of c("mole","mass","kin") for each type of name required
 #' 
 #' @author W. S. Drysdale
 #' 

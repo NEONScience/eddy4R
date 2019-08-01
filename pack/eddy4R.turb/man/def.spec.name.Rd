@@ -7,7 +7,9 @@
 def.spec.name(species, type = c("mole", "mass", "kin")[1])
 }
 \arguments{
-\item{type}{}
+\item{species}{species name such that FD_mole_species corresponds to a column header in data [character]}
+
+\item{type}{one of c("mole","mass","kin") for each type of name required}
 }
 \description{
 generate eddy4r style names for chemical species
