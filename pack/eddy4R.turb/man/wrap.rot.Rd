@@ -16,12 +16,12 @@ wrap.rot(data, rotType = c("single", "double", "planarFit", "none")[1],
 
 \item{plnrFitType}{type of planar fit, "simple", "date" or "wind". [character vector] \itemize{
                    \item simple - numeric vector constant of coefficeients, or coefficeients that are controlled from the workflow. c(al,be,b0)
-                   \item time - data.frame with columns date, al, be, b0. values with date nearest to mn$date are used
-                   \item time - data.frame with columns PSI_uv, al, be, b0. values with date nearest to mn$PSI_uv are used
+                   \item time - data.frame with columns date, al, be, b0. values with date nearest to mean(data$date)
+                   \item time - data.frame with columns PSI_uv, al, be, b0. values with date nearest to average wind dir
 }}
 }
 \value{
-list containing updated data and mn objects
+Data object with rotated wind vectors added
 }
 \description{
 Perform either single or double rotation of wind vectors.

@@ -7,10 +7,10 @@
 #' @param plnrFitCoef coefficients for planar fit [numeric vector or data.frame]
 #' @param plnrFitType type of planar fit, "simple", "date" or "wind". [character vector] \itemize{
 #'                    \item simple - numeric vector constant of coefficeients, or coefficeients that are controlled from the workflow. c(al,be,b0)
-#'                    \item time - data.frame with columns date, al, be, b0. values with date nearest to mn$date are used
-#'                    \item time - data.frame with columns PSI_uv, al, be, b0. values with date nearest to mn$PSI_uv are used
+#'                    \item time - data.frame with columns date, al, be, b0. values with date nearest to mean(data$date)
+#'                    \item time - data.frame with columns PSI_uv, al, be, b0. values with date nearest to average wind dir
 #' }
-#' @return list containing updated data and mn objects
+#' @return Data object with rotated wind vectors added
 #' 
 #' @author W. S. Drysdale
 #' 
@@ -103,9 +103,12 @@ wrap.rot = function(data,
       
       # Filter plnrFitCoef
       if(plnrFitType == "time")
-        plnrFitCoef = plnrFitCoef[which.min(plnrFitCoef$date-mn$date),] # for time, the nearest plnrFitCoef to the mean date is selected
+        plnrFitCoef = plnrFitCoef[which.min(plnrFitCoef$date-mean(data$date,na.rm = TRUE)),] # for time, the nearest plnrFitCoef to the mean date is selected
       if(plnrFitType == "wind")
-        min_dir = which.min(abs(plnrFitCoef$PSI_uv-mn$PSI_uv))
+        mnPSI_uv = eddy4R.base::def.pol.cart(matrix(c(mean(data$v_met, na.rm = TRUE),
+                                                      mean(data$u_met, na.rm = TRUE)),
+                                                    ncol=2))
+        min_dir = which.min(abs(plnrFitCoef$PSI_uv-mnPSI_uv))
       plnrFitCoef = plnrFitCoef[min_dir,] # for wind, the nearest plnrFitCoef to the mean PSI_uv is selected
       
       # Apply planar fit
