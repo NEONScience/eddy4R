@@ -73,26 +73,15 @@ REYNflux_FD_mole_dry <- function(
   #-----------------------------------------------------------
   #GENERAL CONVERSIONS
   
-  #if statement to control water vapour present
-  if("FD_mole_H2O" %in% names(data)){
-    #partial pressure of water vapor
-    data$p_H2O <- data$p_air * data$FD_mole_H2O / (1 + data$FD_mole_H2O)
-    #partial density of H2O
-    data$rho_H2O <- data$p_H2O / eddy4R.base::IntlNatu$Rg / data$T_air
-    #total (wet) air density [mol m-3]
-    data$rho_air <- data$p_air / eddy4R.base::IntlNatu$Rg / data$T_air
-    #dry air density [mol m-3]
-    data$rho_dry <- data$rho_air - data$rho_H2O
-  } else {
-    #partial pressure of water vapor (set to 0 as no water vapour data)
-    data$p_H2O <- data$p_air * 0 / (1 + 0)
-    #partial density of H2O (set to 0 as no water vapour data)
-    data$rho_H2O <- data$p_H2O / eddy4R.base::IntlNatu$Rg / data$T_air
-    #total (wet) air density [mol m-3]
-    data$rho_air <- data$p_air / eddy4R.base::IntlNatu$Rg / data$T_air
-    #dry air density [mol m-3] (same as rho_air as no water vapour data)
-    data$rho_dry <- data$rho_air
-  }
+  #partial pressure of water vapor
+  data$p_H2O <- data$p_air * data$FD_mole_H2O / (1 + data$FD_mole_H2O)
+  #partial density of H2O
+  data$rho_H2O <- data$p_H2O / eddy4R.base::IntlNatu$Rg / data$T_air
+  #total (wet) air density [mol m-3]
+  data$rho_air <- data$p_air / eddy4R.base::IntlNatu$Rg / data$T_air
+  #dry air density [mol m-3]
+  data$rho_dry <- data$rho_air - data$rho_H2O
+
   
   #virtual temperature -> the temperature of a moist air parcel at which a theoretical 
   #dry air parcel would have a total pressure and density equal to the moist parcel of air [K]
@@ -105,71 +94,43 @@ REYNflux_FD_mole_dry <- function(
   #-----------------------------------------------------------
   #CONSIDER HUMIDITY IN DRY ADIABATIC CONSTANT
   
-  #if statement to control water vapour present
-  if("FD_mole_H2O" %in% names(data)){
-    #cp as function of humidity (Webb 1980 Eq 40) [J kg-1 K-1] == [m2 s-2 K-1]
-    #dry mole fraction fomulation identical to within 1e-13
-    #data$cph <- (eddy4R.base::IntlNatu$CpDry * data$rho_dry + eddy4R.base::IntlNatu$CpH2o * data$rho_H2O) / data$rho_air
-    data$cph <- (eddy4R.base::IntlNatu$CpDry * 1 + eddy4R.base::IntlNatu$CpH2o * data$FD_mole_H2O) / (1 + data$FD_mole_H2O)
-    #cv as function of humidity  [J kg-1 K-1] == [m2 s-2 K-1]
-    #data$cvh <- (eddy4R.base::IntlNatu$CvDry * data$rho_dry + eddy4R.base::IntlNatu$CvH2o * data$rho_H2O) / data$rho_air
-    data$cvh <- (eddy4R.base::IntlNatu$CvDry * 1 + eddy4R.base::IntlNatu$CvH2o * data$FD_mole_H2O) / (1 + data$FD_mole_H2O)
-    #specific gas constant for humid air  [J kg-1 K-1] == [m2 s-2 K-1]
-    data$Rh <- data$cph - data$cvh
-    #Kappa exponent for ideal gas law (Poisson) [-]
-    data$Kah <- data$Rh / data$cph
-    mn <- data.frame(Kah=mean(data$Kah, na.rm=TRUE))
-  }
+  #cp as function of humidity (Webb 1980 Eq 40) [J kg-1 K-1] == [m2 s-2 K-1]
+  #dry mole fraction fomulation identical to within 1e-13
+  #data$cph <- (eddy4R.base::IntlNatu$CpDry * data$rho_dry + eddy4R.base::IntlNatu$CpH2o * data$rho_H2O) / data$rho_air
+  data$cph <- (eddy4R.base::IntlNatu$CpDry * 1 + eddy4R.base::IntlNatu$CpH2o * data$FD_mole_H2O) / (1 + data$FD_mole_H2O)
+  #cv as function of humidity  [J kg-1 K-1] == [m2 s-2 K-1]
+  #data$cvh <- (eddy4R.base::IntlNatu$CvDry * data$rho_dry + eddy4R.base::IntlNatu$CvH2o * data$rho_H2O) / data$rho_air
+  data$cvh <- (eddy4R.base::IntlNatu$CvDry * 1 + eddy4R.base::IntlNatu$CvH2o * data$FD_mole_H2O) / (1 + data$FD_mole_H2O)
+  #specific gas constant for humid air  [J kg-1 K-1] == [m2 s-2 K-1]
+  data$Rh <- data$cph - data$cvh
+  #Kappa exponent for ideal gas law (Poisson) [-]
+  data$Kah <- data$Rh / data$cph
+  mn <- data.frame(Kah=mean(data$Kah, na.rm=TRUE))
   
   #-----------------------------------------------------------
   #POTENTIAL TEMPERATURE AND DENSITIES
+
+  #potential temperature at NIST standard pressure (1013.15 hPa) [K]
+  data$T_air_0 <- eddy4R.base::def.temp.pres.pois(temp01=data$T_air, pres01=data$p_air, pres02=eddy4R.base::IntlNatu$Pres00, Kppa=mn$Kah)
+  #virtual potential temperature at NIST standard pressure (1013.15 hPa) [K]
+  data$T_v_0 <- eddy4R.base::def.temp.pres.pois(temp01=data$T_v, pres01=data$p_air, pres02=eddy4R.base::IntlNatu$Pres00, Kppa=mn$Kah)
   
-  #if statement to control water vapour present
-  if("FD_mole_H2O" %in% names(data)){
-    #potential temperature at NIST standard pressure (1013.15 hPa) [K]
-    data$T_air_0 <- eddy4R.base::def.temp.pres.pois(temp01=data$T_air, pres01=data$p_air, pres02=eddy4R.base::IntlNatu$Pres00, Kppa=mn$Kah)
-    #virtual potential temperature at NIST standard pressure (1013.15 hPa) [K]
-    data$T_v_0 <- eddy4R.base::def.temp.pres.pois(temp01=data$T_v, pres01=data$p_air, pres02=eddy4R.base::IntlNatu$Pres00, Kppa=mn$Kah)
-  } else {
-    #potential temperature at NIST standard pressure (1013.15 hPa) [K]
-    data$T_air_0 <- eddy4R.base::def.temp.pres.pois(temp01 = data$T_air, pres01 = data$p_air, pres02 = eddy4R.base::IntlNatu$Pres00)
-    #virtual potential temperature at NIST standard pressure (1013.15 hPa) [K]
-    data$T_v_0 <- eddy4R.base::def.temp.pres.pois(temp01 = data$T_v, pres01 = data$p_air, pres02 = eddy4R.base::IntlNatu$Pres00)
-    mn <- eddy4R.base::IntlNatu$KppaDry
-  }
   
   #use potential temperature and densities?
   if(FcorPOT) {
-    #if statement to control water vapour present
-    if("FD_mole_H2O" %in% names(data)){
-      #define pressure level
-      plevel <- ifelse(!is.null(FcorPOTl), FcorPOTl, mean(data$p_air, na.rm=TRUE) )
-      #potential temperature at mean pressure level
-      data$T_air <- eddy4R.base::def.temp.pres.pois(temp01=data$T_air, pres01=data$p_air, pres02=plevel, Kppa=mn$Kah)      
-      #potential densities at mean pressure level      
-      #dry air
-      data$rho_dry <- eddy4R.base::def.dens.pres.pois(dens01=data$rho_dry, pres01=data$p_air, pres02=plevel, Kppa=mn$Kah)
-      #H2O
-      data$rho_H2O <- eddy4R.base::def.dens.pres.pois(dens01=data$rho_H2O, pres01=data$p_air, pres02=plevel, Kppa=mn$Kah)
-      #wet air
-      data$rho_air <- eddy4R.base::def.dens.pres.pois(dens01=data$rho_air, pres01=data$p_air, pres02=plevel, Kppa=mn$Kah)
-      #clean up
-      rm(plevel)
-    } else {
-      #define pressure level
-      plevel <- ifelse(!is.null(FcorPOTl), FcorPOTl, mean(data$p_air,na.rm = TRUE))
-      #potential temperature at mean pressure level
-      data$T_air <- eddy4R.base::def.temp.pres.pois(temp01 = data$T_air,pres01 = data$p_air,pres02 = plevel)    
-      #potential densities at mean pressure level      
-      #dry air
-      data$rho_dry <- eddy4R.base::def.dens.pres.pois(dens01=data$rho_dry,pres01=data$p_air,pres02=plevel)
-      #H2O
-      data$rho_H2O <- eddy4R.base::def.dens.pres.pois(dens01=data$rho_H2O,pres01=data$p_air,pres02=plevel)
-      #wet air
-      data$rho_air <- eddy4R.base::def.dens.pres.pois(dens01=data$rho_air,pres01=data$p_air,pres02=plevel)
-      #clean up
-      rm(plevel)
-    }
+    #define pressure level
+    plevel <- ifelse(!is.null(FcorPOTl), FcorPOTl, mean(data$p_air, na.rm=TRUE) )
+    #potential temperature at mean pressure level
+    data$T_air <- eddy4R.base::def.temp.pres.pois(temp01=data$T_air, pres01=data$p_air, pres02=plevel, Kppa=mn$Kah)      
+    #potential densities at mean pressure level      
+    #dry air
+    data$rho_dry <- eddy4R.base::def.dens.pres.pois(dens01=data$rho_dry, pres01=data$p_air, pres02=plevel, Kppa=mn$Kah)
+    #H2O
+    data$rho_H2O <- eddy4R.base::def.dens.pres.pois(dens01=data$rho_H2O, pres01=data$p_air, pres02=plevel, Kppa=mn$Kah)
+    #wet air
+    data$rho_air <- eddy4R.base::def.dens.pres.pois(dens01=data$rho_air, pres01=data$p_air, pres02=plevel, Kppa=mn$Kah)
+    #clean up
+    rm(plevel)
   }
   
   
@@ -194,18 +155,37 @@ REYNflux_FD_mole_dry <- function(
   ############################################################
   #ROTATION INTO THE MEAN WIND
   ############################################################
-  rotOut = wrap.rot(data = data,
-                    mn = mn,
-                    rotType = rotType)
+  # Note that this rotation is to rotate the coordinate system for compatibility with footprint models etc
+  # It consists of a single rotation applied per aggregation period
+  # Double rotation / planar fit should be applied before a call to REYNflux
+  #rotation angle
+  rotang <- (eddy4R.base::def.unit.conv(data=(mn$PSI_uv+180),unitFrom="deg",unitTo="rad")) %% (2*pi)
   
-  # tidy output
-  # When REYNflux becomes wrapper - the arguments/return of this function should be changed such that both
-  # the input and output are the same data structure, and this tidy step is no longer required
-  # more like how functions can operate on the REYN object (the result of REYNflux)
-  data = rotOut$data
-  mn = rotOut$mn
-  B = rotOut$B
-  BT = rotOut$BT
+  #transformation matrix
+  B <- matrix(nrow=3, ncol=3)
+  B[1,1] <- cos(rotang)
+  B[1,2] <- sin(rotang)
+  B[1,3] <- 0.
+  B[2,1] <- -sin(rotang)
+  B[2,2] <- cos(rotang)
+  B[2,3] <- 0.
+  B[3,1] <- 0.
+  B[3,2] <- 0.
+  B[3,3] <- 1.
+  BT <- t(B)
+  
+  #wind in (horizontal) geodetic coordinates
+  U <- rbind(data$v_met, data$u_met, data$w_met)
+  
+  #actual rotation
+  Urot <- B %*% U
+  data$u_hor <- Urot[1,]
+  data$v_hor <- -Urot[2,]     #requires mirroring as output is still in geodetic axes order, downstream inpact on imfl$u_star2_y
+  data$w_hor <- Urot[3,]
+  mn$u_hor <- mean(Urot[1,], na.rm=TRUE)
+  mn$v_hor <- mean(Urot[2,], na.rm=TRUE)
+  mn$w_hor <- mean(Urot[3,], na.rm=TRUE)
+  rm(rotang, U, Urot)
   
   ############################################################
   #BASE STATE AND DEVIATIONS
@@ -288,8 +268,7 @@ REYNflux_FD_mole_dry <- function(
   #u_star [m s-1]; optionally only considers the along wind stress u_star_x; Foken (2008) Eq.(2.23)
   mn$u_star2_x <- -Mrot2[1,3]
   mn$u_star2_y <- -Mrot2[2,3]
-  mn$u_star_TK3 <- (mn$u_star2_x^2 + mn$u_star2_y^2)^(1/4)	#TK3 style, necessary if flight path not with wind
-  mn$u_star <- (mean(imfl$u_star2_x)^2 + mean(imfl$u_star2_y)^2)^(1/4) #non TK3 style
+  mn$u_star <- (mn$u_star2_x^2 + mn$u_star2_y^2)^(1/4)
   
   #correlations
   cor <- data.frame(
@@ -320,14 +299,8 @@ REYNflux_FD_mole_dry <- function(
   mn$F_H_kin <- mean(imfl$F_H_kin, na.rm=TRUE)
   
   #conversion to units of energy [W m-2] == [kg s-3]
-  #if statement to control water vapour present
-  if("FD_mole_H2O" %in% names(data)){
-    imfl$F_H_en <- (eddy4R.base::IntlNatu$CpDry * base$rho_dry * eddy4R.base::IntlNatu$MolmDry + eddy4R.base::IntlNatu$CpH2o * base$rho_H2O * eddy4R.base::IntlNatu$MolmH2o) * imfl$F_H_kin
-    mn$F_H_en <- mean(imfl$F_H_en, na.rm=TRUE)
-  } else {
-    imfl$F_H_en <- (eddy4R.base::IntlNatu$CpDry * base$rho_dry * eddy4R.base::IntlNatu$MolmDry) * imfl$F_H_kin
-    mn$F_H_en <- mean(imfl$F_H_en, na.rm=TRUE)
-  }
+  imfl$F_H_en <- (eddy4R.base::IntlNatu$CpDry * base$rho_dry * eddy4R.base::IntlNatu$MolmDry + eddy4R.base::IntlNatu$CpH2o * base$rho_H2O * eddy4R.base::IntlNatu$MolmH2o) * imfl$F_H_kin
+  mn$F_H_en <- mean(imfl$F_H_en, na.rm=TRUE)
   
   #BUOYANCY FLUX considering water vapor buoyancy and NIST standard pressure (1013.15 hPa) reference (virt. pot. temp.) -> z/L
   #flux in kinematic units  [K m s-1]
@@ -344,28 +317,16 @@ REYNflux_FD_mole_dry <- function(
   ############################################################
   #LATENT HEAT FLUX
   ############################################################
-  #if statement to control water vapour present
-  if("FD_mole_H2O" %in% names(data)){
-    #latent heat flux in kinematic units [mol m-2 s-1]
-    imfl$F_LE_kin <- base$rho_dry * imfl$w_hor * imfl$FD_mole_H2O
-    mn$F_LE_kin <- mean(imfl$F_LE_kin, na.rm=TRUE)
-    #latent heat flux in units of energy  [W m-2] == [kg s-3]
-    imfl$F_LE_en <- base$Lv * eddy4R.base::IntlNatu$MolmH2o * imfl$F_LE_kin
-    mn$F_LE_en <- mean(imfl$F_LE_en, na.rm=TRUE)
-    #correlation
-    cor$F_LE_kin <- stats::cor(imfl$w_hor, imfl$FD_mole_H2O, use="pairwise.complete.obs")
-    cor$F_LE_en <- cor$F_LE_kin
-  }else{
-    #latent heat flux in kinematic units [mol m-2 s-1]
-    imfl$F_LE_kin <- base$rho_dry * imfl$w_hor * NA
-    mn$F_LE_kin <- NA
-    #latent heat flux in units of energy  [W m-2] == [kg s-3]
-    imfl$F_LE_en <- base$Lv * eddy4R.base::IntlNatu$MolmH2o * NA
-    mn$F_LE_en <- NA
-    #correlation
-    cor$F_LE_kin <- NA
-    cor$F_LE_en <- NA
-  }
+  
+  #latent heat flux in kinematic units [mol m-2 s-1]
+  imfl$F_LE_kin <- base$rho_dry * imfl$w_hor * imfl$FD_mole_H2O
+  mn$F_LE_kin <- mean(imfl$F_LE_kin, na.rm=TRUE)
+  #latent heat flux in units of energy  [W m-2] == [kg s-3]
+  imfl$F_LE_en <- base$Lv * eddy4R.base::IntlNatu$MolmH2o * imfl$F_LE_kin
+  mn$F_LE_en <- mean(imfl$F_LE_en, na.rm=TRUE)
+  #correlation
+  cor$F_LE_kin <- stats::cor(imfl$w_hor, imfl$FD_mole_H2O, use="pairwise.complete.obs")
+  cor$F_LE_en <- cor$F_LE_kin
   
   ############################################################
   #CH4 FLUX - legacy, include CH4 via the chemistry flux settings
@@ -432,20 +393,12 @@ REYNflux_FD_mole_dry <- function(
   #mixed layer
   mn$T_star_ML <-   mn$F_H_kin / mn$w_star #according to Stull (1988) p. 356
   
-  #if statement to control water vapour present
-  if("FD_mole_H2O" %in% names(data)){
-    #humidity scale (eddy moisture fluctuations) [mol mol-1 dry air]
-    #surface layer
-    mn$FD_mole_H2O_star_SL <- - mean(mn$F_LE_kin / base$rho_dry, na.rm=TRUE) / mn$u_star
-    #mixed layer layer
-    mn$FD_mole_H2O_star_ML <-   mean(mn$F_LE_kin / base$rho_dry, na.rm=TRUE) / mn$w_star} 
-  else {
-    #humidity scale (eddy moisture fluctuations) [mol mol-1 dry air]
-    #surface layer
-    mn$FD_mole_H2O_star_SL <- NA
-    #mixed layer layer
-    mn$FD_mole_H2O_star_ML <- NA}
-  
+  #humidity scale (eddy moisture fluctuations) [mol mol-1 dry air]
+  #surface layer
+  mn$FD_mole_H2O_star_SL <- - mean(mn$F_LE_kin / base$rho_dry, na.rm=TRUE) / mn$u_star
+  #mixed layer layer
+  mn$FD_mole_H2O_star_ML <-   mean(mn$F_LE_kin / base$rho_dry, na.rm=TRUE) / mn$w_star} 
+
   #clean up
   rm(tot)
   
@@ -456,10 +409,10 @@ REYNflux_FD_mole_dry <- function(
   
   #PREPARE DATA
   #mins
-  mi <- plyr::colwise(min)(data,na.rm=T)
+  mi <- plyr::colwise(min)(data,na.rm=TRUE)
   attributes(mi)$names <- attributes(data)$names
   #maxs
-  ma <- plyr::colwise(max)(data,na.rm=T)
+  ma <- plyr::colwise(max)(data,na.rm=TRUE)
   attributes(ma)$names <- attributes(data)$names
   
   #convert the sd date to the mn date (as sd of the date range is meaningless)
