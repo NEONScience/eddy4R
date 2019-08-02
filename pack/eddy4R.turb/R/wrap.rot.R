@@ -22,8 +22,14 @@ wrap.rot = function(data,
                    plnrFitType = c("simple","time","wind")[1]){
   
   # rotation angle
+  mnPSI_uv = eddy4R.base::def.pol.cart(matrix(c(mean(data$v_met, na.rm = TRUE),
+                                                mean(data$u_met, na.rm = TRUE)),
+                                              ncol=2))
+  
+  
+  
   if(rotType %in% c("single","double")){
-    rotang <- (eddy4R.base::def.unit.conv(data=(mn$PSI_uv+180),unitFrom="deg",unitTo="rad")) %% (2*pi)
+    rotang <- (eddy4R.base::def.unit.conv(data=(mnPSI_uv+180),unitFrom="deg",unitTo="rad")) %% (2*pi)
     
     B <- matrix(nrow=3, ncol=3)
     B[1,1] <- cos(rotang)
@@ -105,9 +111,6 @@ wrap.rot = function(data,
       if(plnrFitType == "time")
         plnrFitCoef = plnrFitCoef[which.min(plnrFitCoef$date-mean(data$date,na.rm = TRUE)),] # for time, the nearest plnrFitCoef to the mean date is selected
       if(plnrFitType == "wind")
-        mnPSI_uv = eddy4R.base::def.pol.cart(matrix(c(mean(data$v_met, na.rm = TRUE),
-                                                      mean(data$u_met, na.rm = TRUE)),
-                                                    ncol=2))
         min_dir = which.min(abs(plnrFitCoef$PSI_uv-mnPSI_uv))
       plnrFitCoef = plnrFitCoef[min_dir,] # for wind, the nearest plnrFitCoef to the mean PSI_uv is selected
       
