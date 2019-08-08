@@ -110,9 +110,10 @@ wrap.rot = function(data,
       # Filter plnrFitCoef
       if(plnrFitType == "time")
         plnrFitCoef = plnrFitCoef[which.min(plnrFitCoef$date-mean(data$date,na.rm = TRUE)),] # for time, the nearest plnrFitCoef to the mean date is selected
-      if(plnrFitType == "wind")
+      if(plnrFitType == "wind"){
         min_dir = which.min(abs(plnrFitCoef$PSI_uv-mnPSI_uv))
-      plnrFitCoef = plnrFitCoef[min_dir,] # for wind, the nearest plnrFitCoef to the mean PSI_uv is selected
+        plnrFitCoef = plnrFitCoef[min_dir,]
+      } # for wind, the nearest plnrFitCoef to the mean PSI_uv is selected
       
       # Apply planar fit
       plnrFitData = PFIT_apply(
