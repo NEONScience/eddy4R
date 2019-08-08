@@ -116,7 +116,7 @@ REYNflux_FD_mole_dry <- function(
   
   
   #use potential temperature and densities?
-  if(FcorPOT) {
+  if(FcorPOT == TRUE) {
     #define pressure level
     plevel <- ifelse(!is.null(FcorPOTl), FcorPOTl, mean(data$p_air, na.rm=TRUE) )
     #potential temperature at mean pressure level
@@ -330,7 +330,7 @@ REYNflux_FD_mole_dry <- function(
   ############################################################
   #CH4 FLUX - legacy, include CH4 via the chemistry flux settings
   ############################################################
-  if(flagCh4){
+  if(flagCh4 == TRUE){
     #CH4 flux in kinematic units [mol m-2 s-1]
     imfl$F_CH4_kin <- base$rho_dry * imfl$w_hor * imfl$FD_mole_CH4
     mn$F_CH4_kin <- mean(imfl$F_CH4_kin, na.rm=TRUE)

@@ -24,6 +24,10 @@ def.stna(data, MethStna = c(1, 2, 3)[2], whrVar, NumSubSamp = 6,
 \item{\code{PltfEc}}{A specifier indicating which eddy covariance platform data are processed. Should be either "airc" or "towr". Defaults to "airc". [-]}
 
 \item{\code{flagCh4}}{A logical indicating whether or not methane flux is processed. Defaults to TRUE. [-]}
+
+\item{\code{verbose}}{Logical. Default true. When FALSE supresses warnings when calculating rptStna01 and rptStna02.}
+
+\item{\code{...}}{Passes additonal arguments to REYNflux. For example pass spcs and spcsRMM when calculating chemistry fluxes. [-]}
 }
 \value{
 Stationarity test result. [percent]

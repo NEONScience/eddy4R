@@ -29,27 +29,27 @@ def.flux.chem = function(imfl,
 
     for (i in 1:length(spcs)){
       #Define  name of mole ratio for chemical species
-      F_species_var <- def.spec.name(spcs[i],"mole")
+      F_spcs_var <- def.spcs.name(spcs[i],"mole")
       #Define name of chemical species kinamatic flux
-      F_species_kin <- def.spec.name(spcs[i],"kin")
+      F_spcs_kin <- def.spcs.name(spcs[i],"kin")
       #Define name of chemical species mass flux
-      F_species_mass <- def.spec.name(spcs[i],"mass")
+      F_spcs_mass <- def.spcs.name(spcs[i],"mass")
       
       #Chemical flux in kinematic units [mol m-2 s-1]
-      imfl[,F_species_kin] <- base$rho_dry * imfl$w_hor * imfl[,F_species_var]
-      attributes(imfl[,F_species_kin])$unit <- "mol m-2 s-1"
-      mn[,F_species_kin] <- mean(imfl[,F_species_kin], na.rm = TRUE)
-      attributes(mn[,F_species_kin])$unit <- "mol m-2 s-1"
+      imfl[,F_spcs_kin] <- base$rho_dry * imfl$w_hor * imfl[,F_spcs_var]
+      attributes(imfl[,F_spcs_kin])$unit <- "mol m-2 s-1"
+      mn[,F_spcs_kin] <- mean(imfl[,F_spcs_kin], na.rm = TRUE)
+      attributes(mn[,F_spcs_kin])$unit <- "mol m-2 s-1"
       
       #Chemical flux in mass units [mg m-2 h-1]
-      imfl[,F_species_mass] <- imfl[,F_species_kin] * spcsRMM[[i]] * 1e6 * 3600
-      attributes(imfl[,F_species_mass])$unit <- "mg m-2 h-1"
-      mn[,F_species_mass] <- mean(imfl[,F_species_mass], na.rm = TRUE)
-      attributes(mn[,F_species_mass])$unit <- "mg m-2 h-1"
+      imfl[,F_spcs_mass] <- imfl[,F_spcs_kin] * spcsRMM[[i]] * 1e6 * 3600
+      attributes(imfl[,F_spcs_mass])$unit <- "mg m-2 h-1"
+      mn[,F_spcs_mass] <- mean(imfl[,F_spcs_mass], na.rm = TRUE)
+      attributes(mn[,F_spcs_mass])$unit <- "mg m-2 h-1"
       
       #correlation
-      corr[,F_species_kin] <- suppressWarnings(stats::cor(imfl$w_hor, imfl[,F_species_var], use="pairwise.complete.obs"))
-      corr[,F_species_mass] <- corr[,F_species_kin]
+      corr[,F_spcs_kin] <- suppressWarnings(stats::cor(imfl$w_hor, imfl[,F_spcs_var], use="pairwise.complete.obs"))
+      corr[,F_spcs_mass] <- corr[,F_spcs_kin]
     }
     
     #Return

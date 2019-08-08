@@ -76,20 +76,16 @@ def.ucrt.samp <- function(
   }else{
     whrDistIsca <- base::rbind(c("u_star2_x", "u_hor"),
                                c("u_star2_y", "v_hor"),
-                               c("F_H_en", "T_air"))
+                               c("F_H_en", "T_air"),
+                               c("F_LE_en", "FD_mole_H2O"))
     
     for(i in 1:length(spcs)){
-      F_species_var <- def.spec.name(spcs[i],"mole")
-      F_species_mass <- def.spec.name(spcs[i],"mass")
+      F_spcs_var <- def.spcs.name(spcs[i],"mole")
+      F_spcs_mass <- def.spcs.name(spcs[i],"mass")
       
       whrDistIsca = base::rbind(whrDistIsca,
-                                c(F_species_mass,F_species_var))}
+                                c(F_spcs_mass,F_spcs_var))}
   }
-  
-  if("FD_mole_H2O" %in% names(distScalIsca)){
-    whrDistIsca <- base::rbind(whrDistIsca,
-                               c("F_LE_en", "FD_mole_H2O"))}
-  
   
   #variance length scales
   distVariIsca <- distIsca$vari

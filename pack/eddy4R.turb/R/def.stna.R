@@ -16,6 +16,8 @@
 #' @param \code{presTempPot} A vector containing the air pressure data that will be used in the calculation when \code{corTempPot}=TRUE. Of class "numeric" or "integer" and of the same length as \code{data} or single entry. [Pa]
 #' @param \code{PltfEc} A specifier indicating which eddy covariance platform data are processed. Should be either "airc" or "towr". Defaults to "airc". [-]
 #' @param \code{flagCh4} A logical indicating whether or not methane flux is processed. Defaults to TRUE. [-]
+#' @param \code{verbose} Logical. Default true. When FALSE supresses warnings when calculating rptStna01 and rptStna02.
+#' @param \code{...} Passes additonal arguments to REYNflux. For example pass spcs and spcsRMM when calculating chemistry fluxes. [-]
 
 #' @return Stationarity test result. [percent]
 

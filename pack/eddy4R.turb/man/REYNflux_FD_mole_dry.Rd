@@ -6,8 +6,7 @@
 \usage{
 REYNflux_FD_mole_dry(data = eddy.data, AlgBase = c("mean", "trnd",
   "ord03")[1], FcorPOT = TRUE, FcorPOTl = NULL, PltfEc = "airc",
-  flagCh4 = TRUE, rotType = c("single", "double", "planarFit")[1],
-  spcs = NULL, spcsRMM = NULL, ...)
+  flagCh4 = TRUE, spcs = NULL, spcsRMM = NULL, ...)
 }
 \arguments{
 \item{Currently}{none}
