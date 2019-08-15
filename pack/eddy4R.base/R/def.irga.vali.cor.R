@@ -219,7 +219,7 @@ idxIrga <- order(names(rpt))
 #Changing the order of the variables to alphabetical order using the index
 rpt <- rpt[,idxIrga]
 #adding unit attributes
-attrUnit <- c("-", "-", "molCo2 m-3", "molH2o m-3", "NA", "V", "W", "W", "W", "W", "Pa", "Pa", "Pa", "molCo2 mol-1Dry", "molCo2 mol-1Dry",
+attrUnit <- c("-", "-", "molCo2 m-3", "molH2o m-3", "NA", "V", "W", "W", "W", "W", "Pa", "Pa", "Pa", "molCo2 mol-1Dry", "molCo2 mol-1Dry", "molH2o mol-1Dry",
               "-", "-", "K", "K", "K", "K", "NA")
 
 for(idxVar in 1:length(attrUnit)) {
