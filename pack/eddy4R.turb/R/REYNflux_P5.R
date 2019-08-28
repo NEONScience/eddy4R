@@ -60,7 +60,7 @@ REYNflux_FD_mole_dry <- function(
   PltfEc="airc",
   flagCh4 = TRUE,
   spcs = NULL,
-  spcsRMM = NULL,
+  rmm = NULL,
   ...
 )
 {
@@ -344,14 +344,14 @@ REYNflux_FD_mole_dry <- function(
   ############################################################
   # CHEMISTRY FLUX
   ############################################################
-  if(!is.null(spcs) & !is.null(spcsRMM)){
+  if(!is.null(spcs) & !is.null(rmm)){
     # calculate flux
     fluxChem = def.flux.chem(imfl = imfl,
                              mn = mn,
                              corr = cor,
                              base = base,
                              spcs = spcs,
-                             spcsRMM = spcsRMM)
+                             rmm = rmm)
     
     # tidy output
     # When REYNflux becomes wrapper - the arguments/return of this function should be changed such that both

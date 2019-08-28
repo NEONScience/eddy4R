@@ -15,13 +15,13 @@ def.spcs.name = function(spcs,type = c("mole","mass","kin")[1]){
     return(NULL)
   
   if(type == "mole")
-    spcsNamed = paste0("FD_mole_",toupper(spcs))
+    nameSpcs = paste0("FD_mole_",toupper(spcs))
   
   if(type == "mass")
-    spcsNamed = paste0("F_",toupper(spcs),"_mass")
+    nameSpcs = paste0("F_",toupper(spcs),"_mass")
   
   if(type == "kin")
-    spcsNamed = paste0("F_",toupper(spcs),"_kin")
+    nameSpcs = paste0("F_",toupper(spcs),"_kin")
   
-  spcsNamed
+  nameSpcs
 }

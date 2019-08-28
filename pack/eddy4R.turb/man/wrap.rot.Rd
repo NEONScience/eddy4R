@@ -4,27 +4,32 @@
 \alias{wrap.rot}
 \title{Define Rotation of Wind Vectors}
 \usage{
-wrap.rot(data, rotType = c("single", "double", "planarFit", "none")[1],
+wrap.rot(data, MethRot = c("single", "double", "planarFit", "none")[1],
   plnrFitCoef = NULL, plnrFitType = c("simple", "time", "wind")[1])
 }
 \arguments{
 \item{data}{data.frame containing u_met, v_met and w_met [data.frame]}
 
-\item{rotType}{type of rotation to be performed, one of "single", "double" or "planarFit" [character vector]}
+\item{MethRot}{method of rotation to be used, one of "single", "double" or "planarFit".\cr
+"none" can be supplied to perform no rotation [character vector]}
 
-\item{plnrFitCoef}{coefficients for planar fit [numeric vector or data.frame]}
-
-\item{plnrFitType}{type of planar fit, "simple", "date" or "wind". [character vector] \itemize{
+\item{plnrFitCoef}{coefficients for planar fit. [numeric vector or data.frame] \cr 
+Depending on plnrFitType, plnrFitCoef should be supplied as the following structure: \itemize{
                    \item simple - numeric vector constant of coefficeients, or coefficeients that are controlled from the workflow. c(al,be,b0)
-                   \item time - data.frame with columns date, al, be, b0. values with date nearest to mean(data$date)
-                   \item time - data.frame with columns PSI_uv, al, be, b0. values with date nearest to average wind dir
-}}
+                   \item time - data.frame with columns date, al, be, b0. values with date nearest to mean(data$date) will be used
+                   \item wind - data.frame with columns PSI_uv, al, be, b0. values with PSI_uv nearest to average PSI_uv will be used
+                   }}
+
+\item{plnrFitType}{type of planar fit, "simple", "date" or "wind". [character vector]}
 }
 \value{
 Data object with rotated wind vectors added
 }
 \description{
-Perform either single or double rotation of wind vectors.
+Perform various types of wind vector rotations incl. single, double, planar fit.
+}
+\references{
+Code adapted from REYNFlux_P5 - Stefan Metzger / Cove Sturtevant / Ke Xu - as of commit 35ceda9
 }
 \author{
 W. S. Drysdale

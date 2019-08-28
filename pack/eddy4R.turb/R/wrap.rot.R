@@ -1,34 +1,36 @@
 #' Define Rotation of Wind Vectors
 #' 
-#' Perform either single or double rotation of wind vectors.
+#' Perform various types of wind vector rotations incl. single, double, planar fit.
 #' 
 #' @param data data.frame containing u_met, v_met and w_met [data.frame]
-#' @param rotType type of rotation to be performed, one of "single", "double" or "planarFit" [character vector]
-#' @param plnrFitCoef coefficients for planar fit [numeric vector or data.frame]
-#' @param plnrFitType type of planar fit, "simple", "date" or "wind". [character vector] \itemize{
+#' @param MethRot method of rotation to be used, one of "single", "double" or "planarFit".\cr
+#'  "none" can be supplied to perform no rotation [character vector]
+#' @param plnrFitCoef coefficients for planar fit. [numeric vector or data.frame] \cr 
+#' Depending on plnrFitType, plnrFitCoef should be supplied as the following structure: \itemize{
 #'                    \item simple - numeric vector constant of coefficeients, or coefficeients that are controlled from the workflow. c(al,be,b0)
-#'                    \item time - data.frame with columns date, al, be, b0. values with date nearest to mean(data$date)
-#'                    \item time - data.frame with columns PSI_uv, al, be, b0. values with date nearest to average wind dir
-#' }
+#'                    \item time - data.frame with columns date, al, be, b0. values with date nearest to mean(data$date) will be used
+#'                    \item wind - data.frame with columns PSI_uv, al, be, b0. values with PSI_uv nearest to average PSI_uv will be used
+#'                    }
+#' @param plnrFitType type of planar fit, "simple", "date" or "wind". [character vector]
 #' @return Data object with rotated wind vectors added
+#' 
+#' @references Code adapted from REYNFlux_P5 - Stefan Metzger / Cove Sturtevant / Ke Xu - as of commit 35ceda9
 #' 
 #' @author W. S. Drysdale
 #' 
 #' @export
 
 wrap.rot = function(data,
-                   rotType = c("single","double","planarFit","none")[1],
-                   plnrFitCoef = NULL,
-                   plnrFitType = c("simple","time","wind")[1]){
+                    MethRot = c("single","double","planarFit","none")[1],
+                    plnrFitCoef = NULL,
+                    plnrFitType = c("simple","time","wind")[1]){
   
   # rotation angle
   mnPSI_uv = eddy4R.base::def.pol.cart(matrix(c(mean(data$v_met, na.rm = TRUE),
                                                 mean(data$u_met, na.rm = TRUE)),
                                               ncol=2))
   
-  
-  
-  if(rotType %in% c("single","double")){
+  if(MethRot %in% c("single","double")){
     rotang <- (eddy4R.base::def.unit.conv(data=(mnPSI_uv+180),unitFrom="deg",unitTo="rad")) %% (2*pi)
     
     B <- matrix(nrow=3, ncol=3)
@@ -45,9 +47,9 @@ wrap.rot = function(data,
     U <- rbind(data$v_met, data$u_met, data$w_met)
     Urot <- B %*% U
     
-    if(rotType == "double"){
+    if(MethRot == "double"){
       #second rotation
-      rotang_v = atan2(mean(Urot[3,],na.rm = T),mean(Urot[1,],na.r = T))
+      rotang_v = atan2(mean(Urot[3,],na.rm = TRUE),mean(Urot[1,],na.r = TRUE))
       B2 <- matrix(nrow=3, ncol=3)
       B2[1,1] <- cos(rotang_v)
       B2[1,2] <- 0
@@ -69,13 +71,13 @@ wrap.rot = function(data,
     
   }
   
-  if(rotType == "none"){
+  if(MethRot == "none"){
     data$u_hor = data$u_met
     data$v_hor = data$v_met
     data$w_hor = data$w_met
   }
   
-  if(rotType == "planarFit"){
+  if(MethRot == "planarFit"){
     
     if(is.null(plnrFitCoef)){
       stop("plnrFitCoef is NULL")

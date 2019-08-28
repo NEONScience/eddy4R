@@ -4,7 +4,7 @@
 \alias{def.flux.chem}
 \title{Define Chemical Species Flux}
 \usage{
-def.flux.chem(imfl, mn, corr, base, spcs, spcsRMM)
+def.flux.chem(imfl, mn, corr, base, spcs, rmm)
 }
 \arguments{
 \item{imfl}{immediate fluctuations, created during "BASE STATE AND DEVIATIONS" step. [data.frame]}
@@ -18,14 +18,19 @@ def.flux.chem(imfl, mn, corr, base, spcs, spcsRMM)
 \item{spcs}{names of species as molecular formulae, using IUPAC style where approprate
 e.g \code{c("NO","NO2","C6H6")} [character vector]}
 
-\item{spcsRMM}{relative molecular mass of spcs in kg mol-1. must be of equal length to spcs
-e.g \code{c(0.03001,0.46005,0.07811)}. See \code{eddy4R.base::IntlNatu$Molm*} for some built in spcsRMM}
+\item{rmm}{relative molecular mass of spcs in kg mol-1. must be of equal length to spcs
+e.g \code{c(0.03001,0.46005,0.07811)}. See \code{eddy4R.base::IntlNatu$Molm*} for some built in rmm}
 }
 \value{
 list containing the updated imfl, mn and cor objects
 }
 \description{
-General Version of the CH4 flux calculation. Can use built in species RMM from IntlNatu or supply custom values
+Calculate flux of chemical species. \cr
+General Version of the CH4 flux calculation. \cr
+Can use built in species RMM from IntlNatu or supply custom values \cr
+}
+\references{
+Code adapted from REYNFlux_P5 - Stefan Metzger / Cove Sturtevant / Ke Xu - as of commit 35ceda9
 }
 \author{
 W. S. Drysdale
