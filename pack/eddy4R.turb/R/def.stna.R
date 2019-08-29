@@ -16,7 +16,7 @@
 #' @param \code{presTempPot} A vector containing the air pressure data that will be used in the calculation when \code{corTempPot}=TRUE. Of class "numeric" or "integer" and of the same length as \code{data} or single entry. [Pa]
 #' @param \code{PltfEc} A specifier indicating which eddy covariance platform data are processed. Should be either "airc" or "towr". Defaults to "airc". [-]
 #' @param \code{flagCh4} A logical indicating whether or not methane flux is processed. Defaults to TRUE. [-]
-#' @param \code{vbrs} Logical. Default true. When FALSE supresses warnings when calculating rptStna01 and rptStna02.
+#' @param \code{vrbs} Logical. Default true. When FALSE supresses warnings when calculating rptStna01 and rptStna02.
 #' @param \code{...} Passes additonal arguments to REYNflux. For example pass spcs and rmm when calculating chemistry fluxes. [-]
 
 #' @return Stationarity test result. [percent]
@@ -88,7 +88,7 @@ def.stna <- function(
     )
     
     #deviation [%]
-    if(vbrs == TRUE)
+    if(vrbs == TRUE)
       rptStna01 <- ((detr$mn - trnd$mn) / trnd$mn * 100)[whrVar]
     else
       rptStna01 <- suppressWarnings(((detr$mn - trnd$mn) / trnd$mn * 100)[whrVar])
@@ -124,7 +124,7 @@ def.stna <- function(
     dimnames(outSubSamp)[[2]] <- whrVar
     
     #stationarity criteria
-    if(vbrs == TRUE)
+    if(vrbs == TRUE)
       rptStna02 <- (base::colMeans(outSubSamp) - trnd$mn[whrVar]) / trnd$mn[whrVar] * 100
     else
       rptStna02 <- suppressWarnings((base::colMeans(outSubSamp) - trnd$mn[whrVar]) / trnd$mn[whrVar] * 100)

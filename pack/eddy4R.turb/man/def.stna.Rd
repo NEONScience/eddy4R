@@ -25,7 +25,7 @@ def.stna(data, MethStna = c(1, 2, 3)[2], whrVar, NumSubSamp = 6,
 
 \item{\code{flagCh4}}{A logical indicating whether or not methane flux is processed. Defaults to TRUE. [-]}
 
-\item{\code{vbrs}}{Logical. Default true. When FALSE supresses warnings when calculating rptStna01 and rptStna02.}
+\item{\code{vrbs}}{Logical. Default true. When FALSE supresses warnings when calculating rptStna01 and rptStna02.}
 
 \item{\code{...}}{Passes additonal arguments to REYNflux. For example pass spcs and rmm when calculating chemistry fluxes. [-]}
 }
