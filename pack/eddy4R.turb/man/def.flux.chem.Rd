@@ -2,7 +2,7 @@
 % Please edit documentation in R/def.flux.chem.R
 \name{def.flux.chem}
 \alias{def.flux.chem}
-\title{Define Chemical Species Flux}
+\title{Definition function: Chemical Species Flux}
 \usage{
 def.flux.chem(imfl, mn, corr, base, spcs, rmm)
 }

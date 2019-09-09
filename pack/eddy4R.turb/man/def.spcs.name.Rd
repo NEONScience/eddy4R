@@ -12,7 +12,7 @@ def.spcs.name(spcs, type = c("mole", "mass", "kin")[1])
 \item{type}{one of c("mole","mass","kin") for each type of name required}
 }
 \description{
-generate eddy4r style names for chemical species
+Generate eddy4r style names for chemical species
 }
 \author{
 W. S. Drysdale

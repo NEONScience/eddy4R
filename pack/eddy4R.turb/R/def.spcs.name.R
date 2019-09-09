@@ -1,6 +1,7 @@
-#' Name Species
+#' @title Name Species
 #' 
-#' generate eddy4r style names for chemical species
+#' @description 
+#' Generate eddy4r style names for chemical species
 #' 
 #' @param spcs species name such that FD_mole_species corresponds to a column header in data [character]
 #' @param type one of c("mole","mass","kin") for each type of name required

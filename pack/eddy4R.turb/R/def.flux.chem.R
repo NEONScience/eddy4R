@@ -1,5 +1,6 @@
-#' Define Chemical Species Flux
+#' @title Definition function: Chemical Species Flux
 #' 
+#' @description 
 #' Calculate flux of chemical species. \cr
 #' General Version of the CH4 flux calculation. \cr
 #' Can use built in species RMM from IntlNatu or supply custom values \cr
