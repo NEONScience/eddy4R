@@ -59,6 +59,7 @@ def.hdf5.wrte.dp01.api <- function(
 
 #Needed library
 library(rhdf5)
+library(neonUtilities)
 #TODO: 
 #Create check if group level exists and create if not
 #Add other dp01's and remove hardcoded units
