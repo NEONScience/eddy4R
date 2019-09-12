@@ -7,7 +7,7 @@
 def.lag(refe, meas, freq, dataRefe = refe, dataMeas = meas,
   measVar = NULL, lagMax = 2 * freq, lagCnst = TRUE,
   lagNgtvPstv = c("n", "p", "np")[3], lagAll = TRUE, hpf = TRUE,
-  fracMin = 0.1)
+  fracMin = 0.1, plot = FALSE, DirPlot = NULL)
 }
 \arguments{
 \item{refe}{A vector with variable in reference time frame. Of class numeric. [-]}
@@ -33,6 +33,10 @@ def.lag(refe, meas, freq, dataRefe = refe, dataMeas = meas,
 \item{hpf}{TRUE - apply Butterworth high-pass filter; FALSE - use raw data. Defaults to TRUE. Of class logical. [-]}
 
 \item{fracMin}{Minimum fraction of data to attempt lag determination. Defaults to 0.1. Of class numeric. [-]}
+
+\item{plot}{TRUE - will output cross-correlation plots to set working directory; FALSE - no cross-correlation plot will be generated. Defaults to FALSE. Of class logical. [-]}
+
+\item{DirPlot}{A string defining the Directory to output cross-correlation plots to, if plot = TRUE. Defaults to NULL. Of class integer or character. [-]}
 }
 \value{
 Lagged input data and calculation results in a list consisting of:\cr

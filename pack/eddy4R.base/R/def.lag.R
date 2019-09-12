@@ -162,7 +162,7 @@ def.lag <- function(
     if(lagCnst == TRUE) {
       
       #calculate autocorrelation
-      corr <- ccf(refe, meas, lag.max = lagMax, plot = FALSE, na.action = na.pass)
+      corr <- ccf(refe, meas, lag.max = lagMax, plot = plot, na.action = na.pass)
       #consider negative lag times only: set correlations for positive lag time to zero
       if(lagNgtvPstv == "n") corr$acf[which(corr$lag > 0)] <- 0          
       #consider positive lag times only: set correlations for negative lag time to zero
@@ -184,7 +184,7 @@ def.lag <- function(
         #increase lagMax argument
         if(count > 1) lagMax <- 2 * lagMax
         #calculate autocorrelation
-        corr <- ccf(refe, meas, lag.max = lagMax, plot = FALSE, na.action = na.pass)
+        corr <- ccf(refe, meas, lag.max = lagMax, plot = plot, na.action = na.pass)
         #consider negative lag times only: set correlations for positive lag time to zero
         if(lagNgtvPstv == "n") corr$acf[which(corr$lag > 0)] <- 0          
         #consider positive lag times only: set correlations for negative lag time to zero
@@ -198,6 +198,9 @@ def.lag <- function(
       }
       
     }
+    
+    if(plot == TRUE)
+      dev.off()
     
     #adjust entire dataMeas time series to dataRefe time (assuming constant timing offset over all variables)
     #refe <- lag(refe, k=lag*freq)
@@ -232,7 +235,8 @@ def.lag <- function(
       dataRefe=refeOut,
       dataMeas=measOut,
       lag=lag,
-      corrCros=ifelse(lagAll==TRUE, max(abs(corr$acf)), max(corr$acf))
+      corrCros=ifelse(lagAll==TRUE, max(abs(corr$acf)), max(corr$acf)),
+      corr = corr
     )
     return(rpt)
     #end if !is.na(lag)
@@ -241,7 +245,8 @@ def.lag <- function(
         dataRefe=dataRefe,
         dataMeas=dataMeas,
         lag=NA,
-        corrCros=NA
+        corrCros=NA,
+        corr = NA
       )
       return(rpt)
     }
