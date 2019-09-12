@@ -44,6 +44,8 @@
 #     - Add other dp01's and remove hardcoded units
 #   Natchaya P-Durden (2019-06-10)
 #     adding additional data products
+#   Natchaya P-Durden (2019-09-12)
+#     get information of existing dp01 hor and ver from dp0p hdf5 file
 ##############################################################################################
 
 def.hdf5.wrte.dp01.api <- function(
@@ -118,42 +120,9 @@ if(class(data) == "try-error"){
   #Initialize lists
   rpt <- list(data = list(), qfqm = list(), ucrt = list())
   #get sensor HOR and VER
-  if (DpName %in% "radiNet"){
-    LvlMeas <- LvlTowr} else{
-      #assign downloading directory
-      DirDnld <- paste0(dirname(FileOut), "/",DpName)
-      #Check if download directory exists and create if not
-      if(dir.exists(DirDnld) == FALSE) dir.create(DirDnld, recursive = TRUE)
-      
-      #download data from dataportal
-      neonUtilities::getPackage(dpID = DpNum, site_code = SiteLoca, year_month = yearMnth, package = "basic",savepath = DirDnld)
-      
-      #get the list of download zip file
-      fileList <- list.files(path = DirDnld, pattern= ".zip", all.files=FALSE,
-                             full.names=FALSE)
-      #unzip the download zip file
-      utils::unzip(zipfile = paste0(DirDnld,"/", fileList), exdir = DirDnld, overwrite = TRUE)
-      
-      #get sensor position file name
-      fileName <- list.files(path = DirDnld, pattern = paste0("sensor_positions"))
-      
-      #read in .csv file
-      sensLoc <- read.csv(paste0(DirDnld,"/", fileName), header=TRUE)
-      #get vertical and horizontal measurement location
-      tmpLoc <- strsplit(as.character(sensLoc$HOR.VER),split='.', fixed=TRUE)
-      hor <- unlist(lapply(1:length(tmpLoc), function(x) {
-        if (nchar(tmpLoc[[x]][1]) == 1) {as.character(paste0("00",tmpLoc[[x]][1]))} else{as.character(tmpLoc[[x]][1])}
-      }))
-      ver <- unlist(lapply(1:length(tmpLoc), function(x) {
-        if (nchar(tmpLoc[[x]][2]) == 2) {as.character(paste0(tmpLoc[[x]][2],"0"))} else{as.character(tmpLoc[[x]][2])}
-      }))
-      #merge hor.ver and hor_ver
-      LocMeas <- as.character(paste0(hor,".",ver))
-      LvlMeas <- as.character(paste0(hor,"_",ver))
-      #delete download folder
-      print(unlink(DirDnld, recursive=TRUE))
-      }#end else
-  
+  LocMeas <- gsub("\\_", ".", LvlTowr[[DpName]])
+  LvlMeas <- LvlTowr[[DpName]]
+
   #Determine the output levels
   LvlMeasOut <- LocMeas
   #Name for HDF5 output
@@ -285,15 +254,9 @@ names(nameVar$TimeOut) <- c("timeEnd", "timeBgn")
 #Grabbing the tower measurement levels for a given dp01 product
 ###############################################################################
 #get vertical and horizontal measurement location
-if (DpName %in% "radiNet"){
-  LocMeas <- gsub("\\_", ".", LvlTowr)
-  LvlMeas <- LvlTowr
-} else {
-  tmpLoc <- subset(names(data), grepl("Maximum",names(data)))
-  LocMeas <- gsub("[a-zA-Z]", "", tmpLoc)
-  LocMeas <- substring(LocMeas, 2)
-  LocMeas <- LocMeas[!duplicated(LocMeas)]
-  LvlMeas <- gsub("\\.", "_", LocMeas) }
+#get sensor HOR and VER
+LocMeas <- gsub("\\_", ".", LvlTowr[[DpName]])
+LvlMeas <- LvlTowr[[DpName]]
 
 #Determine the output levels
 LvlMeasOut <- LocMeas
