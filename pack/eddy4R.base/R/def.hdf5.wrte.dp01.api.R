@@ -46,6 +46,7 @@
 #     adding additional data products
 #   Natchaya P-Durden (2019-09-12)
 #     get information of existing dp01 hor and ver from dp0p hdf5 file
+#     convert qmBeta and qmAlph to fraction
 ##############################################################################################
 
 def.hdf5.wrte.dp01.api <- function(
@@ -165,7 +166,7 @@ if(class(data) == "try-error"){
         #Create the output dataframe for data values
         dataOut <- data.frame("timeBgn" = strftime(as.character(timeBgnOut), format= "%Y-%m-%dT%H:%M:%OSZ", tz="UTC"), "timeEnd" = strftime(as.character(timeEndOut), format= "%Y-%m-%dT%H:%M:%OSZ", tz="UTC"), "mean" = dataNa, stringsAsFactors = FALSE) 
         #Create the output dataframe for qfqm values
-        qfqmOut <- data.frame("timeBgn" = strftime(as.character(timeBgnOut), format= "%Y-%m-%dT%H:%M:%OSZ", tz="UTC"), "timeEnd" = strftime(as.character(timeEndOut), format= "%Y-%m-%dT%H:%M:%OSZ", tz="UTC"), "qfDew" = rep(x = -1.0, length = length(timeBgnOut)), "qfFinl" = rep(x = 1L, length = length(timeBgnOut)), "qfSci" = rep(x = 0L, length = length(timeBgnOut)), "qfTemp" = rep(x = -1.0, length = length(timeBgnOut)), stringsAsFactors = FALSE) 
+        qfqmOut <- data.frame("timeBgn" = strftime(as.character(timeBgnOut), format= "%Y-%m-%dT%H:%M:%OSZ", tz="UTC"), "timeEnd" = strftime(as.character(timeEndOut), format= "%Y-%m-%dT%H:%M:%OSZ", tz="UTC"), "qfDew" = rep(x = 1L, length = length(timeBgnOut)), "qfFinl" = rep(x = 1L, length = length(timeBgnOut)), "qfSci" = rep(x = 0L, length = length(timeBgnOut)), "qfTemp" = rep(x = 1L, length = length(timeBgnOut)), stringsAsFactors = FALSE) 
         #Create the output dataframe for ucrt values 
         ucrtOut <- data.frame("timeBgn" = strftime(as.character(timeBgnOut), format= "%Y-%m-%dT%H:%M:%OSZ", tz="UTC"), "timeEnd" = strftime(as.character(timeEndOut), format= "%Y-%m-%dT%H:%M:%OSZ", tz="UTC"), "ucrtCal95" = dataNa, stringsAsFactors = FALSE) 
       }
@@ -345,6 +346,17 @@ for (idxLvl in names(tmp$qfqm)){
     names(attributes(rpt$qfqm[[idxLvl]][[TblName[idxSupDp]]])$unit) <- names(rpt$qfqm[[idxLvl]][[TblName[idxSupDp]]])
     #Convert all NaNs in the qfSci to 0
     rpt$qfqm[[idxLvl]][[TblName[idxSupDp]]][is.nan(rpt$qfqm[[idxLvl]][[TblName[idxSupDp]]]$qfSci),"qfSci"] <- 0L
+    if (!(TblName[idxSupDp] %in% "presCor")){
+    #Convert all NaNs in the qmAlph and qmBeta to 100
+    rpt$qfqm[[idxLvl]][[TblName[idxSupDp]]][is.nan(rpt$qfqm[[idxLvl]][[TblName[idxSupDp]]]$qmAlph),"qmAlph"] <- 0L
+    rpt$qfqm[[idxLvl]][[TblName[idxSupDp]]][is.nan(rpt$qfqm[[idxLvl]][[TblName[idxSupDp]]]$qmBeta),"qmBeta"] <- 100L
+    #Convert unit of qmAlph and qmBeta to fraction
+    rpt$qfqm[[idxLvl]][[TblName[idxSupDp]]]$qmAlph <- (rpt$qfqm[[idxLvl]][[TblName[idxSupDp]]]$qmAlph)/100
+    rpt$qfqm[[idxLvl]][[TblName[idxSupDp]]]$qmBeta <- (rpt$qfqm[[idxLvl]][[TblName[idxSupDp]]]$qmBeta)/100
+    } else {
+      rpt$qfqm[[idxLvl]][[TblName[idxSupDp]]][is.nan(rpt$qfqm[[idxLvl]][[TblName[idxSupDp]]]$qfDew),"qfDew"] <- 1L
+      rpt$qfqm[[idxLvl]][[TblName[idxSupDp]]][is.nan(rpt$qfqm[[idxLvl]][[TblName[idxSupDp]]]$qfTemp),"qfTemp"] <- 1L
+    }
   }
 }
 # #Convert all NaNs in the qfSci to 0
