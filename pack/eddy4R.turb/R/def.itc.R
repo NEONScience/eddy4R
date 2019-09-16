@@ -160,6 +160,10 @@ def.itc <- function(
   if(VarInp %in% c("all")) {
     veloFric <- base::sqrt(veloXaxs^2 + veloZaxs^2)
     fluxSens <- base::sqrt(veloZaxs^2 + temp^2)
+    #calculate the flag; pass (0) both qfVeloXaxs and qfVeloZaxs are zero
+    qfVeloFric <- ifelse(qfVeloXaxs == 0 & qfVeloZaxs == 0, 0, 1)
+    #calculate the flag; pass (0) both qfTemp and qfVeloZaxs are zero
+    qfFluxSens <- ifelse(qfTemp == 0 & qfVeloZaxs == 0, 0, 1)
   }
 #clean up
 #rm(CoefVeloXaxs, CoefVeloZaxs, CoefTemp, coefCorl)
