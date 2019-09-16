@@ -196,5 +196,5 @@ rm(coefCorl)
 #rm(itcVeloXaxsMeas, itcVeloXaxsModl, itcVeloZaxsMeas, itcVeloZaxsModl, itcTempMeas, itcTempModl)
 #-----------------------------------------------------------
 #EXPORT RESULTS
-return(itc)
+return(rpt)
 }
