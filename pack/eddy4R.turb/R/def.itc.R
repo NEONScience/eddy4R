@@ -42,6 +42,9 @@
 #   Natchaya P-Durden (2016-07-22)
 #     initail naming convention for eddy4R
 #     modified function by adding the input variable options
+#   Natchaya P-Durden (2019-09-09)
+#     changed outputs format to list
+#     added calculation of quality flags
 ##############################################################################################
 #INTEGRAL TURBULENCE CHARACTERISTICS
 def.itc <- function(
@@ -51,6 +54,8 @@ def.itc <- function(
   sd,
   varScal
 ) {
+  #initial list
+  rpt <- list()
   #constants for stability parameter
   CnstLocStblObkv <- list(Cnst01 = -0.032, Cnst02 = -1, Cnst03 = -0.062, Cnst04 = 0.02, Cnst05 = -0.2, Cnst06 = 0.4)
   
@@ -84,6 +89,9 @@ def.itc <- function(
   
     #final criteria [%]
     veloXaxs <- (base::abs(itcVeloXaxsMeas - itcVeloXaxsModl) / itcVeloXaxsModl) * 100
+    #calculate the flag; pass (0) if  =< 100%; failed (1) >100%; otherwise = -1
+    qfVeloXaxs <- ifelse(is.na(veloXaxs), -1, 
+                         ifelse(veloXaxs <= 100, 0, 1))
   }
   
   #Calculate MODEL ITCS for vertical-axis wind speed
@@ -113,6 +121,9 @@ def.itc <- function(
 
     #final criteria [%]
     veloZaxs <- (base::abs(itcVeloZaxsMeas - itcVeloZaxsModl) / itcVeloZaxsModl) * 100
+    #calculate the flag; pass (0) if  =< 100%; failed (1) >100%; otherwise = -1
+    qfVeloZaxs <- ifelse(is.na(veloZaxs), -1, 
+                         ifelse(veloZaxs <= 100, 0, 1))
   }
 
   #Calculate MODEL ITCS for temperature
@@ -140,6 +151,9 @@ def.itc <- function(
     
     #final criteria [%]
     temp <- (base::abs(itcTempMeas - itcTempModl) / itcTempModl) * 100
+    #calculate the flag; pass (0) if  =< 100%; failed (1) >100%; otherwise = -1
+    qfTemp <- ifelse(is.na(temp), -1, 
+                     ifelse(temp <= 100, 0, 1))
   }
 
   ##final criteria [%] for combined variables: u_star and sensible heat flux
@@ -155,19 +169,23 @@ rm(coefCorl)
 #output dataframe
   if(VarInp == "veloXaxs"){
     #itc <- data.frame(veloXaxs=veloXaxs)
-    itc <- data.frame(u_hor=veloXaxs) #this line will be replaced by above line once we apply name convention to the reference file header 
+    rpt$itc <- data.frame(u_hor=veloXaxs) #this line will be replaced by above line once we apply name convention to the reference file header 
+    rpt$qfItc <- data.frame(u_hor=qfVeloXaxs)
   }
   if(VarInp == "veloZaxs"){
     #itc <- data.frame(veloZaxs=veloZaxs)
-    itc <- data.frame(w_hor=veloZaxs) #this line will be replaced by above line once we apply name convention to the reference file header
+    rpt$itc <- data.frame(w_hor=veloZaxs) #this line will be replaced by above line once we apply name convention to the reference file header
+    rpt$qfItc <- data.frame(w_hor=qfVeloZaxs)
   }
   if(VarInp == "temp"){
     #itc <- data.frame(temp=temp)
-    itc <- data.frame(T_air=temp)
+    rpt$itc <- data.frame(T_air=temp)
+    rpt$qfItc <- data.frame(T_air=qfTemp)
   }
   if(VarInp == "all"){
     #itc <- data.frame(veloXaxs=veloXaxs, veloZaxs=veloZaxs, temp=temp, veloFric=veloFric, fluxSens=fluxSens)
-    itc <- data.frame(u_hor=veloXaxs, w_hor=veloZaxs, T_air=temp, u_star=veloFric, F_H_kin=fluxSens) #this line will be replaced by above line once we apply name convention to the reference file header
+    rpt$itc <- data.frame(u_hor=veloXaxs, w_hor=veloZaxs, T_air=temp, u_star=veloFric, F_H_kin=fluxSens) #this line will be replaced by above line once we apply name convention to the reference file header
+    rpt$qfItc <- data.frame(u_hor=qfVeloXaxs, w_hor=qfVeloZaxs, T_air=qfTemp, u_star=qfVeloFric, F_H_kin=qfFluxSens)
   }
 #
 #clean up
