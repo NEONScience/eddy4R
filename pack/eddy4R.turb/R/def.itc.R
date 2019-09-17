@@ -90,7 +90,7 @@ def.itc <- function(
     #final criteria [%]
     veloXaxs <- (base::abs(itcVeloXaxsMeas - itcVeloXaxsModl) / itcVeloXaxsModl) * 100
     #calculate the flag; pass (0) if  =< 100%; failed (1) >100%
-    qfVeloXaxs <- ifelse(is.na(veloXaxs) | veloXaxs > 100, 1, 0)
+    qfVeloXaxs <- as.integer(ifelse(is.na(veloXaxs) | veloXaxs > 100, 1, 0))
   }
   
   #Calculate MODEL ITCS for vertical-axis wind speed
@@ -121,7 +121,7 @@ def.itc <- function(
     #final criteria [%]
     veloZaxs <- (base::abs(itcVeloZaxsMeas - itcVeloZaxsModl) / itcVeloZaxsModl) * 100
     #calculate the flag; pass (0) if  =< 100%; failed (1) >100%
-    qfVeloZaxs <- ifelse(is.na(veloZaxs) | veloZaxs > 100, 1, 0)
+    qfVeloZaxs <- as.integer(ifelse(is.na(veloZaxs) | veloZaxs > 100, 1, 0))
   }
 
   #Calculate MODEL ITCS for temperature
@@ -150,7 +150,7 @@ def.itc <- function(
     #final criteria [%]
     temp <- (base::abs(itcTempMeas - itcTempModl) / itcTempModl) * 100
     #calculate the flag; pass (0) if  =< 100%; failed (1) >100%
-    qfTemp <- ifelse(is.na(temp) | temp > 100, 1, 0)
+    qfTemp <- as.integer(ifelse(is.na(temp) | temp > 100, 1, 0))
   }
 
   ##final criteria [%] for combined variables: u_star and sensible heat flux
@@ -158,9 +158,9 @@ def.itc <- function(
     veloFric <- base::sqrt(veloXaxs^2 + veloZaxs^2)
     fluxSens <- base::sqrt(veloZaxs^2 + temp^2)
     #calculate the flag; pass (0) both qfVeloXaxs and qfVeloZaxs are zero
-    qfVeloFric <- ifelse(qfVeloXaxs == 0 & qfVeloZaxs == 0, 0, 1)
+    qfVeloFric <- as.integer(ifelse(qfVeloXaxs == 0 & qfVeloZaxs == 0, 0, 1))
     #calculate the flag; pass (0) both qfTemp and qfVeloZaxs are zero
-    qfFluxSens <- ifelse(qfTemp == 0 & qfVeloZaxs == 0, 0, 1)
+    qfFluxSens <- as.integer(ifelse(qfTemp == 0 & qfVeloZaxs == 0, 0, 1))
   }
 #clean up
 #rm(CoefVeloXaxs, CoefVeloZaxs, CoefTemp, coefCorl)
