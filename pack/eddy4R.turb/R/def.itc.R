@@ -13,8 +13,9 @@
 #' @param \code{VarInp} A vector of class "character" containing the name of variables to be performed integral turbulence characteristics test. \code{VarInp} = c("veloXaxs","veloZaxs","temp","all"), where "veloXaxs" is along-axis horizontal wind speed, "veloZaxs" is vertical-axis wind speed, "temp" is air temperature, and "all" is all three variables. Defaults to "all".[-]
 #' @param \code{sd} A vector or data frame containing standard deviation of \code{VarInp} and of class "numeric". If \code{VarInp} = "all",  \code{sd} shall contain in the follwing orders, standard deviation of along-axis horizontal wind speed, standard deviation of vertical-axis wind speed, and standard deviation of air temperature. [user-defined]
 #' @param \code{varScal} A vector or data frame containing the scaling variables of \code{VarInp} and of class "numeric". If \code{VarInp} = "all", \code{varScal} shall contain in the follwing orders, scaling variable of wind speed (friction velocity will be used for both "veloXaxs" and "veloZaxs") and scaling variable of air temperature.  [user-defined]
-
-#' @return Data frame of integral turbulence characteristics test results of \code{VarInp}. If \code{VarInp} = "all", it includes test results for individual variable, i.e., along-axis horizontal wind speed, vertical-axis wind speed, and air temperature and also combined variables, i.e., friction velocity and sensible heat flux. [percent]
+#' @param \code{Thsh} Threshold value to indicate if quality flag will raise high (qfItc = 1) when the calculated quality indicator values are greater the threshold. Defaults as 100. [percent]
+#' 
+#' @return List of integral turbulence characteristics test results of \code{VarInp}. If \code{VarInp} = "all", it includes test results for individual variable, i.e., along-axis horizontal wind speed, vertical-axis wind speed, and air temperature and also combined variables, i.e., friction velocity and sensible heat flux. [percent]
 
 #' @references 
 #' Thomas, C. and Foken, T: Re-evaluation of integral turbulence characteristics and their parameterisations, 15th Conference on Turbulence and Boundary Layers, Wageningen, NL, American Meteorological Society, pp. 129-132, 2002.
@@ -45,6 +46,10 @@
 #   Natchaya P-Durden (2019-09-09)
 #     changed outputs format to list
 #     added calculation of quality flags
+#   Natchaya P-Durden (2019-09-27)
+#     add threshold value in the parameter
+#     update the final criteria for combined variables (u_star and sensible heat flux) 
+#     to use the maximum value
 ##############################################################################################
 #INTEGRAL TURBULENCE CHARACTERISTICS
 def.itc <- function(
@@ -52,7 +57,8 @@ def.itc <- function(
   lat,
   VarInp=c("veloXaxs","veloZaxs","temp","all")[4],
   sd,
-  varScal
+  varScal,
+  Thsh = 100
 ) {
   #initial list
   rpt <- list()
@@ -90,7 +96,7 @@ def.itc <- function(
     #final criteria [%]
     veloXaxs <- (base::abs(itcVeloXaxsMeas - itcVeloXaxsModl) / itcVeloXaxsModl) * 100
     #calculate the flag; pass (0) if  =< 100%; failed (1) >100%
-    qfVeloXaxs <- as.integer(ifelse(is.na(veloXaxs) | veloXaxs > 100, 1, 0))
+    qfVeloXaxs <- as.integer(ifelse(is.na(veloXaxs) | veloXaxs > Thsh, 1, 0))
   }
   
   #Calculate MODEL ITCS for vertical-axis wind speed
@@ -121,7 +127,7 @@ def.itc <- function(
     #final criteria [%]
     veloZaxs <- (base::abs(itcVeloZaxsMeas - itcVeloZaxsModl) / itcVeloZaxsModl) * 100
     #calculate the flag; pass (0) if  =< 100%; failed (1) >100%
-    qfVeloZaxs <- as.integer(ifelse(is.na(veloZaxs) | veloZaxs > 100, 1, 0))
+    qfVeloZaxs <- as.integer(ifelse(is.na(veloZaxs) | veloZaxs > Thsh, 1, 0))
   }
 
   #Calculate MODEL ITCS for temperature
@@ -150,17 +156,16 @@ def.itc <- function(
     #final criteria [%]
     temp <- (base::abs(itcTempMeas - itcTempModl) / itcTempModl) * 100
     #calculate the flag; pass (0) if  =< 100%; failed (1) >100%
-    qfTemp <- as.integer(ifelse(is.na(temp) | temp > 100, 1, 0))
+    qfTemp <- as.integer(ifelse(is.na(temp) | temp > Thsh, 1, 0))
   }
 
   ##final criteria [%] for combined variables: u_star and sensible heat flux
   if(VarInp %in% c("all")) {
-    veloFric <- base::sqrt(veloXaxs^2 + veloZaxs^2)
-    fluxSens <- base::sqrt(veloZaxs^2 + temp^2)
-    #calculate the flag; pass (0) both qfVeloXaxs and qfVeloZaxs are zero
-    qfVeloFric <- as.integer(ifelse(qfVeloXaxs == 0 & qfVeloZaxs == 0, 0, 1))
-    #calculate the flag; pass (0) both qfTemp and qfVeloZaxs are zero
-    qfFluxSens <- as.integer(ifelse(qfTemp == 0 & qfVeloZaxs == 0, 0, 1))
+    veloFric <- base::max(veloXaxs, veloZaxs)
+    fluxSens <- base::max(veloZaxs, temp)
+    #calculate the flag; pass (0) if  =< 100%; failed (1) >100%
+    qfVeloFric <- as.integer(ifelse(is.na(veloFric) | veloFric > Thsh, 1, 0))
+    qfFluxSens <- as.integer(ifelse(is.na(fluxSens) | fluxSens > Thsh, 1, 0))
   }
 #clean up
 #rm(CoefVeloXaxs, CoefVeloZaxs, CoefTemp, coefCorl)
@@ -170,23 +175,23 @@ rm(coefCorl)
 #output dataframe
   if(VarInp == "veloXaxs"){
     #itc <- data.frame(veloXaxs=veloXaxs)
-    rpt$itc <- data.frame(u_hor=veloXaxs) #this line will be replaced by above line once we apply name convention to the reference file header 
-    rpt$qf <- data.frame(u_hor=qfVeloXaxs)
+    rpt$qiItc <- data.frame(u_hor=veloXaxs) #this line will be replaced by above line once we apply name convention to the reference file header 
+    rpt$qfItc <- data.frame(u_hor=qfVeloXaxs)
   }
   if(VarInp == "veloZaxs"){
     #itc <- data.frame(veloZaxs=veloZaxs)
-    rpt$itc <- data.frame(w_hor=veloZaxs) #this line will be replaced by above line once we apply name convention to the reference file header
-    rpt$qf <- data.frame(w_hor=qfVeloZaxs)
+    rpt$qiItc <- data.frame(w_hor=veloZaxs) #this line will be replaced by above line once we apply name convention to the reference file header
+    rpt$qfItc <- data.frame(w_hor=qfVeloZaxs)
   }
   if(VarInp == "temp"){
     #itc <- data.frame(temp=temp)
-    rpt$itc <- data.frame(T_air=temp)
-    rpt$qf <- data.frame(T_air=qfTemp)
+    rpt$qiItc <- data.frame(T_air=temp)
+    rpt$qfItc <- data.frame(T_air=qfTemp)
   }
   if(VarInp == "all"){
     #itc <- data.frame(veloXaxs=veloXaxs, veloZaxs=veloZaxs, temp=temp, veloFric=veloFric, fluxSens=fluxSens)
-    rpt$itc <- data.frame(u_hor=veloXaxs, w_hor=veloZaxs, T_air=temp, u_star=veloFric, F_H_kin=fluxSens) #this line will be replaced by above line once we apply name convention to the reference file header
-    rpt$qf <- data.frame(u_hor=qfVeloXaxs, w_hor=qfVeloZaxs, T_air=qfTemp, u_star=qfVeloFric, F_H_kin=qfFluxSens)
+    rpt$qiItc <- data.frame(u_hor=veloXaxs, w_hor=veloZaxs, T_air=temp, u_star=veloFric, F_H_kin=fluxSens) #this line will be replaced by above line once we apply name convention to the reference file header
+    rpt$qfItc <- data.frame(u_hor=qfVeloXaxs, w_hor=qfVeloZaxs, T_air=qfTemp, u_star=qfVeloFric, F_H_kin=qfFluxSens)
   }
 #
 #clean up
