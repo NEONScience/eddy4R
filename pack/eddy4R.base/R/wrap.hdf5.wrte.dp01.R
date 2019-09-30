@@ -62,8 +62,8 @@
 #     deleted dp04 of fluxCor and fluxRaw out when writing the basic file
 #   David Durden (2019-05-30)
 #     Adding dp04 low resolution output on top of validation code
-#   Natchaya P-Durden (2019-09-17)
-#     removed qfItc if write out basic file
+#   Natchaya P-Durden (2019-09-30)
+#     only write qfFinl out in basic file
 ##############################################################################################
 
 
@@ -245,9 +245,13 @@ if(MethDp04 == TRUE){
   #Write dp04 QFQM output
   ########################################################################################################################
   
-  #removing qfItc if write out basic file
+  #write out only qfFinl in basic file
   if (MethExpd == FALSE){
-    inpList$dp04$qfqm[[idxDp04]]$turb$qfItc <- NULL
+    lapply(names(inpList$dp04$qfqm[[idxDp04]]$turb), function(x){
+      if (!(x %in% "qfFinl")) {
+        inpList$dp04$qfqm[[idxDp04]]$turb[[x]] <<- NULL
+      }
+    })
   }
   #Adding time to output dataframe
   rptDp04Qfqm <-  cbind(timeBgn = outList$data$soni$veloXaxsErth$timeBgn, timeEnd = outList$data$soni$veloXaxsErth$timeEnd, inpList$dp04$qfqm[[idxDp04]]$turb, stringsAsFactors = FALSE)
