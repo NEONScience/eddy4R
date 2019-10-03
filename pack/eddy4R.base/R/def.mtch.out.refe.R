@@ -5,9 +5,9 @@
 #' David Durden \email{ddurden@battelleecology.org} \cr
 #' Cove Sturtevant \email{eddy4R.info@gmail.com}
 
-#' @description 
+#' @description
 #' Function definition. A function to compare the file output from a workflow to a reference output file
-#' to ensure that changes during development to functions called by the workflow have not impacted the 
+#' to ensure that changes during development to functions called by the workflow have not impacted the
 #' results.\cr
 #' The function reads in the new data produced in the tmp directory and compares the first 10 lines to the reference output data.
 
@@ -46,18 +46,21 @@ def.mtch.out.refe <- function(
   fileRefe,
   Head = FALSE,
   NumLine = 10) {
-  
+
+  log <- eddy4R.log::def.log.init()
+  log$trace("in def.mtch.out.refe.R")
+
   # Read in the output file
   dataOut <- utils::read.csv(fileOut)
-  
+
   # Read in the reference file
   dataRefe <- utils::read.csv(fileRefe)
-  
+
   #Compare the first numLine lines of the data between the output and reference
   if(!isTRUE(base::all.equal(dataOut[1:NumLine,],dataRefe[1:NumLine,]))){
       base::stop("Bummer! The current output DOES NOT MATCH the reference output :(")
   } else {
-    base::print("Yay! The current output MATCHES the reference output :)")
+    log$debug("Yay! The current output MATCHES the reference output :)")
   }
-  
+
 }
