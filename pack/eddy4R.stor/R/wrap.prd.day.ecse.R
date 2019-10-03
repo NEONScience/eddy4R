@@ -9,8 +9,8 @@
 
 #' @param inpList List consisting of input data in the format provided by function \code{eddy4R.base::wrap.hdf5.read()}. Of types numeric, integer,  character and POSIXct.
 #' @param Desp De-spiking parameters as mixed list of types integer and character with the following list entries: \code{widt} de-spiking median filter window width (single integer); \code{nbin} de-spiking histogram bins initial number/step size (single integer); \code{rest} de-spiking resolution threshold (single integer); \code{var} sub-list of sensors in \code{inpList}, with each list entry containing the variable names for which to perform de-spiking (character). See \code{?eddy4R.qaqc::def.dspk.br86} for details.
-#'  
-#' @return 
+#'
+#' @return
 #' The returned object consistes of \code{rpt} after applying the daily processing.
 
 #' @references
@@ -42,11 +42,14 @@ wrap.prd.day.ecse <- function(
   inpList,
   Desp
 ) {
-  
-  
+
+  # Start logging
+  log <- eddy4R.log::def.log.init()
+  log$trace("in wrap.prd.day.ecse.R")
+
   #Create a list to hold all the output
   rpt <- list()
-  
+
   #generate qfFrt00 for mfm to indicate when low flow pass through (pump failure)
   #check if mfm data and qfqm are in the inpList
   if(is.null(inpList$data$mfm) == FALSE & is.null(inpList$qfqm$mfm) == FALSE){
@@ -59,17 +62,17 @@ wrap.prd.day.ecse <- function(
   #Removing high frequency flagged data
   #Applying the bad quality flags to the reported output data
   rpt <- eddy4R.qaqc::wrap.qf.rmv.data(inpList = inpList, Vrbs = FALSE, MethMeas = "ecse", Sens = NULL, qfRmv = c("qfCal", "qfRh", "qfTemp"))
-  
-  
+
+
   # perform de-spiking
   # loop around sensors
   for(sens in base::names(Desp$var)) {
   # sens <- base::names(Desp$var)[1]
-    
+
     # loop around levels
     for(lvl in base::names(rpt$data[[sens]])) {
     # lvl <- base::names(rpt$data[[sens]])[1]
-      
+
       # loop around variables
       for(var in Desp$var[[sens]]) {
       # var <- Desp$var[[sens]][1]
@@ -85,17 +88,17 @@ wrap.prd.day.ecse <- function(
           # resolution threshold
           ThshReso = Desp$rest
         )$dataOut
-     
+
       }; rm(var)
-       
+
     }; rm(lvl)
-    
+
     # print message to screen
-    print(paste0(format(Sys.time(), "%F %T"), ": ", sens, " de-spiking complete"))
-    
+    log$debug(paste0(sens, " de-spiking complete"))
+
   }; rm(sens)
-  
-  
+
+
   #return output
   return(rpt)
   }
