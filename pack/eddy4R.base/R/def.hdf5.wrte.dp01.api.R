@@ -44,6 +44,9 @@
 #     - Add other dp01's and remove hardcoded units
 #   Natchaya P-Durden (2019-06-10)
 #     adding additional data products
+#   Natchaya P-Durden (2019-09-12)
+#     get information of existing dp01 hor and ver from dp0p hdf5 file
+#     convert qmBeta and qmAlph to fraction
 ##############################################################################################
 
 def.hdf5.wrte.dp01.api <- function(
@@ -59,6 +62,7 @@ def.hdf5.wrte.dp01.api <- function(
 
 #Needed library
 library(rhdf5)
+library(neonUtilities)
 #TODO: 
 #Create check if group level exists and create if not
 #Add other dp01's and remove hardcoded units
@@ -117,42 +121,9 @@ if(class(data) == "try-error"){
   #Initialize lists
   rpt <- list(data = list(), qfqm = list(), ucrt = list())
   #get sensor HOR and VER
-  if (DpName %in% "radiNet"){
-    LvlMeas <- LvlTowr} else{
-      #assign downloading directory
-      DirDnld <- paste0(dirname(FileOut), "/",DpName)
-      #Check if download directory exists and create if not
-      if(dir.exists(DirDnld) == FALSE) dir.create(DirDnld, recursive = TRUE)
-      
-      #download data from dataportal
-      neonUtilities::getPackage(dpID = DpNum, site_code = SiteLoca, year_month = yearMnth, package = "basic",savepath = DirDnld)
-      
-      #get the list of download zip file
-      fileList <- list.files(path = DirDnld, pattern= ".zip", all.files=FALSE,
-                             full.names=FALSE)
-      #unzip the download zip file
-      utils::unzip(zipfile = paste0(DirDnld,"/", fileList), exdir = DirDnld, overwrite = TRUE)
-      
-      #get sensor position file name
-      fileName <- list.files(path = DirDnld, pattern = paste0("sensor_positions"))
-      
-      #read in .csv file
-      sensLoc <- read.csv(paste0(DirDnld,"/", fileName), header=TRUE)
-      #get vertical and horizontal measurement location
-      tmpLoc <- strsplit(as.character(sensLoc$HOR.VER),split='.', fixed=TRUE)
-      hor <- unlist(lapply(1:length(tmpLoc), function(x) {
-        if (nchar(tmpLoc[[x]][1]) == 1) {as.character(paste0("00",tmpLoc[[x]][1]))} else{as.character(tmpLoc[[x]][1])}
-      }))
-      ver <- unlist(lapply(1:length(tmpLoc), function(x) {
-        if (nchar(tmpLoc[[x]][2]) == 2) {as.character(paste0(tmpLoc[[x]][2],"0"))} else{as.character(tmpLoc[[x]][2])}
-      }))
-      #merge hor.ver and hor_ver
-      LocMeas <- as.character(paste0(hor,".",ver))
-      LvlMeas <- as.character(paste0(hor,"_",ver))
-      #delete download folder
-      print(unlink(DirDnld, recursive=TRUE))
-      }#end else
-  
+  LocMeas <- gsub("\\_", ".", LvlTowr[[DpName]])
+  LvlMeas <- LvlTowr[[DpName]]
+
   #Determine the output levels
   LvlMeasOut <- LocMeas
   #Name for HDF5 output
@@ -195,7 +166,7 @@ if(class(data) == "try-error"){
         #Create the output dataframe for data values
         dataOut <- data.frame("timeBgn" = strftime(as.character(timeBgnOut), format= "%Y-%m-%dT%H:%M:%OSZ", tz="UTC"), "timeEnd" = strftime(as.character(timeEndOut), format= "%Y-%m-%dT%H:%M:%OSZ", tz="UTC"), "mean" = dataNa, stringsAsFactors = FALSE) 
         #Create the output dataframe for qfqm values
-        qfqmOut <- data.frame("timeBgn" = strftime(as.character(timeBgnOut), format= "%Y-%m-%dT%H:%M:%OSZ", tz="UTC"), "timeEnd" = strftime(as.character(timeEndOut), format= "%Y-%m-%dT%H:%M:%OSZ", tz="UTC"), "qfDew" = rep(x = -1.0, length = length(timeBgnOut)), "qfFinl" = rep(x = 1L, length = length(timeBgnOut)), "qfSci" = rep(x = 0L, length = length(timeBgnOut)), "qfTemp" = rep(x = -1.0, length = length(timeBgnOut)), stringsAsFactors = FALSE) 
+        qfqmOut <- data.frame("timeBgn" = strftime(as.character(timeBgnOut), format= "%Y-%m-%dT%H:%M:%OSZ", tz="UTC"), "timeEnd" = strftime(as.character(timeEndOut), format= "%Y-%m-%dT%H:%M:%OSZ", tz="UTC"), "qfDew" = rep(x = 1L, length = length(timeBgnOut)), "qfFinl" = rep(x = 1L, length = length(timeBgnOut)), "qfSci" = rep(x = 0L, length = length(timeBgnOut)), "qfTemp" = rep(x = 1L, length = length(timeBgnOut)), stringsAsFactors = FALSE) 
         #Create the output dataframe for ucrt values 
         ucrtOut <- data.frame("timeBgn" = strftime(as.character(timeBgnOut), format= "%Y-%m-%dT%H:%M:%OSZ", tz="UTC"), "timeEnd" = strftime(as.character(timeEndOut), format= "%Y-%m-%dT%H:%M:%OSZ", tz="UTC"), "ucrtCal95" = dataNa, stringsAsFactors = FALSE) 
       }
@@ -284,15 +255,9 @@ names(nameVar$TimeOut) <- c("timeEnd", "timeBgn")
 #Grabbing the tower measurement levels for a given dp01 product
 ###############################################################################
 #get vertical and horizontal measurement location
-if (DpName %in% "radiNet"){
-  LocMeas <- gsub("\\_", ".", LvlTowr)
-  LvlMeas <- LvlTowr
-} else {
-  tmpLoc <- subset(names(data), grepl("Maximum",names(data)))
-  LocMeas <- gsub("[a-zA-Z]", "", tmpLoc)
-  LocMeas <- substring(LocMeas, 2)
-  LocMeas <- LocMeas[!duplicated(LocMeas)]
-  LvlMeas <- gsub("\\.", "_", LocMeas) }
+#get sensor HOR and VER
+LocMeas <- gsub("\\_", ".", LvlTowr[[DpName]])
+LvlMeas <- LvlTowr[[DpName]]
 
 #Determine the output levels
 LvlMeasOut <- LocMeas
@@ -381,6 +346,17 @@ for (idxLvl in names(tmp$qfqm)){
     names(attributes(rpt$qfqm[[idxLvl]][[TblName[idxSupDp]]])$unit) <- names(rpt$qfqm[[idxLvl]][[TblName[idxSupDp]]])
     #Convert all NaNs in the qfSci to 0
     rpt$qfqm[[idxLvl]][[TblName[idxSupDp]]][is.nan(rpt$qfqm[[idxLvl]][[TblName[idxSupDp]]]$qfSci),"qfSci"] <- 0L
+    if (!(TblName[idxSupDp] %in% "presCor")){
+    #Convert all NaNs in the qmAlph and qmBeta to 100
+    rpt$qfqm[[idxLvl]][[TblName[idxSupDp]]][is.nan(rpt$qfqm[[idxLvl]][[TblName[idxSupDp]]]$qmAlph),"qmAlph"] <- 0L
+    rpt$qfqm[[idxLvl]][[TblName[idxSupDp]]][is.nan(rpt$qfqm[[idxLvl]][[TblName[idxSupDp]]]$qmBeta),"qmBeta"] <- 100L
+    #Convert unit of qmAlph and qmBeta to fraction
+    rpt$qfqm[[idxLvl]][[TblName[idxSupDp]]]$qmAlph <- (rpt$qfqm[[idxLvl]][[TblName[idxSupDp]]]$qmAlph)/100
+    rpt$qfqm[[idxLvl]][[TblName[idxSupDp]]]$qmBeta <- (rpt$qfqm[[idxLvl]][[TblName[idxSupDp]]]$qmBeta)/100
+    } else {
+      rpt$qfqm[[idxLvl]][[TblName[idxSupDp]]][is.nan(rpt$qfqm[[idxLvl]][[TblName[idxSupDp]]]$qfDew),"qfDew"] <- 1L
+      rpt$qfqm[[idxLvl]][[TblName[idxSupDp]]][is.nan(rpt$qfqm[[idxLvl]][[TblName[idxSupDp]]]$qfTemp),"qfTemp"] <- 1L
+    }
   }
 }
 # #Convert all NaNs in the qfSci to 0
