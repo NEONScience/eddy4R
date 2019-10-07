@@ -45,7 +45,7 @@ wrap.prd.day.ecse <- function(
 
   # Start logging
   log <- eddy4R.log::def.log.init()
-  log$trace("in wrap.prd.day.ecse.R")
+  log$debug("in wrap.prd.day.ecse.R")
 
   #Create a list to hold all the output
   rpt <- list()
