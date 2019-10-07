@@ -106,7 +106,7 @@ def.dspk.wndw <- function (
   }
 
   log <- eddy4R.log::def.log.init()
-  log$trace("in def.dspk.wndw.R")
+  log$debug("in def.dspk.wndw.R")
 
   #data always as matrix
   mat <- as.matrix(data)

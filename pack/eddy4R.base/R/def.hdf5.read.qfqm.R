@@ -55,7 +55,7 @@ def.hdf5.read.qfqm <- function(
 ){
 
   log <- eddy4R.log::def.log.init()
-  log$trace("in def.hdf5.read.qfqm.R")
+  log$debug("in def.hdf5.read.qfqm.R")
 
 #Read in the flags from the HDF5 file
 if (MethMeas == "ecte") {

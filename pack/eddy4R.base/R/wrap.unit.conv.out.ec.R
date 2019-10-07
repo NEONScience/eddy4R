@@ -47,7 +47,7 @@ wrap.unit.conv.out.ec <- function(
   ){
 
   log <- eddy4R.log::def.log.init()
-  log$trace("in wrap.unit.conv.out.ec.R")
+  log$debug("in wrap.unit.conv.out.ec.R")
 
 #Putting MethType to lowercase always
 MethType <- base::tolower(MethType)

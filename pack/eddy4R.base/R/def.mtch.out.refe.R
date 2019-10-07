@@ -48,7 +48,7 @@ def.mtch.out.refe <- function(
   NumLine = 10) {
 
   log <- eddy4R.log::def.log.init()
-  log$trace("in def.mtch.out.refe.R")
+  log$debug("in def.mtch.out.refe.R")
 
   # Read in the output file
   dataOut <- utils::read.csv(fileOut)

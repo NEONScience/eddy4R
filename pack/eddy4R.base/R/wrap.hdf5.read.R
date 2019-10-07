@@ -85,7 +85,7 @@ wrap.hdf5.read <- function(
 ) {
 
   log <- eddy4R.log::def.log.init()
-  log$trace("in wrap.hdf5.read.R")
+  log$debug("in wrap.hdf5.read.R")
 
 # create regular time dimension
 # POSIX is rounding down, add time increment after last significant digit

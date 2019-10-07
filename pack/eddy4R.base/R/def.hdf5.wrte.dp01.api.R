@@ -59,7 +59,7 @@ def.hdf5.wrte.dp01.api <- function(
 ){
 
   log <- eddy4R.log::def.log.init()
-  log$trace("in def.hdf5.wrte.dp01.api.R")
+  log$debug("in def.hdf5.wrte.dp01.api.R")
 
 ##############################################################################
 

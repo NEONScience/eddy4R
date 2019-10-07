@@ -81,7 +81,7 @@ wrap.irga.vali <- function(
 ) {
 
   log <- eddy4R.log::def.log.init()
-  log$trace("in wrap.irga.vali.R")
+  log$debug("in wrap.irga.vali.R")
 
   #adding library
   #library(deming)
