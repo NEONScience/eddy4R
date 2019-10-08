@@ -54,6 +54,10 @@ ThshMiss = .1,
 SI
 ){
 
+#Start logging
+log <- eddy4R.log::def.log.init()
+log$info("in wrap.wave.R")
+
 #Create output list
 rpt <- list()
 
@@ -87,7 +91,7 @@ dfInp <- as.data.frame(ts(
 rpt$wave <- list()
 for (c in colnames(dfInp)) {
     rpt$wave[[c]] <- Waves::cwt(dfInp[[c]], wavelet = FuncWave, dj = DiffScal)
-    log$debug(cat(paste(c, "... done.")))
+    log$debug(paste(c, "... done."))
   }
 
 #normalization factor specific to the choice of Wavelet parameters
