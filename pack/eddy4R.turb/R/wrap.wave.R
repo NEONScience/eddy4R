@@ -56,7 +56,7 @@ SI
 
 #Start logging
 log <- eddy4R.log::def.log.init()
-log$info("in wrap.wave.R")
+log$trace("in wrap.wave.R")
 
 #Create output list
 rpt <- list()
