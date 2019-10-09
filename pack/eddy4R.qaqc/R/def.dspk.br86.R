@@ -104,7 +104,6 @@ def.dspk.br86 <- function(
 
   # Start logging
   log <- eddy4R.log::def.log.init()
-  snk <- file() # open a connection to nothing to sink unwanted error messages to
   log$debug("in def.dspk.br86. messages from robfilter were sinked")
 
   # Initialize output
@@ -171,7 +170,7 @@ def.dspk.br86 <- function(
         #minimum number of non-NAs in window to calculate median, else return NA
           rpt$thshNumData <- base::max(c(5, base::floor(1/2 * rpt$WndwFilt)))
         #calculating median-filtered time-series
-          base::sink(snk, type = "output")
+          base::sink("/dev/null", type = "output")
           rpt$dataNormFiltMed <- robfilter::med.filter(y=rpt$dataNorm, width=rpt$WndwFilt, minNonNAs=rpt$thshNumData, online=FALSE, extrapolate=FALSE)
           base::sink(type = "output")
 
@@ -319,8 +318,6 @@ def.dspk.br86 <- function(
 #  #print message to screen
 #    print(paste("De-spiking completed, ", rpt$numSpk, " spikes have been removed", sep=""))
 
-  #close connection
-  close(snk)
 
   #return des-spiked time-series and all additional info
     return(rpt)
