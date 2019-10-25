@@ -5,7 +5,7 @@
 \title{Definition function: Integral turbulence characteristics}
 \usage{
 def.itc(stblObkv, lat, VarInp = c("veloXaxs", "veloZaxs", "temp",
-  "all")[4], sd, varScal, Thsh = 100)
+  "all")[4], sd, varScal, Thsh = 100, CorTemp = TRUE)
 }
 \arguments{
 \item{\code{stblObkv}}{Stability parameter and of class "numeric". [dimensionless]}
@@ -19,6 +19,8 @@ def.itc(stblObkv, lat, VarInp = c("veloXaxs", "veloZaxs", "temp",
 \item{\code{varScal}}{A vector or data frame containing the scaling variables of \code{VarInp} and of class "numeric". If \code{VarInp} = "all", \code{varScal} shall contain in the follwing orders, scaling variable of wind speed (friction velocity will be used for both "veloXaxs" and "veloZaxs") and scaling variable of air temperature.  [user-defined]}
 
 \item{\code{Thsh}}{Threshold value to indicate if quality flag will raise high (qfItc = 1) when the calculated quality indicator values are greater the threshold. Defaults as 100. [percent]}
+
+\item{\code{CorTemp}}{Logical state if the temperture is used in the determination of ITCs of sensible heat flux (fluxSens). Defaults as TRUE.}
 }
 \value{
 The returned object consists of:\cr

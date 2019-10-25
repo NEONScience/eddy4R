@@ -14,6 +14,7 @@
 #' @param \code{sd} A vector or data frame containing standard deviation of \code{VarInp} and of class "numeric". If \code{VarInp} = "all",  \code{sd} shall contain in the follwing orders, standard deviation of along-axis horizontal wind speed, standard deviation of vertical-axis wind speed, and standard deviation of air temperature. [user-defined]
 #' @param \code{varScal} A vector or data frame containing the scaling variables of \code{VarInp} and of class "numeric". If \code{VarInp} = "all", \code{varScal} shall contain in the follwing orders, scaling variable of wind speed (friction velocity will be used for both "veloXaxs" and "veloZaxs") and scaling variable of air temperature.  [user-defined]
 #' @param \code{Thsh} Threshold value to indicate if quality flag will raise high (qfItc = 1) when the calculated quality indicator values are greater the threshold. Defaults as 100. [percent]
+#' @param \code{CorTemp}  Logical state if the temperture is used in the determination of ITCs of sensible heat flux (fluxSens). Defaults as TRUE.
 #' 
 #' @return 
 #' The returned object consists of:\cr
@@ -53,6 +54,8 @@
 #     add threshold value in the parameter
 #     update the final criteria for combined variables (u_star and sensible heat flux) 
 #     to use the maximum value
+#   Natchaya P-Durden (2019-10-25)
+#     add CorTemp in function parameters
 ##############################################################################################
 #INTEGRAL TURBULENCE CHARACTERISTICS
 def.itc <- function(
@@ -61,7 +64,8 @@ def.itc <- function(
   VarInp=c("veloXaxs","veloZaxs","temp","all")[4],
   sd,
   varScal,
-  Thsh = 100
+  Thsh = 100,
+  CorTemp = TRUE
 ) {
   #initial list
   rpt <- list()
@@ -165,10 +169,16 @@ def.itc <- function(
   ##final criteria [%] for combined variables: u_star and sensible heat flux
   if(VarInp %in% c("all")) {
     veloFric <- base::max(veloXaxs, veloZaxs)
-    fluxSens <- base::max(veloZaxs, temp)
     #calculate the flag; pass (0) if  =< 100%; failed (1) >100%
     qfVeloFric <- as.integer(ifelse(is.na(veloFric) | veloFric > Thsh, 1, 0))
-    qfFluxSens <- as.integer(ifelse(is.na(fluxSens) | fluxSens > Thsh, 1, 0))
+    if(CorTemp == TRUE){
+      fluxSens <- base::max(veloZaxs, temp)
+      qfFluxSens <- as.integer(ifelse(is.na(fluxSens) | fluxSens > Thsh, 1, 0))
+      }else{
+        #not included temperature in the determination of itcs
+        fluxSens <- veloZaxs
+        qfFluxSens <- qfVeloZaxs
+        }
   }
 #clean up
 #rm(CoefVeloXaxs, CoefVeloZaxs, CoefTemp, coefCorl)
