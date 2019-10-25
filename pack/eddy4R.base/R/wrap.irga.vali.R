@@ -80,9 +80,6 @@ wrap.irga.vali <- function(
   DateProc
 ) {
 
-  log <- eddy4R.log::def.log.init()
-  log$debug("in wrap.irga.vali.R")
-
   #adding library
   #library(deming)
   #library(zoo)
@@ -167,7 +164,7 @@ wrap.irga.vali <- function(
     #calculate statistical for each gas
     for (idxNameQf in nameQf){
       #idxNameQf <- nameQf[2]
-      log$debug(idxNameQf)
+      tryCatch({log$debug(idxNameQf)}, error=function(cond){print(idxNameQf)})
       #preparing the qfIrgaTurbValiGas01 to 05 data for def.idx.agr()
       #replace NA to the qf which are not equal to 1
       allSubQfqm[[idxNameQf]][] <- ifelse(allSubQfqm[[idxNameQf]][] != 1, NA, allSubQfqm[[idxNameQf]][])

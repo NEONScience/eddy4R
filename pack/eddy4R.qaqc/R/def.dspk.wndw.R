@@ -105,9 +105,6 @@ def.dspk.wndw <- function (
     stop("Please install package 'eddy4R.base' before continuing")
   }
 
-  log <- eddy4R.log::def.log.init()
-  log$debug("in def.dspk.wndw.R")
-
   #data always as matrix
   mat <- as.matrix(data)
   numVar <- base::ncol(mat)
@@ -282,7 +279,7 @@ def.dspk.wndw <- function (
         	if(Cntl$Prnt == TRUE) {
         	  msg <- paste("Variable ", idxVar, " of ", numVar, ", iteration ", iter, " is finished. ",
                         numSpkNew, " new spikes, totally ", length(setSpkPrlm), " spikes.", sep="")
-        	  log$debug(msg)
+        	  tryCatch({log$debug(msg)}, error=function(cond){print(msg)})
         	}
 
         #break if maximum number of iterations is reached
@@ -354,7 +351,7 @@ def.dspk.wndw <- function (
     if(Cntl$Prnt == TRUE) {
       msg <- paste("Variable ", idxVar, " of ", numVar, " (", dimnames(mat)[[2]][idxVar], ") is finished after ", smmyOut[1,idxVar], " iteration(s). ",
                   smmyOut[2,idxVar], " spike(s) were detected, totally ", smmyOut[3,idxVar], " NAs.", sep="")
-      log$debug(msg)
+      tryCatch({log$debug(msg)}, error=function(cond){print(msg)})
     }
 
     # For Verbose option, output actual flag values

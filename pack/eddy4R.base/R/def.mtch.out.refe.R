@@ -47,9 +47,6 @@ def.mtch.out.refe <- function(
   Head = FALSE,
   NumLine = 10) {
 
-  log <- eddy4R.log::def.log.init()
-  log$debug("in def.mtch.out.refe.R")
-
   # Read in the output file
   dataOut <- utils::read.csv(fileOut)
 
@@ -60,7 +57,10 @@ def.mtch.out.refe <- function(
   if(!isTRUE(base::all.equal(dataOut[1:NumLine,],dataRefe[1:NumLine,]))){
       base::stop("Bummer! The current output DOES NOT MATCH the reference output :(")
   } else {
-    log$debug("Yay! The current output MATCHES the reference output :)")
+    tryCatch({log$debug("Yay! The current output MATCHES the reference output :)"},
+             error=function(cond){
+                 print("Yay! The current output MATCHES the reference output :)")
+             })
   }
 
 }

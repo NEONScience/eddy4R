@@ -84,9 +84,6 @@ wrap.hdf5.read <- function(
   MethMeas = c("ecte", "ecse")[1]
 ) {
 
-  log <- eddy4R.log::def.log.init()
-  log$debug("in wrap.hdf5.read.R")
-
 # create regular time dimension
 # POSIX is rounding down, add time increment after last significant digit
 time <- seq.POSIXt(
@@ -179,7 +176,8 @@ if(!(DateLoca %in% file)) {
   }
 
   # print message to screen
-  log$debug(paste0("dataset ", DateLoca, ": ", VarLoca, " hdf5 file not available, NaNs substituted"))
+  msg<-paste0("dataset ", DateLoca, ": ", VarLoca, " hdf5 file not available, NaNs substituted")
+  tryCatch({log$debug(msg)}, error=function(cond){print(msg)})
 
 ###
 # mid data availability

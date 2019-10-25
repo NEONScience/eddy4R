@@ -102,10 +102,6 @@ def.dspk.br86 <- function(
     FracRealMin = 0.025 # minimum fraction of non-NA values
   ) {
 
-  # Start logging
-  log <- eddy4R.log::def.log.init()
-  log$debug("in def.dspk.br86. messages from robfilter were sinked")
-
   # Initialize output
   rpt <- base::list(dataInp=dataInp,WndwFilt=WndwFilt,NumBin=NumBin,ThshReso=ThshReso,FracRealMin=FracRealMin)
 

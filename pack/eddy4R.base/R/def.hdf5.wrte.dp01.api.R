@@ -58,9 +58,6 @@ def.hdf5.wrte.dp01.api <- function(
   TimeAgr
 ){
 
-  log <- eddy4R.log::def.log.init()
-  log$debug("in def.hdf5.wrte.dp01.api.R")
-
 ##############################################################################
 
 #Needed library
@@ -116,7 +113,8 @@ if(DpName == "h2oSoilVol") TblName <- c("ionSoilVol", "h2oSoilVol")
 if(DpName == "presBaro") TblName <- c("presCor", "presAtm")
 
 #Grab 30 minute data to be written
-log$debug(paste0("downloading ", TimeAgr, " min data from the portal"))
+msg <- paste0("downloading ", TimeAgr, " min data from the portal")
+tryCatch({log$debug(msg), error=function(cond){print(msg)})
 data <- try(expr = Noble::pull.date(site = SiteLoca, dpID = DpNum, bgn.date = timeBgn, end.date = timeEnd, package = "expanded", time.agr = TimeAgr), silent = TRUE) #Currently requires to subtract 1 minute otherwise (1 index will be cut from the beginning)
 
 #Failsafe test if API pull produced an error

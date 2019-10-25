@@ -54,9 +54,6 @@ def.hdf5.read.qfqm <- function(
   MethMeas = c("ecte", "ecse")[1]
 ){
 
-  log <- eddy4R.log::def.log.init()
-  log$debug("in def.hdf5.read.qfqm.R")
-
 #Read in the flags from the HDF5 file
 if (MethMeas == "ecte") {
 qfqm <- rhdf5::h5read(file = base::paste0(DirInpLoca, "/ECTE_dp0p_", SiteLoca, "_", DateLoca, ".h5"),
@@ -73,7 +70,7 @@ for(idx in base::names(qfqm)) qfqm[[idx]] <- base::as.vector(qfqm[[idx]]); base:
 
 #Apply units to each flag
 lapply(seq_len(length(qfqm)), function(x){
-  log$debug(x)
+  tryCatch({log$debug(x)}, error=function(cond){print(x)})
   attributes(qfqm[[x]])$Unit <<- attributes(qfqm)$Unit[[x]]
   })
 

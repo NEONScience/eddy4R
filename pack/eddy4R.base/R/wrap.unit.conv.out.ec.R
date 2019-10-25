@@ -46,9 +46,6 @@ wrap.unit.conv.out.ec <- function(
   MethType = c("Data","Ucrt","Qfqm", "Vali")[1]
   ){
 
-  log <- eddy4R.log::def.log.init()
-  log$debug("in wrap.unit.conv.out.ec.R")
-
 #Putting MethType to lowercase always
 MethType <- base::tolower(MethType)
 
@@ -325,7 +322,8 @@ if(MethMeas == "ecse"){
     outAttr$fluxTemp <- c("mean" = "K m s-1", "timeBgn" = "NA", "timeEnd" = "NA")
 
     #performing dp01 unit conversion
-    log$debug(paste0("dataset ", Date, ": performing dp01 unit conversion"))
+    msg <- paste0("dataset ", Date, ": performing dp01 unit conversion")
+    tryCatch({log$debug(msg)}, error=function(cond){print(msg)})
     for(idxDp in base::names(rpt$dp01$data)[which(!(names(rpt$dp01$data) %in% c("tempAirTop", "tempAirLvl")))]) {
       #idxDp <- base::names(rpt$dp01$data)[1]
 
@@ -363,7 +361,8 @@ if(MethMeas == "ecse"){
     }; rm(idxVar)
 
     #performing dp02 unit conversion
-    log$debug(paste0("dataset ", Date, ": performing dp02 unit conversion"))
+    msg<-paste0("dataset ", Date, ": performing dp02 unit conversion")
+    tryCatch({log$debug(msg)}, error=function(cond){print(msg)})
     for(idxDp in base::names(rpt$dp02$data)) {
       #idxDp <- base::names(rpt$dp02$data)[1]
 
@@ -395,7 +394,8 @@ if(MethMeas == "ecse"){
     }; rm(idxVar)
 
     #performing dp03 unit conversion
-    log$debug(paste0("dataset ", Date, ": performing dp03 unit conversion"))
+    msg <- paste0("dataset ", Date, ": performing dp03 unit conversion")
+    tryCatch({log$debug(msg)}, error=function(cond){print(msg)})
     for(idxDp in base::names(rpt$dp03$data)) {
       #idxDp <- base::names(rpt$dp03$data)[1]
 
@@ -425,7 +425,8 @@ if(MethMeas == "ecse"){
     }; rm(idxVar)
 
     #performing dp04 unit conversion
-    log$debug(paste0("dataset ", Date, ": performing dp04 unit conversion"))
+    msg <- paste0("dataset ", Date, ": performing dp04 unit conversion")
+    tryCatch({log$debug(msg)}, error=function(cond){print(msg)})
     for(idxDp in base::names(rpt$dp04$data)) {
       #idxDp <- base::names(rpt$dp04$data)[3]
 
@@ -455,7 +456,8 @@ if(MethMeas == "ecse"){
 
   if(MethType == "qfqm"){
     #performing dp01 and dp02 unit transfer
-    log$debug(paste0("dataset ", Date, ": transfering dp01 and dp02 qfqm unit "))
+    msg <- paste0("dataset ", Date, ": transfering dp01 and dp02 qfqm unit ")
+    tryCatch({log$debug(msg)}, error=function(cond){print(msg)})
     for(idxDataLvl in c("dp01", "dp02")){
     for(idxDp in base::names(rpt[[idxDataLvl]]$qfqm)[which(!(names(rpt[[idxDataLvl]]$data) %in% c("tempAirTop", "tempAirLvl")))]) {
       for(idxLvl in base::names(rpt[[idxDataLvl]]$qfqm[[idxDp]])){
@@ -478,7 +480,8 @@ if(MethMeas == "ecse"){
     }#end of dp01 and dp02
 
     #performing dp03 and dp04 unit transfer
-    log$debug(paste0("dataset ", Date, ": transfering dp03 and dp04 qfqm unit "))
+    msg <- paste0("dataset ", Date, ": transfering dp03 and dp04 qfqm unit ")
+    tryCatch({log$debug(msg)}, error=function(cond){print(msg)})
     for(idxDataLvl in c("dp03", "dp04")){
       for(idxDp in base::names(rpt[[idxDataLvl]]$qfqm)) {
         for(idxVar in base::names(rpt[[idxDataLvl]]$qfqm[[idxDp]])){
@@ -547,7 +550,8 @@ if(MethMeas == "ecse"){
     outAttr$dlta2HH2o <- c("mean" = "permill", "vari" = "permill", "se" = "permill", "timeBgn" = "NA", "timeEnd" = "NA")
 
     #performing dp01 ucrt unit conversion
-    log$debug(paste0("dataset ", Date, ": performing dp01 ucrt unit conversion"))
+    msg <- paste0("dataset ", Date, ": performing dp01 ucrt unit conversion")
+    tryCatch({log$debug(msg)}, error=function(cond){print(msg)})
     #transfer units
     for(idxDp in base::names(rpt$dp01$ucrt)) {
       #idxDp <- base::names(rpt$dp01$ucrt)[1]

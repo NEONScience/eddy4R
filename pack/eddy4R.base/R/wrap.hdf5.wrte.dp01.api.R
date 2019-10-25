@@ -58,16 +58,14 @@ wrap.hdf5.wrte.dp01.api <- function(
   TimeAgr = c(1,30)
 ){
 
-  log <- eddy4R.log::def.log.init()
-  log$debug("in wrap.hdf5.wrte.dp01.api.R")
-
   #Initialize the reporting data list
  rpt <- list()
 
  #Loop around data products
  for(idxDp in DpName){
    #print screen
-   log$debug(paste0("Begin to re-ingest ", idxDp, " dp01 data"))
+   msg<-paste0("Begin to re-ingest ", idxDp, " dp01 data")
+   tryCatch({log$debug(msg)}, error=function(cond){print(msg)})
    #Call the definition function for all the data product
    rpt[[idxDp]] <- lapply(TimeAgr, function(x) {
      #Use the definition function to grab reingest data
