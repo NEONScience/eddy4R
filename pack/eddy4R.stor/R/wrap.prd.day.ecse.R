@@ -43,10 +43,6 @@ wrap.prd.day.ecse <- function(
   Desp
 ) {
 
-  # Start logging
-  log <- eddy4R.log::def.log.init()
-  log$debug("in wrap.prd.day.ecse.R")
-
   #Create a list to hold all the output
   rpt <- list()
 
@@ -94,7 +90,8 @@ wrap.prd.day.ecse <- function(
     }; rm(lvl)
 
     # print message to screen
-    log$debug(paste0(sens, " de-spiking complete"))
+    msg <- paste0(sens, " de-spiking complete")
+    tryCatch({log$debug(msg)}, error=function(cond){print(msg)})
 
   }; rm(sens)
 
