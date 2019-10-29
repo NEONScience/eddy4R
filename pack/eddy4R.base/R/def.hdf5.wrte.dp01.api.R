@@ -414,6 +414,7 @@ for (idxLvl in names(tmp$ucrt)){
 #############################################################################
 #Writing output to existing dp0p HDF5 file
 #############################################################################
+print("I'm here!@!@$")
 #Create the file, create a class
 idFile <- rhdf5::H5Fopen(FileOut)
 
@@ -475,7 +476,7 @@ if(!is.null(attributes(rpt$qfqm[[names(LvlMeasOut[idx])]][[idxSupDp]])$unit) == 
 
 
 } #End of for loop around measurement levels
-
+print("End of def.hdf5.wrtew.dp01.api.R")
 #Close all the HDF5 connections
 h5closeAll()
 
