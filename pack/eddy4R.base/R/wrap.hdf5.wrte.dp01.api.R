@@ -73,5 +73,6 @@ wrap.hdf5.wrte.dp01.api <- function(
      })# End of lapply function
    } #End of for loop around dp01 data products
 
+ try(log$info("End of Wrap.hdf5.wrte.dp01.api"))
  return(rpt)
 } #End of wrap.hdf5.wrte.dp01.api function
