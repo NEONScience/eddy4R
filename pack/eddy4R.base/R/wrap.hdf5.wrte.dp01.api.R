@@ -65,7 +65,7 @@ wrap.hdf5.wrte.dp01.api <- function(
  for(idxDp in DpName){
    #print screen
    msg<-paste0("Begin to re-ingest ", idxDp, " dp01 data")
-   tryCatch({log$debug(msg)}, error=function(cond){print(msg)})
+   tryCatch({rlog$debug(msg)}, error=function(cond){print(msg)})
    #Call the definition function for all the data product
    rpt[[idxDp]] <- lapply(TimeAgr, function(x) {
      #Use the definition function to grab reingest data
