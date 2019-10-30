@@ -42,6 +42,8 @@
 #     Initail naming convention for eddy4R
 #   Ke Xu (2016-09-19)
 #     Add two arguments PltfEc and flagCh4 to adjust tower data
+#   Natchaya Pingintha-Durden (2019-10-30)
+#     added calcuation of quality flags
 ##############################################################################################
 #STATIONARITY TESTS
 
@@ -92,7 +94,11 @@ def.stna <- function(
       rptStna01 <- ((detr$mn - trnd$mn) / trnd$mn * 100)[whrVar]
     else
       rptStna01 <- suppressWarnings(((detr$mn - trnd$mn) / trnd$mn * 100)[whrVar])
-    
+    #replace NA with NaN
+    lapply(names(rptStna01), function(x)  {rptStna01[[x]][is.na(rptStna01[[x]])] <<- NaN})
+    #calculate the flag; pass (0) if abs(rptStna01) =< 100%; failed (1) abs(rptStna01)>100%; otherwise = -1
+    qfStna01 <- ifelse(is.na(rptStna01[,1:ncol(rptStna01)]), -1, 
+                       ifelse(abs(rptStna01[,1:ncol(rptStna01)]) <= 100, 0, 1))
     #clean up
     rm(detr)
     
@@ -129,6 +135,11 @@ def.stna <- function(
     else
       rptStna02 <- suppressWarnings((base::colMeans(outSubSamp) - trnd$mn[whrVar]) / trnd$mn[whrVar] * 100)
     
+    #replace NA with NaN
+    lapply(names(rptStna02), function(x)  {rptStna02[[x]][is.na(rptStna02[[x]])] <<- NaN})
+    #calculate the flag; pass (0) if abs(rptStna02) =< 100%; failed (1) abs(rptStna02)>100%; otherwise = -1
+    qfStna02 <- ifelse(is.na(rptStna02[,1:ncol(rptStna02)]), -1, 
+                       ifelse(abs(rptStna02[,1:ncol(rptStna02)]) <= 100, 0, 1))
     #clean up
     rm(trnd, NumSubSamp, rngClas, idxSubSamp, outSubSamp)
     
@@ -139,8 +150,12 @@ def.stna <- function(
   
   #aggregate results
   rpt <- list()
-  if(!is.null(rptStna01)) rpt$trnd=rptStna01
-  if(!is.null(rptStna02)) rpt$subSamp=rptStna02
+  if(!is.null(rptStna01)) rpt$qiStnaTrnd=rptStna01
+  if(!is.null(rptStna02)) rpt$qiStnaSubSamp=rptStna02
+  if(MethStna == 1) rpt$qfStna <- qfStna01
+  if(MethStna == 2) rpt$qfStna <- qfStna02
+  if(MethStna == 3) rpt$qfStna <- as.data.frame(t(ifelse(qfStna01[,1:ncol(qfStna01)] == 0 & 
+                                                       qfStna02[,1:ncol(qfStna02)] == 0, 0, 1)))
   
   #return results
   return(rpt)
