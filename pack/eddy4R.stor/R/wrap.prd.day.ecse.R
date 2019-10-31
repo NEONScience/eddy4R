@@ -91,7 +91,7 @@ wrap.prd.day.ecse <- function(
 
     # print message to screen
     msg <- paste0(sens, " de-spiking complete")
-    tryCatch({log$debug(msg)}, error=function(cond){print(msg)})
+    tryCatch({rlog$debug(msg)}, error=function(cond){print(msg)})
 
   }; rm(sens)
 
