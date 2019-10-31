@@ -70,7 +70,7 @@ for(idx in base::names(qfqm)) qfqm[[idx]] <- base::as.vector(qfqm[[idx]]); base:
 
 #Apply units to each flag
 lapply(seq_len(length(qfqm)), function(x){
-  tryCatch({log$debug(x)}, error=function(cond){print(x)})
+  tryCatch({rlog$debug(x)}, error=function(cond){print(x)})
   attributes(qfqm[[x]])$Unit <<- attributes(qfqm)$Unit[[x]]
   })
 

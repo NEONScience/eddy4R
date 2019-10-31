@@ -164,7 +164,7 @@ wrap.irga.vali <- function(
     #calculate statistical for each gas
     for (idxNameQf in nameQf){
       #idxNameQf <- nameQf[2]
-      tryCatch({log$debug(idxNameQf)}, error=function(cond){print(idxNameQf)})
+      tryCatch({rlog$debug(idxNameQf)}, error=function(cond){print(idxNameQf)})
       #preparing the qfIrgaTurbValiGas01 to 05 data for def.idx.agr()
       #replace NA to the qf which are not equal to 1
       allSubQfqm[[idxNameQf]][] <- ifelse(allSubQfqm[[idxNameQf]][] != 1, NA, allSubQfqm[[idxNameQf]][])

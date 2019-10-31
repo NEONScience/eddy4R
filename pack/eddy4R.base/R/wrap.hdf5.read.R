@@ -177,7 +177,7 @@ if(!(DateLoca %in% file)) {
 
   # print message to screen
   msg<-paste0("dataset ", DateLoca, ": ", VarLoca, " hdf5 file not available, NaNs substituted")
-  tryCatch({log$debug(msg)}, error=function(cond){print(msg)})
+  tryCatch({rlog$debug(msg)}, error=function(cond){print(msg)})
 
 ###
 # mid data availability
@@ -211,7 +211,7 @@ if(!(DateLoca %in% file)) {
 
     # print message to screen
     msg <- paste0("dataset ", DateLoca, ": ", VarLoca, " hdf5 read-in complete")
-    tryCatch({log$debug(msg)}, error=function(cond){print(msg)})
+    tryCatch({rlog$debug(msg)}, error=function(cond){print(msg)})
 
   # convert type of variable time
   data$time <- base::as.POSIXct(data$time, format="%Y-%m-%dT%H:%M:%OSZ", tz="UTC") + 0.0001
@@ -256,7 +256,7 @@ if(!(DateLoca %in% file)) {
 
     # print message to screen
     msg <- paste0("dataset ", DateLoca, ": ", VarLoca, " hdf5 attributes complete")
-    tryCatch({log$debug(msg)}, error=function(cond){print(msg)})
+    tryCatch({rlog$debug(msg)}, error=function(cond){print(msg)})
 
   # unit conversion
 
@@ -279,7 +279,7 @@ if(!(DateLoca %in% file)) {
 
     # print message to screen
     msg <- paste0("dataset ", DateLoca, ": ", VarLoca, " unit conversion complete")
-    tryCatch({log$debug(msg)}, error=function(cond){print(msg)})
+    tryCatch({rlog$debug(msg)}, error=function(cond){print(msg)})
 
   # regularization
   if(Rglr) {
@@ -299,13 +299,13 @@ if(!(DateLoca %in% file)) {
 
     # print message to screen
     msg <- paste0("dataset ", DateLoca, ": ", VarLoca, " regularization complete")
-    tryCatch({log$debug(msg)}, error=function(cond){print(msg)})
+    tryCatch({rlog$debug(msg)}, error=function(cond){print(msg)})
 
   } else {
 
     # print message to screen
     msg <- paste0("dataset ", DateLoca, ": ", VarLoca, " regularization not selected")
-    tryCatch({log$debug(msg)}, error=function(cond){print(msg)})
+    tryCatch({rlog$debug(msg)}, error=function(cond){print(msg)})
 
   }
 
@@ -362,13 +362,13 @@ if(!(DateLoca %in% file)) {
 
       # print message to screen
       msg <- paste0("dataset ", DateLoca, ": ", VarLoca, " sensor diagnostics complete")
-      tryCatch({log$debug(msg)}, error=function(cond){print(msg)})
+      tryCatch({rlog$debug(msg)}, error=function(cond){print(msg)})
 
     } else {
 
       # print message to screen
       msg <- paste0("dataset ", DateLoca, ": ", VarLoca, " sensor diagnostics not performed")
-      tryCatch({log$debug(msg)}, error=function(cond){print(msg)})
+      tryCatch({rlog$debug(msg)}, error=function(cond){print(msg)})
 
     }
 
@@ -376,7 +376,7 @@ if(!(DateLoca %in% file)) {
 
     # print message to screen
     msg <- paste0("dataset ", DateLoca, ": ", VarLoca, " sensor diagnostics not selected")
-    tryCatch({log$debug(msg)}, error=function(cond){print(msg)})
+    tryCatch({rlog$debug(msg)}, error=function(cond){print(msg)})
 
   }
 
@@ -397,13 +397,13 @@ if(!(DateLoca %in% file)) {
 
       # print message to screen
       msg <- paste0("dataset ", DateLoca, ": ", VarLoca, " range test complete")
-      tryCatch({log$debug(msg)}, error=function(cond){print(msg)})
+      tryCatch({rlog$debug(msg)}, error=function(cond){print(msg)})
 
     } else {
 
       # print message to screen
       msg <- paste0("dataset ", DateLoca, ": ", VarLoca, " range test not performed")
-      tryCatch({log$debug(msg)}, error=function(cond){print(msg)})
+      tryCatch({rlog$debug(msg)}, error=function(cond){print(msg)})
 
     }
 
@@ -411,7 +411,7 @@ if(!(DateLoca %in% file)) {
 
     # print message to screen
     msg <- paste0("dataset ", DateLoca, ": ", VarLoca, " range test not selected")
-    tryCatch({log$debug(msg)}, error=function(cond){print(msg)})
+    tryCatch({rlog$debug(msg)}, error=function(cond){print(msg)})
 
   }
 
@@ -445,13 +445,13 @@ if(!(DateLoca %in% file)) {
 
       # print message to screen
       msg <- paste0("dataset ", DateLoca, ": ", VarLoca, " de-spiking complete")
-      tryCatch({log$debug(msg)}, error=function(cond){print(msg)})
+      tryCatch({rlog$debug(msg)}, error=function(cond){print(msg)})
 
     } else {
 
       # print message to screen
       msg <- paste0("dataset ", DateLoca, ": ", VarLoca, " de-spiking not performed")
-      tryCatch({log$debug(msg)}, error=function(cond){print(msg)})
+      tryCatch({rlog$debug(msg)}, error=function(cond){print(msg)})
     }
 
   }

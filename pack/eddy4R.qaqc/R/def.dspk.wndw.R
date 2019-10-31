@@ -279,7 +279,7 @@ def.dspk.wndw <- function (
         	if(Cntl$Prnt == TRUE) {
         	  msg <- paste("Variable ", idxVar, " of ", numVar, ", iteration ", iter, " is finished. ",
                         numSpkNew, " new spikes, totally ", length(setSpkPrlm), " spikes.", sep="")
-        	  tryCatch({log$debug(msg)}, error=function(cond){print(msg)})
+        	  tryCatch({rlog$debug(msg)}, error=function(cond){print(msg)})
         	}
 
         #break if maximum number of iterations is reached
@@ -351,7 +351,7 @@ def.dspk.wndw <- function (
     if(Cntl$Prnt == TRUE) {
       msg <- paste("Variable ", idxVar, " of ", numVar, " (", dimnames(mat)[[2]][idxVar], ") is finished after ", smmyOut[1,idxVar], " iteration(s). ",
                   smmyOut[2,idxVar], " spike(s) were detected, totally ", smmyOut[3,idxVar], " NAs.", sep="")
-      tryCatch({log$debug(msg)}, error=function(cond){print(msg)})
+      tryCatch({rlog$debug(msg)}, error=function(cond){print(msg)})
     }
 
     # For Verbose option, output actual flag values

@@ -57,7 +57,7 @@ def.mtch.out.refe <- function(
   if(!isTRUE(base::all.equal(dataOut[1:NumLine,],dataRefe[1:NumLine,]))){
       base::stop("Bummer! The current output DOES NOT MATCH the reference output :(")
   } else {
-    tryCatch({log$debug("Yay! The current output MATCHES the reference output :)")},
+    tryCatch({rlog$debug("Yay! The current output MATCHES the reference output :)")},
              error=function(cond){
                  print("Yay! The current output MATCHES the reference output :)")
              })
