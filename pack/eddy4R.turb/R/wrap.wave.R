@@ -88,7 +88,7 @@ rpt$wave <- list()
 for (c in colnames(dfInp)) {
     rpt$wave[[c]] <- Waves::cwt(dfInp[[c]], wavelet = FuncWave, dj = DiffScal)
     msg <- paste(c, "... done.")
-    tryCatch({log$debug(msg)}, error=function(cond){print(msg)})
+    tryCatch({rlog$debug(msg)}, error=function(cond){print(msg)})
   }
 
 #normalization factor specific to the choice of Wavelet parameters
