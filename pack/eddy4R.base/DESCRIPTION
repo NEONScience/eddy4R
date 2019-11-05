@@ -11,7 +11,9 @@ Description: Contains basic commonalities for the eddy4R family of R-packages
 Depends:
     R (>= 3.4.0)
 Imports:
-    BiocInstaller (>= 1.26.0),
+    BiocManager (>= 1.30.7),
+    DataCombine (>= 0.2.21),
+    deming (>= 1.4),
     downloader (>= 0.4),
     EMD (>= 1.5.7),
     ff (>= 2.2-13),
