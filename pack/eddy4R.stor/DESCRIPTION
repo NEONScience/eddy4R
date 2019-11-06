@@ -10,6 +10,8 @@ Description: Eddy-covariance calculation for R: Storage flux. Eddy-Covariance st
 Depends: R (>= 3.4.3)
 Imports:
     zoo (>= 1.8-1)
+Suggests:
+    NEONprocIS.base
 License: GNU AFFERO GENERAL PUBLIC LICENSE Version 3, 19 November 2007
 Encoding: UTF-8
 LazyData: true
