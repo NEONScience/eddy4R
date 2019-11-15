@@ -17,9 +17,15 @@
 #' @param \code{PltfEc} A specifier indicating which eddy covariance platform data are processed. Should be either "airc" or "towr". Defaults to "airc". [-]
 #' @param \code{flagCh4} A logical indicating whether or not methane flux is processed. Defaults to TRUE. [-]
 #' @param \code{vrbs} Logical. Default true. When FALSE supresses warnings when calculating rptStna01 and rptStna02.
+#' @param \code{Thsh} Threshold value to indicate if quality flag will raise high (qfItc = 1) when the calculated quality indicator values are greater the threshold. Defaults as 100. [percent]
+#' @param \code{Perc} A logical indicatiing whether or not to output the quality indicator in the unit of percentage or fraction. Defaults to TRUE. [-]
 #' @param \code{...} Passes additonal arguments to REYNflux. For example pass spcs and rmm when calculating chemistry fluxes. [-]
 
-#' @return Stationarity test result. [percent]
+#' @return
+#' The returned object consists of:\cr
+#' \code{qiStnaTrnd} Stationarity test results (quality indicator) when calculating using trend method (Vickers and Mahrt, 1997).
+#' \code{qiStnaSubSamp} Stationarity test results (quality indicator) when calculating using internal stationarity method (Foken and Wichura, 1996).
+#' \code{qfStna} Stationarity test quality flag.
 
 #' @references
 #' Foken, T. and Wichura, B.: Tools for quality assessment of surface-based flux measurements, Agricultural and Forest Meteorology, 78, 83-105, (1996) \cr
@@ -44,6 +50,10 @@
 #     Add two arguments PltfEc and flagCh4 to adjust tower data
 #   Natchaya Pingintha-Durden (2019-10-30)
 #     added calcuation of quality flags
+#   Natchaya Pingintha-Durden (2019-11-15)
+#     add Perc and Thsh to input parameter;
+#     update output of qi when Perc equal TRUE or FALSE
+#     update qf algorithm to be 0 when qi is NaN
 ##############################################################################################
 #STATIONARITY TESTS
 
@@ -57,6 +67,8 @@ def.stna <- function(
   PltfEc = "airc",
   flagCh4 = TRUE,
   vrbs = TRUE,
+  Thsh = 100,
+  Perc = TRUE,
   ...
 ) {
   
@@ -96,9 +108,8 @@ def.stna <- function(
       rptStna01 <- suppressWarnings(((detr$mn - trnd$mn) / trnd$mn * 100)[whrVar])
     #replace NA with NaN
     lapply(names(rptStna01), function(x)  {rptStna01[[x]][is.na(rptStna01[[x]])] <<- NaN})
-    #calculate the flag; pass (0) if abs(rptStna01) =< 100%; failed (1) abs(rptStna01)>100%; otherwise = -1
-    qfStna01 <- ifelse(is.na(rptStna01[,1:ncol(rptStna01)]), -1, 
-                       ifelse(abs(rptStna01[,1:ncol(rptStna01)]) <= 100, 0, 1))
+    #calculate the flag; pass (0) if abs(rptStna01) =< 100% or NaN; failed (1) abs(rptStna01)>100%
+    qfStna01 <-  ifelse(is.na(abs(rptStna01[,1:ncol(rptStna01)])) | abs(rptStna01[,1:ncol(rptStna01)]) <= Thsh, 0, 1)
     #clean up
     rm(detr)
     
@@ -137,9 +148,9 @@ def.stna <- function(
     
     #replace NA with NaN
     lapply(names(rptStna02), function(x)  {rptStna02[[x]][is.na(rptStna02[[x]])] <<- NaN})
-    #calculate the flag; pass (0) if abs(rptStna02) =< 100%; failed (1) abs(rptStna02)>100%; otherwise = -1
-    qfStna02 <- ifelse(is.na(rptStna02[,1:ncol(rptStna02)]), -1, 
-                       ifelse(abs(rptStna02[,1:ncol(rptStna02)]) <= 100, 0, 1))
+    #calculate the flag; pass (0) if abs(rptStna02) =< 100% or NaN; failed (1) abs(rptStna02)>100%
+    qfStna02 <- ifelse(is.na(abs(rptStna02[,1:ncol(rptStna02)])) | abs(rptStna02[,1:ncol(rptStna02)]) <= Thsh, 0, 1)
+
     #clean up
     rm(trnd, NumSubSamp, rngClas, idxSubSamp, outSubSamp)
     
@@ -150,8 +161,10 @@ def.stna <- function(
   
   #aggregate results
   rpt <- list()
-  if(!is.null(rptStna01)) rpt$qiStnaTrnd=rptStna01
-  if(!is.null(rptStna02)) rpt$qiStnaSubSamp=rptStna02
+  #if Prec == FALSE convert unit to fraction by deviding 100
+  if (Perc == TRUE) {Frac <- 1 } else { Frac <- 100}
+  if(!is.null(rptStna01)) rpt$qiStnaTrnd=abs(rptStna01)/Frac
+  if(!is.null(rptStna02)) rpt$qiStnaSubSamp=abs(rptStna02)/Frac
   if(MethStna == 1) rpt$qfStna <- qfStna01
   if(MethStna == 2) rpt$qfStna <- qfStna02
   if(MethStna == 3) rpt$qfStna <- as.data.frame(t(ifelse(qfStna01[,1:ncol(qfStna01)] == 0 & 

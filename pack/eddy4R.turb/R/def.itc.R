@@ -58,6 +58,10 @@
 #     add CorTemp in function parameters
 #   Natchaya P-Durden (2019-11-07)
 #     update function to handle when stblObkv is NA
+#   Natchaya Pingintha-Durden (2019-11-15)
+#     add Perc to input parameter;
+#     update output of qi when Perc equal TRUE or FALSE
+#     update qf algorithm to be 0 when qi is NaN
 ##############################################################################################
 #INTEGRAL TURBULENCE CHARACTERISTICS
 def.itc <- function(
@@ -67,6 +71,7 @@ def.itc <- function(
   sd,
   varScal,
   Thsh = 100,
+  Perc = TRUE,
   CorTemp = TRUE
 ) {
   #initial list
@@ -109,8 +114,8 @@ def.itc <- function(
       veloXaxs <- (base::abs(itcVeloXaxsMeas - itcVeloXaxsModl) / itcVeloXaxsModl) * 100
     } #end else
     
-    #calculate the flag; pass (0) if  =< 100%; failed (1) >100%
-    qfVeloXaxs <- as.integer(ifelse(is.na(veloXaxs) | veloXaxs > Thsh, 1, 0))
+    #calculate the flag; pass (0) if  <= 100% or NaN; failed (1) >100%
+    qfVeloXaxs <- as.integer(ifelse(is.na(veloXaxs) | veloXaxs <= Thsh, 0, 1))
   }
   
   #Calculate MODEL ITCS for vertical-axis wind speed
@@ -144,8 +149,8 @@ def.itc <- function(
       #final criteria [%]
       veloZaxs <- (base::abs(itcVeloZaxsMeas - itcVeloZaxsModl) / itcVeloZaxsModl) * 100
     } #end else
-    #calculate the flag; pass (0) if  =< 100%; failed (1) >100%
-    qfVeloZaxs <- as.integer(ifelse(is.na(veloZaxs) | veloZaxs > Thsh, 1, 0))
+    #calculate the flag; pass (0) if  <= 100% or NaN; failed (1) >100%
+    qfVeloZaxs <- as.integer(ifelse(is.na(veloZaxs) | veloZaxs <= Thsh, 0, 1))
   }
 
   #Calculate MODEL ITCS for temperature
@@ -177,18 +182,18 @@ def.itc <- function(
       #final criteria [%]
       temp <- (base::abs(itcTempMeas - itcTempModl) / itcTempModl) * 100
     }#end else
-    #calculate the flag; pass (0) if  =< 100%; failed (1) >100%
-    qfTemp <- as.integer(ifelse(is.na(temp) | temp > Thsh, 1, 0))
+    #calculate the flag; pass (0) if  <= 100% or NaN; failed (1) >100%
+    qfTemp <- as.integer(ifelse(is.na(temp) | temp <= Thsh, 0, 1))
   }
 
   ##final criteria [%] for combined variables: u_star and sensible heat flux
   if(VarInp %in% c("all")) {
     veloFric <- base::max(veloXaxs, veloZaxs)
     #calculate the flag; pass (0) if  =< 100%; failed (1) >100%
-    qfVeloFric <- as.integer(ifelse(is.na(veloFric) | veloFric > Thsh, 1, 0))
+    qfVeloFric <- as.integer(ifelse(is.na(veloFric) | veloFric <= Thsh, 0, 1))
     if(CorTemp == TRUE){
       fluxSens <- base::max(veloZaxs, temp)
-      qfFluxSens <- as.integer(ifelse(is.na(fluxSens) | fluxSens > Thsh, 1, 0))
+      qfFluxSens <- as.integer(ifelse(is.na(fluxSens) | fluxSens <= Thsh, 0, 1))
       }else{
         #not included temperature in the determination of itcs
         fluxSens <- veloZaxs
@@ -201,24 +206,26 @@ rm(coefCorl)
 
 #-----------------------------------------------------------
 #output dataframe
+#if Prec == FALSE convert unit to fraction by deviding 100
+if (Perc == TRUE) {Frac <- 1 } else { Frac <- 100}
   if(VarInp == "veloXaxs"){
     #itc <- data.frame(veloXaxs=veloXaxs)
-    rpt$qiItc <- data.frame(u_hor=veloXaxs) #this line will be replaced by above line once we apply name convention to the reference file header 
+    rpt$qiItc <- data.frame(u_hor=veloXaxs/Frac) #this line will be replaced by above line once we apply name convention to the reference file header 
     rpt$qfItc <- data.frame(u_hor=qfVeloXaxs)
   }
   if(VarInp == "veloZaxs"){
     #itc <- data.frame(veloZaxs=veloZaxs)
-    rpt$qiItc <- data.frame(w_hor=veloZaxs) #this line will be replaced by above line once we apply name convention to the reference file header
+    rpt$qiItc <- data.frame(w_hor=veloZaxs/Frac) #this line will be replaced by above line once we apply name convention to the reference file header
     rpt$qfItc <- data.frame(w_hor=qfVeloZaxs)
   }
   if(VarInp == "temp"){
     #itc <- data.frame(temp=temp)
-    rpt$qiItc <- data.frame(T_air=temp)
+    rpt$qiItc <- data.frame(T_air=temp/Frac)
     rpt$qfItc <- data.frame(T_air=qfTemp)
   }
   if(VarInp == "all"){
     #itc <- data.frame(veloXaxs=veloXaxs, veloZaxs=veloZaxs, temp=temp, veloFric=veloFric, fluxSens=fluxSens)
-    rpt$qiItc <- data.frame(u_hor=veloXaxs, w_hor=veloZaxs, T_air=temp, u_star=veloFric, F_H_kin=fluxSens) #this line will be replaced by above line once we apply name convention to the reference file header
+    rpt$qiItc <- data.frame(u_hor=veloXaxs/Frac, w_hor=veloZaxs/Frac, T_air=temp/Frac, u_star=veloFric/Frac, F_H_kin=fluxSens/Frac) #this line will be replaced by above line once we apply name convention to the reference file header
     rpt$qfItc <- data.frame(u_hor=qfVeloXaxs, w_hor=qfVeloZaxs, T_air=qfTemp, u_star=qfVeloFric, F_H_kin=qfFluxSens)
   }
 #
