@@ -16,6 +16,8 @@
 #' @param \code{presTempPot} A vector containing the air pressure data that will be used in the calculation when \code{corTempPot}=TRUE. Of class "numeric" or "integer" and of the same length as \code{data} or single entry. [Pa]
 #' @param \code{PltfEc} A specifier indicating which eddy covariance platform data are processed. Should be either "airc" or "towr". Defaults to "airc". [-]
 #' @param \code{flagCh4} A logical indicating whether or not methane flux is processed. Defaults to TRUE. [-]
+#' @param \code{vrbs} Logical. Default true. When FALSE supresses warnings when calculating rptStna01 and rptStna02.
+#' @param \code{...} Passes additonal arguments to REYNflux. For example pass spcs and rmm when calculating chemistry fluxes. [-]
 
 #' @return Stationarity test result. [percent]
 
@@ -51,20 +53,23 @@ def.stna <- function(
   corTempPot=TRUE,
   presTempPot=NULL,
   PltfEc = "airc",
-  flagCh4 = TRUE
+  flagCh4 = TRUE,
+  vrbs = TRUE,
+  ...
 ) {
   
   #-----------------------------------------------------------
   #BASIC SETUP
   
   #fluxes including trend
-  trnd <- REYNflux_FD_mole_dry(
+  trnd <- eddy4R.turb::REYNflux_FD_mole_dry(
     data=data,
     AlgBase="mean",
     FcorPOT=corTempPot,
     FcorPOTl=presTempPot,
     PltfEc = PltfEc,
-    flagCh4 = flagCh4
+    flagCh4 = flagCh4,
+    ...
   )
   
   if(MethStna %in% c(1, 3)) { 
@@ -72,17 +77,21 @@ def.stna <- function(
     #TREND EFFECT
     
     #fluxes after trend removal
-    detr <- REYNflux_FD_mole_dry(
+    detr <- eddy4R.turb::REYNflux_FD_mole_dry(
       data=data,
       AlgBase="trnd",
       FcorPOT=corTempPot,
       FcorPOTl=presTempPot,
       PltfEc = PltfEc,
-      flagCh4 = flagCh4
+      flagCh4 = flagCh4,
+      ...
     )
     
     #deviation [%]
-    rptStna01 <- ((detr$mn - trnd$mn) / trnd$mn * 100)[whrVar]
+    if(vrbs == TRUE)
+      rptStna01 <- ((detr$mn - trnd$mn) / trnd$mn * 100)[whrVar]
+    else
+      rptStna01 <- suppressWarnings(((detr$mn - trnd$mn) / trnd$mn * 100)[whrVar])
     
     #clean up
     rm(detr)
@@ -101,20 +110,24 @@ def.stna <- function(
     idxSubSamp <- base::sapply(1:(length(rngClas) - 1), function(x) base::seq(rngClas[x], rngClas[x + 1] - 1))
     
     #results for the subsamples
-    outSubSamp <- base::sapply(1:NumSubSamp, function(x) REYNflux_FD_mole_dry(
+    outSubSamp <- base::sapply(1:NumSubSamp, function(x) eddy4R.turb::REYNflux_FD_mole_dry(
       data=data[idxSubSamp[[x]],],
       AlgBase="mean",
       FcorPOT=corTempPot,
       FcorPOTl=presTempPot,
       PltfEc = PltfEc,
-      flagCh4 = flagCh4
+      flagCh4 = flagCh4,
+      ...
     )$mn[,whrVar]
     )
     outSubSamp <- data.frame(base::matrix(unlist(outSubSamp), ncol=length(whrVar), byrow=TRUE))
     dimnames(outSubSamp)[[2]] <- whrVar
     
     #stationarity criteria
-    rptStna02 <- (base::colMeans(outSubSamp) - trnd$mn[whrVar]) / trnd$mn[whrVar] * 100
+    if(vrbs == TRUE)
+      rptStna02 <- (base::colMeans(outSubSamp) - trnd$mn[whrVar]) / trnd$mn[whrVar] * 100
+    else
+      rptStna02 <- suppressWarnings((base::colMeans(outSubSamp) - trnd$mn[whrVar]) / trnd$mn[whrVar] * 100)
     
     #clean up
     rm(trnd, NumSubSamp, rngClas, idxSubSamp, outSubSamp)

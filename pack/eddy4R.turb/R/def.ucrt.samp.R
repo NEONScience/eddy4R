@@ -40,6 +40,10 @@
 #     added Roxygen2 tags
 #   Kenny Pratt (2017-02-08)
 #     changed naming conventions to match eddy4R and added Moving Block Bootstrap technique
+#   Will Drysdale (2018-01-25)
+#     Added Support for other species to be defined in SiteInfo
+#   Will Drysdale (2019-01-29)
+#     Removed SiteInfo dependance, added switches as explicit variables
 ##############################################################################################
 def.ucrt.samp <- function(
   data = NULL,           #instantaneous data
@@ -47,7 +51,8 @@ def.ucrt.samp <- function(
   valuMean,		      #mean values
   coefCorr,		      #flux correlation coefficient
   distMean,		      #averaging distance ()
-  timeFold = 0     #e-folding time for the autocorrelation of wavelet power at
+  timeFold = 0 ,    #e-folding time for the autocorrelation of wavelet power at
+  spcs = NULL
   #each scale (Torrence and Compo, 1998, Table 1). This e-folding time is chosen
   #so that the wavelet power for a discontinuity at the
   #edge drops by a factor e-2 and ensures that the edge
@@ -55,20 +60,33 @@ def.ucrt.samp <- function(
   #For Morlet Wavelet sqrt(2) * scale for one side (for or aft), so 2 * sqrt(2) * scale for both sides (fore and aft)
 ) {
   
-  
   #-----------------------------------------------------------
   #VARIABLES
   
   #scalar length scales
   distScalIsca <- distIsca$scal
   #lookup table for matching scalar length scales to flux correlation coefficients
-  whrDistIsca <- base::rbind(  
-    c("u_star2_x", "u_hor"),
-    c("u_star2_y", "v_hor"),
-    c("F_H_en", "T_air"),
-    c("F_LE_en", "FD_mole_H2O"),
-    c("F_CH4_mass",  "FD_mole_CH4")
-  )
+  if(is.null(spcs)){
+    whrDistIsca <- base::rbind(  
+      c("u_star2_x", "u_hor"),
+      c("u_star2_y", "v_hor"),
+      c("F_H_en", "T_air"),
+      c("F_CH4_mass",  "FD_mole_CH4")
+    )
+  }else{
+    whrDistIsca <- base::rbind(c("u_star2_x", "u_hor"),
+                               c("u_star2_y", "v_hor"),
+                               c("F_H_en", "T_air"),
+                               c("F_LE_en", "FD_mole_H2O"))
+    
+    for(i in 1:length(spcs)){
+      F_spcs_var <- def.spcs.name(spcs[i],"mole")
+      F_spcs_mass <- def.spcs.name(spcs[i],"mass")
+      
+      whrDistIsca = base::rbind(whrDistIsca,
+                                c(F_spcs_mass,F_spcs_var))}
+  }
+  
   #variance length scales
   distVariIsca <- distIsca$vari
   #flux length scales
@@ -85,27 +103,27 @@ def.ucrt.samp <- function(
   #is influced by a multiple of that scale fore and aft the averaging interval (e-folding time).
   #This should be considered for the random error ( + timeFold * distVariIsca in denominator)
   ucrtRandVari <- base::sqrt(2 * distVariIsca / (distMean + timeFold * distVariIsca))
-
+  
   
   #fluxes
   
   #directly from flux length scales (Lenschow, 1986 Eq. (7) == Lenschow, 1994 Eq. (48))
   #error estimate
   #large error in F_CH4_mass due to four times lower correlation coefficient
-   ucrtRandFlux <- base::data.frame(base::sqrt(2 * distFluxIsca / (distMean + timeFold * distFluxIsca) * (coefCorr^(-2) + 1)))
-   
+  ucrtRandFlux <- base::data.frame(base::sqrt(2 * distFluxIsca / (distMean + timeFold * distFluxIsca) * (coefCorr^(-2) + 1)))
+  
   #error reproduction
   #Bange: u_star2_x and u_star2_y are orthogonal == indepenend -> for random error we can use Gauss reproduction
-   ucrtRandFlux$veloFric <- (
+  ucrtRandFlux$veloFric <- (
     (valuMean$u_star2_x *  ucrtRandFlux$u_star2_x * valuMean$u_star2_x / valuMean$u_star^2)^2 +
       (valuMean$u_star2_y *  ucrtRandFlux$u_star2_y * valuMean$u_star2_y / valuMean$u_star^2)^2
   )^(1/4) / valuMean$u_star 
   
   #upper limit from scalar length scales
   #upper limt for lenght scale following Mann (1994) Eq. (9), Bange (2002) Eq. (10)
-   distMax <- base::data.frame(base::sapply(1:base::length(coefCorr), function(x) {
+  distMax <- base::data.frame(base::sapply(1:base::length(coefCorr), function(x) {
     #get corresponding scalar length scale from conversion table
-     locScalIsca <- distScalIsca[,whrDistIsca[base::match(base::dimnames(coefCorr)[[2]][x], whrDistIsca[,1]),2]]
+    locScalIsca <- distScalIsca[,whrDistIsca[base::match(base::dimnames(coefCorr)[[2]][x], whrDistIsca[,1]),2]]
     base::sqrt(distScalIsca$w_hor *  locScalIsca) / base::abs(coefCorr[x])
   }
   ))
@@ -123,7 +141,7 @@ def.ucrt.samp <- function(
   
   #save to list
   ucrtRand <- base::list()
-
+  
   #sampling error in variance
   ucrtRand$vari$act=ucrtRandVari*100
   #actual flux random error (flux length scales)
@@ -134,41 +152,41 @@ def.ucrt.samp <- function(
   #Below is the Moving Block Bootstrap technique to estimate sampling uncertainty for scalars, variances, and fluxes. Only run if user supplies instantaneous data
   
   if (!is.null(data)) {
-  
-  #scalar
-  
-  require(boot)
-  #Compute the mean of the Relative Error from the B = 1000 bootstrap samples
-  distCrit <- def.wind.mbb(data$scal)
-  tmp <- boot::tsboot(data$scal,mean, 1000, l = round(distCrit), sim = "fixed")
-  ucrtRandScal <- sd(tmp$t)/mean(data$scal)
-  rm(tmp)
-  
-  #save sampling error to list
-  ucrtRand$scal$act = ucrtRandScal*100
-  
-  #variance
-  
-  #Compute the mean of the Relative Error from the B = 1000 bootstrap samples
-  distCrit <- def.wind.mbb(data$vari)
-  tmp <- boot::tsboot(data$vari,mean, 1000, l = round(distCrit), sim = "fixed")
-  ucrtRandVariMbb <- sd(tmp$t)/mean(data$vari)
-  rm(tmp)
-  
-  #sampling error in variance using MBB
-  ucrtRand$vari$mbb=ucrtRandVariMBB*100
-  
-  #flux
-  
-  #Compute the mean of the Relative Error from the B = 1000 bootstrap samples
-  distCrit <- def.wind.mbb(data$flux)
-  tmp <- boot::tsboot(data$flux,mean, 1000, l = round(distCrit), sim = "fixed")
-  ucrtRandFluxMbb <- sd(tmp$t)/mean(data$flux)
-  rm(tmp)
-  
-  #Sampling error using MBB
-  ucrtRand$flux$mbb= ucrtRandFluxMBB*100
-  
+    
+    #scalar
+    
+    require(boot)
+    #Compute the mean of the Relative Error from the B = 1000 bootstrap samples
+    distCrit <- def.wind.mbb(data$scal)
+    tmp <- boot::tsboot(data$scal,mean, 1000, l = round(distCrit), sim = "fixed")
+    ucrtRandScal <- sd(tmp$t)/mean(data$scal)
+    rm(tmp)
+    
+    #save sampling error to list
+    ucrtRand$scal$act = ucrtRandScal*100
+    
+    #variance
+    
+    #Compute the mean of the Relative Error from the B = 1000 bootstrap samples
+    distCrit <- def.wind.mbb(data$vari)
+    tmp <- boot::tsboot(data$vari,mean, 1000, l = round(distCrit), sim = "fixed")
+    ucrtRandVariMbb <- sd(tmp$t)/mean(data$vari)
+    rm(tmp)
+    
+    #sampling error in variance using MBB
+    ucrtRand$vari$mbb=ucrtRandVariMBB*100
+    
+    #flux
+    
+    #Compute the mean of the Relative Error from the B = 1000 bootstrap samples
+    distCrit <- def.wind.mbb(data$flux)
+    tmp <- boot::tsboot(data$flux,mean, 1000, l = round(distCrit), sim = "fixed")
+    ucrtRandFluxMbb <- sd(tmp$t)/mean(data$flux)
+    rm(tmp)
+    
+    #Sampling error using MBB
+    ucrtRand$flux$mbb= ucrtRandFluxMBB*100
+    
   }
   
   #clean up
