@@ -4,7 +4,7 @@
 #' @author
 #' David Durden \email{ddurden@battelleecology.org}
 
-#' @description 
+#' @description
 #' Wrapper function. Calculate Wavelet spectrum/cospectrum using the Waves package. The frequency response correction using Wavelet techniques described in Norbo and Katul, 2012 (NK12)
 
 #' @param dfInp data.frame, consisting of the input data to perform the wavelet transformation
@@ -14,9 +14,9 @@
 #' @param ThshMiss numeric, dimensionless fraction of missing values in each column of data allowed before the quality flag is tripped. Defaults to 0.1 or 10 percent.
 #' @param SI stability parameter (numeric)
 
-#' 
+#'
 #' @return An list constaining wavelet spectra, quality flags if data was available to perform correction, and frequency reponse correction parameters if activated.
-#' 
+#'
 #' @references
 #' License: GNU AFFERO GENERAL PUBLIC LICENSE Version 3, 19 November 2007.
 
@@ -29,7 +29,7 @@
 
 #' @export
 
-# changelog and author contributions / copyrights 
+# changelog and author contributions / copyrights
 #   David Durden (2017-10-07)
 #     original creation
 #   Stefan Metzger (2017-10-14)
@@ -56,9 +56,9 @@ SI
 
 #Create output list
 rpt <- list()
-  
+
 ####Check quality of data###########################################
-#Create a logical flag if more data is missing than the threshold   
+#Create a logical flag if more data is missing than the threshold
 rpt$qfMiss <- as.list(colMeans(is.na(dfInp)) > ThshMiss)
 #Turn the flags into integers
 rpt$qfMiss <- lapply(rpt$qfMiss, as.integer)
@@ -86,9 +86,9 @@ dfInp <- as.data.frame(ts(
 # in the future, can consider package "wmtsa" could enable transition to R 3.x (http://cran.at.r-project.org/web/packages/wmtsa/wmtsa.pdf)
 rpt$wave <- list()
 for (c in colnames(dfInp)) {
-    cat(paste(c, "..."))
     rpt$wave[[c]] <- Waves::cwt(dfInp[[c]], wavelet = FuncWave, dj = DiffScal)
-    cat(" done.\n")
+    msg <- paste(c, "... done.")
+    tryCatch({rlog$debug(msg)}, error=function(cond){print(msg)})
   }
 
 #normalization factor specific to the choice of Wavelet parameters
@@ -126,7 +126,7 @@ rpt$coefNorm <- rpt$wave[["w_hor"]]@dj * rpt$wave[["w_hor"]]@dt / rpt$wave[["w_h
 
 
 # covariance for all wavelengths
-# not currently implemented for friction velocity as approach to negative 
+# not currently implemented for friction velocity as approach to negative
 rpt$cov <- lapply(names(rpt$wave)[-which(names(rpt$wave) == "w_hor")], function(var)
   eddy4R.turb::def.vari.wave(
   # def.vari.wave(

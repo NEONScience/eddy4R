@@ -5,7 +5,7 @@
 \title{Definition function: Integral turbulence characteristics}
 \usage{
 def.itc(stblObkv, lat, VarInp = c("veloXaxs", "veloZaxs", "temp",
-  "all")[4], sd, varScal)
+  "all")[4], sd, varScal, Thsh = 100, Perc = TRUE, CorTemp = TRUE)
 }
 \arguments{
 \item{\code{stblObkv}}{Stability parameter and of class "numeric". [dimensionless]}
@@ -17,9 +17,15 @@ def.itc(stblObkv, lat, VarInp = c("veloXaxs", "veloZaxs", "temp",
 \item{\code{sd}}{A vector or data frame containing standard deviation of \code{VarInp} and of class "numeric". If \code{VarInp} = "all",  \code{sd} shall contain in the follwing orders, standard deviation of along-axis horizontal wind speed, standard deviation of vertical-axis wind speed, and standard deviation of air temperature. [user-defined]}
 
 \item{\code{varScal}}{A vector or data frame containing the scaling variables of \code{VarInp} and of class "numeric". If \code{VarInp} = "all", \code{varScal} shall contain in the follwing orders, scaling variable of wind speed (friction velocity will be used for both "veloXaxs" and "veloZaxs") and scaling variable of air temperature.  [user-defined]}
+
+\item{\code{Thsh}}{Threshold value to indicate if quality flag will raise high (qfItc = 1) when the calculated quality indicator values are greater the threshold. Defaults as 100. [percent]}
+
+\item{\code{CorTemp}}{Logical state if the temperture is used in the determination of ITCs of sensible heat flux (fluxSens). Defaults as TRUE.}
 }
 \value{
-Data frame of integral turbulence characteristics test results of \code{VarInp}. If \code{VarInp} = "all", it includes test results for individual variable, i.e., along-axis horizontal wind speed, vertical-axis wind speed, and air temperature and also combined variables, i.e., friction velocity and sensible heat flux. [percent]
+The returned object consists of:\cr
+\code{qiItc} integral turbulence characteristics test results (quality indicator) of \code{VarInp}. If \code{VarInp} = "all", it includes test results for individual variable, i.e., along-axis horizontal wind speed, vertical-axis wind speed, and air temperature and also combined variables, i.e., friction velocity and sensible heat flux. [percent]\cr
+\code{qfItc} integral turbulence characteristics quality flag of of \code{VarInp}. If \code{VarInp} = "all", it includes quality flag results for individual variable, i.e., along-axis horizontal wind speed, vertical-axis wind speed, and air temperature and also combined variables, i.e., friction velocity and sensible heat flux. [NA]
 }
 \description{
 Function defintion. Integral turbulence characteristics.
