@@ -41,6 +41,9 @@
 #     update @param format
 #   Natchaya P-Durden (2018-04-11)
 #    applied eddy4R term name convention; replaced pos by idxTime
+#   Natchaya P-Durden (2019-10-31)
+#    update function to handle all NaN inputs when running "trnd" option 
+#    generated in NAs in varBase to have the same length as idxTime
 ##############################################################################################
 
 
@@ -53,9 +56,17 @@ if(AlgBase == "mean") {
   
 # linear trend:
 if(AlgBase == "trnd") {
-  var <- stats::approx(x = idxTime, y = var, xout = idxTime, method = "linear", rule = 2)[[2]]	#get rid of NAs in var
-  trnd<-lm(var~idxTime)
-  varBase<- fitted.values(trnd)
+  if (length(which(!is.na(var))) == 0){
+    varBase <- rep(NaN, length(var))
+  }else{
+    var<-approx(idxTime, var, xout=idxTime)[[2]]	#get rid of NAs in var
+    trnd<-lm(var~idxTime)
+    varBase<- fitted.values(trnd)
+    #fill in NAs so varBase has the same length as idxTime
+    if (length(varBase) != length(idxTime)){
+      length(varBase) <- length(idxTime)
+      }
+    }
 #coefficients(trnd)[1]+
 #coefficients(trnd)[2]*idxTime
 }

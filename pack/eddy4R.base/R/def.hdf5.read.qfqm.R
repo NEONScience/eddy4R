@@ -4,7 +4,7 @@
 #' @author
 #' David Durden \email{ddurden@battelleecology.org}
 
-#' @description definition function. Reads an HDF5 input file in NEON standard format from \code{DirInpLoca}. 
+#' @description definition function. Reads an HDF5 input file in NEON standard format from \code{DirInpLoca}.
 
 #' @param DirInpLoca Character: Input directory.
 #' @param SiteLoca Character: Site location.
@@ -14,7 +14,7 @@
 #' @param FreqLoca Integer: Measurement frequency.
 #' @param MethMeas A vector of class "character" containing the name of measurement method (eddy-covariance turbulent exchange or storage exchange), MethMeas = c("ecte", "ecse"). Defaults to "ecte".
 
-#' @return 
+#' @return
 #' Named list \code{qfqm} containing time-series of quality flags.
 
 #' @references
@@ -35,9 +35,9 @@
 #   Natchaya Pingintha-Durden (2017-06-21)
 #     adding parameter MethMeas to distinguish different cases for ecte and ecse
 #   David Durden (2017-12-12)
-#     Removing rev number from dp0p data product HDF5 group levels 
+#     Removing rev number from dp0p data product HDF5 group levels
 #   Natchaya P-Durden (2018-01-19)
-#     Updating to remove rev numbers from ECSE dp0p HDF5 data product group level 
+#     Updating to remove rev numbers from ECSE dp0p HDF5 data product group level
 #   Natchaya P-Durden (2018-03-30)
 #     applied term name convention; replaced Levl by Lvl
 #   Natchaya P-Durden (2018-05-22)
@@ -53,8 +53,8 @@ def.hdf5.read.qfqm <- function(
   FreqLoca,
   MethMeas = c("ecte", "ecse")[1]
 ){
-  
-#Read in the flags from the HDF5 file 
+
+#Read in the flags from the HDF5 file
 if (MethMeas == "ecte") {
 qfqm <- rhdf5::h5read(file = base::paste0(DirInpLoca, "/ECTE_dp0p_", SiteLoca, "_", DateLoca, ".h5"),
                       name = base::paste0("/", SiteLoca, "/dp0p/qfqm/", VarLoca, "/",LvlTowr), read.attributes = TRUE)
@@ -64,13 +64,13 @@ if (MethMeas == "ecse") {
 qfqm <- rhdf5::h5read(file = base::paste0(DirInpLoca, "/ECSE_dp0p_", SiteLoca, "_", DateLoca, ".h5"),
                       name = base::paste0("/", SiteLoca, "/dp0p/qfqm/", VarLoca, "/",LvlTowr), read.attributes = TRUE)
 }
-  
-#Convert each flag to a vector from a 1D array                     
+
+#Convert each flag to a vector from a 1D array
 for(idx in base::names(qfqm)) qfqm[[idx]] <- base::as.vector(qfqm[[idx]]); base::rm(idx)
 
 #Apply units to each flag
-lapply(seq_len(length(qfqm)), function(x){ 
-  print(x)
+lapply(seq_len(length(qfqm)), function(x){
+  tryCatch({rlog$debug(x)}, error=function(cond){print(x)})
   attributes(qfqm[[x]])$Unit <<- attributes(qfqm)$Unit[[x]]
   })
 
