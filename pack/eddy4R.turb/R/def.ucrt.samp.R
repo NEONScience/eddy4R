@@ -44,6 +44,8 @@
 #     Added Support for other species to be defined in SiteInfo
 #   Will Drysdale (2019-01-29)
 #     Removed SiteInfo dependance, added switches as explicit variables
+#   David Durden (2019-11-07)
+#     Fixing missing water vapor variable
 ##############################################################################################
 def.ucrt.samp <- function(
   data = NULL,           #instantaneous data
@@ -71,6 +73,7 @@ def.ucrt.samp <- function(
       c("u_star2_x", "u_hor"),
       c("u_star2_y", "v_hor"),
       c("F_H_en", "T_air"),
+      c("F_LE_en", "FD_mole_H2O"),
       c("F_CH4_mass",  "FD_mole_CH4")
     )
   }else{
