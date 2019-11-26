@@ -14,10 +14,10 @@
 #' @param FreqLoca Integer: Measurement frequency.
 #' @param RngLoca List of named ingegers: Thresholds for range test.
 #' @param DespLoca List of integers: De-spiking parameters
-#' @param MethMeas A vector of class "character" containing the name of measurement method (eddy-covariance turbulent exchange or storage exchange), MethMeas = c("ecte", "ecse"). Defaults to "ecte". 
+#' @param MethMeas A vector of class "character" containing the name of measurement method (eddy-covariance turbulent exchange or storage exchange), MethMeas = c("ecte", "ecse"). Defaults to "ecte".
 
 
-#' @return 
+#' @return
 #' Named list containing pre-processed time-series $time and $data.
 
 #' @references
@@ -45,9 +45,9 @@
 #   Ke Xu (2017-05-22)
 #     adding parameter MethMeas to distinguish different cases for ecte and ecse
 #   David Durden (2017-12-12)
-#     Updating to remove rev numbers from ECTE dp0p HDF5 data product group levels 
+#     Updating to remove rev numbers from ECTE dp0p HDF5 data product group levels
 #   Natchaya P-Durden (2018-01-19)
-#     Updating to remove rev numbers from ECSE dp0p HDF5 data product group levels 
+#     Updating to remove rev numbers from ECSE dp0p HDF5 data product group levels
 #    Updating to remove rev numbers from ECTE dp0p HDF5 data product group levels
 #   Stefan Metzger (2018-01-30)
 #     move ECSE de-spiking from wrap.neon.read.hdf5.eddy() to wrap.prd.day.ecse()
@@ -68,7 +68,7 @@
 #   Natchaya P-Durden (2019-02-14)
 #     adding to write out DfSd of gasRefe
 ##############################################################################################
-        
+
 wrap.hdf5.read <- function(
   DirInpLoca,
   SiteLoca,
@@ -83,7 +83,7 @@ wrap.hdf5.read <- function(
   DespLoca,
   MethMeas = c("ecte", "ecse")[1]
 ) {
-  
+
 # create regular time dimension
 # POSIX is rounding down, add time increment after last significant digit
 time <- seq.POSIXt(
@@ -96,15 +96,15 @@ time <- seq.POSIXt(
 
   # get available files from directory structure
   file <- list.files(DirInpLoca)
-  
+
   # exclude files and subfolder with formats different from target file format
   file <- file[which(sapply(1:length(file), function(x) strsplit(file[x], "_")[[1]][3] == SiteLoca))]
-  
+
   # extract dates in ISO format
-  
+
     # first split file name from extension
     file <- sapply(1:length(file), function(x) strsplit(file[x], "[.]")[[1]][1])
-    
+
     # then split date from remainder of filename
     file <- sapply(1:length(file), function(x) strsplit(file[x], "_")[[1]][4])
 
@@ -118,7 +118,7 @@ if(!(DateLoca %in% file)) {
 
   # irgaTurb
   if(VarLoca == "irgaTurb") {
-    
+
     data <- data.frame(matrix(data = NaN, ncol = 21, nrow = length(time)))
     names(data) <- c("asrpCo2", "asrpH2o", "densMoleCo2", "densMoleH2o", "potCool", "powrCo2Refe", "powrCo2Samp", "powrH2oRefe",
                      "powrH2oSamp", "presAtm", "presDiff","presSum", "rtioMoleDryCo2", "rtioMoleDryH2o", "ssiCo2", "ssiH2o", "tempIn", "tempMean",
@@ -127,57 +127,58 @@ if(!(DateLoca %in% file)) {
     attributes(data)$unit <- c("-", "-", "molCo2 m-3", "molH2o m-3", "V", "W", "W", "W", "W", "Pa", "Pa", "Pa", "molCo2 mol-1Dry",
                                "molH2o mol-1Dry", "-", "-", "K", "K", "K", "K", "YYYY-MM-DD hh:mm:ss.sss")
     names(attributes(data)$unit) <- names(data)
-  
+
   }
 
   # irgaTurb MFC
   if(VarLoca == "mfcSampTurb") {
-    
+
     data <- data.frame(matrix(data = NaN, ncol = 6, nrow = length(time)))
     names(data) <- c("frt", "frt00", "frtSet00", "presAtm", "temp", "time")
     data$time <- time
     attributes(data)$unit <- c("litersPerMinute", "litersPerMinute", "litersPerMinute", "Pa", "K", "YYYY-MM-DD hh:mm:ss.sss")
     names(attributes(data)$unit) <- names(data)
-    
+
   }
 
   # irgaTurb Solenoids in NEMA enclosure
   if(VarLoca == "valvValiNemaTurb") {
-    
+
     data <- data.frame(matrix(data = NaN, ncol = 6, nrow = length(time)))
     names(data) <- c("qfGas01", "qfGas02", "qfGas03", "qfGas04", "qfGas05", "time")
     data$time <- time
     attributes(data)$unit <- c("NA", "NA", "NA", "NA", "NA", "YYYY-MM-DD hh:mm:ss.sss")
     names(attributes(data)$unit) <- names(data)
-    
+
   }
   # soni
   if(VarLoca == "soni") {
-    
+
     data <- data.frame(matrix(data = NaN, ncol = 7, nrow = length(time)))
     names(data) <- c("idx", "tempSoni", "time", "veloSoni", "veloXaxs", "veloYaxs", "veloZaxs")
     data$time <- time
     attributes(data)$unit <- c("NA", "K", "YYYY-MM-DD hh:mm:ss.sss", "m s-1", "m s-1", "m s-1", "m s-1")
     names(attributes(data)$unit) <- names(data)
-    
+
   }
 
   # amrs
   if(VarLoca == "amrs") {
-    
+
     data <- data.frame(matrix(data = NaN, ncol = 14, nrow = length(time)))
-    names(data) <- c("accXaxs", "accXaxsDiff", "accYaxs", "accYaxsDiff", "accZaxs", "accZaxsDiff", "angXaxs", "angYaxs", "angZaxs", 
+    names(data) <- c("accXaxs", "accXaxsDiff", "accYaxs", "accYaxsDiff", "accZaxs", "accZaxsDiff", "angXaxs", "angYaxs", "angZaxs",
                      "avelXaxs", "avelYaxs", "avelZaxs", "idx", "time" )
     data$time <- time
-    attributes(data)$unit <- c("m s-2", "m s-2", "m s-2", "m s-2", "m s-2", "m s-2", "rad", "rad", "rad", "rad s-1", "rad s-1", 
+    attributes(data)$unit <- c("m s-2", "m s-2", "m s-2", "m s-2", "m s-2", "m s-2", "rad", "rad", "rad", "rad s-1", "rad s-1",
                                "rad s-1", "NA", "YYYY-MM-DD hh:mm:ss.sss")
     names(attributes(data)$unit) <- names(data)
-    
+
   }
 
   # print message to screen
-  print(paste0(format(Sys.time(), "%F %T"), ": dataset ", DateLoca, ": ", VarLoca, " hdf5 file not available, NaNs substituted"))
-  
+  msg<-paste0("dataset ", DateLoca, ": ", VarLoca, " hdf5 file not available, NaNs substituted")
+  tryCatch({rlog$debug(msg)}, error=function(cond){print(msg)})
+
 ###
 # mid data availability
 # case "dataset is available": start read data from hdf5 file
@@ -185,50 +186,51 @@ if(!(DateLoca %in% file)) {
 ###
 
   # read-in data
-    
+
     # read-in hdf5 data from the specified sensor
     # options via open connection: fid <- H5Fopen(paste0(DirInpLoca, "/ECSE_L0_", SiteLoca, "_", DateLoca, ".h5")); h5ls(fid)
-  
-   
+
+
   if(MethMeas == "ecte")  data <- rhdf5::h5read(file = base::paste0(DirInpLoca, "/ECTE_dp0p_", SiteLoca, "_", DateLoca, ".h5"),
                                                 name = base::paste0("/", SiteLoca, "/dp0p/data/", VarLoca, "/",LvlTowr),
                                                 read.attributes = TRUE)
-  
-  
+
+
   if(MethMeas == "ecse")  data <- rhdf5::h5read(file = base::paste0(DirInpLoca, "/ECSE_dp0p_", SiteLoca, "_", DateLoca, ".h5"),
                                                 name = base::paste0("/", SiteLoca, "/dp0p/data/", VarLoca, "/",LvlTowr),
                                                 read.attributes = TRUE)
-  
+
 
     # convert 1-d array list-elements to vector list-elements
     # can be omitted once Dave figures out to store h5 data tables as vector list-elements
     for(idx in base::names(data)) data[[idx]] <- base::as.vector(data[[idx]]); base::rm(idx)
-    
+
     # convert list to data.frame
     data <- base::as.data.frame(data, stringsAsFactors = FALSE)
     # base::attributes(data)$row.names <- NULL
-    
+
     # print message to screen
-    print(paste0(format(Sys.time(), "%F %T"), ": dataset ", DateLoca, ": ", VarLoca, " hdf5 read-in complete"))
+    msg <- paste0("dataset ", DateLoca, ": ", VarLoca, " hdf5 read-in complete")
+    tryCatch({rlog$debug(msg)}, error=function(cond){print(msg)})
 
   # convert type of variable time
   data$time <- base::as.POSIXct(data$time, format="%Y-%m-%dT%H:%M:%OSZ", tz="UTC") + 0.0001
 
   # assign hdf5 attributes
-    
+
     # read attributes
-  
+
   if(MethMeas == "ecte") attr <- rhdf5::h5readAttributes(file = base::paste0(DirInpLoca, "/ECTE_dp0p_", SiteLoca, "_", DateLoca, ".h5"),
                                                          name = base::paste0("/", SiteLoca, "/dp0p/data/", VarLoca, "/", LvlTowr))
-  
-  
+
+
    if(MethMeas == "ecse") attr <- rhdf5::h5readAttributes(file = base::paste0(DirInpLoca, "/ECSE_dp0p_", SiteLoca, "_", DateLoca, ".h5"),
                                     name = base::paste0("/", SiteLoca, "/dp0p/data/", VarLoca, "/", LvlTowr))
-    
+
     #########This section not needed after moving the names and units to the data table level###########################
-    # which attributes are of type character? 
+    # which attributes are of type character?
 #    Set01 <- base::names(attr)[base::sapply(base::names(attr), function(x) base::is.character(attr[[x]]))]
-    
+
     # split characters by comma separator and trim white spaces
 #    if(base::length(Set01) > 0) attr[Set01] <- base::sapply(Set01, function(x) base::trimws(base::unlist(base::strsplit(x = attr[[x]], split = ","))))
 
@@ -237,26 +239,27 @@ if(!(DateLoca %in% file)) {
 
     # sort and assign unit descriptions in same order as data
     base::attributes(data)$unit <- attr$Unit[base::names(data)]
-    
+
     # sd assign attribute to gasRefe
     if (VarLoca == "gasRefe"){
       base::names(attr$Sd) <- attr$Name
       base::names(attr$DfSd) <- attr$Name
-      base::attributes(data)$sd <- attr$Sd[base::names(data)] 
-      base::attributes(data)$DfSd <- attr$DfSd[base::names(data)] 
+      base::attributes(data)$sd <- attr$Sd[base::names(data)]
+      base::attributes(data)$DfSd <- attr$DfSd[base::names(data)]
     }
-    rm(attr) 
-    
+    rm(attr)
+
       # replacement statement for assigning units to individual variables in data
       # # assign units to variables in data
       # for(idx in base::names(data)) base::attr(x = data[[idx]], which = "unit") <- attr$Unit[[idx]]
       # rm(idx)
 
     # print message to screen
-    print(paste0(format(Sys.time(), "%F %T"), ": dataset ", DateLoca, ": ", VarLoca, " hdf5 attributes complete"))
+    msg <- paste0("dataset ", DateLoca, ": ", VarLoca, " hdf5 attributes complete")
+    tryCatch({rlog$debug(msg)}, error=function(cond){print(msg)})
 
   # unit conversion
-    
+
     # perform unit conversion
     data <- base::suppressWarnings(eddy4R.base::def.unit.conv(data = data,
                                                               unitFrom = attributes(data)$unit,
@@ -265,21 +268,22 @@ if(!(DateLoca %in% file)) {
       # replacement statement for performing unit conversion over individual variables in data
       # # perform unit conversion: loop around variables in data
       # for(idx in base::names(data)) {
-      #   
+      #
       #   data[[idx]] <- base::suppressWarnings(
       #     eddy4R.base::def.unit.conv(data = base::as.vector(data[[idx]]),
       #                                unitFrom = attributes(data[[idx]])$unit,
       #                                unitTo = "intl")
       #   )
-      #   
+      #
       # }; rm(idx)
 
     # print message to screen
-    print(paste0(format(Sys.time(), "%F %T"), ": dataset ", DateLoca, ": ", VarLoca, " unit conversion complete"))
+    msg <- paste0("dataset ", DateLoca, ": ", VarLoca, " unit conversion complete")
+    tryCatch({rlog$debug(msg)}, error=function(cond){print(msg)})
 
   # regularization
   if(Rglr) {
-    
+
     # perform regularization
     data <- eddy4R.base::def.rglr(
       timeMeas = base::as.POSIXlt(data$time, format="%Y-%m-%dT%H:%M:%OSZ", tz="UTC"),
@@ -294,18 +298,20 @@ if(!(DateLoca %in% file)) {
     )$dataRglr
 
     # print message to screen
-    print(paste0(format(Sys.time(), "%F %T"), ": dataset ", DateLoca, ": ", VarLoca, " regularization complete"))
+    msg <- paste0("dataset ", DateLoca, ": ", VarLoca, " regularization complete")
+    tryCatch({rlog$debug(msg)}, error=function(cond){print(msg)})
 
   } else {
-    
+
     # print message to screen
-    print(paste0(format(Sys.time(), "%F %T"), ": dataset ", DateLoca, ": ", VarLoca, " regularization not selected"))
-    
+    msg <- paste0("dataset ", DateLoca, ": ", VarLoca, " regularization not selected")
+    tryCatch({rlog$debug(msg)}, error=function(cond){print(msg)})
+
   }
-    
+
   # discard data with bad sensor diagnostic flag
   if(Diag) {
-    
+
     # for selected sensors
     if(VarLoca %in% base::names(RngLoca)) {
 
@@ -316,7 +322,7 @@ if(!(DateLoca %in% file)) {
         whr <- which(data$dataRglr$diag != 8191)
         if(length(whr) > 0) data$dataRglr[whr, c("asrpCO2", "asrpH2O", "rhoMoleCO2", "densMoleH2o", "fdMoleCO2", "rtioMoleDryH2o")] <- NaN
         rm(whr)
-        
+
         # #determine binary representations for integers up to 2^32-1
         # #https://stat.ethz.ch/pipermail/r-help/2000-February/010141.html
         # #truncate leading zeroes in strings
@@ -330,7 +336,7 @@ if(!(DateLoca %in% file)) {
         # #determine decimal value of binary string
         # #http://stackoverflow.com/questions/12892348/in-r-how-to-convert-binary-string-to-binary-or-decimal-value
         # base2deci <- function(base_number, base = 2) {
-        #   sapply(1:length(base_number), function(x) 
+        #   sapply(1:length(base_number), function(x)
         #     sum(base^(which(rev(unlist(strsplit(as.character(base_number[x]), "")) == 1))-1))
         #   )
         # }
@@ -343,10 +349,10 @@ if(!(DateLoca %in% file)) {
         # rm(whr_not)
 
       }
-      
+
       # soni
       if(VarLoca == "soni") {
-        
+
         # discard sonic data with invalid quality flag
         idx <- which(data$diag != 0)
         if(length(idx) > 0) data[idx, names(RngLoca$soni)] <- NaN
@@ -355,54 +361,60 @@ if(!(DateLoca %in% file)) {
       }
 
       # print message to screen
-      print(paste0(format(Sys.time(), "%F %T"), ": dataset ", DateLoca, ": ", VarLoca, " sensor diagnostics complete"))
-      
+      msg <- paste0("dataset ", DateLoca, ": ", VarLoca, " sensor diagnostics complete")
+      tryCatch({rlog$debug(msg)}, error=function(cond){print(msg)})
+
     } else {
-      
+
       # print message to screen
-      print(paste0(format(Sys.time(), "%F %T"), ": dataset ", DateLoca, ": ", VarLoca, " sensor diagnostics not performed"))
-      
+      msg <- paste0("dataset ", DateLoca, ": ", VarLoca, " sensor diagnostics not performed")
+      tryCatch({rlog$debug(msg)}, error=function(cond){print(msg)})
+
     }
-    
+
   } else {
-    
+
     # print message to screen
-    print(paste0(format(Sys.time(), "%F %T"), ": dataset ", DateLoca, ": ", VarLoca, " sensor diagnostics not selected"))
-    
+    msg <- paste0("dataset ", DateLoca, ": ", VarLoca, " sensor diagnostics not selected")
+    tryCatch({rlog$debug(msg)}, error=function(cond){print(msg)})
+
   }
 
   # range test
   if(Rng) {
-    
+
     # perform range test
     if(VarLoca %in% base::names(RngLoca)) {
 
       # loop around variables
       for(idx in base::names(RngLoca[[VarLoca]])) {
-        
+
         whr <- which(data[,idx] < RngLoca[[VarLoca]][1,idx] |
                      data[,idx] > RngLoca[[VarLoca]][2,idx])
         if(length(whr > 0)) data[whr,idx] <- NaN
-        
+
       }; rm(idx, whr)
 
       # print message to screen
-      print(paste0(format(Sys.time(), "%F %T"), ": dataset ", DateLoca, ": ", VarLoca, " range test complete"))
-      
+      msg <- paste0("dataset ", DateLoca, ": ", VarLoca, " range test complete")
+      tryCatch({rlog$debug(msg)}, error=function(cond){print(msg)})
+
     } else {
-      
+
       # print message to screen
-      print(paste0(format(Sys.time(), "%F %T"), ": dataset ", DateLoca, ": ", VarLoca, " range test not performed"))
-      
+      msg <- paste0("dataset ", DateLoca, ": ", VarLoca, " range test not performed")
+      tryCatch({rlog$debug(msg)}, error=function(cond){print(msg)})
+
     }
-    
+
   } else {
-    
+
     # print message to screen
-    print(paste0(format(Sys.time(), "%F %T"), ": dataset ", DateLoca, ": ", VarLoca, " range test not selected"))
-    
+    msg <- paste0("dataset ", DateLoca, ": ", VarLoca, " range test not selected")
+    tryCatch({rlog$debug(msg)}, error=function(cond){print(msg)})
+
   }
-  
+
   # de-spiking
   # for ECSE, do not perform here; already migrated to eddy4R.base::wrap.prd.day.ecse()
   # TODO: similarly adjust for ECTE
@@ -410,7 +422,7 @@ if(!(DateLoca %in% file)) {
 
     # perform range test
     if(VarLoca %in% base::names(RngLoca)) {
-  
+
       # loop around variables
       for(idx in base::names(RngLoca[[VarLoca]])) {
 
@@ -425,29 +437,30 @@ if(!(DateLoca %in% file)) {
           # resolution threshold
           ThshReso = DespLoca$rest
         )$dataOut
-        
+
       }
-      
+
       # clean up
       rm(idx)
-      
+
       # print message to screen
-      print(paste0(format(Sys.time(), "%F %T"), ": dataset ", DateLoca, ": ", VarLoca, " de-spiking complete"))
-      
+      msg <- paste0("dataset ", DateLoca, ": ", VarLoca, " de-spiking complete")
+      tryCatch({rlog$debug(msg)}, error=function(cond){print(msg)})
+
     } else {
-      
+
       # print message to screen
-      print(paste0(format(Sys.time(), "%F %T"), ": dataset ", DateLoca, ": ", VarLoca, " de-spiking not performed"))
-      
+      msg <- paste0("dataset ", DateLoca, ": ", VarLoca, " de-spiking not performed")
+      tryCatch({rlog$debug(msg)}, error=function(cond){print(msg)})
     }
-     
+
   }
 
 ###
 }
-# end data availability  
+# end data availability
 ###
-    
+
 # return data
 return(list(time = time, data = data))
 
