@@ -5,9 +5,7 @@ language: r
 services:
 - docker
 
-before_install:
+script:
 - docker build . -t travis
 - docker run -d -p 8787:8787 travis
 - docker ps -a
-
-install: true
