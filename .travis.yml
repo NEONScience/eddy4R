@@ -5,6 +5,8 @@ language: r
 services:
 - docker
 
+install: true
+
 script:
 - docker build . -t travis
 - docker run -d -p 8787:8787 travis
