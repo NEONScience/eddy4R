@@ -32,6 +32,16 @@
 #     change sapply parameter "simplify" to FALSE, and transfer the resulted list to dataframe data type
 #   Ke Xu (2016-09-19)
 #     Add two arguments PltfEc and flagCh4 to adjust tower data
+#   Will Drysdale (2018-01-25)
+#     Added Support for other species to be defined in SiteInfo
+#   Adam Vaughan (2018-11-27)
+#     Added Water Vapour Switch for all functions
+#   Adam Vaughan (2018-11-27)
+#     Added Chemistry Flux Calculation for non-methane tracers
+#   Will Drysdale (2019-01-29)
+#     Removed SiteInfo dependance, added switches as explicit variables
+#   Will Drysdale (2019-02-16)
+#     Convert Chemistry Flux to def.flux.chem and rotation to def.rot. Update some related variable names
 ##############################################################################################
 
 
@@ -48,10 +58,12 @@ REYNflux_FD_mole_dry <- function(
   FcorPOT=TRUE,
   FcorPOTl=NULL,
   PltfEc="airc",
-  flagCh4 = TRUE
-) {
-  
-  
+  flagCh4 = TRUE,
+  spcs = NULL,
+  rmm = NULL,
+  ...
+)
+{
   
   ############################################################
   #THERMODYNAMICS: MOISTURE, DENSITIES AND TEMPERATURES
@@ -68,13 +80,15 @@ REYNflux_FD_mole_dry <- function(
   data$rho_air <- data$p_air / eddy4R.base::IntlNatu$Rg / data$T_air
   #dry air density [mol m-3]
   data$rho_dry <- data$rho_air - data$rho_H2O
+
+  
   #virtual temperature -> the temperature of a moist air parcel at which a theoretical 
   #dry air parcel would have a total pressure and density equal to the moist parcel of air [K]
   #http://en.wikipedia.org/wiki/Virtual_temperature
   #    data$T_v <- data$Temp * (1 + 0.61 * data$q)
   data$T_v <- data$T_air / (1 - ((data$p_H2O / data$p_air) * (1 - eddy4R.base::IntlNatu$RtioMolmH2oDry)) )
   #latent heat of vaporization (Eq 2.55 Foken 2008) [J kg-1] == [m2 s-2]
-  data$Lv <- 2500827 - 2360 * eddy4R.base::def.unit.conv(data=data$T_air,unitFrom="K",unitTo="C")
+  data$Lv <- 2500827 - 2360 * eddy4R.base::def.unit.conv(data=as.numeric(data$T_air),unitFrom="K",unitTo="C")
   
   #-----------------------------------------------------------
   #CONSIDER HUMIDITY IN DRY ADIABATIC CONSTANT
@@ -92,34 +106,31 @@ REYNflux_FD_mole_dry <- function(
   data$Kah <- data$Rh / data$cph
   mn <- data.frame(Kah=mean(data$Kah, na.rm=TRUE))
   
-  
   #-----------------------------------------------------------
   #POTENTIAL TEMPERATURE AND DENSITIES
-  
+
   #potential temperature at NIST standard pressure (1013.15 hPa) [K]
-  data$T_air_0 <- def.temp.pres.pois(temp01=data$T_air, pres01=data$p_air, pres02=eddy4R.base::IntlNatu$Pres00, Kppa=mn$Kah)
+  data$T_air_0 <- eddy4R.base::def.temp.pres.pois(temp01=data$T_air, pres01=data$p_air, pres02=eddy4R.base::IntlNatu$Pres00, Kppa=mn$Kah)
   #virtual potential temperature at NIST standard pressure (1013.15 hPa) [K]
-  data$T_v_0 <- def.temp.pres.pois(temp01=data$T_v, pres01=data$p_air, pres02=eddy4R.base::IntlNatu$Pres00, Kppa=mn$Kah)
+  data$T_v_0 <- eddy4R.base::def.temp.pres.pois(temp01=data$T_v, pres01=data$p_air, pres02=eddy4R.base::IntlNatu$Pres00, Kppa=mn$Kah)
+  
   
   #use potential temperature and densities?
   if(FcorPOT == TRUE) {
-    
     #define pressure level
     plevel <- ifelse(!is.null(FcorPOTl), FcorPOTl, mean(data$p_air, na.rm=TRUE) )
     #potential temperature at mean pressure level
-    data$T_air <- def.temp.pres.pois(temp01=data$T_air, pres01=data$p_air, pres02=plevel, Kppa=mn$Kah)      
+    data$T_air <- eddy4R.base::def.temp.pres.pois(temp01=data$T_air, pres01=data$p_air, pres02=plevel, Kppa=mn$Kah)      
     #potential densities at mean pressure level      
     #dry air
-    data$rho_dry <- def.dens.pres.pois(dens01=data$rho_dry, pres01=data$p_air, pres02=plevel, Kppa=mn$Kah)
+    data$rho_dry <- eddy4R.base::def.dens.pres.pois(dens01=data$rho_dry, pres01=data$p_air, pres02=plevel, Kppa=mn$Kah)
     #H2O
-    data$rho_H2O <- def.dens.pres.pois(dens01=data$rho_H2O, pres01=data$p_air, pres02=plevel, Kppa=mn$Kah)
+    data$rho_H2O <- eddy4R.base::def.dens.pres.pois(dens01=data$rho_H2O, pres01=data$p_air, pres02=plevel, Kppa=mn$Kah)
     #wet air
-    data$rho_air <- def.dens.pres.pois(dens01=data$rho_air, pres01=data$p_air, pres02=plevel, Kppa=mn$Kah)
+    data$rho_air <- eddy4R.base::def.dens.pres.pois(dens01=data$rho_air, pres01=data$p_air, pres02=plevel, Kppa=mn$Kah)
     #clean up
     rm(plevel)
-    
   }
-  
   
   
   ############################################################
@@ -127,12 +138,12 @@ REYNflux_FD_mole_dry <- function(
   ############################################################
   
   #data frame
-  mn <- as.data.frame( matrix(colMeans(data, na.rm=TRUE), ncol=ncol(data)) )
+  mn <- plyr::colwise(mean)(data,na.rm = TRUE)
   attributes(mn)$names <- attributes(data)$names
   
-  
   #aircraft heading as vector average
-  if(PltfEc == "airc") mn$PSI_aircraft <- eddy4R.base::def.conv.poly(data=eddy4R.base::def.pol.cart(matrix(colMeans(eddy4R.base::def.cart.pol(eddy4R.base::def.conv.poly(data=data$PSI_aircraft,coefPoly=eddy4R.base::IntlConv$DegRad)), na.rm=TRUE), ncol=2)),coefPoly=eddy4R.base::IntlConv$RadDeg)
+  if(PltfEc == "airc")
+    mn$PSI_aircraft <- eddy4R.base::def.conv.poly(data=eddy4R.base::def.pol.cart(matrix(colMeans(eddy4R.base::def.cart.pol(eddy4R.base::def.conv.poly(data=data$PSI_aircraft,coefPoly=eddy4R.base::IntlConv$DegRad)), na.rm=TRUE), ncol=2)),coefPoly=eddy4R.base::IntlConv$RadDeg)
   
   #wind direction as vector average
   data$PSI_uv <- eddy4R.base::def.pol.cart(matrix(c(data$v_met, data$u_met), ncol=2))
@@ -143,7 +154,9 @@ REYNflux_FD_mole_dry <- function(
   ############################################################
   #ROTATION INTO THE MEAN WIND
   ############################################################
-  
+  # Note that this rotation is to rotate the coordinate system for compatibility with footprint models etc
+  # It consists of a single rotation applied per aggregation period
+  # Double rotation / planar fit should be applied before a call to REYNflux
   #rotation angle
   rotang <- (eddy4R.base::def.unit.conv(data=(mn$PSI_uv+180),unitFrom="deg",unitTo="rad")) %% (2*pi)
   
@@ -173,17 +186,16 @@ REYNflux_FD_mole_dry <- function(
   mn$w_hor <- mean(Urot[3,], na.rm=TRUE)
   rm(rotang, U, Urot)
   
-  
-  
   ############################################################
   #BASE STATE AND DEVIATIONS
   ############################################################
   
-  
   #base state
   #AlgBase <- c("mean", "trnd", "ord03")[2]
-  if(PltfEc == "airc") base <- sapply(1:ncol(data), function(x) def.base.ec(data$d_xy_travel, data[,x], AlgBase), simplify = FALSE)
-  if(PltfEc == "towr") base <- sapply(1:ncol(data), function(x) def.base.ec(data$t_utc, data[,x], AlgBase), simplify = FALSE)
+  if(PltfEc == "airc") base <- sapply(1:ncol(data), function(x) eddy4R.base::def.base.ec(data$d_xy_travel, data[,x], AlgBase), simplify = FALSE)
+  if(PltfEc == "towr") {
+    base <- sapply(1:ncol(data), function(x) eddy4R.base::def.base.ec(data$t_utc, data[,x], AlgBase), simplify = FALSE)
+  }
   
   base <- as.data.frame(matrix(unlist(base), ncol=ncol(data)))
   attributes(base)$names <- attributes(data)$names
@@ -255,7 +267,7 @@ REYNflux_FD_mole_dry <- function(
   #u_star [m s-1]; optionally only considers the along wind stress u_star_x; Foken (2008) Eq.(2.23)
   mn$u_star2_x <- -Mrot2[1,3]
   mn$u_star2_y <- -Mrot2[2,3]
-  mn$u_star <- (mn$u_star2_x^2 + mn$u_star2_y^2)^(1/4)	#TK3 style, necessary if flight path not with wind
+  mn$u_star <- (mn$u_star2_x^2 + mn$u_star2_y^2)^(1/4)
   
   #correlations
   cor <- data.frame(
@@ -315,10 +327,8 @@ REYNflux_FD_mole_dry <- function(
   cor$F_LE_kin <- stats::cor(imfl$w_hor, imfl$FD_mole_H2O, use="pairwise.complete.obs")
   cor$F_LE_en <- cor$F_LE_kin
   
-  
-  
   ############################################################
-  #CH4 FLUX
+  #CH4 FLUX - legacy, include CH4 via the chemistry flux settings
   ############################################################
   if(flagCh4 == TRUE){
     #CH4 flux in kinematic units [mol m-2 s-1]
@@ -331,9 +341,26 @@ REYNflux_FD_mole_dry <- function(
     cor$F_CH4_kin <- stats::cor(imfl$w_hor, imfl$FD_mole_CH4, use="pairwise.complete.obs")
     cor$F_CH4_mass <- cor$F_CH4_kin
   }
-  
-  
-  
+  ############################################################
+  # CHEMISTRY FLUX
+  ############################################################
+  if(!is.null(spcs) & !is.null(rmm)){
+    # calculate flux
+    fluxChem = def.flux.chem(imfl = imfl,
+                             mn = mn,
+                             corr = cor,
+                             base = base,
+                             spcs = spcs,
+                             rmm = rmm)
+    
+    # tidy output
+    # When REYNflux becomes wrapper - the arguments/return of this function should be changed such that both
+    # the input and output are the same data structure, and this tidy step is no longer required
+    # more like how functions can operate on the REYN object (the result of REYNflux)
+    imfl = fluxChem$imfl
+    mn = fluxChem$mn
+    cor = fluxChem$corr
+  }
   
   ############################################################
   #AUXILARY PARAMETERS
@@ -346,11 +373,7 @@ REYNflux_FD_mole_dry <- function(
   mn$I <- sd(tot, na.rm=TRUE) / mean(tot, na.rm=TRUE)
   
   #Obukhov length (used positive g!)
-  mn$d_L_v_0 <- (-(
-    ( (mn$u_star)^3 / 
-        ( eddy4R.base::IntlNatu$VonkFokn * eddy4R.base::IntlNatu$Grav / mn$T_v_0 * mn$F_H_kin_v_0 )
-    )
-  ))
+  mn$d_L_v_0 <- (-(((mn$u_star)^3 / (eddy4R.base::IntlNatu$VonkFokn * eddy4R.base::IntlNatu$Grav / mn$T_v_0 * mn$F_H_kin_v_0 ))))
   
   #stability
   mn$sigma <- mn$d_z_m / mn$d_L_v_0
@@ -373,12 +396,10 @@ REYNflux_FD_mole_dry <- function(
   #surface layer
   mn$FD_mole_H2O_star_SL <- - mean(mn$F_LE_kin / base$rho_dry, na.rm=TRUE) / mn$u_star
   #mixed layer layer
-  mn$FD_mole_H2O_star_ML <-   mean(mn$F_LE_kin / base$rho_dry, na.rm=TRUE) / mn$w_star
-  
+  mn$FD_mole_H2O_star_ML <-   mean(mn$F_LE_kin / base$rho_dry, na.rm=TRUE) / mn$w_star 
+
   #clean up
   rm(tot)
-  
-  
   
   ############################################################
   #EXPORT RESULTS
@@ -387,11 +408,14 @@ REYNflux_FD_mole_dry <- function(
   
   #PREPARE DATA
   #mins
-  mi <- as.data.frame( matrix(suppressWarnings(splus2R::colMins(data, na.rm=TRUE)), ncol=ncol(data)) )
+  mi <- plyr::colwise(min)(data,na.rm=TRUE)
   attributes(mi)$names <- attributes(data)$names
   #maxs
-  ma <- as.data.frame( matrix(suppressWarnings(splus2R::colMaxs(data, na.rm=TRUE)), ncol=ncol(data)) )
+  ma <- plyr::colwise(max)(data,na.rm=TRUE)
   attributes(ma)$names <- attributes(data)$names
+  
+  #convert the sd date to the mn date (as sd of the date range is meaningless)
+  sd$date = mn$date
   
   #assemble export list
   export <- list(
