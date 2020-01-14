@@ -43,6 +43,8 @@
 #     apply ff object to dataframe to save the memory
 #   Natchaya P-Durden (2019-03-15)
 #     added ScalMax, FracSlpMax, and Freq into input function parameters
+#   Natchaya P-Durden (2020-01-14)
+#     added time when the real validation begin
 ##############################################################################################
 def.irga.vali.cor <- function(
  data,
@@ -115,10 +117,11 @@ def.irga.vali.cor <- function(
     }
     
     #time when performing of zero gas is started
-    if (length(valiData[[dateEnd[idx]]][[coefEnd[idx]]]$timeBgn[which(valiData[[dateEnd[idx]]][[coefEnd[idx]]]$gasType == "qfIrgaTurbValiGas02")]) == 0){
+    if (length(valiData[[dateEnd[idx]]][[coefEnd[idx]]]$timeBgn[which(valiData[[dateEnd[idx]]][[coefEnd[idx]]]$gasType == "qfIrgaTurbValiGas02")]) == 0 ||
+        is.na(valiData[[dateEnd[idx]]][[coefEnd[idx]]]$mean[which(valiData[[dateEnd[idx]]][[coefEnd[idx]]]$gasType == "qfIrgaTurbValiGas02")])){
       timeEnd <- as.POSIXlt(paste(dateEnd[idx], " ", "", sep="00:00:00.000"), format="%Y-%m-%d %H:%M:%OS", tz="UTC")
     } else {
-      timeEnd <- as.POSIXlt(valiData[[dateEnd[idx]]][[coefEnd[idx]]]$timeBgn[which(valiData[[dateEnd[idx]]][[coefEnd[idx]]]$gasType == "qfIrgaTurbValiGas02")])
+      timeEnd <- as.POSIXlt(valiData[[dateEnd[idx]]][[coefEnd[idx]]]$timeBgn[which(valiData[[dateEnd[idx]]][[coefEnd[idx]]]$gasType == "qfIrgaTurbValiGas02")]-(60*3.5))
     }
     
     #output time
