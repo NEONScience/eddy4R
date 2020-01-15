@@ -4,8 +4,11 @@
 \alias{def.qf.irga.vali}
 \title{Definition function: Validation flag for IRGA}
 \usage{
-def.qf.irga.vali(data, Sens = c("irgaMfcSamp", "valvValiNemaTurb")[1],
-  qfGas = NULL)
+def.qf.irga.vali(
+  data,
+  Sens = c("irgaMfcSamp", "valvValiNemaTurb")[1],
+  qfGas = NULL
+)
 }
 \arguments{
 \item{data}{A data.frame containing the L0p input IRGA sampling mass flow controller data or the IRGA validation soleniod valves data at native resolution. Of type numeric or integer. [User-defined]}
