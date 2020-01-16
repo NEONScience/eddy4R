@@ -45,6 +45,8 @@
 #     added ScalMax, FracSlpMax, and Freq into input function parameters
 #   Natchaya P-Durden (2020-01-14)
 #     added time when the real validation begin
+#   Natchaya P-Durden (2020-01-16)
+#     generated NA for rtioMoleDryH2oCor
 ##############################################################################################
 def.irga.vali.cor <- function(
  data,
@@ -173,8 +175,11 @@ def.irga.vali.cor <- function(
     if (all(is.na(ofstLin)) & all(is.na(slpLin))){
       #subData$rtioMoleDryCo2Cor <- as.numeric(subData$rtioMoleDryCo2)
       subData$rtioMoleDryCo2Cor <- NA
+      subData$rtioMoleDryH2oCor <- NA
     } else {
       subData$rtioMoleDryCo2Cor <- as.numeric(ofstLin + subData$rtioMoleDryCo2*slpLin)
+      #place holder for future h2o correction
+      subData$rtioMoleDryH2oCor <- NA
     }
     
     #outSub[[idx]] <- subData
@@ -214,16 +219,15 @@ rpt <- eddy4R.base::def.rglr(timeMeas = base::as.POSIXlt(outTmp01$time, format="
 #replace time to regularize time
 rpt$time <- timeRglr
 #check if rtioMoleDryCo2Cor in rpt if not add them with all NA
-if (length(rpt$rtioMoleDryCo2Cor) == 0){
-  rpt$rtioMoleDryCo2Cor <- NA
-}
+if (length(rpt$rtioMoleDryCo2Cor) == 0) {rpt$rtioMoleDryCo2Cor <- NA}
+if (length(rpt$rtioMoleDryH2oCor) == 0) {rpt$rtioMoleDryH2oCor <- NA}
 #Creating the index to organize the variables in alphabetical order
 idxIrga <- order(names(rpt))
 #Changing the order of the variables to alphabetical order using the index
 rpt <- rpt[,idxIrga]
 #adding unit attributes
 attrUnit <- c("-", "-", "molCo2 m-3", "molH2o m-3", "NA", "V", "W", "W", "W", "W", "Pa", "Pa", "Pa", "molCo2 mol-1Dry", "molCo2 mol-1Dry", "molH2o mol-1Dry",
-              "-", "-", "K", "K", "K", "K", "NA")
+              "molH2o mol-1Dry", "-", "-", "K", "K", "K", "K", "NA")
 
 for(idxVar in 1:length(attrUnit)) {
   
