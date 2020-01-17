@@ -48,6 +48,8 @@
 #    adding linear regression coefficients and its se to the attribute of rtioMoleDryCo2Vali
 #   Natchaya P-Durden (2019-02-21)
 #    adding results from MLF (scale) to the attribute of rtioMoleDryCo2Vali
+#   Natchaya P-Durden (2019-01-08)
+#    removed rtioMoleDryH2oCor and rtioMoleDryH2oRaw data and ucrt from the basic file
 ##############################################################################################
 
 
@@ -70,6 +72,8 @@ MethExpd <- grepl(pattern = "expanded", x = FileOut)
 if(MethExpd == FALSE){
   inpList$data$co2Turb$rtioMoleDryCo2Cor <- NULL
   inpList$data$co2Turb$rtioMoleDryCo2Raw <- NULL
+  inpList$data$h2oTurb$rtioMoleDryH2oCor <- NULL
+  inpList$data$h2oTurb$rtioMoleDryH2oRaw <- NULL
 }
 
 #Create HDF5 connection to the output file  
@@ -113,6 +117,8 @@ if(MethSubAgr == TRUE){
   if(MethExpd == FALSE){
     inpList$dp01AgrSub$data$co2Turb$rtioMoleDryCo2Cor <- NULL
     inpList$dp01AgrSub$data$co2Turb$rtioMoleDryCo2Raw <- NULL
+    inpList$dp01AgrSub$data$h2oTurb$rtioMoleDryH2oCor <- NULL
+    inpList$dp01AgrSub$data$h2oTurb$rtioMoleDryH2oRaw <- NULL
   }
   #Writing sub-aggregated (e.g.1-min) data to output HDF5 file
   lapply(names(inpList$dp01AgrSub$data[[Dp01]]), function(x) rhdf5::h5writeDataset.data.frame(obj = inpList$dp01AgrSub$data[[Dp01]][[x]], h5loc = idData01, name = x, DataFrameAsCompound = TRUE))
@@ -203,6 +209,8 @@ if(MethUcrt == TRUE){
   if(MethExpd == FALSE){
     inpList$ucrt$co2Turb$rtioMoleDryCo2Cor <- NULL
     inpList$ucrt$co2Turb$rtioMoleDryCo2Raw <- NULL
+    inpList$ucrt$h2oTurb$rtioMoleDryH2oCor <- NULL
+    inpList$ucrt$h2oTurb$rtioMoleDryH2oRaw <- NULL
   }
   #Writing 30-min ucrt to output HDF5 file
   lapply(names(inpList$ucrt[[Dp01]]), function(x) rhdf5::h5writeDataset.data.frame(obj = inpList$ucrt[[Dp01]][[x]], h5loc = idUcrt30, name = x, DataFrameAsCompound = TRUE))
@@ -219,6 +227,8 @@ if(MethSubAgr == TRUE){
   if(MethExpd == FALSE){
     inpList$dp01AgrSub$ucrt$co2Turb$rtioMoleDryCo2Cor <- NULL
     inpList$dp01AgrSub$ucrt$co2Turb$rtioMoleDryCo2Raw <- NULL
+    inpList$dp01AgrSub$ucrt$h2oTurb$rtioMoleDryH2oCor <- NULL
+    inpList$dp01AgrSub$ucrt$h2oTurb$rtioMoleDryH2oRaw <- NULL
   }
   #Writing sub-aggregated (e.g.1-min) ucrt to output HDF5 file
   lapply(names(inpList$dp01AgrSub$ucrt[[Dp01]]), function(x) rhdf5::h5writeDataset.data.frame(obj = inpList$dp01AgrSub$ucrt[[Dp01]][[x]], h5loc = idUcrt01, name = x, DataFrameAsCompound = TRUE))
