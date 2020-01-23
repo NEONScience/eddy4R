@@ -50,6 +50,8 @@
 #    adding results from MLF (scale) to the attribute of rtioMoleDryCo2Vali
 #   Natchaya P-Durden (2019-01-08)
 #    removed rtioMoleDryH2oCor and rtioMoleDryH2oRaw data and ucrt from the basic file
+#   Natchaya P-Durden (2020-02-23)
+#    removed unnecessary qfqm unit attributes when writing the basic file
 ##############################################################################################
 
 
@@ -190,7 +192,12 @@ if(MethSubAgr == TRUE){
 lapply(names(inpList$qfqm[[Dp01]]), function(x) {
   if (!is.null(attributes(inpList$qfqm[[Dp01]][[x]])$unit) == TRUE){
     dgid <- rhdf5::H5Dopen(idQfqm30, x)
+    if(MethExpd == FALSE){
+      tmpAttr <- attributes(inpList$qfqm[[Dp01]][[x]])$unit[which(names(attributes(inpList$qfqm[[Dp01]][[x]])$unit) %in% c("qfFinl","timeBgn","timeEnd"))]    
+      rhdf5::h5writeAttribute(tmpAttr, h5obj = dgid, name = "unit")
+    }else{
     rhdf5::h5writeAttribute(attributes(inpList$qfqm[[Dp01]][[x]])$unit, h5obj = dgid, name = "unit")
+    }
   }})
 
 if(MethSubAgr == TRUE){
@@ -198,7 +205,12 @@ if(MethSubAgr == TRUE){
 lapply(names(inpList$dp01AgrSub$qfqm[[Dp01]]), function(x) {
   if (!is.null(attributes(inpList$dp01AgrSub$qfqm[[Dp01]][[x]])$unit) == TRUE){
     dgid <- rhdf5::H5Dopen(idQfqm01, x)
+    if(MethExpd == FALSE){
+      tmpAttr <- attributes(inpList$dp01AgrSub$qfqm[[Dp01]][[x]])$unit[which(names(attributes(inpList$dp01AgrSub$qfqm[[Dp01]][[x]])$unit) %in% c("qfFinl","timeBgn","timeEnd"))]    
+      rhdf5::h5writeAttribute(tmpAttr, h5obj = dgid, name = "unit")
+    }else{
     rhdf5::h5writeAttribute(attributes(inpList$dp01AgrSub$qfqm[[Dp01]][[x]])$unit, h5obj = dgid, name = "unit")
+    }
   }})
 }
 ##########################################################################################
