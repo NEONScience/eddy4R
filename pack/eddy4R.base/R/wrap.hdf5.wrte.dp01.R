@@ -66,6 +66,8 @@
 #     only write qfFinl out in basic file
 #   Natchaya P-Durden (2020-01-17)
 #     adding rtioMoleDryH2o during validation 
+#   Natchaya P-Durden (2020-01-22)
+#     adding timeBgn and timeEnd attributes
 ##############################################################################################
 
 
@@ -178,6 +180,8 @@ if(MethDp04 == TRUE){
       
       #Writing unit attributes to each variable to the dataframe level
       attributes(rptDp04)$unit <- attributes(inpList$dp04$data[[idxDp04]]$stat)$unit
+      #Adding timeBgn and timeEnd attributes
+      attributes(rptDp04)$unit <- c("NA", "NA", attributes(rptDp04)$unit)
 
       #Open connection to dp04 data level
       idDataDp04 <- rhdf5::H5Gopen(idFile,paste0("/", SiteLoca, "/dp04/data/",idxDp04))
@@ -210,6 +214,11 @@ if(MethDp04 == TRUE){
       
       #Writing unit attributes to each variable to the dataframe level
       attributes(rptDp04Qfqm)$unit <- sapply(names(inpList$dp04$qfqm[[idxDp04]]$turb), function(x) attributes(inpList$dp04$qfqm[[idxDp04]]$turb[[x]])$unit)
+      #Adding timeBgn and timeEnd attributes
+      tmpAttr <- c()
+      attributes(tmpAttr)$unit[["timeBgn"]] <- "NA"
+      attributes(tmpAttr)$unit[["timeEnd"]] <- "NA"
+      attributes(rptDp04Qfqm)$unit <- c(attributes(tmpAttr)$unit, attributes(rptDp04Qfqm)$unit)
       
       #Open connection to dp04 data level
       idQfqmDp04 <- rhdf5::H5Gopen(idFile,paste0("/", SiteLoca, "/dp04/qfqm/",idxDp04))
@@ -236,6 +245,12 @@ if(MethDp04 == TRUE){
   #Writing unit attributes to each variable to the dataframe level
   attributes(rptDp04)$unit <- sapply(names(inpList$dp04$data[[idxDp04]]$turb), function(x) attributes(inpList$dp04$data[[idxDp04]]$turb[[x]])$unit)
 
+  #Adding timeBgn and timeEnd attributes
+  tmpAttr <- c()
+  attributes(tmpAttr)$unit[["timeBgn"]] <- "NA"
+  attributes(tmpAttr)$unit[["timeEnd"]] <- "NA"
+  attributes(rptDp04)$unit <- c(attributes(tmpAttr)$unit, attributes(rptDp04)$unit)
+  
   #Open connection to dp04 data level
   idDataDp04 <- rhdf5::H5Gopen(idFile,paste0("/", SiteLoca, "/dp04/data/",idxDp04))
   
@@ -265,6 +280,11 @@ if(MethDp04 == TRUE){
   
   #Writing unit attributes to each variable to the dataframe level
   attributes(rptDp04Qfqm)$unit <- sapply(names(inpList$dp04$qfqm[[idxDp04]]$turb), function(x) attributes(inpList$dp04$qfqm[[idxDp04]]$turb[[x]])$unit)
+  #Adding timeBgn and timeEnd attributes
+  tmpAttr <- c()
+  attributes(tmpAttr)$unit[["timeBgn"]] <- "NA"
+  attributes(tmpAttr)$unit[["timeEnd"]] <- "NA"
+  attributes(rptDp04Qfqm)$unit <- c(attributes(tmpAttr)$unit, attributes(rptDp04Qfqm)$unit)
   
   #Open connection to dp04 data level
   idQfqmDp04 <- rhdf5::H5Gopen(idFile,paste0("/", SiteLoca, "/dp04/qfqm/",idxDp04))
