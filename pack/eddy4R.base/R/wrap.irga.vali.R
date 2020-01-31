@@ -73,6 +73,8 @@
 #     bug fix on selecting the validation gas based on timeCrit
 #   Natchaya P-Durden (2020-01-15)
 #     reporting the rtioMoleDryH2oVali table
+#   Natchaya P-Durden (2020-01-31)
+#     adjust workflow to run MLFR even missing one gas cylinder
 ##############################################################################################
 
 wrap.irga.vali <- function(
@@ -415,15 +417,20 @@ wrap.irga.vali <- function(
       tmpCoef[[idxDate]][[idxData]] <- data.frame(matrix(ncol = 3, nrow = 2))
       #assign column name
       colnames(tmpCoef[[idxDate]][[idxData]]) <- c("coef", "se", "scal")
+      
+      #get the temporary valiData table without NA
+      tmpValiData <- na.omit(valiData[[idxDate]][[idxData]])
+      #report NA for regression coefficients if input validation data less than 3 values
+      if (nrow(tmpValiData) < 3){
 
-    if (length(valiData[[idxDate]][[idxData]]$mean) < 4 |
-        sum(is.na(valiData[[idxDate]][[idxData]]$mean)) > 0 | sum(is.na(valiData[[idxDate]][[idxData]]$se)) >0 |
-        sum(is.na(valiData[[idxDate]][[idxData]]$rtioMoleDryCo2Refe)) > 0 | sum(is.na(valiData[[idxDate]][[idxData]]$rtioMoleDryCo2RefeSe)) > 1){
-      tmpCoef[[idxDate]][[idxData]][,] <- NA
+    # if (length(valiData[[idxDate]][[idxData]]$mean) < 4 |
+    #     sum(is.na(valiData[[idxDate]][[idxData]]$mean)) > 0 | sum(is.na(valiData[[idxDate]][[idxData]]$se)) >0 |
+    #     sum(is.na(valiData[[idxDate]][[idxData]]$rtioMoleDryCo2Refe)) > 0 | sum(is.na(valiData[[idxDate]][[idxData]]$rtioMoleDryCo2RefeSe)) > 1){
+       tmpCoef[[idxDate]][[idxData]][,] <- NA
     } else{
       #x are sensor readings; y are reference gas values
-      rtioMoleDryCo2Mlfr <- deming::deming(rtioMoleDryCo2Refe[1:4] ~ mean[1:4], data = valiData[[idxDate]][[idxData]],
-                                           xstd = se[1:4], ystd = rtioMoleDryCo2RefeSe[1:4])
+      rtioMoleDryCo2Mlfr <- deming::deming(rtioMoleDryCo2Refe[1:nrow(tmpValiData)] ~ mean[1:nrow(tmpValiData)], data = tmpValiData,
+                                           xstd = se[1:nrow(tmpValiData)], ystd = rtioMoleDryCo2RefeSe[1:nrow(tmpValiData)])
       #write output to table
       #intercept
       tmpCoef[[idxDate]][[idxData]][1,1] <- rtioMoleDryCo2Mlfr$coefficients[[1]]
