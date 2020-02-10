@@ -176,6 +176,9 @@ if(MethDp04 == TRUE){
       #Open connection to dp04 data level
       idDataDp04 <- rhdf5::H5Gopen(idFile,paste0("/", SiteLoca, "/dp04/data/",idxDp04))
       
+      #Output the attributes
+      rhdf5::h5writeAttribute("North,East,Down (NED)", h5obj = idDataDp04, name = "sysCordRefe")
+      
       #Writing flux data to output HDF5 file
       rhdf5::h5writeDataset.data.frame(obj = rptDp04, h5loc = idDataDp04, name = "stat", DataFrameAsCompound = TRUE)
       
