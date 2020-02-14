@@ -47,6 +47,8 @@
 #     added time when the real validation begin
 #   Natchaya P-Durden (2020-01-16)
 #     generated NA for rtioMoleDryH2oCor
+#   Natchaya P-Durden (2020-01-14)
+#     added 5 min after the validation end
 ##############################################################################################
 def.irga.vali.cor <- function(
  data,
@@ -115,7 +117,7 @@ def.irga.vali.cor <- function(
     if (length(valiData[[dateBgn[idx]]][[coefBgn[idx]]]$timeEnd[which(valiData[[dateBgn[idx]]][[coefBgn[idx]]]$gasType == "qfIrgaTurbValiGas05")]) == 0){
       timeBgn <- as.POSIXlt(paste(dateBgn[idx], " ", "23:59:59.950", sep=""), format="%Y-%m-%d %H:%M:%OS", tz="UTC")
     } else {
-      timeBgn <- as.POSIXlt(valiData[[dateBgn[idx]]][[coefBgn[idx]]]$timeEnd[which(valiData[[dateBgn[idx]]][[coefBgn[idx]]]$gasType == "qfIrgaTurbValiGas05")])
+      timeBgn <- as.POSIXlt(valiData[[dateBgn[idx]]][[coefBgn[idx]]]$timeEnd[which(valiData[[dateBgn[idx]]][[coefBgn[idx]]]$gasType == "qfIrgaTurbValiGas05")]+(60*5.0))
     }
     
     #time when performing of zero gas is started
