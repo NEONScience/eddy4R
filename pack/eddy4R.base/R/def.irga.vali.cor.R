@@ -114,7 +114,8 @@ def.irga.vali.cor <- function(
     numDate <- numDate + 1
     #time begin and time End to apply coefficient
     #time when performing of high gas is done
-    if (length(valiData[[dateBgn[idx]]][[coefBgn[idx]]]$timeEnd[which(valiData[[dateBgn[idx]]][[coefBgn[idx]]]$gasType == "qfIrgaTurbValiGas05")]) == 0){
+    if (length(valiData[[dateBgn[idx]]][[coefBgn[idx]]]$timeEnd[which(valiData[[dateBgn[idx]]][[coefBgn[idx]]]$gasType == "qfIrgaTurbValiGas05")]) == 0 ||
+        is.na(valiData[[dateBgn[idx]]][[coefBgn[idx]]]$mean[which(valiData[[dateBgn[idx]]][[coefBgn[idx]]]$gasType == "qfIrgaTurbValiGas05")])){
       timeBgn <- as.POSIXlt(paste(dateBgn[idx], " ", "23:59:59.950", sep=""), format="%Y-%m-%d %H:%M:%OS", tz="UTC")
     } else {
       timeBgn <- as.POSIXlt(valiData[[dateBgn[idx]]][[coefBgn[idx]]]$timeEnd[which(valiData[[dateBgn[idx]]][[coefBgn[idx]]]$gasType == "qfIrgaTurbValiGas05")]+(60*5.0))
@@ -127,6 +128,13 @@ def.irga.vali.cor <- function(
     } else {
       timeEnd <- as.POSIXlt(valiData[[dateEnd[idx]]][[coefEnd[idx]]]$timeBgn[which(valiData[[dateEnd[idx]]][[coefEnd[idx]]]$gasType == "qfIrgaTurbValiGas02")]-(60*3.5))
     }
+    
+    # #fail safe to make sure timeBgn less than timeEnd
+    # if (difftime(timeBgn, timeEnd) >= 0){
+    #   timeBgn <- as.POSIXlt(paste(dateBgn[idx], " ", "23:59:59.950", sep=""), format="%Y-%m-%d %H:%M:%OS", tz="UTC")
+    # } else {
+    #   timeBgn <- timeBgn
+    # }
     
     #output time
     timeOut <- as.POSIXlt(seq.POSIXt(
