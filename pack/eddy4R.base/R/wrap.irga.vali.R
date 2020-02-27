@@ -420,26 +420,39 @@ wrap.irga.vali <- function(
       
       #get the temporary valiData table without NA
       tmpValiData <- na.omit(valiData[[idxDate]][[idxData]])
-      #report NA for regression coefficients if input validation data less than 3 values
-      if (nrow(tmpValiData) < 3){
-
-    # if (length(valiData[[idxDate]][[idxData]]$mean) < 4 |
-    #     sum(is.na(valiData[[idxDate]][[idxData]]$mean)) > 0 | sum(is.na(valiData[[idxDate]][[idxData]]$se)) >0 |
-    #     sum(is.na(valiData[[idxDate]][[idxData]]$rtioMoleDryCo2Refe)) > 0 | sum(is.na(valiData[[idxDate]][[idxData]]$rtioMoleDryCo2RefeSe)) > 1){
-       tmpCoef[[idxDate]][[idxData]][,] <- NA
-    } else{
-      #x are sensor readings; y are reference gas values
-      rtioMoleDryCo2Mlfr <- deming::deming(rtioMoleDryCo2Refe[1:nrow(tmpValiData)] ~ mean[1:nrow(tmpValiData)], data = tmpValiData,
-                                           xstd = se[1:nrow(tmpValiData)], ystd = rtioMoleDryCo2RefeSe[1:nrow(tmpValiData)])
-      #write output to table
-      #intercept
-      tmpCoef[[idxDate]][[idxData]][1,1] <- rtioMoleDryCo2Mlfr$coefficients[[1]]
-      #slope
-      tmpCoef[[idxDate]][[idxData]][2,1] <- rtioMoleDryCo2Mlfr$coefficients[[2]]
-      #se
-      tmpCoef[[idxDate]][[idxData]][,2] <- sqrt(diag(rtioMoleDryCo2Mlfr$variance))
-      #scale
-      tmpCoef[[idxDate]][[idxData]][1,3] <- rtioMoleDryCo2Mlfr$sigma
+      #report NA for regression coefficients if input validation data less than 2 values
+      if (nrow(tmpValiData) < 2){
+        tmpCoef[[idxDate]][[idxData]][,] <- NA
+        }
+      
+      #do simple linear regression when there are only 2 input data
+      if (nrow(tmpValiData) == 2){
+        rtioMoleDryCo2Mlfr <- stats::lm(rtioMoleDryCo2Refe ~ mean, data = tmpValiData)
+        #write output to table
+        #intercept
+        tmpCoef[[idxDate]][[idxData]][1,1] <- rtioMoleDryCo2Mlfr$coefficients[[1]]
+        #slope
+        tmpCoef[[idxDate]][[idxData]][2,1] <- rtioMoleDryCo2Mlfr$coefficients[[2]]
+        #se
+        tmpCoef[[idxDate]][[idxData]][,2] <- NA
+        #scale
+        tmpCoef[[idxDate]][[idxData]][1,3] <- NA
+        }
+      
+      #do MLFR if more than 2 input data avaliable
+      if (nrow(tmpValiData) > 2){
+        #x are sensor readings; y are reference gas values
+        rtioMoleDryCo2Mlfr <- deming::deming(rtioMoleDryCo2Refe[1:nrow(tmpValiData)] ~ mean[1:nrow(tmpValiData)], data = tmpValiData,
+                                             xstd = se[1:nrow(tmpValiData)], ystd = rtioMoleDryCo2RefeSe[1:nrow(tmpValiData)])
+        #write output to table
+        #intercept
+        tmpCoef[[idxDate]][[idxData]][1,1] <- rtioMoleDryCo2Mlfr$coefficients[[1]]
+        #slope
+        tmpCoef[[idxDate]][[idxData]][2,1] <- rtioMoleDryCo2Mlfr$coefficients[[2]]
+        #se
+        tmpCoef[[idxDate]][[idxData]][,2] <- sqrt(diag(rtioMoleDryCo2Mlfr$variance))
+        #scale
+        tmpCoef[[idxDate]][[idxData]][1,3] <- rtioMoleDryCo2Mlfr$sigma
     }
     }#end of for loop of idxData
     #report output
