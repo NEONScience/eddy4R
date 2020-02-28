@@ -10,9 +10,10 @@
 #' @param DateProc A vector of class "character" containing the processing date.
 #' @param valiData List consisting of descriptive statistics (mean, min, max, vari, numSamp, se) of CO2 dry mole concentration during performing validation and CO2 dry mole concentration of reference gases.
 #' @param coef List consists of linear regression coefficients (slope and offset) for DateProc - 1, DateProc, and DateProc + 1. 
-#' @param valiCrit A logical stating if there are more than one validation occurred within DateProc. Defaut to FALSE.
-#' @param ScalMax Maximum scale value (resulted from maximum-likelihood fitting of a functional relationship (MLFR)). Defaults to 20.
-#' @param FracSlpMax Maximum fraction of slope value (resulted from maximum-likelihood fitting of a functional relationship (MLFR)). Defaults to 0.1.
+#' @param valiCrit A logical stating if there are more than one validation occurred within DateProc. 
+#' @param ScalMax Maximum scale value. The validation correction will not apply if scale (resulted from maximum-likelihood fitting of a functional relationship (MLFR)) is greater than ScalMax or ScalMax = FALSE. Defaults to FALSE.
+#' @param FracSlpMax Maximum fraction of slope value. The validation correction will not apply if slope (resulted from regression fitting) is greater than the FracSlpMax or FracSlpMax = FALSE. Defaults to FALSE.
+#' @param OfstMax Maximum offset value. The validation correction will not apply if slope (resulted from regression fitting) is greater than the OfstMax (unit in mol mol-1) or OfstMax = FALSE. Defaults to FALSE.
 #' @param Freq Measurement frequency. Defaults to 20. [Hz]
 
 #' @return 
@@ -49,6 +50,8 @@
 #     generated NA for rtioMoleDryH2oCor
 #   Natchaya P-Durden (2020-01-14)
 #     added 5 min after the validation end
+#   Natchaya P-Durden (2020-02-28)
+#     added logical statement to not apply filters (slope, offset, and scale) if they are equal to FALSE
 ##############################################################################################
 def.irga.vali.cor <- function(
  data,
@@ -56,8 +59,9 @@ def.irga.vali.cor <- function(
  coef,
  valiData,
  valiCrit = FALSE,
- ScalMax = 20,
- FracSlpMax = 0.1,
+ ScalMax = FALSE,
+ FracSlpMax = FALSE,
+ OfstMax = FALSE,
  Freq = 20
 ){
   #adding library
@@ -71,27 +75,64 @@ def.irga.vali.cor <- function(
   Date <- c(base::as.Date(DateProc) - 1, base::as.Date(DateProc), base::as.Date(DateProc) + 1)
   Date <- as.character(Date)
   Freq <- Freq  #measurement frequency (20 Hz)
-  #threshold
-  #minimum and maximum slope
-  minSlp <- 1 - FracSlpMax
-  maxSlp <- 1 + FracSlpMax
-  #scale
-  ScalMax <- ScalMax
-  #check if the slope and scale are meet the criteria if not replace them with NA
-  #default slope less than or equal to +/-10% (0.9 <= slope <=1.10)
+  
+  #create a list to keep all filters
+  filt <- list()
+  filt$ScalMax <- ScalMax
+  filt$FracSlpMax <- FracSlpMax
+  filt$OfstMax <- OfstMax
+  
+  
+  #check if filter will apply.
   for (idxDate in Date){
     #idxDate <- Date[1]
     for (idxData in names(coef[[idxDate]])){
       #idxData <- names(coef[[idxDate]])[1]
-      if (!is.na(coef[[idxDate]][[idxData]]$coef[2]) & !is.na(coef[[idxDate]][[idxData]]$scal[1]) & coef[[idxDate]][[idxData]]$coef[2] >= minSlp & coef[[idxDate]][[idxData]]$coef[2] <= maxSlp & coef[[idxDate]][[idxData]]$scal[1] <= ScalMax){
-        coef[[idxDate]][[idxData]] <- coef[[idxDate]][[idxData]] 
-      }else{
-        coef[[idxDate]][[idxData]]$coef <- NA
-        coef[[idxDate]][[idxData]]$se <- NA
-        coef[[idxDate]][[idxData]]$scal <- NA
-      }
-    }
-  }
+      for (idxFilt in names(filt)){
+        #idxFilt <- names(filt)[1]
+        if (filt[[idxFilt]] == FALSE){
+          coef[[idxDate]][[idxData]] <- coef[[idxDate]][[idxData]]
+        } else{#testing the filters
+          if (idxFilt == "ScalMax"){
+            if (!is.na(coef[[idxDate]][[idxData]]$scal[1]) & coef[[idxDate]][[idxData]]$scal[1] <= ScalMax){
+              coef[[idxDate]][[idxData]] <- coef[[idxDate]][[idxData]] 
+            } else {
+              coef[[idxDate]][[idxData]]$coef <- NA
+              coef[[idxDate]][[idxData]]$se <- NA
+              coef[[idxDate]][[idxData]]$scal <- NA
+            }
+          }#end ScalMax
+          
+          if (idxFilt == "FracSlpMax"){
+            #calculate minimum and maximum slope
+            minSlp <- 1 - FracSlpMax
+            maxSlp <- 1 + FracSlpMax
+            if (!is.na(coef[[idxDate]][[idxData]]$coef[2]) & (coef[[idxDate]][[idxData]]$coef[2] >= minSlp & coef[[idxDate]][[idxData]]$coef[2] <= maxSlp)){
+              coef[[idxDate]][[idxData]] <- coef[[idxDate]][[idxData]] 
+            } else {
+              coef[[idxDate]][[idxData]]$coef <- NA
+              coef[[idxDate]][[idxData]]$se <- NA
+              coef[[idxDate]][[idxData]]$scal <- NA
+            }
+          }#end of FracSlpMax
+          
+          if (idxFilt == "OfstMax"){
+            if (!is.na(coef[[idxDate]][[idxData]]$coef[1]) & (abs(coef[[idxDate]][[idxData]]$coef[1]) <= OfstMax)){
+              coef[[idxDate]][[idxData]] <- coef[[idxDate]][[idxData]] 
+            }
+            else {
+              coef[[idxDate]][[idxData]]$coef <- NA
+              coef[[idxDate]][[idxData]]$se <- NA
+              coef[[idxDate]][[idxData]]$scal <- NA
+            }
+          }#end OfstMax
+        }#end of testing filter
+        
+      }#end of idxFilt
+      
+    
+  }#end of idxData
+  }#end idxDate
   
   #organize input coefficient table 
   if (valiCrit == TRUE){
