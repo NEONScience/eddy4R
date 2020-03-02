@@ -4,8 +4,14 @@
 \alias{wrap.wave}
 \title{Wrapper function: Calculate Wavelet spectrum/cospectrum and frequency response correction}
 \usage{
-wrap.wave(dfInp, DiffScal = 1/8, FuncWave = Waves::morlet(),
-  FreqSamp = 20, ThshMiss = 0.1, SI)
+wrap.wave(
+  dfInp,
+  DiffScal = 1/8,
+  FuncWave = Waves::morlet(),
+  FreqSamp = 20,
+  ThshMiss = 0.1,
+  SI
+)
 }
 \arguments{
 \item{dfInp}{data.frame, consisting of the input data to perform the wavelet transformation}
