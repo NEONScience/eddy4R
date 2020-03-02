@@ -4,14 +4,19 @@
 \alias{def.plau}
 \title{Definition function: Plausibility tests (Range, Step, Persistence, Null, Gap)}
 \usage{
-def.plau(data, time = as.POSIXlt(seq.POSIXt(from = Sys.time(), by =
-  "sec", length.out = length(data[, 1]))), RngMin = apply(data, 2, min,
-  na.rm = TRUE), RngMax = apply(data, 2, max, na.rm = TRUE),
+def.plau(
+  data,
+  time = as.POSIXlt(seq.POSIXt(from = Sys.time(), by = "sec", length.out = length(data[,
+    1]))),
+  RngMin = apply(data, 2, min, na.rm = TRUE),
+  RngMax = apply(data, 2, max, na.rm = TRUE),
   DiffStepMax = apply(abs(apply(data, 2, diff)), 2, max, na.rm = TRUE),
-  DiffPersMin = rep.int(0, length(data)), WndwPers = 60 *
-  median(abs(diff(time)), na.rm = TRUE) * rep.int(1, length(data)),
-  TestNull = rep(FALSE, length(data)), NumGap = rep(length(data[, 1]) +
-  1, length(data)), Vrbs = FALSE)
+  DiffPersMin = rep.int(0, length(data)),
+  WndwPers = 60 * median(abs(diff(time)), na.rm = TRUE) * rep.int(1, length(data)),
+  TestNull = rep(FALSE, length(data)),
+  NumGap = rep(length(data[, 1]) + 1, length(data)),
+  Vrbs = FALSE
+)
 }
 \arguments{
 \item{data}{Required input. A data frame containing the data to be evaluated (do not include the time stamp vector here).}

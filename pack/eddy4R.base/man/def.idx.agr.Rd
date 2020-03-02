@@ -4,8 +4,15 @@
 \alias{def.idx.agr}
 \title{Definition function: indices for aggregation periods}
 \usage{
-def.idx.agr(time, PrdAgr, FreqLoca, MethIdx = c("rglr", "specBgn",
-  "specEnd")[1], crdH2oVali = FALSE, data = NULL, CritTime = 0)
+def.idx.agr(
+  time,
+  PrdAgr,
+  FreqLoca,
+  MethIdx = c("rglr", "specBgn", "specEnd")[1],
+  crdH2oVali = FALSE,
+  data = NULL,
+  CritTime = 0
+)
 }
 \arguments{
 \item{time}{a vector of timestamps}
