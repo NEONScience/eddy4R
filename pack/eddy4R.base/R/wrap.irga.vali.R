@@ -75,6 +75,8 @@
 #     reporting the rtioMoleDryH2oVali table
 #   Natchaya P-Durden (2020-01-31)
 #     adjust workflow to run MLFR even missing one gas cylinder
+#   Natchaya P-Durden (2020-03-05)
+#     Set all thresholds to screen linear coefficients to FALSE.
 ##############################################################################################
 
 wrap.irga.vali <- function(
@@ -498,7 +500,7 @@ wrap.irga.vali <- function(
 
   #applying the calculated coefficients to measured data
   #Calculate time-series (20Hz) of slope and zero offset
-  rpt[[DateProc]]$rtioMoleDryCo2Cor <- eddy4R.base::def.irga.vali.cor(data = data, DateProc = DateProc, coef = tmpCoef, valiData = valiData, valiCrit = valiCrit, ScalMax = 20, FracSlpMax = 0.1, Freq = 20)
+  rpt[[DateProc]]$rtioMoleDryCo2Cor <- eddy4R.base::def.irga.vali.cor(data = data, DateProc = DateProc, coef = tmpCoef, valiData = valiData, valiCrit = valiCrit, ScalMax = FALSE, FracSlpMax = FALSE, OfstMax = FALSE, Freq = 20)
 
 #return results
   return(rpt)
