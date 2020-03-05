@@ -90,7 +90,7 @@ wrap.irga.vali <- function(
   DateProc,
   ScalMax = FALSE,
   FracSlpMax = FALSE,
-  OfstMax = FALSE,
+  OfstMax = FALSE
 ) {
 
   #adding library
