@@ -10,6 +10,10 @@
 #' @param qfqmFlag List consisting of \code{ff::ffdf} file-backed objects containing the IRGA quality flags.
 #' @param gasRefe List containing the values of the reference gases. [mol mol-1]
 #' @param DateProc A vector of class "character" containing the processing date.
+#' @param ScalMax Maximum scale value. The validation correction will not apply if scale (resulted from maximum-likelihood fitting of a functional relationship (MLFR)) is greater than ScalMax or ScalMax = FALSE. Defaults to FALSE.
+#' @param FracSlpMax Maximum fraction of slope value. The validation correction will not apply if slope (resulted from regression fitting) is greater than the FracSlpMax or FracSlpMax = FALSE. Defaults to FALSE.
+#' @param OfstMax Maximum offset value. The validation correction will not apply if slope (resulted from regression fitting) is greater than the OfstMax (unit in mol mol-1) or OfstMax = FALSE. Defaults to FALSE.
+
 
 #' @return
 #' The returned object consists of:\cr
@@ -83,7 +87,10 @@ wrap.irga.vali <- function(
   data,
   qfqmFlag,
   gasRefe,
-  DateProc
+  DateProc,
+  ScalMax = FALSE,
+  FracSlpMax = FALSE,
+  OfstMax = FALSE,
 ) {
 
   #adding library
@@ -500,7 +507,7 @@ wrap.irga.vali <- function(
 
   #applying the calculated coefficients to measured data
   #Calculate time-series (20Hz) of slope and zero offset
-  rpt[[DateProc]]$rtioMoleDryCo2Cor <- eddy4R.base::def.irga.vali.cor(data = data, DateProc = DateProc, coef = tmpCoef, valiData = valiData, valiCrit = valiCrit, ScalMax = FALSE, FracSlpMax = FALSE, OfstMax = FALSE, Freq = 20)
+  rpt[[DateProc]]$rtioMoleDryCo2Cor <- eddy4R.base::def.irga.vali.cor(data = data, DateProc = DateProc, coef = tmpCoef, valiData = valiData, valiCrit = valiCrit, ScalMax = ScalMax, FracSlpMax = FracSlpMax, OfstMax = OfstMax, Freq = 20)
 
 #return results
   return(rpt)
