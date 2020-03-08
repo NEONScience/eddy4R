@@ -58,12 +58,12 @@ def.hdf5.read.qfqm <- function(
 #Read in the flags from the HDF5 file
 if (MethMeas == "ecte") {
 rpt <- rhdf5::h5read(file = base::paste0(DirInpLoca, "/ECTE_dp0p_", SiteLoca, "_", DateLoca, ".h5"),
-                      name = base::paste0("/", SiteLoca, "/dp0p/",DataType,"/", VarLoca, "/",LvlTowr), read.attributes = TRUE, drop = TRUE) #drop converts to vector
+                      name = base::paste0("/", SiteLoca, "/dp0p/",DataType,"/", VarLoca, "/",LvlTowr), read.attributes = TRUE) 
 }
 
 if (MethMeas == "ecse") {
 rpt <- rhdf5::h5read(file = base::paste0(DirInpLoca, "/ECSE_dp0p_", SiteLoca, "_", DateLoca, ".h5"),
-                      name = base::paste0("/", SiteLoca, "/dp0p/",DataType,"/", VarLoca, "/",LvlTowr), read.attributes = TRUE, drop = TRUE) #drop converts to vector
+                      name = base::paste0("/", SiteLoca, "/dp0p/",DataType,"/", VarLoca, "/",LvlTowr), read.attributes = TRUE) 
 }
 
 # print message to screen
@@ -71,13 +71,18 @@ msg <- paste0("dataset ", DateLoca, ": ", VarLoca, " hdf5 read-in complete")
 tryCatch({rlog$debug(msg)}, error=function(cond){print(msg)})  
   
 #Convert each flag to a vector from a 1D array
-#for(idx in base::names(rpt)) rpt[[idx]] <- base::as.vector(rpt[[idx]]); base::rm(idx)
+for(idx in base::names(rpt)) rpt[[idx]] <- base::as.vector(rpt[[idx]]); base::rm(idx)
 
 #Cache attributes before coverting to data.frame
 attr <- attributes(rpt)
+#Convert each flag to a vector from a 1D array
+for(idx in base::names(attr)) attr[[idx]] <- base::as.vector(attr[[idx]]); base::rm(idx)
 
 # convert list to data.frame
 rpt <- base::as.data.frame(rpt, stringsAsFactors = FALSE)
+
+#Reapply attributes to reported data.frame
+attributes(rpt) <- attr
 
 # convert type of variable time
 if("time" %in% colnames(rpt)){
@@ -89,20 +94,23 @@ rpt <- base::suppressWarnings(eddy4R.base::def.unit.conv(data = rpt,
                                                           unitFrom = attributes(rpt)$Unit,
                                                           unitTo = "intl"))
 
+
+#Reapply attributes to reported data.frame
+attributes(rpt) <- attr[grep("Unit", names(attr), value = TRUE, invert = TRUE)]
+
+
 # sd assign attribute to gasRefe
 if (VarLoca == "gasRefe"){
   names(attr(rpt,"Sd")) <-  attr(rpt,"Name")
-  names(attr(rpt,"Sd")) <-  attr(rpt,"Name")
-  base::names(rpt$Sd) <- rpt$Name
-  base::names(attr$DfSd) <- attr$Name
-  base::attributes(data)$sd <- attr$Sd[base::names(data)]
-  base::attributes(data)$DfSd <- attr$DfSd[base::names(data)]
+  names(attr(rpt,"DfSd")) <-  attr(rpt,"Name")
+  #base::attributes(rpt)$sd <- attr$Sd[base::names(rpt)]
+  #base::attributes(rpt)$DfSd <- attr$DfSd[base::names(rpt)]
 }
 
 #Apply units to each flag
 lapply(seq_len(length(rpt)), function(x){
   tryCatch({rlog$debug(x)}, error=function(cond){print(x)})
-  attributes(rpt[[x]])$unit <<- attributes(rpt)$Unit[[x]]
+  attributes(rpt[[x]])$unit <<- attributes(rpt)$unit[[x]]
   attributes(rpt[[x]])$`Dspk$Br86$MaxReso` <<- attributes(rpt)$`Dspk$Br86$MaxReso`[[x]]
   attributes(rpt[[x]])$`Dspk$Br86$NumBin` <<- attributes(rpt)$`Dspk$Br86$NumBin`[[x]]
   attributes(rpt[[x]])$`Dspk$Br86$NumWndw` <<- attributes(rpt)$`Dspk$Br86$NumWndw`[[x]]
