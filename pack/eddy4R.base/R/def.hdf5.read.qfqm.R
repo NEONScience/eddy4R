@@ -82,7 +82,7 @@ for(idx in base::names(attr)) attr[[idx]] <- base::as.vector(attr[[idx]]); base:
 rpt <- base::as.data.frame(rpt, stringsAsFactors = FALSE)
 
 #Reapply attributes to reported data.frame
-attributes(rpt) <- attr
+attributes(rpt)$unit <- attr$Unit
 
 # convert type of variable time
 if("time" %in% colnames(rpt)){
@@ -91,12 +91,14 @@ rpt$time <- base::as.POSIXct(rpt$time, format="%Y-%m-%dT%H:%M:%OSZ", tz="UTC") +
 
 # perform unit conversion
 rpt <- base::suppressWarnings(eddy4R.base::def.unit.conv(data = rpt,
-                                                          unitFrom = attributes(rpt)$Unit,
+                                                          unitFrom = attributes(rpt)$unit,
                                                           unitTo = "intl"))
 
 
 #Reapply attributes to reported data.frame
-attributes(rpt) <- attr[grep("Unit", names(attr), value = TRUE, invert = TRUE)]
+lapply(grep("Unit", names(attr), value = TRUE, invert = TRUE), function(x){
+  attributes(rpt)[x] <<- attr[x]
+  })
 
 
 # sd assign attribute to gasRefe
