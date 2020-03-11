@@ -4,9 +4,15 @@
 \alias{wrap.hdf5.wrte.dp01.api}
 \title{Wrapper function: Gather/Write reingested NEON Level 1 data, qfqm, and uncertainty to output HDF5}
 \usage{
-wrap.hdf5.wrte.dp01.api(date, FileOut, SiteLoca, DpName = c("tempAirLvl",
-  "tempAirTop", "fluxHeatSoil", "radiNet", "tempSoil", "h2oSoilVol",
-  "presBaro"), LvlTowr, TimeAgr = c(1, 30))
+wrap.hdf5.wrte.dp01.api(
+  date,
+  FileOut,
+  SiteLoca,
+  DpName = c("tempAirLvl", "tempAirTop", "fluxHeatSoil", "radiNet", "tempSoil",
+    "h2oSoilVol", "presBaro"),
+  LvlTowr,
+  TimeAgr = c(1, 30)
+)
 }
 \arguments{
 \item{date}{Character: The date for the data to be gathered in ISO format ("YYYYmmdd").}

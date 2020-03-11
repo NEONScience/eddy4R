@@ -4,10 +4,22 @@
 \alias{def.lag}
 \title{Definition function: Lag two datasets, so as to maximise their cross-correlation}
 \usage{
-def.lag(refe, meas, freq, dataRefe = refe, dataMeas = meas,
-  measVar = NULL, lagMax = 2 * freq, lagCnst = TRUE,
-  lagNgtvPstv = c("n", "p", "np")[3], lagAll = TRUE, hpf = TRUE,
-  fracMin = 0.1, plot = FALSE, DirPlot = NULL)
+def.lag(
+  refe,
+  meas,
+  freq,
+  dataRefe = refe,
+  dataMeas = meas,
+  measVar = NULL,
+  lagMax = 2 * freq,
+  lagCnst = TRUE,
+  lagNgtvPstv = c("n", "p", "np")[3],
+  lagAll = TRUE,
+  hpf = TRUE,
+  fracMin = 0.1,
+  plot = FALSE,
+  DirPlot = NULL
+)
 }
 \arguments{
 \item{refe}{A vector with variable in reference time frame. Of class numeric. [-]}

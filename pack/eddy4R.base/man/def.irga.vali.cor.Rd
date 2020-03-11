@@ -4,8 +4,16 @@
 \alias{def.irga.vali.cor}
 \title{definition function: Calculation of time-series of the correction IRGA sub data products.}
 \usage{
-def.irga.vali.cor(data, DateProc, coef, valiData, valiCrit = FALSE,
-  ScalMax = 20, FracSlpMax = 0.1, Freq = 20)
+def.irga.vali.cor(
+  data,
+  DateProc,
+  coef,
+  valiData,
+  valiCrit = FALSE,
+  ScalMax = 20,
+  FracSlpMax = 0.1,
+  Freq = 20
+)
 }
 \arguments{
 \item{data}{List consisting of \code{ff::ffdf} file-backed objects containing the dp0p input IRGA.}

@@ -4,10 +4,12 @@
 \alias{wrap.para.thsh}
 \title{Wrapper Function to read threshold table from CI-Parameter-Repo}
 \usage{
-wrap.para.thsh(DpName = c("IrgaTurb", "MfcSampTurb", "Soni", "Amrs"),
+wrap.para.thsh(
+  DpName = c("IrgaTurb", "MfcSampTurb", "Soni", "Amrs"),
   DirInp = "~/eddy/data/Thresholds_EC/CI-Parameter-Repo/ParaSci/Ecte/Dp0p",
   DirOut = "~/eddy/data/Thresholds_EC/threshold_ecte",
-  FileWrte = FALSE)
+  FileWrte = FALSE
+)
 }
 \arguments{
 \item{DpName}{Character: Name of data product. [-]}

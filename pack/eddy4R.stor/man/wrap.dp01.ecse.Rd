@@ -4,11 +4,20 @@
 \alias{wrap.dp01.ecse}
 \title{Wrapper function: Preprocessing and computing NEON eddy-covariance stroage exchange L1 data product descriptive statistics}
 \usage{
-wrap.dp01.ecse(dp01 = c("co2Stor", "h2oStor", "tempAirLvl", "tempAirTop",
-  "isoCo2", "isoH2o")[1], lvl, lvlMfcSampStor = NULL, lvlEnvHut = NULL,
-  lvlValv = NULL, lvlCrdH2oValvVali = NULL, data = list(),
-  qfInp = list(), TypeMeas = c("samp", "vali")[1], PrdMeas, PrdAgr,
-  idxTime = list())
+wrap.dp01.ecse(
+  dp01 = c("co2Stor", "h2oStor", "tempAirLvl", "tempAirTop", "isoCo2", "isoH2o")[1],
+  lvl,
+  lvlMfcSampStor = NULL,
+  lvlEnvHut = NULL,
+  lvlValv = NULL,
+  lvlCrdH2oValvVali = NULL,
+  data = list(),
+  qfInp = list(),
+  TypeMeas = c("samp", "vali")[1],
+  PrdMeas,
+  PrdAgr,
+  idxTime = list()
+)
 }
 \arguments{
 \item{dp01}{A vector of class "character" containing the name of NEON ECSE dp01 which descriptive statistics are being calculated, \cr

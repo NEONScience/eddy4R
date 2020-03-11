@@ -4,10 +4,14 @@
 \alias{def.dp01.grp.qf}
 \title{Definition function: Grouping the quality flags for each of NEON ECTE and ECSE L1 data product}
 \usage{
-def.dp01.grp.qf(qfInp = list(), MethMeas = c("ecte", "ecse")[1],
-  TypeMeas = c("samp", "vali")[1], dp01 = c("envHut", "co2Turb",
-  "h2oTurb", "co2Stor", "h2oStor", "isoCo2", "isoH2o", "soni", "amrs",
-  "tempAirLvl", "tempAirTop")[1], idGas = NULL)
+def.dp01.grp.qf(
+  qfInp = list(),
+  MethMeas = c("ecte", "ecse")[1],
+  TypeMeas = c("samp", "vali")[1],
+  dp01 = c("envHut", "co2Turb", "h2oTurb", "co2Stor", "h2oStor", "isoCo2", "isoH2o",
+    "soni", "amrs", "tempAirLvl", "tempAirTop")[1],
+  idGas = NULL
+)
 }
 \arguments{
 \item{qfInp}{A list of data frame containing the input quality flag data that related to L1 data products are being grouped. Of class integer". [-]}

@@ -4,8 +4,7 @@
 \alias{def.rmsd.diff.prcs.rsq}
 \title{Definition function: RMSD, bias, precision and coefficient of determination - incl. deadband}
 \usage{
-def.rmsd.diff.prcs.rsq(refe, test, Perc = FALSE, Deba = NULL,
-  DebaRltv = FALSE)
+def.rmsd.diff.prcs.rsq(refe, test, Perc = FALSE, Deba = NULL, DebaRltv = FALSE)
 }
 \arguments{
 \item{refe}{Variable of class numeric. Reference data.Same unit as test data.}
