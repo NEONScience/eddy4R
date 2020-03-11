@@ -4,10 +4,18 @@
 \alias{def.vari.wave}
 \title{Definition function: funtion to determine the temporally resolved variance/covariance from continuous wavelet transform}
 \usage{
-def.vari.wave(spec1 = mycwt[["w_met"]]@spectrum, spec2 = NULL,
-  scal = mycwt[[vari]]@scale, peri = mycwt[[vari]]@period,
-  freq_0 = NA, whr_peri = NULL, fac_norm = rpt$coefNorm, flag, SI,
-  SC)
+def.vari.wave(
+  spec1 = mycwt[["w_met"]]@spectrum,
+  spec2 = NULL,
+  scal = mycwt[[vari]]@scale,
+  peri = mycwt[[vari]]@period,
+  freq_0 = NA,
+  whr_peri = NULL,
+  fac_norm = rpt$coefNorm,
+  flag,
+  SI,
+  SC
+)
 }
 \arguments{
 \item{spec1}{Waves package output object spectrum, continuous wavelet transform output object complex spectrum for the first variable (typically w')denoted as \code{object1@spectrum}.}
