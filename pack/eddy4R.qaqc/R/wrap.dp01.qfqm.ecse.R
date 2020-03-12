@@ -75,6 +75,9 @@
 #     pull in the qf from presInlt
 #   Natchaya P-Durden (2019-05-23)
 #     pull in the qf from pumpStor, presValiRegInStor and presValiRegOutStor
+#   Natchaya P-Durden (2020-03-12)
+#     In irgaCo2 an irgaH2o, not include the period when crdCo2 take over to measure at that level 
+#     and irga have to move to measure next level
 ##############################################################################################
 wrap.dp01.qfqm.ecse <- function(
   dp01 = c("co2Stor", "h2oStor", "tempAirLvl", "tempAirTop", "isoCo2", "isoH2o")[1],
@@ -213,6 +216,13 @@ wrap.dp01.qfqm.ecse <- function(
               rpt[[idxAgr]]$timeEnd[[idxVar]] <- wrk$idx$timeEnd[idxAgr]
             }
             
+            #check if this period is the period that crdCo2 take over and irga have to move to measure other level
+            #and qmBeta > 0.1
+            if (dp01 == "co2Stor") {qmBeta <- rpt[[idxAgr]]$qmBeta$rtioMoleDryCo2}
+            if (dp01 == "h2oStor") {qmBeta <- rpt[[idxAgr]]$qmBeta$rtioMoleDryH2o}
+            if (data$crdCo2ValvLvl$`702_000`$lvlCrdCo2[wrk$idx$idxEnd[idxAgr]] == lvlIrga & qmBeta > 0.1){
+              rpt[[idxAgr]] <- NULL
+            }
             #}# end of there is at least one data
             
           }; rm(idxAgr)
@@ -265,6 +275,23 @@ wrap.dp01.qfqm.ecse <- function(
           wrk$idx <- wrk$idx[rowSums(is.na(wrk$idx)) != 2,]
           #if last timeEnd is NA, replce that time to the last time value in data$time
           wrk$idx$timeEnd <- as.POSIXct(ifelse(is.na(wrk$idx$timeEnd), data$time[length(data$time)], wrk$idx$timeEnd), origin = "1970-01-01", tz = "UTC")
+          
+          #get rid of period  that crdCo2 take over and irga have to move to measure other level
+          #and number of sample less than 10% (120-120*0.1)
+          tmpWrkIdx <- list()
+          for (idxAgr in 1:length(wrk$idx$idxEnd)){
+            if (dp01 == "co2Stor") {numSamp <- sum(!is.na(wrk$data$rtioMoleDryCo2[wrk$idx$idxBgn[idxAgr]:wrk$idx$idxEnd[idxAgr]]))}
+            if (dp01 == "h2oStor") {numSamp <- sum(!is.na(wrk$data$rtioMoleDryH2o[wrk$idx$idxBgn[idxAgr]:wrk$idx$idxEnd[idxAgr]]))}
+            if (data$crdCo2ValvLvl$`702_000`$lvlCrdCo2[wrk$idx$idxEnd[idxAgr]] == lvlIrga &  numSamp < 108){
+              tmpWrkIdx[[idxAgr]] <- idxAgr
+              
+            }
+          }
+          
+          #combine idxAgr which will be removed
+          tmpRmv <- do.call(cbind,tmpWrkIdx)
+          #remove those idxAgr from wrk$idx
+          wrk$idx <- wrk$idx[-c(tmpRmv),]
           
           whrSamp <- wrk$idx$idxBgn[1]:wrk$idx$idxEnd[1]
           if (length (wrk$idx$idxBgn) > 1 ){
@@ -1370,6 +1397,8 @@ wrap.dp01.qfqm.ecse <- function(
     
   }#end of dp01 if statement
   
+  #remove NULL list from rpt
+  rpt <- rpt[!sapply(rpt, is.null)]
   #return results
   return(rpt)
   

@@ -64,6 +64,9 @@
 #     rename function from wrap.neon.dp01.ecse() to wrap.dp01.ecse()
 #   Natchaya P-Durden (2019-01-31)
 #     using injNum instate of qfRngTmp to determine missing data
+#   Natchaya P-Durden (2020-03-12)
+#     In irgaCo2 an irgaH2o, not include the period when crdCo2 take over to measure at that level 
+#     and irga have to move to measure next level
 ##############################################################################################
 wrap.dp01.ecse <- function(
   dp01 = c("co2Stor", "h2oStor", "tempAirLvl", "tempAirTop", "isoCo2", "isoH2o")[1],
@@ -195,6 +198,13 @@ wrap.dp01.ecse <- function(
               rpt[[idxAgr]]$timeEnd[[idxVar]] <- wrk$idx$timeEnd[idxAgr]
             }
             
+            #check if this period is the period that crdCo2 take over and irga have to move to measure other level
+            #and number of sample less than 10% (120-120*0.1)
+            if (dp01 == "co2Stor") {numSamp <- rpt[[idxAgr]]$numSamp$rtioMoleDryCo2}
+            if (dp01 == "h2oStor") {numSamp <- rpt[[idxAgr]]$numSamp$rtioMoleDryH2o}
+            if (data$crdCo2ValvLvl$`702_000`$lvlCrdCo2[wrk$idx$idxEnd[idxAgr]] == lvlIrga &  numSamp < 108){
+              rpt[[idxAgr]] <- NULL
+            }
             #}# end of there is at least one data
             
           }; rm(idxAgr)
@@ -1313,6 +1323,8 @@ wrap.dp01.ecse <- function(
     
   }#end of dp01 if statement
   
+  #remove NULL list from rpt
+  rpt <- rpt[!sapply(rpt, is.null)]
   #return results
   return(rpt)
   
