@@ -4,11 +4,12 @@
 \alias{find_F0}
 \title{Definition function: Determine cutoff frequency empirically}
 \usage{
-find_F0(f0,
-  ide = SPEout$fr_obs[SPEout$fr_whr][which(SPEout$fr_obs[SPEout$fr_whr]
-  >= 0.01)], dep = SPEout$FSunfold[SPEout$fr_whr,
-  fpo][which(SPEout$fr_obs[SPEout$fr_whr] >= 0.01)],
-  corfac_ref = corfac_out)
+find_F0(
+  f0,
+  ide = SPEout$fr_obs[SPEout$fr_whr][which(SPEout$fr_obs[SPEout$fr_whr] >= 0.01)],
+  dep = SPEout$FSunfold[SPEout$fr_whr, fpo][which(SPEout$fr_obs[SPEout$fr_whr] >= 0.01)],
+  corfac_ref = corfac_out
+)
 }
 \arguments{
 \item{Currently}{none}
