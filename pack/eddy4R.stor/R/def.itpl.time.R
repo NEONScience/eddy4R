@@ -32,6 +32,7 @@
 #     original creation
 #   Ke Xu (2018-07-01)
 #     apply eddy4R terms: from gap to Wndw
+#   remove na value before applying linear interpolation if like that maxgap will not work
 ##############################################################################################################
 #Start of function call
 ##############################################################################################################
@@ -97,6 +98,8 @@ def.itpl.time <- function(
   } else {
     
     if(methItpl == "linear"){
+      #remove na value if like that maxgap will not work
+      dataInp <- na.omit(dataInp)
       rpt <- zoo::na.approx(object=as.vector(dataInp$mean), x=#dataInp$timeFrac
                                   as.integer(dataInp$timeFrac * 60)
                                 , xout=as.integer(timeFracOut * 60)
