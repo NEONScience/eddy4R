@@ -12,10 +12,11 @@
 #' @param VarLoca Character: Which instrument to read data from.
 #' @param LvlTowr The tower level that the sensor data is being collected in NEON data product convention (HOR_VER)
 #' @param FreqLoca Integer: Measurement frequency.
+#' @param DataType Character: Specify between data and qfqm for read in.
 #' @param MethMeas A vector of class "character" containing the name of measurement method (eddy-covariance turbulent exchange or storage exchange), MethMeas = c("ecte", "ecse"). Defaults to "ecte".
 
 #' @return
-#' Named list \code{qfqm} containing time-series of quality flags.
+#' Named list \code{rpt} containing time-series of quality flags.
 
 #' @references
 #' License: GNU AFFERO GENERAL PUBLIC LICENSE Version 3, 19 November 2007.
@@ -51,7 +52,7 @@ def.hdf5.read.qfqm <- function(
   VarLoca,
   LvlTowr = c("000_040", "000_050", "000_060")[3],
   FreqLoca,
-  DataType = c(data,qfqm)[1],
+  DataType = c("data","qfqm")[1],
   MethMeas = c("ecte", "ecse")[1]
 ){
 
@@ -83,6 +84,7 @@ rpt <- base::as.data.frame(rpt, stringsAsFactors = FALSE)
 
 #Reapply attributes to reported data.frame
 attributes(rpt)$unit <- attr$Unit
+if(is.null(attr(rpt,"unit")) & DataType == "qfqm") attributes(rpt)$unit <- rep(NA, length(rpt))
 
 # convert type of variable time
 if("time" %in% colnames(rpt)){
@@ -90,10 +92,11 @@ rpt$time <- base::as.POSIXct(rpt$time, format="%Y-%m-%dT%H:%M:%OSZ", tz="UTC") +
 }
 
 # perform unit conversion
+if(DataType == "data"){
 rpt <- base::suppressWarnings(eddy4R.base::def.unit.conv(data = rpt,
                                                           unitFrom = attributes(rpt)$unit,
                                                           unitTo = "intl"))
-
+}
 
 #Reapply attributes to reported data.frame
 lapply(grep("Unit", names(attr), value = TRUE, invert = TRUE), function(x){
@@ -104,6 +107,7 @@ lapply(grep("Unit", names(attr), value = TRUE, invert = TRUE), function(x){
 # sd assign attribute to gasRefe
 if (VarLoca == "gasRefe"){
   names(attr(rpt,"Sd")) <-  attr(rpt,"Name")
+  names(attributes(rpt))[which(names(attributes(rpt))=="Sd")] <- "sd" #Change to lower case to keep format
   names(attr(rpt,"DfSd")) <-  attr(rpt,"Name")
   #base::attributes(rpt)$sd <- attr$Sd[base::names(rpt)]
   #base::attributes(rpt)$DfSd <- attr$DfSd[base::names(rpt)]
