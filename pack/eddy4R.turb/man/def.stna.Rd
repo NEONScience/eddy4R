@@ -4,9 +4,20 @@
 \alias{def.stna}
 \title{Definition function: Stationarity tests}
 \usage{
-def.stna(data, MethStna = c(1, 2, 3)[2], whrVar, NumSubSamp = 6,
-  corTempPot = TRUE, presTempPot = NULL, PltfEc = "airc",
-  flagCh4 = TRUE, vrbs = TRUE, Thsh = 100, Perc = TRUE, ...)
+def.stna(
+  data,
+  MethStna = c(1, 2, 3)[2],
+  whrVar,
+  NumSubSamp = 6,
+  corTempPot = TRUE,
+  presTempPot = NULL,
+  PltfEc = "airc",
+  flagCh4 = TRUE,
+  vrbs = TRUE,
+  Thsh = 100,
+  Perc = TRUE,
+  ...
+)
 }
 \arguments{
 \item{\code{data}}{A vector containing the input data. Of class "numeric" or "integer". [user-defined]}
