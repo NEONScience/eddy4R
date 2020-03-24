@@ -202,7 +202,9 @@ wrap.dp01.ecse <- function(
             #and number of sample less than 10% (120-120*0.1)
             if (dp01 == "co2Stor") {numSamp <- rpt[[idxAgr]]$numSamp$rtioMoleDryCo2}
             if (dp01 == "h2oStor") {numSamp <- rpt[[idxAgr]]$numSamp$rtioMoleDryH2o}
-            if (data$crdCo2ValvLvl$`702_000`$lvlCrdCo2[wrk$idx$idxEnd[idxAgr]] == lvlIrga &  numSamp < 108){
+            #replace wrk$idx$idxEnd[idxAgr] > 86400 to 86400
+            IdxEnd <- ifelse(wrk$idx$idxEnd[idxAgr] > 86400, 86400, wrk$idx$idxEnd[idxAgr])
+            if (data$crdCo2ValvLvl$`702_000`$lvlCrdCo2[IdxEnd] == lvlIrga &  numSamp < 108){
               rpt[[idxAgr]] <- NULL
             }
             #}# end of there is at least one data
