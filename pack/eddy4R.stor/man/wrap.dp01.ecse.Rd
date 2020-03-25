@@ -11,6 +11,7 @@ wrap.dp01.ecse(
   lvlEnvHut = NULL,
   lvlValv = NULL,
   lvlCrdH2oValvVali = NULL,
+  lvlCrdCo2Valv = NULL,
   data = list(),
   qfInp = list(),
   TypeMeas = c("samp", "vali")[1],
@@ -32,6 +33,8 @@ c("co2Stor", "h2oStor", "tempAirLvl", "tempAirTop", "isoCo2", "isoH2o"). Default
 \item{lvlValv}{Measurement level of irgaValvLvl, crdCo2ValvLvl, or crdH2oValvLvl. Defaults to NULL. Of type character. [-]}
 
 \item{lvlCrdH2oValvVali}{Measurement level of crdH2oValvVali which apply to only  dp01 equal to "isoH2o". Defaults to NULL. Of type character. [-]}
+
+\item{lvlCrdCo2Valv}{Horizontal and vertical location for crdCo2 valve. Defaults to NULL. Of type character. [-]}
 
 \item{data}{A list of data frame containing the input dp0p data that related to dp01 which descriptive statistics are being calculated. Of class integer". [User defined]}
 

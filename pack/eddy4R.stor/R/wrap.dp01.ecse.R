@@ -14,6 +14,7 @@
 #' @param lvlEnvHut Measurement level of envHut. Defaults to NULL. Of type character. [-]
 #' @param lvlValv Measurement level of irgaValvLvl, crdCo2ValvLvl, or crdH2oValvLvl. Defaults to NULL. Of type character. [-]
 #' @param lvlCrdH2oValvVali Measurement level of crdH2oValvVali which apply to only  dp01 equal to "isoH2o". Defaults to NULL. Of type character. [-]
+#' @param lvlCrdCo2Valv Horizontal and vertical location for crdCo2 valve. Defaults to NULL. Of type character. [-]
 #' @param data A list of data frame containing the input dp0p data that related to dp01 which descriptive statistics are being calculated. Of class integer". [User defined] 
 #' @param qfInp A list of data frame containing the input quality flag data that related to dp01 are being grouped. Of class integer". [-] 
 #' @param TypeMeas A vector of class "character" containing the name of measurement type (sampling or validation), TypeMeas = c("samp", "vali"). Defaults to "samp". [-]
@@ -67,6 +68,8 @@
 #   Natchaya P-Durden (2020-03-12)
 #     In irgaCo2 an irgaH2o, not include the period when crdCo2 take over to measure at that level 
 #     and irga have to move to measure next level
+#   Natchaya P-Durden (2020-03-25)
+#     added lvlCrdCo2Valv to the function's parameter
 ##############################################################################################
 wrap.dp01.ecse <- function(
   dp01 = c("co2Stor", "h2oStor", "tempAirLvl", "tempAirTop", "isoCo2", "isoH2o")[1],
@@ -75,6 +78,7 @@ wrap.dp01.ecse <- function(
   lvlEnvHut = NULL,
   lvlValv = NULL,
   lvlCrdH2oValvVali = NULL,
+  lvlCrdCo2Valv = NULL,
   data = list(),
   qfInp = list(),
   TypeMeas = c("samp", "vali")[1],
@@ -204,7 +208,7 @@ wrap.dp01.ecse <- function(
             #and number of sample less than 10% (120-120*0.1)
             if (dp01 == "co2Stor") {numSamp <- rpt[[idxAgr]]$numSamp$rtioMoleDryCo2}
             if (dp01 == "h2oStor") {numSamp <- rpt[[idxAgr]]$numSamp$rtioMoleDryH2o}
-            if (data$crdCo2ValvLvl$`702_000`$lvlCrdCo2[wrk$idx$idxEnd[idxAgr]] == lvlIrga &  numSamp < 108){
+            if (data$crdCo2ValvLvl[[lvlCrdCo2Valv]]$lvlCrdCo2[wrk$idx$idxEnd[idxAgr]] == lvlIrga &  numSamp < 108){
               rpt[[idxAgr]] <- NULL
             }
             #}# end of there is at least one data
