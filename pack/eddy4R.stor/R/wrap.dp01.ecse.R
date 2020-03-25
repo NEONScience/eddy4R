@@ -152,6 +152,8 @@ wrap.dp01.ecse <- function(
           wrk$idx <- eddy4R.base::def.idx.agr(time = data$time, PrdAgr = (PrdMeas*60), FreqLoca = 1, MethIdx = "specBgn", data = wrk$qfqm$irgaStor$qfRngTemp, CritTime = 60)
           #delete row if last timeBgn and timeEnd is NA
           wrk$idx <- wrk$idx[rowSums(is.na(wrk$idx)) != 2,]
+          #replace last idxEnd > 86400 by 86400
+          wrk$idx$idxEnd <- ifelse(wrk$idx$idxEnd > 86400, 86400, wrk$idx$idxEnd)
           #if last timeEnd is NA, replce that time to the last time value in data$time
           wrk$idx$timeEnd <- as.POSIXct(ifelse(is.na(wrk$idx$timeEnd), data$time[length(data$time)], wrk$idx$timeEnd), origin = "1970-01-01", tz = "UTC")
           #idxAgr2 <- 0
@@ -202,9 +204,7 @@ wrap.dp01.ecse <- function(
             #and number of sample less than 10% (120-120*0.1)
             if (dp01 == "co2Stor") {numSamp <- rpt[[idxAgr]]$numSamp$rtioMoleDryCo2}
             if (dp01 == "h2oStor") {numSamp <- rpt[[idxAgr]]$numSamp$rtioMoleDryH2o}
-            #replace wrk$idx$idxEnd[idxAgr] > 86400 to 86400
-            IdxEnd <- ifelse(wrk$idx$idxEnd[idxAgr] > 86400, 86400, wrk$idx$idxEnd[idxAgr])
-            if (data$crdCo2ValvLvl$`702_000`$lvlCrdCo2[IdxEnd] == lvlIrga &  numSamp < 108){
+            if (data$crdCo2ValvLvl$`702_000`$lvlCrdCo2[wrk$idx$idxEnd[idxAgr]] == lvlIrga &  numSamp < 108){
               rpt[[idxAgr]] <- NULL
             }
             #}# end of there is at least one data
@@ -248,6 +248,8 @@ wrap.dp01.ecse <- function(
           wrk$idx <- eddy4R.base::def.idx.agr(time = data$time, PrdAgr = (PrdMeas*60), FreqLoca = 1, MethIdx = "specBgn", data = wrk$qfqm$irgaStor$qfRngTemp, CritTime = 60)
           #delete row if last timeBgn and timeEnd is NA
           wrk$idx <- wrk$idx[rowSums(is.na(wrk$idx)) != 2,]
+          #replace last idxEnd > 86400 by 86400
+          wrk$idx$idxEnd <- ifelse(wrk$idx$idxEnd > 86400, 86400, wrk$idx$idxEnd)
           #if last timeEnd is NA, replce that time to the last time value in data$time
           wrk$idx$timeEnd <- as.POSIXct(ifelse(is.na(wrk$idx$timeEnd), data$time[length(data$time)], wrk$idx$timeEnd), origin = "1970-01-01", tz = "UTC")
           
