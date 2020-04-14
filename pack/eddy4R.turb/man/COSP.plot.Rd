@@ -4,10 +4,26 @@
 \alias{COSP.plot}
 \title{Definition function: Plot cospectra}
 \usage{
-COSP.plot(name, IDE, DEP, title, labx = NA, laby = NA, colvec = c(1,
-  2, 1), limx = NULL, limy = NULL, weight = T, wl = F,
-  norm = NULL, part_cov = 1, modspec = T, zeta, FX = NULL,
-  devran = NULL, plotting = T)
+COSP.plot(
+  name,
+  IDE,
+  DEP,
+  title,
+  labx = NA,
+  laby = NA,
+  colvec = c(1, 2, 1),
+  limx = NULL,
+  limy = NULL,
+  weight = T,
+  wl = F,
+  norm = NULL,
+  part_cov = 1,
+  modspec = T,
+  zeta,
+  FX = NULL,
+  devran = NULL,
+  plotting = T
+)
 }
 \arguments{
 \item{Currently}{none}

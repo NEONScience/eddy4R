@@ -4,9 +4,20 @@
 \alias{SPEC.plot}
 \title{Definition function: Plot power spectra of up to three variables}
 \usage{
-SPEC.plot(name, IDE, DEP, legtext, labx = NA, laby = NA,
-  colvec = NULL, limx = NULL, limy = NULL, setoff = NULL,
-  powerc = NULL, inisub = c(0.05, Inf))
+SPEC.plot(
+  name,
+  IDE,
+  DEP,
+  legtext,
+  labx = NA,
+  laby = NA,
+  colvec = NULL,
+  limx = NULL,
+  limy = NULL,
+  setoff = NULL,
+  powerc = NULL,
+  inisub = c(0.05, Inf)
+)
 }
 \arguments{
 \item{Currently}{none}
