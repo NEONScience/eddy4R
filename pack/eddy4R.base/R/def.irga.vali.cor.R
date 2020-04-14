@@ -52,6 +52,9 @@
 #     added 5 min after the validation end
 #   Natchaya P-Durden (2020-02-28)
 #     added logical statement to not apply filters (slope, offset, and scale) if they are equal to FALSE
+#   Natchaya P-Durden (2020-04-14)
+#     update the way to determine time begin and end to be able to 
+#     work when the validation do not have a full set of gas tanks
 ##############################################################################################
 def.irga.vali.cor <- function(
  data,
