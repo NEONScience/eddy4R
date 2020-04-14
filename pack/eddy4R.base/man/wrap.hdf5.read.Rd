@@ -4,10 +4,20 @@
 \alias{wrap.hdf5.read}
 \title{Wrapper function: Reading NEON HDF5 files}
 \usage{
-wrap.hdf5.read(DirInpLoca, SiteLoca, DateLoca, VarLoca,
-  LvlTowr = c("000_040", "000_050", "000_060")[3], FreqLoca,
-  Rglr = FALSE, Diag = FALSE, Rng = FALSE, RngLoca = NULL,
-  DespLoca, MethMeas = c("ecte", "ecse")[1])
+wrap.hdf5.read(
+  DirInpLoca,
+  SiteLoca,
+  DateLoca,
+  VarLoca,
+  LvlTowr = c("000_040", "000_050", "000_060")[3],
+  FreqLoca,
+  Rglr = FALSE,
+  Diag = FALSE,
+  Rng = FALSE,
+  RngLoca = NULL,
+  DespLoca,
+  MethMeas = c("ecte", "ecse")[1]
+)
 }
 \arguments{
 \item{DirInpLoca}{Character: Input directory.}

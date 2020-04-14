@@ -64,6 +64,10 @@
 #     Adding dp04 low resolution output on top of validation code
 #   Natchaya P-Durden (2019-09-30)
 #     only write qfFinl out in basic file
+#   Natchaya P-Durden (2020-01-17)
+#     adding rtioMoleDryH2o during validation 
+#   Natchaya P-Durden (2020-01-22)
+#     adding timeBgn and timeEnd attributes
 ##############################################################################################
 
 
@@ -121,11 +125,14 @@ if(MethSubAgr == TRUE){
   
   #adding irgaTurb validation data
   outList$vali$data$co2Turb <- inpList$vali$data$co2Turb
+  outList$vali$data$h2oTurb <- inpList$vali$data$h2oTurb
   
   #If values come in as Posix, they must first be converted to characters
   for (idxTime in c("timeBgn", "timeEnd")){
     if(!is.character(outList$vali$data$co2Turb$rtioMoleDryCo2Vali[[idxTime]])){
       outList$vali$data$co2Turb$rtioMoleDryCo2Vali[[idxTime]] <- strftime(outList$vali$data$co2Turb$rtioMoleDryCo2Vali[[idxTime]], format="%Y-%m-%dT%H:%M:%OSZ", tz="UTC")} 
+    if(!is.character(outList$vali$data$h2oTurb$rtioMoleDryH2oVali[[idxTime]])){
+      outList$vali$data$h2oTurb$rtioMoleDryH2oVali[[idxTime]] <- strftime(outList$vali$data$h2oTurb$rtioMoleDryH2oVali[[idxTime]], format="%Y-%m-%dT%H:%M:%OSZ", tz="UTC")} 
   }
   
   #Unit conversion for dp01 sub-aggregated irgaTurb validation data
@@ -133,6 +140,7 @@ if(MethSubAgr == TRUE){
   
   #adding validation data to dp01AgrSub
   outList$dp01AgrSub$data$co2Turb$rtioMoleDryCo2Vali <- outList$vali$data$co2Turb$rtioMoleDryCo2Vali
+  outList$dp01AgrSub$data$h2oTurb$rtioMoleDryH2oVali <- outList$vali$data$h2oTurb$rtioMoleDryH2oVali
   
   #Packaging sub-aggregated (e.g.1-min) dp01 qfqm for writing to HDF5 file
   outList$dp01AgrSub$qfqm <- sapply(names(inpList$dp01AgrSub$qfqm), function(x) eddy4R.base::def.hdf5.pack(inpList = inpList$dp01AgrSub$qfqm, time = inpList$dp01AgrSub$time, Dp = x))
@@ -172,6 +180,8 @@ if(MethDp04 == TRUE){
       
       #Writing unit attributes to each variable to the dataframe level
       attributes(rptDp04)$unit <- attributes(inpList$dp04$data[[idxDp04]]$stat)$unit
+      #Adding timeBgn and timeEnd attributes
+      attributes(rptDp04)$unit <- c("NA", "NA", attributes(rptDp04)$unit)
 
       #Open connection to dp04 data level
       idDataDp04 <- rhdf5::H5Gopen(idFile,paste0("/", SiteLoca, "/dp04/data/",idxDp04))
@@ -204,6 +214,11 @@ if(MethDp04 == TRUE){
       
       #Writing unit attributes to each variable to the dataframe level
       attributes(rptDp04Qfqm)$unit <- sapply(names(inpList$dp04$qfqm[[idxDp04]]$turb), function(x) attributes(inpList$dp04$qfqm[[idxDp04]]$turb[[x]])$unit)
+      #Adding timeBgn and timeEnd attributes
+      tmpAttr <- c()
+      attributes(tmpAttr)$unit[["timeBgn"]] <- "NA"
+      attributes(tmpAttr)$unit[["timeEnd"]] <- "NA"
+      attributes(rptDp04Qfqm)$unit <- c(attributes(tmpAttr)$unit, attributes(rptDp04Qfqm)$unit)
       
       #Open connection to dp04 data level
       idQfqmDp04 <- rhdf5::H5Gopen(idFile,paste0("/", SiteLoca, "/dp04/qfqm/",idxDp04))
@@ -219,7 +234,7 @@ if(MethDp04 == TRUE){
       
     } else {
     #output only flux for fluxCo2 in basic file
-      if (idxDp04 == c("fluxCo2") & MethExpd == FALSE){
+      if (idxDp04 %in% c("fluxCo2", "fluxH2o") & MethExpd == FALSE){
         inpList$dp04$data[[idxDp04]]$turb$fluxCor <- NULL
         inpList$dp04$data[[idxDp04]]$turb$fluxRaw <- NULL
       }
@@ -230,6 +245,12 @@ if(MethDp04 == TRUE){
   #Writing unit attributes to each variable to the dataframe level
   attributes(rptDp04)$unit <- sapply(names(inpList$dp04$data[[idxDp04]]$turb), function(x) attributes(inpList$dp04$data[[idxDp04]]$turb[[x]])$unit)
 
+  #Adding timeBgn and timeEnd attributes
+  tmpAttr <- c()
+  attributes(tmpAttr)$unit[["timeBgn"]] <- "NA"
+  attributes(tmpAttr)$unit[["timeEnd"]] <- "NA"
+  attributes(rptDp04)$unit <- c(attributes(tmpAttr)$unit, attributes(rptDp04)$unit)
+  
   #Open connection to dp04 data level
   idDataDp04 <- rhdf5::H5Gopen(idFile,paste0("/", SiteLoca, "/dp04/data/",idxDp04))
   
@@ -259,6 +280,11 @@ if(MethDp04 == TRUE){
   
   #Writing unit attributes to each variable to the dataframe level
   attributes(rptDp04Qfqm)$unit <- sapply(names(inpList$dp04$qfqm[[idxDp04]]$turb), function(x) attributes(inpList$dp04$qfqm[[idxDp04]]$turb[[x]])$unit)
+  #Adding timeBgn and timeEnd attributes
+  tmpAttr <- c()
+  attributes(tmpAttr)$unit[["timeBgn"]] <- "NA"
+  attributes(tmpAttr)$unit[["timeEnd"]] <- "NA"
+  attributes(rptDp04Qfqm)$unit <- c(attributes(tmpAttr)$unit, attributes(rptDp04Qfqm)$unit)
   
   #Open connection to dp04 data level
   idQfqmDp04 <- rhdf5::H5Gopen(idFile,paste0("/", SiteLoca, "/dp04/qfqm/",idxDp04))

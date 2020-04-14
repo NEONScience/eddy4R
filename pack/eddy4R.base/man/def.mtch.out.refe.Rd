@@ -20,7 +20,7 @@ Currently none
 }
 \description{
 Function definition. A function to compare the file output from a workflow to a reference output file
-to ensure that changes during development to functions called by the workflow have not impacted the 
+to ensure that changes during development to functions called by the workflow have not impacted the
 results.\cr
 The function reads in the new data produced in the tmp directory and compares the first 10 lines to the reference output data.
 }

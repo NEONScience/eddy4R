@@ -4,8 +4,12 @@
 \alias{def.dp01.agr.ecte}
 \title{Definition function: aggregation of ecte dp01 outputs}
 \usage{
-def.dp01.agr.ecte(inpList, MethSubAgr = FALSE, MethUcrt = FALSE,
-  RptExpd = FALSE)
+def.dp01.agr.ecte(
+  inpList,
+  MethSubAgr = FALSE,
+  MethUcrt = FALSE,
+  RptExpd = FALSE
+)
 }
 \arguments{
 \item{inpList}{a list of dp01 computed output statistics and dp01 quality flags and quality metrics over multiple aggregations periods that need to be combined.}
