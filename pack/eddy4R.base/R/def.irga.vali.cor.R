@@ -153,21 +153,27 @@ def.irga.vali.cor <- function(
   numDate <- 0
   for (idx in 1:length(dateBgn)){
     numDate <- numDate + 1
+    tmpTimeBgn <- as.POSIXlt(paste(dateBgn[idx], " ", "23:59:59.950", sep=""), format="%Y-%m-%d %H:%M:%OS", tz="UTC")
+    tmpTimeEnd <- as.POSIXlt(paste(dateEnd[idx], " ", "", sep="00:00:00.000"), format="%Y-%m-%d %H:%M:%OS", tz="UTC")
     #time begin and time End to apply coefficient
-    #time when performing of high gas is done
-    if (length(valiData[[dateBgn[idx]]][[coefBgn[idx]]]$timeEnd[which(valiData[[dateBgn[idx]]][[coefBgn[idx]]]$gasType == "qfIrgaTurbValiGas05")]) == 0 ||
-        is.na(valiData[[dateBgn[idx]]][[coefBgn[idx]]]$mean[which(valiData[[dateBgn[idx]]][[coefBgn[idx]]]$gasType == "qfIrgaTurbValiGas05")])){
+    #time when performing of last gas is done
+    if (all(valiData[[dateBgn[idx]]][[coefBgn[idx]]]$timeEnd == tmpTimeBgn) &
+        all(is.na(valiData[[dateBgn[idx]]][[coefBgn[idx]]]$mean))){
       timeBgn <- as.POSIXlt(paste(dateBgn[idx], " ", "23:59:59.950", sep=""), format="%Y-%m-%d %H:%M:%OS", tz="UTC")
     } else {
-      timeBgn <- as.POSIXlt(valiData[[dateBgn[idx]]][[coefBgn[idx]]]$timeEnd[which(valiData[[dateBgn[idx]]][[coefBgn[idx]]]$gasType == "qfIrgaTurbValiGas05")]+(60*5.0))
+      #identify which row that timeEnd not = "23:59:59.950"
+      tmpEndRow <- which(valiData[[dateBgn[idx]]][[coefBgn[idx]]]$timeEnd != tmpTimeBgn & !is.na(valiData[[dateBgn[idx]]][[coefBgn[idx]]]$mean))
+      timeBgn <- as.POSIXlt(valiData[[dateBgn[idx]]][[coefBgn[idx]]]$timeEnd[tmpEndRow[length(tmpEndRow)]]+(60*5.0))
     }
     
-    #time when performing of zero gas is started
-    if (length(valiData[[dateEnd[idx]]][[coefEnd[idx]]]$timeBgn[which(valiData[[dateEnd[idx]]][[coefEnd[idx]]]$gasType == "qfIrgaTurbValiGas02")]) == 0 ||
-        is.na(valiData[[dateEnd[idx]]][[coefEnd[idx]]]$mean[which(valiData[[dateEnd[idx]]][[coefEnd[idx]]]$gasType == "qfIrgaTurbValiGas02")])){
+    #time when performing of first gas is started
+    if (all(valiData[[dateEnd[idx]]][[coefEnd[idx]]]$timeBgn == tmpTimeEnd) &
+        all(is.na(valiData[[dateEnd[idx]]][[coefEnd[idx]]]$mean))){
       timeEnd <- as.POSIXlt(paste(dateEnd[idx], " ", "", sep="00:00:00.000"), format="%Y-%m-%d %H:%M:%OS", tz="UTC")
     } else {
-      timeEnd <- as.POSIXlt(valiData[[dateEnd[idx]]][[coefEnd[idx]]]$timeBgn[which(valiData[[dateEnd[idx]]][[coefEnd[idx]]]$gasType == "qfIrgaTurbValiGas02")]-(60*3.5))
+      #identify which row that timeEnd not = "00:00:00.000"
+      tmpBgnRow <- which(valiData[[dateEnd[idx]]][[coefEnd[idx]]]$timeBgn != tmpTimeEnd & !is.na(valiData[[dateEnd[idx]]][[coefEnd[idx]]]$mean))
+      timeEnd <- as.POSIXlt(valiData[[dateEnd[idx]]][[coefEnd[idx]]]$timeBgn[tmpBgnRow[1]]-(60*3.5))
     }
     
     # #fail safe to make sure timeBgn less than timeEnd
@@ -244,7 +250,8 @@ def.irga.vali.cor <- function(
 }
 #append dataframe
 #outTmp00 <- do.call(rbind,outSub)
-
+#change row.name in allSubData
+  row.names(allSubData) <-  make.names(1:length(allSubData$time), unique = TRUE)
 #return data only the processing date
 #report time
 options(digits.secs=3) 

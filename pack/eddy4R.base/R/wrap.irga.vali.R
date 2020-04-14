@@ -132,8 +132,8 @@ wrap.irga.vali <- function(
       #check if there are data and qfqmFlag
       if(length(locDate) == 0){
         #create the empty dataframe
-        subData <- data.frame(matrix(ncol = length(data$irgaTurb), nrow = length(data$irgaTurb[[1]])))
-        subQfqmFlag <- data.frame(matrix(ncol = length(qfqmFlag$irgaTurb), nrow = length(qfqmFlag$irgaTurb[[1]])))
+        subData <- data.frame(matrix(ncol = length(data$irgaTurb), nrow = 24*60*60*Freq))#20Hz data over 1 day
+        subQfqmFlag <- data.frame(matrix(ncol = length(qfqmFlag$irgaTurb), nrow = 24*60*60*Freq))
         colnames(subData) <- names(data$irgaTurb)
         colnames(subQfqmFlag) <- names(qfqmFlag$irgaTurb)
         #add time
