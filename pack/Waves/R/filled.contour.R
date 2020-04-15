@@ -81,11 +81,13 @@ function (x = seq(0, 1, length.out = nrow(z)),
         stop("no proper 'z' matrix specified")
     if (!is.double(z))
         storage.mode(z) <- "double"
-    .Internal(filledcontour(as.double(x),
+    # fixed per https://stackoverflow.com/questions/16812528/filled-contour-in-r-3-0-x-throws-error
+    # Waves 0.2 originally broke because the C code underlying base graphics has been migrated to the graphics package
+    .filled.contour(as.double(x),
                             as.double(y),
                             z,
                             as.double(levels),
-                            col = col))
+                            col = col)
     if (missing(plot.axes)) {
         if (axes) {
             title(main="", xlab="", ylab="")
