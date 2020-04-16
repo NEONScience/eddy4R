@@ -52,6 +52,11 @@
 #     added 5 min after the validation end
 #   Natchaya P-Durden (2020-02-28)
 #     added logical statement to not apply filters (slope, offset, and scale) if they are equal to FALSE
+#   Natchaya P-Durden (2020-04-14)
+#     update the way to determine time begin and end to be able to 
+#     work when the validation do not have a full set of gas tanks
+#   Natchaya P-Durden (2020-04-15)
+#     adding logical to handle the period that falling into the last day and first day of year
 ##############################################################################################
 def.irga.vali.cor <- function(
  data,
@@ -192,6 +197,12 @@ def.irga.vali.cor <- function(
     
     #fractional
     timeFracOut <- timeOut$hour + timeOut$min / 60 + timeOut$sec / 3600
+    #adding logical to handle the period that falling into the last day and first day of year
+    if (format(as.Date(timeBgn, format="%d/%m/%Y"),"%Y") != format(as.Date(timeEnd, format="%d/%m/%Y"),"%Y")){
+      #replace those fist day (equal to 0 to max(timeOut$yday)+1)
+      timeOut$yday[timeOut$yday != max(timeOut$yday)] <- max(timeOut$yday)+1
+    }
+
     #calculate doy
     timeDoy <- timeOut$yday + 1 +  timeFracOut / 24
     
