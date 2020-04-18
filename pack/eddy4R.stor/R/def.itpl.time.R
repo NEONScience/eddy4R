@@ -103,12 +103,13 @@ def.itpl.time <- function(
     #if only two data are available and as.integer(dataInp$timeFrac * 60) are the same value, add 1 to timeFrac of the 2nd value
     tmpTimeFrac <- as.integer(dataInp$timeFrac * 60)
     if (setLgth == 2 & tmpTimeFrac[1]==tmpTimeFrac[2]) tmpTimeFrac[2] <- tmpTimeFrac[2]+1
-    
     if(methItpl == "linear"){
       #remove na value if like that maxgap will not work
       dataInp <- na.omit(dataInp)
+      #make sure use the right inpTime before interpolating
+      if (setLgth == 2){inpTime <- tmpTimeFrac}else{inpTime <- as.integer(dataInp$timeFrac * 60)}
       rpt <- zoo::na.approx(object=as.vector(dataInp$mean), x=#dataInp$timeFrac
-                              tmpTimeFrac
+                              inpTime
                                 , xout=as.integer(timeFracOut * 60)
                                 , method = "linear", maxgap=(WndwMax/60), na.rm=FALSE, rule=1, f=0)
       
