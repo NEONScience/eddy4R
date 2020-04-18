@@ -297,7 +297,8 @@ wrap.dp01.qfqm.ecse <- function(
           #combine idxAgr which will be removed
           tmpRmv <- do.call(cbind,tmpWrkIdx)
           #remove those idxAgr from wrk$idx
-          wrk$idx <- wrk$idx[-c(tmpRmv),]
+          if(!is.null(tmpRmv)) wrk$idx <- wrk$idx[-c(tmpRmv),]
+          
           
           whrSamp <- wrk$idx$idxBgn[1]:wrk$idx$idxEnd[1]
           if (length (wrk$idx$idxBgn) > 1 ){
