@@ -36,6 +36,8 @@
 #     remove na value before applying linear interpolation if like that maxgap will not work
 #   Natchaya P-Durden (2020-04-01)
 #     added failsafe for not to break the zoo::na.approx function when timeFrac are duplicate
+#   Natchaya P-Durden (2020-04-24)
+#     added failsafe replace NaN in numSamp with zero
 ##############################################################################################################
 #Start of function call
 ##############################################################################################################
@@ -69,6 +71,9 @@ def.itpl.time <- function(
   #assign actual time
   #convert to POSIXct, so the full date and time can be stored in as accessed as a single vector
   timeInp <- as.POSIXlt(dataInp$timeBgn, format="%Y-%m-%dT%H:%M:%OSZ", tz="UTC")
+  
+  #failsafe replace NaN in numSamp with zero
+  dataInp$numSamp[is.na(dataInp$numSamp)] <- 0
   
   #if(idxDp == "co2Stor" | idxDp == "h2oStor"){
     #timeBgn + numSamp/2/* 1/1Hz
@@ -111,7 +116,7 @@ def.itpl.time <- function(
       rpt <- zoo::na.approx(object=as.vector(dataInp$mean), x=#dataInp$timeFrac
                               inpTime
                                 , xout=as.integer(timeFracOut * 60)
-                                , method = "linear", maxgap=(WndwMax/60), na.rm=FALSE, rule=1, f=0)
+                                , method = "linear", maxgap=(WndwMax/60), na.rm=FALSE, rule=1, f=0,ties = mean)
       
     }
     
