@@ -4,9 +4,16 @@
 \alias{SPEC.fwd}
 \title{Definition function: Fast Fourier transform}
 \usage{
-SPEC.fwd(tstamp = POST$UT, data, relmot = POST$veloTAmagn,
-  height = POST$lengMCzLS, fre = freq, demean = F, detrend = T,
-  taper = 0.05)
+SPEC.fwd(
+  tstamp = POST$UT,
+  data,
+  relmot = POST$veloTAmagn,
+  height = POST$lengMCzLS,
+  fre = freq,
+  demean = F,
+  detrend = T,
+  taper = 0.05
+)
 }
 \arguments{
 \item{Currently}{none}
