@@ -4,8 +4,11 @@
 \alias{wrap.unit.conv.out.ec}
 \title{Wrapper function: Output unit conversion for ECTE}
 \usage{
-wrap.unit.conv.out.ec(inpList, MethMeas = c("ecte", "ecse")[1],
-  MethType = c("Data", "Ucrt", "Qfqm", "Vali")[1])
+wrap.unit.conv.out.ec(
+  inpList,
+  MethMeas = c("ecte", "ecse")[1],
+  MethType = c("Data", "Ucrt", "Qfqm", "Vali")[1]
+)
 }
 \arguments{
 \item{inpList}{Required. A named list of data frames of type numeric, containing the data to be converted.}

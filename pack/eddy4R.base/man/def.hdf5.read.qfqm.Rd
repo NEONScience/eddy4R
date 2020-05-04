@@ -4,9 +4,15 @@
 \alias{def.hdf5.read.qfqm}
 \title{Wrapper function: Reading quality flags from NEON HDF5 files}
 \usage{
-def.hdf5.read.qfqm(DirInpLoca, SiteLoca, DateLoca, VarLoca,
-  LvlTowr = c("000_040", "000_050", "000_060")[3], FreqLoca,
-  MethMeas = c("ecte", "ecse")[1])
+def.hdf5.read.qfqm(
+  DirInpLoca,
+  SiteLoca,
+  DateLoca,
+  VarLoca,
+  LvlTowr = c("000_040", "000_050", "000_060")[3],
+  FreqLoca,
+  MethMeas = c("ecte", "ecse")[1]
+)
 }
 \arguments{
 \item{DirInpLoca}{Character: Input directory.}

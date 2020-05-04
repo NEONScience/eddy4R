@@ -4,11 +4,24 @@
 \alias{def.para.flow}
 \title{Definition function: Determine the workflow variables}
 \usage{
-def.para.flow(Deve = TRUE, DirFilePara = NULL, DirInp = NA,
-  DirMnt = NA, DirOut = NA, DirTmp = NA, DirWrk = NA,
-  DateOut = NULL, FileOutBase = NULL, Read = "hdf5",
-  VersDp = c("001", "004")[1], VersEddy = "latest",
-  MethParaFlow = c("DfltInp", "EnvVar")[1], UrlInpRefe, UrlOutRefe, ...)
+def.para.flow(
+  Deve = TRUE,
+  DirFilePara = NULL,
+  DirInp = NA,
+  DirMnt = NA,
+  DirOut = NA,
+  DirTmp = NA,
+  DirWrk = NA,
+  DateOut = NULL,
+  FileOutBase = NULL,
+  Read = "hdf5",
+  VersDp = c("001", "004")[1],
+  VersEddy = "latest",
+  MethParaFlow = c("DfltInp", "EnvVar")[1],
+  UrlInpRefe,
+  UrlOutRefe,
+  ...
+)
 }
 \arguments{
 \item{Deve}{is logical that determines if only a subset of the data should be read in to reduce testing time during development (\code{Deve = TRUE}) or all the input data should be read in (\code{Deve = FALSE})}

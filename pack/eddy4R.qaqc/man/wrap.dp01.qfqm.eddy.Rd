@@ -4,11 +4,15 @@
 \alias{wrap.dp01.qfqm.eddy}
 \title{Wrapper function: Calculate quality metrics, alpha and beta quality metrics, and final quality flag for the NEON eddy-covariance turbulent and stroage exchange L1 data products}
 \usage{
-wrap.dp01.qfqm.eddy(qfInp = list(), MethMeas = c("ecte", "ecse")[1],
-  TypeMeas = c("samp", "vali")[1], RptExpd = FALSE,
-  dp01 = c("envHut", "co2Turb", "h2oTurb", "co2Stor", "h2oStor",
-  "isoCo2", "isoH2o", "soni", "soniAmrs", "tempAirLvl", "tempAirTop")[1],
-  idGas = NULL)
+wrap.dp01.qfqm.eddy(
+  qfInp = list(),
+  MethMeas = c("ecte", "ecse")[1],
+  TypeMeas = c("samp", "vali")[1],
+  RptExpd = FALSE,
+  dp01 = c("envHut", "co2Turb", "h2oTurb", "co2Stor", "h2oStor", "isoCo2", "isoH2o",
+    "soni", "soniAmrs", "tempAirLvl", "tempAirTop")[1],
+  idGas = NULL
+)
 }
 \arguments{
 \item{qfInp}{A list of data frame containing the input quality flag data that related to L1 data products are being grouped. Of class integer". [-]}

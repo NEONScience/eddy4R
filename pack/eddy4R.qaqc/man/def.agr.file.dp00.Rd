@@ -4,8 +4,15 @@
 \alias{def.agr.file.dp00}
 \title{Definition function: Combine individual L0 data streams from file}
 \usage{
-def.agr.file.dp00(dirFile = ".", nameFile, nameVar, unitVar, Freq,
-  FmtTime = "\%d-\%b-\%Y \%I.\%M.\%OS \%p", Tz = "GMT")
+def.agr.file.dp00(
+  dirFile = ".",
+  nameFile,
+  nameVar,
+  unitVar,
+  Freq,
+  FmtTime = "\%d-\%b-\%Y \%I.\%M.\%OS \%p",
+  Tz = "GMT"
+)
 }
 \arguments{
 \item{dirFile}{Optional. A character string indicating the directory in which the files to combine are stored. Default is the current working directory.}

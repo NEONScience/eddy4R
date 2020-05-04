@@ -4,8 +4,12 @@
 \alias{def.dens.temp.pois}
 \title{Definition function: Poisson's equation (adiabatic change) - density as function of temperature change}
 \usage{
-def.dens.temp.pois(dens01, temp01, temp02,
-  Kppa = eddy4R.base::IntlNatu$KppaDry)
+def.dens.temp.pois(
+  dens01,
+  temp01,
+  temp02,
+  Kppa = eddy4R.base::IntlNatu$KppaDry
+)
 }
 \arguments{
 \item{dens01}{Measured density, Amount per volume [same unit as returned density, e.g. kg/m3 or kmol/m3].}
