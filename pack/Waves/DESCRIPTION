@@ -1,5 +1,5 @@
 Package: Waves
-Version: 0.2
+Version: 0.3
 Title: TU Bayreuth Wavelet Analysis
 Author@R: c( person("Baltasar", "Trancon y Widemann", email =
     "baltasar.trancon@tu-ilmenau.de", role = c("aut", "cre")), person("Stefan",
@@ -17,4 +17,4 @@ Collate:
     CWT.R
 Description: Fix me!
 License: LGPL-3
-RoxygenNote: 7.0.2
+RoxygenNote: 7.1.0
