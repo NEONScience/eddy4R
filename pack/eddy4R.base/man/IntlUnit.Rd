@@ -4,7 +4,8 @@
 \name{IntlUnit}
 \alias{IntlUnit}
 \title{Internal data: Parameter set: Unit representations}
-\format{A nested list of named unit categories:
+\format{
+A nested list of named unit categories:
 \describe{
   \item{Base}{
    \describe{
@@ -127,7 +128,8 @@
    \code{Forc = "N"}\cr
    \code{Freq = "Hz"}\cr
    }
-}}
+}
+}
 \source{
 Units are defined within flow.save.intl.cnst.R,
  available in the data-raw/ folder of the source version of the package

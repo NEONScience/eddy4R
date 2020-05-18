@@ -12,7 +12,8 @@ wrap.hdf5.wrte.dp01(
   LvlTowr,
   MethUcrt = TRUE,
   MethDp04 = FALSE,
-  MethSubAgr = TRUE
+  MethSubAgr = TRUE,
+  Meta
 )
 }
 \arguments{
@@ -31,6 +32,8 @@ wrap.hdf5.wrte.dp01(
 \item{MethDp04}{logical indicating if ECTE dp04 HDF5 data should be included.}
 
 \item{MethSubAgr}{Logical: Determines if 1-minute data is available for output.}
+
+\item{Meta}{A list of parameters and metadata for updating output HDF5 metadata}
 }
 \value{
 An HDF5 file with dp01 data, qfqm, and uncertainty written

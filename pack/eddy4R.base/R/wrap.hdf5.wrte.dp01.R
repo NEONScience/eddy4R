@@ -15,6 +15,7 @@
 #' @param MethUcrt Logical: Determines if uncertainty information is available for output.
 #' @param MethDp04 logical indicating if ECTE dp04 HDF5 data should be included.
 #' @param MethSubAgr Logical: Determines if 1-minute data is available for output.
+#' @param Meta A list of parameters and metadata for updating output HDF5 metadata
 
 #' 
 #' @return An HDF5 file with dp01 data, qfqm, and uncertainty written
@@ -68,6 +69,8 @@
 #     adding rtioMoleDryH2o during validation 
 #   Natchaya P-Durden (2020-01-22)
 #     adding timeBgn and timeEnd attributes
+#   David Durden (2020-05-01)
+#     adding Pfit coefficient output metadata
 ##############################################################################################
 
 
@@ -81,7 +84,8 @@ wrap.hdf5.wrte.dp01 <- function(
   LvlTowr,
   MethUcrt = TRUE,
   MethDp04 = FALSE,
-  MethSubAgr = TRUE
+  MethSubAgr = TRUE,
+  Meta
 ){
 
 #Determine if the output file should be expanded or basic by creating a logical determined from the filename
@@ -298,7 +302,8 @@ if(MethDp04 == TRUE){
   rhdf5::h5writeAttribute(attributes(rptDp04Qfqm)$unit, h5obj = idQfqmDp04Df, name = "unit")
     }                                
   } 
-  rhdf5::h5closeAll()                                           
+  #Close HDF5 connections
+  rhdf5::h5closeAll() 
 }
 
 ######################################################################
@@ -306,4 +311,17 @@ if(MethDp04 == TRUE){
 ######################################################################
 eddy4R.base::def.hdf5.copy.para(FileInp = FileInp, FileOut = FileOut)
 
+#Create HDF5 connection to the output file  
+idFile <- rhdf5::H5Fopen(FileOut)
+#Open connection to dp04 data level
+idSite <- rhdf5::H5Gopen(idFile, paste0("/", SiteLoca))
+  
+#Write updated Pfit coefficients to output file
+#Output the attributes
+rhdf5::h5writeAttribute(round(Meta$Sci$`Pf$AngEnuXaxs`, digits = 6), h5obj = idSite, name = "Pf$AngEnuXaxs")
+rhdf5::h5writeAttribute(round(Meta$Sci$`Pf$AngEnuYaxs`, digits = 6), h5obj = idSite, name = "Pf$AngEnuYaxs")
+rhdf5::h5writeAttribute(round(Meta$Sci$`Pf$Ofst`, digits = 6), h5obj = idSite, name = "Pf$Ofst")
+
+#Close HDF5 connections
+rhdf5::h5closeAll() 
 }
