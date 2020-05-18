@@ -81,6 +81,8 @@
 #     and irga have to move to measure next level
 #   Natchaya P-Durden (2020-03-25)
 #     added lvlCrdCo2Valv to the function's parameter
+#   David Durden (2020-05-15)
+#     failsafe for crd kickoff removal causing no data for entire day
 ##############################################################################################
 wrap.dp01.qfqm.ecse <- function(
   dp01 = c("co2Stor", "h2oStor", "tempAirLvl", "tempAirTop", "isoCo2", "isoH2o")[1],
