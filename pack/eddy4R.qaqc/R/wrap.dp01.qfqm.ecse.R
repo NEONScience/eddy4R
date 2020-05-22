@@ -83,6 +83,8 @@
 #     added lvlCrdCo2Valv to the function's parameter
 #   David Durden (2020-05-15)
 #     failsafe for crd kickoff removal causing no data for entire day
+#   David Durden (2020-05-21)
+#     bug fix for qmBeta causing differing number of values between data and qfqm
 ##############################################################################################
 wrap.dp01.qfqm.ecse <- function(
   dp01 = c("co2Stor", "h2oStor", "tempAirLvl", "tempAirTop", "isoCo2", "isoH2o")[1],
@@ -226,7 +228,7 @@ wrap.dp01.qfqm.ecse <- function(
             #and qmBeta > 0.1
             if (dp01 == "co2Stor") {qmBeta <- rpt[[idxAgr]]$qmBeta$rtioMoleDryCo2}
             if (dp01 == "h2oStor") {qmBeta <- rpt[[idxAgr]]$qmBeta$rtioMoleDryH2o}
-            if (data$crdCo2ValvLvl[[lvlCrdCo2Valv]]$lvlCrdCo2[wrk$idx$idxEnd[idxAgr]] == lvlIrga & qmBeta > 0.1){
+            if (data$crdCo2ValvLvl[[lvlCrdCo2Valv]]$lvlCrdCo2[wrk$idx$idxEnd[idxAgr]] == lvlIrga & numSamp < 108){
               rpt[[idxAgr]] <- NULL
             }
             
