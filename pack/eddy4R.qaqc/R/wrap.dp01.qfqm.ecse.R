@@ -224,10 +224,10 @@ wrap.dp01.qfqm.ecse <- function(
               rpt[[idxAgr]]$timeEnd[[idxVar]] <- wrk$idx$timeEnd[idxAgr]
             }
             
-            #check if this period is the period that crdCo2 take over and irga have to move to measure other level
-            #and qmBeta > 0.1
-            if (dp01 == "co2Stor") {qmBeta <- rpt[[idxAgr]]$qmBeta$rtioMoleDryCo2}
-            if (dp01 == "h2oStor") {qmBeta <- rpt[[idxAgr]]$qmBeta$rtioMoleDryH2o}
+            #get rid of period  that crdCo2 take over and irga have to move to measure other level
+            #and number of sample less than 10% (120-120*0.1)
+            if (dp01 == "co2Stor") {numSamp <- sum(!is.na(wrk$data$rtioMoleDryCo2[wrk$idx$idxBgn[idxAgr]:wrk$idx$idxEnd[idxAgr]]))}
+            if (dp01 == "h2oStor") {numSamp <- sum(!is.na(wrk$data$rtioMoleDryH2o[wrk$idx$idxBgn[idxAgr]:wrk$idx$idxEnd[idxAgr]]))}
             if (data$crdCo2ValvLvl[[lvlCrdCo2Valv]]$lvlCrdCo2[wrk$idx$idxEnd[idxAgr]] == lvlIrga & numSamp < 108){
               rpt[[idxAgr]] <- NULL
             }
