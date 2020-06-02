@@ -4,9 +4,20 @@
 \alias{def.stna}
 \title{Definition function: Stationarity tests}
 \usage{
-def.stna(data, MethStna = c(1, 2, 3)[2], whrVar, NumSubSamp = 6,
-  corTempPot = TRUE, presTempPot = NULL, PltfEc = "airc",
-  flagCh4 = TRUE, vrbs = TRUE, ...)
+def.stna(
+  data,
+  MethStna = c(1, 2, 3)[2],
+  whrVar,
+  NumSubSamp = 6,
+  corTempPot = TRUE,
+  presTempPot = NULL,
+  PltfEc = "airc",
+  flagCh4 = TRUE,
+  vrbs = TRUE,
+  Thsh = 100,
+  Perc = TRUE,
+  ...
+)
 }
 \arguments{
 \item{\code{data}}{A vector containing the input data. Of class "numeric" or "integer". [user-defined]}
@@ -27,10 +38,17 @@ def.stna(data, MethStna = c(1, 2, 3)[2], whrVar, NumSubSamp = 6,
 
 \item{\code{vrbs}}{Logical. Default true. When FALSE supresses warnings when calculating rptStna01 and rptStna02.}
 
+\item{\code{Thsh}}{Threshold value to indicate if quality flag will raise high (qfItc = 1) when the calculated quality indicator values are greater the threshold. Defaults as 100. [percent]}
+
+\item{\code{Perc}}{A logical indicatiing whether or not to output the quality indicator in the unit of percentage or fraction. Defaults to TRUE. [-]}
+
 \item{\code{...}}{Passes additonal arguments to REYNflux. For example pass spcs and rmm when calculating chemistry fluxes. [-]}
 }
 \value{
-Stationarity test result. [percent]
+The returned object consists of:\cr
+\code{qiStnaTrnd} Stationarity test results (quality indicator) when calculating using trend method (Vickers and Mahrt, 1997).
+\code{qiStnaSubSamp} Stationarity test results (quality indicator) when calculating using internal stationarity method (Foken and Wichura, 1996).
+\code{qfStna} Stationarity test quality flag.
 }
 \description{
 Function defintion. Stationarity tests based on Vickers and Mahrt (1997) and Foken and Wichura (1996).
