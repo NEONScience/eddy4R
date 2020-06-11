@@ -57,6 +57,8 @@
 #     work when the validation do not have a full set of gas tanks
 #   Natchaya P-Durden (2020-04-15)
 #     adding logical to handle the period that falling into the last day and first day of year
+#   David Durden (2020-05-26)
+#     Failsafe for when the valve is switched, but no validation occurs
 ##############################################################################################
 def.irga.vali.cor <- function(
  data,
@@ -163,21 +165,21 @@ def.irga.vali.cor <- function(
     #time begin and time End to apply coefficient
     #time when performing of last gas is done
     if (all(valiData[[dateBgn[idx]]][[coefBgn[idx]]]$timeEnd == tmpTimeBgn) &
-        all(is.na(valiData[[dateBgn[idx]]][[coefBgn[idx]]]$mean))){
+        all(is.na(valiData[[dateBgn[idx]]][[coefBgn[idx]]]$numSamp))){
       timeBgn <- as.POSIXlt(paste(dateBgn[idx], " ", "23:59:59.950", sep=""), format="%Y-%m-%d %H:%M:%OS", tz="UTC")
     } else {
       #identify which row that timeEnd not = "23:59:59.950"
-      tmpEndRow <- which(valiData[[dateBgn[idx]]][[coefBgn[idx]]]$timeEnd != tmpTimeBgn & !is.na(valiData[[dateBgn[idx]]][[coefBgn[idx]]]$mean))
+      tmpEndRow <- which(valiData[[dateBgn[idx]]][[coefBgn[idx]]]$timeEnd != tmpTimeBgn & !is.na(valiData[[dateBgn[idx]]][[coefBgn[idx]]]$numSamp))
       timeBgn <- as.POSIXlt(valiData[[dateBgn[idx]]][[coefBgn[idx]]]$timeEnd[tmpEndRow[length(tmpEndRow)]]+(60*5.0))
     }
     
     #time when performing of first gas is started
     if (all(valiData[[dateEnd[idx]]][[coefEnd[idx]]]$timeBgn == tmpTimeEnd) &
-        all(is.na(valiData[[dateEnd[idx]]][[coefEnd[idx]]]$mean))){
+        all(is.na(valiData[[dateEnd[idx]]][[coefEnd[idx]]]$numSamp))){
       timeEnd <- as.POSIXlt(paste(dateEnd[idx], " ", "", sep="00:00:00.000"), format="%Y-%m-%d %H:%M:%OS", tz="UTC")
     } else {
       #identify which row that timeEnd not = "00:00:00.000"
-      tmpBgnRow <- which(valiData[[dateEnd[idx]]][[coefEnd[idx]]]$timeBgn != tmpTimeEnd & !is.na(valiData[[dateEnd[idx]]][[coefEnd[idx]]]$mean))
+      tmpBgnRow <- which(valiData[[dateEnd[idx]]][[coefEnd[idx]]]$timeBgn != tmpTimeEnd & !is.na(valiData[[dateEnd[idx]]][[coefEnd[idx]]]$numSamp))
       timeEnd <- as.POSIXlt(valiData[[dateEnd[idx]]][[coefEnd[idx]]]$timeBgn[tmpBgnRow[1]]-(60*3.5))
     }
     

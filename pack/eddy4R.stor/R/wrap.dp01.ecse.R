@@ -70,6 +70,8 @@
 #     and irga have to move to measure next level
 #   Natchaya P-Durden (2020-03-25)
 #     added lvlCrdCo2Valv to the function's parameter
+#   David Durden (2020-05-15)
+#     failsafe for crd kickoff removal causing no data for entire day
 ##############################################################################################
 wrap.dp01.ecse <- function(
   dp01 = c("co2Stor", "h2oStor", "tempAirLvl", "tempAirTop", "isoCo2", "isoH2o")[1],
@@ -211,6 +213,35 @@ wrap.dp01.ecse <- function(
             if (data$crdCo2ValvLvl[[lvlCrdCo2Valv]]$lvlCrdCo2[wrk$idx$idxEnd[idxAgr]] == lvlIrga &  numSamp < 108){
               rpt[[idxAgr]] <- NULL
             }
+            
+            #Check if after removing data for valve kickooff if no data remains
+            if(length(wrk$idx$idxBgn) == 1 && length(rpt) == 0){
+              rpt[[1]] <- list()
+              
+              for(idxStat in NameStat){
+                #idxStat <- NameStat[1]
+                rpt[[1]][[idxStat]] <- as.data.frame(matrix(NaN, nrow = 1, ncol = ncol(wrk$data)))
+                #assign name to each column
+                names(rpt[[1]][[idxStat]]) <- names(wrk$data)
+                #not report lvlIrga
+                rpt[[1]][[idxStat]] <- rpt[[1]][[idxStat]][which(!(names(rpt[[1]][[idxStat]]) %in% c("lvlIrga")))]
+                
+              }; rm(idxStat)
+              #add both time begin and time end to rpt
+              rpt[[1]]$timeBgn <- list()
+              rpt[[1]]$timeEnd <- list()
+              
+              #output time for dp01
+              for(idxVar in names(wrk$data)[which(!(names(wrk$data) %in% c("lvlIrga")))]){
+                rpt[[1]]$timeBgn[[idxVar]] <- data$time[1]
+                rpt[[1]]$timeEnd[[idxVar]] <- data$time[length(data$time)]
+                #unit
+                attributes(rpt[[1]]$mean[[idxVar]])$unit <- attributes(wrk$data[[idxVar]])$unit
+                
+              }; rm(idxVar)
+              
+            }#end failsafe of if no measurement data at all in the whole day once valve issue removed
+            
             #}# end of there is at least one data
             
           }; rm(idxAgr)
