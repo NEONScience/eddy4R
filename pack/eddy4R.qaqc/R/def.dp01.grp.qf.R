@@ -86,6 +86,8 @@
 #     adding qfHeat to ECSE
 #   Natchaya P-Durden (2020-03-11)
 #     removed qfCal and qfHeat from ECSE
+#   David Durden (2020-06-21)
+#     removing flags for external sensors from ECSE qfqm
 ##############################################################################################
 
 def.dp01.grp.qf <- function(
