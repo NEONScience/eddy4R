@@ -131,9 +131,6 @@ if(class(data) == "try-error"){
   LvlMeasOut <- LocMeas
   #Name for HDF5 output
   names(LvlMeasOut) <- LvlMeas
-  
-  #Check against the measurement location
-  LvlMeasOut <- LvlMeasOut[LvlMeasOut %in% Noble::pull.dp.locs(site = SiteLoca, dpID = DpNum)$HOR.VER]
 
   #Create the timeBgn vector for aggregation period specified (1, 30 minutes)
   timeBgnOut <- seq(from = lubridate::ymd_hms(timeBgn) + lubridate::seconds(1), to = base::as.POSIXlt(timeEnd) - lubridate::minutes(TimeAgr), by = paste(TimeAgr, "mins", sep = " "))
