@@ -270,8 +270,11 @@ LvlMeasOut <- LocMeas
 #Name for HDF5 output
 names(LvlMeasOut) <- LvlMeas
 
+#Check measurement levels returned from API
+LvlExis <- unique(unlist(regmatches(names(data),gregexpr(pattern = "[0-9][0-9][0-9].[)0-9][0-9][0-9]", names(data)))))
+
 #Check against the measurement location
-LvlMeasOut <- LvlMeasOut[LvlMeasOut %in% Noble::pull.dp.locs(site = SiteLoca, dpID = DpNum)$HOR.VER]
+LvlMeasOut <- LvlMeasOut[LvlMeasOut %in% LvlExis]
 
 #####################################################################################
 
