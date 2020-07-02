@@ -47,6 +47,8 @@
 #   Natchaya P-Durden (2019-09-12)
 #     get information of existing dp01 hor and ver from dp0p hdf5 file
 #     convert qmBeta and qmAlph to fraction
+#   David Durden(2020-07-02)
+#     updating function to check physical locations of reingest sensors exist before pulling from API
 ##############################################################################################
 
 def.hdf5.wrte.dp01.api <- function(
