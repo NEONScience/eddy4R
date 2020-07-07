@@ -2108,28 +2108,28 @@ if (MethMeas == "ecse") {
                                                setQf$presCrdH2o, setQf$tempCrdH2o,
                                                setQf$tempWbox,  setQf$sensCrdH2o,
                                                #setQf$envHut, 
-                                               setQf$valiCrdH2o,
+                                               setQf$valiCrdH2o#,
                                                #setQf$presValiRegInStor, setQf$presValiRegOutStor
                                                ))
       
       rpt$rtioMoleWetH2o <- na.omit(data.frame(setQf$rtioMoleWetH2o, setQf$presCrdH2o, 
                                                setQf$tempCrdH2o, setQf$tempWbox,  
                                                setQf$sensCrdH2o, #setQf$envHut,
-                                               setQf$valiCrdH2o, #setQf$presValiRegInStor, 
+                                               setQf$valiCrdH2o#, setQf$presValiRegInStor, 
                                                #setQf$presValiRegOutStor
                                                ))
       
       rpt$dlta18OH2o <- na.omit(data.frame(setQf$dlta18OH2o, setQf$presCrdH2o, 
                                            setQf$tempCrdH2o, setQf$tempWbox,  
                                            setQf$sensCrdH2o, #setQf$envHut,
-                                           setQf$valiCrdH2o, #setQf$presValiRegInStor, 
+                                           setQf$valiCrdH2o#, setQf$presValiRegInStor, 
                                            #setQf$presValiRegOutStor
                                            ))
       
       rpt$dlta2HH2o <- na.omit(data.frame(setQf$dlta2HH2o, setQf$presCrdH2o, 
                                           setQf$tempCrdH2o, setQf$tempWbox,  
                                           setQf$sensCrdH2o, #setQf$envHut,
-                                          setQf$valiCrdH2o, #setQf$presValiRegInStor, 
+                                          setQf$valiCrdH2o#, setQf$presValiRegInStor, 
                                           #setQf$presValiRegOutStor
                                           ))
       
