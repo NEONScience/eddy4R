@@ -48,6 +48,8 @@
 #    replaced dfQf by inpQf
 #   Natchaya P-Durden (2019-03-12)
 #    added qfRmv into the function parameter list
+#   Dave Durden (2020-04-24)
+#     Adding qfNull to output
 ##############################################################################################
 
 
@@ -71,6 +73,16 @@ def.qf.rmv.data <- function(
   
   #List of variables to check for flags to remove bad data
   rpt$listVar <- base::names(inpData[!base::names(inpData) %in% c("time", "idx")])
+  #Create a NULL flag based on NaN's in original data
+  rpt$qfNull <- as.data.frame(sapply(rpt$listVar, function(x){
+    qfTmp <- base::rep_len(0L, length.out = length(inpData[[x]]))
+    setNull <- which(is.na(inpData[[x]]))
+    qfTmp[setNull] <- 1L
+    return(qfTmp)
+  }))
+ #Correct the Null flag names
+  names(rpt$qfNull) <- paste0("qfNull",toupper(substring(names(rpt$qfNull),1,1)),substring(names(rpt$qfNull),2,nchar(names(rpt$qfNull))))
+  
   
   #If a sensor (Sens) is included, check for sensor specific flags to perform filtering of data    
   if(!base::is.null(Sens) && base::length(Sens) == 1){ 
