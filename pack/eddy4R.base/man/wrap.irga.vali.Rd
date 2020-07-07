@@ -4,7 +4,15 @@
 \alias{wrap.irga.vali}
 \title{Wrapper function: Validation processing for IRGA}
 \usage{
-wrap.irga.vali(data, qfqmFlag, gasRefe, DateProc)
+wrap.irga.vali(
+  data,
+  qfqmFlag,
+  gasRefe,
+  DateProc,
+  ScalMax = FALSE,
+  FracSlpMax = FALSE,
+  OfstMax = FALSE
+)
 }
 \arguments{
 \item{data}{List consisting of \code{ff::ffdf} file-backed objects containing the dp0p input IRGA.}
@@ -14,6 +22,12 @@ wrap.irga.vali(data, qfqmFlag, gasRefe, DateProc)
 \item{gasRefe}{List containing the values of the reference gases. [mol mol-1]}
 
 \item{DateProc}{A vector of class "character" containing the processing date.}
+
+\item{ScalMax}{Maximum scale value. The validation correction will not apply if scale (resulted from maximum-likelihood fitting of a functional relationship (MLFR)) is greater than ScalMax or ScalMax = FALSE. Defaults to FALSE.}
+
+\item{FracSlpMax}{Maximum fraction of slope value. The validation correction will not apply if slope (resulted from regression fitting) is greater than the FracSlpMax or FracSlpMax = FALSE. Defaults to FALSE.}
+
+\item{OfstMax}{Maximum offset value. The validation correction will not apply if slope (resulted from regression fitting) is greater than the OfstMax (unit in mol mol-1) or OfstMax = FALSE. Defaults to FALSE.}
 }
 \value{
 The returned object consists of:\cr

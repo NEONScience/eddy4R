@@ -4,8 +4,17 @@
 \alias{def.irga.vali.cor}
 \title{definition function: Calculation of time-series of the correction IRGA sub data products.}
 \usage{
-def.irga.vali.cor(data, DateProc, coef, valiData, valiCrit = FALSE,
-  ScalMax = 20, FracSlpMax = 0.1, Freq = 20)
+def.irga.vali.cor(
+  data,
+  DateProc,
+  coef,
+  valiData,
+  valiCrit = FALSE,
+  ScalMax = FALSE,
+  FracSlpMax = FALSE,
+  OfstMax = FALSE,
+  Freq = 20
+)
 }
 \arguments{
 \item{data}{List consisting of \code{ff::ffdf} file-backed objects containing the dp0p input IRGA.}
@@ -16,11 +25,13 @@ def.irga.vali.cor(data, DateProc, coef, valiData, valiCrit = FALSE,
 
 \item{valiData}{List consisting of descriptive statistics (mean, min, max, vari, numSamp, se) of CO2 dry mole concentration during performing validation and CO2 dry mole concentration of reference gases.}
 
-\item{valiCrit}{A logical stating if there are more than one validation occurred within DateProc. Defaut to FALSE.}
+\item{valiCrit}{A logical stating if there are more than one validation occurred within DateProc.}
 
-\item{ScalMax}{Maximum scale value (resulted from maximum-likelihood fitting of a functional relationship (MLFR)). Defaults to 20.}
+\item{ScalMax}{Maximum scale value. The validation correction will not apply if scale (resulted from maximum-likelihood fitting of a functional relationship (MLFR)) is greater than ScalMax or ScalMax = FALSE. Defaults to FALSE.}
 
-\item{FracSlpMax}{Maximum fraction of slope value (resulted from maximum-likelihood fitting of a functional relationship (MLFR)). Defaults to 0.1.}
+\item{FracSlpMax}{Maximum fraction of slope value. The validation correction will not apply if slope (resulted from regression fitting) is greater than the FracSlpMax or FracSlpMax = FALSE. Defaults to FALSE.}
+
+\item{OfstMax}{Maximum offset value. The validation correction will not apply if slope (resulted from regression fitting) is greater than the OfstMax (unit in mol mol-1) or OfstMax = FALSE. Defaults to FALSE.}
 
 \item{Freq}{Measurement frequency. Defaults to 20. [Hz]}
 }

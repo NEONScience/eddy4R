@@ -4,7 +4,8 @@
 \name{IntlConv}
 \alias{IntlConv}
 \title{Internal data: Parameter set: Conversion Factors}
-\format{A named list of numerical polynomial conversion coefficients. Names are constructed from 
+\format{
+A named list of numerical polynomial conversion coefficients. Names are constructed from 
 the quantities to be converted. The quantity to be converted from is named first, followed by the 
 quantity to be converted to.\cr
 \cr
@@ -167,7 +168,8 @@ quantity to be converted to.\cr
 \describe{
   \item{NewtPndf}{force conversion, Newton to pound-force = c(0,0.224809) [lbf N-1]}
   \item{PndfNewt}{force conversion, pound-force to Newton = c(0,4.44822) [N lbf-1]}
-}}
+}
+}
 \source{
 Conversion factors are defined within flow.save.intl.cnst.R,
  available in the data-raw/ folder of the source version of the package

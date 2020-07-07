@@ -4,8 +4,14 @@
 \alias{def.qf.rmv.data}
 \title{Definition function: to remove high frequency data points that have failed quality flags}
 \usage{
-def.qf.rmv.data(inpData, inpQf, Sens = NULL, qfRmv = NULL,
-  Vrbs = FALSE, TypeData = c("integer", "real")[1])
+def.qf.rmv.data(
+  inpData,
+  inpQf,
+  Sens = NULL,
+  qfRmv = NULL,
+  Vrbs = FALSE,
+  TypeData = c("integer", "real")[1]
+)
 }
 \arguments{
 \item{inpData}{Input data.frame for data to be removed from based on quality flags}

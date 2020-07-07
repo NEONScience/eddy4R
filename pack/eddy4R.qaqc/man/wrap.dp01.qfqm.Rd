@@ -4,14 +4,17 @@
 \alias{wrap.dp01.qfqm}
 \title{Wrapper function: Generate basic L1 data product, including descriptive statics, quality metrics, and final quality flag}
 \usage{
-wrap.dp01.qfqm(data, time = base::as.POSIXlt(base::seq.POSIXt(from =
-  base::Sys.time(), by = "sec", length.out = base::length(data[, 1]))),
+wrap.dp01.qfqm(
+  data,
+  time = base::as.POSIXlt(base::seq.POSIXt(from = base::Sys.time(), by = "sec",
+    length.out = base::length(data[, 1]))),
   setQf = base::vector("list", base::length(data)),
-  qf = base::vector("list", base::length(data)), WndwAgr = 1800 *
-  stats::median(base::abs(base::diff(time)), na.rm = TRUE),
-  TimeBgn = NULL, TimeEnd = NULL,
-  NameQfExcl = base::as.list(base::character(length =
-  base::length(data))))
+  qf = base::vector("list", base::length(data)),
+  WndwAgr = 1800 * stats::median(base::abs(base::diff(time)), na.rm = TRUE),
+  TimeBgn = NULL,
+  TimeEnd = NULL,
+  NameQfExcl = base::as.list(base::character(length = base::length(data)))
+)
 }
 \arguments{
 \item{data}{Required input. A data frame containing the L0' (calibrated raw) data evaluated (do not include the time stamp vector here).}

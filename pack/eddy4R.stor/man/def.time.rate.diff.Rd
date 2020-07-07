@@ -4,8 +4,14 @@
 \alias{def.time.rate.diff}
 \title{Definition function: calculate time rate of change for ecse dp02 data and qfqm}
 \usage{
-def.time.rate.diff(dataInp, numDate, PrdWndwAgr, PrdIncrAgr, Date,
-  qfqmFlag = FALSE)
+def.time.rate.diff(
+  dataInp,
+  numDate,
+  PrdWndwAgr,
+  PrdIncrAgr,
+  Date,
+  qfqmFlag = FALSE
+)
 }
 \arguments{
 \item{\code{dataInp}}{Input data.}

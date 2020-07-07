@@ -4,7 +4,8 @@
 \name{IntlNatu}
 \alias{IntlNatu}
 \title{Internal data: Parameter set: Natural constants}
-\format{A list of named constants:
+\format{
+A list of named constants:
 \describe{
   \item{Grav}{acceleration of gravity = 9.81 [m s-2]}
   \item{PrdErth}{rotation period of the Earth (one sidereal day) = 86164.1 [s]}
@@ -30,7 +31,8 @@
   \item{RsH2o}{specific gas constant for water vapour	= 461.96 [J kg-1 K-1]}
   \item{GmmaH2o}{CpH2o / CvH2o = 1.333776 [-]}
   \item{KppaH2o}{water vapour Kappa exponent for ideal gas law (Poisson), RsH2o / CpH2o = 0.2502 [-]}
-}}
+}
+}
 \source{
 Natural constants are defined within flow.save.intl.cnst.R,
  available in the data-raw/ folder of the source version of the package

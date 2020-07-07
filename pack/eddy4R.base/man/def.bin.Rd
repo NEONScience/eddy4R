@@ -4,8 +4,14 @@
 \alias{def.bin}
 \title{Definition function: Binning data}
 \usage{
-def.bin(idep, depe, RngMinMax = NULL, NumBin, widtBin = c("lin",
-  "log10", "exp10", "logExp", "expLog"), meanFunc = c("mean", "median"))
+def.bin(
+  idep,
+  depe,
+  RngMinMax = NULL,
+  NumBin,
+  widtBin = c("lin", "log10", "exp10", "logExp", "expLog"),
+  meanFunc = c("mean", "median")
+)
 }
 \arguments{
 \item{idep}{Either a vector or matrix of class numeric or integer containing the independent variable and of the same length as \code{depe}. []}

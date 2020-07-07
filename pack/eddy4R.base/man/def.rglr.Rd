@@ -4,12 +4,19 @@
 \alias{def.rglr}
 \title{Definition function: Regularizing irregular data to strictly regular / equidistant data}
 \usage{
-def.rglr(timeMeas, dataMeas, unitMeas = base::attributes(dataMeas)$unit,
-  BgnRglr = NULL, EndRglr = NULL,
-  TzRglr = base::attributes(BgnRglr)$tzone, FreqRglr,
-  MethRglr = c("CybiEc", "cybiDflt", "zoo")[1], WndwRglr = c("Cntr",
-  "Lead", "Trlg")[1], IdxWndw = c("Clst", "IdxWndwMin", "IdxWndwMax")[1],
-  PrcsSec = 6)
+def.rglr(
+  timeMeas,
+  dataMeas,
+  unitMeas = base::attributes(dataMeas)$unit,
+  BgnRglr = NULL,
+  EndRglr = NULL,
+  TzRglr = base::attributes(BgnRglr)$tzone,
+  FreqRglr,
+  MethRglr = c("CybiEc", "cybiDflt", "zoo")[1],
+  WndwRglr = c("Cntr", "Lead", "Trlg")[1],
+  IdxWndw = c("Clst", "IdxWndwMin", "IdxWndwMax")[1],
+  PrcsSec = 6
+)
 }
 \arguments{
 \item{timeMeas}{A vector containing the observation times. Of class "POSIXlt" including timezone attribute, and of the same length as \code{dataMeas}. [-]}

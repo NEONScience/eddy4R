@@ -4,8 +4,17 @@
 \alias{wrap.hdf5.wrte.dp01}
 \title{Wrapper function: Write NEON Level 1 data, qfqm, and uncertainty to output HDF5}
 \usage{
-wrap.hdf5.wrte.dp01(inpList, FileInp, FileOut, SiteLoca, LvlTowr,
-  MethUcrt = TRUE, MethDp04 = FALSE, MethSubAgr = TRUE)
+wrap.hdf5.wrte.dp01(
+  inpList,
+  FileInp,
+  FileOut,
+  SiteLoca,
+  LvlTowr,
+  MethUcrt = TRUE,
+  MethDp04 = FALSE,
+  MethSubAgr = TRUE,
+  Meta
+)
 }
 \arguments{
 \item{inpList}{A list of including dp01 data, quality flags and quality metrics, and uncertainty calculations to package and write to an output HDF5 file}
@@ -23,6 +32,8 @@ wrap.hdf5.wrte.dp01(inpList, FileInp, FileOut, SiteLoca, LvlTowr,
 \item{MethDp04}{logical indicating if ECTE dp04 HDF5 data should be included.}
 
 \item{MethSubAgr}{Logical: Determines if 1-minute data is available for output.}
+
+\item{Meta}{A list of parameters and metadata for updating output HDF5 metadata}
 }
 \value{
 An HDF5 file with dp01 data, qfqm, and uncertainty written
