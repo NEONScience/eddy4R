@@ -1451,7 +1451,7 @@ if (MethMeas == "ecse") {
         
         tmp$rtioMoleWet12CCo2 <-data.frame(setQf$rtioMoleWet12CCo2, setQf$presCrdCo2, 
                                            setQf$tempCrdCo2, setQf$tempWbox,
-                                           setQf$sensCrdCo2
+                                           setQf$sensCrdCo2,
                                            #, setQf$frt00Mfm, 
                                            #setQf$frtMfm, setQf$presAtmMfm, 
                                            #setQf$tempMfm, 
@@ -1628,7 +1628,7 @@ if (MethMeas == "ecse") {
         rpt$dlta13CCo2 <- na.omit(data.frame(setQf$dlta13CCo2, setQf$rtioMoleWet12CCo2,
                                              setQf$rtioMoleWet13CCo2, setQf$presCrdCo2,
                                              setQf$tempCrdCo2, setQf$tempWbox,
-                                             setQf$sensCrdCo2#, setQf$frt00Mfm, 
+                                             setQf$sensCrdCo2,# setQf$frt00Mfm, 
                                              #setQf$frtMfm, setQf$presAtmMfm, 
                                              #setQf$tempMfm, 
                                              setQf$sensMfm#,
