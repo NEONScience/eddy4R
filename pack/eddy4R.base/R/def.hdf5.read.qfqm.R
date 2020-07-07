@@ -43,6 +43,8 @@
 #     applied term name convention; replaced Levl by Lvl
 #   Natchaya P-Durden (2018-05-22)
 #     rename function from def.neon.read.hdf5.qfqm() to def.hdf5.read.qfqm()
+#   David Durden (2020-06-22)
+#     extending function to work with data and qfqm, as well as adding metadata
 ##############################################################################################
 
 def.hdf5.read.qfqm <- function(
