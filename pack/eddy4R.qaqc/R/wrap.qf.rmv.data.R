@@ -63,17 +63,36 @@ wrap.qf.rmv.data <- function(
   if(MethMeas == "ecte"){
   # Determine quality flags to apply to each stream, quantify flags, and remove bad data across all sensors
   outList <- base::lapply(Sens, function(x){ 
-    eddy4R.qaqc::def.qf.rmv.data(inpData = inpList$data[[x]][], inpQf = inpList$qfqm[[x]], Sens = x, qfRmv = qfRmv, Vrbs = Vrbs) #Remove high frequency data that is flagged by sensor specific flags or plausibility tests flags
+    def.qf.rmv.data(inpData = inpList$data[[x]][], inpQf = inpList$qfqm[[x]], Sens = x, qfRmv = qfRmv, Vrbs = Vrbs) #Remove high frequency data that is flagged by sensor specific flags or plausibility tests flags
   })
   
   #Apply names to the output list
   base::names(outList) <- Sens
+ 
+  #Despiking routine 
+ test <- base::lapply(Sens, function(x){ 
+    #x <- "irgaTurb" #for testing
+    varDspk <- names(outList[[x]]$inpData)[!names(outList[[x]]$inpData) %in% c("time","idx")]
+      tmp <- base::lapply(varDspk, function(y){
+        eddy4R.qaqc::def.dspk.br86(
+          # input data, univariate vector of integers or numerics
+          dataInp = outList[[x]][[y]],
+          # filter width
+          WndwFilt = as.numeric(ramattribs(inpList$data[[x]][[y]])$`Dspk$Br86$NumWndw`),
+          # initial number/step size of histogram bins
+          NumBin = as.numeric(ramattribs(inpList$data[[x]][[y]])$`Dspk$Br86$NumBin`),
+          # resolution threshold
+          ThshReso = as.numeric(ramattribs(inpList$data[[x]][[y]])$`Dspk$Br86$MaxReso`)
+        )$dataOut #Remove high frequency data that is flagged by sensor specific flags or plausibility tests flags
+      })    
+  })
   
   #Applying the bad quality flags to the reported output data
   base::lapply(base::names(outList), function(x) {
     #Outputting the data ffdf's
     rpt$data[[x]] <<- ff::as.ffdf(outList[[x]]$inpData) 
     rpt$data[[x]] <<- eddy4R.base::def.unit.var(samp = rpt$data[[x]], refe = inpList$data[[x]]) #Copy units
+    rpt$qfqm[[x]] <<- ff::as.ffdf(base::cbind(rpt$qfqm[[x]][], outList$irgaTurb$qfNull))
   })
   
   #If verbose is true write out all the information about the quality flags applied to the raw data
