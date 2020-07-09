@@ -68,7 +68,7 @@ for(idxFile in 1:base::length(nameFile)){
   data <- data[[2]]
   
   # Regularize time series. 
-  data <- eddy4R.base::def.rglr(timeMeas=timeInp,dataMeas=as.data.frame(data),unitMeas=unitVar[idxFile],FreqRglr=Freq,MethRglr="cybiDflt")
+  data <- eddy4R.base::def.rglr(timeMeas=timeInp,dataMeas=as.data.frame(data),unitMeas=unitVar[idxFile],FreqRglr=Freq,MethRglr="CybiEc",WndwRglr='Trlg',IdxWndw='IdxWndwMin')
   timeRglr[[idxFile]] <- data$timeRglr 
   dataRglr[[idxFile]] <- data$dataRglr[[1]]
   
