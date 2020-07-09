@@ -12,7 +12,7 @@ def.rglr(
   EndRglr = NULL,
   TzRglr = base::attributes(BgnRglr)$tzone,
   FreqRglr,
-  MethRglr = c("CybiEc", "cybiDflt", "zoo")[1],
+  MethRglr = c("CybiEc", "CybiEcTimeMeas", "zoo")[1],
   WndwRglr = c("Cntr", "Lead", "Trlg")[1],
   IdxWndw = c("Clst", "IdxWndwMin", "IdxWndwMax")[1],
   PrcsSec = 6
