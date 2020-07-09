@@ -238,10 +238,10 @@ wrap.dp01.qfqm <- function (
       
       # Find data locations in window
       setData <- base::which((time >= timeAgrBgn[idxAgr]) & (time < timeAgrBgn[idxAgr]+WndwAgr))
-      numDataAgr <- base::length(setData)
+      numDataIdxAgr <- base::length(setData)
       
       # If there is no data to process move to next aggregation window
-      if (numDataAgr == 0) {
+      if (numDataIdxAgr == 0) {
         next
       }
       
