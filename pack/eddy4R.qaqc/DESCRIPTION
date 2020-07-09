@@ -17,7 +17,8 @@ Imports:
     lattice (>= 0.20-35),
     plyr (>= 1.8.4),
     reshape2 (>= 1.4.2),
-    Rmisc (>= 1.5)
+    Rmisc (>= 1.5),
+    RcppRoll (>= 0.3.0)
 Suggests:
     NEONprocIS.base
 License: GNU AFFERO GENERAL PUBLIC LICENSE Version 3, 19 November 2007
