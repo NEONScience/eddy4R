@@ -233,7 +233,7 @@ def.plau <- function (
     diffDataIdx <- diff(data[,idxVar])
     diffDataNaIdx <- is.na(diffDataIdx)
     setNaDiffDataIdx <- which(diffDataNaIdx)
-    setNaDiffDataIdx <- which(!diffDataNaIdx)
+    setRealDiffDataIdx <- which(!diffDataNaIdx)
     
     
     setQf[[idxVar]]$setQfStep <- list(fail=numeric(0),na=numeric(0)) # initialize
@@ -248,7 +248,7 @@ def.plau <- function (
     }
     
     # If previous point is null, but next value is present, evaluate the step test with next value
-    setQf[[idxVar]]$setQfStep$na <- setdiff(setQf[[idxVar]]$setQfStep$na,setNaDiffDataIdx)
+    setQf[[idxVar]]$setQfStep$na <- setdiff(setQf[[idxVar]]$setQfStep$na,setRealDiffDataIdx)
     
     # For Verbose option, output actual flag values
     if(Vrbs) {
