@@ -90,6 +90,8 @@
 #   Cove Sturtevant (2020-07-07)
 #     optimized time-based persistence test and removed point-based method, adding conversion to time-based method. 
 #     also caught bug causing a potential lack of persistence test na flags when all values between 2 points are NA.
+#   Cove Sturtevant (2020-07-08)
+#     optimized gap test. WAY faster when there are a lot of gaps in the dataset
 ##############################################################################################
 def.plau <- function (
   data,                               # a data frame containing the data to be evaluated (do not include the time stamp vector here). Required input.
@@ -237,13 +239,12 @@ def.plau <- function (
     setQf[[idxVar]]$setQfStep <- list(fail=numeric(0),na=numeric(0)) # initialize
     
     setQf[[idxVar]]$setQfStep$fail <- which((abs(diffDataIdx) > DiffStepMax[idxVar]))
-    setQf[[idxVar]]$setQfStep$fail <- unique(c(setQf[[idxVar]]$setQfStep$fail,setQf[[idxVar]]$setQfStep$fail+1))
+    setQf[[idxVar]]$setQfStep$fail <- union(setQf[[idxVar]]$setQfStep$fail,setQf[[idxVar]]$setQfStep$fail+1)
     setQf[[idxVar]]$setQfStep$na <- setNaDiffDataIdx+1
     
     # If either of the first two values are NULL, flag NA (the first value is missed by the above code)
     if(diffDataNaIdx[1]){
-      setQf[[idxVar]]$setQfStep$na <- unique(
-      c(1,setQf[[idxVar]]$setQfStep$na))
+      setQf[[idxVar]]$setQfStep$na <- union(1,setQf[[idxVar]]$setQfStep$na)
     }
     
     # If previous point is null, but next value is present, evaluate the step test with next value
@@ -353,8 +354,8 @@ def.plau <- function (
           } else {
             
             # Awe bummer, the sensor was stuck before this point.
-            setQf[[idxVar]]$setQfPers$fail <- unique(c(setQf[[idxVar]]$setQfPers$fail,
-                                                       idxDataBgn:(idxData-1)))
+            setQf[[idxVar]]$setQfPers$fail <- union(setQf[[idxVar]]$setQfPers$fail,
+                                                    idxDataBgn:(idxData-1))
             
           }
           
@@ -391,7 +392,7 @@ def.plau <- function (
       if (timePers[idxData]-timeIdxBgn >= WndwPersIdx) {
         # We didn't hit the threshold for the final non-NA points and we were beyond the allowable 
         # time interval for the persistence test, so let's flag the end of the data
-        setQf[[idxVar]]$setQfPers$fail <- unique(c(setQf[[idxVar]]$setQfPers$fail,idxDataBgn:idxData))
+        setQf[[idxVar]]$setQfPers$fail <- union(setQf[[idxVar]]$setQfPers$fail,idxDataBgn:idxData)
         
       } else {
         # We didn't hit the threshold for the final non-NA points, but we are not yet beyond the 
@@ -432,48 +433,27 @@ def.plau <- function (
   # Do Gap test
   for(idxVar in 1:numVar) {
     
+    # Initialize
     setQf[[idxVar]]$setQfGap <- list(fail=numeric(0),na=numeric(0)) # initialize
     
-    setNull <- setDataNa[[idxVar]] # find NA values
-    setGap <- setNull # Start out thinking every Null is a gap, we'll whittle it down below
-    diffSetNull <- diff(setNull) # difference between null position
+    # Do a rolling count of NAs with a window the length of the gap
+    dataNAIdx <- dataNa[[idxVar]]
+    NumGapIdx <- NumGap[idxVar]
+    numNaWndwGap <- RcppRoll::roll_sum(x=dataNAIdx,n=NumGapIdx,by=1,align='left',na.rm=FALSE)
     
-    # Only evaluate this if we need to
-    if (length(setNull) >= NumGap[idxVar]) {
-      
-      # Go thru each NA value to determine if it is part of a set >= NumGap[idxVar]
-      for (idxNull in 1:length(setNull)) {
-        
-        # Isolate positions within the NumGap[idxVar] range that are consecutive
-        diffSetNullSelf <- c(diffSetNull[1:idxNull-1],1,diffSetNull[idxNull:length(diffSetNull)])# Fill in the position difference vector with a value of 1 for idxNull itself
-        setNullPre <- seq(from=idxNull-NumGap[idxVar],to=idxNull-1,by=1)
-        setNullPre <- rev(setNullPre[(setNullPre > 0) & (setNullPre <= numData)])
-        numNullPre <- which(diffSetNullSelf[setNullPre]!=1)[1]-1 # number of consecutive nulls prior to this Null
-        if (is.na(numNullPre)) {
-          numNullPre <- length(setNullPre)
-        }
-        setNullPost <- seq(from=idxNull,to=idxNull+NumGap[idxVar]-1,by=1)
-        setNullPost <- setNullPost[(setNullPost > 0) & (setNullPost <= numData)]
-        numNullPost <- which(diffSetNullSelf[setNullPost]!=1)[1]-1  # number of consecutive nulls including and after this Null
-        if (is.na(numNullPost)) {
-          numNullPost <- length(setNullPost)
-        }
-        
-        if (numNullPre+numNullPost < NumGap[idxVar]) {
-          # This position is not within a gap, so remove it from out list
-          setGap <- setdiff(setGap,setNull[idxNull])
-        }        
-      }
-      
-      setQf[[idxVar]]$setQfGap$fail <- setGap
-      
+    # Which of the windows has all gaps? Mark the test failure
+    setGapBgn <- which(numNaWndwGap == 4)
+    qfGap <- rep(0,numData)
+    for(idxGapBgn in setGapBgn){
+      qfGap[idxGapBgn:(idxGapBgn+NumGapIdx-1)] <- 1
     }
     
-    # For Verbose option, output actual flag values
+    setQf[[idxVar]]$setQfGap$fail <- which(qfGap == 1)
+    
     if(Vrbs) {
-      qf[[idxVar]]$qfGap[setQf[[idxVar]]$setQfGap$fail] <- 1
-      qf[[idxVar]]$qfGap[setQf[[idxVar]]$setQfGap$na] <- -1
+      qf[[idxVar]]$qfGap <- qfGap
     } 
+    
   }
   
   # Return results
