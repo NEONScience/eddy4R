@@ -92,10 +92,12 @@
 #     also caught bug causing a potential lack of persistence test na flags when all values between 2 points are NA.
 #   Cove Sturtevant (2020-07-08)
 #     optimized gap test. WAY faster when there are a lot of gaps in the dataset
+#   Cove Sturtevant (2020-07-09)
+#     Additional optimization of persistence test achieved by turning time variable to numeric seconds past start
 ##############################################################################################
 def.plau <- function (
   data,                               # a data frame containing the data to be evaluated (do not include the time stamp vector here). Required input.
-  time = as.POSIXlt(seq.POSIXt(from=Sys.time(),by="sec",length.out=length(data[,1]))),  # time vector corresponding with the rows in data, in  Class "POSIXlt", which is a named list of vectors representing sec, min, hour,day,mon,year. Defaults to an evenly spaced time vector starting from execution by seconds.
+  time = as.POSIXlt(seq.POSIXt(from=Sys.time(),by="sec",length.out=nrow(data))),  # time vector corresponding with the rows in data, in  Class "POSIXlt", which is a named list of vectors representing sec, min, hour,day,mon,year. Defaults to an evenly spaced time vector starting from execution by seconds.
   RngMin = apply(data,2,min,na.rm=TRUE), # a numeric vector containing the minimum acceptable value for each variable in data, defaults to observed minimums
   RngMax = apply(data,2,max,na.rm=TRUE), # a numeric vector containing the maximum acceptable value for each variable in data, defaults to observed maximums
   DiffStepMax = apply(abs(apply(data,2,diff)),2,max,na.rm=TRUE), # a vector containing the maximum acceptable absolute difference between sequential data points for each variable in data
@@ -117,7 +119,7 @@ def.plau <- function (
   # Initial stats
   numVar <- length(data) # Get number of variables 
   nameData <- names(data) # Get variable names
-  numData <- length(data[,1])
+  numData <- nrow(data)
   
   
   # Check time
@@ -259,11 +261,12 @@ def.plau <- function (
 
   # Do persistence test 
   if(class(WndwPers) %in% c("numeric","integer")){
-    # Figure out what the time-based representation would be
-    timePers <- as.POSIXlt(seq.POSIXt(from=Sys.time(),by="sec",length.out=length(data[,1])))
-    WndwPers <- as.difftime(WndwPers,units='secs')
+    timePers <- seq_len(numData)
   } else {
-    timePers <- time
+    # Convert time to seconds past start. It's faster.
+    timePers <- as.numeric(time) # Turn time to # seconds past start
+    timePers <- timePers-timePers[1]
+    WndwPers <- as.double(WndwPers,units='secs')
   }
   
   for(idxVar in 1:numVar) {
