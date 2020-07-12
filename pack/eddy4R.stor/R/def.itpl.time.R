@@ -38,6 +38,8 @@
 #     added failsafe for not to break the zoo::na.approx function when timeFrac are duplicate
 #   Natchaya P-Durden (2020-04-24)
 #     added failsafe replace NaN in numSamp with zero
+#   David Durden (2020-07-10)
+#     added failsafe to make sure the time and data lengths are the same for cases with setLgth = 2
 ##############################################################################################################
 #Start of function call
 ##############################################################################################################
@@ -112,7 +114,7 @@ def.itpl.time <- function(
       #remove na value if like that maxgap will not work
       dataInp <- na.omit(dataInp)
       #make sure use the right inpTime before interpolating
-      if (setLgth == 2){inpTime <- tmpTimeFrac}else{inpTime <- as.integer(dataInp$timeFrac * 60)}
+      if (setLgth == 2 && length(tmpTimeFrac) == setLgth){inpTime <- tmpTimeFrac}else{inpTime <- as.integer(dataInp$timeFrac * 60)}
       rpt <- zoo::na.approx(object=as.vector(dataInp$mean), x=#dataInp$timeFrac
                               inpTime
                                 , xout=as.integer(timeFracOut * 60)
