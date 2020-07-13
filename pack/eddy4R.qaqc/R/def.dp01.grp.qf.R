@@ -521,27 +521,37 @@ if (MethMeas == "ecte") {
     #qf for along-axis wind speed
     setQf$veloXaxs <- data.frame("qfRngVeloXaxs" = qfInp$soni$qfRngVeloXaxs, 
                                  "qfStepVeloXaxs" = qfInp$soni$qfStepVeloXaxs, 
-                                 "qfPersVeloXaxs" = qfInp$soni$qfPersVeloXaxs) 
+                                 "qfPersVeloXaxs" = qfInp$soni$qfPersVeloXaxs, 
+                                 "qfSpkVeloXaxs" = qfInp$soni$qfSpkVeloXaxs, 
+                                 "qfNullVeloXaxs" = qfInp$soni$qfNullVeloXaxs) 
                                  #"qfCalVeloXaxs" = qfInp$soni$qfCalVeloXaxs)
     #qf for cross-axis wind speed
     setQf$veloYaxs <- data.frame("qfRngVeloYaxs" = qfInp$soni$qfRngVeloYaxs, 
                                  "qfStepVeloYaxs" = qfInp$soni$qfStepVeloYaxs, 
-                                 "qfPersVeloYaxs" = qfInp$soni$qfPersVeloYaxs) 
+                                 "qfPersVeloYaxs" = qfInp$soni$qfPersVeloYaxs, 
+                                 "qfSpkVeloYaxs" = qfInp$soni$qfSpkVeloYaxs, 
+                                 "qfNullVeloYaxs" = qfInp$soni$qfNullVeloYaxs) 
                                  #"qfCalVeloYaxs" = qfInp$soni$qfCalVeloYaxs)
     #qf for vertical-axis wind speed
     setQf$veloZaxs <- data.frame("qfRngVeloZaxs" = qfInp$soni$qfRngVeloZaxs, 
                                  "qfStepVeloZaxs" = qfInp$soni$qfStepVeloZaxs, 
-                                 "qfPersVeloZaxs" = qfInp$soni$qfPersVeloZaxs) 
+                                 "qfPersVeloZaxs" = qfInp$soni$qfPersVeloZaxs, 
+                                 "qfSpkVeloZaxs" = qfInp$soni$qfSpkVeloZaxs, 
+                                 "qfNullVeloZaxs" = qfInp$soni$qfNullVeloZaxs) 
                                  #"qfCalVeloZaxs" = qfInp$soni$qfCalVeloZaxs)
     #qf for sonic velocity
     setQf$veloSoni <- data.frame("qfRngVeloSoni" = qfInp$soni$qfRngVeloSoni, 
                                  "qfStepVeloSoni" = qfInp$soni$qfStepVeloSoni, 
-                                 "qfPersVeloSoni" = qfInp$soni$qfPersVeloSoni) 
+                                 "qfPersVeloSoni" = qfInp$soni$qfPersVeloSoni, 
+                                 "qfSpkVeloSoni" = qfInp$soni$qfSpkVeloSoni, 
+                                 "qfNullVeloSoni" = qfInp$soni$qfNullVeloSoni) 
                                  #"qfCalVeloSoni" = qfInp$soni$qfCalVeloSoni)
     #qf for soic temperature
     setQf$tempSoni <- data.frame("qfRngTempSoni" = qfInp$soni$qfRngTempSoni, 
                                  "qfStepTempSoni" = qfInp$soni$qfStepTempSoni, 
-                                 "qfPersTempSoni" = qfInp$soni$qfPersTempSoni) 
+                                 "qfPersTempSoni" = qfInp$soni$qfPersTempSoni, 
+                                 "qfSpkTempSoni" = qfInp$soni$qfSpkTempSoni, 
+                                 "qfNullTempSoni" = qfInp$soni$qfNullTempSoni) 
                                  #"qfCalTempSoni" = qfInp$soni$qfCalTempSoni)
     
     #external quality flags from irgaTurb for grouping qf of tempAir
