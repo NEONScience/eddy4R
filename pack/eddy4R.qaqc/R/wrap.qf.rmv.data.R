@@ -63,36 +63,46 @@ wrap.qf.rmv.data <- function(
   if(MethMeas == "ecte"){
   # Determine quality flags to apply to each stream, quantify flags, and remove bad data across all sensors
   outList <- base::lapply(Sens, function(x){ 
-    def.qf.rmv.data(inpData = inpList$data[[x]][], inpQf = inpList$qfqm[[x]], Sens = x, qfRmv = qfRmv, Vrbs = Vrbs) #Remove high frequency data that is flagged by sensor specific flags or plausibility tests flags
+    eddy4R.qaqc::def.qf.rmv.data(inpData = inpList$data[[x]][], inpQf = inpList$qfqm[[x]], Sens = x, qfRmv = qfRmv, Vrbs = Vrbs) #Remove high frequency data that is flagged by sensor specific flags or plausibility tests flags
   })
   
   #Apply names to the output list
   base::names(outList) <- Sens
  
   #Despiking routine 
- test <- base::lapply(Sens, function(x){ 
-    #x <- "irgaTurb" #for testing
-    varDspk <- names(outList[[x]]$inpData)[!names(outList[[x]]$inpData) %in% c("time","idx")]
-      tmp <- base::lapply(varDspk, function(y){
-        eddy4R.qaqc::def.dspk.br86(
+base::lapply(Sens, function(x){ 
+    #x <- Sens[2] #for testing
+    print(x)
+    varDspk <- names(outList[[x]]$inpData)[!names(outList[[x]]$inpData) %in% c("time","idx","frtSet00")]
+      base::lapply(varDspk, function(y){
+        print(y)
+       #y <- "asrpCo2"
+        tmp <- eddy4R.qaqc::def.dspk.br86(
           # input data, univariate vector of integers or numerics
-          dataInp = outList[[x]][[y]],
+          dataInp = outList[[x]]$inpData[[y]][],
           # filter width
           WndwFilt = as.numeric(ramattribs(inpList$data[[x]][[y]])$`Dspk$Br86$NumWndw`),
           # initial number/step size of histogram bins
           NumBin = as.numeric(ramattribs(inpList$data[[x]][[y]])$`Dspk$Br86$NumBin`),
           # resolution threshold
           ThshReso = as.numeric(ramattribs(inpList$data[[x]][[y]])$`Dspk$Br86$MaxReso`)
-        )$dataOut #Remove high frequency data that is flagged by sensor specific flags or plausibility tests flags
-      })    
-  })
+        ) #Remove high frequency data that is flagged by sensor specific flags or plausibility tests flags
+        outList[[x]]$inpData[[y]] <<- tmp$dataOut
+        
+        #Create flag name
+        nameQf <- base::paste0("qfSpk",base::toupper(base::substring(y,1,1)),base::substring(y,2,base::nchar(y)))
+        #Output despiking flag
+        outList[[x]]$qfSpk[[nameQf]] <<- tmp$qfSpk
+        
+      })  #End lapply for variables
+  })#End lapply around sensors
   
   #Applying the bad quality flags to the reported output data
   base::lapply(base::names(outList), function(x) {
     #Outputting the data ffdf's
     rpt$data[[x]] <<- ff::as.ffdf(outList[[x]]$inpData) 
     rpt$data[[x]] <<- eddy4R.base::def.unit.var(samp = rpt$data[[x]], refe = inpList$data[[x]]) #Copy units
-    rpt$qfqm[[x]] <<- ff::as.ffdf(base::cbind(rpt$qfqm[[x]][], outList$irgaTurb$qfNull))
+    rpt$qfqm[[x]] <<- ff::as.ffdf(base::cbind(rpt$qfqm[[x]][], outList[[x]]$qfNull, as.data.frame(outList[[x]]$qfSpk)))
   })
   
   #If verbose is true write out all the information about the quality flags applied to the raw data
