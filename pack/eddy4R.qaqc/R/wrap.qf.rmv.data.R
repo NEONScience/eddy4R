@@ -72,10 +72,10 @@ wrap.qf.rmv.data <- function(
   #Despiking routine 
 base::lapply(Sens, function(x){ 
     #x <- Sens[2] #for testing
-    print(x)
+    #print(x)
     varDspk <- names(outList[[x]]$inpData)[!names(outList[[x]]$inpData) %in% c("time","idx","frtSet00")]
       base::lapply(varDspk, function(y){
-        print(y)
+        #print(y)
        #y <- "asrpCo2"
         tmp <- eddy4R.qaqc::def.dspk.br86(
           # input data, univariate vector of integers or numerics
