@@ -12,7 +12,7 @@ def.rglr(
   EndRglr = NULL,
   TzRglr = base::attributes(BgnRglr)$tzone,
   FreqRglr,
-  MethRglr = c("CybiEc", "cybiDflt", "zoo")[1],
+  MethRglr = c("CybiEc", "CybiEcTimeMeas", "zoo")[1],
   WndwRglr = c("Cntr", "Lead", "Trlg")[1],
   IdxWndw = c("Clst", "IdxWndwMin", "IdxWndwMax")[1],
   PrcsSec = 6
@@ -25,20 +25,18 @@ def.rglr(
 
 \item{unitMeas}{A vector containing the unit of each column in \code{dataMeas}. Of class "character". It is recommended to conform to the "unit representation" guidelines documented in the eddy4R.base package.}
 
-\item{BgnRglr}{Desired begin time for the regularized dataset. Of class "POSIXlt" including timezone attribute, and \code{length(BgnRglr) = 1}. This input is not used in the "cybiDflt" method. [-]}
+\item{BgnRglr}{Desired begin time for the regularized dataset. Of class "POSIXlt" including timezone attribute, and \code{length(BgnRglr) = 1}. [-]}
 
-\item{EndRglr}{Desired end time for the regularized dataset. Of class "POSIXlt" including timezone attribute, and \code{length(EndRglr) = 1}. This input is not used in the "cybiDflt" method. [-]}
+\item{EndRglr}{Desired end time for the regularized dataset. Of class "POSIXlt" including timezone attribute, and \code{length(EndRglr) = 1}. [-]}
 
-\item{TzRglr}{Desired timezone for the regularized dataset. Of class "character" and \code{length(TzRglr) = 1}, defaults to the same timezone as \code{BgnRglr}. For the "cybiDflt" method, the same time zone as timeMeas is used. [-]}
+\item{TzRglr}{Desired timezone for the regularized dataset. Of class "character" and \code{length(TzRglr) = 1}, defaults to the same timezone as \code{BgnRglr}. [-]}
 
 \item{FreqRglr}{Desired frequency of  the regularized dataset. Of class "numeric" or "integer" and \code{length(FreqRglr) = 1}. [Hz]}
 
 \item{MethRglr}{Switch for different regularization methods. Of class "character", currently defaults to "CybiEc". [-] \cr
-Method "cybiDflt" implements the default for metereological variable regularization performed by NEON CI. Namely, a new time series is created 
-from the first measurement time, rounded toward zero, using the expected data frequency. The first measurement falling 
-in between one time stamp and the next is assigned to the first of these, and all other measurements falling in this range are ignored.\cr
 Method "CybiEc" implements the default regularization method for eddy-covariance processing utilized CI. The procedure 
 is documented in NEON.DOC.001069.\cr
+Method "CybiEcTimeMeas" is a modification of CybiEc that replaces the regularized timestamp with the actual value of \code{timeMeas} for the observation (if any) that was selected following the binning options specified in \code{WndwRglr} and \code{idxWndw}. \cr
 Method "zoo" implements the regularization method using the zoo::na.approx function. This method can only handle up to millisecond precision (PrcsSec=3)}
 
 \item{WndwRglr}{Position of the window for binning in the "CybiEc" method. \code{WndwRglr} can be centered [Cntr], leading [Lead], or trailing [Trlg] (defaults to centered).\cr}
@@ -97,7 +95,7 @@ def.rglr(
 }
 \references{
 License: GNU AFFERO GENERAL PUBLIC LICENSE Version 3, 19 November 2007. \cr
-NEON.DOC.001069 Preprocessing ATBD: The ATBD that describes the CybiEc and cybiDflt regularization methods. \cr
+NEON.DOC.001069 Preprocessing ATBD: The ATBD that describes the CybiEc regularization method. \cr
 }
 \seealso{
 ?zoo:na.approx, ?stats::approx

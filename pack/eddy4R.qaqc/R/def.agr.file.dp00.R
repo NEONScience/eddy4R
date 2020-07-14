@@ -37,6 +37,8 @@
 #     update @param format
 #   Natchaya P-Durden (2018-04-11)
 #    applied eddy4R term name convention; replaced pos by idx
+#   Cove Sturtevant (2020-07-09)
+#    adjust call to def.rglr to work with new version
 ##############################################################################################
 
 def.agr.file.dp00 <- function (
@@ -68,7 +70,9 @@ for(idxFile in 1:base::length(nameFile)){
   data <- data[[2]]
   
   # Regularize time series. 
-  data <- eddy4R.base::def.rglr(timeMeas=timeInp,dataMeas=as.data.frame(data),unitMeas=unitVar[idxFile],FreqRglr=Freq,MethRglr="cybiDflt")
+  BgnRglr <- base::as.POSIXlt(base::trunc.POSIXt(timeInp[1],units="secs")) # Round down to the nearest whole second
+  EndRglr <- base::as.POSIXlt(utils::tail(timeInp,1))
+  data <- eddy4R.base::def.rglr(timeMeas=timeInp,dataMeas=as.data.frame(data),unitMeas=unitVar[idxFile],BgnRglr=BgnRglr,EndRglr=EndRglr,FreqRglr=Freq,MethRglr="CybiEc",WndwRglr='Trlg',IdxWndw='IdxWndwMin')
   timeRglr[[idxFile]] <- data$timeRglr 
   dataRglr[[idxFile]] <- data$dataRglr[[1]]
   

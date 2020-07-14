@@ -47,6 +47,8 @@
 #   Natchaya P-Durden (2019-09-12)
 #     get information of existing dp01 hor and ver from dp0p hdf5 file
 #     convert qmBeta and qmAlph to fraction
+#   David Durden(2020-07-02)
+#     updating function to check physical locations of reingest sensors exist before pulling from API
 ##############################################################################################
 
 def.hdf5.wrte.dp01.api <- function(
@@ -265,10 +267,17 @@ LvlMeasOut <- LocMeas
 #Name for HDF5 output
 names(LvlMeasOut) <- LvlMeas
 
+#Check measurement levels returned from API
+LvlExis <- unique(unlist(regmatches(names(data),gregexpr(pattern = "[0-9][0-9][0-9].[)0-9][0-9][0-9]", names(data)))))
+
+#Check against the measurement location
+LvlMeasOut <- LvlMeasOut[LvlMeasOut %in% LvlExis]
+
 #####################################################################################
 
 #Sort output data and apply eddy4R naming conventions
 tmp$data  <- lapply(LvlMeasOut, function(x){
+  #print(x)
   #Grab just the columns to be output
   tmp <- data[,grep(pattern = paste(nameVar$DataOut, collapse = "|"), x = names(data))]
   if(DpName %in% "presBaro"){

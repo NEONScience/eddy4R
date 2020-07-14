@@ -6,8 +6,7 @@
 \usage{
 def.plau(
   data,
-  time = as.POSIXlt(seq.POSIXt(from = Sys.time(), by = "sec", length.out =
-    length(data[, 1]))),
+  time = as.POSIXlt(seq.POSIXt(from = Sys.time(), by = "sec", length.out = nrow(data))),
   RngMin = apply(data, 2, min, na.rm = TRUE),
   RngMax = apply(data, 2, max, na.rm = TRUE),
   DiffStepMax = apply(abs(apply(data, 2, diff)), 2, max, na.rm = TRUE),
