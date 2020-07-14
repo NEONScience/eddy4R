@@ -86,6 +86,8 @@
 #     adding qfHeat to ECSE
 #   Natchaya P-Durden (2020-03-11)
 #     removed qfCal and qfHeat from ECSE
+#   David Durden (2020-07-14)
+#     Added qfNull and qfSpk for all variables, removed qfNull from ancillary data streams
 ##############################################################################################
 
 def.dp01.grp.qf <- function(
@@ -2262,6 +2264,20 @@ if (MethMeas == "ecse") {
     }#close if statement of TypeMeas %in% c("samp", "vali")
   }#close if statement of dp01 == tempAirLvl
 }# closed if statement of MethMeas == "ecse"
+
+#Create name vector
+nameVar <- names(rpt)   
+
+#calculate qmAlpha, qmBeta, qfFinl
+rpt <- lapply(names(rpt), function(x){
+    nameQfNull <- grep("null", names(rpt[[x]]), ignore.case=TRUE, value = TRUE)
+    nameQfNullRmv <- grep(x, nameQfNull, ignore.case=TRUE, value = TRUE, invert = TRUE)
+    outQf <- rpt[[x]][,!names(inp[[x]]) %in% nameQfNullRmv]  
+    #Return output
+    return(outQf)
+    })#End lapply around removing other variables qfNull flags
+#Reattribute variable names
+names(rpt) <- nameVar
 
 #return values
 return(rpt)
