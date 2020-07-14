@@ -41,6 +41,8 @@
 #    replaced dfQf by inpQf
 #   Natchaya P-Durden (2019-03-12)
 #    added Sens and qfRmv into the function parameter list
+#   David Durden (2020-07-14)
+#    added despiking routine and output qfSpk and qfNull
 ##############################################################################################
 
 
