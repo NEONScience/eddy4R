@@ -2272,7 +2272,7 @@ nameVar <- names(rpt)
 rpt <- lapply(names(rpt), function(x){
     nameQfNull <- grep("null", names(rpt[[x]]), ignore.case=TRUE, value = TRUE)
     nameQfNullRmv <- grep(x, nameQfNull, ignore.case=TRUE, value = TRUE, invert = TRUE)
-    outQf <- rpt[[x]][,!names(inp[[x]]) %in% nameQfNullRmv]  
+    outQf <- rpt[[x]][,!names(rpt[[x]]) %in% nameQfNullRmv]  
     #Return output
     return(outQf)
     })#End lapply around removing other variables qfNull flags
