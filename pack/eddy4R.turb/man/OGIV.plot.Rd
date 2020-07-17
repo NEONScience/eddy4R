@@ -4,9 +4,24 @@
 \alias{OGIV.plot}
 \title{Definition function: Plot ogives}
 \usage{
-OGIV.plot(name, IDR, RAW, IDS, SMO, thresh, Fperi, title = NULL,
-  labx = NULL, laby = NULL, colvec = c("grey", 1, 1), LIMX = NULL,
-  LIMY = NULL, weight = F, wl = T, norm = 1)
+OGIV.plot(
+  name,
+  IDR,
+  RAW,
+  IDS,
+  SMO,
+  thresh,
+  Fperi,
+  title = NULL,
+  labx = NULL,
+  laby = NULL,
+  colvec = c("grey", 1, 1),
+  LIMX = NULL,
+  LIMY = NULL,
+  weight = F,
+  wl = T,
+  norm = 1
+)
 }
 \arguments{
 \item{Currently}{none}

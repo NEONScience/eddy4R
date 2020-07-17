@@ -4,8 +4,15 @@
 \alias{def.ucrt.samp}
 \title{Definition function: Statistical errors for scalars, variances, and fluxes}
 \usage{
-def.ucrt.samp(data = NULL, distIsca, valuMean, coefCorr, distMean,
-  timeFold = 0, spcs = NULL)
+def.ucrt.samp(
+  data = NULL,
+  distIsca,
+  valuMean,
+  coefCorr,
+  distMean,
+  timeFold = 0,
+  spcs = NULL
+)
 }
 \arguments{
 \item{\code{data}}{A vector of instantaneous data. If user provides vector, Moving block bootstrap technique will be implemented to provide an additional uncertainty estimate. If NULL is provided, only Lenschow technique will be performed.}
