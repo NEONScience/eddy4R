@@ -14,6 +14,7 @@
 #' @param lvlEnvHut Measurement level of envHut. Defaults to NULL. Of type character. [-]
 #' @param lvlValv Measurement level of irgaValvLvl, crdCo2ValvLvl, or crdH2oValvLvl. Defaults to NULL. Of type character. [-]
 #' @param lvlCrdH2oValvVali Measurement level of crdH2oValvVali which apply to only  dp01 equal to "isoH2o". Defaults to NULL. Of type character. [-]
+#' @param lvlCrdCo2Valv Horizontal and vertical location for crdCo2 valve. Defaults to NULL. Of type character. [-]
 #' @param data A list of data frame containing the input dp0p data that related to dp01 which descriptive statistics are being calculated. Of class integer". [User defined] 
 #' @param qfInp A list of data frame containing the input quality flag data that related to dp01 are being grouped. Of class integer". [-] 
 #' @param TypeMeas A vector of class "character" containing the name of measurement type (sampling or validation), TypeMeas = c("samp", "vali"). Defaults to "samp". [-]
@@ -64,6 +65,13 @@
 #     rename function from wrap.neon.dp01.ecse() to wrap.dp01.ecse()
 #   Natchaya P-Durden (2019-01-31)
 #     using injNum instate of qfRngTmp to determine missing data
+#   Natchaya P-Durden (2020-03-12)
+#     In irgaCo2 an irgaH2o, not include the period when crdCo2 take over to measure at that level 
+#     and irga have to move to measure next level
+#   Natchaya P-Durden (2020-03-25)
+#     added lvlCrdCo2Valv to the function's parameter
+#   David Durden (2020-05-15)
+#     failsafe for crd kickoff removal causing no data for entire day
 ##############################################################################################
 wrap.dp01.ecse <- function(
   dp01 = c("co2Stor", "h2oStor", "tempAirLvl", "tempAirTop", "isoCo2", "isoH2o")[1],
@@ -72,6 +80,7 @@ wrap.dp01.ecse <- function(
   lvlEnvHut = NULL,
   lvlValv = NULL,
   lvlCrdH2oValvVali = NULL,
+  lvlCrdCo2Valv = NULL,
   data = list(),
   qfInp = list(),
   TypeMeas = c("samp", "vali")[1],
@@ -149,6 +158,8 @@ wrap.dp01.ecse <- function(
           wrk$idx <- eddy4R.base::def.idx.agr(time = data$time, PrdAgr = (PrdMeas*60), FreqLoca = 1, MethIdx = "specBgn", data = wrk$qfqm$irgaStor$qfRngTemp, CritTime = 60)
           #delete row if last timeBgn and timeEnd is NA
           wrk$idx <- wrk$idx[rowSums(is.na(wrk$idx)) != 2,]
+          #replace last idxEnd > 86400 by 86400
+          wrk$idx$idxEnd <- ifelse(wrk$idx$idxEnd > 86400, 86400, wrk$idx$idxEnd)
           #if last timeEnd is NA, replce that time to the last time value in data$time
           wrk$idx$timeEnd <- as.POSIXct(ifelse(is.na(wrk$idx$timeEnd), data$time[length(data$time)], wrk$idx$timeEnd), origin = "1970-01-01", tz = "UTC")
           #idxAgr2 <- 0
@@ -195,6 +206,42 @@ wrap.dp01.ecse <- function(
               rpt[[idxAgr]]$timeEnd[[idxVar]] <- wrk$idx$timeEnd[idxAgr]
             }
             
+            #check if this period is the period that crdCo2 take over and irga have to move to measure other level
+            #and number of sample less than 10% (120-120*0.1)
+            if (dp01 == "co2Stor") {numSamp <- rpt[[idxAgr]]$numSamp$rtioMoleDryCo2}
+            if (dp01 == "h2oStor") {numSamp <- rpt[[idxAgr]]$numSamp$rtioMoleDryH2o}
+            if (data$crdCo2ValvLvl[[lvlCrdCo2Valv]]$lvlCrdCo2[wrk$idx$idxEnd[idxAgr]] == lvlIrga &  numSamp < 108){
+              rpt[[idxAgr]] <- NULL
+            }
+            
+            #Check if after removing data for valve kickooff if no data remains
+            if(length(wrk$idx$idxBgn) == 1 && length(rpt) == 0){
+              rpt[[1]] <- list()
+              
+              for(idxStat in NameStat){
+                #idxStat <- NameStat[1]
+                rpt[[1]][[idxStat]] <- as.data.frame(matrix(NaN, nrow = 1, ncol = ncol(wrk$data)))
+                #assign name to each column
+                names(rpt[[1]][[idxStat]]) <- names(wrk$data)
+                #not report lvlIrga
+                rpt[[1]][[idxStat]] <- rpt[[1]][[idxStat]][which(!(names(rpt[[1]][[idxStat]]) %in% c("lvlIrga")))]
+                
+              }; rm(idxStat)
+              #add both time begin and time end to rpt
+              rpt[[1]]$timeBgn <- list()
+              rpt[[1]]$timeEnd <- list()
+              
+              #output time for dp01
+              for(idxVar in names(wrk$data)[which(!(names(wrk$data) %in% c("lvlIrga")))]){
+                rpt[[1]]$timeBgn[[idxVar]] <- data$time[1]
+                rpt[[1]]$timeEnd[[idxVar]] <- data$time[length(data$time)]
+                #unit
+                attributes(rpt[[1]]$mean[[idxVar]])$unit <- attributes(wrk$data[[idxVar]])$unit
+                
+              }; rm(idxVar)
+              
+            }#end failsafe of if no measurement data at all in the whole day once valve issue removed
+            
             #}# end of there is at least one data
             
           }; rm(idxAgr)
@@ -236,6 +283,8 @@ wrap.dp01.ecse <- function(
           wrk$idx <- eddy4R.base::def.idx.agr(time = data$time, PrdAgr = (PrdMeas*60), FreqLoca = 1, MethIdx = "specBgn", data = wrk$qfqm$irgaStor$qfRngTemp, CritTime = 60)
           #delete row if last timeBgn and timeEnd is NA
           wrk$idx <- wrk$idx[rowSums(is.na(wrk$idx)) != 2,]
+          #replace last idxEnd > 86400 by 86400
+          wrk$idx$idxEnd <- ifelse(wrk$idx$idxEnd > 86400, 86400, wrk$idx$idxEnd)
           #if last timeEnd is NA, replce that time to the last time value in data$time
           wrk$idx$timeEnd <- as.POSIXct(ifelse(is.na(wrk$idx$timeEnd), data$time[length(data$time)], wrk$idx$timeEnd), origin = "1970-01-01", tz = "UTC")
           
@@ -1313,6 +1362,8 @@ wrap.dp01.ecse <- function(
     
   }#end of dp01 if statement
   
+  #remove NULL list from rpt
+  rpt <- rpt[!sapply(rpt, is.null)]
   #return results
   return(rpt)
   

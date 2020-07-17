@@ -38,6 +38,8 @@
 #     adding units conversion for ecse
 #   Natchaya P-Durden (2019-07-23)
 #     converting time format in ecse qfqm
+#   Natchaya P-Durden (2020-01-17)
+#     adding unit conversion for rtioMoleDryH2o during validation
 ############################################################################################
 
 wrap.unit.conv.out.ec <- function(
@@ -83,6 +85,8 @@ outAttr$co2Turb <- base::list(
 
 outAttr$h2oTurb <- base::list(
   "rtioMoleDryH2o"= c("mean" = "mmolH2o mol-1Dry", "min" = "mmolH2o mol-1Dry", "max" = "mmolH2o mol-1Dry", "vari" = "mmolH2o mol-1Dry", "numSamp" = "NA", "timeBgn" = "NA", "timeEnd" = "NA"),
+  "rtioMoleDryH2oCor"= c("mean" = "mmolH2o mol-1Dry", "min" = "mmolH2o mol-1Dry", "max" = "mmolH2o mol-1Dry", "vari" = "mmolH2o mol-1Dry", "numSamp" = "NA", "timeBgn" = "NA", "timeEnd" = "NA"),
+  "rtioMoleDryH2oRaw"= c("mean" = "mmolH2o mol-1Dry", "min" = "mmolH2o mol-1Dry", "max" = "mmolH2o mol-1Dry", "vari" = "mmolH2o mol-1Dry", "numSamp" = "NA", "timeBgn" = "NA", "timeEnd" = "NA"),
   "densMoleH2o"= c("mean" = "mmolH2o m-3", "min" = "mmolH2o m-3", "max" = "mmolH2o m-3", "vari" = "mmolH2o m-3", "numSamp" = "NA", "timeBgn" = "NA", "timeEnd" = "NA"),
   "tempDew"= c("mean" = "C", "min" = "C", "max" = "C", "vari" = "C", "numSamp" = "NA", "timeBgn" = "NA", "timeEnd" = "NA"),
   "presAtm"= c("mean" = "kPa", "min" = "kPa", "max" = "kPa", "vari" = "kPa", "numSamp" = "NA", "timeBgn" = "NA", "timeEnd" = "NA"),
@@ -118,6 +122,8 @@ if(MethType == "ucrt"){
 
   outAttr$h2oTurb <- base::list(
     "rtioMoleDryH2o"= c("mean" = "mmolH2o mol-1Dry",  "vari" = "mmolH2o mol-1Dry", "se" = "mmolH2o mol-1Dry", "timeBgn" = "NA", "timeEnd" = "NA"),
+    "rtioMoleDryH2oCor"= c("mean" = "mmolH2o mol-1Dry",  "vari" = "mmolH2o mol-1Dry", "se" = "mmolH2o mol-1Dry", "timeBgn" = "NA", "timeEnd" = "NA"),
+    "rtioMoleDryH2oRaw"= c("mean" = "mmolH2o mol-1Dry",  "vari" = "mmolH2o mol-1Dry", "se" = "mmolH2o mol-1Dry", "timeBgn" = "NA", "timeEnd" = "NA"),
     "densMoleH2o"= c("mean" = "mmolH2o m-3", "vari" = "mmolH2o m-3", "se" = "mmolH2o m-3", "timeBgn" = "NA", "timeEnd" = "NA"),
     "tempDew"= c("mean" = "C", "vari" = "C", "se" = "C", "timeBgn" = "NA", "timeEnd" = "NA"),
     "presAtm"= c("mean" = "kPa", "vari" = "kPa", "se" = "kPa", "timeBgn" = "NA", "timeEnd" = "NA"),
@@ -129,6 +135,8 @@ if(MethType == "ucrt"){
 if(MethType == "vali"){
   outAttr$co2Turb <- base::list(
     "rtioMoleDryCo2Vali"= c("mean" = "umolCo2 mol-1Dry", "min" = "umolCo2 mol-1Dry", "max" = "umolCo2 mol-1Dry", "vari" = "umolCo2 mol-1Dry", "numSamp" = "NA", "rtioMoleDryCo2Refe" = "umolCo2 mol-1Dry", "timeBgn" = "NA", "timeEnd" = "NA"))
+  outAttr$h2oTurb <- base::list(
+    "rtioMoleDryH2oVali"= c("mean" = "mmolH2o mol-1Dry", "min" = "mmolH2o mol-1Dry", "max" = "mmolH2o mol-1Dry", "vari" = "mmolH2o mol-1Dry", "numSamp" = "NA", "rtioMoleDryH2oRefe" = "mmolH2o mol-1Dry", "timeBgn" = "NA", "timeEnd" = "NA"))
 }
 
 #assign output attributes
@@ -153,6 +161,9 @@ outAttr$vari <- base::list(
   "frt00Samp"= "dm6 min-2",
   "tempAve"= "C2",
   "rtioMoleDryH2o"= "mmol2H2o mol-2Dry",
+  "rtioMoleDryH2oCor"= "mmol2H2o mol-2Dry",
+  "rtioMoleDryH2oRaw"= "mmol2H2o mol-2Dry",
+  "rtioMoleDryH2oVali"= "mmol2H2o mol-2Dry",
   "densMoleH2o"= "mmol2H2o m-6",
   "tempDew"= "C2"
   )

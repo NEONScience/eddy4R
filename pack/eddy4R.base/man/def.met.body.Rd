@@ -4,9 +4,12 @@
 \alias{def.met.body}
 \title{Definition function: Coordinate transformation from CSAT3 body coordinate system to meteorological coordinate system}
 \usage{
-def.met.body(AngZaxsSoniInst,
-  AngZaxsSoniOfst = eddy4R.base::def.unit.conv(data = 90, unitFrom =
-  "deg", unitTo = "rad"), veloBody)
+def.met.body(
+  AngZaxsSoniInst,
+  AngZaxsSoniOfst = eddy4R.base::def.unit.conv(data = 90, unitFrom = "deg", unitTo =
+    "rad"),
+  veloBody
+)
 }
 \arguments{
 \item{AngZaxsSoniInst}{Parameter of class numeric. Azimuth (angle around z axis) direction against true north in which sonic anemometer installation (transducer array) is pointing [rad]}

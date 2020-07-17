@@ -4,8 +4,12 @@
 \alias{def.inst.depe}
 \title{Definition function: Install dependent packages}
 \usage{
-def.inst.depe(DirPack = ".", Depe = TRUE,
-  Repo = base::getOption("repos")[1], Lib = .libPaths()[1])
+def.inst.depe(
+  DirPack = ".",
+  Depe = TRUE,
+  Repo = base::getOption("repos")[1],
+  Lib = .libPaths()[1]
+)
 }
 \arguments{
 \item{DirPack}{Path to the package \code{DESCRIPTION} file, defaults to the current working directory. Character vector with single entry [-].}

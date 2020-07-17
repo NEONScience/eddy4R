@@ -4,8 +4,12 @@
 \alias{def.temp.pres.pois}
 \title{Definition function: Poisson's equation (adiabatic change) - temperature as function of pressure change}
 \usage{
-def.temp.pres.pois(temp01, pres01, pres02,
-  Kppa = eddy4R.base::IntlNatu$KppaDry)
+def.temp.pres.pois(
+  temp01,
+  pres01,
+  pres02,
+  Kppa = eddy4R.base::IntlNatu$KppaDry
+)
 }
 \arguments{
 \item{temp01}{Measured air temperature [K]}
