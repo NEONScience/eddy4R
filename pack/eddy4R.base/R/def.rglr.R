@@ -12,16 +12,14 @@
 #' @param timeMeas A vector containing the observation times. Of class "POSIXlt" including timezone attribute, and of the same length as \code{dataMeas}. [-]
 #' @param dataMeas A named data.frame containing the observations. Columns may be of class "numeric" or "integer", and of the same length as \code{timeMeas}. Columns of classes other than "numeric" or "integer" are removed and not included in the returned \code{dataRegl}. [user-defined]
 #' @param unitMeas A vector containing the unit of each column in \code{dataMeas}. Of class "character". It is recommended to conform to the "unit representation" guidelines documented in the eddy4R.base package. 
-#' @param BgnRglr Desired begin time for the regularized dataset. Of class "POSIXlt" including timezone attribute, and \code{length(BgnRglr) = 1}. This input is not used in the "cybiDflt" method. [-]
-#' @param EndRglr Desired end time for the regularized dataset. Of class "POSIXlt" including timezone attribute, and \code{length(EndRglr) = 1}. This input is not used in the "cybiDflt" method. [-]
-#' @param TzRglr Desired timezone for the regularized dataset. Of class "character" and \code{length(TzRglr) = 1}, defaults to the same timezone as \code{BgnRglr}. For the "cybiDflt" method, the same time zone as timeMeas is used. [-]
+#' @param BgnRglr Desired begin time for the regularized dataset. Of class "POSIXlt" including timezone attribute, and \code{length(BgnRglr) = 1}. [-]
+#' @param EndRglr Desired end time for the regularized dataset. Of class "POSIXlt" including timezone attribute, and \code{length(EndRglr) = 1}. [-]
+#' @param TzRglr Desired timezone for the regularized dataset. Of class "character" and \code{length(TzRglr) = 1}, defaults to the same timezone as \code{BgnRglr}. [-]
 #' @param FreqRglr Desired frequency of  the regularized dataset. Of class "numeric" or "integer" and \code{length(FreqRglr) = 1}. [Hz]
 #' @param MethRglr Switch for different regularization methods. Of class "character", currently defaults to "CybiEc". [-] \cr
-#' Method "cybiDflt" implements the default for metereological variable regularization performed by NEON CI. Namely, a new time series is created 
-#' from the first measurement time, rounded toward zero, using the expected data frequency. The first measurement falling 
-#' in between one time stamp and the next is assigned to the first of these, and all other measurements falling in this range are ignored.\cr
 #' Method "CybiEc" implements the default regularization method for eddy-covariance processing utilized CI. The procedure 
 #' is documented in NEON.DOC.001069.\cr
+#' Method "CybiEcTimeMeas" is a modification of CybiEc that replaces the regularized timestamp with the actual value of \code{timeMeas} for the observation (if any) that was selected following the binning options specified in \code{WndwRglr} and \code{idxWndw}. \cr
 #' Method "zoo" implements the regularization method using the zoo::na.approx function. This method can only handle up to millisecond precision (PrcsSec=3)
 #' @param WndwRglr Position of the window for binning in the "CybiEc" method. \code{WndwRglr} can be centered [Cntr], leading [Lead], or trailing [Trlg] (defaults to centered).\cr
 #' @param IdxWndw Determines which observation to allocate to a bin if multiple observations fall into a single bin when using the "CybiEc" method.. \code{IdxWndw} can be set to closest [Clst], first [IdxWndwMin], or last [IdxWndwMax] (defaults to closest).\cr
@@ -32,7 +30,7 @@
 
 #' @references
 #' License: GNU AFFERO GENERAL PUBLIC LICENSE Version 3, 19 November 2007. \cr
-#' NEON.DOC.001069 Preprocessing ATBD: The ATBD that describes the CybiEc and cybiDflt regularization methods. \cr
+#' NEON.DOC.001069 Preprocessing ATBD: The ATBD that describes the CybiEc regularization method. \cr
 #' 
 #' @keywords regularization, equidistant, preprocessing
 
@@ -104,6 +102,9 @@
 #     Added error checking for empty data when using cybiDflt method
 #   Cove Sturtevant (2018-05-23)
 #     Changed term 'pos' to 'idx' for single indices, to 'set' for multiple indices
+#   Cove Sturtevant (2020-02-18)
+#     Removed MethRglr "cybiDflt", as it is no longer used by NEON CI (CybiEc is used)
+#     Added MethRglr "CybiEcTimeMeas"
 ##############################################################################################
 
 def.rglr <- function(
@@ -114,7 +115,7 @@ def.rglr <- function(
   EndRglr=NULL,
   TzRglr = base::attributes(BgnRglr)$tzone,
   FreqRglr,
-  MethRglr= c("CybiEc", "cybiDflt", "zoo")[1],
+  MethRglr= c("CybiEc", "CybiEcTimeMeas", "zoo")[1],
   WndwRglr = c("Cntr", "Lead", "Trlg")[1],
   IdxWndw = c("Clst","IdxWndwMin","IdxWndwMax")[1],
   PrcsSec = 6
@@ -132,23 +133,13 @@ def.rglr <- function(
   }
   
   # Error-check
-  if(!(MethRglr %in% c("zoo","cybiDflt","CybiEc"))){
-    stop(base::paste0('Unrecognized value for input MethRglr. Options are "zoo","cybiDflt","CybiEc" (case-sensitive)'))
+  if(!(MethRglr %in% c("zoo","CybiEcTimeMeas","CybiEc"))){
+    stop(base::paste0('Unrecognized value for input MethRglr. Options are "zoo","CybiEc", and "CybiEcTimeMeas" (case-sensitive)'))
   }
   
-  # CI uses the first value as the starting point for the regularization, rounding down to the nearest second
-  # Note: the rounding down aspect is a change implemented week of 1 May 2016. Previously the starting point was
-  # the exact time (to the decimal second).
-  if(MethRglr == "cybiDflt"){
-    BgnRglr <- base::as.POSIXlt(base::trunc.POSIXt(timeMeas[1],units="secs"))
-    EndRglr <- base::as.POSIXlt(utils::tail(timeMeas,1) + 1/FreqRglr)
-    
-    if(base::is.null(TzRglr)) {
-      TzRglr <- base::attributes(BgnRglr)$tzone
-    }
-  }
+
   
-  if(MethRglr %in% c("zoo","cybiDflt","CybiEc")){
+  if(MethRglr %in% c("zoo","CybiEcTimeMeas","CybiEc")){
     if(!("POSIXlt" %in% base::class(timeMeas))){
       stop("Input 'timeMeas' must be in POSIXlt")
     }
@@ -214,14 +205,7 @@ def.rglr <- function(
   if(MethRglr == 'zoo' && PrcsSec > 3){
     PrcsSec <- 3
   }
-  
-  # Quit if there is no data and we are using cybiDflt method, since the cybiDflt method 
-  # relies on the first data point to generate the time seq
-  if(base::length(timeMeas) == 0 && MethRglr == 'cybiDflt'){
-    rpt <- base::list(TzRglr=NULL,FreqRglr=FreqRglr,MethRglr=MethRglr,timeRglr=timeMeas,dataRglr=dataMeas)
-    return(rpt)
-  }
-  
+
   # POSIX time has some issues with sub-second precision, often rounding down to a lower value without an 
   # obvious reason. As a result, use numeric representation of time and round to a specified precision. 
   # When returning to POSIX time, ensure use of POSIXlt so that down-rounding does not occur.
@@ -308,52 +292,9 @@ def.rglr <- function(
     # end MethRglr == zoo
   }
   
-  
-  
-  # Regularize time series according to default NEON cyber infrastructure (CI) L0 -> L0' procedure. 
-  # NEON CI transforms raw L0 data into a regularized time series according to the expected data frequency.
-  # Namely, a new time series is created from the first measurement time, rounded toward zero, using the 
-  # expected data frequency. The first measurement falling in between one time stamp and the next is assigned
-  # to the first of these, and all other measurements falling in this range are ignored. 
-  # This code replicates this procedure in order to compare expected output to that produced by CI.
-  if(MethRglr == "cybiDflt") {
-    
-    # Which time bin does each measurement time fit into?
-    idxRglr <- base::.bincode(timeMeasNumc,timeRglrNumc,right=FALSE) # which bin?
-    dataMeas <- base::subset(dataMeas,!base::is.na(idxRglr),select=1:numVar) # Get rid of anomalous times/data not fitting in any bin
-    timeMeasNumc <- base::subset(timeMeasNumc,!base::is.na(idxRglr))
-    idxRglr <- base::subset(idxRglr,!base::is.na(idxRglr))
-    dupl <- base::duplicated(idxRglr) # which fall into an already occupied bin?
-    
-    # intialize regularized timeseries
-    if(base::is.character(dataMeas$data) || base::is.factor(dataMeas$data)){
-      dataRglr <- base::matrix(data="NA",nrow=length(timeRglrNumc)-1,ncol=numVar) # initialize
-    } else {
-      dataRglr <- base::matrix(data=NA*1.5,nrow=length(timeRglrNumc)-1,ncol=numVar) # initialize
-    }
-    
-    # Pull the first value that falls within each bin
-    for(idxVar in 1:numVar){
-      # place the first value falling into each bin
-      dataRglr[idxRglr[!dupl],idxVar] <- dataMeas[which(!dupl),idxVar]
-    }
-    dataRglr <- base::as.data.frame(dataRglr,stringsAsFactors=FALSE) # Make data frame
-    base::names(dataRglr) <- nameVar # Assign names same as dataMeas
-    
-    # Report output
-    rpt$timeRglr <- base::as.POSIXlt(timeRglr)
-    
-    rpt$timeRglr <- rpt$timeRglr[-length(rpt$timeRglr)]
-    rpt$dataRglr <- dataRglr
-    
-    # assign unit attributes
-    base::attributes(rpt$dataRglr)$unit <- unitMeas
-  }
-  
-  
   # Method "CybiEc" implements the default regularization method for eddy-covariance 
   # processing utilized CI. The procedure is documented in NEON.DOC.001069.  
-  if(MethRglr == "CybiEc") {
+  if(MethRglr %in% c("CybiEc","CybiEcTimeMeas")) {
     
     # delete rows with times that are duplicates of rows with smaller indices
     set01 <- !base::duplicated(timeMeasNumc)
@@ -429,6 +370,11 @@ def.rglr <- function(
     }
     base::names(dataRglr) <- nameVar # Assign names same as dataMeas
 
+    # For CybiEcTimeMeas, replace the regularized timestamps with the actual timestamps of the measured values selected for each bin
+    if(MethRglr == 'CybiEcTimeMeas'){
+      rpt$timeRglr[idxRglr[!dupl]] <- timeMeas[which(!dupl)]
+    }
+    
     # Report output
     rpt$dataRglr <- dataRglr
     # assign unit attributes

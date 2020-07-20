@@ -87,10 +87,17 @@
 #    applied eddy4R term name convention; replaced posQf by setQf
 #   Natchaya P-Durden (2018-04-11)
 #    applied eddy4R term name convention; replaced pos by idx or set
+#   Cove Sturtevant (2020-07-07)
+#     optimized time-based persistence test and removed point-based method, adding conversion to time-based method. 
+#     also caught bug causing a potential lack of persistence test na flags when all values between 2 points are NA.
+#   Cove Sturtevant (2020-07-08)
+#     optimized gap test. WAY faster when there are a lot of gaps in the dataset
+#   Cove Sturtevant (2020-07-09)
+#     Additional optimization of persistence test achieved by turning time variable to numeric seconds past start
 ##############################################################################################
 def.plau <- function (
   data,                               # a data frame containing the data to be evaluated (do not include the time stamp vector here). Required input.
-  time = as.POSIXlt(seq.POSIXt(from=Sys.time(),by="sec",length.out=length(data[,1]))),  # time vector corresponding with the rows in data, in  Class "POSIXlt", which is a named list of vectors representing sec, min, hour,day,mon,year. Defaults to an evenly spaced time vector starting from execution by seconds.
+  time = as.POSIXlt(seq.POSIXt(from=Sys.time(),by="sec",length.out=nrow(data))),  # time vector corresponding with the rows in data, in  Class "POSIXlt", which is a named list of vectors representing sec, min, hour,day,mon,year. Defaults to an evenly spaced time vector starting from execution by seconds.
   RngMin = apply(data,2,min,na.rm=TRUE), # a numeric vector containing the minimum acceptable value for each variable in data, defaults to observed minimums
   RngMax = apply(data,2,max,na.rm=TRUE), # a numeric vector containing the maximum acceptable value for each variable in data, defaults to observed maximums
   DiffStepMax = apply(abs(apply(data,2,diff)),2,max,na.rm=TRUE), # a vector containing the maximum acceptable absolute difference between sequential data points for each variable in data
@@ -112,7 +119,7 @@ def.plau <- function (
   # Initial stats
   numVar <- length(data) # Get number of variables 
   nameData <- names(data) # Get variable names
-  numData <- length(data[,1])
+  numData <- nrow(data)
   
   
   # Check time
@@ -190,8 +197,10 @@ def.plau <- function (
   # intialize output of failed and na vector positions
   setQf <- vector("list",numVar) # Initialize output for each variable
   names(setQf) <- nameData
-  setDataReal <- lapply(data,FUN=function(var){which(!is.na(var))})
-  setDataNa <- lapply(setDataReal,FUN=function(var){setdiff(1:numData,var)})
+  dataNa <- lapply(data,FUN=function(var){is.na(var)})# logical
+  dataReal <- lapply(dataNa,FUN=function(var){!var}) # logical
+  setDataReal <- lapply(dataReal,FUN=function(var){which(var)}) # indices
+  setDataNa <- lapply(dataNa,FUN=function(var){which(var)}) # indices
   
   # For verbose option, initialize output
   if(Vrbs) {
@@ -222,19 +231,26 @@ def.plau <- function (
   
   # Do step test
   for(idxVar in 1:numVar) {
+    
+    diffDataIdx <- diff(data[,idxVar])
+    diffDataNaIdx <- is.na(diffDataIdx)
+    setNaDiffDataIdx <- which(diffDataNaIdx)
+    setRealDiffDataIdx <- which(!diffDataNaIdx)
+    
+    
     setQf[[idxVar]]$setQfStep <- list(fail=numeric(0),na=numeric(0)) # initialize
     
-    setQf[[idxVar]]$setQfStep$fail <- which((abs(diff(data[,idxVar])) > DiffStepMax[idxVar]))
-    setQf[[idxVar]]$setQfStep$fail <- unique(c(setQf[[idxVar]]$setQfStep$fail,setQf[[idxVar]]$setQfStep$fail+1))
-    setQf[[idxVar]]$setQfStep$na <- which(is.na(diff(data[,idxVar])))+1
+    setQf[[idxVar]]$setQfStep$fail <- which((abs(diffDataIdx) > DiffStepMax[idxVar]))
+    setQf[[idxVar]]$setQfStep$fail <- union(setQf[[idxVar]]$setQfStep$fail,setQf[[idxVar]]$setQfStep$fail+1)
+    setQf[[idxVar]]$setQfStep$na <- setNaDiffDataIdx+1
     
     # If either of the first two values are NULL, flag NA (the first value is missed by the above code)
-    if(is.na(diff(data[,idxVar])[1])){setQf[[idxVar]]$setQfStep$na <- unique(
-      c(1,setQf[[idxVar]]$setQfStep$na))}
+    if(diffDataNaIdx[1]){
+      setQf[[idxVar]]$setQfStep$na <- union(1,setQf[[idxVar]]$setQfStep$na)
+    }
     
     # If previous point is null, but next value is present, evaluate the step test with next value
-    setQf[[idxVar]]$setQfStep$na <- setdiff(setQf[[idxVar]]$setQfStep$na,
-                                            which(!is.na(diff(data[,idxVar]))))
+    setQf[[idxVar]]$setQfStep$na <- setdiff(setQf[[idxVar]]$setQfStep$na,setRealDiffDataIdx)
     
     # For Verbose option, output actual flag values
     if(Vrbs) {
@@ -243,260 +259,169 @@ def.plau <- function (
     }  
   }
 
-  # Do persistence test with time-based windowing approach
-  if(class(WndwPers) == "difftime"){
-    
-    for(idxVar in 1:numVar) {
-      
-      dataIdxVar <- data[[idxVar]]
-      DiffPersMinIdx <- DiffPersMin[idxVar]
-      WndwPersIdx <- WndwPers[idxVar]
-      
-      # Initialize
-      setQf[[idxVar]]$setQfPers <- list(fail=numeric(0),na=numeric(0))
-      setQf[[idxVar]]$setQfPers$na <- which(is.na(dataIdxVar)) 
-      
-      # Quit if all data are NA
-      if(length(setDataReal[[idxVar]]) <= 1){
-        setQf[[idxVar]]$setQfPers$na <- 1:numData
-        if(Vrbs){qf[[idxVar]]$qfPers[setQf[[idxVar]]$setQfPers$na] <- -1}
-        next
-      } else if(DiffPersMinIdx <= 0){
-        if(Vrbs){qf[[idxVar]]$qfPers[setQf[[idxVar]]$setQfPers$na] <- -1}
-        next
-      }
-      
-      # Start at the beginning, making sure we aren't on a null value
-      idxDataBgn <- setDataReal[[idxVar]][1]
-
-      idxDataMin <- idxDataBgn # initialize index of running min
-      idxDataMax <- idxDataBgn # intialize index of running max
-      idxData <- 2 # intialize index position
-
-      # Grab the data for these indices, improves CPU time
-      dataIdxMin <- dataIdxVar[idxDataMin]
-      dataIdxMax <- dataIdxVar[idxDataMax]
-      
-      while(idxData <= numData) {
-        
-        #If we hit NA, get to the next non-NA value
-        if(is.na(dataIdxVar[idxData])){
-          idxData <- idxData +1
-          next
-        } 
-
-        # Is the value at this index the running max or min?
-        if(dataIdxVar[idxData] < dataIdxMin) {
-          idxDataMin <- idxData
-          dataIdxMin <- dataIdxVar[idxDataMin]
-        } else if(dataIdxVar[idxData] > dataIdxMax) {
-          idxDataMax <- idxData
-          dataIdxMax <- dataIdxVar[idxDataMax]
-        }
-        
-        
-        # Is diff between max and min at or larger than the persistence threshold?
-        if(dataIdxMax-dataIdxMin >= DiffPersMinIdx) {
-
-          # We've hit the threshold, now check whether we are beyond the allowable time interval
-          if(diff(time[c(idxDataBgn,idxData)]) < WndwPersIdx) {
-            # Hooray! The data is not "stuck"
-            idxDataBgn <- min(c(idxDataMin,idxDataMax))+1 # set start of next window to the next point after the lower of the running min and max
-            
-            # Make sure we aren't on a null value
-            while(is.na(dataIdxVar[idxDataBgn])){
-              idxDataBgn <- idxDataBgn+1
-            }
-
-            idxDataMin <- idxDataBgn # reset running minimum
-            idxDataMax <- idxDataBgn # reset running maximum
-            idxData <- idxDataBgn+1 # reset the next point to be evaluated
-            
-            # Grab the data for these indices, improves CPU time
-            dataIdxMin <- dataIdxVar[idxDataMin]
-            dataIdxMax <- dataIdxVar[idxDataMax]
-            
-          } else {
-            
-            # We might have a stuck sensor, but first let's check whether we blew the time threshold b/c 
-            # all the data were NA prior to this point
-            if (sum(!is.na(idxDataBgn:(idxData-1))) <= 1) {
-              
-              # Data were all NA after starting index, mark as cannot evaluate
-              setQf[[idxVar]]$setQfPers$na <- union(setQf[[idxVar]]$setQfPers$na,idxDataBgn:(idxData-1))
-              
-            } else {
-              
-              # Awe bummer, the sensor was stuck before this point.
-              setQf[[idxVar]]$setQfPers$fail <- unique(c(setQf[[idxVar]]$setQfPers$fail,
-                                                         idxDataBgn:(idxData-1)))
-              
-              # Don't mark the NA values as fail
-              setQf[[idxVar]]$setQfPers$fail <- setdiff(setQf[[idxVar]]$setQfPers$fail,
-                                                        setQf[[idxVar]]$setQfPers$na)
-            }
-            
-            idxDataBgn <- idxData # restart the test from here
-            idxData <- idxDataBgn+1 # reset the next point to be evaluated
-          } 
-          
-        } else if ((idxData == numData) && (time[idxData]-time[idxDataBgn] >= WndwPersIdx)) {
-          
-          # We didn't hit the threshold and we've reached the end of the data. We are also beyond the allowable 
-          # time interval for the persistence test, so let's flag the data
-          setQf[[idxVar]]$setQfPers$fail <- unique(c(setQf[[idxVar]]$setQfPers$fail,idxDataBgn:idxData))
-          
-          # Don't mark the NA values as fail
-          setQf[[idxVar]]$setQfPers$fail <- setdiff(setQf[[idxVar]]$setQfPers$fail,setQf[[idxVar]]$setQfPers$na)
-          
-          idxData <- idxData+1 # We're done
-          
-        } else {
-          
-          # We didn't pass the minimum acceptable change on this point, move to the next
-          idxData <- idxData+1
-        }
-      }
-      # If we reached the end of the data but the last value was NA, we need to go back and evaluate the last
-      # non-NA value
-      idxData <- numData
-      if (is.na(dataIdxVar[idxData])) {
-        # Get to last non-NA point
-        idxData <- tail(setDataReal[[idxVar]],n=1)
-        
-        if (time[idxData]-time[idxDataBgn] >= WndwPersIdx) {
-          # We didn't hit the threshold for the final non-NA points and we were beyond the allowable 
-          # time interval for the persistence test, so let's flag the end of the data
-          setQf[[idxVar]]$setQfPers$fail <- unique(c(setQf[[idxVar]]$setQfPers$fail,idxDataBgn:idxData))
-          
-          # Don't mark the NA values as fail
-          setQf[[idxVar]]$setQfPers$fail <- setdiff(setQf[[idxVar]]$setQfPers$fail,setQf[[idxVar]]$setQfPers$na)
-          
-        } else {
-          # We didn't hit the threshold for the final non-NA points, but we are not yet beyond the 
-          # allowable time interval, so let's flag as unable to evaluate
-          setQf[[idxVar]]$setQfPers$na <- unique(c(setQf[[idxVar]]$setQfPers$na,idxDataBgn:idxData))
-        }
-      }
-      
-      # For Verbose option, output actual flag values
-      if(Vrbs) {
-        qf[[idxVar]]$qfPers[setQf[[idxVar]]$setQfPers$fail] <- 1
-        qf[[idxVar]]$qfPers[setQf[[idxVar]]$setQfPers$na] <- -1
-      }  
-    }
+  # Do persistence test 
+  if(class(WndwPers) %in% c("numeric","integer")){
+    timePers <- seq_len(numData)
+  } else {
+    # Convert time to seconds past start. It's faster.
+    timePers <- as.numeric(time) # Turn time to # seconds past start
+    timePers <- timePers-timePers[1]
+    WndwPers <- as.double(WndwPers,units='secs')
   }
   
-  
-  # Do persistence test with point-based windowing option
-  if(class(WndwPers) %in% c("numeric","integer")){
-    for(idxVar in 1:numVar) {
-      
-      dataIdxVar <- data[[idxVar]] # Pull out this variable
-      DiffPersMinIdx <- DiffPersMin[idxVar]
-      
-      # Initialize 
-      setQf[[idxVar]]$setQfPers <- list(fail=numeric(0),na=numeric(0))
-      setQf[[idxVar]]$setQfPers$na <- which(is.na(dataIdxVar)) 
-      tmpQfPers <- rep(0,numData) # Default the flag to OK
-      tmpQfPersNa <- rep(-1,numData) # Set up a variable to coincidentally mark whether the data were able to be evaluated
+  for(idxVar in 1:numVar) {
+    
+    dataIdxVar <- data[[idxVar]]
+    dataNaIdx <- dataNa[[idxVar]]
+    dataRealIdx <- dataReal[[idxVar]]
+    DiffPersMinIdx <- DiffPersMin[idxVar]
+    WndwPersIdx <- WndwPers[idxVar]
+    
+    # Initialize
+    setQf[[idxVar]]$setQfPers <- list(fail=numeric(0),na=numeric(0))
+    setQf[[idxVar]]$setQfPers$na <- setDataNa[[idxVar]]
+    
+    # Quit if all data are NA
+    if(length(setDataReal[[idxVar]]) <= 1){
+      setQf[[idxVar]]$setQfPers$na <- 1:numData
+      if(Vrbs){qf[[idxVar]]$qfPers[setQf[[idxVar]]$setQfPers$na] <- -1}
+      next
+    } else if(DiffPersMinIdx <= 0){
+      if(Vrbs){qf[[idxVar]]$qfPers[setQf[[idxVar]]$setQfPers$na] <- -1}
+      next
+    }
+    
+    # Start at the beginning, making sure we aren't on a null value
+    idxDataBgn <- setDataReal[[idxVar]][1]
 
-      # Quit if all data are NA
-      if(length(setDataReal[[idxVar]]) <= 1){
-        setQf[[idxVar]]$setQfPers$na <- 1:numData
-        if(Vrbs){qf[[idxVar]]$qfPers[setQf[[idxVar]]$setQfPers$na] <- -1}
+    idxDataMin <- idxDataBgn # initialize index of running min
+    idxDataMax <- idxDataBgn # intialize index of running max
+    idxData <- 2 # intialize index position
+
+    # Grab the data for these indices
+    timeIdxBgn <- timePers[idxDataBgn]
+    dataIdxMin <- dataIdxVar[idxDataMin]
+    dataIdxMax <- dataIdxVar[idxDataMax]
+    
+    while(idxData <= numData) {
+
+      #If we hit NA, get to the next non-NA value
+      if(dataNaIdx[idxData]){
+        idxData <- idxData +1
         next
-      } else if(DiffPersMinIdx <= 0){
-        if(Vrbs){qf[[idxVar]]$qfPers[setQf[[idxVar]]$setQfPers$na] <- -1}
-        next
+      } 
+
+      # Is the value at this index the running max or min?
+      if(dataIdxVar[idxData] < dataIdxMin) {
+        idxDataMin <- idxData
+        dataIdxMin <- dataIdxVar[idxDataMin]
+      } else if(dataIdxVar[idxData] > dataIdxMax) {
+        idxDataMax <- idxData
+        dataIdxMax <- dataIdxVar[idxDataMax]
       }
       
-      # Loop thru the data, checking for persistence over the window size. Here, we default the data to ok, 
-      # and if the persistence test fails over any window encompassing a particular data point, the flag
-      # for the point is set to 1
-      for (idxData in setDataReal[[idxVar]][1]:(numData-WndwPers[idxVar]+1)){
-        
-        # Initialize metrics
-        setData <- idxData:(idxData+WndwPers[idxVar]-1) # data range to eval
-        dataIdx <- dataIdxVar[setData] # data to eval
-        dataIdxBgn <- dataIdx[1] # 1st data point in eval range
-        
-        if(is.na(dataIdxBgn) || sum(!is.na(dataIdx)) < 2){next}
-        
-        dataIdxEnd <- tail(dataIdx,n=1) # Last data point in eval range
-        diffMax <- max(dataIdx,na.rm=TRUE) - min(dataIdx,na.rm=TRUE)  # max difference over the eval range
-        
-        # If the last point is NA and we haven't passed the threshold, get to the next point that exceeds 
-        # the threshold and flag everything up that point
-        if(is.na(dataIdxEnd) && diffMax < DiffPersMinIdx){
- 
-          # Keep looking at data until we surpass the threshold, or reach the end of the data
-          setDataExt <- setData[1]:numData
-          setDataExt <- intersect(setDataExt,setDataReal[[idxVar]]) # filter out the NA indices
-          idxPass <- head(which(cummax(dataIdxVar[setDataExt])-cummin(dataIdxVar[setDataExt]) >= DiffPersMinIdx),n=1) # Find the first point at which we pass the threshold
-          
-          # If we found it, stage data up to, but not including this point, for flagging
-          if(length(idxPass) == 1){
-            setData <- setData[1]:(setDataExt[idxPass]-1)
-          } 
-        }
+      
+      # Is diff between max and min at or larger than the persistence threshold?
+      if(dataIdxMax-dataIdxMin >= DiffPersMinIdx) {
 
-        
-        # Check for passing the threshold, and flag appropriately
-        #if(sum(!is.na(dataIdx)) > 1 && !is.na(dataIdxBgn)){
-          tmpQfPersNa[setData] <- 0 # Mark data as able to eval
+        # We've hit the threshold, now check whether we are beyond the allowable time interval
+        if(timePers[idxData]-timeIdxBgn < WndwPersIdx) {
+          # Hooray! The data is not "stuck"
+          idxDataBgn <- min(c(idxDataMin,idxDataMax))+1 # set start of next window to the next point after the earlier of the running min and max
           
-          if(diffMax < DiffPersMinIdx){
-            tmpQfPers[setData] <- 1 # Flag
+          # Make sure we aren't on a null value
+          while(dataNaIdx[idxDataBgn]){
+            idxDataBgn <- idxDataBgn+1
           }
-        #} 
-      } # End loop through data for normal persistence testing
-      
-      # Now account for NA values
-      tmpQfPers[tmpQfPersNa==-1] <- -1 # Set flag to -1 for cannot eval
-      tmpQfPers[is.na(dataIdxVar)] <- -1 # Ensure that flag is -1 for NA points
-      
-      # If the last point is NA, go back and see what we could not evaluate
-      if(is.na(dataIdxVar[numData])){
-        
-        # Initialize
-        idxDataEnd <- tail(setDataReal[[idxVar]],n=1)
-        idxData <- idxDataEnd-1
-        
-        # Step backward through the data until we surpass the persistence threshold.
-        # All data after this point needs to be marked as cannot evaluate, unless it 
-        # has already been flagged
-        while(idxData > (idxDataEnd-WndwPers[idxVar]+1) && tmpQfPers[idxDataEnd] != 1){
-          setData <- idxData:idxDataEnd
-          dataIdx <- dataIdxVar[setData]
-          diffMax <- suppressWarnings(max(dataIdx,na.rm=TRUE) - min(dataIdx,na.rm=TRUE))
-          if (diffMax < DiffPersMinIdx){
-            tmpQfPers[setData] <- -1
-            idxData <- idxData-1
+
+          idxDataMin <- idxDataBgn # reset running minimum
+          idxDataMax <- idxDataBgn # reset running maximum
+          idxData <- idxDataBgn+1 # reset the next point to be evaluated
+          
+          # Grab the data for these indices, improves CPU time
+          timeIdxBgn <- timePers[idxDataBgn]
+          dataIdxMin <- dataIdxVar[idxDataMin]
+          dataIdxMax <- dataIdxVar[idxDataMax]
+          
+        } else {
+          
+          # We might have a stuck sensor, but first let's check whether we blew the time threshold b/c 
+          # all the data were NA prior to this point
+          if (sum(dataRealIdx[idxDataBgn:(idxData-1)]) <= 1) {
+            
+            # Data were all NA between the starting index and the current point, mark the non-NA points 
+            # as cannot evaluate if they haven't already been marked for test failure
+            setNaAdd <- setdiff(idxDataBgn:(idxData-1),setQf[[idxVar]]$setQfPers$fail)
+            setQf[[idxVar]]$setQfPers$na <- union(setQf[[idxVar]]$setQfPers$na,setNaAdd)
+            
           } else {
-            break
+            
+            # Awe bummer, the sensor was stuck before this point.
+            setQf[[idxVar]]$setQfPers$fail <- union(setQf[[idxVar]]$setQfPers$fail,
+                                                    idxDataBgn:(idxData-1))
+            
           }
-        } # End while loop
-      } # End if statement checking last value for NA
-      
-      # Output the results in the desired format
-      if(Vrbs){
-        qf[[idxVar]]$qfPers <- tmpQfPers
+          
+          idxDataBgn <- idxData # restart the test from here
+          idxData <- idxDataBgn+1 # reset the next point to be evaluated
+          
+          # Grab the data for these indices, improves CPU time
+          timeIdxBgn <- timePers[idxDataBgn]
+          
+        } 
+        
+      } else if ((idxData == numData) && (timePers[idxData]-timeIdxBgn >= WndwPersIdx)) {
+        
+        # We didn't hit the threshold and we've reached the end of the data. We are also beyond the allowable 
+        # time interval for the persistence test, so let's flag the data
+        setQf[[idxVar]]$setQfPers$fail <- union(setQf[[idxVar]]$setQfPers$fail,idxDataBgn:idxData)
+        
+        idxData <- idxData+1 # We're done
+        
       } else {
-        setQf[[idxVar]]$setQfPers$fail <- which(tmpQfPers == 1)
-        setQf[[idxVar]]$setQfPers$na <- which(tmpQfPers == -1)
+        
+        # We didn't pass the minimum acceptable change on this point, move to the next
+        idxData <- idxData+1
       }
+    }
+    
+    # If we reached the end of the data but the last value was NA, we need to go back and evaluate the last
+    # non-NA value
+    idxData <- numData
+    if (dataNaIdx[idxData]) {
+      # Get to last non-NA point
+      idxData <- tail(setDataReal[[idxVar]],n=1)
       
-    } # End for loop around variables
-  } # End if statement checking for numeric WndwPers value
-  
+      if (timePers[idxData]-timeIdxBgn >= WndwPersIdx) {
+        # We didn't hit the threshold for the final non-NA points and we were beyond the allowable 
+        # time interval for the persistence test, so let's flag the end of the data
+        setQf[[idxVar]]$setQfPers$fail <- union(setQf[[idxVar]]$setQfPers$fail,idxDataBgn:idxData)
+        
+      } else {
+        # We didn't hit the threshold for the final non-NA points, but we are not yet beyond the 
+        # allowable time interval, so let's flag as unable to evaluate
+        setQf[[idxVar]]$setQfPers$na <- union(setQf[[idxVar]]$setQfPers$na,idxDataBgn:idxData)
+      }
+    }
+    
+    # Don't mark the NA values as fail
+    setQf[[idxVar]]$setQfPers$fail <- setdiff(setQf[[idxVar]]$setQfPers$fail,setQf[[idxVar]]$setQfPers$na)
+    
+    
+    # For Verbose option, output actual flag values
+    if(Vrbs) {
+      qf[[idxVar]]$qfPers[setQf[[idxVar]]$setQfPers$fail] <- 1
+      qf[[idxVar]]$qfPers[setQf[[idxVar]]$setQfPers$na] <- -1
+    }  
+  }
+
   
   # Do Null test
   for(idxVar in 1:numVar) {
     setQf[[idxVar]]$setQfNull <- list(fail=numeric(0),na=numeric(0)) # initialize
     
     if(TestNull[idxVar]) {
-      setQf[[idxVar]]$setQfNull$fail <- which(is.na(data[,idxVar]))
+      setQf[[idxVar]]$setQfNull$fail <- setDataNa[[idxVar]]
     }
     
     # For Verbose option, output actual flag values
@@ -511,48 +436,27 @@ def.plau <- function (
   # Do Gap test
   for(idxVar in 1:numVar) {
     
+    # Initialize
     setQf[[idxVar]]$setQfGap <- list(fail=numeric(0),na=numeric(0)) # initialize
     
-    setNull <- setDataNa[[idxVar]] # find NA values
-    setGap <- setNull # Start out thinking every Null is a gap, we'll whittle it down below
-    diffSetNull <- diff(setNull) # difference between null position
+    # Do a rolling count of NAs with a window the length of the gap
+    dataNAIdx <- dataNa[[idxVar]]
+    NumGapIdx <- NumGap[idxVar]
+    numNaWndwGap <- RcppRoll::roll_sum(x=dataNAIdx,n=NumGapIdx,by=1,align='left',na.rm=FALSE)
     
-    # Only evaluate this if we need to
-    if (length(setNull) >= NumGap[idxVar]) {
-      
-      # Go thru each NA value to determine if it is part of a set >= NumGap[idxVar]
-      for (idxNull in 1:length(setNull)) {
-        
-        # Isolate positions within the NumGap[idxVar] range that are consecutive
-        diffSetNullSelf <- c(diffSetNull[1:idxNull-1],1,diffSetNull[idxNull:length(diffSetNull)])# Fill in the position difference vector with a value of 1 for idxNull itself
-        setNullPre <- seq(from=idxNull-NumGap[idxVar],to=idxNull-1,by=1)
-        setNullPre <- rev(setNullPre[(setNullPre > 0) & (setNullPre <= numData)])
-        numNullPre <- which(diffSetNullSelf[setNullPre]!=1)[1]-1 # number of consecutive nulls prior to this Null
-        if (is.na(numNullPre)) {
-          numNullPre <- length(setNullPre)
-        }
-        setNullPost <- seq(from=idxNull,to=idxNull+NumGap[idxVar]-1,by=1)
-        setNullPost <- setNullPost[(setNullPost > 0) & (setNullPost <= numData)]
-        numNullPost <- which(diffSetNullSelf[setNullPost]!=1)[1]-1  # number of consecutive nulls including and after this Null
-        if (is.na(numNullPost)) {
-          numNullPost <- length(setNullPost)
-        }
-        
-        if (numNullPre+numNullPost < NumGap[idxVar]) {
-          # This position is not within a gap, so remove it from out list
-          setGap <- setdiff(setGap,setNull[idxNull])
-        }        
-      }
-      
-      setQf[[idxVar]]$setQfGap$fail <- setGap
-      
+    # Which of the windows has all gaps? Mark the test failure
+    setGapBgn <- which(numNaWndwGap == 4)
+    qfGap <- rep(0,numData)
+    for(idxGapBgn in setGapBgn){
+      qfGap[idxGapBgn:(idxGapBgn+NumGapIdx-1)] <- 1
     }
     
-    # For Verbose option, output actual flag values
+    setQf[[idxVar]]$setQfGap$fail <- which(qfGap == 1)
+    
     if(Vrbs) {
-      qf[[idxVar]]$qfGap[setQf[[idxVar]]$setQfGap$fail] <- 1
-      qf[[idxVar]]$qfGap[setQf[[idxVar]]$setQfGap$na] <- -1
+      qf[[idxVar]]$qfGap <- qfGap
     } 
+    
   }
   
   # Return results

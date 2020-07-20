@@ -18,6 +18,7 @@ def.para.flow(
   VersDp = c("001", "004")[1],
   VersEddy = "latest",
   MethParaFlow = c("DfltInp", "EnvVar")[1],
+  MethDp01Api = TRUE,
   UrlInpRefe,
   UrlOutRefe,
   ...
@@ -50,12 +51,14 @@ def.para.flow(
 
 \item{MethParaFlow}{is the method used to specify workflow parameters, "EnvVar" will grab ParaFlow parameters from environmental variable and "DfltInp" will use whatever is specified in the function call.}
 
+\item{MethDp01Api}{is a logical (TRUE/FALSE) determining if Dp01 reingest data for storage exchange workflow should be gathered from the API.}
+
 \item{UrlInpRefe}{A single-entry vector of class "character" containing the web address of the reference input data zip file to be downloaded.}
 
 \item{UrlOutRefe}{A single-entry vector of class "character" containing the web address of the reference output data zip file to be downloaded.}
 }
 \value{
-\code{ParaFlow} is a list returned that indicates the workflow control parameters, including \code{ParaFlow$DirFilePara},\code{ParaFlow$DirInp}, \code{ParaFlow$DirMnt}, \code{ParaFlow$DirOut}, \code{ParaFlow$DirTmp}, \code{ParaFlow$DirWrk}, \code{ParaFlow$DateOut}, \code{ParaFlow$FileOutBase},  \code{ParaFlow$Read}, \code{ParaFlow$VersDp}, \code{ParaFlow$VersEddy}.
+\code{ParaFlow} is a list returned that indicates the workflow control parameters, including \code{ParaFlow$DirFilePara},\code{ParaFlow$DirInp}, \code{ParaFlow$DirMnt}, \code{ParaFlow$DirOut}, \code{ParaFlow$DirTmp}, \code{ParaFlow$DirWrk}, \code{ParaFlow$DateOut}, \code{ParaFlow$FileOutBase},  \code{ParaFlow$Read}, \code{ParaFlow$VersDp}, \code{ParaFlow$VersEddy}, \code{ParaFlow$MethDp01Api}.
 }
 \description{
 Definition function. Function to determine the workflow variables by either reading them in from the environmental variables, defining them explicitly, or defining them by default values
