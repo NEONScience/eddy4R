@@ -232,9 +232,11 @@ wrap.dp01.qfqm.ecse <- function(
               rpt[[idxAgr]] <- NULL
             }
             
+            #Remove any empty lists in case valve issues
+            if(length(wrk$idx$idxBgn) == idxAgr) rpt <- Filter(Negate(is.null), rpt)
             
             #Check if after removing data for valve kickooff if no data remains
-            if(length(wrk$idx$idxBgn) == 1 && length(rpt) == 0){
+            if(length(wrk$idx$idxBgn) == idxAgr && length(rpt) == 0){
             rpt[[1]] <- list()
             #idxStat <- NameQf[1]
             rpt[[1]]$qmAlph <- as.data.frame(matrix(0, nrow = 1, ncol = ncol(wrk$data)))
