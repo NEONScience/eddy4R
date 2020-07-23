@@ -164,7 +164,7 @@ wrap.dp01.ecse <- function(
           wrk$idx$timeEnd <- as.POSIXct(ifelse(is.na(wrk$idx$timeEnd), data$time[length(data$time)], wrk$idx$timeEnd), origin = "1970-01-01", tz = "UTC")
           #idxAgr2 <- 0
           for (idxAgr in 1:length(wrk$idx$idxBgn)){
-            #idxAgr <- 4
+            #idxAgr <- 3
             
             #only use the middle 2 min after the first 1 min
             wrk$inpMask$data <- list()
@@ -214,8 +214,11 @@ wrap.dp01.ecse <- function(
               rpt[[idxAgr]] <- NULL
             }
             
+            #Remove any empty lists in case valve issues
+            if(length(wrk$idx$idxBgn) == idxAgr) rpt <- Filter(Negate(is.null), rpt)
+            
             #Check if after removing data for valve kickooff if no data remains
-            if(length(wrk$idx$idxBgn) == 1 && length(rpt) == 0){
+            if(length(wrk$idx$idxBgn) == idxAgr && length(rpt) == 0){
               rpt[[1]] <- list()
               
               for(idxStat in NameStat){
