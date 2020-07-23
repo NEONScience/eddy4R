@@ -72,6 +72,8 @@
 #     added lvlCrdCo2Valv to the function's parameter
 #   David Durden (2020-05-15)
 #     failsafe for crd kickoff removal causing no data for entire day
+#   David Durden (2020-07-23)
+#     bug fix for valve issues where looks like consistently Stor data thrown off by Crd
 ##############################################################################################
 wrap.dp01.ecse <- function(
   dp01 = c("co2Stor", "h2oStor", "tempAirLvl", "tempAirTop", "isoCo2", "isoH2o")[1],

@@ -85,6 +85,8 @@
 #     failsafe for crd kickoff removal causing no data for entire day
 #   David Durden (2020-05-21)
 #     bug fix for qmBeta causing differing number of values between data and qfqm
+#   David Durden (2020-07-23)
+#     bug fix for valve issues where looks like consistently Stor data thrown off by Crd
 ##############################################################################################
 wrap.dp01.qfqm.ecse <- function(
   dp01 = c("co2Stor", "h2oStor", "tempAirLvl", "tempAirTop", "isoCo2", "isoH2o")[1],
