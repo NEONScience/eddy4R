@@ -40,6 +40,8 @@
 #     added failsafe replace NaN in numSamp with zero
 #   David Durden (2020-07-10)
 #     added failsafe to make sure the time and data lengths are the same for cases with setLgth = 2
+#   David Durden(2020-07-24)
+#     Failsafe if multiple lines exist, but removed due to NaN
 ##############################################################################################################
 #Start of function call
 ##############################################################################################################
@@ -114,7 +116,12 @@ def.itpl.time <- function(
       #remove na value if like that maxgap will not work
       dataInp <- na.omit(dataInp)
       #make sure use the right inpTime before interpolating
-      if (setLgth == 2 && length(tmpTimeFrac) == setLgth){inpTime <- tmpTimeFrac}else{inpTime <- as.integer(dataInp$timeFrac * 60)}
+      if (setLgth == 2 && length(tmpTimeFrac) == setLgth){
+        inpTime <- tmpTimeFrac
+      }else{
+          inpTime <- as.integer(dataInp$timeFrac * 60)
+          if (setLgth == 2 & inpTime[1]==inpTime[2]) inpTime[2] <- inpTime[2]+1 #Failsafe if multiple lines exist, but removed due to NaN
+          } #End if for setLgth == 2 and length of tmpTime == to setLgth
       rpt <- zoo::na.approx(object=as.vector(dataInp$mean), x=#dataInp$timeFrac
                               inpTime
                                 , xout=as.integer(timeFracOut * 60)
