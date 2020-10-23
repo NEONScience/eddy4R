@@ -157,7 +157,7 @@ wrap.dp01.ecse <- function(
         #if there is at least one measurement
         if(length(which(!is.na(wrk$qfqm$irgaStor$qfRngTemp))) > 0){
           #determine the index of each measurement  
-          wrk$idx <- eddy4R.base::def.idx.agr(time = data$time, PrdAgr = (PrdMeas*60), FreqLoca = 1, MethIdx = "specBgn", data = wrk$qfqm$irgaStor$qfRngTemp, CritTime = 60)
+          wrk$idx <- eddy4R.base::def.idx.agr(time = data$time, PrdAgr = (PrdMeas*60), FreqLoca = 1, MethIdx = "specBgnIso", data = wrk$qfqm$irgaStor$qfRngTemp, CritTime = 60)
           #delete row if last timeBgn and timeEnd is NA
           wrk$idx <- wrk$idx[rowSums(is.na(wrk$idx)) != 2,]
           #replace last idxEnd > 86400 by 86400
