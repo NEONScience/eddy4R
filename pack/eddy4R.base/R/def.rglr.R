@@ -387,11 +387,15 @@ def.rglr <- function(
       }}else{dupl <- rep(FALSE, length(idxRglr))} #If no duplicates exist, all equal FALSE
     
     # Pull the value that chosen by IdxWndw within each bin 
-    typeData <- lapply(dataMeas,base::typeof) # Get the type of each variable so we can make sure the output gets the same
+    classData <- lapply(dataMeas,base::class) # Get the type of each variable so we can make sure the output gets the same
+    typeData <- lapply(dataMeas,base::typeof)
     dataRglr <- base::data.frame(base::matrix(data=NA*1.5,nrow=numRglr,ncol=numVar)) # initialize, multiply by 1.5 to give numeric
     for(idxVar in 1:numVar){
       # Give the column its original class
-      base::class(dataRglr[[idxVar]]) <- typeData[[idxVar]]
+      base::class(dataRglr[[idxVar]]) <- tryCatch(
+        base::class(dataRglr[[idxVar]]) <- classData[[idxVar]],
+        error=function(e){base::class(dataRglr[[idxVar]]) <- typeData[[idxVar]]})
+        
       
       # place the value falling into each bin
       dataRglr[idxRglr[!dupl],idxVar] <- dataMeas[which(!dupl),idxVar]
