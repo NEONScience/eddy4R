@@ -111,6 +111,10 @@
 #   Cove Sturtevant (2021-02-02)
 #     Added option to retain non-numeric columns for everything but zoo method
 #     Added option to output the time bins (start and end times) in a new list element in the output
+#   Cove Sturtevant (2021-02-15)
+#     bug fix. Sometimes class returns 'array', which was causing an error when forcing the type of 
+#     each regularized variable to the same as that in the input data frame. 
+#     Replaced 'class' with 'typeof' to fix. 
 ##############################################################################################
 
 def.rglr <- function(
@@ -383,7 +387,7 @@ def.rglr <- function(
       }}else{dupl <- rep(FALSE, length(idxRglr))} #If no duplicates exist, all equal FALSE
     
     # Pull the value that chosen by IdxWndw within each bin 
-    typeData <- lapply(dataMeas,base::class) # Get the class of each variable so we can make sure the output gets the same
+    typeData <- lapply(dataMeas,base::typeof) # Get the type of each variable so we can make sure the output gets the same
     dataRglr <- base::data.frame(base::matrix(data=NA*1.5,nrow=numRglr,ncol=numVar)) # initialize, multiply by 1.5 to give numeric
     for(idxVar in 1:numVar){
       # Give the column its original class
