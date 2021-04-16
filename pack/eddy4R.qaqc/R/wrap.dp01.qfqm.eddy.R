@@ -70,6 +70,8 @@
 #     rename function from wrap.neon.dp01.qfqm() to wrap.dp01.qfqm.eddy()
 #   Natchaya P-Durden (2019-07-23)
 #     adding one row with qf = -1 in the empty dataframe to eliminate code break in def.qf.finl()
+#   Chris Florian (2021-04-09)
+#     adding ch4Conc to the dp01 list
 ##############################################################################################
 
 wrap.dp01.qfqm.eddy <- function(
@@ -77,7 +79,7 @@ wrap.dp01.qfqm.eddy <- function(
   MethMeas = c("ecte", "ecse")[1],
   TypeMeas = c("samp", "vali")[1], 
   RptExpd = FALSE,
-  dp01 = c("envHut", "co2Turb", "h2oTurb", "co2Stor", "h2oStor", "isoCo2", "isoH2o", "soni", "soniAmrs", "tempAirLvl", "tempAirTop")[1],
+  dp01 = c("envHut", "co2Turb", "h2oTurb", "co2Stor", "h2oStor", "isoCo2", "ch4Conc", "isoH2o", "soni", "soniAmrs", "tempAirLvl", "tempAirTop")[1],
   idGas =NULL
 ) {
 
