@@ -990,14 +990,14 @@ wrap.dp01.ecse <- function(
       
       #input the whole day data
       wrk$data <- data.frame(stringsAsFactors = FALSE,
+                             "rtioMoleWetCh4" = data$crdCo2[[lvl]]$rtioMoleWetCh4,
+                             "rtioMoleDryCh4" = data$crdCo2[[lvl]]$rtioMoleDryCh4,
+                             "temp" = data$crdCo2[[lvl]]$temp,
                              "pres" = data$crdCo2[[lvl]]$pres,
                              "presEnvHut" = data$envHut[[lvlEnvHut]]$pres,
                              "rhEnvHut" = data$envHut[[lvlEnvHut]]$rh,
-                             "rtioMoleDryCh4" = data$crdCo2[[lvl]]$rtioMoleDryCh4,
-                             "rtioMoleWetCh4" = data$crdCo2[[lvl]]$rtioMoleWetCh4,
-                             "rtioMoleWetH2oEnvHut" = data$envHut[[lvlEnvHut]]$rtioMoleWetH2o,
-                             "temp" = data$crdCo2[[lvl]]$temp, 
                              "tempEnvHut" = data$envHut[[lvlEnvHut]]$temp,
+                             "rtioMoleWetH2oEnvHut" = data$envHut[[lvlEnvHut]]$rtioMoleWetH2o,
                              "lvlCrdCo2" = data$crdCo2ValvLvl[[lvlValv]]$lvlCrdCo2
       )
       
@@ -1178,23 +1178,14 @@ wrap.dp01.ecse <- function(
     if (TypeMeas %in% "vali"){
       #input the whole day data
       wrk$data <- data.frame(stringsAsFactors = FALSE,
-                             "dlta13CCo2" = data$crdCo2[[lvl]]$dlta13CCo2,
-                             "dlta13CCo2Refe" = data$crdCo2[[lvl]]$dlta13CCo2Refe,
+                             "rtioMoleWetCh4" = data$crdCo2[[lvl]]$rtioMoleWetCh4,
+                             "rtioMoleDryCh4" = data$crdCo2[[lvl]]$rtioMoleDryCh4,
+                             "temp" = data$crdCo2[[lvl]]$temp,
                              "pres" = data$crdCo2[[lvl]]$pres,
                              "presEnvHut" = data$envHut[[lvlEnvHut]]$pres,
                              "rhEnvHut" = data$envHut[[lvlEnvHut]]$rh,
-                             "rtioMoleDry12CCo2" = data$crdCo2[[lvl]]$rtioMoleDry12CCo2,
-                             "rtioMoleDry13CCo2" = data$crdCo2[[lvl]]$rtioMoleDry13CCo2,
-                             "rtioMoleDryCo2" = data$crdCo2[[lvl]]$rtioMoleDryCo2,
-                             "rtioMoleDryCo2Refe" = data$crdCo2[[lvl]]$rtioMoleDryCo2Refe,
-                             "rtioMoleDryH2o" = data$crdCo2[[lvl]]$rtioMoleDryH2o,
-                             "rtioMoleWet12CCo2" = data$crdCo2[[lvl]]$rtioMoleWet12CCo2,
-                             "rtioMoleWet13CCo2" = data$crdCo2[[lvl]]$rtioMoleWet13CCo2,
-                             "rtioMoleWetCo2" = data$crdCo2[[lvl]]$rtioMoleWetCo2,
-                             "rtioMoleWetH2o" = data$crdCo2[[lvl]]$rtioMoleWetH2o,
-                             "rtioMoleWetH2oEnvHut" = data$envHut[[lvlEnvHut]]$rtioMoleWetH2o,
-                             "temp" = data$crdCo2[[lvl]]$temp, 
-                             "tempEnvHut" = data$envHut[[lvlEnvHut]]$temp
+                             "tempEnvHut" = data$envHut[[lvlEnvHut]]$temp,
+                             "rtioMoleWetH2oEnvHut" = data$envHut[[lvlEnvHut]]$rtioMoleWetH2o
       )
       
       #input the whole day qfqm 
