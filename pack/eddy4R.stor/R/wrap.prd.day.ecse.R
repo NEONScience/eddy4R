@@ -36,6 +36,8 @@
 #     update input parameters in wrap.qf.rmv.data function
 #   Natchaya P-Durden (2019-05-06)
 #     adding logic to determine qfFrt00 from mfm
+#   Chris Florian (2021-06-02)
+#     updating qfRmv to not exclude rtioMoleWetH2o data that are below the low humidity threshold
 ##############################################################################################
 
 wrap.prd.day.ecse <- function(
@@ -57,7 +59,7 @@ wrap.prd.day.ecse <- function(
   }
   #Removing high frequency flagged data
   #Applying the bad quality flags to the reported output data
-  rpt <- eddy4R.qaqc::wrap.qf.rmv.data(inpList = inpList, Vrbs = FALSE, MethMeas = "ecse", Sens = NULL, qfRmv = c("qfCal", "qfRh", "qfTemp"))
+  rpt <- eddy4R.qaqc::wrap.qf.rmv.data(inpList = inpList, Vrbs = FALSE, MethMeas = "ecse", Sens = NULL, qfRmv = c("qfCal", "qfRh", "qfTemp", "qfLowRtioMoleWetH2o"))
 
 
   # perform de-spiking
