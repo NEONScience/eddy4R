@@ -10,10 +10,10 @@ def.plau(
   RngMin = apply(data, 2, min, na.rm = TRUE),
   RngMax = apply(data, 2, max, na.rm = TRUE),
   DiffStepMax = apply(abs(apply(data, 2, diff)), 2, max, na.rm = TRUE),
-  DiffPersMin = rep.int(0, length(data)),
-  WndwPers = 60 * median(abs(diff(time)), na.rm = TRUE) * rep.int(1, length(data)),
-  TestNull = rep(FALSE, length(data)),
-  NumGap = rep(length(data[, 1]) + 1, length(data)),
+  DiffPersMin = rep.int(0, ncol(data)),
+  WndwPers = 60 * median(abs(diff(time)), na.rm = TRUE) * rep.int(1, ncol(data)),
+  TestNull = rep(FALSE, ncol(data)),
+  NumGap = rep(nrow(data) + 1, ncol(data)),
   Vrbs = FALSE
 )
 }
