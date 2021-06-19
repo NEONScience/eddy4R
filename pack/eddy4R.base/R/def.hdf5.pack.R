@@ -123,12 +123,12 @@ if(MethMeas %in% "ecse"){
         if(exists('qm', where = inpList[[idxDp]][[idxLvLReso]][[1]]) == TRUE){
 
           # Add the qm's to tmp list
-          tmp00[[idxDp]][[idxLvLReso]]$qm <- lapply(names(inpList[[idxDp]][[idxLvLReso]][[1]]$qm), function(idxStat)
+          tmp00[[idxDp]][[idxLvLReso]]$qm <- lapply(names(inpList[[idxDp]][[idxLvLReso]][[1]]$qm), function(idxStat) {
             # second call to lapply, targeting the observations to be combined into the result data.frames
             do.call(rbind, lapply(1:length(inpList[[idxDp]][[idxLvLReso]]), function(idxt) {
               inpList[[idxDp]][[idxLvLReso]][[idxt]]$qm[[idxStat]]
               } )
-          ))
+          )})
           # assign names to data.frames      
           names(tmp00[[idxDp]][[idxLvLReso]]$qm) <- names(inpList[[idxDp]][[idxLvLReso]][[1]]$qm)
         }
@@ -136,10 +136,11 @@ if(MethMeas %in% "ecse"){
         #Remove qm from the inpList
         for(idx in 1:length(inpList[[idxDp]][[idxLvLReso]])) {inpList[[idxDp]][[idxLvLReso]][[idx]]$qm <- NULL}
         
-        tmp01[[idxDp]][[idxLvLReso]] <- lapply(names(inpList[[idxDp]][[idxLvLReso]][[1]]), function(idxStat)
+        tmp01[[idxDp]][[idxLvLReso]] <- lapply(names(inpList[[idxDp]][[idxLvLReso]][[1]]), function(idxStat) {
           # second call to lapply, targeting the observations to be combined into the result data.frames
-          do.call(rbind, lapply(1:length(inpList[[idxDp]][[idxLvLReso]]), function(idxt) inpList[[idxDp]][[idxLvLReso]][[idxt]][[idxStat]] ))
-        )
+          do.call(rbind, lapply(1:length(inpList[[idxDp]][[idxLvLReso]]), function(idxt) {
+            inpList[[idxDp]][[idxLvLReso]][[idxt]][[idxStat]]}))
+        })
         
         # assign names to data.frames      
         names(tmp01[[idxDp]][[idxLvLReso]]) <- names(inpList[[idxDp]][[idxLvLReso]][[1]])
