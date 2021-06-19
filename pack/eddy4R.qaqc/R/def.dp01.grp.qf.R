@@ -2024,7 +2024,7 @@ if (MethMeas == "ecse") {
           rpt$rtioMoleWetCh4 <- na.omit(tmp$rtioMoleWetCh4[which(tmp$rtioMoleWetCh4$idGas == 25 | (is.na(tmp$rtioMoleWetCh4$idGas) & tmp$rtioMoleWetCh4$qfSensStus == -1)),])
           
           tmp$rtioMoleDryCh4 <- data.frame(setQf$rtioMoleDryCh4, setQf$presCrdCo2, 
-                                           setQf$tempCrdCo2, setQf$tempWbox,
+                                           setQf$tempCrdCo2, setQf$tempWbox, 
                                            setQf$sensCrdCo2, 
                                            #setQf$frt00Mfm, 
                                            #setQf$frtMfm, setQf$presAtmMfm, 
@@ -2129,9 +2129,10 @@ if (MethMeas == "ecse") {
           #remove tmp
           rm(tmp)
         } else {
-          #grouping qulity flags that related to isoCo2 L1 sub-data product  
+          #grouping qulity flags that related to ch4Conc L1 sub-data product  
           rpt$rtioMoleWetCh4 <- na.omit(data.frame(setQf$rtioMoleWetCh4, 
                                                    setQf$tempCrdCo2, setQf$tempWbox,
+                                                   setQf$presCrdCo2,
                                                    setQf$sensCrdCo2, #setQf$frt00MfcVali, 
                                                    #setQf$frtMfcVali, setQf$presAtmMfcVali, 
                                                    #setQf$tempMfcVali,
@@ -2141,6 +2142,7 @@ if (MethMeas == "ecse") {
           
           rpt$rtioMoleDryCh4 <- na.omit(data.frame(setQf$rtioMoleDryCh4, 
                                                    setQf$tempCrdCo2, setQf$tempWbox,
+                                                   setQf$presCrdCo2,
                                                    setQf$sensCrdCo2, #setQf$frt00MfcVali, 
                                                    #setQf$frtMfcVali, setQf$presAtmMfcVali, 
                                                    #setQf$tempMfcVali,
