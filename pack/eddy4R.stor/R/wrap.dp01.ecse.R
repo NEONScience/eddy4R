@@ -76,6 +76,8 @@
 #     bug fix for valve issues where looks like consistently Stor data thrown off by Crd
 #   Chris Florian (2021-02-24)
 #     adding ch4Conc L1 data processing steps
+#   Chris Florian (2021-06-09)
+#     adding rtioMoleDryCh4Refe data to validation time period
 ##############################################################################################
 wrap.dp01.ecse <- function(
   dp01 = c("co2Stor", "h2oStor", "tempAirLvl", "tempAirTop", "isoCo2", "isoH2o", "ch4Conc")[1],
@@ -1180,6 +1182,7 @@ wrap.dp01.ecse <- function(
       wrk$data <- data.frame(stringsAsFactors = FALSE,
                              "rtioMoleWetCh4" = data$crdCo2[[lvl]]$rtioMoleWetCh4,
                              "rtioMoleDryCh4" = data$crdCo2[[lvl]]$rtioMoleDryCh4,
+                             "rtioMoleDryCh4Refe" = data$crdCo2[[lvl]]$rtioMoleDryCh4Refe,
                              "temp" = data$crdCo2[[lvl]]$temp,
                              "pres" = data$crdCo2[[lvl]]$pres,
                              "presEnvHut" = data$envHut[[lvlEnvHut]]$pres,
