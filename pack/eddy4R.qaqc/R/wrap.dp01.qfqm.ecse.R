@@ -89,6 +89,10 @@
 #     bug fix for valve issues where looks like consistently Stor data thrown off by Crd
 #   Chris Florian (2021-02-26)
 #     adding ch4Conc to dp01 list
+#   Chris Florian (2021-06-03)
+#     adjusting data input for crdCh4 validation time periods
+#   Chris Florian (2021-06-07)
+#     updating list to remove the CH4 reference values from qfqm
 ##############################################################################################
 wrap.dp01.qfqm.ecse <- function(
   dp01 = c("co2Stor", "h2oStor", "tempAirLvl", "tempAirTop", "isoCo2", "isoH2o", "ch4Conc")[1],
@@ -1253,21 +1257,13 @@ wrap.dp01.qfqm.ecse <- function(
       if (lvl == "co2High") lvlPresValiRegInStor <- "714_000"
       #input the whole day data
       wrk$data <- data.frame(stringsAsFactors = FALSE,
-                             "dlta13CCo2" = data$crdCo2[[lvl]]$dlta13CCo2,
-                             "dlta13CCo2Refe" = data$crdCo2[[lvl]]$dlta13CCo2Refe,
                              "idGas" = data$crdCo2[[lvl]]$idGas,
                              "pres" = data$crdCo2[[lvl]]$pres,
                              "presEnvHut" = data$envHut[[lvlEnvHut]]$pres,
                              "rhEnvHut" = data$envHut[[lvlEnvHut]]$rh,
-                             "rtioMoleDry12CCo2" = data$crdCo2[[lvl]]$rtioMoleDry12CCo2,
-                             "rtioMoleDry13CCo2" = data$crdCo2[[lvl]]$rtioMoleDry13CCo2,
-                             "rtioMoleDryCo2" = data$crdCo2[[lvl]]$rtioMoleDryCo2,
-                             "rtioMoleDryCo2Refe" = data$crdCo2[[lvl]]$rtioMoleDryCo2Refe,
-                             "rtioMoleDryH2o" = data$crdCo2[[lvl]]$rtioMoleDryH2o,
-                             "rtioMoleWet12CCo2" = data$crdCo2[[lvl]]$rtioMoleWet12CCo2,
-                             "rtioMoleWet13CCo2" = data$crdCo2[[lvl]]$rtioMoleWet13CCo2,
-                             "rtioMoleWetCo2" = data$crdCo2[[lvl]]$rtioMoleWetCo2,
-                             "rtioMoleWetH2o" = data$crdCo2[[lvl]]$rtioMoleWetH2o,
+                             "rtioMoleDryCh4" = data$crdCo2[[lvl]]$rtioMoleDryCo2,
+                             "rtioMoleDryCh4Refe" = data$crdCo2[[lvl]]$rtioMoleDryCo2Refe,
+                             "rtioMoleWetCh4" = data$crdCo2[[lvl]]$rtioMoleWetCo2,
                              "rtioMoleWetH2oEnvHut" = data$envHut[[lvlEnvHut]]$rtioMoleWetH2o,
                              "temp" = data$crdCo2[[lvl]]$temp, 
                              "tempEnvHut" = data$envHut[[lvlEnvHut]]$temp
@@ -1320,7 +1316,7 @@ wrap.dp01.qfqm.ecse <- function(
             rpt[[idxAgr]]$timeEnd <- list()
             
             #output time for qf dp01; do not output reference gas
-            for(idxVar in names(wrk$data)[which(!(names(wrk$data) %in% c("rtioMoleDryCo2Refe", "dlta13CCo2Refe", "idGas")))]){
+            for(idxVar in names(wrk$data)[which(!(names(wrk$data) %in% c("rtioMoleDryCh4Refe", "idGas")))]){
               rpt[[idxAgr]]$timeBgn[[idxVar]] <- wrk$idx$timeBgn[idxAgr]
               rpt[[idxAgr]]$timeEnd[[idxVar]] <- wrk$idx$timeEnd[idxAgr]
             }; rm(idxVar)
@@ -1352,7 +1348,7 @@ wrap.dp01.qfqm.ecse <- function(
             #assign name to each column
             names(rpt[[1]][[idxQf]]) <- names(wrk$data)
             #not report lvlIrga
-            rpt[[1]][[idxQf]] <- rpt[[1]][[idxQf]][which(!(names(rpt[[1]][[idxQf]]) %in% c("rtioMoleDryCo2Refe", "dlta13CCo2Refe", "idGas")))]
+            rpt[[1]][[idxQf]] <- rpt[[1]][[idxQf]][which(!(names(rpt[[1]][[idxQf]]) %in% c("rtioMoleDryCh4Refe", "idGas")))]
           }; rm(idxQf)
           
           #add both time begin and time end to rpt
@@ -1360,7 +1356,7 @@ wrap.dp01.qfqm.ecse <- function(
           rpt[[1]]$timeEnd <- list()
           
           #output time for dp01
-          for(idxVar in names(wrk$data)[which(!(names(wrk$data) %in% c("rtioMoleDryCo2Refe", "dlta13CCo2Refe", "idGas")))]){
+          for(idxVar in names(wrk$data)[which(!(names(wrk$data) %in% c("rtioMoleDryCh4Refe", "idGas")))]){
             rpt[[1]]$timeBgn[[idxVar]] <- data$time[1]
             rpt[[1]]$timeEnd[[idxVar]] <- data$time[length(data$time)]
             #unit
@@ -1426,7 +1422,7 @@ wrap.dp01.qfqm.ecse <- function(
           rpt[[idxAgr]]$timeEnd <- list()
           
           #output time for qf dp01; do not output reference gas
-          for(idxVar in names(wrk$data)[which(!(names(wrk$data) %in% c("rtioMoleDryCo2Refe", "dlta13CCo2Refe", "idGas")))]){
+          for(idxVar in names(wrk$data)[which(!(names(wrk$data) %in% c("rtioMoleDryCh4Refe", "idGas")))]){
             rpt[[idxAgr]]$timeBgn[[idxVar]] <- data$time[idxTime[[paste0(PrdAgr, "min")]]$Bgn[idxAgr]]
             rpt[[idxAgr]]$timeEnd[[idxVar]] <- data$time[idxTime[[paste0(PrdAgr, "min")]]$End[idxAgr]]
           }; rm(idxVar)
