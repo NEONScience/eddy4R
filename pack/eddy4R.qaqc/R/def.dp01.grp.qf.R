@@ -2104,7 +2104,7 @@ if (MethMeas == "ecse") {
                                            idGas = idGas)
           rpt$rtioMoleWetCh4 <- na.omit(tmp$rtioMoleWetCh4[which(tmp$rtioMoleWetCh4$idGas == 25 | (is.na(tmp$rtioMoleWetCh4$idGas) & tmp$rtioMoleWetCh4$qfSensStus == -1)),])
           
-          tmp$rtioMoleDryCh4 <- data.frame(setQf$rtioMoleWetCh4, 
+          tmp$rtioMoleDryCh4 <- data.frame(setQf$rtioMoleDryCh4, 
                                            setQf$presCrdCo2, 
                                            setQf$tempCrdCo2, setQf$tempWbox,
                                            setQf$sensCrdCo2,# setQf$frt00MfcVali, 
@@ -2117,7 +2117,7 @@ if (MethMeas == "ecse") {
           
           
           rpt$temp <- na.omit(data.frame(setQf$tempCrdCo2, setQf$sensCrdCo2))
-          rpt$pres <- na.omit(data.frame(setQf$presCrdCo2, setQf$sensCrdCo2))
+          rpt$pres <- na.omit(data.frame(setQf$presCrdCo2, setQf$sensCrdCo2)) 
           rpt$presEnvHut <- na.omit(data.frame(setQf$presEnvHut))
           rpt$rhEnvHut <- na.omit(data.frame (setQf$rhEnvHut))
           rpt$tempEnvHut <- na.omit(data.frame (setQf$tempEnvHut))
