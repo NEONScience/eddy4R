@@ -99,6 +99,8 @@
 #     Fix bug truncating fractional seconds from time vector 
 #     adjusted indexing statements to allow input of tibble data frame, which does not automatically drop the data 
 #        frame when accessing a single column using [,].
+#   Cove Sturtevant (2021-06-29)
+#     fix bug in gap test. The code effectively hard-coded the gap test threshold to 4.
 ##############################################################################################
 def.plau <- function (
   data,                               # a data frame containing the data to be evaluated (do not include the time stamp vector here). Required input.
@@ -454,7 +456,7 @@ def.plau <- function (
     numNaWndwGap <- RcppRoll::roll_sum(x=dataNAIdx,n=NumGapIdx,by=1,align='left',na.rm=FALSE)
     
     # Which of the windows has all gaps? Mark the test failure
-    setGapBgn <- which(numNaWndwGap == 4)
+    setGapBgn <- which(numNaWndwGap == NumGapIdx)
     qfGap <- rep(0,numData)
     for(idxGapBgn in setGapBgn){
       qfGap[idxGapBgn:(idxGapBgn+NumGapIdx-1)] <- 1
