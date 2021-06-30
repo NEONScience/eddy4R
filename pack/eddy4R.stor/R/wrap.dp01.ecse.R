@@ -78,6 +78,8 @@
 #     adding ch4Conc L1 data processing steps
 #   Chris Florian (2021-06-09)
 #     adding rtioMoleDryCh4Refe data to validation time period
+#   Chris Florian
+#     updating the columns used to select data from 15 to 8 for ch4Conc to get rid of extra dataframes 
 ##############################################################################################
 wrap.dp01.ecse <- function(
   dp01 = c("co2Stor", "h2oStor", "tempAirLvl", "tempAirTop", "isoCo2", "isoH2o", "ch4Conc")[1],
@@ -1122,13 +1124,13 @@ wrap.dp01.ecse <- function(
             #replace idxData data with NaN when irga got kick out to measure the new measurement level
             wrk$data[[idxData]] <- ifelse(wrk$data$lvlCrdCo2 == lvlCrdCo2, wrk$data[[idxData]], NaN)
           }
-          wrk$data[-whrSamp, 1:15] <- NaN
+          wrk$data[-whrSamp, 1:8] <- NaN #the range of columns represents the varibles included except the valve data
           #added attributes
           for (idxData in c("presEnvHut", "rhEnvHut", "rtioMoleWetH2oEnvHut", "tempEnvHut")){
             attributes(wrk$data[[idxData]]) <- tmpAttr[[idxData]]
           }
         } else {#if there are no data at all in wrk$data$temp
-          wrk$data[,1:15] <- NaN
+          wrk$data[,1:8] <- NaN #the range of columns represents the varibles included except the valve data
         } 
         
         
