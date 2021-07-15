@@ -251,7 +251,7 @@ def.plot.dp01.qfqm <- function (
     grobFinl <- ggplot2::ggplotGrob(plotFinl) # grab the grob for this plot for later manipulation
     
     # Adjust grobs and combine to align plots (since we want the legend only for the top plot)
-    colGrobLeg <- which(!(grobAlphBeta$widths %in% grobFinl$widths)) # where the legend width is located in grobFail
+    colGrobLeg <- which(!(as.character(grobAlphBeta$widths) %in% as.character(grobFinl$widths))) # where the legend width is located in grobFail
     distWdthLeg <- grobAlphBeta$widths[colGrobLeg] # Get legend width
     grobFinl <- gtable::gtable_add_cols(grobFinl, distWdthLeg, colGrobLeg[1]-1) # Add an entry for the legend width matching grobAlphBeta
 
