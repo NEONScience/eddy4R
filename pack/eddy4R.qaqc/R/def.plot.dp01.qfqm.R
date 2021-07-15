@@ -45,6 +45,8 @@
 #     Changed term 'Pos' to 'Set' for multiple indices
 #   David Durden (2019-02-05)
 #     Fixing bug with Rmisc::multiplot and POSIXlt
+#   David Durden (2021-07-15)
+#     Fixing bug with R4.0.3 update where grob widths didn't match up
 ##############################################################################################
 
 
@@ -220,7 +222,7 @@ def.plot.dp01.qfqm <- function (
     grobNa <- ggplot2::ggplotGrob(plotNa) # grab the grob for this plot for later manipulation
     
     # Adjust grobs and combine to align plots (since we want the legend only for the middle plot)
-    colGrobLeg <- which(!(grobFail$widths %in% grobPass$widths)) # where the legend width is located in grobFail
+    colGrobLeg <- which(!(as.character(grobFail$widths) %in% as.character(grobPass$widths))) # where the legend width is located in grobFail
     distWdthLeg <- grobFail$widths[colGrobLeg] # Get legend width
     grobPass <- gtable::gtable_add_cols(grobPass, distWdthLeg, colGrobLeg[1]-1) # Add an entry for the legend width matching grobFail
     grobNa <- gtable::gtable_add_cols(grobNa, distWdthLeg, colGrobLeg[1]-1) # Add an entry for the legend width matching grobFail
