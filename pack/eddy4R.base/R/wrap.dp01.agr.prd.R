@@ -50,6 +50,8 @@
 #     rename function from wrap.neon.dp01.agr.prd() to wrap.dp01.agr.prd()
 #   Natchaya P-Durden (2018-05-23)
 #     rename function from wrap.neon.dp01.qfqm.ec() to wrap.dp01.qfqm.ecte()
+#   David Durden (2021-07-15)
+#     dealing with R4.0.3 update bug, tmp$qfqm <- NULL was removing tmp$qfqmOut values, put in failsafe
 ##############################################################################################
 
 
@@ -133,12 +135,13 @@ for(idxAgr in 1:iter){
     )
     
     tmp$qfqmOut[[lvlAgr]] <- eddy4R.base::wrap.dp01.qfqm.ecte(qfqm = tmp$qfqm, idx = names(tmp$data), MethMeas = "ecte", RptExpd = FALSE )
-  
+
+tmp$qfqm[names(tmp$qfqm)] <- NULL      
 tmp$data <- NULL
-tmp$qfqm <- NULL
 invisible(gc())
 }
 
+#Format for output
 rpt <- eddy4R.base::def.dp01.agr.ecte(inpList = tmp)
 
 return(rpt)
