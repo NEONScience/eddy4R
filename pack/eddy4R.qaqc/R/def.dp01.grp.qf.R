@@ -1372,10 +1372,14 @@ if (MethMeas == "ecse") {
                                           "qfPersRtioMoleDry13CCo2" = qfInp$crdCo2$qfPersRtioMoleDry13CCo2) 
                                           #"qfCalRtioMoleDry13CCo2" = qfInp$crdCo2$qfCalRtioMoleDry13CCo2)
     
-    setQf$rtioMoleDryCh4 <- data.frame("qfRngRtioMoleDryCh4" = qfInp$crdCo2$qfRngRtioMoleDryCh4, 
-                                       "qfStepRtioMoleDryCh4" = qfInp$crdCo2$qfStepRtioMoleDryCh4,
-                                       "qfPersRtioMoleDryCh4" = qfInp$crdCo2$qfPersRtioMoleDryCh4) 
-                                        #"qfCalRtioMoleDryCh4" = qfInp$crdCo2$qfCalRtioMoleDryCh4)
+    
+    if ("ch4Conc" %in% names(qfInp)){
+      setQf$rtioMoleDryCh4 <- data.frame("qfRngRtioMoleDryCh4" = qfInp$crdCo2$qfRngRtioMoleDryCh4, 
+                                         "qfStepRtioMoleDryCh4" = qfInp$crdCo2$qfStepRtioMoleDryCh4,
+                                         "qfPersRtioMoleDryCh4" = qfInp$crdCo2$qfPersRtioMoleDryCh4) 
+                                         #"qfCalRtioMoleDryCh4" = qfInp$crdCo2$qfCalRtioMoleDryCh4)
+    }
+
     
     
     setQf$rtioMoleDryH2o <- data.frame("qfRngRtioMoleDryH2o" = qfInp$crdCo2$qfRngRtioMoleDryH2o, 
@@ -1397,11 +1401,13 @@ if (MethMeas == "ecse") {
                                           "qfStepRtioMoleWet13CCo2" = qfInp$crdCo2$qfStepRtioMoleWet13CCo2,
                                           "qfPersRtioMoleWet13CCo2" = qfInp$crdCo2$qfPersRtioMoleWet13CCo2) 
                                           #"qfCalRtioMoleWet13CCo2 " = qfInp$crdCo2$qfCalRtioMoleWet13CCo2)
-    
+   
+     if ("ch4Conc" %in% names(qfInp)){
     setQf$rtioMoleWetCh4 <- data.frame("qfRngRtioMoleWetCh4" = qfInp$crdCo2$qfRngRtioMoleWetCh4, 
                                        "qfStepRtioMoleWetCh4" = qfInp$crdCo2$qfStepRtioMoleWetCh4,
                                        "qfPersRtioMoleWetCh4" = qfInp$crdCo2$qfPersRtioMoleWetCh4) 
                                        #"qfCalRtioMoleWetCh4" = qfInp$crdCo2$qfCalRtioMoleWetCh4)
+     }
     
     setQf$rtioMoleWetH2o <- data.frame("qfRngRtioMoleWetH2o" = qfInp$crdCo2$qfRngRtioMoleWetH2o, 
                                        #"qfStepRtioMoleWetH2o" = qfInp$crdCo2$qfStepRtioMoleWetH2o,
@@ -1433,12 +1439,12 @@ if (MethMeas == "ecse") {
     names(setQf$rtioMoleDryCo2) <- paste0(colnames(setQf$rtioMoleDryCo2), "CrdCo2")
     names(setQf$rtioMoleDry12CCo2) <- paste0(colnames(setQf$rtioMoleDry12CCo2), "CrdCo2")
     names(setQf$rtioMoleDry13CCo2) <- paste0(colnames(setQf$rtioMoleDry13CCo2), "CrdCo2")
-    names(setQf$rtioMoleDryCh4) <- paste0(colnames(setQf$rtioMoleDryCh4), "CrdCo2")
+    if ("ch4Conc" %in% names(qfInp)){names(setQf$rtioMoleDryCh4) <- paste0(colnames(setQf$rtioMoleDryCh4), "CrdCo2")}
     names(setQf$rtioMoleDryH2o) <- paste0(colnames(setQf$rtioMoleDryH2o), "CrdCo2")
     names(setQf$rtioMoleWetCo2) <- paste0(colnames(setQf$rtioMoleWetCo2), "CrdCo2")
     names(setQf$rtioMoleWet12CCo2) <- paste0(colnames(setQf$rtioMoleWet12CCo2), "CrdCo2")
     names(setQf$rtioMoleWet13CCo2) <- paste0(colnames(setQf$rtioMoleWet13CCo2), "CrdCo2")
-    names(setQf$rtioMoleWetCh4) <- paste0(colnames(setQf$rtioMoleWetCh4), "CrdCo2")
+    if ("ch4Conc" %in% names(qfInp)){names(setQf$rtioMoleWetCh4) <- paste0(colnames(setQf$rtioMoleWetCh4), "CrdCo2")}
     names(setQf$rtioMoleWetH2o) <- paste0(colnames(setQf$rtioMoleWetH2o), "CrdCo2")
     names(setQf$dlta13CCo2) <- paste0(colnames(setQf$dlta13CCo2), "CrdCo2")
     names(setQf$presCrdCo2) <- paste0(colnames(setQf$presCrdCo2), "CrdCo2")
