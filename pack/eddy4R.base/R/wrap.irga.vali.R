@@ -81,6 +81,8 @@
 #     adjust workflow to run MLFR even missing one gas cylinder
 #   Natchaya P-Durden (2020-03-05)
 #     Set all thresholds to screen linear coefficients to FALSE.
+#   Chris Florian (2021-08-03)
+#     add thresholding based on benchmarking regression
 ##############################################################################################
 
 wrap.irga.vali <- function(
@@ -508,7 +510,37 @@ wrap.irga.vali <- function(
   #applying the calculated coefficients to measured data
   #Calculate time-series (20Hz) of slope and zero offset
   rpt[[DateProc]]$rtioMoleDryCo2Cor <- eddy4R.base::def.irga.vali.cor(data = data, DateProc = DateProc, coef = tmpCoef, valiData = valiData, valiCrit = valiCrit, ScalMax = ScalMax, FracSlpMax = FracSlpMax, OfstMax = OfstMax, Freq = 20)
-
+  
+  #run the benchmarking regression to determine if the validation was good
+  valiPass <- eddy4R.base::def.irga.vali.thsh(data = rpt[[DateProc]], DateProc = DateProc, bnchSlpMax = 1.05, bnchSlpMin = 0.95)
+  
+  #remove corrected data if validation fails benchmarking test
+  if (valiPass$valiPass == FALSE){
+    rpt[[DateProc]]$rtioMoleDryCo2Cor <- NaN
+    #raise quality flag in validation table to indicate validation status
+    rpt[[DateProc]]$rtioMoleDryCo2Mlf$qfValiThsh <-  c(NA, 1)
+  } else {
+    rpt[[DateProc]]$rtioMoleDryCo2Mlf$qfValiThsh <- c(NA, 0)
+  }
+  
+  #add corrected reference gas values to vali table 
+  rpt[[DateProc]]$rtioMoleDryCo2Vali$rtioMoleDryCo2RefeCor <- c(NaN, valiPass$rtioMoleDryCo2RefeCor)
+  
+  #reorder to place the corrected reference values next to the original reference values
+  rpt[[DateProc]]$rtioMoleDryCo2Vali <- rpt[[DateProc]]$rtioMoleDryCo2Vali[c("mean", "min", "max", "vari", "numSamp", "rtioMoleDryCo2Refe", "rtioMoleDryCo2RefeCor", "timeBgn", "timeEnd")]
+  
+  #reset attributes
+  
+  attributes(rpt[[DateProc]]$rtioMoleDryCo2Vali)$unit <- c("molCo2 mol-1Dry", #"mean"
+                                                           "molCo2 mol-1Dry", #"min"
+                                                           "molCo2 mol-1Dry", #"max"
+                                                           "molCo2 mol-1Dry",#"vari"
+                                                           "NA", #"numSamp"
+                                                           "molCo2 mol-1Dry",#gasRefe
+                                                           "molCo2 mol-1Dry",#gasRefeCor
+                                                           "NA", #"timeBgn"
+                                                           "NA")#"timeEnd"
+  
 #return results
   return(rpt)
 }
