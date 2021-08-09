@@ -31,6 +31,8 @@
 # changelog and author contributions / copyrights
 #   Chris Florian (2021-08-03)
 #     original creation   
+#   Chris Florian (2021-08-09)
+#     adding logic to prevent errors if data are missing
 ##############################################################################################
 
 def.irga.vali.thsh <- function(
@@ -66,15 +68,25 @@ def.irga.vali.thsh <- function(
   
   
   #run benchmarking least squares regression on corrected mean values from the reference gasses vs. the reference values
-  #make sure this can handle NaN values
-  valiLmSlp <- lm(rtioMoleDryCo2RefeCor ~ refeVals)$coefficient[[2]]
+  #adding logic to avoid an error when one of the lists passed into lm() is entirely NA
   
-  if (valiLmSlp >= bnchSlpMin & valiLmSlp <= bnchSlpMax){
-    valiPass <- TRUE
+  if(all(!is.na(refeVals)) == TRUE & all(!is.na(rtioMoleDryCo2RefeCor)) == TRUE){
+  valiLmSlp <- stats::lm(rtioMoleDryCo2RefeCor ~ refeVals)$coefficient[[2]]
   } else {
-    valiPass <- FALSE
+    valiLmSlp <- NA
   }
   
+  #set valiPass flag, 0 for good validation, 1 for bad, -1 for missing values 
+  if(!is.na(valiLmSlp)){
+    if (valiLmSlp >= bnchSlpMin & valiLmSlp <= bnchSlpMax){
+      valiPass <- TRUE
+    } else {
+      valiPass <- FALSE
+    }
+  } else {
+    valiPass <- -1
+  }
+    
   #compile report including validation pass status and the corrected reference files to add to the vali table
   rpt <- list()
   rpt$valiPass <- valiPass
