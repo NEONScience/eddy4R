@@ -52,6 +52,8 @@
 #    removed rtioMoleDryH2oCor and rtioMoleDryH2oRaw data and ucrt from the basic file
 #   Natchaya P-Durden (2020-02-23)
 #    removed unnecessary qfqm unit attributes when writing the basic file
+#   Chris Florian (2021-08-09)
+#    adding qfValiThsh to rtioMoleDryCo2Vali attributes
 ##############################################################################################
 
 
@@ -138,6 +140,7 @@ if(MethSubAgr == TRUE){
     rhdf5::h5writeAttribute(attributes(inpList$dp01AgrSub$data$co2Turb$rtioMoleDryCo2Vali)$coef, h5obj = dgid, name = "coef")
     rhdf5::h5writeAttribute(attributes(inpList$dp01AgrSub$data$co2Turb$rtioMoleDryCo2Vali)$coefSe, h5obj = dgid, name = "coefSe")
     rhdf5::h5writeAttribute(attributes(inpList$dp01AgrSub$data$co2Turb$rtioMoleDryCo2Vali)$scal, h5obj = dgid, name = "scal")
+    rhdf5::h5writeAttribute(attributes(inpList$dp01AgrSub$data$co2Turb$rtioMoleDryCo2Vali)$qfValiThsh, h5obj = dgid, name = "qfValiThsh")
   }}
 }
 ##########################################################################################
