@@ -83,6 +83,8 @@
 #     Set all thresholds to screen linear coefficients to FALSE.
 #   Chris Florian (2021-08-03)
 #     add thresholding based on benchmarking regression
+#   Chris Florian (2021-08-09)
+#     adding -1 flag for missing validations
 ##############################################################################################
 
 wrap.irga.vali <- function(
@@ -519,8 +521,10 @@ wrap.irga.vali <- function(
     rpt[[DateProc]]$rtioMoleDryCo2Cor <- NaN
     #raise quality flag in validation table to indicate validation status
     rpt[[DateProc]]$rtioMoleDryCo2Mlf$qfValiThsh <-  c(NA, 1)
-  } else {
+  } else if (valiPass$valiPass == TRUE) {
     rpt[[DateProc]]$rtioMoleDryCo2Mlf$qfValiThsh <- c(NA, 0)
+  } else {
+    rpt[[DateProc]]$rtioMoleDryCo2Mlf$qfValiThsh <- c(NA, -1)
   }
   
   #add corrected reference gas values to vali table 
