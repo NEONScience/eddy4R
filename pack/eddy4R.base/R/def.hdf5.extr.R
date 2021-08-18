@@ -193,6 +193,7 @@ if(!is.null(FileOut)) {
   
   # determine if attributes should be written to output HDF5
   if(MethExtrAttr == TRUE){
+    #Failsafe to remove rhdf5 attribute
     lapply(names(rpt$listAttr), function(x){
       if(length(names(rpt$listAttr[[x]])) == 1 && grepl(pattern = "rhdf5", x = names(rpt$listAttr[[x]]))){
         #Remove attribute if rhdf5 attribute is the only one written
