@@ -227,7 +227,7 @@ if(MethDp04 == TRUE){
       tmpAttr <- c()
       attributes(tmpAttr)$unit[["timeBgn"]] <- "NA"
       attributes(tmpAttr)$unit[["timeEnd"]] <- "NA"
-      attributes(rptDp04Qfqm)$unit <- c(attributes(tmpAttr)$unit, attributes(rptDp04Qfqm)$unit)
+      attributes(rptDp04Qfqm)$unit <- base::as.character(c(attributes(tmpAttr)$unit, attributes(rptDp04Qfqm)$unit))
       
       #Open connection to dp04 data level
       idQfqmDp04 <- rhdf5::H5Gopen(idFile,paste0("/", SiteLoca, "/dp04/qfqm/",idxDp04))
@@ -241,7 +241,8 @@ if(MethDp04 == TRUE){
       rhdf5::h5writeAttribute(attributes(rptDp04Qfqm)$unit, h5obj = idQfqmDp04Df, name = "unit")
       
       
-    } else {
+    } 
+    else {
     #output only flux for fluxCo2 in basic file
       if (idxDp04 %in% c("fluxCo2", "fluxH2o") & MethExpd == FALSE){
         inpList$dp04$data[[idxDp04]]$turb$fluxCor <- NULL
