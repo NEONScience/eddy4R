@@ -71,6 +71,8 @@
 #     adding timeBgn and timeEnd attributes
 #   David Durden (2020-05-01)
 #     adding Pfit coefficient output metadata
+#   David Durden (2021-08-17)
+#     Fixing attribute issues related to rhdf5 not being able to write lists
 ##############################################################################################
 
 
@@ -177,7 +179,7 @@ if(MethDp04 == TRUE){
   idFile <- rhdf5::H5Fopen(FileOut)
 
   for(idxDp04 in names(inpList$dp04$data)){
-    #idxDp04 <- names(inpList$dp04$data)[5]
+    #idxDp04 <- names(inpList$dp04$data)[1]
     if(idxDp04 == "foot") {
       #Adding time to output dataframe
       rptDp04 <-  cbind(timeBgn = outList$data$soni$veloXaxsErth$timeBgn, timeEnd = outList$data$soni$veloXaxsErth$timeEnd, inpList$dp04$data[[idxDp04]]$stat, stringsAsFactors = FALSE)
@@ -256,7 +258,7 @@ if(MethDp04 == TRUE){
   tmpAttr <- c()
   attributes(tmpAttr)$unit[["timeBgn"]] <- "NA"
   attributes(tmpAttr)$unit[["timeEnd"]] <- "NA"
-  attributes(rptDp04)$unit <- c(attributes(tmpAttr)$unit, attributes(rptDp04)$unit)
+  attributes(rptDp04)$unit <- base::as.character(c(attributes(tmpAttr)$unit, attributes(rptDp04)$unit))
   
   #Open connection to dp04 data level
   idDataDp04 <- rhdf5::H5Gopen(idFile,paste0("/", SiteLoca, "/dp04/data/",idxDp04))
@@ -291,7 +293,7 @@ if(MethDp04 == TRUE){
   tmpAttr <- c()
   attributes(tmpAttr)$unit[["timeBgn"]] <- "NA"
   attributes(tmpAttr)$unit[["timeEnd"]] <- "NA"
-  attributes(rptDp04Qfqm)$unit <- c(attributes(tmpAttr)$unit, attributes(rptDp04Qfqm)$unit)
+  attributes(rptDp04Qfqm)$unit <- base::as.character(c(attributes(tmpAttr)$unit, attributes(rptDp04Qfqm)$unit))
   
   #Open connection to dp04 data level
   idQfqmDp04 <- rhdf5::H5Gopen(idFile,paste0("/", SiteLoca, "/dp04/qfqm/",idxDp04))
