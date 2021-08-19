@@ -137,10 +137,14 @@ if(MethSubAgr == TRUE){
   if (Dp01 == "co2Turb"){
   if (!is.null(attributes(inpList$dp01AgrSub$data$co2Turb$rtioMoleDryCo2Vali)$coef) == TRUE){
     dgid <- rhdf5::H5Dopen(idData01, "rtioMoleDryCo2Vali")
-    rhdf5::h5writeAttribute(attributes(inpList$dp01AgrSub$data$co2Turb$rtioMoleDryCo2Vali)$coef, h5obj = dgid, name = "coef")
-    rhdf5::h5writeAttribute(attributes(inpList$dp01AgrSub$data$co2Turb$rtioMoleDryCo2Vali)$coefSe, h5obj = dgid, name = "coefSe")
-    rhdf5::h5writeAttribute(attributes(inpList$dp01AgrSub$data$co2Turb$rtioMoleDryCo2Vali)$scal, h5obj = dgid, name = "scal")
-    rhdf5::h5writeAttribute(attributes(inpList$dp01AgrSub$data$co2Turb$rtioMoleDryCo2Vali)$qfValiThsh, h5obj = dgid, name = "qfValiThsh")
+    rhdf5::h5writeAttribute(attributes(inpList$dp01AgrSub$data$co2Turb$rtioMoleDryCo2Vali)$coef, h5obj = dgid, name = "valiCoef")
+    rhdf5::h5writeAttribute(attributes(inpList$dp01AgrSub$data$co2Turb$rtioMoleDryCo2Vali)$coefSe, h5obj = dgid, name = "valiCoefSe")
+    rhdf5::h5writeAttribute(attributes(inpList$dp01AgrSub$data$co2Turb$rtioMoleDryCo2Vali)$scal, h5obj = dgid, name = "valiScal")
+    rhdf5::h5writeAttribute(attributes(inpList$dp01AgrSub$data$co2Turb$rtioMoleDryCo2Vali)$qfEvalThsh, h5obj = dgid, name = "qfEvalThsh")
+    rhdf5::h5writeAttribute(attributes(inpList$dp01AgrSub$data$co2Turb$rtioMoleDryCo2Vali)$evalCoef, h5obj = dgid, name = "evalCoef")
+    rhdf5::h5writeAttribute(attributes(inpList$dp01AgrSub$data$co2Turb$rtioMoleDryCo2Vali)$evalCoefSe, h5obj = dgid, name = "evalCoefSe")
+    rhdf5::h5writeAttribute(attributes(inpList$dp01AgrSub$data$co2Turb$rtioMoleDryCo2Vali)$evalSlpThsh, h5obj = dgid, name = "evalSlpThsh")
+    rhdf5::h5writeAttribute(attributes(inpList$dp01AgrSub$data$co2Turb$rtioMoleDryCo2Vali)$evalOfstThsh, h5obj = dgid, name = "evalOfstThsh")
   }}
 }
 ##########################################################################################
