@@ -207,7 +207,7 @@ if (MethMeas == "ecte") {
     setQf$presDiffIrgaTurb <- data.frame("qfRngPresDiff" = qfInp$irgaTurb$qfRngPresDiff,
                                      "qfStepPresDiff" = qfInp$irgaTurb$qfStepPresDiff,
                                      "qfPersPresDiff" = qfInp$irgaTurb$qfPersPresDiff,
-                                     "qfSpkPresDiff" = qfInp$irgaTurb$qfSpkPresDiff,
+                                     "qiSpkPresDiff" = qfInp$irgaTurb$qfSpkPresDiff,
                                      "qfNullPresDiff" = qfInp$irgaTurb$qfNullPresDiff)
                                      #"qfCalPresDiff" = qfInp$irgaTurb$qfCalPresDiff) 
     
@@ -291,14 +291,14 @@ if (MethMeas == "ecte") {
     setQf$ssiCo2 <- data.frame("qfRngSsiCo2" = qfInp$irgaTurb$qfRngSsiCo2, 
                                "qfStepSsiCo2" = qfInp$irgaTurb$qfStepSsiCo2, 
                                "qfPersSsiCo2" = qfInp$irgaTurb$qfPersSsiCo2, 
-                               "qfSpkSsiCo2" = qfInp$irgaTurb$qfSpkSsiCo2, 
+                               "qiSpkSsiCo2" = qfInp$irgaTurb$qfSpkSsiCo2, 
                                "qfNullSsiCo2" = qfInp$irgaTurb$qfNullSsiCo2)
                                #"qfCalSsiCo2" = qfInp$irgaTurb$qfCalSsiCo2)
     
     setQf$ssiH2o <- data.frame("qfRngSsiH2o" = qfInp$irgaTurb$qfRngSsiH2o, 
                                "qfStepSsiH2o" = qfInp$irgaTurb$qfStepSsiH2o, 
                                "qfPersSsiH2o" = qfInp$irgaTurb$qfPersSsiH2o, 
-                               "qfSpkSsiH2o" = qfInp$irgaTurb$qfSpkSsiH2o, 
+                               "qiSpkSsiH2o" = qfInp$irgaTurb$qfSpkSsiH2o, 
                                "qfNullSsiH2o" = qfInp$irgaTurb$qfNullSsiH2o) 
                                #"qfCalSsiH2o" = qfInp$irgaTurb$qfCalSsiH2o)
     
