@@ -73,6 +73,8 @@
 #     adding Pfit coefficient output metadata
 #   David Durden (2021-08-17)
 #     Fixing attribute issues related to rhdf5 not being able to write lists
+#   David Durden (2021-08-17)
+#     Adding difference to UTC to output
 ##############################################################################################
 
 
@@ -322,11 +324,12 @@ idFile <- rhdf5::H5Fopen(FileOut)
 #Open connection to dp04 data level
 idSite <- rhdf5::H5Gopen(idFile, paste0("/", SiteLoca))
   
-#Write updated Pfit coefficients to output file
+#Write updated Pfit coefficients and UTC time diff to output file
 #Output the attributes
 rhdf5::h5writeAttribute(round(Meta$Sci$`Pf$AngEnuXaxs`, digits = 6), h5obj = idSite, name = "Pf$AngEnuXaxs")
 rhdf5::h5writeAttribute(round(Meta$Sci$`Pf$AngEnuYaxs`, digits = 6), h5obj = idSite, name = "Pf$AngEnuYaxs")
 rhdf5::h5writeAttribute(round(Meta$Sci$`Pf$Ofst`, digits = 6), h5obj = idSite, name = "Pf$Ofst")
+rhdf5::h5writeAttribute(Meta$Site$TimeDiffUtcLt, h5obj = idSite, name = "TimeDiffUtcLt")
 
 #Close HDF5 connections
 rhdf5::h5closeAll() 
