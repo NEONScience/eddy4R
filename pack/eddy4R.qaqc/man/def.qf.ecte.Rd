@@ -8,7 +8,7 @@ def.qf.ecte(
   TimeBgn,
   TimeEnd,
   Freq = 20,
-  Sens = c("soni", "irga", "irgaMfcSamp", "soniAmrs")[1],
+  Sens = c("soni", "irgaTurb", "mfcSampTurb", "amrs")[1],
   PcntQf = 0.05
 )
 }
