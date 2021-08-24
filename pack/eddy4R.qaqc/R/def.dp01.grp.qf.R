@@ -90,6 +90,8 @@
 #     removing flags for external sensors from ECSE qfqm
 #   David Durden (2020-07-14)
 #     Added qfNull and qfSpk for all variables, removed qfNull from ancillary data streams
+#   David Durden (2021-08-24)
+#     Changing ancillary data stream ECTE quality flags to quality indicators
 ##############################################################################################
 
 def.dp01.grp.qf <- function(
@@ -207,7 +209,7 @@ if (MethMeas == "ecte") {
     setQf$presDiffIrgaTurb <- data.frame("qfRngPresDiff" = qfInp$irgaTurb$qfRngPresDiff,
                                      "qfStepPresDiff" = qfInp$irgaTurb$qfStepPresDiff,
                                      "qfPersPresDiff" = qfInp$irgaTurb$qfPersPresDiff,
-                                     "qiSpkPresDiff" = qfInp$irgaTurb$qfSpkPresDiff,
+                                     "qfSpkPresDiff" = qfInp$irgaTurb$qfSpkPresDiff,
                                      "qfNullPresDiff" = qfInp$irgaTurb$qfNullPresDiff)
                                      #"qfCalPresDiff" = qfInp$irgaTurb$qfCalPresDiff) 
     
@@ -291,14 +293,14 @@ if (MethMeas == "ecte") {
     setQf$ssiCo2 <- data.frame("qfRngSsiCo2" = qfInp$irgaTurb$qfRngSsiCo2, 
                                "qfStepSsiCo2" = qfInp$irgaTurb$qfStepSsiCo2, 
                                "qfPersSsiCo2" = qfInp$irgaTurb$qfPersSsiCo2, 
-                               "qiSpkSsiCo2" = qfInp$irgaTurb$qfSpkSsiCo2, 
+                               "qfSpkSsiCo2" = qfInp$irgaTurb$qfSpkSsiCo2, 
                                "qfNullSsiCo2" = qfInp$irgaTurb$qfNullSsiCo2)
                                #"qfCalSsiCo2" = qfInp$irgaTurb$qfCalSsiCo2)
     
     setQf$ssiH2o <- data.frame("qfRngSsiH2o" = qfInp$irgaTurb$qfRngSsiH2o, 
                                "qfStepSsiH2o" = qfInp$irgaTurb$qfStepSsiH2o, 
                                "qfPersSsiH2o" = qfInp$irgaTurb$qfPersSsiH2o, 
-                               "qiSpkSsiH2o" = qfInp$irgaTurb$qfSpkSsiH2o, 
+                               "qfSpkSsiH2o" = qfInp$irgaTurb$qfSpkSsiH2o, 
                                "qfNullSsiH2o" = qfInp$irgaTurb$qfNullSsiH2o) 
                                #"qfCalSsiH2o" = qfInp$irgaTurb$qfCalSsiH2o)
     
@@ -445,131 +447,149 @@ if (MethMeas == "ecte") {
     #grouping qulity flags that related to co2Turb L1 sub-data product
     if (dp01 == "co2Turb"){
       if (TypeMeas == "samp"){
-      rpt$densMoleCo2 <- data.frame(setQf$sensIrgaTurb, setQf$sensIrgaTurbExt,
-                                    setQf$tempAve, setQf$presDiffIrgaTurb, 
+      rpt$densMoleCo2 <- data.frame(setQf$sensIrgaTurb, setQf$sensIrgaTurbExt, setQf$densMoleCo2, 
+                                    "qfRngFrt00" = setQf$frt00MfcSampTurb$qfRngFrt00, 
+                                    eddy4R.qaqc::def.qi.qf(qf = list(setQf$tempAve, setQf$presDiffIrgaTurb, 
                                     setQf$powrCo2Samp, setQf$powrCo2Refe, 
-                                    setQf$asrpCo2, setQf$densMoleCo2, 
+                                    setQf$asrpCo2, 
                                     setQf$rtioMoleDryCo2, setQf$ssiCo2, 
-                                    "qfRngFrt00" = setQf$frt00MfcSampTurb$qfRngFrt00, setQf$presAtmMfcSampTurb, 
-                                    setQf$tempMfcSampTurb)
+                                     setQf$presAtmMfcSampTurb, 
+                                    setQf$tempMfcSampTurb)))
       
-      rpt$rtioMoleDryCo2 <- data.frame(setQf$sensIrgaTurb, setQf$sensIrgaTurbExt,
-                                       setQf$tempAve, setQf$presDiffIrgaTurb, 
+      rpt$rtioMoleDryCo2 <- data.frame(setQf$sensIrgaTurb, setQf$sensIrgaTurbExt, setQf$rtioMoleDryCo2, 
+                                       "qfRngFrt00" = setQf$frt00MfcSampTurb$qfRngFrt00,
+                                       eddy4R.qaqc::def.qi.qf(qf = list(setQf$tempAve, setQf$presDiffIrgaTurb, 
                                        setQf$powrH2oSamp, setQf$powrH2oRefe, 
                                        setQf$asrpH2o, setQf$rtioMoleDryH2o, 
                                        setQf$powrCo2Samp, setQf$powrCo2Refe, 
-                                       setQf$asrpCo2, setQf$rtioMoleDryCo2, 
+                                       setQf$asrpCo2, 
                                        setQf$ssiCo2, setQf$ssiH2o, 
-                                       "qfRngFrt00" = setQf$frt00MfcSampTurb$qfRngFrt00, setQf$presAtmMfcSampTurb, 
-                                       setQf$tempMfcSampTurb)
+                                        setQf$presAtmMfcSampTurb, 
+                                       setQf$tempMfcSampTurb)))
       
       rpt$presAtm <- data.frame(setQf$sensIrgaTurb, setQf$sensIrgaTurbExt, setQf$presAtmIrgaTurb)
       
       rpt$presSum <- data.frame(setQf$sensIrgaTurb, setQf$sensIrgaTurbExt, setQf$presSum)
       
       rpt$tempAve <- data.frame(setQf$sensIrgaTurb, setQf$sensIrgaTurbExt, 
-                                setQf$tempIn, setQf$tempOut, 
-                                setQf$tempAve)
+                                setQf$tempAve, 
+                                eddy4R.qaqc::def.qi.qf(qf = list(setQf$tempIn, setQf$tempOut)))
       }#close if statement of TypeMeas == "samp"
       
       if (TypeMeas == "vali"){
-        rpt$densMoleCo2 <- data.frame(setQf$sensIrgaTurb, setQf$tempAve,
+        rpt$densMoleCo2 <- data.frame(setQf$sensIrgaTurb, setQf$densMoleCo2, 
+                                      "qfRngFrt00" = setQf$frt00MfcSampTurb$qfRngFrt00,
+                                      "qfRngFrt00" = setQf$frt00MfcValiTurb$qfRngFrt00,
+                                      eddy4R.qaqc::def.qi.qf(qf = list(setQf$tempAve,
                                       setQf$presDiffIrgaTurb, setQf$powrCo2Samp, 
                                       setQf$powrCo2Refe, setQf$asrpCo2 , 
-                                      setQf$densMoleCo2, setQf$rtioMoleDryCo2, 
-                                      setQf$ssiCo2, "qfRngFrt00" = setQf$frt00MfcSampTurb$qfRngFrt00,
+                                       setQf$rtioMoleDryCo2, 
+                                      setQf$ssiCo2, 
                                       setQf$presAtmMfcSampTurb, setQf$tempMfcSampTurb,
-                                      "qfRngFrt00" = setQf$frt00MfcValiTurb$qfRngFrt00, setQf$presAtmMfcValiTurb, 
-                                      setQf$tempMfcValiTurb)
+                                       setQf$presAtmMfcValiTurb, 
+                                      setQf$tempMfcValiTurb)))
         
-        rpt$rtioMoleDryCo2 <- data.frame(setQf$sensIrgaTurb, setQf$tempAve,
+        rpt$rtioMoleDryCo2 <- data.frame(setQf$sensIrgaTurb, setQf$rtioMoleDryCo2,
+                                         "qfRngFrt00" = setQf$frt00MfcSampTurb$qfRngFrt00,
+                                         "qfRngFrt00" = setQf$frt00MfcValiTurb$qfRngFrt00,
+                                         eddy4R.qaqc::def.qi.qf(qf = list(setQf$tempAve,
                                          setQf$presDiffIrgaTurb, setQf$powrH2oSamp, 
                                          setQf$powrH2oRefe, setQf$asrpH2o, 
                                          setQf$rtioMoleDryH2o, setQf$powrCo2Samp, 
                                          setQf$powrCo2Refe, setQf$asrpCo2,
-                                         setQf$rtioMoleDryCo2, setQf$ssiCo2, 
-                                         setQf$ssiH2o, "qfRngFrt00" = setQf$frt00MfcSampTurb$qfRngFrt00,
+                                          setQf$ssiCo2, 
+                                         setQf$ssiH2o,
                                          setQf$presAtmMfcSampTurb, setQf$tempMfcSampTurb,
-                                         "qfRngFrt00" = setQf$frt00MfcValiTurb$qfRngFrt00, setQf$presAtmMfcValiTurb, 
-                                         setQf$tempMfcValiTurb)
+                                          setQf$presAtmMfcValiTurb, 
+                                         setQf$tempMfcValiTurb)))
         
         rpt$presAtm <- data.frame(setQf$sensIrgaTurb, setQf$presAtmIrgaTurb)
         
         rpt$presSum <- data.frame(setQf$sensIrgaTurb, setQf$presSum)
         
-        rpt$tempAve <- data.frame(setQf$sensIrgaTurb, setQf$tempIn, 
-                                  setQf$tempOut, setQf$tempAve)
+        rpt$tempAve <- data.frame(setQf$sensIrgaTurb, setQf$tempAve,
+                                  eddy4R.qaqc::def.qi.qf(qf = list(setQf$tempIn, 
+                                  setQf$tempOut)))
       }#close if statement of TypeMeas == "vali"
       
-      rpt$frt00Samp <- data.frame(setQf$frt00MfcSampTurb, setQf$frtMfcSampTurb, 
-                                    setQf$presAtmMfcSampTurb, setQf$tempMfcSampTurb)
+      rpt$frt00Samp <- data.frame(setQf$frt00MfcSampTurb, 
+                                  eddy4R.qaqc::def.qi.qf(qf = list(setQf$frtMfcSampTurb, 
+                                    setQf$presAtmMfcSampTurb, setQf$tempMfcSampTurb)))
       
     }
     #grouping qulity flags that related to h2oTurb L1 sub-data product    
     if (dp01 == "h2oTurb") {
       if (TypeMeas == "samp"){
-      rpt$densMoleH2o <- data.frame(setQf$sensIrgaTurb, setQf$sensIrgaTurbExt,
-                                    setQf$tempAve, setQf$presDiffIrgaTurb, 
+      rpt$densMoleH2o <- data.frame(setQf$sensIrgaTurb, setQf$sensIrgaTurbExt, setQf$densMoleH2o, 
+                                    "qfRngFrt00" = setQf$frt00MfcSampTurb$qfRngFrt00,
+                                    eddy4R.qaqc::def.qi.qf(qf = list(setQf$tempAve, setQf$presDiffIrgaTurb, 
                                     setQf$powrH2oSamp, setQf$powrH2oRefe, 
-                                    setQf$asrpH2o, setQf$densMoleH2o, 
-                                    setQf$ssiH2o, "qfRngFrt00" = setQf$frt00MfcSampTurb$qfRngFrt00, 
-                                    setQf$presAtmMfcSampTurb, setQf$tempMfcSampTurb)
+                                    setQf$asrpH2o,  
+                                    setQf$ssiH2o,  
+                                    setQf$presAtmMfcSampTurb, setQf$tempMfcSampTurb)))
       
-      rpt$rtioMoleDryH2o <- data.frame(setQf$sensIrgaTurb, setQf$sensIrgaTurbExt,
-                                       setQf$tempAve, setQf$presDiffIrgaTurb, 
+      rpt$rtioMoleDryH2o <- data.frame(setQf$sensIrgaTurb, setQf$sensIrgaTurbExt, setQf$rtioMoleDryH2o, 
+                                       "qfRngFrt00" = setQf$frt00MfcSampTurb$qfRngFrt00,
+                                       eddy4R.qaqc::def.qi.qf(qf = list(setQf$tempAve, setQf$presDiffIrgaTurb, 
                                        setQf$powrH2oSamp, setQf$powrH2oRefe, 
-                                       setQf$asrpH2o, setQf$rtioMoleDryH2o, 
-                                       setQf$ssiH2o, "qfRngFrt00" = setQf$frt00MfcSampTurb$qfRngFrt00, 
-                                       setQf$presAtmMfcSampTurb, setQf$tempMfcSampTurb)
+                                       setQf$asrpH2o, setQf$ssiH2o, 
+                                       setQf$presAtmMfcSampTurb, setQf$tempMfcSampTurb)))
       
       rpt$presAtm <- data.frame(setQf$sensIrgaTurb, setQf$sensIrgaTurbExt, setQf$presAtmIrgaTurb)
       
       rpt$presSum <- data.frame(setQf$sensIrgaTurb, setQf$sensIrgaTurbExt, setQf$presSum)
       
       rpt$tempAve <- data.frame(setQf$sensIrgaTurb, setQf$sensIrgaTurbExt, 
-                                setQf$tempIn, setQf$tempOut, 
-                                setQf$tempAve)
+                                setQf$tempAve, 
+                                eddy4R.qaqc::def.qi.qf(qf = list(setQf$tempIn, setQf$tempOut)))
       
       rpt$tempDew <- data.frame(setQf$sensIrgaTurb, setQf$sensIrgaTurbExt,
-                                setQf$tempAve, setQf$presDiffIrgaTurb, 
+                                setQf$tempAve, setQf$rtioMoleDryH2o, 
+                                eddy4R.qaqc::def.qi.qf(qf = list(setQf$presDiffIrgaTurb, 
                                 setQf$presSum, setQf$powrH2oSamp,
                                 setQf$powrH2oRefe, setQf$asrpH2o, 
-                                setQf$rtioMoleDryH2o, setQf$ssiH2o)#,setQf$soni) Remove until we can deal with differance length
+                                 setQf$ssiH2o)))#,setQf$soni) Remove until we can deal with differance length
       }#close if statement of TypeMeas == "samp"
       
       if (TypeMeas == "vali"){
-        rpt$densMoleH2o <- data.frame(setQf$sensIrgaTurb, setQf$tempAve,
+        rpt$densMoleH2o <- data.frame(setQf$sensIrgaTurb, setQf$densMoleH2o,
+                                      "qfRngFrt00" = setQf$frt00MfcSampTurb$qfRngFrt00,
+                                      "qfRngFrt00" = setQf$frt00MfcValiTurb$qfRngFrt00,
+                                      eddy4R.qaqc::def.qi.qf(qf = list(setQf$tempAve,
                                       setQf$presDiffIrgaTurb, setQf$powrH2oSamp, 
                                       setQf$powrH2oRefe, setQf$asrpH2o, 
-                                      setQf$densMoleH2o, setQf$ssiH2o,
-                                      "qfRngFrt00" = setQf$frt00MfcSampTurb$qfRngFrt00, setQf$presAtmMfcSampTurb, 
-                                      setQf$tempMfcSampTurb, "qfRngFrt00" = setQf$frt00MfcValiTurb$qfRngFrt00, 
-                                      setQf$presAtmMfcValiTurb, setQf$tempMfcValiTurb)
+                                       setQf$ssiH2o,
+                                       setQf$presAtmMfcSampTurb, 
+                                      setQf$tempMfcSampTurb,  
+                                      setQf$presAtmMfcValiTurb, setQf$tempMfcValiTurb)))
         
-        rpt$rtioMoleDryH2o <- data.frame(setQf$sensIrgaTurb, setQf$tempAve,
+        rpt$rtioMoleDryH2o <- data.frame(setQf$sensIrgaTurb, setQf$rtioMoleDryH2o,
+                                         "qfRngFrt00" = setQf$frt00MfcSampTurb$qfRngFrt00,
+                                         "qfRngFrt00" = setQf$frt00MfcValiTurb$qfRngFrt00,
+                                         eddy4R.qaqc::def.qi.qf(qf = list(setQf$tempAve,
                                          setQf$presDiffIrgaTurb, setQf$powrH2oSamp, 
                                          setQf$powrH2oRefe, setQf$asrpH2o, 
-                                         setQf$rtioMoleDryH2o, setQf$ssiH2o,
-                                         "qfRngFrt00" = setQf$frt00MfcSampTurb$qfRngFrt00, setQf$presAtmMfcSampTurb, 
-                                         setQf$tempMfcSampTurb, "qfRngFrt00" = setQf$frt00MfcValiTurb$qfRngFrt00, 
-                                         setQf$presAtmMfcValiTurb, setQf$tempMfcValiTurb)
+                                          setQf$ssiH2o,
+                                          setQf$presAtmMfcSampTurb, 
+                                         setQf$tempMfcSampTurb,  
+                                         setQf$presAtmMfcValiTurb, setQf$tempMfcValiTurb)))
         
         rpt$presAtm <- data.frame(setQf$sensIrgaTurb, setQf$presAtmIrgaTurb)
         
         rpt$presSum <- data.frame(setQf$sensIrgaTurb, setQf$presSum)
         
-        rpt$tempAve <- data.frame(setQf$sensIrgaTurb, setQf$tempIn, 
-                                  setQf$tempOut, setQf$tempAve)
+        rpt$tempAve <- data.frame(setQf$sensIrgaTurb, setQf$tempAve, 
+                                  eddy4R.qaqc::def.qi.qf(qf = list(setQf$tempIn, setQf$tempOut)))
         
-        rpt$tempDew <- data.frame(setQf$sensIrgaTurb, setQf$tempAve,
-                                  setQf$presDiffIrgaTurb, setQf$presSum,
+        rpt$tempDew <- data.frame(setQf$sensIrgaTurb, setQf$tempAve, setQf$rtioMoleDryH2o,
+                                  eddy4R.qaqc::def.qi.qf(qf = list(setQf$presDiffIrgaTurb, setQf$presSum,
                                   setQf$powrH2oSamp,setQf$powrH2oRefe, 
-                                  setQf$asrpH2o, setQf$rtioMoleDryH2o, 
-                                  setQf$ssiH2o) #, setQf$soni) Remove until we can deal with the difference length
+                                  setQf$asrpH2o,  
+                                  setQf$ssiH2o))) #, setQf$soni) Remove until we can deal with the difference length
       }#close if statement of TypeMeas == "vali"
       
-      rpt$frt00Samp <- data.frame(setQf$frt00MfcSampTurb, setQf$frtMfcSampTurb, 
-                              setQf$presAtmMfcSampTurb, setQf$tempMfcSampTurb)
+      rpt$frt00Samp <- data.frame(setQf$frt00MfcSampTurb, eddy4R.qaqc::def.qi.qf(qf = list(setQf$frtMfcSampTurb, 
+                              setQf$presAtmMfcSampTurb, setQf$tempMfcSampTurb)))
       
     }
     #remove setQf
@@ -779,7 +799,7 @@ if (MethMeas == "ecte") {
     #                               setQf$veloSoni, setQf$amrs)
     
     rpt$tempAir <- data.frame(setQf$sensSoni, setQf$veloSoni, 
-                              setQf$tempSoni) #setQf$irgaTurb) # Removing until we can handle flags of different lengths
+                              setQf$tempSoni, eddy4R.qaqc::def.qi.qf(qf = setQf$irgaTurb)) # Removing until we can handle flags of different lengths
     
     rpt$tempSoni <- data.frame(setQf$sensSoni, setQf$veloSoni, 
                                setQf$tempSoni)
@@ -901,9 +921,9 @@ if (MethMeas == "ecte") {
                                   "qfNullAngZaxs" = qfInp$amrs$qfNullAngZaxs)
     
     #grouping qulity flags that related to L1 sub-data product
-      rpt$angNedXaxs <- data.frame(setQf$sensAmrs, setQf$angXaxs)
-      rpt$angNedYaxs <- data.frame(setQf$sensAmrs, setQf$angYaxs)
-      rpt$angNedZaxs <- data.frame(setQf$sensAmrs, setQf$angZaxs)
+      rpt$angNedXaxs <- data.frame(setQf$sensAmrs, setQf$angXaxs, eddy4R.qaqc::def.qi.qf(qf = list(setQf$accXaxsDiff, setQf$avelXaxs))) 
+      rpt$angNedYaxs <- data.frame(setQf$sensAmrs, setQf$angYaxs, eddy4R.qaqc::def.qi.qf(qf = list(setQf$accYaxsDiff, setQf$avelYaxs)))
+      rpt$angNedZaxs <- data.frame(setQf$sensAmrs, setQf$angZaxs, eddy4R.qaqc::def.qi.qf(qf = list(setQf$accZaxsDiff, setQf$avelZaxs)))
     }#close if statement of TypeMeas %in% c("samp", "vali")
   } #close if statement of dp01 == "amrs"
 } #close if statement of  MethMeas == "ecse"
