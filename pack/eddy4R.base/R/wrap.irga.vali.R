@@ -85,6 +85,8 @@
 #     add thresholding based on benchmarking regression
 #   Chris Florian (2021-08-09)
 #     adding -1 flag for missing validations
+#   Chris Florian (2021-08-26)
+#     adding failsafe for extra validation gas rows
 ##############################################################################################
 
 wrap.irga.vali <- function(
@@ -535,13 +537,19 @@ wrap.irga.vali <- function(
   
   
   #add corrected reference gas values to vali table 
-  rpt[[DateProc]]$rtioMoleDryCo2Vali$meanCor <- c(NaN, valiEval$meanCor)
   
-  #reorder to place the corrected reference values next to the original reference values
-  rpt[[DateProc]]$rtioMoleDryCo2Vali <- rpt[[DateProc]]$rtioMoleDryCo2Vali[c("mean", "min", "max", "vari", "numSamp", "rtioMoleDryCo2Refe", "meanCor", "timeBgn", "timeEnd")]
-  
-  #rename rtioMoleDryCo2Refe to refe, this could be implemented in the rest of the functions in the future
-  names(rpt[[DateProc]]$rtioMoleDryCo2Vali) <- c("mean", "min", "max", "vari", "numSamp", "refe", "meanCor", "timeBgn", "timeEnd")
+  if(base::nrow(rpt[[DateProc]]$rtioMoleDryCo2Vali) == base::length(valiEval$meanCor+1)){ # failsafe for row mismatches 
+    
+    rpt[[DateProc]]$rtioMoleDryCo2Vali$meanCor <- c(NaN, valiEval$meanCor) 
+    
+    #reorder to place the corrected reference values next to the original reference values
+    rpt[[DateProc]]$rtioMoleDryCo2Vali <- rpt[[DateProc]]$rtioMoleDryCo2Vali[c("mean", "min", "max", "vari", "numSamp", "rtioMoleDryCo2Refe", "meanCor", "timeBgn", "timeEnd")]
+    
+    #rename rtioMoleDryCo2Refe to refe, this could be implemented in the rest of the functions in the future
+    names(rpt[[DateProc]]$rtioMoleDryCo2Vali) <- c("mean", "min", "max", "vari", "numSamp", "refe", "meanCor", "timeBgn", "timeEnd")
+  } else {
+    names(rpt[[DateProc]]$rtioMoleDryCo2Vali) <- c("mean", "min", "max", "vari", "numSamp", "refe", "timeBgn", "timeEnd")
+  }
   
   #rename rtioMoleDryH2oRefe to refe to match CO2
   names(rpt[[DateProc]]$rtioMoleDryH2oVali) <- c("mean", "min", "max", "vari", "numSamp", "refe", "timeBgn", "timeEnd")
