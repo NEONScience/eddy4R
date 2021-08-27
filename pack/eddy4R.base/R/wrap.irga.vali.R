@@ -87,6 +87,9 @@
 #     adding -1 flag for missing validations
 #   Chris Florian (2021-08-26)
 #     adding failsafe for extra validation gas rows
+#   Chris Florian (2021-08-27)
+#     retaining the rest of the rtioMoleDryCo2Cor for failed validations 
+#     adding NaNs for meanCor with failed validations to keep structure the same
 ##############################################################################################
 
 wrap.irga.vali <- function(
@@ -520,7 +523,7 @@ wrap.irga.vali <- function(
   
   #remove corrected data if validation fails benchmarking test
   if (valiEval$valiEvalPass == FALSE){
-    rpt[[DateProc]]$rtioMoleDryCo2Cor <- NaN
+    rpt[[DateProc]]$rtioMoleDryCo2Cor$rtioMoleDryCo2Cor <- NaN
     #raise quality flag in validation table to indicate validation status
     rpt[[DateProc]]$rtioMoleDryCo2Mlf$qfEvalThsh <-  c(NA, 1)
   } else if (valiEval$valiEvalPass == TRUE) {
@@ -538,9 +541,9 @@ wrap.irga.vali <- function(
   
   #add corrected reference gas values to vali table 
   
-  if(base::nrow(rpt[[DateProc]]$rtioMoleDryCo2Vali) == base::length(valiEval$meanCor+1)){ # failsafe for row mismatches 
+  if(base::nrow(rpt[[DateProc]]$rtioMoleDryCo2Vali) == base::length(valiEval$meanCor+1)){ # failsafe for row mismatches, valiEval$meanCor will always be one short because the archive gas is not included
     
-    rpt[[DateProc]]$rtioMoleDryCo2Vali$meanCor <- c(NaN, valiEval$meanCor) 
+    rpt[[DateProc]]$rtioMoleDryCo2Vali$meanCor <- c(NaN, valiEval$meanCor) # need to add the NaN to account for the archive gas in the first position of the vali table
     
     #reorder to place the corrected reference values next to the original reference values
     rpt[[DateProc]]$rtioMoleDryCo2Vali <- rpt[[DateProc]]$rtioMoleDryCo2Vali[c("mean", "min", "max", "vari", "numSamp", "rtioMoleDryCo2Refe", "meanCor", "timeBgn", "timeEnd")]
@@ -548,7 +551,13 @@ wrap.irga.vali <- function(
     #rename rtioMoleDryCo2Refe to refe, this could be implemented in the rest of the functions in the future
     names(rpt[[DateProc]]$rtioMoleDryCo2Vali) <- c("mean", "min", "max", "vari", "numSamp", "refe", "meanCor", "timeBgn", "timeEnd")
   } else {
-    names(rpt[[DateProc]]$rtioMoleDryCo2Vali) <- c("mean", "min", "max", "vari", "numSamp", "refe", "timeBgn", "timeEnd")
+    #fill meanCor with NaN if there were extra validation gas rows
+    rpt[[DateProc]]$rtioMoleDryCo2Vali$meanCor <- NaN
+    
+    #reorder to place the corrected reference values next to the original reference values
+    rpt[[DateProc]]$rtioMoleDryCo2Vali <- rpt[[DateProc]]$rtioMoleDryCo2Vali[c("mean", "min", "max", "vari", "numSamp", "rtioMoleDryCo2Refe", "meanCor", "timeBgn", "timeEnd")]
+    
+    names(rpt[[DateProc]]$rtioMoleDryCo2Vali) <- c("mean", "min", "max", "vari", "numSamp", "refe", "meanCor", "timeBgn", "timeEnd")
   }
   
   #rename rtioMoleDryH2oRefe to refe to match CO2
