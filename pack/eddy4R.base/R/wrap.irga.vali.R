@@ -541,7 +541,7 @@ wrap.irga.vali <- function(
   
   #add corrected reference gas values to vali table 
   
-  if(base::nrow(rpt[[DateProc]]$rtioMoleDryCo2Vali) == base::length(valiEval$meanCor+1)){ # failsafe for row mismatches, valiEval$meanCor will always be one short because the archive gas is not included
+  if(base::nrow(rpt[[DateProc]]$rtioMoleDryCo2Vali) == base::length(valiEval$meanCor)+1){ # failsafe for row mismatches, valiEval$meanCor will always be one short because the archive gas is not included
     
     rpt[[DateProc]]$rtioMoleDryCo2Vali$meanCor <- c(NaN, valiEval$meanCor) # need to add the NaN to account for the archive gas in the first position of the vali table
     
