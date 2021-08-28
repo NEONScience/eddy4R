@@ -90,6 +90,8 @@
 #   Chris Florian (2021-08-27)
 #     retaining the rest of the rtioMoleDryCo2Cor for failed validations 
 #     adding NaNs for meanCor with failed validations to keep structure the same
+#   Chris Florian (2021-08-27)
+#     resetting attributes on rtioMoleDryCo2Cor to fix issues when the corrected data was removed
 ##############################################################################################
 
 wrap.irga.vali <- function(
@@ -574,7 +576,15 @@ wrap.irga.vali <- function(
                                                            "molCo2 mol-1Dry",#gasRefeCor
                                                            "NA", #"timeBgn"
                                                            "NA")#"timeEnd"
-  
+ 
+  attributes(rpt[[DateProc]]$rtioMoleDryCo2Cor)$unit <- c("molCo2 mol-1Dry", #"mean"
+                                                          "molCo2 mol-1Dry", #"min"
+                                                          "molCo2 mol-1Dry", #"max"
+                                                          "molCo2 mol-1Dry",#"vari"
+                                                          "NA", #"numSamp"
+                                                          "NA", #"timeBgn"
+                                                          "NA")#"timeEnd"
+   
 #return results
   return(rpt)
 }
