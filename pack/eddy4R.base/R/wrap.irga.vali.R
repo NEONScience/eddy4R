@@ -577,13 +577,7 @@ wrap.irga.vali <- function(
                                                            "NA", #"timeBgn"
                                                            "NA")#"timeEnd"
  
-  attributes(rpt[[DateProc]]$rtioMoleDryCo2Cor)$unit <- c("molCo2 mol-1Dry", #"mean"
-                                                          "molCo2 mol-1Dry", #"min"
-                                                          "molCo2 mol-1Dry", #"max"
-                                                          "molCo2 mol-1Dry",#"vari"
-                                                          "NA", #"numSamp"
-                                                          "NA", #"timeBgn"
-                                                          "NA")#"timeEnd"
+  attributes(rpt[[DateProc]]$rtioMoleDryCo2Cor$rtioMoleDryCo2Cor)$unit <- "molCo2 mol-1Dry"
    
 #return results
   return(rpt)
