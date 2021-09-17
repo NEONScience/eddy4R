@@ -112,6 +112,7 @@ if(MethMeas %in% "ecse"){
   if (Dp %in% c("Dp01", "Dp02")) { 
     
     for(idxDp in names(inpList)) {
+      #idxDp <- "co2Stor" #for testing
       
       tmp00[[idxDp]] <- list()
       tmp01[[idxDp]] <- list()
@@ -138,9 +139,8 @@ if(MethMeas %in% "ecse"){
         
         tmp01[[idxDp]][[idxLvLReso]] <- lapply(names(inpList[[idxDp]][[idxLvLReso]][[1]]), function(idxStat) {
           # second call to lapply, targeting the observations to be combined into the result data.frames
-          do.call(rbind, lapply(1:length(inpList[[idxDp]][[idxLvLReso]]), function(idxt) {
-            inpList[[idxDp]][[idxLvLReso]][[idxt]][[idxStat]]}))
-        })
+          base::as.data.frame(dplyr::bind_rows(lapply(1:length(inpList[[idxDp]][[idxLvLReso]]), function(idxt) inpList[[idxDp]][[idxLvLReso]][[idxt]][[idxStat]] )))
+        )
         
         # assign names to data.frames      
         names(tmp01[[idxDp]][[idxLvLReso]]) <- names(inpList[[idxDp]][[idxLvLReso]][[1]])

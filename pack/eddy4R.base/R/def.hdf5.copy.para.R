@@ -39,6 +39,8 @@
 #     applied term name convention; replaced FileIn by FileInp
 #    Natchaya P-Durden (2018-05-22)
 #     rename function from def.para.hdf5.dp01() to def.hdf5.copy.para()
+#   Dave Durden (2021-08-17)
+#     Failsafe to remove rhdf5 attribute from list of attributes written out
 ##############################################################################################################
 #Start of function call to read metadata from one file and write to another
 ##############################################################################################################
@@ -74,6 +76,13 @@ base::names(listAttr) <- listGrp
 #Remove all empty lists
 listAttr <- listAttr[!base::sapply(listAttr, function(x) base::length(x) == 0)]
 
+#Failsafe to remove rhdf5 attribute
+lapply(names(listAttr), function(x){
+  if(length(names(listAttr[[x]])) == 1 && grepl(pattern = "rhdf5", x = names(listAttr[[x]]))){
+    #Remove attribute if rhdf5 attribute is the only one written
+    listAttr[[x]] <<- NULL
+  }#end if logical for single rhdf5 attribute   
+})#end failsafe for rhdf5 attribute
 
 #Open the output file HDF5 link
 idFile <- rhdf5::H5Fopen(FileOut)

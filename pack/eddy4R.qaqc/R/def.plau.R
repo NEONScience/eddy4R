@@ -94,6 +94,13 @@
 #     optimized gap test. WAY faster when there are a lot of gaps in the dataset
 #   Cove Sturtevant (2020-07-09)
 #     Additional optimization of persistence test achieved by turning time variable to numeric seconds past start
+#   Cove Sturtevant (2021-06-08)
+#     Fix bug causing looping (sometimes infinitely) over periods already flagged by persistence test.
+#     Fix bug truncating fractional seconds from time vector 
+#     adjusted indexing statements to allow input of tibble data frame, which does not automatically drop the data 
+#        frame when accessing a single column using [,].
+#   Cove Sturtevant (2021-06-29)
+#     fix bug in gap test. The code effectively hard-coded the gap test threshold to 4.
 ##############################################################################################
 def.plau <- function (
   data,                               # a data frame containing the data to be evaluated (do not include the time stamp vector here). Required input.
@@ -101,14 +108,13 @@ def.plau <- function (
   RngMin = apply(data,2,min,na.rm=TRUE), # a numeric vector containing the minimum acceptable value for each variable in data, defaults to observed minimums
   RngMax = apply(data,2,max,na.rm=TRUE), # a numeric vector containing the maximum acceptable value for each variable in data, defaults to observed maximums
   DiffStepMax = apply(abs(apply(data,2,diff)),2,max,na.rm=TRUE), # a vector containing the maximum acceptable absolute difference between sequential data points for each variable in data
-  DiffPersMin = rep.int(0,length(data)), # a vector containing the minimum absolute change in value for each variable in data over the interval specified in WndwPers. Defaults to a vector of zeros.
-  WndwPers = 60*median(abs(diff(time)),na.rm=TRUE)*rep.int(1,length(data)), # a vector of class difftime specifying the time interval for each variable in data over which to test for the minimum absolute change in value specified in DiffPersMin. Defaults to 60 x median observed time difference. Class difftime can be generated using as.difftime.
-  TestNull = rep(FALSE,length(data)), # apply the null test? A logical vector of [TRUE or FALSE] of length equal to number of variables in data. Defaults to FALSE (no null values are flagged)
-  NumGap = rep(length(data[,1])+1,length(data)), # an integer greater than 0 specifying the number of consecutive NA values that constitute a gap
+  DiffPersMin = rep.int(0,ncol(data)), # a vector containing the minimum absolute change in value for each variable in data over the interval specified in WndwPers. Defaults to a vector of zeros.
+  WndwPers = 60*median(abs(diff(time)),na.rm=TRUE)*rep.int(1,ncol(data)), # a vector of class difftime specifying the time interval for each variable in data over which to test for the minimum absolute change in value specified in DiffPersMin. Defaults to 60 x median observed time difference. Class difftime can be generated using as.difftime.
+  TestNull = rep(FALSE,ncol(data)), # apply the null test? A logical vector of [TRUE or FALSE] of length equal to number of variables in data. Defaults to FALSE (no null values are flagged)
+  NumGap = rep(nrow(data)+1,ncol(data)), # an integer greater than 0 specifying the number of consecutive NA values that constitute a gap
   Vrbs = FALSE # FALSE = output the vector positions of the fail and na results, TRUE = output flag values for each test
 ) {
-  
-  
+
   # Error Checking ----------------------------------------------------------
   
   # Check data
@@ -117,7 +123,7 @@ def.plau <- function (
   }
   
   # Initial stats
-  numVar <- length(data) # Get number of variables 
+  numVar <- ncol(data) # Get number of variables 
   nameData <- names(data) # Get variable names
   numData <- nrow(data)
   
@@ -218,7 +224,7 @@ def.plau <- function (
   # Do range test
   for(idxVar in 1:numVar) {
     setQf[[idxVar]]$setQfRng <- list(fail=numeric(0),na=numeric(0)) # initialize
-    setQf[[idxVar]]$setQfRng$fail <- which((data[,idxVar] < RngMin[idxVar]) | (data[,idxVar] > RngMax[idxVar]))
+    setQf[[idxVar]]$setQfRng$fail <- which((data[[idxVar]] < RngMin[idxVar]) | (data[[idxVar]] > RngMax[idxVar]))
     setQf[[idxVar]]$setQfRng$na <- setDataNa[[idxVar]]
     
     # For Verbose option, output actual flag values
@@ -232,7 +238,7 @@ def.plau <- function (
   # Do step test
   for(idxVar in 1:numVar) {
     
-    diffDataIdx <- diff(data[,idxVar])
+    diffDataIdx <- diff(data[[idxVar]])
     diffDataNaIdx <- is.na(diffDataIdx)
     setNaDiffDataIdx <- which(diffDataNaIdx)
     setRealDiffDataIdx <- which(!diffDataNaIdx)
@@ -264,8 +270,7 @@ def.plau <- function (
     timePers <- seq_len(numData)
   } else {
     # Convert time to seconds past start. It's faster.
-    timePers <- as.numeric(time) # Turn time to # seconds past start
-    timePers <- timePers-timePers[1]
+    timePers <- as.double(time-time[1], units = "secs") # Turn time to numeric seconds past start
     WndwPers <- as.double(WndwPers,units='secs')
   }
   
@@ -328,7 +333,7 @@ def.plau <- function (
         if(timePers[idxData]-timeIdxBgn < WndwPersIdx) {
           # Hooray! The data is not "stuck"
           idxDataBgn <- min(c(idxDataMin,idxDataMax))+1 # set start of next window to the next point after the earlier of the running min and max
-          
+
           # Make sure we aren't on a null value
           while(dataNaIdx[idxDataBgn]){
             idxDataBgn <- idxDataBgn+1
@@ -362,11 +367,17 @@ def.plau <- function (
             
           }
           
-          idxDataBgn <- idxData # restart the test from here
-          idxData <- idxDataBgn+1 # reset the next point to be evaluated
-          
+          # Restart the test from here
+          idxDataBgn <- idxData 
+          idxData <- idxDataBgn+1 
+
+          idxDataMin <- idxDataBgn # reset running minimum
+          idxDataMax <- idxDataBgn # reset running maximum
+
           # Grab the data for these indices, improves CPU time
           timeIdxBgn <- timePers[idxDataBgn]
+          dataIdxMin <- dataIdxVar[idxDataMin]
+          dataIdxMax <- dataIdxVar[idxDataMax]
           
         } 
         
@@ -445,7 +456,7 @@ def.plau <- function (
     numNaWndwGap <- RcppRoll::roll_sum(x=dataNAIdx,n=NumGapIdx,by=1,align='left',na.rm=FALSE)
     
     # Which of the windows has all gaps? Mark the test failure
-    setGapBgn <- which(numNaWndwGap == 4)
+    setGapBgn <- which(numNaWndwGap == NumGapIdx)
     qfGap <- rep(0,numData)
     for(idxGapBgn in setGapBgn){
       qfGap[idxGapBgn:(idxGapBgn+NumGapIdx-1)] <- 1

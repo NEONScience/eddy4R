@@ -52,6 +52,8 @@
 #     applied term name convention; replaced FileIn by FileInp
 #   Natchaya P-Durden (2018-05-11)
 #     rename function from def.extr.hdf5() to def.hdf5.extr()
+#   Dave Durden (2018-03-12)
+#     Adding failsafe for rhdf5 metadata attribute on individual dp0p arrays
 ##############################################################################################################
 #Start of function call to extract data from one file and write to another
 ##############################################################################################################
@@ -191,10 +193,20 @@ if(!is.null(FileOut)) {
   
   # determine if attributes should be written to output HDF5
   if(MethExtrAttr == TRUE){
+    #Failsafe to remove rhdf5 attribute
+    lapply(names(rpt$listAttr), function(x){
+      if(length(names(rpt$listAttr[[x]])) == 1 && grepl(pattern = "rhdf5", x = names(rpt$listAttr[[x]]))){
+        #Remove attribute if rhdf5 attribute is the only one written
+        rpt$listAttr[[x]] <<- NULL
+      }#end if logical for single rhdf5 attribute   
+    })#end failsafe for rhdf5 attribute
+    
     #Write attributes to the output HDF5 file
     lapply(names(rpt$listAttr), function(x){
+      #print(x)
       idData <- rhdf5::H5Oopen(idFile, x)
       base::lapply(names(rpt$listAttr[[x]]), function(y){
+        #print(y)
         #y <- names(rpt$listAttr[[x]])[1]
         rhdf5::h5writeAttribute(attr = rpt$listAttr[[x]][[y]], h5obj = idData, name = y)})
     })

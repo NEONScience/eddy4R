@@ -81,6 +81,10 @@
 #     adjust workflow to run MLFR even missing one gas cylinder
 #   Natchaya P-Durden (2020-03-05)
 #     Set all thresholds to screen linear coefficients to FALSE.
+#   Chris Florian (2021-08-03)
+#     add thresholding based on benchmarking regression
+#   Chris Florian (2021-08-09)
+#     adding -1 flag for missing validations
 ##############################################################################################
 
 wrap.irga.vali <- function(
@@ -508,7 +512,52 @@ wrap.irga.vali <- function(
   #applying the calculated coefficients to measured data
   #Calculate time-series (20Hz) of slope and zero offset
   rpt[[DateProc]]$rtioMoleDryCo2Cor <- eddy4R.base::def.irga.vali.cor(data = data, DateProc = DateProc, coef = tmpCoef, valiData = valiData, valiCrit = valiCrit, ScalMax = ScalMax, FracSlpMax = FracSlpMax, OfstMax = OfstMax, Freq = 20)
-
+  
+  #run the benchmarking regression to determine if the validation was good
+  valiEval <- eddy4R.base::def.irga.vali.thsh(data = rpt[[DateProc]], DateProc = DateProc, evalSlpMax = 1.05, evalSlpMin = 0.95, evalOfstMax = 100, evalOfstMin = -100)
+  
+  #remove corrected data if validation fails benchmarking test
+  if (valiEval$valiEvalPass == FALSE){
+    rpt[[DateProc]]$rtioMoleDryCo2Cor <- NaN
+    #raise quality flag in validation table to indicate validation status
+    rpt[[DateProc]]$rtioMoleDryCo2Mlf$qfEvalThsh <-  c(NA, 1)
+  } else if (valiEval$valiEvalPass == TRUE) {
+    rpt[[DateProc]]$rtioMoleDryCo2Mlf$qfEvalThsh <- c(NA, 0)
+  } else {
+    rpt[[DateProc]]$rtioMoleDryCo2Mlf$qfEvalThsh <- c(NA, -1)
+  }
+  
+  #add additional coefficients to mlf table
+  rpt[[DateProc]]$rtioMoleDryCo2Mlf$evalCoef <- valiEval$evalCoef
+  rpt[[DateProc]]$rtioMoleDryCo2Mlf$evalCoefSe <- valiEval$evalCoefSe
+  rpt[[DateProc]]$rtioMoleDryCo2Mlf$evalSlpThsh <- valiEval$evalSlpThsh
+  rpt[[DateProc]]$rtioMoleDryCo2Mlf$evalOfstThsh <- valiEval$evalOfstThsh
+  
+  
+  #add corrected reference gas values to vali table 
+  rpt[[DateProc]]$rtioMoleDryCo2Vali$meanCor <- c(NaN, valiEval$meanCor)
+  
+  #reorder to place the corrected reference values next to the original reference values
+  rpt[[DateProc]]$rtioMoleDryCo2Vali <- rpt[[DateProc]]$rtioMoleDryCo2Vali[c("mean", "min", "max", "vari", "numSamp", "rtioMoleDryCo2Refe", "meanCor", "timeBgn", "timeEnd")]
+  
+  #rename rtioMoleDryCo2Refe to refe, this could be implemented in the rest of the functions in the future
+  names(rpt[[DateProc]]$rtioMoleDryCo2Vali) <- c("mean", "min", "max", "vari", "numSamp", "refe", "meanCor", "timeBgn", "timeEnd")
+  
+  #rename rtioMoleDryH2oRefe to refe to match CO2
+  names(rpt[[DateProc]]$rtioMoleDryH2oVali) <- c("mean", "min", "max", "vari", "numSamp", "refe", "timeBgn", "timeEnd")
+  
+  #reset attributes
+  
+  attributes(rpt[[DateProc]]$rtioMoleDryCo2Vali)$unit <- c("molCo2 mol-1Dry", #"mean"
+                                                           "molCo2 mol-1Dry", #"min"
+                                                           "molCo2 mol-1Dry", #"max"
+                                                           "molCo2 mol-1Dry",#"vari"
+                                                           "NA", #"numSamp"
+                                                           "molCo2 mol-1Dry",#gasRefe
+                                                           "molCo2 mol-1Dry",#gasRefeCor
+                                                           "NA", #"timeBgn"
+                                                           "NA")#"timeEnd"
+  
 #return results
   return(rpt)
 }
