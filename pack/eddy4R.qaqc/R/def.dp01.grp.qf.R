@@ -94,6 +94,8 @@
 #     adding ch4Conc to the dp01 list and adding all ch4 qfqm variables
 #   David Durden (2021-08-24)
 #     Changing ancillary data stream ECTE quality flags to quality indicators
+#   Chris Florian (2021-09-21)
+#     Adding logic to set CH4 qfs or not depending on if ch4Conc is in the dp01 list
 ##############################################################################################
 
 def.dp01.grp.qf <- function(
@@ -1393,7 +1395,7 @@ if (MethMeas == "ecse") {
                                           #"qfCalRtioMoleDry13CCo2" = qfInp$crdCo2$qfCalRtioMoleDry13CCo2)
     
     
-    if ("ch4Conc" %in% names(qfInp)){
+    if (dp01 == "ch4Conc"){
       setQf$rtioMoleDryCh4 <- data.frame("qfRngRtioMoleDryCh4" = qfInp$crdCo2$qfRngRtioMoleDryCh4, 
                                          "qfStepRtioMoleDryCh4" = qfInp$crdCo2$qfStepRtioMoleDryCh4,
                                          "qfPersRtioMoleDryCh4" = qfInp$crdCo2$qfPersRtioMoleDryCh4) 
@@ -1422,7 +1424,7 @@ if (MethMeas == "ecse") {
                                           "qfPersRtioMoleWet13CCo2" = qfInp$crdCo2$qfPersRtioMoleWet13CCo2) 
                                           #"qfCalRtioMoleWet13CCo2 " = qfInp$crdCo2$qfCalRtioMoleWet13CCo2)
    
-     if ("ch4Conc" %in% names(qfInp)){
+     if (dp01 == "ch4Conc"){
     setQf$rtioMoleWetCh4 <- data.frame("qfRngRtioMoleWetCh4" = qfInp$crdCo2$qfRngRtioMoleWetCh4, 
                                        "qfStepRtioMoleWetCh4" = qfInp$crdCo2$qfStepRtioMoleWetCh4,
                                        "qfPersRtioMoleWetCh4" = qfInp$crdCo2$qfPersRtioMoleWetCh4) 
@@ -1459,12 +1461,12 @@ if (MethMeas == "ecse") {
     names(setQf$rtioMoleDryCo2) <- paste0(colnames(setQf$rtioMoleDryCo2), "CrdCo2")
     names(setQf$rtioMoleDry12CCo2) <- paste0(colnames(setQf$rtioMoleDry12CCo2), "CrdCo2")
     names(setQf$rtioMoleDry13CCo2) <- paste0(colnames(setQf$rtioMoleDry13CCo2), "CrdCo2")
-    if ("ch4Conc" %in% names(qfInp)){names(setQf$rtioMoleDryCh4) <- paste0(colnames(setQf$rtioMoleDryCh4), "CrdCo2")}
+    if (dp01 == "ch4Conc"){names(setQf$rtioMoleDryCh4) <- paste0(colnames(setQf$rtioMoleDryCh4), "CrdCo2")}
     names(setQf$rtioMoleDryH2o) <- paste0(colnames(setQf$rtioMoleDryH2o), "CrdCo2")
     names(setQf$rtioMoleWetCo2) <- paste0(colnames(setQf$rtioMoleWetCo2), "CrdCo2")
     names(setQf$rtioMoleWet12CCo2) <- paste0(colnames(setQf$rtioMoleWet12CCo2), "CrdCo2")
     names(setQf$rtioMoleWet13CCo2) <- paste0(colnames(setQf$rtioMoleWet13CCo2), "CrdCo2")
-    if ("ch4Conc" %in% names(qfInp)){names(setQf$rtioMoleWetCh4) <- paste0(colnames(setQf$rtioMoleWetCh4), "CrdCo2")}
+    if (dp01 == "ch4Conc"){names(setQf$rtioMoleWetCh4) <- paste0(colnames(setQf$rtioMoleWetCh4), "CrdCo2")}
     names(setQf$rtioMoleWetH2o) <- paste0(colnames(setQf$rtioMoleWetH2o), "CrdCo2")
     names(setQf$dlta13CCo2) <- paste0(colnames(setQf$dlta13CCo2), "CrdCo2")
     names(setQf$presCrdCo2) <- paste0(colnames(setQf$presCrdCo2), "CrdCo2")
