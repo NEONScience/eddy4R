@@ -72,6 +72,8 @@
 #     adding one row with qf = -1 in the empty dataframe to eliminate code break in def.qf.finl()
 #   Chris Florian (2021-04-09)
 #     adding ch4Conc to the dp01 list
+#   Chris Florian (2021-12-08)
+#     adding logic to allow for more missing data due to variable picarro sampling frequency
 ##############################################################################################
 
 wrap.dp01.qfqm.eddy <- function(
@@ -93,7 +95,15 @@ wrap.dp01.qfqm.eddy <- function(
   lapply(names(inp), function(x) if (nrow(inp[[x]]) == 0) inp[[x]][1,] <<- -1)
 
   #calculate qmAlpha, qmBeta, qfFinl
-  tmp <- lapply(inp, FUN = eddy4R.qaqc::def.qf.finl)
+  if (dp01 %in% c("envHut", "co2Turb", "h2oTurb", "co2Stor", "h2oStor", "soni", "soniAmrs", "tempAirLvl", "tempAirTop")){
+    tmp <- lapply(inp, FUN = eddy4R.qaqc::def.qf.finl)
+  }
+  
+  #set qmBeta weight lower for picarro data products to account for variable sampling frequency
+  if (dp01 %in% c("isoCo2", "ch4Conc", "isoH2o")){
+    tmp <- lapply(inp, FUN = eddy4R.qaqc::def.qf.finl, WghtAlphBeta=c(2,0.2))
+  }
+  
 
   #assign default qfSciRevw
   lapply(names(tmp), function(x) tmp[[x]]$qfqm$qfSciRevw <<- 0)
