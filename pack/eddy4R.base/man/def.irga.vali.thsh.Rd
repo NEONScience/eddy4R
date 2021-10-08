@@ -4,16 +4,27 @@
 \alias{def.irga.vali.thsh}
 \title{Definition function: Threshold IRGA validation data based on benchmarking regression}
 \usage{
-def.irga.vali.thsh(data, DateProc, bnchSlpMax, bnchSlpMin)
+def.irga.vali.thsh(
+  data,
+  DateProc,
+  evalSlpMax,
+  evalSlpMin,
+  evalOfstMax,
+  evalOfstMin
+)
 }
 \arguments{
 \item{data}{List of validation data as a report from eddy4R.base::wrap.irga.vali()}
 
 \item{DateProc}{A vector of class "character" containing the processing date.}
 
-\item{bnchSlpMax}{Maximum acceptable slope of the benchmarking regression}
+\item{evalSlpMax}{Maximum acceptable slope of the benchmarking regression}
 
-\item{bnchSlpMin}{Minimum acceptable slope of the benchmarking regression}
+\item{evalSlpMin}{Minimum acceptable slope of the benchmarking regression}
+
+\item{evalOfstMax}{Maximum acceptable offset of the benchmarking regression}
+
+\item{evalOfstMin}{Minimum acceptable offset of the benchmarking regression}
 
 \item{gasRefe}{List containing the values of the reference gases. [mol mol-1]}
 }
