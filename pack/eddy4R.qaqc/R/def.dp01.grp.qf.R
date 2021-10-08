@@ -92,6 +92,8 @@
 #     Added qfNull and qfSpk for all variables, removed qfNull from ancillary data streams
 #   David Durden (2021-08-24)
 #     Changing ancillary data stream ECTE quality flags to quality indicators
+#   David Durden (2021-10-08)
+#     Changing qfSpkPresAtm to quality indicator and fixing soni tempAir flags
 ##############################################################################################
 
 def.dp01.grp.qf <- function(
@@ -202,7 +204,7 @@ if (MethMeas == "ecte") {
     setQf$presAtmIrgaTurb <- data.frame("qfRngPresAtm" = qfInp$irgaTurb$qfRngPresAtm, 
                                 "qfStepPresAtm" = qfInp$irgaTurb$qfStepPresAtm,
                                 "qfPersPresAtm" = qfInp$irgaTurb$qfPersPresAtm, 
-                                "qfSpkPresAtm" = qfInp$irgaTurb$qfSpkPresAtm,
+                                "qiSpkPresAtm" = qfInp$irgaTurb$qfSpkPresAtm,#TODO remove hard coded qi for SpkPresAtm
                                 "qfNullPresAtm" = qfInp$irgaTurb$qfNullPresAtm) 
                                 #"qfCalPresAtm" = qfInp$irgaTurb$qfCalPresAtm)
     
@@ -453,7 +455,8 @@ if (MethMeas == "ecte") {
                                     setQf$powrCo2Samp, setQf$powrCo2Refe, 
                                     setQf$asrpCo2, 
                                     setQf$rtioMoleDryCo2, setQf$ssiCo2, 
-                                     setQf$presAtmMfcSampTurb, 
+                                    setQf$presAtmIrgaTurb,
+                                    setQf$presSum,
                                     setQf$tempMfcSampTurb)))
       
       rpt$rtioMoleDryCo2 <- data.frame(setQf$sensIrgaTurb, setQf$sensIrgaTurbExt, setQf$rtioMoleDryCo2, 
@@ -464,7 +467,8 @@ if (MethMeas == "ecte") {
                                        setQf$powrCo2Samp, setQf$powrCo2Refe, 
                                        setQf$asrpCo2, 
                                        setQf$ssiCo2, setQf$ssiH2o, 
-                                        setQf$presAtmMfcSampTurb, 
+                                        setQf$presAtmIrgaTurb,
+                                       setQf$presSum,
                                        setQf$tempMfcSampTurb)))
       
       rpt$presAtm <- data.frame(setQf$sensIrgaTurb, setQf$sensIrgaTurbExt, setQf$presAtmIrgaTurb)
@@ -478,15 +482,16 @@ if (MethMeas == "ecte") {
       
       if (TypeMeas == "vali"){
         rpt$densMoleCo2 <- data.frame(setQf$sensIrgaTurb, setQf$densMoleCo2, 
-                                      "qfRngFrt00" = setQf$frt00MfcSampTurb$qfRngFrt00,
+                                      "qfRngFrt00" = setQf$frt00MfcSampTurb$qfRngFrt00,  #TODO: qfRngFrt00 needs to be reconciled, vali qf not currently output
                                       "qfRngFrt00" = setQf$frt00MfcValiTurb$qfRngFrt00,
                                       eddy4R.qaqc::def.qi.qf(qf = list(setQf$tempAve,
                                       setQf$presDiffIrgaTurb, setQf$powrCo2Samp, 
                                       setQf$powrCo2Refe, setQf$asrpCo2 , 
                                        setQf$rtioMoleDryCo2, 
                                       setQf$ssiCo2, 
-                                      setQf$presAtmMfcSampTurb, setQf$tempMfcSampTurb,
-                                       setQf$presAtmMfcValiTurb, 
+                                      setQf$presAtmIrgaTurb,
+                                      setQf$presSum, setQf$tempMfcSampTurb,
+                                      setQf$presAtmMfcValiTurb, 
                                       setQf$tempMfcValiTurb)))
         
         rpt$rtioMoleDryCo2 <- data.frame(setQf$sensIrgaTurb, setQf$rtioMoleDryCo2,
@@ -499,7 +504,8 @@ if (MethMeas == "ecte") {
                                          setQf$powrCo2Refe, setQf$asrpCo2,
                                           setQf$ssiCo2, 
                                          setQf$ssiH2o,
-                                         setQf$presAtmMfcSampTurb, setQf$tempMfcSampTurb,
+                                         setQf$presAtmIrgaTurb,
+                                         setQf$presSum, setQf$tempMfcSampTurb,
                                           setQf$presAtmMfcValiTurb, 
                                          setQf$tempMfcValiTurb)))
         
@@ -526,14 +532,14 @@ if (MethMeas == "ecte") {
                                     setQf$powrH2oSamp, setQf$powrH2oRefe, 
                                     setQf$asrpH2o,  
                                     setQf$ssiH2o,  
-                                    setQf$presAtmMfcSampTurb, setQf$tempMfcSampTurb)))
+                                    setQf$presAtmIrgaTurb, setQf$presSum, setQf$tempMfcSampTurb)))
       
       rpt$rtioMoleDryH2o <- data.frame(setQf$sensIrgaTurb, setQf$sensIrgaTurbExt, setQf$rtioMoleDryH2o, 
                                        "qfRngFrt00" = setQf$frt00MfcSampTurb$qfRngFrt00,
                                        eddy4R.qaqc::def.qi.qf(qf = list(setQf$tempAve, setQf$presDiffIrgaTurb, 
                                        setQf$powrH2oSamp, setQf$powrH2oRefe, 
                                        setQf$asrpH2o, setQf$ssiH2o, 
-                                       setQf$presAtmMfcSampTurb, setQf$tempMfcSampTurb)))
+                                       setQf$presAtmIrgaTurb, setQf$presSum, setQf$tempMfcSampTurb)))
       
       rpt$presAtm <- data.frame(setQf$sensIrgaTurb, setQf$sensIrgaTurbExt, setQf$presAtmIrgaTurb)
       
@@ -559,7 +565,8 @@ if (MethMeas == "ecte") {
                                       setQf$presDiffIrgaTurb, setQf$powrH2oSamp, 
                                       setQf$powrH2oRefe, setQf$asrpH2o, 
                                        setQf$ssiH2o,
-                                       setQf$presAtmMfcSampTurb, 
+                                       setQf$presAtmIrgaTurb, 
+                                      setQf$presSum,
                                       setQf$tempMfcSampTurb,  
                                       setQf$presAtmMfcValiTurb, setQf$tempMfcValiTurb)))
         
@@ -570,7 +577,8 @@ if (MethMeas == "ecte") {
                                          setQf$presDiffIrgaTurb, setQf$powrH2oSamp, 
                                          setQf$powrH2oRefe, setQf$asrpH2o, 
                                           setQf$ssiH2o,
-                                          setQf$presAtmMfcSampTurb, 
+                                         setQf$presAtmIrgaTurb, 
+                                         setQf$presSum,
                                          setQf$tempMfcSampTurb,  
                                          setQf$presAtmMfcValiTurb, setQf$tempMfcValiTurb)))
         
@@ -659,33 +667,40 @@ if (MethMeas == "ecte") {
                                "qfIrgaTurbSync" = qfInp$irgaTurb$qfIrgaTurbSync,
                                "qfIrgaTurbAgc" = qfInp$irgaTurb$qfIrgaTurbAgc,
                                "qfIrgaTurbVali" = qfInp$irgaTurb$qfIrgaTurbVali,
-                               "qfRngTempMean" = qfInp$irgaTurb$qfRngTempMean, 
-                               "qfStepTempMean" = qfInp$irgaTurb$qfStepTempMean,
-                               "qfPersTempMean" = qfInp$irgaTurb$qfPersTempMean, 
+                               # "qfRngTempMean" = qfInp$irgaTurb$qfRngTempMean, 
+                               # "qfStepTempMean" = qfInp$irgaTurb$qfStepTempMean,
+                               # "qfPersTempMean" = qfInp$irgaTurb$qfPersTempMean,
+                               # "qfSpkTempMean" = qfInp$irgaTurb$qfSpkTempMean,
                                #"qfCalTempMean" = qfInp$irgaTurb$qfCalTempMean,
-                               "qfRngPresDiff" = qfInp$irgaTurb$qfRngPresDiff,
-                               "qfStepPresDiff" = qfInp$irgaTurb$qfStepPresDiff,
-                               "qfPersPresDiff" = qfInp$irgaTurb$qfPersPresDiff,
-                               #"qfCalPresDiff" = qfInp$irgaTurb$qfCalPresDiff,
-                               "qfRngPowrH2oSamp" = qfInp$irgaTurb$qfRngPowrH2oSamp,
-                               "qfStepPowrH2oSamp" = qfInp$irgaTurb$qfStepPowrH2oSamp,
-                               "qfPersPowrH2oSamp" = qfInp$irgaTurb$qfPersPowrH2oSamp,
+                               "qfRngPresAtm" = qfInp$irgaTurb$qfRngPresAtm,
+                               "qfStepPresAtm" = qfInp$irgaTurb$qfStepPresAtm,
+                               "qfPersPresAtm" = qfInp$irgaTurb$qfPersPresAtm,
+                               "qfSpkPresAtm" = qfInp$irgaTurb$qfSpkPresAtm,
+                               "qfRngPresSum" = qfInp$irgaTurb$qfRngPresSum,
+                               "qfStepPresSum" = qfInp$irgaTurb$qfStepPresSum,
+                               "qfPersPresSum" = qfInp$irgaTurb$qfPersPresSum,
+                               "qfSpkPresSum" = qfInp$irgaTurb$qfSpkPresSum,
+                               # #"qfCalPresDiff" = qfInp$irgaTurb$qfCalPresDiff,
+                               # "qfRngPowrH2oSamp" = qfInp$irgaTurb$qfRngPowrH2oSamp,
+                               # "qfStepPowrH2oSamp" = qfInp$irgaTurb$qfStepPowrH2oSamp,
+                               # "qfPersPowrH2oSamp" = qfInp$irgaTurb$qfPersPowrH2oSamp,
                                #"qfCalPowrH2oSamp" = qfInp$irgaTurb$qfCalPowrH2oSamp,
-                               "qfRngPowrH2oRefe" = qfInp$irgaTurb$qfRngPowrH2oRefe,
-                               "qfStepPowrH2oRefe" = qfInp$irgaTurb$qfStepPowrH2oRefe,
-                               "qfPersPowrH2oRefe" = qfInp$irgaTurb$qfPersPowrH2oRefe,
+                               # "qfRngPowrH2oRefe" = qfInp$irgaTurb$qfRngPowrH2oRefe,
+                               # "qfStepPowrH2oRefe" = qfInp$irgaTurb$qfStepPowrH2oRefe,
+                               # "qfPersPowrH2oRefe" = qfInp$irgaTurb$qfPersPowrH2oRefe,
                                #"qfCalPowrH2oRefe" = qfInp$irgaTurb$qfCalPowrH2oRefe,
-                               "qfRngAsrpH2o" = qfInp$irgaTurb$qfRngAsrpH2o, 
-                               "qfStepAsrpH2o" = qfInp$irgaTurb$qfStepAsrpH2o, 
-                               "qfPersAsrpH2o" = qfInp$irgaTurb$qfPersAsrpH2o, 
+                               # "qfRngAsrpH2o" = qfInp$irgaTurb$qfRngAsrpH2o, 
+                               # "qfStepAsrpH2o" = qfInp$irgaTurb$qfStepAsrpH2o, 
+                               # "qfPersAsrpH2o" = qfInp$irgaTurb$qfPersAsrpH2o, 
                                #"qfCalAsrpH2o" = qfInp$irgaTurb$qfCalAsrpH2o,
                                "qfRngDensMoleH2o" = qfInp$irgaTurb$qfRngDensMoleH2o, 
                                "qfStepDensMoleH2o" = qfInp$irgaTurb$qfStepDensMoleH2o, 
-                               "qfPersDensMoleH2o" = qfInp$irgaTurb$qfPersDensMoleH2o, 
+                               "qfPersDensMoleH2o" = qfInp$irgaTurb$qfPersDensMoleH2o,
+                               "qfSpkDensMoleH2o" = qfInp$irgaTurb$qfSpkDensMoleH2o)#, 
                                #"qfCalDensMoleH2o" = qfInp$irgaTurb$qfCalDensMoleH2o,
-                               "qfRngSsiH2o" = qfInp$irgaTurb$qfRngSsiH2o, 
-                               "qfStepSsiH2o" = qfInp$irgaTurb$qfStepSsiH2o, 
-                               "qfPersSsiH2o" = qfInp$irgaTurb$qfPersSsiH2o) 
+                               #"qfRngSsiH2o" = qfInp$irgaTurb$qfRngSsiH2o, 
+                               #"qfStepSsiH2o" = qfInp$irgaTurb$qfStepSsiH2o, 
+                               ##"qfPersSsiH2o" = qfInp$irgaTurb$qfPersSsiH2o) 
                                #"qfCalSsiH2o" = qfInp$irgaTurb$qfCalSsiH2o)
       } else {
       setQf$irgaTurb <- data.frame("qfIrgaTurbHead" = -1,
@@ -699,33 +714,39 @@ if (MethMeas == "ecte") {
                                "qfIrgaTurbSync" = -1,
                                "qfIrgaTurbAgc" = -1,
                                "qfIrgaTurbVali" = -1,
-                               "qfRngTempMean" = -1, 
-                               "qfStepTempMean" = -1,
-                               "qfPersTempMean" = -1, 
+                               # "qfRngTempMean" = -1, 
+                               # "qfStepTempMean" = -1,
+                               # "qfPersTempMean" = -1, 
                                #"qfCalTempMean" = -1,
-                               "qfRngPresDiff" = -1,
-                               "qfStepPresDiff" = -1,
-                               "qfPersPresDiff" = -1,
+                               "qfRngPresAtm" = -1,
+                               "qfStepPresAtm" = -1,
+                               "qfPersPresAtm" = -1,
+                               "qfSpkPresAtm" = -1,
+                               "qfRngPresSum" = -1,
+                               "qfStepPresSum" = -1,
+                               "qfPersPresSum" = -1,
+                               "qfSpkPresSum" = -1,
                                #"qfCalPresDiff" = -1,
-                               "qfRngPowrH2oSamp" = -1,
-                               "qfStepPowrH2oSamp" = -1,
-                               "qfPersPowrH2oSamp" = -1,
+                               # "qfRngPowrH2oSamp" = -1,
+                               # "qfStepPowrH2oSamp" = -1,
+                               # "qfPersPowrH2oSamp" = -1,
                                #"qfCalPowrH2oSamp" = -1,
-                               "qfRngPowrH2oRefe" = -1,
-                               "qfStepPowrH2oRefe" = -1,
-                               "qfPersPowrH2oRefe" = -1,
+                               # "qfRngPowrH2oRefe" = -1,
+                               # "qfStepPowrH2oRefe" = -1,
+                               # "qfPersPowrH2oRefe" = -1,
                                #"qfCalPowrH2oRefe" = -1,
-                               "qfRngAsrpH2o" = -1, 
-                               "qfStepAsrpH2o" = -1, 
-                               "qfPersAsrpH2o" = -1, 
+                               # "qfRngAsrpH2o" = -1, 
+                               # "qfStepAsrpH2o" = -1, 
+                               # "qfPersAsrpH2o" = -1, 
                                #"qfCalAsrpH2o" = -1,
                                "qfRngDensMoleH2o" = -1, 
                                "qfStepDensMoleH2o" = -1, 
-                               "qfPersDensMoleH2o" = -1, 
+                               "qfPersDensMoleH2o" = -1,
+                               "qfSpkDensMoleH2o" = -1)#, 
                                #"qfCalDensMoleH2o" = -1,
-                               "qfRngSsiH2o" = -1, 
-                               "qfStepSsiH2o" = -1, 
-                               "qfPersSsiH2o" = -1) 
+                               # "qfRngSsiH2o" = -1, 
+                               # "qfStepSsiH2o" = -1, 
+                               # "qfPersSsiH2o" = -1) 
                                #"qfCalSsiH2o" = -1)   
     }#close if else statement for irgaTurb
     ##TO DO##Considering later when the AMRS is collaborating to correct the SONI data
