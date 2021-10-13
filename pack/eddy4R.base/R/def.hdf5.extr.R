@@ -54,6 +54,8 @@
 #     rename function from def.extr.hdf5() to def.hdf5.extr()
 #   Dave Durden (2018-03-12)
 #     Adding failsafe for rhdf5 metadata attribute on individual dp0p arrays
+#   Dave Durden (2021-10-12)
+#     Copy global attributes by adding file level to listGrp
 ##############################################################################################################
 #Start of function call to extract data from one file and write to another
 ##############################################################################################################
@@ -90,6 +92,9 @@ if(base::is.null(rpt)) {
     
     #List of all object names
     listObjName <- base::paste(listObj$group, listObj$name, sep = "/")
+    
+    #Append global attribute level
+    listObjName <- append("/", listObjName)
   
     
   # Groups for HDF5 group structure
