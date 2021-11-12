@@ -72,8 +72,10 @@
 #     adding one row with qf = -1 in the empty dataframe to eliminate code break in def.qf.finl()
 #   Chris Florian (2021-04-09)
 #     adding ch4Conc to the dp01 list
-#   Chris Florian (2021-12-08)
+#   Chris Florian (2021-11-08)
 #     adding logic to allow for more missing data due to variable picarro sampling frequency
+#   Chris Florian (2021-11-12)
+#     setting the ch4Conc qmBeta weighting to 0.2, this is the lowest weighing we can assign while also flagging intervals that are fully missing
 ##############################################################################################
 
 wrap.dp01.qfqm.eddy <- function(
@@ -95,12 +97,12 @@ wrap.dp01.qfqm.eddy <- function(
   lapply(names(inp), function(x) if (nrow(inp[[x]]) == 0) inp[[x]][1,] <<- -1)
 
   #calculate qmAlpha, qmBeta, qfFinl
-  if (dp01 %in% c("envHut", "co2Turb", "h2oTurb", "co2Stor", "h2oStor", "soni", "soniAmrs", "tempAirLvl", "tempAirTop")){
+  if (dp01 %in% c("envHut", "co2Turb", "h2oTurb", "co2Stor", "isoCo2", "isoH2o", "h2oStor", "soni", "soniAmrs", "tempAirLvl", "tempAirTop")){
     tmp <- lapply(inp, FUN = eddy4R.qaqc::def.qf.finl)
   }
   
-  #set qmBeta weight lower for picarro data products to account for variable sampling frequency
-  if (dp01 %in% c("isoCo2", "ch4Conc", "isoH2o")){
+  #set qmBeta weight lower methane to account for lower sampling frequency
+  if (dp01 %in% c("ch4Conc")){
     tmp <- lapply(inp, FUN = eddy4R.qaqc::def.qf.finl, WghtAlphBeta=c(2,0.2))
   }
   
