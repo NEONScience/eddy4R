@@ -102,12 +102,17 @@ REYNflux_FD_mole_dry <- function(
   # GENERAL CONVERSIONS
   
   # partial pressure of water vapor [Pa = kg m-1 m-2]
-  data$presH2o <- def.pres.h2o.rtio.mole.h2o.dry.pres(
+  data$presH2o <- eddy4R.base::def.pres.h2o.rtio.mole.h2o.dry.pres(
     rtioMoleDryH2o = data$rtioMoleDryH2o,
     pres = data$presAtm)
+  base::attr(x = data$presH2o, which = "unit") <- "Pa"
   
-  #molar density of H2O [mol m-3]
-  data$densMoleH2o <- data$presH2o / eddy4R.base::IntlNatu$Rg / data$tempAir
+  # molar density of H2O [mol m-3]
+  data$densMoleH2o <- eddy4R.base::def.dens.mole.air(
+    presSum = data$presH2o,
+    tempMean = data$tempAir)
+  base::attr(x = data$densMoleH2o, which = "unit") <- "mol m-3"
+
   #total (wet) air density [mol m-3]
   data$densMoleAir <- data$presAtm / eddy4R.base::IntlNatu$Rg / data$tempAir
   #dry air density [mol m-3]
