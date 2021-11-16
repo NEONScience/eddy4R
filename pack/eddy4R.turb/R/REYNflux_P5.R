@@ -101,7 +101,7 @@ REYNflux_FD_mole_dry <- function(
   #-----------------------------------------------------------
   # GENERAL CONVERSIONS
   
-  # partial pressure of water vapor [Pa = kg m-1 m-2]
+  # partial pressure of water vapor [Pa = kg m-1 m-2]; add unit that is missing from def.pres.h2o.rtio.mole.h2o.dry.pres()
   data$presH2o <- eddy4R.base::def.pres.h2o.rtio.mole.h2o.dry.pres(
     rtioMoleDryH2o = data$rtioMoleDryH2o,
     pres = data$presAtm)
@@ -111,12 +111,19 @@ REYNflux_FD_mole_dry <- function(
   data$densMoleH2o <- eddy4R.base::def.dens.mole.air(
     presSum = data$presH2o,
     tempMean = data$tempAir)
+
+  # total (wet) air density [mol m-3]
+  data$densMoleAir <- eddy4R.base::def.dens.mole.air(
+    presSum = data$presAtm,
+    tempMean = data$tempAir)
+  
+  # dry air density [mol m-3]; temporarily change data$densMoleH2o attribute to pass (inconsistent) def.dens.mole.air.dry() unit test
+  base::attr(x = data$densMoleH2o, which = "unit") <- "molH2o m-3"
+  data$densMoleAirDry <- eddy4R.base::def.dens.mole.air.dry(
+    densMoleAir = data$densMoleAir,
+    densMoleH2o = data$densMoleH2o)
   base::attr(x = data$densMoleH2o, which = "unit") <- "mol m-3"
 
-  #total (wet) air density [mol m-3]
-  data$densMoleAir <- data$presAtm / eddy4R.base::IntlNatu$Rg / data$tempAir
-  #dry air density [mol m-3]
-  data$densMoleAirDry <- data$densMoleAir - data$densMoleH2o
   
   #virtual temperature -> the temperature of a moist air parcel at which a theoretical 
   #dry air parcel would have a total pressure and density equal to the moist parcel of air [K]
