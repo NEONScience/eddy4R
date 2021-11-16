@@ -161,8 +161,8 @@ REYNflux_FD_mole_dry <- function(
     mn$PSI_aircraft <- eddy4R.base::def.conv.poly(data=eddy4R.base::def.pol.cart(matrix(colMeans(eddy4R.base::def.cart.pol(eddy4R.base::def.conv.poly(data=data$PSI_aircraft,coefPoly=eddy4R.base::IntlConv$DegRad)), na.rm=TRUE), ncol=2)),coefPoly=eddy4R.base::IntlConv$RadDeg)
   
   #wind direction as vector average
-  data$PSI_uv <- eddy4R.base::def.pol.cart(matrix(c(data$v_met, data$u_met), ncol=2))
-  mn$PSI_uv <- eddy4R.base::def.pol.cart(matrix(c(mn$v_met, mn$u_met), ncol=2))
+  data$PSI_uv <- eddy4R.base::def.pol.cart(matrix(c(data$veloYaxs, data$veloXaxs), ncol=2))
+  mn$PSI_uv <- eddy4R.base::def.pol.cart(matrix(c(mn$veloYaxs, mn$veloXaxs), ncol=2))
   
   
   
@@ -189,7 +189,7 @@ REYNflux_FD_mole_dry <- function(
   BT <- t(B)
   
   #wind in (horizontal) geodetic coordinates
-  U <- rbind(data$v_met, data$u_met, data$w_met)
+  U <- rbind(data$veloYaxs, data$veloXaxs, data$veloZaxs)
   
   #actual rotation
   Urot <- B %*% U
@@ -227,7 +227,7 @@ REYNflux_FD_mole_dry <- function(
   attributes(imfl)$names <- attributes(data)$names
   
   #correct wind direction from (detrended) wind components
-  PSI_uv_dum <- eddy4R.base::def.pol.cart(matrix(c(imfl$v_met + mn$v_met, imfl$u_met + mn$u_met), ncol=2))
+  PSI_uv_dum <- eddy4R.base::def.pol.cart(matrix(c(imfl$veloYaxs + mn$veloYaxs, imfl$veloXaxs + mn$veloXaxs), ncol=2))
   imfl$PSI_uv <- (PSI_uv_dum - mn$PSI_uv)
   rm(PSI_uv_dum)
   #same should be done for PSI_aircraft
@@ -243,9 +243,9 @@ REYNflux_FD_mole_dry <- function(
   ############################################################
   
   #wind deviations in MET coordinates
-  dx <- imfl$v_met
-  dy <- imfl$u_met
-  dz <- imfl$w_met
+  dx <- imfl$veloYaxs
+  dy <- imfl$veloXaxs
+  dz <- imfl$veloZaxs
   
   #stress tensor
   M <- rbind(
@@ -383,7 +383,7 @@ REYNflux_FD_mole_dry <- function(
   
   #turbulence intensity from total wind vector (Stull, Eq. 1.4d)
   #total wind vector
-  tot <- sqrt(data$u_met^2 + data$v_met^2 + data$w_met^2)
+  tot <- sqrt(data$veloXaxs^2 + data$veloYaxs^2 + data$veloZaxs^2)
   #turbulence intensity should be <0.5 to allow for Taylors hypothesis
   mn$I <- sd(tot, na.rm=TRUE) / mean(tot, na.rm=TRUE)
   
