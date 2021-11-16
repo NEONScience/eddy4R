@@ -68,15 +68,29 @@ REYNflux_FD_mole_dry <- function(
   ### rename input data in preparation of terms update (remove after refactoring)
   
     # wind vector
-    data$veloXaxs <- data$u_met; data$u_met <- NULL
-    data$veloYaxs <- data$v_met; data$v_met <- NULL
-    data$veloZaxs <- data$w_met; data$w_met <- NULL
+    data$veloXaxs <- data$u_met
+      data$u_met <- NULL
+      base::attr(x = data$veloXaxs, which = "unit") <- "m s-1"
+    data$veloYaxs <- data$v_met
+      data$v_met <- NULL
+      base::attr(x = data$veloYaxs, which = "unit") <- "m s-1"
+    data$veloZaxs <- data$w_met
+      data$w_met <- NULL
+      base::attr(x = data$veloZaxs, which = "unit") <- "m s-1"
     
     # scalars
-    data$presAtm <- data$p_air; data$p_air <- NULL
-    data$tempAir <- data$T_air; data$T_air <- NULL
-    data$rtioMoleDryH2o <- data$FD_mole_H2O; data$FD_mole_H2O <- NULL
-    data$rtioMoleDryCo2 <- data$FD_mole_CH4; data$FD_mole_CH4 <- NULL
+    data$presAtm <- data$p_air
+      data$p_air <- NULL
+      base::attr(x = data$presAtm, which = "unit") <- "Pa"
+    data$tempAir <- data$T_air
+      data$T_air <- NULL
+      base::attr(x = data$tempAir, which = "unit") <- "K"
+    data$rtioMoleDryH2o <- data$FD_mole_H2O
+      data$FD_mole_H2O <- NULL
+      base::attr(x = data$rtioMoleDryH2o, which = "unit") <- "-"
+    data$rtioMoleDryCo2 <- data$FD_mole_CH4
+      data$FD_mole_CH4 <- NULL
+      base::attr(x = data$rtioMoleDryCo2, which = "unit") <- "-"
   
   
   
@@ -85,17 +99,19 @@ REYNflux_FD_mole_dry <- function(
   ############################################################
   
   #-----------------------------------------------------------
-  #GENERAL CONVERSIONS
+  # GENERAL CONVERSIONS
   
-  #partial pressure of water vapor
-  data$presH2o <- data$presAtm * data$rtioMoleDryH2o / (1 + data$rtioMoleDryH2o)
+  # partial pressure of water vapor [Pa = kg m-1 m-2]
+  data$presH2o <- def.pres.h2o.rtio.mole.h2o.dry.pres(
+    rtioMoleDryH2o = data$rtioMoleDryH2o,
+    pres = data$presAtm)
+  
   #molar density of H2O [mol m-3]
   data$densMoleH2o <- data$presH2o / eddy4R.base::IntlNatu$Rg / data$tempAir
   #total (wet) air density [mol m-3]
   data$densMoleAir <- data$presAtm / eddy4R.base::IntlNatu$Rg / data$tempAir
   #dry air density [mol m-3]
   data$densMoleAirDry <- data$densMoleAir - data$densMoleH2o
-
   
   #virtual temperature -> the temperature of a moist air parcel at which a theoretical 
   #dry air parcel would have a total pressure and density equal to the moist parcel of air [K]
