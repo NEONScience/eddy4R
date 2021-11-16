@@ -65,6 +65,21 @@ REYNflux_FD_mole_dry <- function(
 )
 {
   
+  ### rename input data in preparation of terms update (remove after refactoring)
+  
+    # wind vector
+    data$veloXaxs <- data$u_met; data$u_met <- NULL
+    data$veloYaxs <- data$v_met; data$v_met <- NULL
+    data$veloZaxs <- data$w_met; data$w_met <- NULL
+    
+    # scalars
+    data$presAtm <- data$p_air; data$p_air <- NULL
+    data$tempAir <- data$T_air; data$T_air <- NULL
+    data$rtioMoleDryH2o <- data$FD_mole_H2O; data$FD_mole_H2O <- NULL
+    data$rtioMoleDryCo2 <- data$FD_mole_CH4; data$FD_mole_CH4 <- NULL
+  
+  
+  
   ############################################################
   #THERMODYNAMICS: MOISTURE, DENSITIES AND TEMPERATURES
   ############################################################
