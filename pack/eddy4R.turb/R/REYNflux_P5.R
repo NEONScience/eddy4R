@@ -88,20 +88,20 @@ REYNflux_FD_mole_dry <- function(
   #GENERAL CONVERSIONS
   
   #partial pressure of water vapor
-  data$p_H2O <- data$presAtm * data$rtioMoleDryH2o / (1 + data$rtioMoleDryH2o)
-  #partial density of H2O
-  data$rho_H2O <- data$p_H2O / eddy4R.base::IntlNatu$Rg / data$tempAir
+  data$presH2o <- data$presAtm * data$rtioMoleDryH2o / (1 + data$rtioMoleDryH2o)
+  #molar density of H2O [mol m-3]
+  data$densMoleH2o <- data$presH2o / eddy4R.base::IntlNatu$Rg / data$tempAir
   #total (wet) air density [mol m-3]
-  data$rho_air <- data$presAtm / eddy4R.base::IntlNatu$Rg / data$tempAir
+  data$densMoleAir <- data$presAtm / eddy4R.base::IntlNatu$Rg / data$tempAir
   #dry air density [mol m-3]
-  data$rho_dry <- data$rho_air - data$rho_H2O
+  data$densMoleAirDry <- data$densMoleAir - data$densMoleH2o
 
   
   #virtual temperature -> the temperature of a moist air parcel at which a theoretical 
   #dry air parcel would have a total pressure and density equal to the moist parcel of air [K]
   #http://en.wikipedia.org/wiki/Virtual_temperature
   #    data$T_v <- data$Temp * (1 + 0.61 * data$q)
-  data$T_v <- data$tempAir / (1 - ((data$p_H2O / data$presAtm) * (1 - eddy4R.base::IntlNatu$RtioMolmH2oDry)) )
+  data$T_v <- data$tempAir / (1 - ((data$presH2o / data$presAtm) * (1 - eddy4R.base::IntlNatu$RtioMolmH2oDry)) )
   #latent heat of vaporization (Eq 2.55 Foken 2008) [J kg-1] == [m2 s-2]
   data$Lv <- 2500827 - 2360 * eddy4R.base::def.unit.conv(data=as.numeric(data$tempAir),unitFrom="K",unitTo="C")
   
@@ -110,10 +110,10 @@ REYNflux_FD_mole_dry <- function(
   
   #cp as function of humidity (Webb 1980 Eq 40) [J kg-1 K-1] == [m2 s-2 K-1]
   #dry mole fraction fomulation identical to within 1e-13
-  #data$cph <- (eddy4R.base::IntlNatu$CpDry * data$rho_dry + eddy4R.base::IntlNatu$CpH2o * data$rho_H2O) / data$rho_air
+  #data$cph <- (eddy4R.base::IntlNatu$CpDry * data$densMoleAirDry + eddy4R.base::IntlNatu$CpH2o * data$densMoleH2o) / data$densMoleAir
   data$cph <- (eddy4R.base::IntlNatu$CpDry * 1 + eddy4R.base::IntlNatu$CpH2o * data$rtioMoleDryH2o) / (1 + data$rtioMoleDryH2o)
   #cv as function of humidity  [J kg-1 K-1] == [m2 s-2 K-1]
-  #data$cvh <- (eddy4R.base::IntlNatu$CvDry * data$rho_dry + eddy4R.base::IntlNatu$CvH2o * data$rho_H2O) / data$rho_air
+  #data$cvh <- (eddy4R.base::IntlNatu$CvDry * data$densMoleAirDry + eddy4R.base::IntlNatu$CvH2o * data$densMoleH2o) / data$densMoleAir
   data$cvh <- (eddy4R.base::IntlNatu$CvDry * 1 + eddy4R.base::IntlNatu$CvH2o * data$rtioMoleDryH2o) / (1 + data$rtioMoleDryH2o)
   #specific gas constant for humid air  [J kg-1 K-1] == [m2 s-2 K-1]
   data$Rh <- data$cph - data$cvh
@@ -138,11 +138,11 @@ REYNflux_FD_mole_dry <- function(
     data$tempAir <- eddy4R.base::def.temp.pres.pois(temp01=data$tempAir, pres01=data$presAtm, pres02=plevel, Kppa=mn$Kah)      
     #potential densities at mean pressure level      
     #dry air
-    data$rho_dry <- eddy4R.base::def.dens.pres.pois(dens01=data$rho_dry, pres01=data$presAtm, pres02=plevel, Kppa=mn$Kah)
+    data$densMoleAirDry <- eddy4R.base::def.dens.pres.pois(dens01=data$densMoleAirDry, pres01=data$presAtm, pres02=plevel, Kppa=mn$Kah)
     #H2O
-    data$rho_H2O <- eddy4R.base::def.dens.pres.pois(dens01=data$rho_H2O, pres01=data$presAtm, pres02=plevel, Kppa=mn$Kah)
+    data$densMoleH2o <- eddy4R.base::def.dens.pres.pois(dens01=data$densMoleH2o, pres01=data$presAtm, pres02=plevel, Kppa=mn$Kah)
     #wet air
-    data$rho_air <- eddy4R.base::def.dens.pres.pois(dens01=data$rho_air, pres01=data$presAtm, pres02=plevel, Kppa=mn$Kah)
+    data$densMoleAir <- eddy4R.base::def.dens.pres.pois(dens01=data$densMoleAir, pres01=data$presAtm, pres02=plevel, Kppa=mn$Kah)
     #clean up
     rm(plevel)
   }
@@ -313,7 +313,7 @@ REYNflux_FD_mole_dry <- function(
   mn$F_H_kin <- mean(imfl$F_H_kin, na.rm=TRUE)
   
   #conversion to units of energy [W m-2] == [kg s-3]
-  imfl$F_H_en <- (eddy4R.base::IntlNatu$CpDry * base$rho_dry * eddy4R.base::IntlNatu$MolmDry + eddy4R.base::IntlNatu$CpH2o * base$rho_H2O * eddy4R.base::IntlNatu$MolmH2o) * imfl$F_H_kin
+  imfl$F_H_en <- (eddy4R.base::IntlNatu$CpDry * base$densMoleAirDry * eddy4R.base::IntlNatu$MolmDry + eddy4R.base::IntlNatu$CpH2o * base$densMoleH2o * eddy4R.base::IntlNatu$MolmH2o) * imfl$F_H_kin
   mn$F_H_en <- mean(imfl$F_H_en, na.rm=TRUE)
   
   #BUOYANCY FLUX considering water vapor buoyancy and NIST standard pressure (1013.15 hPa) reference (virt. pot. temp.) -> z/L
@@ -333,7 +333,7 @@ REYNflux_FD_mole_dry <- function(
   ############################################################
   
   #latent heat flux in kinematic units [mol m-2 s-1]
-  imfl$F_LE_kin <- base$rho_dry * imfl$w_hor * imfl$rtioMoleDryH2o
+  imfl$F_LE_kin <- base$densMoleAirDry * imfl$w_hor * imfl$rtioMoleDryH2o
   mn$F_LE_kin <- mean(imfl$F_LE_kin, na.rm=TRUE)
   #latent heat flux in units of energy  [W m-2] == [kg s-3]
   imfl$F_LE_en <- base$Lv * eddy4R.base::IntlNatu$MolmH2o * imfl$F_LE_kin
@@ -347,7 +347,7 @@ REYNflux_FD_mole_dry <- function(
   ############################################################
   if(flagCh4 == TRUE){
     #CH4 flux in kinematic units [mol m-2 s-1]
-    imfl$F_CH4_kin <- base$rho_dry * imfl$w_hor * imfl$rtioMoleDryCo2
+    imfl$F_CH4_kin <- base$densMoleAirDry * imfl$w_hor * imfl$rtioMoleDryCo2
     mn$F_CH4_kin <- mean(imfl$F_CH4_kin, na.rm=TRUE)
     #CH4 flux in mass units [mg m-2 h-1]
     imfl$F_CH4_mass <- imfl$F_CH4_kin * eddy4R.base::IntlNatu$MolmCh4 * 1e6 * 3600
@@ -409,9 +409,9 @@ REYNflux_FD_mole_dry <- function(
   
   #humidity scale (eddy moisture fluctuations) [mol mol-1 dry air]
   #surface layer
-  mn$rtioMoleDryH2o_star_SL <- - mean(mn$F_LE_kin / base$rho_dry, na.rm=TRUE) / mn$u_star
+  mn$rtioMoleDryH2o_star_SL <- - mean(mn$F_LE_kin / base$densMoleAirDry, na.rm=TRUE) / mn$u_star
   #mixed layer layer
-  mn$rtioMoleDryH2o_star_ML <-   mean(mn$F_LE_kin / base$rho_dry, na.rm=TRUE) / mn$w_star 
+  mn$rtioMoleDryH2o_star_ML <-   mean(mn$F_LE_kin / base$densMoleAirDry, na.rm=TRUE) / mn$w_star 
 
   #clean up
   rm(tot)
