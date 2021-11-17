@@ -169,6 +169,8 @@ REYNflux_FD_mole_dry <- function(
     # changelog and author contributions / copyrights
     #   Stefan Metzger (2011-03-04)
     #     original creation
+    #   Stefan Metzger (2021-11-16)
+    #     update to eddy4R terminology and modularize into definition function
     ###############################################################################################
     
     # molar density of the mixture of dry air and water vapor
@@ -270,6 +272,8 @@ REYNflux_FD_mole_dry <- function(
     # changelog and author contributions / copyrights
     #   Stefan Metzger (2011-03-04)
     #     original creation
+    #   Stefan Metzger (2021-11-17)
+    #     update to eddy4R terminology and modularize into definition function
     ###############################################################################################
     
     # latent heat of vaporization
@@ -351,6 +355,8 @@ REYNflux_FD_mole_dry <- function(
     # changelog and author contributions / copyrights
     #   Stefan Metzger (2011-03-04)
     #     original creation
+    #   Stefan Metzger (2021-11-17)
+    #     update to eddy4R terminology and modularize into definition function
     ###############################################################################################
     
     # thermodynamic properties of a mix of dry air and water vapor
