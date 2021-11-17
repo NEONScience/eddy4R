@@ -216,6 +216,8 @@ REYNflux_FD_mole_dry <- function(
       
       # calculate the virtual temperature
       tempVirt <- tempAir / (1 - ((presH2o / presAtm) * (1 - eddy4R.base::IntlNatu$RtioMolmH2oDry)) )
+      
+      # alternate formulation based on specific humidity (retained for future extensibility): tempVirt <- tempAir * (1 + 0.61 * q)
   
       # assign output unit
       attributes(tempVirt)$unit <- "K"
