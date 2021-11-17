@@ -154,12 +154,12 @@ REYNflux_FD_mole_dry <- function(
     #' Example 1, this will cause an error message due to tempAir, presH2o, presAtm have no units:
     #' def.temp.virt.temp.air.pres.h2o.pres.atm(tempAir = 268, presH2o = 30, presAtm = 93344)
     #' Example 2, assign values and units to variables first, the function should run ok.
-    #' tempAir = 268
-    #' presH2o = 30
-    #' presAtm = 93344
-    #' attributes(tempAir)$unit = "K"
-    #' attributes(presH2o)$unit = "Pa"
-    #' attributes(presAtm)$unit = "Pa"
+    #' tempAir <- 268
+    #' presH2o <- 30
+    #' presAtm <- 93344
+    #' attributes(tempAir)$unit <- "K"
+    #' attributes(presH2o)$unit <- "Pa"
+    #' attributes(presAtm)$unit <- "Pa"
     #' def.temp.virt.temp.air.pres.h2o.pres.atm(tempAir, presH2o, presAtm)
     
     #' @seealso Currently none.
@@ -259,8 +259,8 @@ REYNflux_FD_mole_dry <- function(
     #' Example 1, this will cause an error message due to tempAir has no unit:
     #' def.heat.h2o.gas.temp(tempAir = 268)
     #' Example 2, assign values and units to variables first, the function should run ok.
-    #' tempAir = 268
-    #' attributes(tempAir)$unit = "K"
+    #' tempAir <- 268
+    #' attributes(tempAir)$unit <- "K"
     #' def.heat.h2o.gas.temp(tempAir)
     
     #' @seealso Currently none.
@@ -309,34 +309,120 @@ REYNflux_FD_mole_dry <- function(
   }
   # actual calculation
   data$heatH2oGas <- def.heat.h2o.gas.temp(tempAir = data$tempAir)
+
+  # Thermodynamic properties of a mix of dry air and water vapor
+  # definition function (to be exported)
+  {
+    ##############################################################################################
+    #' @title Definition function: Calculation of the thermodynamic properties of a mix of dry air and water vapor
+    
+    #' @author
+    #' Stefan Metzger \email{eddy4R.info@gmail.com}
+    
+    #' @description Function definition. Calculation of the thermodynamic properties of a mix of dry air and water vapor.
+    
+    #' @param rtioMoleDryH2o A vector containing the water vapor dry mole fraction, of class "numeric". [-]
+    
+    #' @return 
+    #' The returned object is a data frame with the same number of observations as rtioMoleDryH2o, containing the following variables:
+    #'    $cpWet: specific heat at constant pressure of dry air + water vapor mix. [J kg-1 K-1]
+    #'    $cvWet: specific heat at constant volume of dry air + water vapor mix. [J kg-1 K-1]
+    #'    $rsWet: specific gas constant. [J kg-1 K-1]
+    #'    $gmmaWet: ratio of specific heat at constant pressure to specific heat at constant volume. [-]
+    #'    $kppaWet: Kappa exponent for ideal gas law (Poisson's equation of adiabatic change). [-]
+    
+    #' @references
+    #' License: GNU AFFERO GENERAL PUBLIC LICENSE Version 3, 19 November 2007
+    
+    #' @keywords thermodynamics, adiabatic change, water vapor, constant
+    
+    #' @examples
+    #' Example 1, this will cause an error message due to tempAir has no unit:
+    #' def.natu.air.wet(rtioMoleDryH2o = 0.0003)
+    #' Example 2, assign values and units to variables first, the function should run ok.
+    #' rtioMoleDryH2o <- 0.0003
+    #' attributes(rtioMoleDryH2o)$unit <- "-"
+    #' def.natu.air.wet(rtioMoleDryH2o)
+    
+    #' @seealso Currently none.
+    
+    #' @export
+    
+    # changelog and author contributions / copyrights
+    #   Stefan Metzger (2011-03-04)
+    #     original creation
+    ###############################################################################################
+    
+    # thermodynamic properties of a mix of dry air and water vapor
+    def.natu.air.wet <- function(
+      
+      # water vapor dry mole fraction
+      rtioMoleDryH2o
+      
+    ) {
+      
+      # test for presence of unit attribute
+      
+      if(!("unit" %in% names(attributes(rtioMoleDryH2o)))) {
+        
+        stop("def.natu.air.wet(): rtioMoleDryH2o is missing unit attribute.")
+        
+      }
+      
+      # test for correct units of input variables
+      if(attributes(rtioMoleDryH2o)$unit != "-") {
+        
+        stop("def.natu.air.wet(): input units are not matching internal units, please check.")
+        
+      }
+      
+      # perform calculations
+      
+        # initialize data frame  
+        # calculate specific heat at constant pressure as function of humidity (Webb 1980 Eq 40) [J kg-1 K-1] == [m2 s-2 K-1]
+        # density-based formulation identical to within 1e-13 (keep here for future extensibility)
+        # natuAirWet$cpWet <- (eddy4R.base::IntlNatu$CpDry * densMoleAirDry + eddy4R.base::IntlNatu$CpH2o * densMoleH2o) / densMoleAir
+        natuAirWet <- data.frame(cpWet = (eddy4R.base::IntlNatu$CpDry * 1 + eddy4R.base::IntlNatu$CpH2o * rtioMoleDryH2o) / (1 + rtioMoleDryH2o))
+        attr(natuAirWet$cpWet,"unit") <- "J kg-1 K-1"
+        
+        # calculate specific heat at constant volume as function of humidity [J kg-1 K-1] == [m2 s-2 K-1]
+        # natuAirWet$cvWet <- (eddy4R.base::IntlNatu$CvDry * densMoleAirDry + eddy4R.base::IntlNatu$CvH2o * densMoleH2o) / densMoleAir
+        natuAirWet$cvWet <- (eddy4R.base::IntlNatu$CvDry * 1 + eddy4R.base::IntlNatu$CvH2o * rtioMoleDryH2o) / (1 + rtioMoleDryH2o)
+        attr(natuAirWet$cvWet,"unit") <- "J kg-1 K-1"
+        
+        # calculate specific gas constant as function of humidity [J kg-1 K-1] == [m2 s-2 K-1]
+        natuAirWet$rsWet <- natuAirWet$cpWet - natuAirWet$cvWet
+        attr(natuAirWet$rsWet,"unit") <- "J kg-1 K-1"
+        
+        # calculate ratio of specific heat at constant pressure to specific heat at constant volume as function of humidity [-]
+        natuAirWet$gmmaWet <- natuAirWet$cpWet / natuAirWet$cvWet
+        attr(natuAirWet$gmmaWet,"unit") <- "-"
+        
+        # calculate kappa exponent for ideal gas law (Poisson) as function of humidity [-]
+        natuAirWet$kppaWet <- natuAirWet$rsWet / natuAirWet$cpWet
+        attr(natuAirWet$kppaWet,"unit") <- "-"
+      
+      # return results
+      return(natuAirWet) 
+      
+    }
+  }
+  # actual calculation
+  data <- base::cbind(data, def.natu.air.wet(rtioMoleDryH2o = data$rtioMoleDryH2o))
   
 
   
-  
-  
-  #-----------------------------------------------------------
-  #CONSIDER HUMIDITY IN DRY ADIABATIC CONSTANT
-  
-  #cp as function of humidity (Webb 1980 Eq 40) [J kg-1 K-1] == [m2 s-2 K-1]
-  #dry mole fraction fomulation identical to within 1e-13
-  #data$cph <- (eddy4R.base::IntlNatu$CpDry * data$densMoleAirDry + eddy4R.base::IntlNatu$CpH2o * data$densMoleH2o) / data$densMoleAir
-  data$cph <- (eddy4R.base::IntlNatu$CpDry * 1 + eddy4R.base::IntlNatu$CpH2o * data$rtioMoleDryH2o) / (1 + data$rtioMoleDryH2o)
-  #cv as function of humidity  [J kg-1 K-1] == [m2 s-2 K-1]
-  #data$cvh <- (eddy4R.base::IntlNatu$CvDry * data$densMoleAirDry + eddy4R.base::IntlNatu$CvH2o * data$densMoleH2o) / data$densMoleAir
-  data$cvh <- (eddy4R.base::IntlNatu$CvDry * 1 + eddy4R.base::IntlNatu$CvH2o * data$rtioMoleDryH2o) / (1 + data$rtioMoleDryH2o)
-  #specific gas constant for humid air  [J kg-1 K-1] == [m2 s-2 K-1]
-  data$Rh <- data$cph - data$cvh
-  #Kappa exponent for ideal gas law (Poisson) [-]
-  data$Kah <- data$Rh / data$cph
-  mn <- data.frame(Kah=mean(data$Kah, na.rm=TRUE))
+
   
   #-----------------------------------------------------------
   #POTENTIAL TEMPERATURE AND DENSITIES
+  
+  mn <- data.frame(Kah=mean(data$kppaWet, na.rm=TRUE))
 
   #potential temperature at NIST standard pressure (1013.15 hPa) [K]
-  data$tempAir_0 <- eddy4R.base::def.temp.pres.pois(temp01=data$tempAir, pres01=data$presAtm, pres02=eddy4R.base::IntlNatu$Pres00, Kppa=mn$Kah)
+  data$tempAir_0 <- eddy4R.base::def.temp.pres.pois(temp01=data$tempAir, pres01=data$presAtm, pres02=eddy4R.base::IntlNatu$Pres00, Kppa=mn$kppaWet)
   #virtual potential temperature at NIST standard pressure (1013.15 hPa) [K]
-  data$T_v_0 <- eddy4R.base::def.temp.pres.pois(temp01=data$T_v, pres01=data$presAtm, pres02=eddy4R.base::IntlNatu$Pres00, Kppa=mn$Kah)
+  data$T_v_0 <- eddy4R.base::def.temp.pres.pois(temp01=data$T_v, pres01=data$presAtm, pres02=eddy4R.base::IntlNatu$Pres00, Kppa=mn$kppaWet)
   
   
   #use potential temperature and densities?
@@ -344,14 +430,14 @@ REYNflux_FD_mole_dry <- function(
     #define pressure level
     plevel <- ifelse(!is.null(FcorPOTl), FcorPOTl, mean(data$presAtm, na.rm=TRUE) )
     #potential temperature at mean pressure level
-    data$tempAir <- eddy4R.base::def.temp.pres.pois(temp01=data$tempAir, pres01=data$presAtm, pres02=plevel, Kppa=mn$Kah)      
+    data$tempAir <- eddy4R.base::def.temp.pres.pois(temp01=data$tempAir, pres01=data$presAtm, pres02=plevel, Kppa=mn$kppaWet)      
     #potential densities at mean pressure level      
     #dry air
-    data$densMoleAirDry <- eddy4R.base::def.dens.pres.pois(dens01=data$densMoleAirDry, pres01=data$presAtm, pres02=plevel, Kppa=mn$Kah)
+    data$densMoleAirDry <- eddy4R.base::def.dens.pres.pois(dens01=data$densMoleAirDry, pres01=data$presAtm, pres02=plevel, Kppa=mn$kppaWet)
     #H2O
-    data$densMoleH2o <- eddy4R.base::def.dens.pres.pois(dens01=data$densMoleH2o, pres01=data$presAtm, pres02=plevel, Kppa=mn$Kah)
+    data$densMoleH2o <- eddy4R.base::def.dens.pres.pois(dens01=data$densMoleH2o, pres01=data$presAtm, pres02=plevel, Kppa=mn$kppaWet)
     #wet air
-    data$densMoleAir <- eddy4R.base::def.dens.pres.pois(dens01=data$densMoleAir, pres01=data$presAtm, pres02=plevel, Kppa=mn$Kah)
+    data$densMoleAir <- eddy4R.base::def.dens.pres.pois(dens01=data$densMoleAir, pres01=data$presAtm, pres02=plevel, Kppa=mn$kppaWet)
     #clean up
     rm(plevel)
   }
