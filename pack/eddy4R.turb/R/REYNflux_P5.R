@@ -423,30 +423,43 @@ REYNflux_FD_mole_dry <- function(
   #-----------------------------------------------------------
   #POTENTIAL TEMPERATURE AND DENSITIES
   
-  mn <- data.frame(Kah=mean(data$kppaWet, na.rm=TRUE))
-
-  #potential temperature at NIST standard pressure (1013.15 hPa) [K]
-  data$tempAir_0 <- eddy4R.base::def.temp.pres.pois(temp01=data$tempAir, pres01=data$presAtm, pres02=eddy4R.base::IntlNatu$Pres00, Kppa=mn$kppaWet)
-  #virtual potential temperature at NIST standard pressure (1013.15 hPa) [K]
-  data$T_v_0 <- eddy4R.base::def.temp.pres.pois(temp01=data$T_v, pres01=data$presAtm, pres02=eddy4R.base::IntlNatu$Pres00, Kppa=mn$kppaWet)
+  # mean kappa exponent for ideal gas law (Poisson) as function of humidity
+  KppaWet <- base::mean(data$kppaWet, na.rm = TRUE)
+  attr(KppaWet,"unit") <- "-"
   
+  # potential temperature at NIST standard pressure (1013.15 hPa) [K]; here only for completeness (not further used)
+  data$tempPot00 <- eddy4R.base::def.temp.pres.pois(
+    temp01 = data$tempAir,
+    pres01 = data$presAtm,
+    pres02 = eddy4R.base::IntlNatu$Pres00,
+    Kppa = KppaWet)
   
-  #use potential temperature and densities?
+  # virtual potential temperature at NIST standard pressure (1013.15 hPa) [K]; used to calculate buoyancy flux, stability, Deardorff velocity
+  data$tempVirtPot00 <- eddy4R.base::def.temp.pres.pois(
+    temp01 = data$tempVirt,
+    pres01 = data$presAtm,
+    pres02 = eddy4R.base::IntlNatu$Pres00,
+    Kppa = KppaWet)
+  
+  # use potential temperature and densities?
   if(FcorPOT == TRUE) {
     #define pressure level
     plevel <- ifelse(!is.null(FcorPOTl), FcorPOTl, mean(data$presAtm, na.rm=TRUE) )
     #potential temperature at mean pressure level
-    data$tempAir <- eddy4R.base::def.temp.pres.pois(temp01=data$tempAir, pres01=data$presAtm, pres02=plevel, Kppa=mn$kppaWet)      
+    data$tempAir <- eddy4R.base::def.temp.pres.pois(temp01=data$tempAir, pres01=data$presAtm, pres02=plevel, Kppa=KppaWet)      
     #potential densities at mean pressure level      
     #dry air
-    data$densMoleAirDry <- eddy4R.base::def.dens.pres.pois(dens01=data$densMoleAirDry, pres01=data$presAtm, pres02=plevel, Kppa=mn$kppaWet)
+    data$densMoleAirDry <- eddy4R.base::def.dens.pres.pois(dens01=data$densMoleAirDry, pres01=data$presAtm, pres02=plevel, Kppa=KppaWet)
     #H2O
-    data$densMoleH2o <- eddy4R.base::def.dens.pres.pois(dens01=data$densMoleH2o, pres01=data$presAtm, pres02=plevel, Kppa=mn$kppaWet)
+    data$densMoleH2o <- eddy4R.base::def.dens.pres.pois(dens01=data$densMoleH2o, pres01=data$presAtm, pres02=plevel, Kppa=KppaWet)
     #wet air
-    data$densMoleAir <- eddy4R.base::def.dens.pres.pois(dens01=data$densMoleAir, pres01=data$presAtm, pres02=plevel, Kppa=mn$kppaWet)
+    data$densMoleAir <- eddy4R.base::def.dens.pres.pois(dens01=data$densMoleAir, pres01=data$presAtm, pres02=plevel, Kppa=KppaWet)
     #clean up
     rm(plevel)
   }
+  
+  # clean up
+  base::rm(KppaWet)
   
   
   ############################################################
@@ -619,13 +632,13 @@ REYNflux_FD_mole_dry <- function(
   
   #BUOYANCY FLUX considering water vapor buoyancy and NIST standard pressure (1013.15 hPa) reference (virt. pot. temp.) -> z/L
   #flux in kinematic units  [K m s-1]
-  imfl$F_H_kin_v_0 <- imfl$w_hor * imfl$T_v_0
+  imfl$F_H_kin_v_0 <- imfl$w_hor * imfl$tempVirtPot00
   mn$F_H_kin_v_0 <- mean(imfl$F_H_kin_v_0, na.rm=TRUE)
   
   #CORRELATIONS
   cor$F_H_kin <- stats::cor(imfl$w_hor, imfl$tempAir, use="pairwise.complete.obs")
   cor$F_H_en <- cor$F_H_kin
-  cor$F_H_kin_v_0 <- stats::cor(imfl$w_hor, imfl$T_v_0, use="pairwise.complete.obs")
+  cor$F_H_kin_v_0 <- stats::cor(imfl$w_hor, imfl$tempVirtPot00, use="pairwise.complete.obs")
   
   
   
@@ -689,14 +702,14 @@ REYNflux_FD_mole_dry <- function(
   mn$I <- sd(tot, na.rm=TRUE) / mean(tot, na.rm=TRUE)
   
   #Obukhov length (used positive g!)
-  mn$d_L_v_0 <- (-(((mn$u_star)^3 / (eddy4R.base::IntlNatu$VonkFokn * eddy4R.base::IntlNatu$Grav / mn$T_v_0 * mn$F_H_kin_v_0 ))))
+  mn$d_L_v_0 <- (-(((mn$u_star)^3 / (eddy4R.base::IntlNatu$VonkFokn * eddy4R.base::IntlNatu$Grav / mn$tempVirtPot00 * mn$F_H_kin_v_0 ))))
   
   #stability
   mn$sigma <- mn$d_z_m / mn$d_L_v_0
   
   #convective (Deardorff) velocity [m s-1]
   #missing values in Deardorff velocity and resulting variables when buoyancy flux is negative!
-  mn$w_star <- ( eddy4R.base::IntlNatu$Grav * mn$d_z_ABL / mn$T_v_0 * mn$F_H_kin_v_0 )^(1/3)
+  mn$w_star <- ( eddy4R.base::IntlNatu$Grav * mn$d_z_ABL / mn$tempVirtPot00 * mn$F_H_kin_v_0 )^(1/3)
   
   #(free) convective time scale [s], often in the order of 5-15 min
   mn$t_star <- mn$d_z_ABL / mn$w_star
