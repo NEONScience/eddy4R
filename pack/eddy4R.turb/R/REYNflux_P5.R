@@ -53,11 +53,11 @@
 
 
 REYNflux_FD_mole_dry <- function(
-  data=eddy.data,
-  AlgBase=c("mean", "trnd", "ord03")[1],
-  FcorPOT=TRUE,
-  FcorPOTl=NULL,
-  PltfEc="airc",
+  data = eddy.data,
+  AlgBase = c("mean", "trnd", "ord03")[1],
+  slctPot = TRUE,
+  presPot = NULL,
+  PltfEc = "airc",
   flagCh4 = TRUE,
   spcs = NULL,
   rmm = NULL,
@@ -442,9 +442,9 @@ REYNflux_FD_mole_dry <- function(
     Kppa = KppaWet)
   
   # use potential temperature and densities?
-  if(FcorPOT == TRUE) {
+  if(slctPot == TRUE) {
     #define pressure level
-    plevel <- ifelse(!is.null(FcorPOTl), FcorPOTl, mean(data$presAtm, na.rm=TRUE) )
+    plevel <- ifelse(!is.null(presPot), presPot, mean(data$presAtm, na.rm=TRUE) )
     #potential temperature at mean pressure level
     data$tempAir <- eddy4R.base::def.temp.pres.pois(temp01=data$tempAir, pres01=data$presAtm, pres02=plevel, Kppa=KppaWet)      
     #potential densities at mean pressure level      
