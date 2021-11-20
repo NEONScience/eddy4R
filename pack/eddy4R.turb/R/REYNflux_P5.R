@@ -65,7 +65,7 @@ REYNflux_FD_mole_dry <- function(
 )
 {
   
-  ### rename input data in preparation of terms update (remove after refactoring)
+  ### rename input data in preparation of terms update (replace with unit test when completing refactoring)
   
     # wind vector
     data$veloXaxs <- data$u_met
@@ -95,7 +95,7 @@ REYNflux_FD_mole_dry <- function(
   
   
   ############################################################
-  #THERMODYNAMICS: MOISTURE, DENSITIES AND TEMPERATURES
+  # THERMODYNAMICS: MOISTURE, DENSITIES AND TEMPERATURES
   ############################################################
   
   #-----------------------------------------------------------
@@ -415,14 +415,11 @@ REYNflux_FD_mole_dry <- function(
   }
   # actual calculation
   data <- base::cbind(data, def.natu.air.wet(rtioMoleDryH2o = data$rtioMoleDryH2o))
-  
-
-  
 
   
   #-----------------------------------------------------------
-  #POTENTIAL TEMPERATURE AND DENSITIES
-  
+  # POTENTIAL TEMPERATURE AND DENSITIES
+  {
   # mean kappa exponent for ideal gas law (Poisson) as function of humidity
   KppaWet <- base::mean(data$kppaWet, na.rm = TRUE)
   attr(KppaWet,"unit") <- "-"
@@ -443,23 +440,62 @@ REYNflux_FD_mole_dry <- function(
   
   # use potential temperature and densities?
   if(slctPot == TRUE) {
-    #define pressure level
-    plevel <- ifelse(!is.null(presPot), presPot, mean(data$presAtm, na.rm=TRUE) )
-    #potential temperature at mean pressure level
-    data$tempAir <- eddy4R.base::def.temp.pres.pois(temp01=data$tempAir, pres01=data$presAtm, pres02=plevel, Kppa=KppaWet)      
-    #potential densities at mean pressure level      
-    #dry air
-    data$densMoleAirDry <- eddy4R.base::def.dens.pres.pois(dens01=data$densMoleAirDry, pres01=data$presAtm, pres02=plevel, Kppa=KppaWet)
-    #H2O
-    data$densMoleH2o <- eddy4R.base::def.dens.pres.pois(dens01=data$densMoleH2o, pres01=data$presAtm, pres02=plevel, Kppa=KppaWet)
-    #wet air
-    data$densMoleAir <- eddy4R.base::def.dens.pres.pois(dens01=data$densMoleAir, pres01=data$presAtm, pres02=plevel, Kppa=KppaWet)
-    #clean up
-    rm(plevel)
+    
+    # check correct units if potential pressure reference is provided
+    if(!is.null(presPot)){
+    
+      # test for presence of unit attribute
+      if(!("unit" %in% names(attributes(presPot)))) {
+        stop("presPot is missing unit attribute.")}
+      
+      # test for correct unit
+      if(attributes(presPot)$unit != "Pa") {
+        stop("presPot units are not matching internal units, please check.")}
+      
+    }
+    
+    # define pressure level for potential quantities
+    presPotLoca <- ifelse(!is.null(presPot), presPot, base::mean(data$presAtm, na.rm=TRUE))
+    base::attr(x = presPotLoca, which = "unit") <- "Pa"
+    
+    # potential temperature at defined pressure level
+    data$tempAir <- eddy4R.base::def.temp.pres.pois(
+      temp01 = data$tempAir,
+      pres01 = data$presAtm,
+      pres02 = presPotLoca,
+      Kppa = KppaWet)
+    
+    # potential densities at defined pressure level
+    
+      # dry air
+      data$densMoleAirDry <- eddy4R.base::def.dens.pres.pois(
+        dens01 = data$densMoleAirDry,
+        pres01 = data$presAtm,
+        pres02 = presPotLoca,
+        Kppa = KppaWet)
+      
+      # H2O
+      data$densMoleH2o <- eddy4R.base::def.dens.pres.pois(
+        dens01 = data$densMoleH2o,
+        pres01 = data$presAtm,
+        pres02 = presPotLoca,
+        Kppa=KppaWet)
+      
+      # wet air
+      data$densMoleAir <- eddy4R.base::def.dens.pres.pois(
+        dens01 = data$densMoleAir,
+        pres01 = data$presAtm,
+        pres02 = presPotLoca,
+        Kppa = KppaWet)
+      
+      # clean up
+      rm(presPotLoca)
+    
   }
   
   # clean up
   base::rm(KppaWet)
+  }
   
   
   ############################################################
