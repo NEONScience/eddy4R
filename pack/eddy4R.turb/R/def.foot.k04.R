@@ -15,7 +15,17 @@
 
 #' @description Flux footprint after Kljun et a. (2004), Metzger et al. (2012).
 
-#' @param Currently none
+#' @param
+#' @param \code{angZaxsErth} wind direction to rotate the inertial footprint matrix [Deg]
+#' @param \code{distReso} cell size of result grid [m]
+#' @param \code{veloXaxsYaxs} horizontal wind speed [m/s]
+#' @param \code{veloYaxsHorSd} crosswind fluctuations [m/s]
+#' @param \code{veloFric} friction velocity [m/s]
+#' @param \code{distZaxsMeasDisp} height of measurement - displacement [m]
+#' @param \code{distObkv} Obukhov Length [m]
+#' @param \code{distZaxsAbl}	boundary layer height
+#' @param \code{thsh} threshold for cumulative footprint extent
+#' @param \code{univFunc} integral over the stability-dependent universal function to make the log-wind-profile applicable to different atmospheric stratifications; from def.func.univ()
 
 #' @return Footprint weight matrix
 
@@ -48,7 +58,7 @@ def.foot.k04 <- function(
   distZaxsRgh,
   distZaxsAbl=1000,	#boundary layer height
   thsh = 0.8, # threshold for cumulative footprint extent
-  Psi=0
+  univFunc=0
 ){
   
   
@@ -56,121 +66,125 @@ def.foot.k04 <- function(
   #PREPARATION OF INPUT PARAMETERS
   
   #constant parameters from pages 507 and 516
-  alpha1 <- 0.8
-  Ac <- 4.28	#+-0.13
-  Ad <- 1.68	#+-0.11
-  Af <- 0.18	#+-0.01
-  Ax <- 2.59	#+-0.17
-  Bup <- 3.42	#+-0.35
+  para01 <- 0.8 #alpha1
+  para02 <- 4.28	#+-0.13; Ac
+  para03 <- 1.68	#+-0.11; Ad
+  para04 <- 0.18	#+-0.01; Af
+  para05 <- 2.59	#+-0.17; Ax
+  para06 <- 3.42	#+-0.35; Bup
   
   #calculation of fitted parameters Eqs. (13) - (16)
-  a <- Af / (Bup - log(distZaxsRgh))	#maximum value of the distribution
-  b <- 3.70	#+-0.30
-  c <- Ac * (Bup - log(distZaxsRgh))
-  d <- Ad * (Bup - log(distZaxsRgh))	#maximum upwind extend (non-dimensional)
+  paraFit01 <- para04 / (para06 - log(distZaxsRgh))	#maximum value of the distribution; a
+  paraFit02 <- 3.70	#+-0.30; b
+  paraFit03 <- para02 * (para06 - log(distZaxsRgh)) #c
+  paraFit04 <- para03 * (para06 - log(distZaxsRgh))	#maximum upwind extend (non-dimensional); d
   
   
   #-----------------------------------------------------------
   #SIZE ESTIMATION OF FOOTPRINT MATRIX
   
   #scaling from non-dimensional to dimensional framework, Eqs. (17) - (18)
-  scal <- distZaxsMeasDisp * (veloZaxsHorSd / veloFric)^(-alpha1)
+  scal <- distZaxsMeasDisp * (veloZaxsHorSd / veloFric)^(-para01)
   
   #alongwind (crosswind integrated) density distribution
   
   #position of maximum along x
   #non-dimensional, Eq. (11)
-  Xmax <- Ax * (Bup - log(distZaxsRgh))
+  distFootXaxsMaxNorm <- para05 * (para06 - log(distZaxsRgh))
   #dimensional, Eq. (17)
-  xmax <- Xmax * scal
+  distFootXaxsMax <- distFootXaxsMaxNorm * scal
   
   #maximum value, Eqs. (12) - (13)
-  fmax <- a
+  wghtFootYaxsMax <- paraFit01
   
   #crosswind integrated flux footprint, Eq. (7)
-  FFPalong <- function(x) {
+  def.wght.foot.xaxs <- function(x) {
     #non-dimensional alongwind distance, Eq. (5)
-    Xstar <- ((veloZaxsHorSd / veloFric)^alpha1) * x / distZaxsMeasDisp
+    distFootXaxsNorm01 <- ((veloZaxsHorSd / veloFric)^para01) * x / distZaxsMeasDisp
     #seperated term 
-    Lprime <- (Xstar + d) / c
+    distFootXaxsNorm02 <- (distFootXaxsNorm01 + paraFit04) / paraFit03
     #crosswind integrated flux footprint, Eq. (7)
-    Fstar <- a * (Lprime^b) * exp(b * (1 - Lprime))
+    wghtFootXaxs <- paraFit01 * (distFootXaxsNorm02^paraFit02) * exp(paraFit02 * (1 - distFootXaxsNorm02))
     #return result
-    return(Fstar)
+    return(wghtFootXaxs)
   }
   
   #alongwind footprint extend
   
   #in lee (negative) direction, Eq. (10)
-  whrxn <- ceiling((-(d * scal + distReso/2)) / distReso)
+  numCellXaxsEnd <- ceiling((-(paraFit04 * scal + distReso/2)) / distReso)
   
-  #in luv (postitiv) direction until contribution falls below 1 % of fmax
-  whri <- xmax; whro <- fmax	#start from distribution peak
-  while(whro > fmax / 100) {
-    whri <- whri + distReso	#use step width of landuse matrix
-    whro <- FFPalong(whri)	#calculate
+  #in luv (postitiv) direction until contribution falls below 1 % of wghtFootYaxsMax
+  distFootXaxs <- distFootXaxsMax 
+  wghtFootXaxsDistMax <- wghtFootYaxsMax	#start from distribution peak
+  while(wghtFootXaxsDistMax > wghtFootYaxsMax / 100) {
+    distFootXaxs <- distFootXaxs + distReso	#use step width of landuse matrix
+    wghtFootXaxsDistMax <- def.wght.foot.xaxs(whri)	#calculate
   }
-  whrxp <- ceiling(whri / distReso)	#cell length necessay in X direction
+  #clean up distFootXaxs
+  rm(distFootXaxs)
+  
+  numCellXaxsBgn <- ceiling(whri / distReso)	#cell length necessay in X direction
   
   #crosswind density distribution
   
   #crosswind distribution of footprint (Heidbach, 2010)
-  FFPcross <- function(
-    x=0,
-    y=0,
+  def.wght.foot.yaxs <- function(
+    distFootXaxs=0,
+    distFootYaxs=0,
     veloYaxsHorSd=veloYaxsHorSd,
     veloZaxsHorSd=veloZaxsHorSd,
     veloFric=veloFric,
     distZaxsMeasDisp=distZaxsMeasDisp,
     distZaxsRgh=distZaxsRgh,
     distZaxsAbl=distZaxsAbl,
-    Psi=Psi
+    univFunc=univFunc
   ) {
     #describing the friction within the air layer / column [s]
-    Tly <- 0.08 * distZaxsAbl^2 / (distZaxsAbl - distZaxsMeasDisp) / veloFric
+    timeFric <- 0.08 * distZaxsAbl^2 / (distZaxsAbl - distZaxsMeasDisp) / veloFric
     #column average transport velocity [s]
-    Ulog <- veloFric / 0.4 * (log(distZaxsMeasDisp / distZaxsRgh) - (distZaxsMeasDisp - distZaxsRgh) / distZaxsMeasDisp - Psi)
+    veloLog <- veloFric / 0.4 * (log(distZaxsMeasDisp / distZaxsRgh) - (distZaxsMeasDisp - distZaxsRgh) / distZaxsMeasDisp - univFunc)
     #average travel time of a particle
-    tau <- sqrt((x / Ulog)^2 + ((distZaxsMeasDisp - distZaxsRgh) / veloZaxsHorSd)^2)
+    timeZaxs <- sqrt((distFootXaxs / veloLog)^2 + ((distZaxsMeasDisp - distZaxsRgh) / veloZaxsHorSd)^2)
     #scaled crosswind fluctuations
-    sigma <- tau / (1 + sqrt(tau / (2 * Tly))) * tau / Tly * veloYaxsHorSd
+    veloYaxsHorSdScal <- timeZaxs / (1 + sqrt(timeZaxs / (2 * timeFric))) * timeZaxs / timeFric * veloYaxsHorSd
     #crosswind distribution
-    Dy <- (1 / (sqrt(2 * pi) * sigma)) * exp((-y^2) / (2 * (sigma^2)))
+    wghtFootYaxs <- (1 / (sqrt(2 * pi) * veloYaxsHorSdScal)) * exp((-distFootYaxs^2) / (2 * (veloYaxsHorSdScal^2)))
     #return result
-    return(Dy)
+    return(wghtFootYaxs)
   }
   
   #maximum of crosswind density distribution
   ymax <- 0
-  fmax <- FFPcross(
-    x=whrxp * distReso,
-    y=ymax,
+  wghtFootYaxsMax <- def.wght.foot.yaxs(
+    distFootXaxs=numCellXaxsBgn * distReso,
+    distFootYaxs=ymax,
     veloYaxsHorSd=veloYaxsHorSd,
     veloZaxsHorSd=veloZaxsHorSd,
     veloFric=veloFric,
     distZaxsMeasDisp=distZaxsMeasDisp,
     distZaxsRgh=distZaxsRgh,
     distZaxsAbl=distZaxsAbl,
-    Psi=Psi
+    univFunc=univFunc
   )
   
-  #crosswind footprint extend until contribution falls below 1 % fmax
-  whri <- ymax; whro <- fmax	#start from distribution peak
-  while(whro > fmax / 100) {
+  #crosswind footprint extend until contribution falls below 1 % wghtFootYaxsMax
+  whri <- ymax; wghtFootXaxsDistMax <- wghtFootYaxsMax	#start from distribution peak
+  while(wghtFootXaxsDistMax > wghtFootYaxsMax / 100) {
     whri <- whri + distReso	#use step width of landuse matrix
-    whro <- FFPcross(
-      x=whrxp * distReso,
-      y=whri,
+    wghtFootXaxsDistMax <- def.wght.foot.yaxs(
+      distFootXaxs=numCellXaxsBgn * distReso,
+      distFootYaxs=whri,
       veloYaxsHorSd=veloYaxsHorSd,
       veloZaxsHorSd=veloZaxsHorSd,
       veloFric=veloFric,
       distZaxsMeasDisp=distZaxsMeasDisp,
       distZaxsRgh=distZaxsRgh,
       distZaxsAbl=distZaxsAbl,
-      Psi=Psi
+      univFunc=univFunc
     )
   }
-  whry <- ceiling(whri / distReso)	#cell length necessay in Y direction
+  numCellYaxs <- ceiling(whri / distReso)	#cell length necessay in Y direction
   
   
   #-----------------------------------------------------------
@@ -179,37 +193,37 @@ def.foot.k04 <- function(
   #place aircraft in cell center around zero
   
   #alongwind integration boundaries with aicraft centered in 0
-  if(whrxn < 0) {
-    XRng <- c((whrxn:(-1) + 0.5), 1:whrxp - 0.5) * distReso
+  if(numCellXaxsEnd < 0) {
+    distXaxs <- c((numCellXaxsEnd:(-1) + 0.5), 1:numCellXaxsBgn - 0.5) * distReso
   } else {
-    XRng <- c(0, 1:whrxp - 0.5)* distReso
+    distXaxs <- c(0, 1:numCellXaxsBgn - 0.5)* distReso
   }
   
   #crosswind integration boundaries with aicraft centered in 0
-  YRng <- c(0, 1:whry - 0.5) * distReso
+  distYaxs <- c(0, 1:numCellYaxs - 0.5) * distReso
   
   #alongwind cell center coordinates
-  Xcen <- sapply(1:(length(XRng)-1), function(x) mean(XRng[x:(x+1)]))
+  distXaxsCntr <- sapply(1:(length(distXaxs)-1), function(x) mean(distXaxs[x:(x+1)]))
   
   #crosswind cell center coordinates
-  Ycen <- c(0, sapply(2:(length(YRng)-1), function(y) mean(YRng[y:(y+1)])))
+  distYaxsCntr <- c(0, sapply(2:(length(distYaxs)-1), function(y) mean(distYaxs[y:(y+1)])))
   
   #integration of alongwind footprint
   
   #function to integrate over, Eq. (A10) - (A11)
-  gam <- function(t) t^b * exp(-t)
+  gam <- function(idxCellXaxs) idxCellXaxs^paraFit02 * exp(-idxCellXaxs)
   
   #auxilary dimensionless distance
-  Lhat <- (XRng / scal + d) / c
+  Lhat <- (distXaxs / scal + paraFit04) / paraFit03
   
   #integrate
-  Gam <- sapply(1:(length(Lhat)-1), function(xwhr) integrate(gam, b*Lhat[xwhr], b*Lhat[xwhr+1])$value)
+  Gam <- sapply(1:(length(Lhat)-1), function(xwhr) integrate(gam, paraFit02*Lhat[xwhr], paraFit02*Lhat[xwhr+1])$value)
   
   #cellwise alongwind footprint, Eq. (A10)
-  PHIalong <- a * c * exp(b) * b^(-b) / b *Gam
+  PHIalong <- paraFit01 * paraFit03 * exp(paraFit02) * paraFit02^(-paraFit02) / paraFit02 *Gam
   
   #integral over the entire footprint
-  INTall <- a * c * exp(b) * b^(-b) * gamma(b)
+  INTall <- paraFit01 * paraFit03 * exp(paraFit02) * paraFit02^(-paraFit02) * base::gamma(paraFit02)
   
   #percentage of alongwind footprint covered
   cover <- sum(PHIalong) / INTall * 100
@@ -220,34 +234,34 @@ def.foot.k04 <- function(
   #integration of crosswind footprint
   
   #function for crosswind dispersion
-  FFPcrossY <- function(y, sigma) {
-    Dy <- (1 / (sqrt(2 * pi) * sigma)) * exp((-y^2) / (2 * (sigma^2)))
-    return(Dy)
+  FFPcrossY <- function(y, veloYaxsHorSdScal) {
+    wghtFootYaxs <- (1 / (sqrt(2 * pi) * veloYaxsHorSdScal)) * exp((-y^2) / (2 * (veloYaxsHorSdScal^2)))
+    return(wghtFootYaxs)
   }
   
   #alongwind distance dependence of crosswind dispersion
   FFPcrossXY <- function(
-    x=0,
-    y=0,
+    distFootXaxs=0,
+    distFootYaxs=0,
     veloYaxsHorSd=veloYaxsHorSd,
     veloZaxsHorSd=veloZaxsHorSd,
     veloFric=veloFric,
     distZaxsMeasDisp=distZaxsMeasDisp,
     distZaxsRgh=distZaxsRgh,
     distZaxsAbl=distZaxsAbl,
-    Psi=Psi
+    univFunc=univFunc
   ) {
     #describing the friction within the air layer / column [s]
-    Tly <- 0.08 * distZaxsAbl^2 / (distZaxsAbl - distZaxsMeasDisp) / veloFric
+    timeFric <- 0.08 * distZaxsAbl^2 / (distZaxsAbl - distZaxsMeasDisp) / veloFric
     #column average transport velocity [s]
-    Ulog <- veloFric / 0.4 * (log(distZaxsMeasDisp / distZaxsRgh) - (distZaxsMeasDisp - distZaxsRgh) / distZaxsMeasDisp - Psi)
+    veloLog <- veloFric / 0.4 * (log(distZaxsMeasDisp / distZaxsRgh) - (distZaxsMeasDisp - distZaxsRgh) / distZaxsMeasDisp - univFunc)
     #average travel time of a particle
-    tau <- sqrt((x / Ulog)^2 + ((distZaxsMeasDisp - distZaxsRgh) / veloZaxsHorSd)^2)
+    timeZaxs <- sqrt((distFootXaxs / veloLog)^2 + ((distZaxsMeasDisp - distZaxsRgh) / veloZaxsHorSd)^2)
     #scaled crosswind fluctuations
-    sigma <- tau / (1 + sqrt(tau / (2 * Tly))) * tau / Tly * veloYaxsHorSd
+    veloYaxsHorSdScal <- timeZaxs / (1 + sqrt(timeZaxs / (2 * timeFric))) * timeZaxs / timeFric * veloYaxsHorSd
     #call function for crosswind dispersion (integration slightly increases density towards the outside)
-    #PHIcross <- FFPcrossY(Ycen, sigma)
-    PHIcross <- sapply(1:(length(y)-1), function(ywhr) integrate(FFPcrossY, y[ywhr], y[ywhr+1], sigma)$value)
+    #PHIcross <- FFPcrossY(distYaxsCntr, veloYaxsHorSdScal)
+    PHIcross <- sapply(1:(length(distFootYaxs)-1), function(ywhr) integrate(FFPcrossY, distFootYaxs[ywhr], distFootYaxs[ywhr+1], veloYaxsHorSdScal)$value)
     #normalisation to 0.5
     PHIcross <- PHIcross / (2 * sum(PHIcross))
     #return result
@@ -255,16 +269,16 @@ def.foot.k04 <- function(
   }
   
   #integration, output: top -> bottom == upwind -> downwind, left -> right == alongwind axis -> outside
-  PHIcross <- t(sapply(1:length(Xcen), function(xwhr) FFPcrossXY(
-    x=Xcen[xwhr],
-    y=YRng,
+  PHIcross <- t(sapply(1:length(distXaxsCntr), function(xwhr) FFPcrossXY(
+    x=distXaxsCntr[xwhr],
+    y=distYaxs,
     veloYaxsHorSd=veloYaxsHorSd,
     veloZaxsHorSd=veloZaxsHorSd,
     veloFric=veloFric,
     distZaxsMeasDisp=distZaxsMeasDisp,
     distZaxsRgh=distZaxsRgh,
     distZaxsAbl=distZaxsAbl,
-    Psi=Psi
+    univFunc=univFunc
   )))
   
   
@@ -273,7 +287,7 @@ def.foot.k04 <- function(
   
   #combine crosswind contributions on alongwind axis; will always yield uneven column number; rows sum to unity
   PHIcross <- cbind(matlab::fliplr(PHIcross[,2:ncol(PHIcross)]), 2*PHIcross[,1], PHIcross[,2:ncol(PHIcross)])
-  #YcenLR <- c(-rev(Ycen[2:length(Ycen)]), 0, Ycen[2:length(Ycen)])
+  #YcenLR <- c(-rev(distYaxsCntr[2:length(distYaxsCntr)]), 0, distYaxsCntr[2:length(distYaxsCntr)])
   #sapply(1:nrow(PHIcross), function(x) sum(PHIcross[x,]))
   #str(PHIcross)
   
@@ -285,9 +299,9 @@ def.foot.k04 <- function(
   #contour(matlab::rot90(PHI,3), levels=c(1e-4, 1e-3, 1e-2))
   
   #center aicraft alongwind location in plot, pad with zeroes
-  pads <- length(which(Xcen > 0)) - length(which(Xcen < 0))
+  pads <- length(which(distXaxsCntr > 0)) - length(which(distXaxsCntr < 0))
   PHIc<- rbind(matrix(nrow=pads, ncol=ncol(PHI), 0), PHI)
-  #XcenUD <- seq(-max(Xcen), max(Xcen), by=distReso)
+  #XcenUD <- seq(-max(distXaxsCntr), max(distXaxsCntr), by=distReso)
   #contour(YcenLR, XcenUD, matlab::rot90(PHIc,1), levels=NIVo, col=colorRampPalette(c("black", "red"))(length(NIVo)), asp=1)
   
   #pad with zeroes if not rectangular matrix
