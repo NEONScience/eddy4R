@@ -97,13 +97,12 @@ wrap.dp01.qfqm.eddy <- function(
   lapply(names(inp), function(x) if (nrow(inp[[x]]) == 0) inp[[x]][1,] <<- -1)
 
   #calculate qmAlpha, qmBeta, qfFinl
-  if (dp01 %in% c("envHut", "co2Turb", "h2oTurb", "co2Stor", "isoCo2", "isoH2o", "h2oStor", "soni", "soniAmrs", "tempAirLvl", "tempAirTop")){
-    tmp <- lapply(inp, FUN = eddy4R.qaqc::def.qf.finl)
-  }
   
-  #set qmBeta weight lower methane to account for lower sampling frequency
+  #set qmBeta weight lower for methane to account for lower sampling frequency, use default 2:1 weighing for all other data products
   if (dp01 %in% c("ch4Conc")){
     tmp <- lapply(inp, FUN = eddy4R.qaqc::def.qf.finl, WghtAlphBeta=c(2,0.2))
+  } else {
+    tmp <- lapply(inp, FUN = eddy4R.qaqc::def.qf.finl)
   }
   
 
