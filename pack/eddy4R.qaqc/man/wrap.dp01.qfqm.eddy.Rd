@@ -9,8 +9,8 @@ wrap.dp01.qfqm.eddy(
   MethMeas = c("ecte", "ecse")[1],
   TypeMeas = c("samp", "vali")[1],
   RptExpd = FALSE,
-  dp01 = c("envHut", "co2Turb", "h2oTurb", "co2Stor", "h2oStor", "isoCo2", "isoH2o",
-    "soni", "soniAmrs", "tempAirLvl", "tempAirTop")[1],
+  dp01 = c("envHut", "co2Turb", "h2oTurb", "co2Stor", "h2oStor", "isoCo2", "ch4Conc",
+    "isoH2o", "soni", "soniAmrs", "tempAirLvl", "tempAirTop")[1],
   idGas = NULL
 )
 }

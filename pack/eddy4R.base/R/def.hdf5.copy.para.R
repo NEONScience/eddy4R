@@ -41,6 +41,8 @@
 #     rename function from def.para.hdf5.dp01() to def.hdf5.copy.para()
 #   Dave Durden (2021-08-17)
 #     Failsafe to remove rhdf5 attribute from list of attributes written out
+#   Dave Durden (2021-10-12)
+#     Copy global attributes by adding file level to listGrp
 ##############################################################################################################
 #Start of function call to read metadata from one file and write to another
 ##############################################################################################################
@@ -65,6 +67,8 @@ listPara <- rhdf5::h5ls(FileInp, datasetinfo = FALSE)
 #listPara <- listPara[listPara$otype == "H5I_GROUP",] #Used to grab metadata if it is only attached to the group level
 listGrp <- base::paste(listPara$group, listPara$name, sep = "/") # Combining output
 
+#Append global attribute level
+listGrp <- append("/", listGrp)
 
 # read attributes from input file
 listAttr <- base::lapply(listGrp, rhdf5::h5readAttributes, file = FileInp)
