@@ -536,33 +536,48 @@ REYNflux_FD_mole_dry <- function(
       base::mean(data$veloYaxs, na.rm = TRUE),
       base::mean(data$veloXaxs, na.rm = TRUE)), ncol=2))
     
-    + 180), unitFrom="deg",unitTo="rad")) %% (2*pi)
+    + 180), unitFrom="deg", unitTo="rad")) %% (2*pi)
   
-  #transformation matrix
-  B <- matrix(nrow=3, ncol=3)
-  B[1,1] <- cos(angRot)
-  B[1,2] <- sin(angRot)
-  B[1,3] <- 0.
-  B[2,1] <- -sin(angRot)
-  B[2,2] <- cos(angRot)
-  B[2,3] <- 0.
-  B[3,1] <- 0.
-  B[3,2] <- 0.
-  B[3,3] <- 1.
-  BT <- t(B)
+  # rotation matrix
+  mtrxRot01 <- base::matrix(nrow=3, ncol=3)
+    mtrxRot01[1,1] <- base::cos(angRot)
+    mtrxRot01[1,2] <- base::sin(angRot)
+    mtrxRot01[1,3] <- 0.
+    mtrxRot01[2,1] <- -base::sin(angRot)
+    mtrxRot01[2,2] <- base::cos(angRot)
+    mtrxRot01[2,3] <- 0.
+    mtrxRot01[3,1] <- 0.
+    mtrxRot01[3,2] <- 0.
+    mtrxRot01[3,3] <- 1.
+    
+  # transpose of rotation matrix
+  mtrxRot02 <- base::t(mtrxRot01)
   
-  #wind in (horizontal) geodetic coordinates
-  U <- rbind(data$veloYaxs, data$veloXaxs, data$veloZaxs)
+  # wind velocity vector in (horizontal) geodetic coordinates
+  veloVect <- rbind(data$veloYaxs, data$veloXaxs, data$veloZaxs)
   
-  #actual rotation
-  Urot <- B %*% U
-  data$u_hor <- Urot[1,]
-  data$v_hor <- -Urot[2,]     #requires mirroring as output is still in geodetic axes order, downstream inpact on imfl$u_star2_y
-  data$w_hor <- Urot[3,]
-  mn$u_hor <- mean(Urot[1,], na.rm=TRUE)
-  mn$v_hor <- mean(Urot[2,], na.rm=TRUE)
-  mn$w_hor <- mean(Urot[3,], na.rm=TRUE)
-  rm(angRot, U, Urot)
+  # actual rotation
+  veloVectRot <- mtrxRot01 %*% veloVect
+
+  
+  
+  
+    
+  # create object for export
+  # separate and include high-frequency and vector-mean wind direction?
+  data$u_hor <- veloVectRot[1,]
+  data$v_hor <- -veloVectRot[2,]     #requires mirroring as output is still in geodetic axes order, downstream inpact on imfl$u_star2_y
+  data$w_hor <- veloVectRot[3,]
+  mn$u_hor <- mean(veloVectRot[1,], na.rm=TRUE)
+  mn$v_hor <- mean(veloVectRot[2,], na.rm=TRUE)
+  mn$w_hor <- mean(veloVectRot[3,], na.rm=TRUE)
+  
+  # clean up
+  rm(angRot, veloVect, veloVectRot)
+  
+  # separate and report wind direction based on average vector components
+  
+  
   
   ############################################################
   #BASE STATE AND DEVIATIONS
@@ -618,11 +633,11 @@ REYNflux_FD_mole_dry <- function(
   )
   
   #rotation into mean wind coordinate system
-  Mrot1 <- B %*% M
-  Mrot2 <- Mrot1 %*% BT
+  Mrot1 <- mtrxRot01 %*% M
+  Mrot2 <- Mrot1 %*% mtrxRot02
   
   #clean up
-  rm(BT, dx, dy, dz, M, Mrot1)
+  rm(mtrxRot02, dx, dy, dz, M, Mrot1)
   
   
   
@@ -805,11 +820,11 @@ REYNflux_FD_mole_dry <- function(
     sd=sd,		#standard deviation
     imfl=imfl,	#immidiate fluctuations
     cor=cor,		#correlation coefficient
-    B=B       #transformation matrix for stress tensor
+    mtrxRot01=mtrxRot01       #transformation matrix for stress tensor
   )
   
   #clean up
-  rm(B, base, data, mi, ma, mn, sd, imfl, cor)
+  rm(mtrxRot01, base, data, mi, ma, mn, sd, imfl, cor)
   
   #return result
   return(export)
