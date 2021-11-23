@@ -523,20 +523,28 @@ REYNflux_FD_mole_dry <- function(
   # Note that this rotation is to rotate the coordinate system for compatibility with footprint models etc
   # It consists of a single rotation applied per aggregation period
   # Double rotation / planar fit should be applied before a call to REYNflux
+  # example data structure from dp01: wrk$dp01$numAgr01$soni$mean
   
-  # rotation angle
-  angRot <- (eddy4R.base::def.unit.conv(data=(
-      
-    # wind direction in degrees, based on first averaging each horizontal component of the wind vector
+  # wind direction
+    
+    # instantaneous wind direction [rad]
+    data$angZaxsErth <- eddy4R.base::def.unit.conv(data = eddy4R.base::def.pol.cart(cart = base::matrix(c(
+      data$veloYaxs,
+      data$veloXaxs), ncol=2)),
+      unitFrom = "deg", unitTo = "rad")
+  
+    # mean wind direction [rad], based on first averaging each horizontal component of the wind vector
     # minimizes mean cross-wind, thus satisfying conditions for footprint modeling (required) and separating shear into stream-wise and cross-wind terms (optional)
     # however, dp04 results (124.824 deg) differ from reported dp01 (118.9117 deg, for first 30 min in gold data per 2021-11-23)
     # that is because dp01are based on INSTANTANEOUS wind directions (eddy4R.base::wrap.dp01.R calls eddy4R.base::def.dir.wind(inp = data$soni$angZaxsErth, MethVari = "Yama"))
     # how to best reconcile, different community standards for dp01 (states -> 2D sonics) and dp04 (fluxes)?
-    eddy4R.base::def.pol.cart(cart = base::matrix(c(
+    angZaxsErthMean <- eddy4R.base::def.unit.conv(data = eddy4R.base::def.pol.cart(cart = base::matrix(c(
       base::mean(data$veloYaxs, na.rm = TRUE),
-      base::mean(data$veloXaxs, na.rm = TRUE)), ncol=2))
-    
-    + 180), unitFrom="deg", unitTo="rad")) %% (2*pi)
+      base::mean(data$veloXaxs, na.rm = TRUE)), ncol=2)),
+      unitFrom = "deg", unitTo = "rad")
+  
+  # rotation angle
+  angRot <- (angZaxsErthMean + base::pi) %% (2 * base::pi)
   
   # rotation matrix
   mtrxRot01 <- base::matrix(nrow=3, ncol=3)
