@@ -498,24 +498,7 @@ REYNflux_FD_mole_dry <- function(
   }
   
   
-  ############################################################
-  #TIME SERIES AVERAGES
-  ############################################################
-  
-  #data frame
-  mn <- plyr::colwise(mean)(data,na.rm = TRUE)
-  attributes(mn)$names <- attributes(data)$names
-  
-  #aircraft heading as vector average
-  if(PltfEc == "airc")
-    mn$PSI_aircraft <- eddy4R.base::def.conv.poly(data=eddy4R.base::def.pol.cart(matrix(colMeans(eddy4R.base::def.cart.pol(eddy4R.base::def.conv.poly(data=data$PSI_aircraft,coefPoly=eddy4R.base::IntlConv$DegRad)), na.rm=TRUE), ncol=2)),coefPoly=eddy4R.base::IntlConv$RadDeg)
-  
-  # integrated with "ROTATION INTO THE MEAN WIND" below, left here for reference ony
-  #wind direction as vector average
-  # data$PSI_uv <- eddy4R.base::def.pol.cart(matrix(c(data$veloYaxs, data$veloXaxs), ncol=2))
-  # mn$PSI_uv <- eddy4R.base::def.pol.cart(matrix(c(mn$veloYaxs, mn$veloXaxs), ncol=2))
-  
-  
+
   
   ############################################################
   #ROTATION INTO THE MEAN WIND
@@ -566,19 +549,23 @@ REYNflux_FD_mole_dry <- function(
   
   # actual rotation
   veloVectRot <- mtrxRot01 %*% veloVect
-
-  
-  
-  
     
   # create object for export
   # separate and include high-frequency and vector-mean wind direction?
-  data$u_hor <- veloVectRot[1,]
-  data$v_hor <- -veloVectRot[2,]     #requires mirroring as output is still in geodetic axes order, downstream inpact on imfl$u_star2_y
-  data$w_hor <- veloVectRot[3,]
-  mn$u_hor <- mean(veloVectRot[1,], na.rm=TRUE)
-  mn$v_hor <- mean(veloVectRot[2,], na.rm=TRUE)
-  mn$w_hor <- mean(veloVectRot[3,], na.rm=TRUE)
+  
+    # along-wind
+    data$veloXaxsHor <- veloVectRot[1,]
+    attr(data$veloXaxsHor,"unit") <- "m s-1"
+    
+    # cross-wind
+    data$veloYaxsHor <- -veloVectRot[2,]     #requires mirroring as output is still in geodetic axes order, downstream inpact on imfl$u_star2_y
+    attr(data$veloYaxsHor,"unit") <- "m s-1"
+    
+    # vertical wind
+    data$veloZaxsHor <- veloVectRot[3,]
+    attr(data$veloZaxsHor,"unit") <- "m s-1"
+    
+    
   
   # clean up
   rm(angRot, veloVect, veloVectRot)
@@ -590,6 +577,25 @@ REYNflux_FD_mole_dry <- function(
   ############################################################
   #BASE STATE AND DEVIATIONS
   ############################################################
+  
+  # need to always calculate means as reference
+  
+  ############################################################
+  # moved here from TIME SERIES AVERAGES
+  ############################################################
+  
+  # #data frame
+  # mn <- plyr::colwise(mean)(data,na.rm = TRUE)
+  # attributes(mn)$names <- attributes(data)$names
+  # 
+  # #aircraft heading as vector average
+  # if(PltfEc == "airc")
+  #   mn$PSI_aircraft <- eddy4R.base::def.conv.poly(data=eddy4R.base::def.pol.cart(matrix(colMeans(eddy4R.base::def.cart.pol(eddy4R.base::def.conv.poly(data=data$PSI_aircraft,coefPoly=eddy4R.base::IntlConv$DegRad)), na.rm=TRUE), ncol=2)),coefPoly=eddy4R.base::IntlConv$RadDeg)
+  
+  # moved here from ROTATION INTO THE MEAN WIND
+  # mn$veloXaxsHor <- mean(veloVectRot[1,], na.rm=TRUE)
+  # mn$veloYaxsHor <- mean(veloVectRot[2,], na.rm=TRUE)
+  # mn$veloZaxsHor <- mean(veloVectRot[3,], na.rm=TRUE)
   
   #base state
   #AlgBase <- c("mean", "trnd", "ord03")[2]
@@ -658,8 +664,8 @@ REYNflux_FD_mole_dry <- function(
   #FROM INITIAL COMPONENTS
   
   #immidiate fluxes from deviations in mean wind coordinates
-  imfl$u_star2_x <- -(imfl$u_hor * imfl$w_hor)
-  imfl$u_star2_y <- -(imfl$v_hor * imfl$w_hor)
+  imfl$u_star2_x <- -(imfl$veloXaxsHor * imfl$veloZaxsHor)
+  imfl$u_star2_y <- -(imfl$veloYaxsHor * imfl$veloZaxsHor)
   imfl$u_star <- NaN
   
   #-----------------------------------------------------------
@@ -672,15 +678,15 @@ REYNflux_FD_mole_dry <- function(
   
   #correlations
   cor <- data.frame(
-    u_star2_x= -Mrot2[1,3] / sd$u_hor / sd$w_hor,
-    u_star2_y= -Mrot2[2,3] / sd$v_hor / sd$w_hor
+    u_star2_x= -Mrot2[1,3] / sd$veloXaxsHor / sd$veloZaxsHor,
+    u_star2_y= -Mrot2[2,3] / sd$veloYaxsHor / sd$veloZaxsHor
   )
   
   #wind variance; deviations from initial sd are < 2%
   sd_dum <- sqrt(abs(diag(Mrot2)))
-  sd$u_hor <- sd_dum[1]
-  sd$v_hor <- sd_dum[2]
-  sd$w_hor <- sd_dum[3]
+  sd$veloXaxsHor <- sd_dum[1]
+  sd$veloYaxsHor <- sd_dum[2]
+  sd$veloZaxsHor <- sd_dum[3]
   
   #-----------------------------------------------------------
   #CLEAN UP
@@ -695,7 +701,7 @@ REYNflux_FD_mole_dry <- function(
   
   #SENSIBLE HEAT FLUX 
   #flux in kinematic units [K m s-1]
-  imfl$F_H_kin <- imfl$w_hor * imfl$tempAir
+  imfl$F_H_kin <- imfl$veloZaxsHor * imfl$tempAir
   mn$F_H_kin <- mean(imfl$F_H_kin, na.rm=TRUE)
   
   #conversion to units of energy [W m-2] == [kg s-3]
@@ -704,13 +710,13 @@ REYNflux_FD_mole_dry <- function(
   
   #BUOYANCY FLUX considering water vapor buoyancy and NIST standard pressure (1013.15 hPa) reference (virt. pot. temp.) -> z/L
   #flux in kinematic units  [K m s-1]
-  imfl$F_H_kin_v_0 <- imfl$w_hor * imfl$tempVirtPot00
+  imfl$F_H_kin_v_0 <- imfl$veloZaxsHor * imfl$tempVirtPot00
   mn$F_H_kin_v_0 <- mean(imfl$F_H_kin_v_0, na.rm=TRUE)
   
   #CORRELATIONS
-  cor$F_H_kin <- stats::cor(imfl$w_hor, imfl$tempAir, use="pairwise.complete.obs")
+  cor$F_H_kin <- stats::cor(imfl$veloZaxsHor, imfl$tempAir, use="pairwise.complete.obs")
   cor$F_H_en <- cor$F_H_kin
-  cor$F_H_kin_v_0 <- stats::cor(imfl$w_hor, imfl$tempVirtPot00, use="pairwise.complete.obs")
+  cor$F_H_kin_v_0 <- stats::cor(imfl$veloZaxsHor, imfl$tempVirtPot00, use="pairwise.complete.obs")
   
   
   
@@ -719,13 +725,13 @@ REYNflux_FD_mole_dry <- function(
   ############################################################
   
   #latent heat flux in kinematic units [mol m-2 s-1]
-  imfl$F_LE_kin <- base$densMoleAirDry * imfl$w_hor * imfl$rtioMoleDryH2o
+  imfl$F_LE_kin <- base$densMoleAirDry * imfl$veloZaxsHor * imfl$rtioMoleDryH2o
   mn$F_LE_kin <- mean(imfl$F_LE_kin, na.rm=TRUE)
   #latent heat flux in units of energy  [W m-2] == [kg s-3]
   imfl$F_LE_en <- base$heatH2oGas * eddy4R.base::IntlNatu$MolmH2o * imfl$F_LE_kin
   mn$F_LE_en <- mean(imfl$F_LE_en, na.rm=TRUE)
   #correlation
-  cor$F_LE_kin <- stats::cor(imfl$w_hor, imfl$rtioMoleDryH2o, use="pairwise.complete.obs")
+  cor$F_LE_kin <- stats::cor(imfl$veloZaxsHor, imfl$rtioMoleDryH2o, use="pairwise.complete.obs")
   cor$F_LE_en <- cor$F_LE_kin
   
   ############################################################
@@ -733,13 +739,13 @@ REYNflux_FD_mole_dry <- function(
   ############################################################
   if(flagCh4 == TRUE){
     #CH4 flux in kinematic units [mol m-2 s-1]
-    imfl$F_CH4_kin <- base$densMoleAirDry * imfl$w_hor * imfl$rtioMoleDryCo2
+    imfl$F_CH4_kin <- base$densMoleAirDry * imfl$veloZaxsHor * imfl$rtioMoleDryCo2
     mn$F_CH4_kin <- mean(imfl$F_CH4_kin, na.rm=TRUE)
     #CH4 flux in mass units [mg m-2 h-1]
     imfl$F_CH4_mass <- imfl$F_CH4_kin * eddy4R.base::IntlNatu$MolmCh4 * 1e6 * 3600
     mn$F_CH4_mass <- mean(imfl$F_CH4_mass, na.rm=TRUE)
     #correlation
-    cor$F_CH4_kin <- stats::cor(imfl$w_hor, imfl$rtioMoleDryCo2, use="pairwise.complete.obs")
+    cor$F_CH4_kin <- stats::cor(imfl$veloZaxsHor, imfl$rtioMoleDryCo2, use="pairwise.complete.obs")
     cor$F_CH4_mass <- cor$F_CH4_kin
   }
   ############################################################
