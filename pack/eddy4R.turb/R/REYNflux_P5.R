@@ -515,8 +515,8 @@ REYNflux_FD_mole_dry <- function(
     #' @param dataLoca A data frame containing the wind vector in meteorological convention with the variables veloXaxs (latitudinal wind speed, positive from west), veloYaxs (longitudinal wind speed, positive from south), and veloZaxs (vertical wind speed, positive from below) of class "numeric, each with unit attribute. [m s-1]
     
     #' @return 
-    #' The returned object is a list containing the elements dataLoca and rot.
-    #' dataLoca is a dataframe with the same number of observations as the function call inputs. It contains the wind vector variables in streamwise convention veloXaxsHor (streamwise wind speed, positive from front), veloYaxsHor (cross-wind speed, positive from left) and veloZaxsHor (vertical wind speed, positive from below) [m s-1], and the wind direction angZaxsErth [rad], each of class "numeric and with unit attribute.
+    #' The returned object is a list containing the elements data and rot.
+    #' data is a dataframe with the same number of observations as the function call inputs. It contains the wind vector variables in streamwise convention veloXaxsHor (streamwise wind speed, positive from front), veloYaxsHor (cross-wind speed, positive from left) and veloZaxsHor (vertical wind speed, positive from below) [m s-1], and the wind direction angZaxsErth [rad], each of class "numeric and with unit attribute.
     #' rot is a list with the objects used in the rotation, averaged over all observations in the function call inputs. It contains the mean wind direction angZaxsErth [rad] with unit attribute, the resulting rotation matrix mtrxRot01 and the transpose of the rotation matrix mtrxRot02, each of class "numeric. It should be noted that angZaxsErth is calculated by first averaging each horizontal component of the wind vector, which minimizes the mean cross-wind thus satisfying conditions for footprint modeling and separating shear into stream-wise and cross-wind terms.
     
     #' @references
@@ -568,90 +568,96 @@ REYNflux_FD_mole_dry <- function(
       
       # clean up
       base::rm(whr)
+  
+      # calculate wind direction
+        
+        # instantaneous wind direction [rad]
+        angZaxsErth <- eddy4R.base::def.unit.conv(data = eddy4R.base::def.pol.cart(cart = base::matrix(c(
+          dataLoca$veloYaxs,
+          dataLoca$veloXaxs), ncol=2)),
+          unitFrom = "deg", unitTo = "rad")
       
+        # mean wind direction [rad], based on first averaging each horizontal component of the wind vector
+        # minimizes mean cross-wind, thus satisfying conditions for footprint modeling (required) 
+        # and separating shear into stream-wise and cross-wind terms (optional)
+        # however, dp04 results (124.824 deg) differ from reported dp01 (118.9117 deg,
+        # for first 30 min in gold data per 2021-11-23)
+        # that is because dp01are based on INSTANTANEOUS wind directions 
+        # (eddy4R.base::wrap.dp01.R calls eddy4R.base::def.dir.wind(inp = dataLoca$soni$angZaxsErth, MethVari = "Yama"))
+        # how to best reconcile, different community standards for dp01 (states -> 2D sonics) and dp04 (fluxes)?
+        angZaxsErthMean <- eddy4R.base::def.unit.conv(data = eddy4R.base::def.pol.cart(cart = base::matrix(c(
+          base::mean(dataLoca$veloYaxs, na.rm = TRUE),
+          base::mean(dataLoca$veloXaxs, na.rm = TRUE)), ncol=2)),
+          unitFrom = "deg", unitTo = "rad")
       
+      # rotation angle
+      angRot <- (angZaxsErthMean + base::pi) %% (2 * base::pi)
       
+      # rotation matrix
+      mtrxRot01 <- base::matrix(nrow=3, ncol=3)
+        mtrxRot01[1,1] <- base::cos(angRot)
+        mtrxRot01[1,2] <- base::sin(angRot)
+        mtrxRot01[1,3] <- 0.
+        mtrxRot01[2,1] <- -base::sin(angRot)
+        mtrxRot01[2,2] <- base::cos(angRot)
+        mtrxRot01[2,3] <- 0.
+        mtrxRot01[3,1] <- 0.
+        mtrxRot01[3,2] <- 0.
+        mtrxRot01[3,3] <- 1.
+        
+      # transpose of rotation matrix
+      mtrxRot02 <- base::t(mtrxRot01)
       
-      # calculate the latent heat of vaporization
-      heatH2oGas <- 2500827 - 2360 * eddy4R.base::def.unit.conv(data=as.numeric(tempAir), unitFrom="K", unitTo="C")
+      # wind velocity vector in (horizontal) geodetic coordinates
+      veloVect <- rbind(dataLoca$veloYaxs, dataLoca$veloXaxs, dataLoca$veloZaxs)
       
-      # assign output unit
-      attributes(heatH2oGas)$unit <- "J kg-1"
+      # actual rotation
+      veloVectRot <- mtrxRot01 %*% veloVect
+        
+      # create object for export
+      
+        # create list
+        rpt <- base::list()
+
+        # populate rpt$data
+        
+          # along-wind
+          rpt$data <- base::data.frame(veloXaxsHor = veloVectRot[1,])
+          attr(rpt$data$veloXaxsHor,"unit") <- "m s-1"
+          
+          # cross-wind
+          # requires mirroring as output is still in geodetic axes order, downstream impact on imfl$u_star2_y
+          rpt$data$veloYaxsHor <- -veloVectRot[2,]
+          attr(rpt$data$veloYaxsHor,"unit") <- "m s-1"
+          
+          # vertical wind
+          rpt$data$veloZaxsHor <- veloVectRot[3,]
+          attr(rpt$data$veloZaxsHor,"unit") <- "m s-1"
+          
+          # wind direction
+          rpt$data$angZaxsErth <- angZaxsErth
+          
+        # populate rpt$rot
+          
+          # assign data
+          rpt$rot <- base::list(
+            angZaxsErth = angZaxsErthMean,
+            mtrxRot01 = mtrxRot01,
+            mtrxRot02 = mtrxRot02)
+          
+          # assign output unit
+          attributes(rpt$rot$angZaxsErth)$unit <- "rad"
+
+      # clean up
+      rm(angRot, angZaxsErth, angZaxsErthMean, dataLoca, mtrxRot01, mtrxRot02, veloVect, veloVectRot)
       
       # return results
-      return(heatH2oGas) 
+      return(rpt) 
       
     }
   }
   # actual calculation
   
-  
-  
-  # wind direction
-  
-  # example data structure from dp01: wrk$dp01$numAgr01$soni$mean
-    
-    # instantaneous wind direction [rad]
-    data$angZaxsErth <- eddy4R.base::def.unit.conv(data = eddy4R.base::def.pol.cart(cart = base::matrix(c(
-      data$veloYaxs,
-      data$veloXaxs), ncol=2)),
-      unitFrom = "deg", unitTo = "rad")
-  
-    # mean wind direction [rad], based on first averaging each horizontal component of the wind vector
-    # minimizes mean cross-wind, thus satisfying conditions for footprint modeling (required) and separating shear into stream-wise and cross-wind terms (optional)
-    # however, dp04 results (124.824 deg) differ from reported dp01 (118.9117 deg, for first 30 min in gold data per 2021-11-23)
-    # that is because dp01are based on INSTANTANEOUS wind directions (eddy4R.base::wrap.dp01.R calls eddy4R.base::def.dir.wind(inp = data$soni$angZaxsErth, MethVari = "Yama"))
-    # how to best reconcile, different community standards for dp01 (states -> 2D sonics) and dp04 (fluxes)?
-    angZaxsErthMean <- eddy4R.base::def.unit.conv(data = eddy4R.base::def.pol.cart(cart = base::matrix(c(
-      base::mean(data$veloYaxs, na.rm = TRUE),
-      base::mean(data$veloXaxs, na.rm = TRUE)), ncol=2)),
-      unitFrom = "deg", unitTo = "rad")
-  
-  # rotation angle
-  angRot <- (angZaxsErthMean + base::pi) %% (2 * base::pi)
-  
-  # rotation matrix
-  mtrxRot01 <- base::matrix(nrow=3, ncol=3)
-    mtrxRot01[1,1] <- base::cos(angRot)
-    mtrxRot01[1,2] <- base::sin(angRot)
-    mtrxRot01[1,3] <- 0.
-    mtrxRot01[2,1] <- -base::sin(angRot)
-    mtrxRot01[2,2] <- base::cos(angRot)
-    mtrxRot01[2,3] <- 0.
-    mtrxRot01[3,1] <- 0.
-    mtrxRot01[3,2] <- 0.
-    mtrxRot01[3,3] <- 1.
-    
-  # transpose of rotation matrix
-  mtrxRot02 <- base::t(mtrxRot01)
-  
-  # wind velocity vector in (horizontal) geodetic coordinates
-  veloVect <- rbind(data$veloYaxs, data$veloXaxs, data$veloZaxs)
-  
-  # actual rotation
-  veloVectRot <- mtrxRot01 %*% veloVect
-    
-  # create object for export
-  # separate and include high-frequency and vector-mean wind direction?
-  
-    # along-wind
-    data$veloXaxsHor <- veloVectRot[1,]
-    attr(data$veloXaxsHor,"unit") <- "m s-1"
-    
-    # cross-wind
-    data$veloYaxsHor <- -veloVectRot[2,]     #requires mirroring as output is still in geodetic axes order, downstream inpact on imfl$u_star2_y
-    attr(data$veloYaxsHor,"unit") <- "m s-1"
-    
-    # vertical wind
-    data$veloZaxsHor <- veloVectRot[3,]
-    attr(data$veloZaxsHor,"unit") <- "m s-1"
-    
-    
-  
-  # clean up
-  rm(angRot, veloVect, veloVectRot)
-  
-  # separate and report wind direction based on average vector components
   
   
   
