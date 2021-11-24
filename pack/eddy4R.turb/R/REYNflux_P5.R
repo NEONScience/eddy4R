@@ -498,17 +498,93 @@ REYNflux_FD_mole_dry <- function(
   }
   
   
-
+  ############################################################
+  # ROTATION INTO THE MEAN WIND
+  ############################################################
   
-  ############################################################
-  #ROTATION INTO THE MEAN WIND
-  ############################################################
-  # Note that this rotation is to rotate the coordinate system for compatibility with footprint models etc
-  # It consists of a single rotation applied per aggregation period
-  # Double rotation / planar fit should be applied before a call to REYNflux
-  # example data structure from dp01: wrk$dp01$numAgr01$soni$mean
+    # definition function (to be exported)
+  {
+    ##############################################################################################
+    #' @title Definition function: Streamwise rotation of the wind vector
+    
+    #' @author
+    #' Stefan Metzger \email{eddy4R.info@gmail.com}
+    
+    #' @description Function definition. This function rotates the wind vector into the mean, thus allowing to separate stream-wise and cross-wind components for subsequent use in footprint models, calculating shear stress etc. It consists of a single azimuth-rotation around the vertical axis. Any more comprehensive rotation such as double rotation or planar fit should be applied prior to calling this function.
+    
+    #' @param dataLoca A data frame containing the wind vector in meteorological convention with the variables veloXaxs (latitudinal wind speed, positive from west), veloYaxs (longitudinal wind speed, positive from south), and veloZaxs (vertical wind speed, positive from below) of class "numeric, each with unit attribute. [m s-1]
+    
+    #' @return 
+    #' The returned object is a list containing the elements dataLoca and rot.
+    #' dataLoca is a dataframe with the same number of observations as the function call inputs. It contains the wind vector variables in streamwise convention veloXaxsHor (streamwise wind speed, positive from front), veloYaxsHor (cross-wind speed, positive from left) and veloZaxsHor (vertical wind speed, positive from below) [m s-1], and the wind direction angZaxsErth [rad], each of class "numeric and with unit attribute.
+    #' rot is a list with the objects used in the rotation, averaged over all observations in the function call inputs. It contains the mean wind direction angZaxsErth [rad] with unit attribute, the resulting rotation matrix mtrxRot01 and the transpose of the rotation matrix mtrxRot02, each of class "numeric. It should be noted that angZaxsErth is calculated by first averaging each horizontal component of the wind vector, which minimizes the mean cross-wind thus satisfying conditions for footprint modeling and separating shear into stream-wise and cross-wind terms.
+    
+    #' @references
+    #' License: GNU AFFERO GENERAL PUBLIC LICENSE Version 3, 19 November 2007
+    
+    #' @keywords rotation, stream-wise, mean wind, footprint, shear
+    
+    #' @examples
+    #' Example 1, this will cause an error message due to tempAir has no unit:
+    #' def.heat.h2o.gas.temp(tempAir = 268)
+    #' Example 2, assign values and units to variables first, the function should run ok.
+    #' tempAir <- 268
+    #' attributes(tempAir)$unit <- "K"
+    #' def.heat.h2o.gas.temp(tempAir)
+    
+    #' @seealso Currently none.
+    
+    #' @export
+    
+    # changelog and author contributions / copyrights
+    #   Stefan Metzger (2011-03-04)
+    #     original creation
+    #   Stefan Metzger (2021-11-24)
+    #     update to eddy4R terminology and modularize into definition function
+    ###############################################################################################
+    
+    # rotation into the mean wind
+    def.rot.ang.zaxs.erth <- function(
+      
+      # air temperature
+      dataLoca
+      
+    ) {
+      
+      # test for presence of unit attribute
+      
+      if(!("unit" %in% names(attributes(tempAir)))) {
+        
+        stop("def.heat.h2o.gas.temp(): tempAir is missing unit attribute.")
+        
+      }
+      
+      # test for correct units of input variables
+      if(attributes(tempAir)$unit != "K") {
+        
+        stop("def.heat.h2o.gas.temp(): input units are not matching internal units, please check.")
+        
+      }
+      
+      
+      # calculate the latent heat of vaporization
+      heatH2oGas <- 2500827 - 2360 * eddy4R.base::def.unit.conv(data=as.numeric(tempAir), unitFrom="K", unitTo="C")
+      
+      # assign output unit
+      attributes(heatH2oGas)$unit <- "J kg-1"
+      
+      # return results
+      return(heatH2oGas) 
+      
+    }
+  }
+  # actual calculation
+  
+  
   
   # wind direction
+  
+  # example data structure from dp01: wrk$dp01$numAgr01$soni$mean
     
     # instantaneous wind direction [rad]
     data$angZaxsErth <- eddy4R.base::def.unit.conv(data = eddy4R.base::def.pol.cart(cart = base::matrix(c(
