@@ -546,25 +546,30 @@ REYNflux_FD_mole_dry <- function(
     # rotation into the mean wind
     def.rot.ang.zaxs.erth <- function(
       
-      # air temperature
-      dataLoca
+      # dataframe with variables veloXaxs, veloYaxs, and veloZaxs of class "numeric, each with unit attribute. [m s-1]
+      dataLoca = data[c("veloXaxs", "veloYaxs", "veloZaxs")]
       
     ) {
       
-      # test for presence of unit attribute
-      
-      if(!("unit" %in% names(attributes(tempAir)))) {
+      # test input variable unit attributes
+      for(whr in base::names(dataLoca)){
+      # whr <- base::names(dataLoca)[1]
         
-        stop("def.heat.h2o.gas.temp(): tempAir is missing unit attribute.")
+        # test for presence/absence of unit attribute
+        if(!("unit" %in% names(attributes(dataLoca[[whr]])))) {
+          stop(base::paste0("def.rot.ang.zaxs.erth(): dataLoca$", whr, " is missing unit attribute."))        }
+        
+        # test for correct units
+        if(attributes(dataLoca[[whr]])$unit != "m s-1") {
+          stop(base::paste0("def.rot.ang.zaxs.erth(): dataLoca$", whr, 
+                            " input units are not matching internal units, please check."))}
         
       }
       
-      # test for correct units of input variables
-      if(attributes(tempAir)$unit != "K") {
-        
-        stop("def.heat.h2o.gas.temp(): input units are not matching internal units, please check.")
-        
-      }
+      # clean up
+      base::rm(whr)
+      
+      
       
       
       # calculate the latent heat of vaporization
