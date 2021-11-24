@@ -682,8 +682,14 @@ REYNflux_FD_mole_dry <- function(
   }
   
   # actual calculation
+  
+  # function call
   dataTmp <- def.rot.ang.zaxs.erth(inp = data[c("veloXaxs", "veloYaxs", "veloZaxs")])
-  str(dataTmp)
+  
+  # assign results and clean up
+  data <- base::cbind(data, dataTmp$data)
+  rot <- dataTmp$rot
+  base::rm(dataTmp)
   
   
   
