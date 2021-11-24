@@ -12,6 +12,8 @@
 #     re-formualtion as function() to allow packaging
 #   Chris Florian (2021-11-10)
 #     modularization of function from footprints.r and initial eddy4R naming convention updates
+#   Chris Florian (2021-11-24)
+#     update remaining terms to eddy4R naming convention
 
 #' @description Flux footprint after Kljun et a. (2004), Metzger et al. (2012).
 
@@ -211,36 +213,36 @@ def.foot.k04 <- function(
   #integration of alongwind footprint
   
   #function to integrate over, Eq. (A10) - (A11)
-  gam <- function(idxCellXaxs) idxCellXaxs^paraFit02 * exp(-idxCellXaxs)
+  def.wght.foot.xaxs.itgr.xaxs.norm <- function(idxCellXaxs) idxCellXaxs^paraFit02 * exp(-idxCellXaxs)
   
   #auxilary dimensionless distance
-  Lhat <- (distXaxs / scal + paraFit04) / paraFit03
+  distXaxsNorm <- (distXaxs / scal + paraFit04) / paraFit03
   
   #integrate
-  Gam <- sapply(1:(length(Lhat)-1), function(xwhr) integrate(gam, paraFit02*Lhat[xwhr], paraFit02*Lhat[xwhr+1])$value)
+  wghtFootXaxsItgrNorm <- sapply(1:(length(distXaxsNorm)-1), function(numCellXaxs) integrate(def.wght.foot.xaxs.itgr.xaxs.norm, paraFit02*distXaxsNorm[numCellXaxs], paraFit02*distXaxsNorm[numCellXaxs+1])$value)
   
   #cellwise alongwind footprint, Eq. (A10)
-  PHIalong <- paraFit01 * paraFit03 * exp(paraFit02) * paraFit02^(-paraFit02) / paraFit02 *Gam
+  wghtFootXaxsItgr <- paraFit01 * paraFit03 * exp(paraFit02) * paraFit02^(-paraFit02) / paraFit02 *wghtFootXaxsItgrNorm
   
   #integral over the entire footprint
-  INTall <- paraFit01 * paraFit03 * exp(paraFit02) * paraFit02^(-paraFit02) * base::gamma(paraFit02)
+   wghtFootXaxsAll <- paraFit01 * paraFit03 * exp(paraFit02) * paraFit02^(-paraFit02) * base::gamma(paraFit02)
   
   #percentage of alongwind footprint covered
-  cover <- sum(PHIalong) / INTall * 100
+   qiFootXaxsFrac <- sum(wghtFootXaxsItgr) /  wghtFootXaxsAll * 100
   
   #normalisation to unity
-  PHIalong <- PHIalong / sum(PHIalong)
+  wghtFootXaxsItgr <- wghtFootXaxsItgr / sum(wghtFootXaxsItgr)
   
   #integration of crosswind footprint
   
   #function for crosswind dispersion
-  FFPcrossY <- function(y, veloYaxsHorSdScal) {
+  def.wght.foot.yaxs.itgr.yaxs <- function(y, veloYaxsHorSdScal) {
     wghtFootYaxs <- (1 / (sqrt(2 * pi) * veloYaxsHorSdScal)) * exp((-y^2) / (2 * (veloYaxsHorSdScal^2)))
     return(wghtFootYaxs)
   }
   
   #alongwind distance dependence of crosswind dispersion
-  FFPcrossXY <- function(
+  def.wght.foot.yaxs.itgr.xaxs.yaxs <- function(
     distFootXaxs=0,
     distFootYaxs=0,
     veloYaxsHorSd=veloYaxsHorSd,
@@ -260,17 +262,17 @@ def.foot.k04 <- function(
     #scaled crosswind fluctuations
     veloYaxsHorSdScal <- timeZaxs / (1 + sqrt(timeZaxs / (2 * timeFric))) * timeZaxs / timeFric * veloYaxsHorSd
     #call function for crosswind dispersion (integration slightly increases density towards the outside)
-    #PHIcross <- FFPcrossY(distYaxsCntr, veloYaxsHorSdScal)
-    PHIcross <- sapply(1:(length(distFootYaxs)-1), function(ywhr) integrate(FFPcrossY, distFootYaxs[ywhr], distFootYaxs[ywhr+1], veloYaxsHorSdScal)$value)
+    #wghtFootYaxsItgr <- def.wght.foot.yaxs.itgr.yaxs(distYaxsCntr, veloYaxsHorSdScal)
+    wghtFootYaxsItgr <- sapply(1:(length(distFootYaxs)-1), function(numCellYaxs) integrate(def.wght.foot.yaxs.itgr.yaxs, distFootYaxs[numCellYaxs], distFootYaxs[numCellYaxs+1], veloYaxsHorSdScal)$value)
     #normalisation to 0.5
-    PHIcross <- PHIcross / (2 * sum(PHIcross))
+    wghtFootYaxsItgr <- wghtFootYaxsItgr / (2 * sum(wghtFootYaxsItgr))
     #return result
-    return(PHIcross)
+    return(wghtFootYaxsItgr)
   }
   
   #integration, output: top -> bottom == upwind -> downwind, left -> right == alongwind axis -> outside
-  PHIcross <- t(sapply(1:length(distXaxsCntr), function(xwhr) FFPcrossXY(
-    x=distXaxsCntr[xwhr],
+  wghtFootYaxsItgr <- t(sapply(1:length(distXaxsCntr), function(numCellXaxs) def.wght.foot.yaxs.itgr.xaxs.yaxs(
+    x=distXaxsCntr[numCellXaxs],
     y=distYaxs,
     veloYaxsHorSd=veloYaxsHorSd,
     veloZaxsHorSd=veloZaxsHorSd,
@@ -286,97 +288,97 @@ def.foot.k04 <- function(
   #COMBINE ALONG- AND CROSSWIND DENSITY DISTRIBUTIONS AND ROTATE INTO MEAN WIND
   
   #combine crosswind contributions on alongwind axis; will always yield uneven column number; rows sum to unity
-  PHIcross <- cbind(matlab::fliplr(PHIcross[,2:ncol(PHIcross)]), 2*PHIcross[,1], PHIcross[,2:ncol(PHIcross)])
+  wghtFootYaxsItgr <- cbind(matlab::fliplr(wghtFootYaxsItgr[,2:ncol(wghtFootYaxsItgr)]), 2*wghtFootYaxsItgr[,1], wghtFootYaxsItgr[,2:ncol(wghtFootYaxsItgr)])
   #YcenLR <- c(-rev(distYaxsCntr[2:length(distYaxsCntr)]), 0, distYaxsCntr[2:length(distYaxsCntr)])
-  #sapply(1:nrow(PHIcross), function(x) sum(PHIcross[x,]))
-  #str(PHIcross)
+  #sapply(1:nrow(wghtFootYaxsItgr), function(x) sum(wghtFootYaxsItgr[x,]))
+  #str(wghtFootYaxsItgr)
   
   #combination of along- and cross component; along wind from up to down, crosswind from left to right; sums to unity
-  PHI <- t(sapply(1:nrow(PHIcross), function(x) PHIalong[x] * PHIcross[x,]))
-  #plot(PHIalong)
-  #plot(PHIcross[5,])
+  wghtFootXaxsYaxsItgr <- t(sapply(1:nrow(wghtFootYaxsItgr), function(x) wghtFootXaxsItgr[x] * wghtFootYaxsItgr[x,]))
+  #plot(wghtFootXaxsItgr)
+  #plot(wghtFootYaxsItgr[5,])
   #NIVo <- c(1e-4, 1e-3, 1e-2)
-  #contour(matlab::rot90(PHI,3), levels=c(1e-4, 1e-3, 1e-2))
+  #contour(matlab::rot90(wghtFootXaxsYaxsItgr,3), levels=c(1e-4, 1e-3, 1e-2))
   
   #center aicraft alongwind location in plot, pad with zeroes
-  pads <- length(which(distXaxsCntr > 0)) - length(which(distXaxsCntr < 0))
-  PHIc<- rbind(matrix(nrow=pads, ncol=ncol(PHI), 0), PHI)
+  numCellXaxsDiff <- length(which(distXaxsCntr > 0)) - length(which(distXaxsCntr < 0))
+  wghtFootXaxsYaxsItgrCntr<- rbind(matrix(nrow=numCellXaxsDiff, ncol=ncol(wghtFootXaxsYaxsItgr), 0), wghtFootXaxsYaxsItgr)
   #XcenUD <- seq(-max(distXaxsCntr), max(distXaxsCntr), by=distReso)
-  #contour(YcenLR, XcenUD, matlab::rot90(PHIc,1), levels=NIVo, col=colorRampPalette(c("black", "red"))(length(NIVo)), asp=1)
+  #contour(YcenLR, XcenUD, matlab::rot90(wghtFootXaxsYaxsItgrCntr,1), levels=NIVo, col=colorRampPalette(c("black", "red"))(length(NIVo)), asp=1)
   
   #pad with zeroes if not rectangular matrix
-  if(nrow(PHIc) == ncol(PHIc)) {
-    PHIcp <- PHIc
+  if(nrow(wghtFootXaxsYaxsItgrCntr) == ncol(wghtFootXaxsYaxsItgrCntr)) {
+    wghtFootXaxsYaxsItgrCntrSq  <- wghtFootXaxsYaxsItgrCntr
   } else {
-    if(nrow(PHIc) > ncol(PHIc)) {
-      PHIcp <- cbind(
-        matrix(nrow=nrow(PHIc), ncol=(nrow(PHIc)-ncol(PHIc)) / 2, 0),
-        PHIc,
-        matrix(nrow=nrow(PHIc), ncol=(nrow(PHIc)-ncol(PHIc)) / 2, 0)
+    if(nrow(wghtFootXaxsYaxsItgrCntr) > ncol(wghtFootXaxsYaxsItgrCntr)) {
+      wghtFootXaxsYaxsItgrCntrSq  <- cbind(
+        matrix(nrow=nrow(wghtFootXaxsYaxsItgrCntr), ncol=(nrow(wghtFootXaxsYaxsItgrCntr)-ncol(wghtFootXaxsYaxsItgrCntr)) / 2, 0),
+        wghtFootXaxsYaxsItgrCntr,
+        matrix(nrow=nrow(wghtFootXaxsYaxsItgrCntr), ncol=(nrow(wghtFootXaxsYaxsItgrCntr)-ncol(wghtFootXaxsYaxsItgrCntr)) / 2, 0)
       )
     }
-    if(nrow(PHIc) < ncol(PHIc)) {
-      PHIcp <- rbind(
-        matrix(ncol=ncol(PHIc), nrow=(ncol(PHIc)-nrow(PHIc)) / 2, 0),
-        PHIc,
-        matrix(ncol=ncol(PHIc), nrow=(ncol(PHIc)-nrow(PHIc)) / 2, 0)
+    if(nrow(wghtFootXaxsYaxsItgrCntr) < ncol(wghtFootXaxsYaxsItgrCntr)) {
+      wghtFootXaxsYaxsItgrCntrSq  <- rbind(
+        matrix(ncol=ncol(wghtFootXaxsYaxsItgrCntr), nrow=(ncol(wghtFootXaxsYaxsItgrCntr)-nrow(wghtFootXaxsYaxsItgrCntr)) / 2, 0),
+        wghtFootXaxsYaxsItgrCntr,
+        matrix(ncol=ncol(wghtFootXaxsYaxsItgrCntr), nrow=(ncol(wghtFootXaxsYaxsItgrCntr)-nrow(wghtFootXaxsYaxsItgrCntr)) / 2, 0)
       )
     }
   }
   #YcenLRp <- XcenUD
-  #contour(YcenLRp, XcenUD, matlab::rot90(PHIcp,1), levels=NIVo, col=colorRampPalette(c("black", "red"))(length(NIVo)), asp=1)
+  #contour(YcenLRp, XcenUD, matlab::rot90(wghtFootXaxsYaxsItgrCntrSq ,1), levels=NIVo, col=colorRampPalette(c("black", "red"))(length(NIVo)), asp=1)
   
   # upwind distance of 80% cumulative flux footprint
-  PHIcpr <- matlab::flipud(PHIcp)
-  #PHIcpr <- EBImage::rotate(PHIcp, 180-0)@.Data
-  f80 <- rev(rowSums(PHIcpr))
+  wghtFootXaxsYaxsItgrCntrSqRot <- matlab::flipud(wghtFootXaxsYaxsItgrCntrSq )
+  #wghtFootXaxsYaxsItgrCntrSqRot <- EBImage::rotate(wghtFootXaxsYaxsItgrCntrSq , 180-0)@.Data
+  distFootXaxsThshFootCum <- rev(rowSums(wghtFootXaxsYaxsItgrCntrSqRot))
   
   # upwind distance of peak
-  fx <- (which(f80 == max(f80)) - (length(f80) - 1) / 2 + 1) *   distReso
-  names(fx) <- ("fx")
+  distFootXaxsMax <- (which(distFootXaxsThshFootCum == max(distFootXaxsThshFootCum)) - (length(distFootXaxsThshFootCum) - 1) / 2 + 1) *   distReso
+  names(distFootXaxsMax) <- ("distFootXaxsMax")
   
-  f80 <- cumsum(f80)
-  f80 <- f80/max(f80, na.rm=TRUE)
-  f80 <- (which(f80 > thsh)[1] - (length(f80) - 1) / 2 + 1) *   distReso
-  names(f80) <- ("f80")
+  distFootXaxsThshFootCum <- cumsum(distFootXaxsThshFootCum)
+  distFootXaxsThshFootCum <- distFootXaxsThshFootCum/max(distFootXaxsThshFootCum, na.rm=TRUE)
+  distFootXaxsThshFootCum <- (which(distFootXaxsThshFootCum > thsh)[1] - (length(distFootXaxsThshFootCum) - 1) / 2 + 1) *   distReso
+  names(distFootXaxsThshFootCum) <- ("distFootXaxsThshFootCum")
   
   # one-sided cross-wind distance of 80% cumulative flux footprint
-  fy <- rev(colSums(PHIcpr))
-  fy <- fy[((length(fy) - 1) / 2 + 1):length(fy)]
-  fy <- cumsum(fy)
-  fy <- fy/max(fy, na.rm=TRUE)
-  fy <- which(fy > thsh)[1] * distReso
-  names(fy) <- ("fy")
+  distFootYaxsThshFootCum <- rev(colSums(wghtFootXaxsYaxsItgrCntrSqRot))
+  distFootYaxsThshFootCum <- distFootYaxsThshFootCum[((length(distFootYaxsThshFootCum) - 1) / 2 + 1):length(distFootYaxsThshFootCum)]
+  distFootYaxsThshFootCum <- cumsum(distFootYaxsThshFootCum)
+  distFootYaxsThshFootCum <- distFootYaxsThshFootCum/max(distFootYaxsThshFootCum, na.rm=TRUE)
+  distFootYaxsThshFootCum <- which(distFootYaxsThshFootCum > thsh)[1] * distReso
+  names(distFootYaxsThshFootCum) <- ("distFootYaxsThshFootCum")
   
   # rotate image clockwise (align footprint in mean wind)
   # specify output.dim, so that dimensions remain odd-numbered, and the tower at the center
   # explicitly specifying output.origin for some reason leads to a shift, hence commented out
-  PHIcpr <- EBImage::rotate(x = PHIcp,
+  wghtFootXaxsYaxsItgrCntrSqRot <- EBImage::rotate(x = wghtFootXaxsYaxsItgrCntrSq ,
                             angZaxsErth = 180 - angZaxsErth,
-                            output.dim = base::rep(nrow(PHIcp),2),
-                            # output.origin = base::rep(((nrow(PHIcp) - 1) / 2 + 1), 2)
+                            output.dim = base::rep(nrow(wghtFootXaxsYaxsItgrCntrSq ),2),
+                            # output.origin = base::rep(((nrow(wghtFootXaxsYaxsItgrCntrSq ) - 1) / 2 + 1), 2)
   )@.Data
-  PHIcpr <- PHIcpr / sum(sum(PHIcpr))
+  wghtFootXaxsYaxsItgrCntrSqRot <- wghtFootXaxsYaxsItgrCntrSqRot / sum(sum(wghtFootXaxsYaxsItgrCntrSqRot))
   
   # contour(
-  #   x = 1:nrow(PHIcp),
-  #   y = 1:nrow(PHIcp),
-  #   z = PHIcpr)
-  # points(x = ((nrow(PHIcp) - 1) / 2 + 1), y = ((nrow(PHIcp) - 1) / 2 + 1), col=2)
-  # nrow(PHIcp)
+  #   x = 1:nrow(wghtFootXaxsYaxsItgrCntrSq ),
+  #   y = 1:nrow(wghtFootXaxsYaxsItgrCntrSq ),
+  #   z = wghtFootXaxsYaxsItgrCntrSqRot)
+  # points(x = ((nrow(wghtFootXaxsYaxsItgrCntrSq ) - 1) / 2 + 1), y = ((nrow(wghtFootXaxsYaxsItgrCntrSq ) - 1) / 2 + 1), col=2)
+  # nrow(wghtFootXaxsYaxsItgrCntrSq )
   
   #     #attempted workaround for cell shifts of rotate() function in Windows
   #     #for some reason rotate shifts 1 cell back and 1 cell right in Windows
   #       if(.Platform$OS.type == "windows") {
   #         #fix before rotation?
-  #           #PHIcp1 <- cbind(rep(0, nrow(PHIcp)), PHIcp[,1:(ncol(PHIcp)-1)])
+  #           #PHIcp1 <- cbind(rep(0, nrow(wghtFootXaxsYaxsItgrCntrSq )), wghtFootXaxsYaxsItgrCntrSq [,1:(ncol(wghtFootXaxsYaxsItgrCntrSq )-1)])
   #           #PHIcp1 <- rbind(rep(0, ncol(PHIcp1)), PHIcp1[1:(nrow(PHIcp1)-1),])
-  #         PHIcpr <- EBImage::rotate(PHIcp1, 180-angZaxsErth)@.Data
+  #         wghtFootXaxsYaxsItgrCntrSqRot <- EBImage::rotate(PHIcp1, 180-angZaxsErth)@.Data
   #         #fix after rotation?
-  #           #PHIcpr <- cbind(PHIcpr[,2:ncol(PHIcpr)], rep(0, nrow(PHIcpr)))
-  #           #PHIcpr <- rbind(PHIcpr[2:nrow(PHIcpr),], rep(0, ncol(PHIcpr)))
+  #           #wghtFootXaxsYaxsItgrCntrSqRot <- cbind(wghtFootXaxsYaxsItgrCntrSqRot[,2:ncol(wghtFootXaxsYaxsItgrCntrSqRot)], rep(0, nrow(wghtFootXaxsYaxsItgrCntrSqRot)))
+  #           #wghtFootXaxsYaxsItgrCntrSqRot <- rbind(wghtFootXaxsYaxsItgrCntrSqRot[2:nrow(wghtFootXaxsYaxsItgrCntrSqRot),], rep(0, ncol(wghtFootXaxsYaxsItgrCntrSqRot)))
   #   
-  #           image(PHIcpr)
+  #           image(wghtFootXaxsYaxsItgrCntrSqRot)
   #           points(x=0.5, y=0.5)
   #         
   #         #none of the above work consistently
@@ -384,9 +386,9 @@ def.foot.k04 <- function(
   #         # -> on the longer run, find different package to perform rotation also in Windows;
   #       }
   
-  #YcenLRpr <- ((1:ncol(PHIcpr)) - ceiling(ncol(PHIcpr) / 2)) * distReso  #new X
-  #XcenUDpr <- ((1:nrow(PHIcpr)) - ceiling(nrow(PHIcpr) / 2)) * distReso	#new Y
-  #contour(YcenLRpr, XcenUDpr, matlab::rot90(PHIcpr,3), levels=NIVo, col=colorRampPalette(c("black", "red"))(length(NIVo)), asp=1)
+  #YcenLRpr <- ((1:ncol(wghtFootXaxsYaxsItgrCntrSqRot)) - ceiling(ncol(wghtFootXaxsYaxsItgrCntrSqRot) / 2)) * distReso  #new X
+  #XcenUDpr <- ((1:nrow(wghtFootXaxsYaxsItgrCntrSqRot)) - ceiling(nrow(wghtFootXaxsYaxsItgrCntrSqRot) / 2)) * distReso	#new Y
+  #contour(YcenLRpr, XcenUDpr, matlab::rot90(wghtFootXaxsYaxsItgrCntrSqRot,3), levels=NIVo, col=colorRampPalette(c("black", "red"))(length(NIVo)), asp=1)
   #points(c(0,0), pch=3)
   
   
@@ -396,11 +398,11 @@ def.foot.k04 <- function(
   
   #create result list
   export<-list(
-    PHI=PHIcpr, 
-    cover=cover,
-    f80=f80,
-    fx=fx,
-    fy=fy
+    wghtFootXaxsYaxsItgr=wghtFootXaxsYaxsItgrCntrSqRot, 
+     qiFootXaxsFrac= qiFootXaxsFrac,
+    distFootXaxsThshFootCum=distFootXaxsThshFootCum,
+    distFootXaxsMax=distFootXaxsMax,
+    distFootYaxsThshFootCum=distFootYaxsThshFootCum
   )
   
   #return list
