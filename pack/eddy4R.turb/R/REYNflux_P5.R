@@ -510,14 +510,14 @@ REYNflux_FD_mole_dry <- function(
     #' @author
     #' Stefan Metzger \email{eddy4R.info@gmail.com}
     
-    #' @description Function definition. This function rotates the wind vector into the mean, thus allowing to separate stream-wise and cross-wind components for subsequent use in footprint models, calculating shear stress etc. It consists of a single azimuth-rotation around the vertical axis. Any more comprehensive rotation such as double rotation or planar fit should be applied prior to calling this function.
+    #' @description Function definition. This function rotates the wind vector into the mean wind, thus allowing to separate stream-wise and cross-wind components for subsequent use in footprint models, calculating shear stress etc. It consists of a single azimuth-rotation around the vertical axis. Any more comprehensive rotation such as double rotation or planar fit should be applied prior to calling this function.
     
-    #' @param dataLoca A data frame containing the wind vector in meteorological convention with the variables veloXaxs (latitudinal wind speed, positive from west), veloYaxs (longitudinal wind speed, positive from south), and veloZaxs (vertical wind speed, positive from below) of class "numeric, each with unit attribute. [m s-1]
+    #' @param inp A data frame containing the wind vector in meteorological convention with the variables veloXaxs (latitudinal wind speed, positive from west), veloYaxs (longitudinal wind speed, positive from south), and veloZaxs (vertical wind speed, positive from below) of class "numeric, each with unit attribute. [m s-1]
     
     #' @return 
     #' The returned object is a list containing the elements data and rot.
     #' data is a dataframe with the same number of observations as the function call inputs. It contains the wind vector variables in streamwise convention veloXaxsHor (streamwise wind speed, positive from front), veloYaxsHor (cross-wind speed, positive from left) and veloZaxsHor (vertical wind speed, positive from below) [m s-1], and the wind direction angZaxsErth [rad], each of class "numeric and with unit attribute.
-    #' rot is a list with the objects used in the rotation, averaged over all observations in the function call inputs. It contains the mean wind direction angZaxsErth [rad] with unit attribute, the resulting rotation matrix mtrxRot01 and the transpose of the rotation matrix mtrxRot02, each of class "numeric. It should be noted that angZaxsErth is calculated by first averaging each horizontal component of the wind vector, which minimizes the mean cross-wind thus satisfying conditions for footprint modeling and separating shear into stream-wise and cross-wind terms.
+    #' rot is a list with the objects used in the rotation, averaged over all observations in the function call inputs. It contains the mean wind direction angZaxsErth [rad], the resulting rotation matrix mtrxRot01 [-] and the transpose of the rotation matrix mtrxRot02 [-], each of class "numeric and with unit attribute. It should be noted that angZaxsErth is calculated by first averaging each horizontal component of the wind vector, which minimizes the mean cross-wind thus satisfying conditions for footprint modeling and separating shear into stream-wise and cross-wind terms.
     
     #' @references
     #' License: GNU AFFERO GENERAL PUBLIC LICENSE Version 3, 19 November 2007
@@ -525,13 +525,25 @@ REYNflux_FD_mole_dry <- function(
     #' @keywords rotation, stream-wise, mean wind, footprint, shear
     
     #' @examples
-    #' Example 1, this will cause an error message due to tempAir has no unit:
-    #' def.heat.h2o.gas.temp(tempAir = 268)
-    #' Example 2, assign values and units to variables first, the function should run ok.
-    #' tempAir <- 268
-    #' attributes(tempAir)$unit <- "K"
-    #' def.heat.h2o.gas.temp(tempAir)
-    
+    #' Example 1, this will cause an error message due to inp01$veloYaxs is missing:
+    #' inp01 <- base::data.frame(
+    #'   veloXaxs = c(-1.889635, -1.661724, -1.615837, -1.711132, -1.223001),
+    #'   veloZaxs = c(0.176613897, 0.184947662, 0.344331819, 0.190230311, 0.239193186)
+    #' )
+    #' attr(inp01$veloXaxs,"unit") <- "m s-1"; attr(inp01$veloZaxs,"unit") <- "m s-1"
+    #' def.rot.ang.zaxs.erth(inp = inp01)
+    #' base::rm(inp01)
+    #' Example 2, make sure to assign all variables and units, the function should run ok.
+    #' inp02 <- base::data.frame(
+    #'   veloXaxs = c(-1.889635, -1.661724, -1.615837, -1.711132, -1.223001),
+    #'   veloYaxs = c(1.365195, 1.277106, 1.394891, 1.180698, 1.283836),
+    #'   veloZaxs = c(0.176613897, 0.184947662, 0.344331819, 0.190230311, 0.239193186)
+    #' )
+    #' attr(inp02$veloXaxs,"unit") <- "m s-1"; attr(inp02$veloYaxs,"unit") <- "m s-1"; attr(inp02$veloZaxs,"unit") <- "m s-1"
+    #' out02 <- def.rot.ang.zaxs.erth(inp = inp02)
+    #' utils::str(out02)
+    #' base::rm(inp02, out02)
+
     #' @seealso Currently none.
     
     #' @export
@@ -542,26 +554,36 @@ REYNflux_FD_mole_dry <- function(
     #   Stefan Metzger (2021-11-24)
     #     update to eddy4R terminology and modularize into definition function
     ###############################################################################################
-    
+
+        
     # rotation into the mean wind
     def.rot.ang.zaxs.erth <- function(
       
-      # dataframe with variables veloXaxs, veloYaxs, and veloZaxs of class "numeric, each with unit attribute. [m s-1]
-      dataLoca = data[c("veloXaxs", "veloYaxs", "veloZaxs")]
+      # input dataframe with variables veloXaxs, veloYaxs, and veloZaxs of class "numeric, each with unit attribute. [m s-1]
+      inp
       
     ) {
       
-      # test input variable unit attributes
-      for(whr in base::names(dataLoca)){
-      # whr <- base::names(dataLoca)[1]
+      # check that input is of class data.frame
+      if(base::class(inp) != "data.frame") {
+        stop(base::paste0("def.rot.ang.zaxs.erth(): inp is not of class data.frame, please check."))  
+      }
+      
+      # test input variables and unit attributes
+      for(whr in c("veloXaxs", "veloYaxs", "veloZaxs")){
+      # whr <- "veloXaxs"
+        
+        # test for presence/absence of variables
+        if(!(whr %in% base::names(inp))) {
+          stop(base::paste0("def.rot.ang.zaxs.erth(): inp$", whr, " is missing."))        }
         
         # test for presence/absence of unit attribute
-        if(!("unit" %in% names(attributes(dataLoca[[whr]])))) {
-          stop(base::paste0("def.rot.ang.zaxs.erth(): dataLoca$", whr, " is missing unit attribute."))        }
+        if(!("unit" %in% base::names(attributes(inp[[whr]])))) {
+          stop(base::paste0("def.rot.ang.zaxs.erth(): inp$", whr, " is missing unit attribute."))        }
         
         # test for correct units
-        if(attributes(dataLoca[[whr]])$unit != "m s-1") {
-          stop(base::paste0("def.rot.ang.zaxs.erth(): dataLoca$", whr, 
+        if(attributes(inp[[whr]])$unit != "m s-1") {
+          stop(base::paste0("def.rot.ang.zaxs.erth(): inp$", whr, 
                             " input units are not matching internal units, please check."))}
         
       }
@@ -573,8 +595,8 @@ REYNflux_FD_mole_dry <- function(
         
         # instantaneous wind direction [rad]
         angZaxsErth <- eddy4R.base::def.unit.conv(data = eddy4R.base::def.pol.cart(cart = base::matrix(c(
-          dataLoca$veloYaxs,
-          dataLoca$veloXaxs), ncol=2)),
+          inp$veloYaxs,
+          inp$veloXaxs), ncol=2)),
           unitFrom = "deg", unitTo = "rad")
       
         # mean wind direction [rad], based on first averaging each horizontal component of the wind vector
@@ -586,8 +608,8 @@ REYNflux_FD_mole_dry <- function(
         # (eddy4R.base::wrap.dp01.R calls eddy4R.base::def.dir.wind(inp = dataLoca$soni$angZaxsErth, MethVari = "Yama"))
         # how to best reconcile, different community standards for dp01 (states -> 2D sonics) and dp04 (fluxes)?
         angZaxsErthMean <- eddy4R.base::def.unit.conv(data = eddy4R.base::def.pol.cart(cart = base::matrix(c(
-          base::mean(dataLoca$veloYaxs, na.rm = TRUE),
-          base::mean(dataLoca$veloXaxs, na.rm = TRUE)), ncol=2)),
+          base::mean(inp$veloYaxs, na.rm = TRUE),
+          base::mean(inp$veloXaxs, na.rm = TRUE)), ncol=2)),
           unitFrom = "deg", unitTo = "rad")
       
       # rotation angle
@@ -609,7 +631,7 @@ REYNflux_FD_mole_dry <- function(
       mtrxRot02 <- base::t(mtrxRot01)
       
       # wind velocity vector in (horizontal) geodetic coordinates
-      veloVect <- rbind(dataLoca$veloYaxs, dataLoca$veloXaxs, dataLoca$veloZaxs)
+      veloVect <- rbind(inp$veloYaxs, inp$veloXaxs, inp$veloZaxs)
       
       # actual rotation
       veloVectRot <- mtrxRot01 %*% veloVect
@@ -645,18 +667,23 @@ REYNflux_FD_mole_dry <- function(
             mtrxRot01 = mtrxRot01,
             mtrxRot02 = mtrxRot02)
           
-          # assign output unit
+          # assign output units
           attributes(rpt$rot$angZaxsErth)$unit <- "rad"
+          attributes(rpt$rot$mtrxRot01)$unit <- "-"
+          attributes(rpt$rot$mtrxRot02)$unit <- "-"
 
       # clean up
-      rm(angRot, angZaxsErth, angZaxsErthMean, dataLoca, mtrxRot01, mtrxRot02, veloVect, veloVectRot)
+      rm(angRot, angZaxsErth, angZaxsErthMean, inp, mtrxRot01, mtrxRot02, veloVect, veloVectRot)
       
       # return results
       return(rpt) 
       
     }
   }
+  
   # actual calculation
+  dataTmp <- def.rot.ang.zaxs.erth(inp = data[c("veloXaxs", "veloYaxs", "veloZaxs")])
+  str(dataTmp)
   
   
   
