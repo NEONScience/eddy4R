@@ -43,28 +43,28 @@ def.pf.derv.coef <- function(
 ) {
   
   #perform regression
-  modlLin <- lm(veloZaxs ~ veloXaxs + veloYaxs)
+  modlLin <- stats::lm(veloZaxs ~ veloXaxs + veloYaxs)
   #LM <- robustbase::lmrob(w ~ u + v)
   
   #extract regression coefficients
-  coef00 <- coefficients(modlLin )[1]
-  coef01 <- coefficients(modlLin )[2]
-  coef02 <- coefficients(modlLin )[3]
+  coef00 <- stats::coefficients(modlLin )[1] #b0
+  coef01 <- stats::coefficients(modlLin )[2] #b1
+  coef02 <- stats::coefficients(modlLin )[3] #b2
   
   #determine cosine matrix elements
-  mtrx31 <- -coef01 / sqrt(coef01^2 + coef02^2 + 1)
-  mtrx32 <- -coef02 / sqrt(coef01^2 + coef02^2 + 1)
-  mtrx33 <-   1 / sqrt(coef01^2 + coef02^2 + 1)
+  mtrx31 <- -coef01 / base::sqrt(coef01^2 + coef02^2 + 1) #p31
+  mtrx32 <- -coef02 / base::sqrt(coef01^2 + coef02^2 + 1) #p32
+  mtrx33 <-   1 / base::sqrt(coef01^2 + coef02^2 + 1) #p33
   
   #solve cosine matrix for rotation angles [rad]
-  angEnuYaxs <- asin(mtrx31)
-  angEnuXaxs <-  atan(-mtrx32 / mtrx33)
+  angEnuYaxs <- base::asin(mtrx31) #alpha
+  angEnuXaxs <-  base::atan(-mtrx32 / mtrx33) #beta
   #alpha <- acos(sqrt(p32^2 + p33^2)) * 180 / pi
   #beta <-  asin(-p32 / sqrt(p32^2 + p33^2)) * 180 / pi
   
   #aggregate and return results
-  coefPf <- data.frame(AngEnuYaxs=angEnuYaxs, AngEnuXaxs=angEnuXaxs, Ofst=coef00) #Should coefficients be capitalized?
-  dimnames(coefPf)[[1]] <- ""
-  return(coefPf)
+  CoefPf <- base::data.frame(AngEnuYaxs=angEnuYaxs, AngEnuXaxs=angEnuXaxs, Ofst=coef00) #Should coefficients be capitalized?
+  base::dimnames(CoefPf)[[1]] <- ""
+  return(CoefPf)
   
 }
