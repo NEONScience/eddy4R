@@ -63,7 +63,7 @@ def.pf.derv.coef <- function(
   #beta <-  asin(-p32 / sqrt(p32^2 + p33^2)) * 180 / pi
   
   #aggregate and return results
-  CoefPf <- base::data.frame(AngEnuYaxs=angEnuYaxs, AngEnuXaxs=angEnuXaxs, Ofst=coef00) #Should coefficients be capitalized?
+  CoefPf <- base::data.frame(AngEnuYaxs=angEnuYaxs, AngEnuXaxs=angEnuXaxs, Ofst=coef00) #Alpha (al), beta (be), offset(b0) 
   base::dimnames(CoefPf)[[1]] <- ""
   return(CoefPf)
   
