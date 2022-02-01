@@ -695,19 +695,28 @@ REYNflux_FD_mole_dry <- function(
   
   
   ############################################################
-  #BASE STATE AND DEVIATIONS
+  # BASE STATE, DEVIATIONS AND SUMMARY STATISTICS
   ############################################################
   
-  # need to always calculate means as reference
+  # always calculate means as reference
+  
+    # calculate means for euclidean (linear, cartensian) quantities
+    mean <- plyr::colwise("mean")(data, na.rm = TRUE)
+  
+    # batch-apply units from data to mean
+    base::sapply(base::names(mean), function(x) {base::attr(mean[[x]], which = "unit") <<- 
+      base::attr(data[[x]], which = "unit")})
+    
+    # re-calculate means for circular (polar) quantities
+    
+  
+  str(mean)
+  
   
   ############################################################
   # moved here from TIME SERIES AVERAGES
   ############################################################
   
-  # #data frame
-  # mn <- plyr::colwise(mean)(data,na.rm = TRUE)
-  # attributes(mn)$names <- attributes(data)$names
-  # 
   # #aircraft heading as vector average
   # if(PltfEc == "airc")
   #   mn$PSI_aircraft <- eddy4R.base::def.conv.poly(data=eddy4R.base::def.pol.cart(matrix(colMeans(eddy4R.base::def.cart.pol(eddy4R.base::def.conv.poly(data=data$PSI_aircraft,coefPoly=eddy4R.base::IntlConv$DegRad)), na.rm=TRUE), ncol=2)),coefPoly=eddy4R.base::IntlConv$RadDeg)
