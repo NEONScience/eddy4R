@@ -11,12 +11,12 @@
 #' @description 
 #' Function defintion. Performs planar fit transformation on wind vector in right-hand body coordinate system, e.g. CSAT3: Positive from front, left, below.
 
-#' @param dfVeloWind data.frame containing the horizontal (u,v) and vertical (z) wind velocities in ms-1
+#' @param veloWind data.frame containing the horizontal (u,v) and vertical (z) wind velocities in ms-1
 #' @param AngEnuYaxs The planar fit coefficient for pitch angle rotation - alpha (al)
 #' @param AngEnuXaxs The planar fit coefficient for roll angle rotation - beta (be)
 #' @param Ofst The planar fit coefficient for vertical velocity offset (b0)
 #' 
-#' @return A data.frame \code{dfVeloWindPf} containing data rotated using the planar fit transformation with the same dimensions as \code{dfVeloWind}.
+#' @return A data.frame \code{veloWindPf} containing data rotated using the planar fit transformation with the same dimensions as \code{veloWind}.
 
 #' @references 
 #' Wilczak et al., 2001
@@ -43,7 +43,7 @@
 
 def.pf.rot <- function(
 #measured wind velocity vector [m s-1]
-  dfVeloWind = data.frame(veloXaxs, veloYaxs, veloZaxs),
+  veloWind = data.frame(veloXaxs, veloYaxs, veloZaxs),
 #pitch rotation angle [rad] - alpha (al)
   AngEnuYaxs = 0,
 #roll rotation angle [rad] - beta (be)
@@ -53,25 +53,28 @@ def.pf.rot <- function(
 ) {
 
 #mean offset correction for vertical wind
-  dfVeloWind$veloZaxs <- dfVeloWind$veloZaxs - Ofst
+  veloWind$veloZaxs <- veloWind$veloZaxs - Ofst
 
 #partial rotation matrix for the pitch angle (Wilczak et al., 2001, Eq. 2)
-  mtrxAngYaxs <- c(base::cos(AngEnuYaxs), 0, -base::sin(AngEnuYaxs), 0, 1, 0, base::sin(AngEnuYaxs), 0, base::cos(AngEnuYaxs)) #Dmat
+  mtrxAngYaxs <- c(base::cos(AngEnuYaxs), 0, -base::sin(AngEnuYaxs), 0, 1, 0,
+                   base::sin(AngEnuYaxs), 0, base::cos(AngEnuYaxs)) #Dmat
   mtrxAngYaxs  <- base::matrix(mtrxAngYaxs, nrow=3, ncol=3) #Dmat
 
 #partial rotation matrix for the roll angle (Wilczak et al., 2001, Eq. 2)
-  mtrxAngXaxs <- c(1,0, 0,0,base::cos(AngEnuXaxs), base::sin(AngEnuXaxs),0, -base::sin(AngEnuXaxs), base::cos(AngEnuXaxs))
+  mtrxAngXaxs <- c(1,0, 0,0,base::cos(AngEnuXaxs), base::sin(AngEnuXaxs),0,
+                    -base::sin(AngEnuXaxs), base::cos(AngEnuXaxs))
+  
   mtrxAngXaxs  <- base::matrix(mtrxAngXaxs, nrow=3, ncol=3)
 
 #combination of pitch and roll angle rotation matrices (Wilczak et al., 2001, Eq. 36)
   mtrxRot <- t(mtrxAngYaxs) %*% t(mtrxAngXaxs) #Pmat
 
 #perform planar-fit rotation (Wilczak et al., 2001, Eq. 35)
-  dfVeloWindPf <- base::data.frame(t(mtrxRot %*% t(dfVeloWind)))
-  base::dimnames(dfVeloWindPf)[[2]] <- base::dimnames(dfVeloWind)[[2]]
+  veloWindPf <- base::data.frame(t(mtrxRot %*% t(veloWind)))
+  base::dimnames(veloWindPf)[[2]] <- base::dimnames(veloWind)[[2]]
 
 #return resulting wind vector
-  return(dfVeloWindPf)
+  return(veloWindPf)
 
 }
 
