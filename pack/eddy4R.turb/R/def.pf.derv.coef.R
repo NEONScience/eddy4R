@@ -1,19 +1,23 @@
 ##############################################################################################
-#' @title Definition function: Determine planar fit coefficients
+#' @title Definition function: Derive planar fit coefficients
 
 #' @author
 #' Ke Xu \email{xuke2012abroad@gmail.com},
 #' Stefan Metzger \email{eddy4R.info@gmail.com}
-#' David Durden 
+#' David Durden \email{eddy4R.info@gmail.com}
 
 #' @description 
-#' Function defintion. Determines planar fit coefficients on wind vector in right-hand body coordinate system, e.g. CSAT3: Positive from front, left, below.
+#' Function defintion. Determines planar fit coefficients on wind vector in right-hand body coordinate system, e.g. CSAT3: Positive from front, left, below. Met: positive from west, south and below
 
-#' @param Currently none
+#' @param veloXaxs numeric vector containing the horizontal (met: u) wind velocities in ms-1
+#' @param veloYaxs numeric vector containing the horizontal (met: v) wind velocities in ms-1
+#' @param veloZaxs numeric vector containing the vertical (met: z) wind velocities in ms-1
 
-#' @return Currently none
+#' @return A data.frame \code{coefPf} containing the planar fit coefficients (\code{angEnuYaxs} = Alpha,\code{angEnuXaxs} = Beta,\code{Ofst} = Offset).
 
-#' @references Currently none
+#' @references 
+#' Wilczak et al., 2001
+#' License: GNU AFFERO GENERAL PUBLIC LICENSE Version 3, 19 November 2007
 
 #' @keywords planar fit, coordinate rotation, coordinate transformation
 
