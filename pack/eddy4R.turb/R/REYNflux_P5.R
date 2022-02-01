@@ -85,6 +85,7 @@ REYNflux_FD_mole_dry <- function(
     # $ d_xy_flow     : num 900
     base::attr(x = data$d_xy_flow, which = "unit") <- "s"
     # $ PSI_aircraft  : num 290
+    data$PSI_aircraft <- eddy4R.base::def.conv.poly(data = data$PSI_aircraft, coefPoly = eddy4R.base::IntlConv$DegRad)
     attributes(data$PSI_aircraft)$unit <- "rad"
     # $ uvw_aircraft  : num 2.02
     base::attr(x = data$uvw_aircraft, which = "unit") <- "m s-1"
@@ -731,11 +732,46 @@ REYNflux_FD_mole_dry <- function(
     # calculate means for euclidean (linear, cartensian) quantities
     mean <- plyr::colwise("mean")(data, na.rm = TRUE)
   
-    # batch-apply units from data to mean
+    # apply units from data to mean
     base::sapply(base::names(mean), function(x) {base::attr(mean[[x]], which = "unit") <<- 
       base::attr(data[[x]], which = "unit")})
     
     # re-calculate means for circular (polar) quantities
+    
+      # test for correct units
+    
+        # determine if there are any variables in unit "deg"
+        tmp01 <- base::sapply(base::names(mean), function(x) {base::attr(mean[[x]], which = "unit") == "deg"})
+        
+        # stop and print error message to screen
+        if(length(which(tmp01)) > 0) {
+          stop(base::paste0("my.function(): ", base::names(base::which(tmp01)), 
+                            " units are not matching internal units (radians), please check."))}
+        
+        # clean up
+        base::rm(tmp01)
+      
+      
+      # determine whether there are any variables in unit "rad"
+      tmp02 <- base::sapply(base::names(mean), function(x) {base::attr(mean[[x]], which = "unit") == "rad"})
+      
+      # continue only if there is at least one variable in unit "rad"
+      if(length(which(tmp02)) > 0) {
+        
+        # variables to re-calculate
+        tmp03 <- base::names(base::which(tmp02))
+        
+        # re-calculate: use code from line 639 above
+        
+      }
+      # clean up
+      base::rm(tmp02, tmp03)
+      
+      
+      
+
+    # perform unit check on the very top of the script, that all imported variables have units
+    
     
   
   str(mean)
