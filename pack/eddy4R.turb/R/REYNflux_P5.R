@@ -67,6 +67,34 @@ REYNflux_FD_mole_dry <- function(
   
   ### rename input data in preparation of terms update (replace with unit test when completing refactoring)
   
+    # to be consolidated
+    # $ t_utc         : num 0.25
+    base::attr(x = data$t_utc, which = "unit") <- "h"
+    # $ t_doy_utc     : num 332
+    base::attr(x = data$t_doy_utc, which = "unit") <- "d"
+    # $ t_doy_local   : num 332
+    base::attr(x = data$t_doy_local, which = "unit") <- "d"
+    # $ d_x_utm       : num 710730
+    base::attr(x = data$d_x_utm, which = "unit") <- "m"
+    # $ d_y_utm       : num 4330788
+    base::attr(x = data$d_y_utm, which = "unit") <- "m"
+    # $ d_z_m         : num 8
+    base::attr(x = data$d_z_m, which = "unit") <- "m"
+    # $ d_xy_travel   : num 900
+    base::attr(x = data$d_xy_travel, which = "unit") <- "s"
+    # $ d_xy_flow     : num 900
+    base::attr(x = data$d_xy_flow, which = "unit") <- "s"
+    # $ PSI_aircraft  : num 290
+    attributes(data$PSI_aircraft)$unit <- "rad"
+    # $ uvw_aircraft  : num 2.02
+    base::attr(x = data$uvw_aircraft, which = "unit") <- "m s-1"
+    # $ uv_met        : num 2.02
+    base::attr(x = data$uv_met, which = "unit") <- "m s-1"
+    # $ d_z_terrain   : num 414
+    base::attr(x = data$d_z_terrain, which = "unit") <- "m"
+    # $ d_z_ABL       : num 1000
+    base::attr(x = data$d_z_ABL, which = "unit") <- "m"
+  
     # wind vector
     data$veloXaxs <- data$u_met
       data$u_met <- NULL
