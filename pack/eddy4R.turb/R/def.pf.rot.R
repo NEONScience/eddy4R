@@ -9,7 +9,7 @@
 #' Stefan Metzger \email{eddy4R.info@gmail.com}
 
 #' @description 
-#' Function defintion. Performs planar fit transformation on wind vector in right-hand body coordinate system, e.g. CSAT3: Positive from front, left, below.
+#' Function defintion. Performs planar fit transformation on wind vector in right-hand body coordinate system, e.g. CSAT3: Positive from front, left, below. Met: positive from west, south and below. The coefficients don't have to be in the East-North-Up (ENU) coordinate system (AngEnuXaxs); however, the names are consistent with NEON data terminology and in our data pipeline are in ENU.
 
 #' @param veloWind data.frame containing the horizontal (u,v) and vertical (z) wind velocities in ms-1
 #' @param AngEnuYaxs The planar fit coefficient for pitch angle rotation - alpha (al)
