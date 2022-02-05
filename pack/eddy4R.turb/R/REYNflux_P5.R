@@ -82,6 +82,8 @@ REYNflux_FD_mole_dry <- function(
     base::attr(x = data$d_z_m, which = "unit") <- "m"
     # $ d_xy_travel   : num 900
     base::attr(x = data$d_xy_travel, which = "unit") <- "s"
+    # re-assign as independent variable, which can be used exchangably for tower, aircraft etc. with corresponding units
+    data$idep <- data$d_xy_travel
     # $ d_xy_flow     : num 900
     base::attr(x = data$d_xy_flow, which = "unit") <- "s"
     # $ PSI_aircraft  : num 290
@@ -720,7 +722,7 @@ REYNflux_FD_mole_dry <- function(
   rot <- dataTmp$rot
   base::rm(dataTmp)
   
-  
+
   
   
   ############################################################
@@ -737,7 +739,7 @@ REYNflux_FD_mole_dry <- function(
   
     # calculate means for euclidean (linear, cartensian) quantities
     mean <- plyr::colwise("mean")(data, na.rm = TRUE)
-  
+
     # apply units from data to mean
     base::sapply(base::names(mean), function(x) {base::attr(mean[[x]], which = "unit") <<- 
       base::attr(data[[x]], which = "unit")})
@@ -756,7 +758,6 @@ REYNflux_FD_mole_dry <- function(
         
         # clean up
         base::rm(tmp01)
-      
       
       # determine whether there are any variables in unit "rad"
       tmp02 <- base::sapply(base::names(mean), function(x) {base::attr(mean[[x]], which = "unit") == "rad"})
@@ -805,30 +806,62 @@ REYNflux_FD_mole_dry <- function(
       }
       # clean up
       base::rm(tmp02, tmp03)
-      
-      
 
       
+  # base states; AlgBase <- c("mean", "trnd", "ord03")[2]
       
+      # re-assign mean data if AlgBase == "mean"
+      if(AlgBase == "mean") {
+        
+        base <- mean
+        
+      # compute base state otherwise
+      } else {
+        
+        # calculate base states      
+        base <- base::sapply(base::names(data), function(x) eddy4R.base::def.base.ec(
+          idxTime = data$idep,
+          var = data[[x]],
+          AlgBase = AlgBase),
+          simplify = FALSE)
+        
+        # reshape results
+        base <- base::as.data.frame(base::matrix(base::unlist(base), ncol = base::ncol(data)))
+        base::attributes(base)$names <- base::attributes(data)$names
+        
+        # apply units from data to base
+        base::sapply(base::names(base), function(x) {base::attr(base[[x]], which = "unit") <<- 
+          base::attr(data[[x]], which = "unit")})
+        
+        # determine whether there are any variables in unit "rad"
+        tmp01 <- base::sapply(base::names(base), function(x) {base::attr(base[[x]], which = "unit") == "rad"})
+        
+        # continue only if there is at least one variable in unit "rad"
+        if(length(which(tmp01)) > 0) {
+          
+          # variables to re-calculate / re-assign
+          tmp02 <- base::names(base::which(tmp01))
+          
+          # assign NAs - current computation of de-trending or 3rd order polynomial not defined for circular quantities
+          for(idx in tmp02) {
+            
+            base[[idx]] <- base::rep(x = NaN, length.out = base::length(base[[idx]]))
+            attributes(base[[idx]])$unit <- attributes(data[[idx]])$unit
+            
+          }
+          base::rm(idx)
+          
+        }
+        # clean up
+        base::rm(tmp01, tmp02)
       
+      }
       
-      
-  #base state
-  #AlgBase <- c("mean", "trnd", "ord03")[2]
-  if(PltfEc == "airc") base <- sapply(1:ncol(data), function(x) eddy4R.base::def.base.ec(data$d_xy_travel, data[,x], AlgBase), simplify = FALSE)
-  if(PltfEc == "towr") {
-    base <- sapply(1:ncol(data), function(x) eddy4R.base::def.base.ec(data$t_utc, data[,x], AlgBase), simplify = FALSE)
-  }
+
+
+
   
-  base <- as.data.frame(matrix(unlist(base), ncol=ncol(data)))
-  attributes(base)$names <- attributes(data)$names
-  #vector averages for azimuth angles if AlgBase == "mean"
-  if(AlgBase == "mean") {  
-    if(PltfEc == "airc") base$PSI_aircraft <- mn$PSI_aircraft
-    base$PSI_uv <- mn$PSI_uv
-  }
-  #str(base)
-  
+
   #immidiate fluctuations
   imfl <- sapply(1:ncol(data), function(x) data[,x] - base[,x])
   imfl <- as.data.frame(matrix(imfl, ncol=ncol(data)))
