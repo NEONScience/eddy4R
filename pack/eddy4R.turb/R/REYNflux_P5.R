@@ -724,8 +724,14 @@ REYNflux_FD_mole_dry <- function(
   
   
   ############################################################
-  # BASE STATE, DEVIATIONS AND SUMMARY STATISTICS
+  # MEANS, BASE STATES, DEVIATIONS AND SUMMARY STATISTICS
   ############################################################
+  
+  # prepare inputs
+  # reference quantities that overwrite internal calculations
+  refe <- list()
+  refe$mean$angZaxsErth <- rot$angZaxsErth
+  
   
   # always calculate means as reference
   
@@ -736,7 +742,7 @@ REYNflux_FD_mole_dry <- function(
     base::sapply(base::names(mean), function(x) {base::attr(mean[[x]], which = "unit") <<- 
       base::attr(data[[x]], which = "unit")})
     
-    # re-calculate means for circular (polar) quantities
+    # re-calculate / re-assign means for circular (polar) quantities as vector average
     
       # test for correct units
     
@@ -758,38 +764,55 @@ REYNflux_FD_mole_dry <- function(
       # continue only if there is at least one variable in unit "rad"
       if(length(which(tmp02)) > 0) {
         
-        # variables to re-calculate
+        # variables to re-calculate / re-assign
         tmp03 <- base::names(base::which(tmp02))
         
-        # re-calculate: use code from line 639 above
+        # re-calculate / re-assign
+        for(idx in tmp03) {
+          
+          # re-assign reference value if provided
+          if(!is.null(refe$mean) & idx %in% base::names(refe$mean)) {
+            
+            mean[[idx]] <- refe$mean[[idx]]
+          
+          # re-calculate otherwise
+          # need to change from degree to internal units radians: eddy4R.base::def.pol.cart() and 
+          # eddy4R.base::def.cart.pol(); inconsistent results when calculating mean wind direction
+          # 1) directly from mean horizontal wind vector [m s-1] via single call to eddy4R.base::def.pol.cart() vs.
+          # 2) re-calculating from high-frequency wind direction -> unit vector via call to 
+          # eddy4R.base::def.pol.cart(eddy4R.base::def.cart.pol()); implemented above look-back as a
+          # workaround specifically for wind direction to be consistently defined as the direction that
+          # minimizes the mean cross-wind; example:
+          # 124.8 deg from 1) wind vector: eddy4R.base::def.pol.cart(cart = base::matrix(c(0.9941063, -1.429056), ncol=2))
+          # 123.6 deg from 2) unit vector: eddy4R.base::def.pol.cart(cart = base::matrix(c(0.5394431, -0.8106568), ncol=2))
+          } else {
+          
+            mean[[idx]] <- eddy4R.base::def.unit.conv(data = eddy4R.base::def.pol.cart(
+              cart = base::matrix(
+                base::colMeans(
+                  eddy4R.base::def.cart.pol(
+                    az = eddy4R.base::def.conv.poly(data = data[[idx]], coefPoly = eddy4R.base::IntlConv$RadDeg)
+                    ),
+                  na.rm=TRUE),
+                ncol=2)
+              ), unitFrom = "deg", unitTo = "rad")
+
+          } 
+          
+        }
+        base::rm(idx)
         
       }
       # clean up
       base::rm(tmp02, tmp03)
       
       
-      
 
-    # perform unit check on the very top of the script, that all imported variables have units
-    
-    
-  
-  str(mean)
-  
-  
-  ############################################################
-  # moved here from TIME SERIES AVERAGES
-  ############################################################
-  
-  # #aircraft heading as vector average
-  # if(PltfEc == "airc")
-  #   mn$PSI_aircraft <- eddy4R.base::def.conv.poly(data=eddy4R.base::def.pol.cart(matrix(colMeans(eddy4R.base::def.cart.pol(eddy4R.base::def.conv.poly(data=data$PSI_aircraft,coefPoly=eddy4R.base::IntlConv$DegRad)), na.rm=TRUE), ncol=2)),coefPoly=eddy4R.base::IntlConv$RadDeg)
-  
-  # moved here from ROTATION INTO THE MEAN WIND
-  # mn$veloXaxsHor <- mean(veloVectRot[1,], na.rm=TRUE)
-  # mn$veloYaxsHor <- mean(veloVectRot[2,], na.rm=TRUE)
-  # mn$veloZaxsHor <- mean(veloVectRot[3,], na.rm=TRUE)
-  
+      
+      
+      
+      
+      
   #base state
   #AlgBase <- c("mean", "trnd", "ord03")[2]
   if(PltfEc == "airc") base <- sapply(1:ncol(data), function(x) eddy4R.base::def.base.ec(data$d_xy_travel, data[,x], AlgBase), simplify = FALSE)
@@ -820,6 +843,13 @@ REYNflux_FD_mole_dry <- function(
   #variances (corresponding to base state treatment)
   sd <- as.data.frame( matrix(sqrt(splus2R::colVars(imfl, na.rm=TRUE)), ncol=ncol(imfl)) )
   attributes(sd)$names <- attributes(imfl)$names
+  
+  
+  
+  
+  
+  
+  
   
   
   
