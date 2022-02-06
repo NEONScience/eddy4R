@@ -734,6 +734,26 @@ REYNflux_FD_mole_dry <- function(
   refe <- list()
   refe$mean$angZaxsErth <- rot$angZaxsErth
   
+  # minimum and maximum
+  
+    # min
+  
+      # calulate
+      min <- plyr::colwise("min")(data, na.rm=TRUE)
+      
+      # apply units from data to min
+      base::sapply(base::names(min), function(x) {base::attr(min[[x]], which = "unit") <<- 
+        base::attr(data[[x]], which = "unit")})
+      
+    # max
+      
+      # calulate
+      max <- plyr::colwise("max")(data, na.rm=TRUE)
+      
+      # apply units from data to max
+      base::sapply(base::names(max), function(x) {base::attr(max[[x]], which = "unit") <<- 
+        base::attr(data[[x]], which = "unit")})
+
   
   # always calculate means as reference
   
@@ -884,6 +904,8 @@ REYNflux_FD_mole_dry <- function(
     base::sapply(base::names(sd), function(x) {base::attr(sd[[x]], which = "unit") <<- 
       base::attr(data[[x]], which = "unit")})
     
+    
+
   
   str(sd$heatH2oGas)
   
@@ -1081,14 +1103,6 @@ REYNflux_FD_mole_dry <- function(
   #EXPORT RESULTS
   ############################################################
   
-  
-  #PREPARE DATA
-  #mins
-  mi <- plyr::colwise(min)(data,na.rm=TRUE)
-  attributes(mi)$names <- attributes(data)$names
-  #maxs
-  ma <- plyr::colwise(max)(data,na.rm=TRUE)
-  attributes(ma)$names <- attributes(data)$names
   
   #convert the sd date to the mn date (as sd of the date range is meaningless)
   sd$date = mn$date
