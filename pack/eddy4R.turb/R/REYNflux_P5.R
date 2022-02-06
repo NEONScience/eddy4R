@@ -858,24 +858,41 @@ REYNflux_FD_mole_dry <- function(
       }
 
       
-  # immediate fluctuations
-  diff <- sapply(1:ncol(data), function(x) data[,x] - base[,x])
-  diff <- as.data.frame(matrix(diff, ncol=ncol(data)))
-  attributes(diff)$names <- attributes(data)$names
+  # immediate fluctuations (corresponding to base state treatment)
+      
+    # calculate
+    diff <- sapply(base::names(data), function(x) data[[x]] - base[[x]])
+    
+    # reshape data
+    diff <- base::as.data.frame(base::matrix(diff, ncol = base::ncol(data)))
+    base::attributes(diff)$names <- base::attributes(data)$names
+    
+    # apply units from data to diff
+    base::sapply(base::names(diff), function(x) {base::attr(diff[[x]], which = "unit") <<- 
+      base::attr(data[[x]], which = "unit")})
   
-  #correct wind direction from (detrended) wind components
-  PSI_uv_dum <- eddy4R.base::def.pol.cart(matrix(c(diff$veloYaxs + mn$veloYaxs, diff$veloXaxs + mn$veloXaxs), ncol=2))
-  diff$PSI_uv <- (PSI_uv_dum - mn$PSI_uv)
-  rm(PSI_uv_dum)
-  #same should be done for PSI_aircraft
+  # standard deviations (corresponding to base state treatment)
+    
+    # calculate
+    sd <- sapply(base::names(data), function(x) stats::sd(diff[[x]], na.rm=TRUE))
+    
+    # reshape data
+    sd <- base::as.data.frame(base::matrix(sd, ncol = base::ncol(data)))
+    base::attributes(sd)$names <- base::attributes(data)$names
+    
+    # apply units from data to sd
+    base::sapply(base::names(sd), function(x) {base::attr(sd[[x]], which = "unit") <<- 
+      base::attr(data[[x]], which = "unit")})
+    
   
-  #variances (corresponding to base state treatment)
-  sd <- as.data.frame( matrix(sqrt(splus2R::colVars(diff, na.rm=TRUE)), ncol=ncol(diff)) )
-  attributes(sd)$names <- attributes(diff)$names
+  str(sd$heatH2oGas)
+  
+  min
+  
+  max
   
   
-  
-  
+
   
   
   
