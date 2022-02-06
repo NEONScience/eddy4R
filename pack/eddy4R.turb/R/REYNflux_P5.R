@@ -894,11 +894,7 @@ REYNflux_FD_mole_dry <- function(
   # standard deviations (corresponding to base state treatment)
     
     # calculate
-    sd <- sapply(base::names(data), function(x) stats::sd(diff[[x]], na.rm=TRUE))
-    
-    # reshape data
-    sd <- base::as.data.frame(base::matrix(sd, ncol = base::ncol(data)))
-    base::attributes(sd)$names <- base::attributes(data)$names
+    sd <- plyr::colwise("sd")(diff, na.rm=TRUE)
     
     # apply units from data to sd
     base::sapply(base::names(sd), function(x) {base::attr(sd[[x]], which = "unit") <<- 
@@ -906,17 +902,8 @@ REYNflux_FD_mole_dry <- function(
     
     
 
-  
-  str(sd$heatH2oGas)
-  
-  min
-  
-  max
-  
-  
 
-  
-  
+    
   
   
   
