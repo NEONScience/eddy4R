@@ -738,19 +738,19 @@ REYNflux_FD_mole_dry <- function(
     #' @author
     #' Stefan Metzger \email{eddy4R.info@gmail.com}
     
-    #' @description Function definition. The function calculates summary statistics (min, max, mean), base state (mean, trend, 3rd order polynomial), and the immediate differences and standard deviations with respect to the chosen base state. This enables subsequent calculations (eddy-covariance turbulent fluxes, footprint modeling etc.) with respect to the chosen base state.
+    #' @description Function definition. The function calculates summary statistics (min, max, mean), selected base state (mean, trend, 3rd order polynomial), and the immediate differences and standard deviations with respect to the selected base state. This enables subsequent calculations (eddy-covariance turbulent fluxes, footprint modeling etc.) with respect to the selected base state.
     
-    #' @param inp A data frame containing the wind vector in meteorological convention with the variables veloXaxs (latitudinal wind speed, positive from west), veloYaxs (longitudinal wind speed, positive from south), and veloZaxs (vertical wind speed, positive from below) of class "numeric, each with unit attribute. [m s-1]
+    #' @param inp A data frame containing the variables for which to perform the calculations, class "numeric", each with unit attribute.
+    #' @param refe A list of reference quantities that can be supplied to overwrite internal calculations, class "numeric", each with unit attribute. Currently implemented only for refe$mean in combination with inp variables in units [rad].
+    #' @param AlgBase A vector of length 1 that defines the base state with respect to which immediate differences and standard deviations are calculated, of class "character" and no unit attribute. Contains one of AlgBase <- c("mean", "trnd", "ord03")[1] and defaults to "mean", with the additional options detrending "trnd" and 3rd-order polynomial "ord03". See ?eddy4R.base::def.base.ec() for additional details.
     
     #' @return 
-    #' The returned object is a list containing the elements data and rot.
-    #' data is a dataframe with the same number of observations as the function call inputs. It contains the wind vector variables in streamwise convention veloXaxsHor (streamwise wind speed, positive from front), veloYaxsHor (cross-wind speed, positive from left) and veloZaxsHor (vertical wind speed, positive from below) [m s-1], and the wind direction angZaxsErth [rad], each of class "numeric and with unit attribute.
-    #' rot is a list with the objects used in the rotation, averaged over all observations in the function call inputs. It contains the mean wind direction angZaxsErth [rad], the resulting rotation matrix mtrxRot01 [-] and the transpose of the rotation matrix mtrxRot02 [-], each of class "numeric and with unit attribute. It should be noted that angZaxsErth is calculated by first averaging each horizontal component of the wind vector, which minimizes the mean cross-wind thus satisfying conditions for footprint modeling and separating shear into stream-wise and cross-wind terms.
+    #' The returned object is a list containing the element dataframes min, max, mean, base, diff, and sd, each of class "numeric" and with unit attributes. The elements min, max and mean are the minimum, maximum and mean of the variables in inp with a single observation. The element base is the base state for each of the variables in inp, with a single observation (AlgBase == "mean") or the same number of observations as inp (AlgBase %in% c("trnd", "ord03")). The element diff are the point-by-point differences from the selected base state for each of the variables in inp, with the same number of observations as inp. The element sd are the standard deviations of diff for each of the variables in inp, with a single observation. It should be noted that the mean (and base state for AlgBase == "mean") for angular quantities with unit [rad] is computed from 1) point-wise unit vector decomposition to polar coordinates [-], 2) averaging the polar coordinates [-], and 3) re-composing the mean polar coordinates to Cartesian angle [rad]. In the special case of wind direction (example: angZaxsErth) it is recommended to supply the argument refe$mean$angZaxsErth to the function call as provided from ?def.rot.ang.zaxs.erth. This ensures consistency with downstream applications for footprint modeling, separating shear into stream-wise and cross-wind terms etc. (minimizes the mean cross-wind from directly averaging the wind vector horizontal components instead of unit vector components).
     
     #' @references
     #' License: GNU AFFERO GENERAL PUBLIC LICENSE Version 3, 19 November 2007
     
-    #' @keywords rotation, stream-wise, mean wind, footprint, shear
+    #' @keywords minimum, maximum, mean, statistics, standard deviation, turbulence
     
     #' @examples
     #' Example 1, this will cause an error message due to inp01$veloYaxs is missing:
@@ -784,7 +784,7 @@ REYNflux_FD_mole_dry <- function(
     ###############################################################################################
     
     
-    # rotation into the mean wind
+    # Summary statistics, base states, immediate differences
     def.stat.sta.diff <- function(
       
       # input dataframe containing the variables for which to perform the calculations, each with unit attribute
@@ -792,7 +792,10 @@ REYNflux_FD_mole_dry <- function(
       
       # list of reference quantities that can be supplied to overwrite internal calculations
       # currently implemented only for refe$mean in combination with inp variables in units [rad]
-      refe # <- base::list("mean" = base::list("angZaxsErth" = rot$angZaxsErth))
+      refe, # <- base::list("mean" = base::list("angZaxsErth" = rot$angZaxsErth))
+      
+      # base state, defaults to "mean", additional options are detrending "trnd" and 3rd-order polynomial "ord03"
+      AlgBase <- c("mean", "trnd", "ord03")[1]
     ) {
 
       # check that input is of class data.frame
@@ -870,6 +873,11 @@ REYNflux_FD_mole_dry <- function(
               
               # re-assign reference value if provided
               if(!is.null(refe$mean) & idx %in% base::names(refe$mean)) {
+                
+                # check that refe is of class list
+                if(base::class(refe) != "list") {
+                  stop(base::paste0("def.stat.sta.diff(): refe is not of class list, please check."))  
+                }
                 
                 # test for correct units
                 if(attributes(refe$mean[[idx]])$unit != attributes(inp[[idx]])$unit) {
