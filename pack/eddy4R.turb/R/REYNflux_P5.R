@@ -601,26 +601,26 @@ REYNflux_FD_mole_dry <- function(
       }
       
       # test input variables and unit attributes
-      for(whr in c("veloXaxs", "veloYaxs", "veloZaxs")){
-      # whr <- "veloXaxs"
+      for(idx in c("veloXaxs", "veloYaxs", "veloZaxs")){
+      # idx <- "veloXaxs"
         
         # test for presence/absence of variables
-        if(!(whr %in% base::names(inp))) {
-          stop(base::paste0("def.rot.ang.zaxs.erth(): inp$", whr, " is missing."))        }
+        if(!(idx %in% base::names(inp))) {
+          stop(base::paste0("def.rot.ang.zaxs.erth(): inp$", idx, " is missing."))        }
         
         # test for presence/absence of unit attribute
-        if(!("unit" %in% base::names(attributes(inp[[whr]])))) {
-          stop(base::paste0("def.rot.ang.zaxs.erth(): inp$", whr, " is missing unit attribute."))        }
+        if(!("unit" %in% base::names(attributes(inp[[idx]])))) {
+          stop(base::paste0("def.rot.ang.zaxs.erth(): inp$", idx, " is missing unit attribute."))        }
         
         # test for correct units
-        if(attributes(inp[[whr]])$unit != "m s-1") {
-          stop(base::paste0("def.rot.ang.zaxs.erth(): inp$", whr, 
+        if(attributes(inp[[idx]])$unit != "m s-1") {
+          stop(base::paste0("def.rot.ang.zaxs.erth(): inp$", idx, 
                             " input units are not matching internal units, please check."))}
         
       }
       
       # clean up
-      base::rm(whr)
+      base::rm(idx)
   
       # calculate wind direction
         
@@ -1031,8 +1031,6 @@ REYNflux_FD_mole_dry <- function(
     AlgBase = c("mean", "trnd", "ord03")[1]
     )
     
-
-  str(statStaDiff)
 
   
   
