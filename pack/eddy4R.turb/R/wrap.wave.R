@@ -12,7 +12,7 @@
 #' @param FuncWave Waves package function, denoting the type of mother wavelet function to be used in the transformation
 #' @param FreqSamp numeric, that determines the time series objects points
 #' @param ThshMiss numeric, dimensionless fraction of missing values in each column of data allowed before the quality flag is tripped. Defaults to 0.1 or 10 percent.
-#' @param SI stability parameter (numeric)
+#' @param paraStbl stability parameter (numeric)
 
 #'
 #' @return An list constaining wavelet spectra, quality flags if data was available to perform correction, and frequency reponse correction parameters if activated.
@@ -51,20 +51,20 @@ DiffScal = 1/8,
 FuncWave = Waves::morlet(),
 FreqSamp = 20, #Defaults to 20Hz
 ThshMiss = .1,
-SI
+paraStbl
 ){
 
 #Create output list
-rpt <- list()
+rpt <- base::list()
 
 ####Check quality of data###########################################
 #Create a logical flag if more data is missing than the threshold
-rpt$qfMiss <- as.list(colMeans(is.na(dfInp)) > ThshMiss)
+rpt$qfMiss <- base::as.list(base::colMeans(base::is.na(dfInp)) > ThshMiss)
 #Turn the flags into integers
-rpt$qfMiss <- lapply(rpt$qfMiss, as.integer)
+rpt$qfMiss <- lapply(rpt$qfMiss, base::as.integer)
 # in case the vertical wind is not available, no cospectral correction can be performed
 # then flag all scalars
-if(rpt$qfMiss$w_hor == 1) base::invisible(lapply(names(rpt$qfMiss), function(x) rpt$qfMiss[x] <<- 1))
+if(rpt$qfMiss$w_hor == 1) base::invisible(lapply(base::names(rpt$qfMiss), function(x) rpt$qfMiss[x] <<- 1))
 ####################################################################
 
 # fill missing values through linear interpolation
@@ -75,7 +75,7 @@ tmp <- zoo::na.approx(dfInp, na.rm = TRUE, rule = 2) #Rule 2 allows extropolatin
 if(base::nrow(tmp) > 1) dfInp <- tmp
 
 #time series
-dfInp <- as.data.frame(ts(
+dfInp <- base::as.data.frame(stats::ts(
   dfInp,                   #discard rows with bogus w
   start = 0,      		        #compensate for missing first row
   frequency = FreqSamp			#time unit is 20 Hz
@@ -84,15 +84,15 @@ dfInp <- as.data.frame(ts(
 
 # perform CWT
 # in the future, can consider package "wmtsa" could enable transition to R 3.x (http://cran.at.r-project.org/web/packages/wmtsa/wmtsa.pdf)
-rpt$wave <- list()
-for (c in colnames(dfInp)) {
+rpt$wave <- base::list()
+for (c in base::colnames(dfInp)) {
     rpt$wave[[c]] <- Waves::cwt(dfInp[[c]], wavelet = FuncWave, dj = DiffScal)
     msg <- paste(c, "... done.")
     tryCatch({rlog$debug(msg)}, error=function(cond){print(msg)})
   }
 
 #normalization factor specific to the choice of Wavelet parameters
-rpt$coefNorm <- rpt$wave[["w_hor"]]@dj * rpt$wave[["w_hor"]]@dt / rpt$wave[["w_hor"]]@wavelet@cdelta / length(rpt$wave[["w_hor"]]@series)
+rpt$coefNorm <- rpt$wave[["w_hor"]]@dj * rpt$wave[["w_hor"]]@dt / rpt$wave[["w_hor"]]@wavelet@cdelta / base::length(rpt$wave[["w_hor"]]@series)
 
 
 # # variance for all wavelengths
@@ -118,7 +118,7 @@ rpt$coefNorm <- rpt$wave[["w_hor"]]@dj * rpt$wave[["w_hor"]]@dt / rpt$wave[["w_h
 #     # Wavelet flag: process (0) or not
 #     flag=rpt$qfMiss[[var]],
 #     #stability parameter
-#     SI = wrk$reyn$mn$sigma,
+#     paraStbl = wrk$reyn$mn$sigma,
 #     #spectrum or cospectrum?
 #     SC = c("spe", "cos")[1]
 #   )
@@ -147,11 +147,11 @@ rpt$cov <- lapply(names(rpt$wave)[-which(names(rpt$wave) == "w_hor")], function(
     # Wavelet flag: process (0) or not
     flag=rpt$qfMiss[[var]],
     #stability parameter
-    SI = SI,
+    paraStbl = paraStbl,
     #spectrum or cospectrum?
     SC = c("spe", "cos")[2]
   )
-); names(rpt$cov) <- names(rpt$wave)[-which(names(rpt$wave) == "w_hor")]
+); base::names(rpt$cov) <- base::names(rpt$wave)[-base::which(base::names(rpt$wave) == "w_hor")]
 
 #return all output from the wave function
 return(rpt)
