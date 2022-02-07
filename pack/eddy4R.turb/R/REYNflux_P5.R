@@ -982,8 +982,25 @@ REYNflux_FD_mole_dry <- function(
         # apply units from inp to sd
         base::sapply(base::names(sd), function(x) {base::attr(sd[[x]], which = "unit") <<- 
           base::attr(inp[[x]], which = "unit")})
-    
-    
+        
+      # create object for export
+        
+        # create list
+        rpt <- base::list()
+        
+        # populate list
+        rpt$min <- min
+        rpt$max <- max
+        rpt$mean <- mean
+        rpt$base <- base
+        rpt$diff <- diff
+        rpt$sd <- sd
+        
+        # clean up
+        rm(base, diff, max, mean, min, sd)
+        
+        # return results
+        return(rpt)
     
     }
   
