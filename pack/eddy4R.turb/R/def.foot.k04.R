@@ -397,7 +397,7 @@ def.foot.k04 <- function(
   #RETURN RESULTS
   
   #create result list
-  export<-list(
+  rpt<-list(
     wghtFootXaxsYaxsItgr=wghtFootXaxsYaxsItgrCntrSqRot, 
      qiFootXaxsFrac= qiFootXaxsFrac,
     distFootXaxsThshFootCum=distFootXaxsThshFootCum,
@@ -406,6 +406,6 @@ def.foot.k04 <- function(
   )
   
   #return list
-  return(export)
+  return(rpt)
   
 }

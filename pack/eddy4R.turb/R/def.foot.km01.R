@@ -13,7 +13,7 @@
 #   Chris Florian (2021-11-09)
 #     modularization of function from footprints.r and initial eddy4R naming convention updates
 
-#' @description Function for calclulating one flux footprint matrix at a time for the crosswind integrated footprint Kormann & Meixner, 2001 (KM01). For the crosswind distribution, a Gaussian function is used(Pasquill, 1974; Kormann and Meixner, 2001). The matrix extent is precalculated, and cut off where the footprint function reaches 1 % of its peak (Neftel, 2008).
+#' @description Function for calculating one flux footprint matrix at a time for the crosswind integrated footprint Kormann & Meixner, 2001 (KM01). For the crosswind distribution, a Gaussian function is used(Pasquill, 1974; Kormann and Meixner, 2001). The matrix extent is precalculated, and cut off where the footprint function reaches 1 % of its peak (Neftel, 2008).
 
 #' @param \code{angZaxsErth} wind direction to rotate the inertial footprint matrix [Deg]
 #' @param \code{distReso} cell size of result grid [m]
@@ -57,40 +57,40 @@ def.foot.km01 <- function(
   #-----------------------------------------------------------
   #PREPARATION OF INPUT PARAMETERS
   
-  #calculation of local stability zeta [-]
-  zeta <- distZaxsMeasDisp / distObkv
-  if(zeta > 0.1) zeta <- 0.1
+  #calculation of local stability [-]
+  StblObkv <- distZaxsMeasDisp / distObkv
+  if(StblObkv > 0.1) StblObkv <- 0.1
   
-  #m exponents of the wind velocity power law
-  if (zeta >= 0) {
-    phi_m <- 1 + 5*zeta
+  #FuncVertVeloExp02 exponents of the wind velocity power law
+  if (StblObkv >= 0) {
+    FuncVertVeloExp02 <- 1 + 5*StblObkv
   } else {
-    phi_m <- (1-16*zeta)^(-0.25)
+    FuncVertVeloExp02 <- (1-16*StblObkv)^(-0.25)
   }
-  m <- veloFric * phi_m / 0.4 / veloXaxsYaxs
+  FuncVertVeloExp02 <- veloFric * FuncVertVeloExp02 / 0.4 / veloXaxsYaxs
   
-  #n exponent of eddy diffusivity power law
-  if (zeta >= 0) {
-    n <- 1 /(1+5*zeta)
+  #FuncVertTurbExp01 exponent of eddy diffusivity power law
+  if (StblObkv >= 0) {
+    FuncVertTurbExp01 <- 1 /(1+5*StblObkv)
   } else {
-    n <- (1-24*zeta)/(1-16*zeta)
+    FuncVertTurbExp01 <- (1-24*StblObkv)/(1-16*StblObkv)
   }
-  #r shape factor
-  r <- 2 + m - n  
+  #FuncVertCoef shape factor
+  FuncVertCoef <- 2 + FuncVertVeloExp02 - FuncVertTurbExp01  
   
-  #U constant in power law profile in the wind velocity
-  U <- veloXaxsYaxs / (distZaxsMeasDisp^m)
+  #FuncVertVeloCnst constant in power law profile in the wind velocity
+  FuncVertVeloCnst <- veloXaxsYaxs / (distZaxsMeasDisp^FuncVertVeloExp02)
   
   #K vertical profile of the eddy diffusivity
-  if (zeta >= 0) {
-    phi_c <- 1 + 5*zeta
+  if (StblObkv >= 0) {
+    phi_c <- 1 + 5*StblObkv
   } else {
-    phi_c <- (1-16*zeta)^(-0.5)
+    phi_c <- (1-16*StblObkv)^(-0.5)
   } 
   K <- 0.4*veloFric * distZaxsMeasDisp /phi_c
   
-  #kapa constant of the power law profile of the eddy diffusivity
-  kapa <- K / distZaxsMeasDisp^n
+  #FuncVertTurbCnst constant of the power law profile of the eddy diffusivity
+  FuncVertTurbCnst <- K / distZaxsMeasDisp^FuncVertTurbExp01
   
   
   #-----------------------------------------------------------
@@ -98,13 +98,13 @@ def.foot.km01 <- function(
   
   #alongwind (crosswind integrated) density distribution
   
-  #position of maximum along x, 290.5334 m
+  #position of maximum along x, 290.5334 FuncVertVeloExp02
   Xmax <- function(mue, xi) xi / (1+mue)
-  xmax <- Xmax(mue=(1+m)/r, xi=(U*distZaxsMeasDisp^r)/((r^2)*kapa))
+  xmax <- Xmax(mue=(1+FuncVertVeloExp02)/FuncVertCoef, xi=(FuncVertVeloCnst*distZaxsMeasDisp^FuncVertCoef)/((FuncVertCoef^2)*FuncVertTurbCnst))
   
   #maximum value, 0.001369324
   Fmax <- function(mue, xi) ( exp(-1-mue) * (1+mue)^(1+mue) ) / (gamma(mue) * xi)
-  fmax <- Fmax(mue=(1+m)/r, xi=(U*distZaxsMeasDisp^r)/((r^2)*kapa))
+  fmax <- Fmax(mue=(1+FuncVertVeloExp02)/FuncVertCoef, xi=(FuncVertVeloCnst*distZaxsMeasDisp^FuncVertCoef)/((FuncVertCoef^2)*FuncVertTurbCnst))
   
   #crosswind integrated flux footprint
   FFPalong <- function(x, mue, xi) {
@@ -116,7 +116,7 @@ def.foot.km01 <- function(
   whri <- xmax; whro <- fmax	#start from distribution peak
   while(whro > fmax * cutoff) {
     whri <- whri + distReso	#use step width of landuse matrix
-    whro <- FFPalong(whri, mue=(1+m)/r, xi=(U*distZaxsMeasDisp^r)/((r^2)*kapa))	#calculate
+    whro <- FFPalong(whri, mue=(1+FuncVertVeloExp02)/FuncVertCoef, xi=(FuncVertVeloCnst*distZaxsMeasDisp^FuncVertCoef)/((FuncVertCoef^2)*FuncVertTurbCnst))	#calculate
   }
   whrx <- ceiling(whri / distReso)	#cell length necessay in X direction
   
@@ -140,7 +140,7 @@ def.foot.km01 <- function(
     whri <- whri + distReso	#use step width of landuse matrix
     whro <- FFPcross(whrx * distReso, whri, sigmav=veloYaxsHorSd, u=veloXaxsYaxs)	#calculate
   }
-  whry <- ceiling(whri / distReso)	#cell length necessay in Y direction
+  whry <- ceiling(whri / distReso)	#cell length necessary in Y direction
   
   
   #-----------------------------------------------------------
@@ -154,9 +154,9 @@ def.foot.km01 <- function(
   
   
   #integration of alongwind footprint
-  PHIalong <- sapply(1:(length(XRng)-1), function(xwhr) integrate(FFPalong, XRng[xwhr], XRng[xwhr+1], mue=(1+m)/r, xi=(U*distZaxsMeasDisp^r)/((r^2)*kapa))$value)
+  PHIalong <- sapply(1:(length(XRng)-1), function(xwhr) integrate(FFPalong, XRng[xwhr], XRng[xwhr+1], mue=(1+FuncVertVeloExp02)/FuncVertCoef, xi=(FuncVertVeloCnst*distZaxsMeasDisp^FuncVertCoef)/((FuncVertCoef^2)*FuncVertTurbCnst))$value)
   sumPHIalong <- sum(PHIalong)
-  PHIalong <- PHIalong / sumPHIalong	#normalisation to 1
+  PHIalong <- PHIalong / sumPHIalong	#normalization to 1
   
   
   #integration of crosswind footprint
