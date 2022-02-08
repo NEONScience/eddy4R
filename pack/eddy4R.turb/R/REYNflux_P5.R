@@ -732,16 +732,16 @@ REYNflux_FD_mole_dry <- function(
   # definition function (to be exported)
   {
     ##############################################################################################
-    #' @title Definition function: Summary statistics, base states, immediate differences
+    #' @title Definition function: Summary statistics, base states, instantaneous differences
     
     #' @author
     #' Stefan Metzger \email{eddy4R.info@gmail.com}
     
-    #' @description Function definition. The function calculates summary statistics (min, max, mean), selected base state (mean, trend, 3rd order polynomial), and the immediate differences and standard deviations with respect to the selected base state. This enables subsequent calculations (eddy-covariance turbulent fluxes, footprint modeling etc.) with respect to the selected base state.
+    #' @description Function definition. The function calculates summary statistics (min, max, mean), selected base state (mean, trend, 3rd order polynomial), and the instantaneous differences and standard deviations with respect to the selected base state. This enables subsequent calculations (eddy-covariance turbulent fluxes, footprint modeling etc.) with respect to the selected base state.
     
     #' @param inp A data frame containing the variables for which to perform the calculations, class "numeric", each with unit attribute.
     #' @param refe A list of reference quantities that can be supplied to overwrite internal calculations, class "numeric", each with unit attribute. Currently implemented only for refe$mean in combination with inp variables in units [rad].
-    #' @param AlgBase A vector of length 1 that defines the base state with respect to which immediate differences and standard deviations are calculated, of class "character" and no unit attribute. Contains one of AlgBase <- c("mean", "trnd", "ord03")[1] and defaults to "mean", with the additional options detrending "trnd" and 3rd-order polynomial "ord03". See ?eddy4R.base::def.base.ec() for additional details.
+    #' @param AlgBase A vector of length 1 that defines the base state with respect to which instantaneous differences and standard deviations are calculated, of class "character" and no unit attribute. Contains one of AlgBase <- c("mean", "trnd", "ord03")[1] and defaults to "mean", with the additional options detrending "trnd" and 3rd-order polynomial "ord03". See ?eddy4R.base::def.base.ec() for additional details.
     
     #' @return 
     #' The returned object is a list containing the element dataframes min, max, mean, base, diff, and sd, each of class "numeric" and with unit attributes. The elements min, max and mean are the minimum, maximum and mean of the variables in inp with a single observation. The element base is the base state for each of the variables in inp, with a single observation (AlgBase == "mean") or the same number of observations as inp (AlgBase %in% c("trnd", "ord03")). The element diff are the point-by-point differences from the selected base state for each of the variables in inp, with the same number of observations as inp. The element sd are the standard deviations of diff for each of the variables in inp, with a single observation. It should be noted that the mean (and base state for AlgBase == "mean") for angular quantities with unit [rad] is computed from 1) point-wise unit vector decomposition to polar coordinates [-], 2) averaging the polar coordinates [-], and 3) re-composing the mean polar coordinates to Cartesian angle [rad]. In the special case of wind direction (example: angZaxsErth) it is recommended to supply the argument refe$mean$angZaxsErth to the function call as provided from ?def.rot.ang.zaxs.erth. This ensures consistency with downstream applications for footprint modeling, separating shear into stream-wise and cross-wind terms etc. (minimizes the mean cross-wind from directly averaging the wind vector horizontal components instead of unit vector components).
@@ -794,7 +794,7 @@ REYNflux_FD_mole_dry <- function(
     ###############################################################################################
     
     
-    # Summary statistics, base states, immediate differences
+    # Summary statistics, base states, instantaneous differences
     def.stat.sta.diff <- function(
       
       # input dataframe containing the variables for which to perform the calculations, each with unit attribute
@@ -976,7 +976,7 @@ REYNflux_FD_mole_dry <- function(
           }
     
           
-      # immediate differences (corresponding to chosen base state treatment)
+      # instantaneous differences (corresponding to chosen base state treatment)
           
         # calculate
         diff <- sapply(base::names(inp), function(x) inp[[x]] - base[[x]])
@@ -1039,12 +1039,12 @@ REYNflux_FD_mole_dry <- function(
   #ROTATION OF STRESS TENSOR
   ############################################################
   
-  #wind deviations in MET coordinates
-  dx <- diff$veloYaxs
-  dy <- diff$veloXaxs
-  dz <- diff$veloZaxs
+  # wind instantaneous differences in MET coordinates
+  dx <- statStaDiff$diff$veloYaxs
+  dy <- statStaDiff$diff$veloXaxs
+  dz <- statStaDiff$diff$veloZaxs
   
-  #stress tensor
+  # stress tensor
   M <- rbind(
     c(mean(dx * dx, na.rm = TRUE), mean(dx * dy, na.rm = TRUE), mean(dx * dz, na.rm = TRUE)),
     c(mean(dy * dx, na.rm = TRUE), mean(dy * dy, na.rm = TRUE), mean(dy * dz, na.rm = TRUE)),
@@ -1052,8 +1052,8 @@ REYNflux_FD_mole_dry <- function(
   )
   
   #rotation into mean wind coordinate system
-  Mrot1 <- mtrxRot01 %*% M
-  Mrot2 <- Mrot1 %*% mtrxRot02
+  Mrot1 <- rot$mtrxRot01 %*% M
+  Mrot2 <- Mrot1 %*% rot$mtrxRot02
   
   #clean up
   rm(mtrxRot02, dx, dy, dz, M, Mrot1)
@@ -1068,7 +1068,7 @@ REYNflux_FD_mole_dry <- function(
   #-----------------------------------------------------------
   #FROM INITIAL COMPONENTS
   
-  #immidiate fluxes from deviations in mean wind coordinates
+  #instantaneous fluxes from deviations in mean wind coordinates
   diff$u_star2_x <- -(diff$veloXaxsHor * diff$veloZaxsHor)
   diff$u_star2_y <- -(diff$veloYaxsHor * diff$veloZaxsHor)
   diff$u_star <- NaN
@@ -1229,7 +1229,7 @@ REYNflux_FD_mole_dry <- function(
     max=ma,		#max
     mn=mn,		#mean
     sd=sd,		#standard deviation
-    diff=diff,	#immidiate fluctuations
+    diff=diff,	#instantaneous fluctuations
     cor=cor,		#correlation coefficient
     mtrxRot01=mtrxRot01       #transformation matrix for stress tensor
   )
