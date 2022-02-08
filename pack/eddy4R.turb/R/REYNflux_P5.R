@@ -1030,216 +1030,273 @@ REYNflux_FD_mole_dry <- function(
     refe = base::list("mean" = base::list("angZaxsErth" = rot$angZaxsErth)),
     AlgBase = c("mean", "trnd", "ord03")[1]
     )
-    
 
-  
   
   
   ############################################################
   # MOMENTUM FLUX AND FRICTION VELOCITY
   ############################################################
   
-  
-  def.flux.vect <- function(
+
+  # definition function (to be exported)
+  {
+    ##############################################################################################
+    #' @title Definition function: Streamwise rotation of the wind vector
     
-    # input dataframe with variables veloXaxs, veloYaxs, and veloZaxs of class "numeric, each with unit attribute. [m s-1]
-    # limit to required wind components, use def.rot.ang.zaxs.erth example above
+    #' @author
+    #' Stefan Metzger \email{eddy4R.info@gmail.com}
+    
+    #' @description Function definition. This function rotates the wind vector into the mean wind, thus allowing to separate stream-wise and cross-wind components for subsequent use in footprint models, calculating shear stress etc. It consists of a single azimuth-rotation around the vertical axis. Any more comprehensive rotation such as double rotation or planar fit should be applied prior to calling this function.
+    
+    #' @param inp A data frame containing the wind vector in meteorological convention with the variables veloXaxs (latitudinal wind speed, positive from west), veloYaxs (longitudinal wind speed, positive from south), and veloZaxs (vertical wind speed, positive from below) of class "numeric, each with unit attribute. [m s-1]
+    
+    #' @return 
+    #' The returned object is a list containing the elements data and rot.
+    #' data is a dataframe with the same number of observations as the function call inputs. It contains the wind vector variables in streamwise convention veloXaxsHor (streamwise wind speed, positive from front), veloYaxsHor (cross-wind speed, positive from left) and veloZaxsHor (vertical wind speed, positive from below) [m s-1], and the wind direction angZaxsErth [rad], each of class "numeric and with unit attribute.
+    #' rot is a list with the objects used in the rotation, averaged over all observations in the function call inputs. It contains the mean wind direction angZaxsErth [rad], the resulting rotation matrix mtrxRot01 [-] and the transpose of the rotation matrix mtrxRot02 [-], each of class "numeric and with unit attribute. It should be noted that angZaxsErth is calculated by first averaging each horizontal component of the wind vector, which minimizes the mean cross-wind thus satisfying conditions for footprint modeling and separating shear into stream-wise and cross-wind terms.
+    
+    #' @references
+    #' License: GNU AFFERO GENERAL PUBLIC LICENSE Version 3, 19 November 2007
+    
+    #' @keywords rotation, stream-wise, mean wind, footprint, shear
+    
+    #' @examples
+    #' Example 1, this will cause an error message due to inp01$veloYaxs is missing:
+    #' inp01 <- base::data.frame(
+    #'   veloXaxs = c(-1.889635, -1.661724, -1.615837, -1.711132, -1.223001),
+    #'   veloZaxs = c(0.176613897, 0.184947662, 0.344331819, 0.190230311, 0.239193186)
+    #' )
+    #' attr(inp01$veloXaxs,"unit") <- "m s-1"; attr(inp01$veloZaxs,"unit") <- "m s-1"
+    #' def.rot.ang.zaxs.erth(inp = inp01)
+    #' base::rm(inp01)
+    #' Example 2, make sure to assign all variables and units, the function should run ok.
+    #' inp02 <- base::data.frame(
+    #'   veloXaxs = c(-1.889635, -1.661724, -1.615837, -1.711132, -1.223001),
+    #'   veloYaxs = c(1.365195, 1.277106, 1.394891, 1.180698, 1.283836),
+    #'   veloZaxs = c(0.176613897, 0.184947662, 0.344331819, 0.190230311, 0.239193186)
+    #' )
+    #' attr(inp02$veloXaxs,"unit") <- "m s-1"; attr(inp02$veloYaxs,"unit") <- "m s-1"; attr(inp02$veloZaxs,"unit") <- "m s-1"
+    #' out02 <- def.rot.ang.zaxs.erth(inp = inp02)
+    #' utils::str(out02)
+    #' base::rm(inp02, out02)
+    
+    #' @seealso Currently none.
+    
+    #' @export
+    
+    # changelog and author contributions / copyrights
+    #   Stefan Metzger (2011-03-04)
+    #     original creation
+    #   Stefan Metzger (2021-11-24)
+    #     update to eddy4R terminology and modularize into definition function
+    ###############################################################################################
+    
+
+    def.flux.vect <- function(
+      
+      # input dataframe with variables veloXaxs, veloYaxs, and veloZaxs of class "numeric, each with unit attribute. [m s-1]
+      # limit to required wind components, use def.rot.ang.zaxs.erth example above
+      inp = statStaDiff$diff[c("veloXaxs", "veloYaxs", "veloZaxs", "veloXaxsHor", "veloYaxsHor", "veloZaxsHor")],
+      rot = rot,
+      Unit = base::data.frame(In = "m s-1", Out = "m s-1", OutSq = "m2 s-2")
+    
+    ) {
+      
+      # create Roxygen header
+      
+      
+      # check presence of input arguments and consistent units
+      
+        # inp
+        
+          # check that input is of class data.frame
+          if(base::class(inp) != "data.frame") {
+            stop(base::paste0("def.flux.vect(): inp is not of class data.frame, please check."))  
+          }
+          
+          # test input variables and unit attributes
+          for(idx in c("veloXaxs", "veloYaxs", "veloZaxs", "veloXaxsHor", "veloYaxsHor", "veloZaxsHor")){
+            # idx <- "veloXaxs"
+            
+            # test for presence/absence of variables
+            if(!(idx %in% base::names(inp))) {
+              stop(base::paste0("def.flux.vect(): inp$", idx, " is missing."))}
+            
+            # test for presence/absence of unit attribute
+            if(!("unit" %in% base::names(attributes(inp[[idx]])))) {
+              stop(base::paste0("def.flux.vect(): inp$", idx, " is missing unit attribute."))}
+            
+            # test for correct units
+            if(attributes(inp[[idx]])$unit != Unit$In) {
+              stop(base::paste0("def.flux.vect(): inp$", idx, 
+                                " input units are not matching Unit$In, please check."))}
+            
+          }; base::rm(idx)
+        
+        # rot
+          
+          # check that rot is of class list
+          if(base::class(rot) != "list") {
+            stop(base::paste0("def.flux.vect(): rot is not of class list, please check."))  
+          }
+          
+          # test rot list entries and unit attributes
+          for(idx in c("mtrxRot01", "mtrxRot02")){
+            # idx <- "mtrxRot01"
+            
+            # test for presence/absence of list entries
+            if(!(idx %in% base::names(rot))) {
+              stop(base::paste0("def.flux.vect(): rot$", idx, " is missing."))}
+  
+            # test for presence/absence of unit attribute
+            if(!("unit" %in% base::names(attributes(rot[[idx]])))) {
+              stop(base::paste0("def.flux.vect(): rot$", idx, " is missing unit attribute."))}
+            
+            # test for correct units
+            if(attributes(rot[[idx]])$unit != "-") {
+              stop(base::paste0("def.flux.vect(): rot$", idx, 
+                                " input units are not matching internal units, please check."))}
+            
+          }; base::rm(idx)
+      
+        # Unit
+        
+          # check that Unit is of class data.frame
+          if(base::class(Unit) != "data.frame") {
+            stop(base::paste0("def.flux.vect(): Unit is not of class data.frame, please check."))  
+          }
+        
+          # test that input and output Unit are identical
+          if(!(Unit$In == Unit$Out)) {
+            stop(base::paste0("def.flux.vect(): Unit$Out differs from Unit$In, please check"))}
+  
+      
+      # instantaneous fluxes from instantaneous wind component differences in streamline coordinates
+      # for downstream calculation of integral length scales and statistical errors
+      # includes negative sign prefixes commonly used in ENU meteorological convention
+      # identical to stress tensor results: veloFric <- (mean(diff$veloFricXaxsSq)^2 + mean(diff$veloFricYaxsSq)^2)^(1/4)
+      
+        # calculate
+        diff <- base::data.frame(
+          veloFricXaxsSq = -(inp$veloXaxsHor * inp$veloZaxsHor),
+          veloFricYaxsSq = -(inp$veloYaxsHor * inp$veloZaxsHor),
+          veloFric = base::rep(x = NaN, length.out = base::nrow(inp))
+        )
+        
+        # assign units
+        base::attr(diff$veloFricXaxsSq, which = "unit") <- Unit$OutSq
+        base::attr(diff$veloFricYaxsSq, which = "unit") <- Unit$OutSq
+        base::attr(diff$veloFric, which = "unit") <- Unit$Out
+      
+      # calculate stress tensor and rotate into streamline coordinates
+    
+        # transpose wind component instantaneous differences from ENU meteorological convention to NED geographic convention
+        # this also means that negative-sign prefixes are omitted from veloFric calculations based on stress tensor
+        veloXaxsIntl <- inp$veloYaxs
+        veloYaxsIntl <- inp$veloXaxs
+        veloZaxsIntl <- -inp$veloZaxs
+        
+        # stress tensor (defined in NED geographic convention)
+        mtrxFric <- rbind(
+          c(base::mean(veloXaxsIntl * veloXaxsIntl, na.rm = TRUE),
+            base::mean(veloXaxsIntl * veloYaxsIntl, na.rm = TRUE),
+            base::mean(veloXaxsIntl * veloZaxsIntl, na.rm = TRUE)),
+          c(base::mean(veloYaxsIntl * veloXaxsIntl, na.rm = TRUE),
+            base::mean(veloYaxsIntl * veloYaxsIntl, na.rm = TRUE),
+            base::mean(veloYaxsIntl * veloZaxsIntl, na.rm = TRUE)),
+          c(base::mean(veloZaxsIntl * veloXaxsIntl, na.rm = TRUE),
+            base::mean(veloZaxsIntl * veloYaxsIntl, na.rm = TRUE),
+            base::mean(veloZaxsIntl * veloZaxsIntl, na.rm = TRUE))
+        )
+        base::attr(mtrxFric, which = "unit") <- Unit$OutSq
+        
+        # rotate stress tensor into streamline coordinates
+        mtrxRot03 <- rot$mtrxRot01 %*% mtrxFric
+        base::attr(mtrxRot03, which = "unit") <- Unit$OutSq
+        
+        mtrxRot04 <- mtrxRot03 %*% rot$mtrxRot02
+        base::attr(mtrxRot04, which = "unit") <- Unit$OutSq
+        
+        # clean up
+        base::rm(mtrxFric, mtrxRot03, veloXaxsIntl, veloYaxsIntl, veloZaxsIntl)
+      
+      
+      # friction velocity [m s-1]
+      # optionally only considers the along wind stress veloFricXaxsSq; Foken (2008) Eq.(2.23)
+      # negative sign prefixes commonly used for ENU Zaxs are omitted because stress tensor is already defined in NED
+        
+        # calculate
+        mean <- base::data.frame(
+          veloFricXaxsSq = mtrxRot04[1,3],
+          veloFricYaxsSq = mtrxRot04[2,3])
+        mean$veloFric <- (mean$veloFricXaxsSq^2 + mean$veloFricYaxsSq^2)^(1/4)
+        
+        # assign units
+        base::attr(mean$veloFricXaxsSq, which = "unit") <- Unit$OutSq
+        base::attr(mean$veloFricYaxsSq, which = "unit") <- Unit$OutSq
+        base::attr(mean$veloFric, which = "unit") <- Unit$Out
+    
+    
+      # standard deviation of wind components; deviations from sd calculated in def.stat.sta.diff are < 2%
+        
+        # calculate
+        sd <- base::data.frame(
+          veloXaxsHor = base::sqrt(base::abs(base::diag(mtrxRot04)))[1],
+          veloYaxsHor = base::sqrt(base::abs(base::diag(mtrxRot04)))[2],
+          veloZaxsHor = base::sqrt(base::abs(base::diag(mtrxRot04)))[3])
+        
+        # assign units
+        base::attr(sd$veloXaxsHor, which = "unit") <- Unit$Out
+        base::attr(sd$veloYaxsHor, which = "unit") <- Unit$Out
+        base::attr(sd$veloZaxsHor, which = "unit") <- Unit$Out
+    
+    
+      # calculate correlations
+      # negative sign prefixes commonly used for ENU Zaxs are omitted because stress tensor is already defined in NED
+        
+        # calculate
+        corr <- base::data.frame(
+          veloFricXaxsSq = mtrxRot04[1,3] / sd$veloXaxsHor / sd$veloZaxsHor,
+          veloFricYaxsSq = mtrxRot04[2,3] / sd$veloYaxsHor / sd$veloZaxsHor,
+          veloFric = NaN)
+        
+        # assign units
+        base::sapply(base::names(corr), function(x) {base::attr(corr[[x]], which = "unit") <<- "-"})
+      
+      
+        
+      # create object for export
+        
+        # create list
+        rpt <- base::list()
+        
+        # populate list
+        rpt$corr <- corr
+        rpt$diff <- diff
+        rpt$mean <- mean
+        rpt$sd <- sd
+        
+        # clean up
+        base::rm(corr, diff, mean, mtrxRot04, sd)
+        
+        
+      # return results
+      return(rpt)
+  
+    
+    }
+
+  }
+  
+  # actual calculation
+  
+  # function call
+  fluxVect <- def.flux.vect(
     inp = statStaDiff$diff[c("veloXaxs", "veloYaxs", "veloZaxs", "veloXaxsHor", "veloYaxsHor", "veloZaxsHor")],
     rot = rot,
     Unit = base::data.frame(In = "m s-1", Out = "m s-1", OutSq = "m2 s-2")
-  
-  ) {
-  
+  )
 
-    
-    # create function call
-    
-    # create Roxygen header
-    
-    
-    # check presence of input arguments and consistent units
-    
-      # inp
-      
-        # check that input is of class data.frame
-        if(base::class(inp) != "data.frame") {
-          stop(base::paste0("def.flux.vect(): inp is not of class data.frame, please check."))  
-        }
-        
-        # test input variables and unit attributes
-        for(idx in c("veloXaxs", "veloYaxs", "veloZaxs", "veloXaxsHor", "veloYaxsHor", "veloZaxsHor")){
-          # idx <- "veloXaxs"
-          
-          # test for presence/absence of variables
-          if(!(idx %in% base::names(inp))) {
-            stop(base::paste0("def.flux.vect(): inp$", idx, " is missing."))}
-          
-          # test for presence/absence of unit attribute
-          if(!("unit" %in% base::names(attributes(inp[[idx]])))) {
-            stop(base::paste0("def.flux.vect(): inp$", idx, " is missing unit attribute."))}
-          
-          # test for correct units
-          if(attributes(inp[[idx]])$unit != Unit$In) {
-            stop(base::paste0("def.flux.vect(): inp$", idx, 
-                              " input units are not matching Unit$In, please check."))}
-          
-        }; base::rm(idx)
-      
-      # rot
-        
-        # check that rot is of class list
-        if(base::class(rot) != "list") {
-          stop(base::paste0("def.flux.vect(): rot is not of class list, please check."))  
-        }
-        
-        # test rot list entries and unit attributes
-        for(idx in c("mtrxRot01", "mtrxRot02")){
-          # idx <- "mtrxRot01"
-          
-          # test for presence/absence of list entries
-          if(!(idx %in% base::names(rot))) {
-            stop(base::paste0("def.flux.vect(): rot$", idx, " is missing."))}
-
-          # test for presence/absence of unit attribute
-          if(!("unit" %in% base::names(attributes(rot[[idx]])))) {
-            stop(base::paste0("def.flux.vect(): rot$", idx, " is missing unit attribute."))}
-          
-          # test for correct units
-          if(attributes(rot[[idx]])$unit != "-") {
-            stop(base::paste0("def.flux.vect(): rot$", idx, 
-                              " input units are not matching internal units, please check."))}
-          
-        }; base::rm(idx)
-    
-      # Unit
-      
-        # check that Unit is of class data.frame
-        if(base::class(Unit) != "data.frame") {
-          stop(base::paste0("def.flux.vect(): Unit is not of class data.frame, please check."))  
-        }
-      
-        # test that input and output Unit are identical
-        if(!(Unit$In == Unit$Out)) {
-          stop(base::paste0("def.flux.vect(): Unit$Out differs from Unit$In, please check"))}
-
-    
-    # instantaneous fluxes from instantaneous wind component differences in streamline coordinates
-    # for downstream calculation of integral length scales and statistical errors
-    # includes negative sign prefixes commonly used in ENU meteorological convention
-    # identical to stress tensor results: veloFric <- (mean(diff$veloFricXaxsSq)^2 + mean(diff$veloFricYaxsSq)^2)^(1/4)
-    
-      # calculate
-      diff <- base::data.frame(
-        veloFricXaxsSq = -(inp$veloXaxsHor * inp$veloZaxsHor),
-        veloFricYaxsSq = -(inp$veloYaxsHor * inp$veloZaxsHor),
-        veloFric = base::rep(x = NaN, length.out = base::nrow(inp))
-      )
-      
-      # assign units
-      base::attr(diff$veloFricXaxsSq, which = "unit") <- Unit$OutSq
-      base::attr(diff$veloFricYaxsSq, which = "unit") <- Unit$OutSq
-      base::attr(diff$veloFric, which = "unit") <- Unit$Out
-    
-    # calculate stress tensor and rotate into streamline coordinates
-  
-      # transpose wind component instantaneous differences from ENU meteorological convention to NED geographic convention
-      # this also means that negative-sign prefixes are omitted from veloFric calculations based on stress tensor
-      veloXaxsIntl <- inp$veloYaxs
-      veloYaxsIntl <- inp$veloXaxs
-      veloZaxsIntl <- -inp$veloZaxs
-      
-      # stress tensor (defined in NED geographic convention)
-      mtrxFric <- rbind(
-        c(base::mean(veloXaxsIntl * veloXaxsIntl, na.rm = TRUE),
-          base::mean(veloXaxsIntl * veloYaxsIntl, na.rm = TRUE),
-          base::mean(veloXaxsIntl * veloZaxsIntl, na.rm = TRUE)),
-        c(base::mean(veloYaxsIntl * veloXaxsIntl, na.rm = TRUE),
-          base::mean(veloYaxsIntl * veloYaxsIntl, na.rm = TRUE),
-          base::mean(veloYaxsIntl * veloZaxsIntl, na.rm = TRUE)),
-        c(base::mean(veloZaxsIntl * veloXaxsIntl, na.rm = TRUE),
-          base::mean(veloZaxsIntl * veloYaxsIntl, na.rm = TRUE),
-          base::mean(veloZaxsIntl * veloZaxsIntl, na.rm = TRUE))
-      )
-      base::attr(mtrxFric, which = "unit") <- Unit$OutSq
-      
-      # rotate stress tensor into streamline coordinates
-      mtrxRot03 <- rot$mtrxRot01 %*% mtrxFric
-      base::attr(mtrxRot03, which = "unit") <- Unit$OutSq
-      
-      mtrxRot04 <- mtrxRot03 %*% rot$mtrxRot02
-      base::attr(mtrxRot04, which = "unit") <- Unit$OutSq
-      
-      # clean up
-      base::rm(mtrxFric, mtrxRot03, veloXaxsIntl, veloYaxsIntl, veloZaxsIntl)
-    
-    
-    # friction velocity [m s-1]
-    # optionally only considers the along wind stress veloFricXaxsSq; Foken (2008) Eq.(2.23)
-    # negative sign prefixes commonly used for ENU Zaxs are omitted because stress tensor is already defined in NED
-      
-      # calculate
-      mean <- base::data.frame(
-        veloFricXaxsSq = mtrxRot04[1,3],
-        veloFricYaxsSq = mtrxRot04[2,3])
-      mean$veloFric <- (mean$veloFricXaxsSq^2 + mean$veloFricYaxsSq^2)^(1/4)
-      
-      # assign units
-      base::attr(mean$veloFricXaxsSq, which = "unit") <- Unit$OutSq
-      base::attr(mean$veloFricYaxsSq, which = "unit") <- Unit$OutSq
-      base::attr(mean$veloFric, which = "unit") <- Unit$Out
-  
-  
-    # standard deviation of wind components; deviations from sd calculated in def.stat.sta.diff are < 2%
-      
-      # calculate
-      sd <- base::data.frame(
-        veloXaxsHor = base::sqrt(base::abs(base::diag(mtrxRot04)))[1],
-        veloYaxsHor = base::sqrt(base::abs(base::diag(mtrxRot04)))[2],
-        veloZaxsHor = base::sqrt(base::abs(base::diag(mtrxRot04)))[3])
-      
-      # assign units
-      base::attr(sd$veloXaxsHor, which = "unit") <- Unit$Out
-      base::attr(sd$veloYaxsHor, which = "unit") <- Unit$Out
-      base::attr(sd$veloZaxsHor, which = "unit") <- Unit$Out
-  
-  
-    # calculate correlations
-    # negative sign prefixes commonly used for ENU Zaxs are omitted because stress tensor is already defined in NED
-      
-      # calculate
-      corr <- base::data.frame(
-        veloFricXaxsSq = mtrxRot04[1,3] / sd$veloXaxsHor / sd$veloZaxsHor,
-        veloFricYaxsSq = mtrxRot04[2,3] / sd$veloYaxsHor / sd$veloZaxsHor,
-        veloFric = NaN)
-      
-      # assign units
-      base::sapply(base::names(corr), function(x) {base::attr(corr[[x]], which = "unit") <<- "-"})
-    
-    
-      
-    # create object for export
-      
-      # create list
-      rpt <- base::list()
-      
-      # populate list
-      rpt$corr <- corr
-      rpt$diff <- diff
-      rpt$mean <- mean
-      rpt$sd <- sd
-      
-      # clean up
-      base::rm(corr, diff, mean, mtrxRot04, sd)
-      
-      
-    # return results
-    return(rpt)
-
-  
-  }
-  
-  
-  
   
   
   
