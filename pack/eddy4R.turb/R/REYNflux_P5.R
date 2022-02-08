@@ -1050,7 +1050,7 @@ REYNflux_FD_mole_dry <- function(
   
   ) {
   
-    # check for presence of inputs and consistent units
+
     
     # create export
     
@@ -1058,6 +1058,73 @@ REYNflux_FD_mole_dry <- function(
     
     # create function call
     
+    
+    
+    # check presence of input arguments and consistent units
+    
+      # inp
+      
+        # check that input is of class data.frame
+        if(base::class(inp) != "data.frame") {
+          stop(base::paste0("def.flux.vect(): inp is not of class data.frame, please check."))  
+        }
+        
+        # test input variables and unit attributes
+        for(idx in c("veloXaxs", "veloYaxs", "veloZaxs", "veloXaxsHor", "veloYaxsHor", "veloZaxsHor")){
+          # idx <- "veloXaxs"
+          
+          # test for presence/absence of variables
+          if(!(idx %in% base::names(inp))) {
+            stop(base::paste0("def.flux.vect(): inp$", idx, " is missing."))}
+          
+          # test for presence/absence of unit attribute
+          if(!("unit" %in% base::names(attributes(inp[[idx]])))) {
+            stop(base::paste0("def.flux.vect(): inp$", idx, " is missing unit attribute."))}
+          
+          # test for correct units
+          if(attributes(inp[[idx]])$unit != Unit$In) {
+            stop(base::paste0("def.flux.vect(): inp$", idx, 
+                              " input units are not matching Unit$In, please check."))}
+          
+        }; base::rm(idx)
+      
+      # rot
+        
+        # check that rot is of class list
+        if(base::class(rot) != "list") {
+          stop(base::paste0("def.flux.vect(): rot is not of class list, please check."))  
+        }
+        
+        # test rot list entries and unit attributes
+        for(idx in c("mtrxRot01", "mtrxRot02")){
+          # idx <- "mtrxRot01"
+          
+          # test for presence/absence of list entries
+          if(!(idx %in% base::names(rot))) {
+            stop(base::paste0("def.flux.vect(): rot$", idx, " is missing."))}
+
+          # test for presence/absence of unit attribute
+          if(!("unit" %in% base::names(attributes(rot[[idx]])))) {
+            stop(base::paste0("def.flux.vect(): rot$", idx, " is missing unit attribute."))}
+          
+          # test for correct units
+          if(attributes(rot[[idx]])$unit != "-") {
+            stop(base::paste0("def.flux.vect(): rot$", idx, 
+                              " input units are not matching internal units, please check."))}
+          
+        }; base::rm(idx)
+    
+      # Unit
+      
+        # check that Unit is of class data.frame
+        if(base::class(Unit) != "data.frame") {
+          stop(base::paste0("def.flux.vect(): Unit is not of class data.frame, please check."))  
+        }
+      
+        # test that input and output Unit are identical
+        if(!(Unit$In == Unit$Out)) {
+          stop(base::paste0("def.flux.vect(): Unit$Out differs from Unit$In, please check"))}
+
     
     # instantaneous fluxes from instantaneous wind component differences in streamline coordinates
     # for downstream calculation of integral length scales and statistical errors
