@@ -1052,12 +1052,9 @@ REYNflux_FD_mole_dry <- function(
   
 
     
-    # create export
-    
-    # create Roxygen header
-    
     # create function call
     
+    # create Roxygen header
     
     
     # check presence of input arguments and consistent units
@@ -1219,8 +1216,25 @@ REYNflux_FD_mole_dry <- function(
       base::sapply(base::names(corr), function(x) {base::attr(corr[[x]], which = "unit") <<- "-"})
     
     
-    # clean up
-    base::rm(mtrxRot04)
+      
+    # create object for export
+      
+      # create list
+      rpt <- base::list()
+      
+      # populate list
+      rpt$corr <- corr
+      rpt$diff <- diff
+      rpt$mean <- mean
+      rpt$sd <- sd
+      
+      # clean up
+      base::rm(corr, diff, mean, mtrxRot04, sd)
+      
+      
+    # return results
+    return(rpt)
+
   
   }
   
