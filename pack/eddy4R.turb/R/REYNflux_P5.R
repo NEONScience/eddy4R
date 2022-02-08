@@ -1036,66 +1036,87 @@ REYNflux_FD_mole_dry <- function(
   
   
   ############################################################
-  #ROTATION OF STRESS TENSOR
-  ############################################################
-  
-  # wind instantaneous differences in MET coordinates
-  dx <- statStaDiff$diff$veloYaxs
-  dy <- statStaDiff$diff$veloXaxs
-  dz <- statStaDiff$diff$veloZaxs
-  
-  # stress tensor
-  M <- rbind(
-    c(mean(dx * dx, na.rm = TRUE), mean(dx * dy, na.rm = TRUE), mean(dx * dz, na.rm = TRUE)),
-    c(mean(dy * dx, na.rm = TRUE), mean(dy * dy, na.rm = TRUE), mean(dy * dz, na.rm = TRUE)),
-    c(mean(dz * dx, na.rm = TRUE), mean(dz * dy, na.rm = TRUE), mean(dz * dz, na.rm = TRUE))
-  )
-  
-  #rotation into mean wind coordinate system
-  Mrot1 <- rot$mtrxRot01 %*% M
-  Mrot2 <- Mrot1 %*% rot$mtrxRot02
-  
-  #clean up
-  rm(mtrxRot02, dx, dy, dz, M, Mrot1)
-  
-  
-  
-  ############################################################
   #MOMENTUM FLUX AND FRICTION VELOCITY
   ############################################################
+  
+  
+  
+  # limit to 3 wind components, use def.rot.ang.zaxs.erth example above
+  inp = statStaDiff$diff
+  rot = rot
+  
+  # check for presence of inputs and correct units
+  
+  
+  # calculate stress tensor and rotate into streamline coordinates
+
+    # transpose differences of horizontal wind components (from meteorological convention to geographic convention)
+    # wouldn't vertical wind also need to be transposed to yield a right-hand cordinate system and hence the correct 
+    # sign in the stress tensor elements and downstream calculations (some of which are currently negated)?
+    veloXaxsIntl <- inp$veloYaxs
+    veloYaxsIntl <- inp$veloXaxs
+    veloZaxsIntl <- inp$veloZaxs
+    
+    # stress tensor
+    mtrxFric <- rbind(
+      c(base::mean(veloXaxsIntl * veloXaxsIntl, na.rm = TRUE),
+        base::mean(veloXaxsIntl * veloYaxsIntl, na.rm = TRUE),
+        base::mean(veloXaxsIntl * veloZaxsIntl, na.rm = TRUE)),
+      c(base::mean(veloYaxsIntl * veloXaxsIntl, na.rm = TRUE),
+        base::mean(veloYaxsIntl * veloYaxsIntl, na.rm = TRUE),
+        base::mean(veloYaxsIntl * veloZaxsIntl, na.rm = TRUE)),
+      c(base::mean(veloZaxsIntl * veloXaxsIntl, na.rm = TRUE),
+        base::mean(veloZaxsIntl * veloYaxsIntl, na.rm = TRUE),
+        base::mean(veloZaxsIntl * veloZaxsIntl, na.rm = TRUE))
+    )
+    
+    # rotate stress tensor into streamline coordinates
+    mtrxRot03 <- rot$mtrxRot01 %*% mtrxFric
+    mtrxRot04 <- mtrxRot03 %*% rot$mtrxRot02
+    
+    # clean up
+    base::rm(mtrxFric, mtrxRot03, veloXaxsIntl, veloYaxsIntl, veloZaxsIntl)
+  
+  
+  # calculate friction velocity [m s-1]
+  # optionally only considers the along wind stress veloFricXaxsSq; Foken (2008) Eq.(2.23)
+  mean <- base::data.frame(
+    veloFricXaxsSq = -mtrxRot04[1,3],
+    veloFricYaxsSq = -mtrxRot04[2,3])
+  mean$veloFric <- (mean$veloFricXaxsSq^2 + mean$veloFricYaxsSq^2)^(1/4)
+
+    
+  # standard deviation of wind components; deviations from sd calculated in def.stat.sta.diff are < 2%
+  sd <- base::data.frame(
+    veloXaxsHor = base::sqrt(base::abs(base::diag(mtrxRot04)))[1],
+    veloYaxsHor = base::sqrt(base::abs(base::diag(mtrxRot04)))[2],
+    veloZaxsHor = base::sqrt(base::abs(base::diag(mtrxRot04)))[3])
+
+
+  # calculate correlations
+  corr <- base::data.frame(
+    veloFricXaxsSq = -mtrxRot04[1,3] / sd$veloXaxsHor / sd$veloZaxsHor,
+    veloFricYaxsSq = -mtrxRot04[2,3] / sd$veloYaxsHor / sd$veloZaxsHor
+  )
+  
+  
+  # clean up
+  base::rm(mtrxRot04)
+  
   
   
   #-----------------------------------------------------------
   #FROM INITIAL COMPONENTS
   
-  #instantaneous fluxes from deviations in mean wind coordinates
-  diff$u_star2_x <- -(diff$veloXaxsHor * diff$veloZaxsHor)
-  diff$u_star2_y <- -(diff$veloYaxsHor * diff$veloZaxsHor)
-  diff$u_star <- NaN
-  
-  #-----------------------------------------------------------
-  #FROM STRESS TENSOR
-  
-  #u_star [m s-1]; optionally only considers the along wind stress u_star_x; Foken (2008) Eq.(2.23)
-  mn$u_star2_x <- -Mrot2[1,3]
-  mn$u_star2_y <- -Mrot2[2,3]
-  mn$u_star <- (mn$u_star2_x^2 + mn$u_star2_y^2)^(1/4)
-  
-  #correlations
-  cor <- data.frame(
-    u_star2_x= -Mrot2[1,3] / sd$veloXaxsHor / sd$veloZaxsHor,
-    u_star2_y= -Mrot2[2,3] / sd$veloYaxsHor / sd$veloZaxsHor
+  # instantaneous fluxes from instantaneous wind component differences in streamline coordinates
+  # for downstream calculation of integral length scales and statistical errors
+  diff <- base::data.frame(
+    veloFricXaxsSq = -(inp$veloXaxsHor * inp$veloZaxsHor),
+    veloFricYaxsSq = -(inp$veloYaxsHor * inp$veloZaxsHor),
+    veloFric = base::rep(x = NaN, length.out = base::nrow(inp))
   )
-  
-  #wind variance; deviations from initial sd are < 2%
-  sd_dum <- sqrt(abs(diag(Mrot2)))
-  sd$veloXaxsHor <- sd_dum[1]
-  sd$veloYaxsHor <- sd_dum[2]
-  sd$veloZaxsHor <- sd_dum[3]
-  
-  #-----------------------------------------------------------
-  #CLEAN UP
-  rm(Mrot2, sd_dum)
+
+
   
   
   
@@ -1119,9 +1140,9 @@ REYNflux_FD_mole_dry <- function(
   mn$F_H_kin_v_0 <- mean(diff$F_H_kin_v_0, na.rm=TRUE)
   
   #CORRELATIONS
-  cor$F_H_kin <- stats::cor(diff$veloZaxsHor, diff$tempAir, use="pairwise.complete.obs")
-  cor$F_H_en <- cor$F_H_kin
-  cor$F_H_kin_v_0 <- stats::cor(diff$veloZaxsHor, diff$tempVirtPot00, use="pairwise.complete.obs")
+  corr$F_H_kin <- stats::corr(diff$veloZaxsHor, diff$tempAir, use="pairwise.complete.obs")
+  corr$F_H_en <- corr$F_H_kin
+  corr$F_H_kin_v_0 <- stats::corr(diff$veloZaxsHor, diff$tempVirtPot00, use="pairwise.complete.obs")
   
   
   
@@ -1136,8 +1157,8 @@ REYNflux_FD_mole_dry <- function(
   diff$F_LE_en <- base$heatH2oGas * eddy4R.base::IntlNatu$MolmH2o * diff$F_LE_kin
   mn$F_LE_en <- mean(diff$F_LE_en, na.rm=TRUE)
   #correlation
-  cor$F_LE_kin <- stats::cor(diff$veloZaxsHor, diff$rtioMoleDryH2o, use="pairwise.complete.obs")
-  cor$F_LE_en <- cor$F_LE_kin
+  corr$F_LE_kin <- stats::corr(diff$veloZaxsHor, diff$rtioMoleDryH2o, use="pairwise.complete.obs")
+  corr$F_LE_en <- corr$F_LE_kin
   
   ############################################################
   #CH4 FLUX - legacy, include CH4 via the chemistry flux settings
@@ -1150,8 +1171,8 @@ REYNflux_FD_mole_dry <- function(
     diff$F_CH4_mass <- diff$F_CH4_kin * eddy4R.base::IntlNatu$MolmCh4 * 1e6 * 3600
     mn$F_CH4_mass <- mean(diff$F_CH4_mass, na.rm=TRUE)
     #correlation
-    cor$F_CH4_kin <- stats::cor(diff$veloZaxsHor, diff$rtioMoleDryCo2, use="pairwise.complete.obs")
-    cor$F_CH4_mass <- cor$F_CH4_kin
+    corr$F_CH4_kin <- stats::corr(diff$veloZaxsHor, diff$rtioMoleDryCo2, use="pairwise.complete.obs")
+    corr$F_CH4_mass <- corr$F_CH4_kin
   }
   ############################################################
   # CHEMISTRY FLUX
@@ -1160,7 +1181,7 @@ REYNflux_FD_mole_dry <- function(
     # calculate flux
     fluxChem = def.flux.chem(imfl = diff,
                              mn = mn,
-                             corr = cor,
+                             corr = corr,
                              base = base,
                              spcs = spcs,
                              rmm = rmm)
@@ -1171,7 +1192,7 @@ REYNflux_FD_mole_dry <- function(
     # more like how functions can operate on the REYN object (the result of REYNflux)
     diff = fluxChem$imfl
     mn = fluxChem$mn
-    cor = fluxChem$corr
+    corr = fluxChem$corr
   }
   
   ############################################################
@@ -1185,7 +1206,7 @@ REYNflux_FD_mole_dry <- function(
   mn$I <- sd(tot, na.rm=TRUE) / mean(tot, na.rm=TRUE)
   
   #Obukhov length (used positive g!)
-  mn$d_L_v_0 <- (-(((mn$u_star)^3 / (eddy4R.base::IntlNatu$VonkFokn * eddy4R.base::IntlNatu$Grav / mn$tempVirtPot00 * mn$F_H_kin_v_0 ))))
+  mn$d_L_v_0 <- (-(((veloFric)^3 / (eddy4R.base::IntlNatu$VonkFokn * eddy4R.base::IntlNatu$Grav / mn$tempVirtPot00 * mn$F_H_kin_v_0 ))))
   
   #stability
   mn$sigma <- mn$d_z_m / mn$d_L_v_0
@@ -1199,14 +1220,14 @@ REYNflux_FD_mole_dry <- function(
   
   #temperature scale (eddy temperature fluctuations) [K]
   #surface layer
-  #mn$T_star_SL <- - mn$F_H_kin_v_0 / mn$u_star	#according to Stull (1988) p. 356
-  mn$T_star_SL <- - mn$F_H_kin / mn$u_star	#according to Foken (2008) p.42, fits with ITC assessment
+  #mn$T_star_SL <- - mn$F_H_kin_v_0 / veloFric	#according to Stull (1988) p. 356
+  mn$T_star_SL <- - mn$F_H_kin / veloFric	#according to Foken (2008) p.42, fits with ITC assessment
   #mixed layer
   mn$T_star_ML <-   mn$F_H_kin / mn$w_star #according to Stull (1988) p. 356
   
   #humidity scale (eddy moisture fluctuations) [mol mol-1 dry air]
   #surface layer
-  mn$rtioMoleDryH2o_star_SL <- - mean(mn$F_LE_kin / base$densMoleAirDry, na.rm=TRUE) / mn$u_star
+  mn$rtioMoleDryH2o_star_SL <- - mean(mn$F_LE_kin / base$densMoleAirDry, na.rm=TRUE) / veloFric
   #mixed layer layer
   mn$rtioMoleDryH2o_star_ML <-   mean(mn$F_LE_kin / base$densMoleAirDry, na.rm=TRUE) / mn$w_star 
 
@@ -1230,12 +1251,12 @@ REYNflux_FD_mole_dry <- function(
     mn=mn,		#mean
     sd=sd,		#standard deviation
     diff=diff,	#instantaneous fluctuations
-    cor=cor,		#correlation coefficient
+    corr=corr,		#correlation coefficient
     mtrxRot01=mtrxRot01       #transformation matrix for stress tensor
   )
   
   #clean up
-  rm(mtrxRot01, base, data, mi, ma, mn, sd, diff, cor)
+  rm(mtrxRot01, base, data, mi, ma, mn, sd, diff, corr)
   
   #return result
   return(export)
