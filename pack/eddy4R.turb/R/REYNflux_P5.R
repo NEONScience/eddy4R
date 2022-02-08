@@ -1036,28 +1036,45 @@ REYNflux_FD_mole_dry <- function(
   
   
   ############################################################
-  #MOMENTUM FLUX AND FRICTION VELOCITY
+  # MOMENTUM FLUX AND FRICTION VELOCITY
   ############################################################
   
   
   
-  # limit to 3 wind components, use def.rot.ang.zaxs.erth example above
+  # check for presence of inputs and correct units
+  # limit to required wind components, use def.rot.ang.zaxs.erth example above
   inp = statStaDiff$diff
   rot = rot
   
-  # check for presence of inputs and correct units
+  # assign units throughout function
+  
+  # create function structure
+  
+  # create export
+  
+  # create function header
   
   
+  # instantaneous fluxes from instantaneous wind component differences in streamline coordinates
+  # for downstream calculation of integral length scales and statistical errors
+  # includes negative sign prefixes commonly used in ENU meteorological convention
+  # identical to stress tensor results: veloFric <- (mean(diff$veloFricXaxsSq)^2 + mean(diff$veloFricYaxsSq)^2)^(1/4)
+  diff <- base::data.frame(
+    veloFricXaxsSq = -(inp$veloXaxsHor * inp$veloZaxsHor),
+    veloFricYaxsSq = -(inp$veloYaxsHor * inp$veloZaxsHor),
+    veloFric = base::rep(x = NaN, length.out = base::nrow(inp))
+  )
+
+
   # calculate stress tensor and rotate into streamline coordinates
 
-    # transpose differences of horizontal wind components (from meteorological convention to geographic convention)
-    # wouldn't vertical wind also need to be transposed to yield a right-hand cordinate system and hence the correct 
-    # sign in the stress tensor elements and downstream calculations (some of which are currently negated)?
+    # transpose wind component instantaneous differences from ENU meteorological convention to NED geographic convention
+    # this also means that negative-sign prefixes are omitted from veloFric calculations based on stress tensor
     veloXaxsIntl <- inp$veloYaxs
     veloYaxsIntl <- inp$veloXaxs
-    veloZaxsIntl <- inp$veloZaxs
+    veloZaxsIntl <- -inp$veloZaxs
     
-    # stress tensor
+    # stress tensor (defined in NED geographic convention)
     mtrxFric <- rbind(
       c(base::mean(veloXaxsIntl * veloXaxsIntl, na.rm = TRUE),
         base::mean(veloXaxsIntl * veloYaxsIntl, na.rm = TRUE),
@@ -1080,9 +1097,10 @@ REYNflux_FD_mole_dry <- function(
   
   # calculate friction velocity [m s-1]
   # optionally only considers the along wind stress veloFricXaxsSq; Foken (2008) Eq.(2.23)
+  # negative sign prefixes commonly used for ENU Zaxs are omitted because stress tensor is already defined in NED
   mean <- base::data.frame(
-    veloFricXaxsSq = -mtrxRot04[1,3],
-    veloFricYaxsSq = -mtrxRot04[2,3])
+    veloFricXaxsSq = mtrxRot04[1,3],
+    veloFricYaxsSq = mtrxRot04[2,3])
   mean$veloFric <- (mean$veloFricXaxsSq^2 + mean$veloFricYaxsSq^2)^(1/4)
 
     
@@ -1094,10 +1112,11 @@ REYNflux_FD_mole_dry <- function(
 
 
   # calculate correlations
+  # negative sign prefixes commonly used for ENU Zaxs are omitted because stress tensor is already defined in NED
   corr <- base::data.frame(
-    veloFricXaxsSq = -mtrxRot04[1,3] / sd$veloXaxsHor / sd$veloZaxsHor,
-    veloFricYaxsSq = -mtrxRot04[2,3] / sd$veloYaxsHor / sd$veloZaxsHor
-  )
+    veloFricXaxsSq = mtrxRot04[1,3] / sd$veloXaxsHor / sd$veloZaxsHor,
+    veloFricYaxsSq = mtrxRot04[2,3] / sd$veloYaxsHor / sd$veloZaxsHor,
+    veloFric = NaN)
   
   
   # clean up
@@ -1105,17 +1124,6 @@ REYNflux_FD_mole_dry <- function(
   
   
   
-  #-----------------------------------------------------------
-  #FROM INITIAL COMPONENTS
-  
-  # instantaneous fluxes from instantaneous wind component differences in streamline coordinates
-  # for downstream calculation of integral length scales and statistical errors
-  diff <- base::data.frame(
-    veloFricXaxsSq = -(inp$veloXaxsHor * inp$veloZaxsHor),
-    veloFricYaxsSq = -(inp$veloYaxsHor * inp$veloZaxsHor),
-    veloFric = base::rep(x = NaN, length.out = base::nrow(inp))
-  )
-
 
   
   
