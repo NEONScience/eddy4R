@@ -1040,117 +1040,122 @@ REYNflux_FD_mole_dry <- function(
   ############################################################
   
   
-  
-  # check for presence of inputs and correct units
-  # limit to required wind components, use def.rot.ang.zaxs.erth example above
-  inp = statStaDiff$diff
-  rot = rot
-  Unit = base::data.frame(In = "m s-1", Out = "m s-1", OutSq = "m2 s-2")
-  
-  # create function structure
-  
-  # create export
-  
-  # create function header
-  
-  # create function call
-  
-  
-  # instantaneous fluxes from instantaneous wind component differences in streamline coordinates
-  # for downstream calculation of integral length scales and statistical errors
-  # includes negative sign prefixes commonly used in ENU meteorological convention
-  # identical to stress tensor results: veloFric <- (mean(diff$veloFricXaxsSq)^2 + mean(diff$veloFricYaxsSq)^2)^(1/4)
-  
-    # calculate
-    diff <- base::data.frame(
-      veloFricXaxsSq = -(inp$veloXaxsHor * inp$veloZaxsHor),
-      veloFricYaxsSq = -(inp$veloYaxsHor * inp$veloZaxsHor),
-      veloFric = base::rep(x = NaN, length.out = base::nrow(inp))
-    )
+  def.flux.vect <- function(
     
-    # assign units
-    base::attr(diff$veloFricXaxsSq, which = "unit") <- Unit$OutSq
-    base::attr(diff$veloFricYaxsSq, which = "unit") <- Unit$OutSq
-    base::attr(diff$veloFric, which = "unit") <- Unit$Out
+    # input dataframe with variables veloXaxs, veloYaxs, and veloZaxs of class "numeric, each with unit attribute. [m s-1]
+    # limit to required wind components, use def.rot.ang.zaxs.erth example above
+    inp = statStaDiff$diff[c("veloXaxs", "veloYaxs", "veloZaxs", "veloXaxsHor", "veloYaxsHor", "veloZaxsHor")],
+    rot = rot,
+    Unit = base::data.frame(In = "m s-1", Out = "m s-1", OutSq = "m2 s-2")
   
-  # calculate stress tensor and rotate into streamline coordinates
-
-    # transpose wind component instantaneous differences from ENU meteorological convention to NED geographic convention
-    # this also means that negative-sign prefixes are omitted from veloFric calculations based on stress tensor
-    veloXaxsIntl <- inp$veloYaxs
-    veloYaxsIntl <- inp$veloXaxs
-    veloZaxsIntl <- -inp$veloZaxs
+  ) {
+  
+    # check for presence of inputs and consistent units
     
-    # stress tensor (defined in NED geographic convention)
-    mtrxFric <- rbind(
-      c(base::mean(veloXaxsIntl * veloXaxsIntl, na.rm = TRUE),
-        base::mean(veloXaxsIntl * veloYaxsIntl, na.rm = TRUE),
-        base::mean(veloXaxsIntl * veloZaxsIntl, na.rm = TRUE)),
-      c(base::mean(veloYaxsIntl * veloXaxsIntl, na.rm = TRUE),
-        base::mean(veloYaxsIntl * veloYaxsIntl, na.rm = TRUE),
-        base::mean(veloYaxsIntl * veloZaxsIntl, na.rm = TRUE)),
-      c(base::mean(veloZaxsIntl * veloXaxsIntl, na.rm = TRUE),
-        base::mean(veloZaxsIntl * veloYaxsIntl, na.rm = TRUE),
-        base::mean(veloZaxsIntl * veloZaxsIntl, na.rm = TRUE))
-    )
-    base::attr(mtrxFric, which = "unit") <- Unit$OutSq
+    # create export
     
-    # rotate stress tensor into streamline coordinates
-    mtrxRot03 <- rot$mtrxRot01 %*% mtrxFric
-    base::attr(mtrxRot03, which = "unit") <- Unit$OutSq
+    # create Roxygen header
     
-    mtrxRot04 <- mtrxRot03 %*% rot$mtrxRot02
-    base::attr(mtrxRot04, which = "unit") <- Unit$OutSq
+    # create function call
+    
+    
+    # instantaneous fluxes from instantaneous wind component differences in streamline coordinates
+    # for downstream calculation of integral length scales and statistical errors
+    # includes negative sign prefixes commonly used in ENU meteorological convention
+    # identical to stress tensor results: veloFric <- (mean(diff$veloFricXaxsSq)^2 + mean(diff$veloFricYaxsSq)^2)^(1/4)
+    
+      # calculate
+      diff <- base::data.frame(
+        veloFricXaxsSq = -(inp$veloXaxsHor * inp$veloZaxsHor),
+        veloFricYaxsSq = -(inp$veloYaxsHor * inp$veloZaxsHor),
+        veloFric = base::rep(x = NaN, length.out = base::nrow(inp))
+      )
+      
+      # assign units
+      base::attr(diff$veloFricXaxsSq, which = "unit") <- Unit$OutSq
+      base::attr(diff$veloFricYaxsSq, which = "unit") <- Unit$OutSq
+      base::attr(diff$veloFric, which = "unit") <- Unit$Out
+    
+    # calculate stress tensor and rotate into streamline coordinates
+  
+      # transpose wind component instantaneous differences from ENU meteorological convention to NED geographic convention
+      # this also means that negative-sign prefixes are omitted from veloFric calculations based on stress tensor
+      veloXaxsIntl <- inp$veloYaxs
+      veloYaxsIntl <- inp$veloXaxs
+      veloZaxsIntl <- -inp$veloZaxs
+      
+      # stress tensor (defined in NED geographic convention)
+      mtrxFric <- rbind(
+        c(base::mean(veloXaxsIntl * veloXaxsIntl, na.rm = TRUE),
+          base::mean(veloXaxsIntl * veloYaxsIntl, na.rm = TRUE),
+          base::mean(veloXaxsIntl * veloZaxsIntl, na.rm = TRUE)),
+        c(base::mean(veloYaxsIntl * veloXaxsIntl, na.rm = TRUE),
+          base::mean(veloYaxsIntl * veloYaxsIntl, na.rm = TRUE),
+          base::mean(veloYaxsIntl * veloZaxsIntl, na.rm = TRUE)),
+        c(base::mean(veloZaxsIntl * veloXaxsIntl, na.rm = TRUE),
+          base::mean(veloZaxsIntl * veloYaxsIntl, na.rm = TRUE),
+          base::mean(veloZaxsIntl * veloZaxsIntl, na.rm = TRUE))
+      )
+      base::attr(mtrxFric, which = "unit") <- Unit$OutSq
+      
+      # rotate stress tensor into streamline coordinates
+      mtrxRot03 <- rot$mtrxRot01 %*% mtrxFric
+      base::attr(mtrxRot03, which = "unit") <- Unit$OutSq
+      
+      mtrxRot04 <- mtrxRot03 %*% rot$mtrxRot02
+      base::attr(mtrxRot04, which = "unit") <- Unit$OutSq
+      
+      # clean up
+      base::rm(mtrxFric, mtrxRot03, veloXaxsIntl, veloYaxsIntl, veloZaxsIntl)
+    
+    
+    # friction velocity [m s-1]
+    # optionally only considers the along wind stress veloFricXaxsSq; Foken (2008) Eq.(2.23)
+    # negative sign prefixes commonly used for ENU Zaxs are omitted because stress tensor is already defined in NED
+      
+      # calculate
+      mean <- base::data.frame(
+        veloFricXaxsSq = mtrxRot04[1,3],
+        veloFricYaxsSq = mtrxRot04[2,3])
+      mean$veloFric <- (mean$veloFricXaxsSq^2 + mean$veloFricYaxsSq^2)^(1/4)
+      
+      # assign units
+      base::attr(mean$veloFricXaxsSq, which = "unit") <- Unit$OutSq
+      base::attr(mean$veloFricYaxsSq, which = "unit") <- Unit$OutSq
+      base::attr(mean$veloFric, which = "unit") <- Unit$Out
+  
+  
+    # standard deviation of wind components; deviations from sd calculated in def.stat.sta.diff are < 2%
+      
+      # calculate
+      sd <- base::data.frame(
+        veloXaxsHor = base::sqrt(base::abs(base::diag(mtrxRot04)))[1],
+        veloYaxsHor = base::sqrt(base::abs(base::diag(mtrxRot04)))[2],
+        veloZaxsHor = base::sqrt(base::abs(base::diag(mtrxRot04)))[3])
+      
+      # assign units
+      base::attr(sd$veloXaxsHor, which = "unit") <- Unit$Out
+      base::attr(sd$veloYaxsHor, which = "unit") <- Unit$Out
+      base::attr(sd$veloZaxsHor, which = "unit") <- Unit$Out
+  
+  
+    # calculate correlations
+    # negative sign prefixes commonly used for ENU Zaxs are omitted because stress tensor is already defined in NED
+      
+      # calculate
+      corr <- base::data.frame(
+        veloFricXaxsSq = mtrxRot04[1,3] / sd$veloXaxsHor / sd$veloZaxsHor,
+        veloFricYaxsSq = mtrxRot04[2,3] / sd$veloYaxsHor / sd$veloZaxsHor,
+        veloFric = NaN)
+      
+      # assign units
+      base::sapply(base::names(corr), function(x) {base::attr(corr[[x]], which = "unit") <<- "-"})
+    
     
     # clean up
-    base::rm(mtrxFric, mtrxRot03, veloXaxsIntl, veloYaxsIntl, veloZaxsIntl)
+    base::rm(mtrxRot04)
   
-  
-  # friction velocity [m s-1]
-  # optionally only considers the along wind stress veloFricXaxsSq; Foken (2008) Eq.(2.23)
-  # negative sign prefixes commonly used for ENU Zaxs are omitted because stress tensor is already defined in NED
-    
-    # calculate
-    mean <- base::data.frame(
-      veloFricXaxsSq = mtrxRot04[1,3],
-      veloFricYaxsSq = mtrxRot04[2,3])
-    mean$veloFric <- (mean$veloFricXaxsSq^2 + mean$veloFricYaxsSq^2)^(1/4)
-    
-    # assign units
-    base::attr(mean$veloFricXaxsSq, which = "unit") <- Unit$OutSq
-    base::attr(mean$veloFricYaxsSq, which = "unit") <- Unit$OutSq
-    base::attr(mean$veloFric, which = "unit") <- Unit$Out
-
-
-  # standard deviation of wind components; deviations from sd calculated in def.stat.sta.diff are < 2%
-    
-    # calculate
-    sd <- base::data.frame(
-      veloXaxsHor = base::sqrt(base::abs(base::diag(mtrxRot04)))[1],
-      veloYaxsHor = base::sqrt(base::abs(base::diag(mtrxRot04)))[2],
-      veloZaxsHor = base::sqrt(base::abs(base::diag(mtrxRot04)))[3])
-    
-    # assign units
-    base::attr(sd$veloXaxsHor, which = "unit") <- Unit$Out
-    base::attr(sd$veloYaxsHor, which = "unit") <- Unit$Out
-    base::attr(sd$veloZaxsHor, which = "unit") <- Unit$Out
-
-
-  # calculate correlations
-  # negative sign prefixes commonly used for ENU Zaxs are omitted because stress tensor is already defined in NED
-    
-    # calculate
-    corr <- base::data.frame(
-      veloFricXaxsSq = mtrxRot04[1,3] / sd$veloXaxsHor / sd$veloZaxsHor,
-      veloFricYaxsSq = mtrxRot04[2,3] / sd$veloYaxsHor / sd$veloZaxsHor,
-      veloFric = NaN)
-    
-    # assign units
-    base::sapply(base::names(corr), function(x) {base::attr(corr[[x]], which = "unit") <<- "-"})
-  
-  
-  # clean up
-  base::rm(mtrxRot04)
+  }
   
   
   
