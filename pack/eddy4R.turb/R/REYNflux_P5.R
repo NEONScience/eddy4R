@@ -1041,14 +1041,15 @@ REYNflux_FD_mole_dry <- function(
   # definition function (to be exported)
   {
     ##############################################################################################
-    #' @title Definition function: Streamwise rotation of the wind vector
+    #' @title Definition function: Eddy-covariance flux calculation for vector quantities
     
     #' @author
     #' Stefan Metzger \email{eddy4R.info@gmail.com}
     
-    #' @description Function definition. This function rotates the wind vector into the mean wind, thus allowing to separate stream-wise and cross-wind components for subsequent use in footprint models, calculating shear stress etc. It consists of a single azimuth-rotation around the vertical axis. Any more comprehensive rotation such as double rotation or planar fit should be applied prior to calling this function.
+    #' @description Function definition. This function calculates eddy-covariances flux for vector quantities, such as the wind vector -> momentum flux and friction velocity.
     
-    #' @param inp A data frame containing the wind vector in meteorological convention with the variables veloXaxs (latitudinal wind speed, positive from west), veloYaxs (longitudinal wind speed, positive from south), and veloZaxs (vertical wind speed, positive from below) of class "numeric, each with unit attribute. [m s-1]
+    #' @param inp A data frame containing 1) the wind vector in meteorological ENU convention with the variables veloXaxs (latitudinal wind speed, positive from west), veloYaxs (longitudinal wind speed, positive from south), and veloZaxs (vertical wind speed, positive from below) and 2) the wind vector in streamwise ENU convention with the variables veloXaxsHor (streamwise wind speed, positive from front), veloYaxsHor (cross-wind speed, positive from left), and veloZaxs (vertical wind speed, positive from below) derived from def.rot.ang.zaxs.erth, of class "numeric, each with unit attribute. [m s-1].
+    #' @param rot A list of rotation matrices with the list elements mtrxRot01 and mtrxRot02 derived from def.rot.ang.zaxs.erth, class "numeric", each with unit attribute. [-]
     
     #' @return 
     #' The returned object is a list containing the elements data and rot.
@@ -1087,24 +1088,21 @@ REYNflux_FD_mole_dry <- function(
     # changelog and author contributions / copyrights
     #   Stefan Metzger (2011-03-04)
     #     original creation
-    #   Stefan Metzger (2021-11-24)
+    #   Stefan Metzger (2022-02-08)
     #     update to eddy4R terminology and modularize into definition function
     ###############################################################################################
     
-
+    # Eddy-covariance flux calculation for vector quantities
     def.flux.vect <- function(
       
       # input dataframe with variables veloXaxs, veloYaxs, and veloZaxs of class "numeric, each with unit attribute. [m s-1]
       # limit to required wind components, use def.rot.ang.zaxs.erth example above
-      inp = statStaDiff$diff[c("veloXaxs", "veloYaxs", "veloZaxs", "veloXaxsHor", "veloYaxsHor", "veloZaxsHor")],
+      inp,
       rot = rot,
       Unit = base::data.frame(In = "m s-1", Out = "m s-1", OutSq = "m2 s-2")
     
     ) {
-      
-      # create Roxygen header
-      
-      
+
       # check presence of input arguments and consistent units
       
         # inp
