@@ -123,12 +123,13 @@ def.foot.k04 <- function(
   wghtFootXaxsDistMax <- wghtFootYaxsMax	#start from distribution peak
   while(wghtFootXaxsDistMax > wghtFootYaxsMax / 100) {
     distFootXaxs <- distFootXaxs + distReso	#use step width of landuse matrix
-    wghtFootXaxsDistMax <- def.wght.foot.xaxs(whri)	#calculate
+    wghtFootXaxsDistMax <- def.wght.foot.xaxs(distFootXaxs)	#calculate
   }
+  
+  numCellXaxsBgn <- base::ceiling(distFootXaxs / distReso)	#cell length necessay in X direction
+  
   #clean up distFootXaxs
   base::rm(distFootXaxs)
-  
-  numCellXaxsBgn <- base::ceiling(whri / distReso)	#cell length necessay in X direction
   
   #crosswind density distribution
   
@@ -173,12 +174,12 @@ def.foot.k04 <- function(
   )
   
   #crosswind footprint extend until contribution falls below 1 % wghtFootYaxsMax
-  whri <- ymax; wghtFootXaxsDistMax <- wghtFootYaxsMax	#start from distribution peak
+  distFootXaxs <- ymax; wghtFootXaxsDistMax <- wghtFootYaxsMax	#start from distribution peak
   while(wghtFootXaxsDistMax > wghtFootYaxsMax / 100) {
-    whri <- whri + distReso	#use step width of landuse matrix
+    distFootXaxs <- distFootXaxs + distReso	#use step width of landuse matrix
     wghtFootXaxsDistMax <- def.wght.foot.yaxs(
       distFootXaxs=numCellXaxsBgn * distReso,
-      distFootYaxs=whri,
+      distFootYaxs=distFootXaxs,
       veloYaxsHorSd=veloYaxsHorSd,
       veloZaxsHorSd=veloZaxsHorSd,
       veloFric=veloFric,
@@ -188,7 +189,7 @@ def.foot.k04 <- function(
       univFunc=univFunc
     )
   }
-  numCellYaxs <- base::ceiling(whri / distReso)	#cell length necessay in Y direction
+  numCellYaxs <- base::ceiling(distFootXaxs / distReso)	#cell length necessay in Y direction
   
   
   #-----------------------------------------------------------
@@ -274,8 +275,8 @@ def.foot.k04 <- function(
   
   #integration, output: top -> bottom == upwind -> downwind, left -> right == alongwind axis -> outside
   wghtFootYaxsItgr <- t(base::sapply(1:base::length(distXaxsCntr), function(numCellXaxs) def.wght.foot.yaxs.itgr.xaxs.yaxs(
-    x=distXaxsCntr[numCellXaxs],
-    y=distYaxs,
+    distFootXaxs=distXaxsCntr[numCellXaxs],
+    distFootYaxs=distYaxs,
     veloYaxsHorSd=veloYaxsHorSd,
     veloZaxsHorSd=veloZaxsHorSd,
     veloFric=veloFric,
@@ -356,7 +357,7 @@ def.foot.k04 <- function(
   # specify output.dim, so that dimensions remain odd-numbered, and the tower at the center
   # explicitly specifying output.origin for some reason leads to a shift, hence commented out
   wghtFootXaxsYaxsItgrCntrSqRot <- EBImage::rotate(x = wghtFootXaxsYaxsItgrCntrSq ,
-                            angZaxsErth = 180 - angZaxsErth,
+                            angle = 180 - angZaxsErth,
                             output.dim = base::rep(nrow(wghtFootXaxsYaxsItgrCntrSq ),2),
                             # output.origin = base::rep(((nrow(wghtFootXaxsYaxsItgrCntrSq ) - 1) / 2 + 1), 2)
   )@.Data
