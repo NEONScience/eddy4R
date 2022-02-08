@@ -14,6 +14,8 @@
 #     modularization of function from footprints.r and initial eddy4R naming convention updates
 #   Chris Florian (2021-11-24)
 #     update remaining terms to eddy4R naming convention
+#   Chris Florian (2021-02-07)
+#     update to call base functions from namespace
 
 #' @description Flux footprint after Kljun et a. (2004), Metzger et al. (2012).
 
@@ -76,10 +78,10 @@ def.foot.k04 <- function(
   para06 <- 3.42	#+-0.35; Bup
   
   #calculation of fitted parameters Eqs. (13) - (16)
-  paraFit01 <- para04 / (para06 - log(distZaxsRgh))	#maximum value of the distribution; a
+  paraFit01 <- para04 / (para06 - base::log(distZaxsRgh))	#maximum value of the distribution; a
   paraFit02 <- 3.70	#+-0.30; b
-  paraFit03 <- para02 * (para06 - log(distZaxsRgh)) #c
-  paraFit04 <- para03 * (para06 - log(distZaxsRgh))	#maximum upwind extend (non-dimensional); d
+  paraFit03 <- para02 * (para06 - base::log(distZaxsRgh)) #c
+  paraFit04 <- para03 * (para06 - base::log(distZaxsRgh))	#maximum upwind extend (non-dimensional); d
   
   
   #-----------------------------------------------------------
@@ -92,7 +94,7 @@ def.foot.k04 <- function(
   
   #position of maximum along x
   #non-dimensional, Eq. (11)
-  distFootXaxsMaxNorm <- para05 * (para06 - log(distZaxsRgh))
+  distFootXaxsMaxNorm <- para05 * (para06 - base::log(distZaxsRgh))
   #dimensional, Eq. (17)
   distFootXaxsMax <- distFootXaxsMaxNorm * scal
   
@@ -106,7 +108,7 @@ def.foot.k04 <- function(
     #seperated term 
     distFootXaxsNorm02 <- (distFootXaxsNorm01 + paraFit04) / paraFit03
     #crosswind integrated flux footprint, Eq. (7)
-    wghtFootXaxs <- paraFit01 * (distFootXaxsNorm02^paraFit02) * exp(paraFit02 * (1 - distFootXaxsNorm02))
+    wghtFootXaxs <- paraFit01 * (distFootXaxsNorm02^paraFit02) * base::exp(paraFit02 * (1 - distFootXaxsNorm02))
     #return result
     return(wghtFootXaxs)
   }
@@ -114,7 +116,7 @@ def.foot.k04 <- function(
   #alongwind footprint extend
   
   #in lee (negative) direction, Eq. (10)
-  numCellXaxsEnd <- ceiling((-(paraFit04 * scal + distReso/2)) / distReso)
+  numCellXaxsEnd <- base::ceiling((-(paraFit04 * scal + distReso/2)) / distReso)
   
   #in luv (postitiv) direction until contribution falls below 1 % of wghtFootYaxsMax
   distFootXaxs <- distFootXaxsMax 
@@ -124,9 +126,9 @@ def.foot.k04 <- function(
     wghtFootXaxsDistMax <- def.wght.foot.xaxs(whri)	#calculate
   }
   #clean up distFootXaxs
-  rm(distFootXaxs)
+  base::rm(distFootXaxs)
   
-  numCellXaxsBgn <- ceiling(whri / distReso)	#cell length necessay in X direction
+  numCellXaxsBgn <- base::ceiling(whri / distReso)	#cell length necessay in X direction
   
   #crosswind density distribution
   
@@ -147,11 +149,11 @@ def.foot.k04 <- function(
     #column average transport velocity [s]
     veloLog <- veloFric / 0.4 * (log(distZaxsMeasDisp / distZaxsRgh) - (distZaxsMeasDisp - distZaxsRgh) / distZaxsMeasDisp - univFunc)
     #average travel time of a particle
-    timeZaxs <- sqrt((distFootXaxs / veloLog)^2 + ((distZaxsMeasDisp - distZaxsRgh) / veloZaxsHorSd)^2)
+    timeZaxs <- base::sqrt((distFootXaxs / veloLog)^2 + ((distZaxsMeasDisp - distZaxsRgh) / veloZaxsHorSd)^2)
     #scaled crosswind fluctuations
-    veloYaxsHorSdScal <- timeZaxs / (1 + sqrt(timeZaxs / (2 * timeFric))) * timeZaxs / timeFric * veloYaxsHorSd
+    veloYaxsHorSdScal <- timeZaxs / (1 + base::sqrt(timeZaxs / (2 * timeFric))) * timeZaxs / timeFric * veloYaxsHorSd
     #crosswind distribution
-    wghtFootYaxs <- (1 / (sqrt(2 * pi) * veloYaxsHorSdScal)) * exp((-distFootYaxs^2) / (2 * (veloYaxsHorSdScal^2)))
+    wghtFootYaxs <- (1 / (base::sqrt(2 * pi) * veloYaxsHorSdScal)) * base::exp((-distFootYaxs^2) / (2 * (veloYaxsHorSdScal^2)))
     #return result
     return(wghtFootYaxs)
   }
@@ -186,7 +188,7 @@ def.foot.k04 <- function(
       univFunc=univFunc
     )
   }
-  numCellYaxs <- ceiling(whri / distReso)	#cell length necessay in Y direction
+  numCellYaxs <- base::ceiling(whri / distReso)	#cell length necessay in Y direction
   
   
   #-----------------------------------------------------------
@@ -205,10 +207,10 @@ def.foot.k04 <- function(
   distYaxs <- c(0, 1:numCellYaxs - 0.5) * distReso
   
   #alongwind cell center coordinates
-  distXaxsCntr <- sapply(1:(length(distXaxs)-1), function(x) mean(distXaxs[x:(x+1)]))
+  distXaxsCntr <- base::sapply(1:(length(distXaxs)-1), function(x) mean(distXaxs[x:(x+1)]))
   
   #crosswind cell center coordinates
-  distYaxsCntr <- c(0, sapply(2:(length(distYaxs)-1), function(y) mean(distYaxs[y:(y+1)])))
+  distYaxsCntr <- c(0, base::sapply(2:(length(distYaxs)-1), function(y) mean(distYaxs[y:(y+1)])))
   
   #integration of alongwind footprint
   
@@ -219,25 +221,25 @@ def.foot.k04 <- function(
   distXaxsNorm <- (distXaxs / scal + paraFit04) / paraFit03
   
   #integrate
-  wghtFootXaxsItgrNorm <- sapply(1:(length(distXaxsNorm)-1), function(numCellXaxs) integrate(def.wght.foot.xaxs.itgr.xaxs.norm, paraFit02*distXaxsNorm[numCellXaxs], paraFit02*distXaxsNorm[numCellXaxs+1])$value)
+  wghtFootXaxsItgrNorm <- base::sapply(1:(base::length(distXaxsNorm)-1), function(numCellXaxs) stats::integrate(def.wght.foot.xaxs.itgr.xaxs.norm, paraFit02*distXaxsNorm[numCellXaxs], paraFit02*distXaxsNorm[numCellXaxs+1])$value)
   
   #cellwise alongwind footprint, Eq. (A10)
-  wghtFootXaxsItgr <- paraFit01 * paraFit03 * exp(paraFit02) * paraFit02^(-paraFit02) / paraFit02 *wghtFootXaxsItgrNorm
+  wghtFootXaxsItgr <- paraFit01 * paraFit03 * base::exp(paraFit02) * paraFit02^(-paraFit02) / paraFit02 *wghtFootXaxsItgrNorm
   
   #integral over the entire footprint
-   wghtFootXaxsAll <- paraFit01 * paraFit03 * exp(paraFit02) * paraFit02^(-paraFit02) * base::gamma(paraFit02)
+   wghtFootXaxsAll <- paraFit01 * paraFit03 * base::exp(paraFit02) * paraFit02^(-paraFit02) * base::gamma(paraFit02)
   
   #percentage of alongwind footprint covered
-   qiFootXaxsFrac <- sum(wghtFootXaxsItgr) /  wghtFootXaxsAll * 100
+   qiFootXaxsFrac <- base::sum(wghtFootXaxsItgr) /  wghtFootXaxsAll * 100
   
   #normalisation to unity
-  wghtFootXaxsItgr <- wghtFootXaxsItgr / sum(wghtFootXaxsItgr)
+  wghtFootXaxsItgr <- wghtFootXaxsItgr / base::sum(wghtFootXaxsItgr)
   
   #integration of crosswind footprint
   
   #function for crosswind dispersion
   def.wght.foot.yaxs.itgr.yaxs <- function(y, veloYaxsHorSdScal) {
-    wghtFootYaxs <- (1 / (sqrt(2 * pi) * veloYaxsHorSdScal)) * exp((-y^2) / (2 * (veloYaxsHorSdScal^2)))
+    wghtFootYaxs <- (1 / (sqrt(2 * pi) * veloYaxsHorSdScal)) * base::exp((-y^2) / (2 * (veloYaxsHorSdScal^2)))
     return(wghtFootYaxs)
   }
   
@@ -260,18 +262,18 @@ def.foot.k04 <- function(
     #average travel time of a particle
     timeZaxs <- sqrt((distFootXaxs / veloLog)^2 + ((distZaxsMeasDisp - distZaxsRgh) / veloZaxsHorSd)^2)
     #scaled crosswind fluctuations
-    veloYaxsHorSdScal <- timeZaxs / (1 + sqrt(timeZaxs / (2 * timeFric))) * timeZaxs / timeFric * veloYaxsHorSd
+    veloYaxsHorSdScal <- timeZaxs / (1 + base::sqrt(timeZaxs / (2 * timeFric))) * timeZaxs / timeFric * veloYaxsHorSd
     #call function for crosswind dispersion (integration slightly increases density towards the outside)
     #wghtFootYaxsItgr <- def.wght.foot.yaxs.itgr.yaxs(distYaxsCntr, veloYaxsHorSdScal)
-    wghtFootYaxsItgr <- sapply(1:(length(distFootYaxs)-1), function(numCellYaxs) integrate(def.wght.foot.yaxs.itgr.yaxs, distFootYaxs[numCellYaxs], distFootYaxs[numCellYaxs+1], veloYaxsHorSdScal)$value)
+    wghtFootYaxsItgr <- base::sapply(1:(length(distFootYaxs)-1), function(numCellYaxs) stats::integrate(def.wght.foot.yaxs.itgr.yaxs, distFootYaxs[numCellYaxs], distFootYaxs[numCellYaxs+1], veloYaxsHorSdScal)$value)
     #normalisation to 0.5
-    wghtFootYaxsItgr <- wghtFootYaxsItgr / (2 * sum(wghtFootYaxsItgr))
+    wghtFootYaxsItgr <- wghtFootYaxsItgr / (2 * base::sum(wghtFootYaxsItgr))
     #return result
     return(wghtFootYaxsItgr)
   }
   
   #integration, output: top -> bottom == upwind -> downwind, left -> right == alongwind axis -> outside
-  wghtFootYaxsItgr <- t(sapply(1:length(distXaxsCntr), function(numCellXaxs) def.wght.foot.yaxs.itgr.xaxs.yaxs(
+  wghtFootYaxsItgr <- t(base::sapply(1:base::length(distXaxsCntr), function(numCellXaxs) def.wght.foot.yaxs.itgr.xaxs.yaxs(
     x=distXaxsCntr[numCellXaxs],
     y=distYaxs,
     veloYaxsHorSd=veloYaxsHorSd,
@@ -288,40 +290,40 @@ def.foot.k04 <- function(
   #COMBINE ALONG- AND CROSSWIND DENSITY DISTRIBUTIONS AND ROTATE INTO MEAN WIND
   
   #combine crosswind contributions on alongwind axis; will always yield uneven column number; rows sum to unity
-  wghtFootYaxsItgr <- cbind(matlab::fliplr(wghtFootYaxsItgr[,2:ncol(wghtFootYaxsItgr)]), 2*wghtFootYaxsItgr[,1], wghtFootYaxsItgr[,2:ncol(wghtFootYaxsItgr)])
+  wghtFootYaxsItgr <- base::cbind(matlab::fliplr(wghtFootYaxsItgr[,2:base::ncol(wghtFootYaxsItgr)]), 2*wghtFootYaxsItgr[,1], wghtFootYaxsItgr[,2:base::ncol(wghtFootYaxsItgr)])
   #YcenLR <- c(-rev(distYaxsCntr[2:length(distYaxsCntr)]), 0, distYaxsCntr[2:length(distYaxsCntr)])
   #sapply(1:nrow(wghtFootYaxsItgr), function(x) sum(wghtFootYaxsItgr[x,]))
   #str(wghtFootYaxsItgr)
   
   #combination of along- and cross component; along wind from up to down, crosswind from left to right; sums to unity
-  wghtFootXaxsYaxsItgr <- t(sapply(1:nrow(wghtFootYaxsItgr), function(x) wghtFootXaxsItgr[x] * wghtFootYaxsItgr[x,]))
+  wghtFootXaxsYaxsItgr <- t(sapply(1:base::nrow(wghtFootYaxsItgr), function(x) wghtFootXaxsItgr[x] * wghtFootYaxsItgr[x,]))
   #plot(wghtFootXaxsItgr)
   #plot(wghtFootYaxsItgr[5,])
   #NIVo <- c(1e-4, 1e-3, 1e-2)
   #contour(matlab::rot90(wghtFootXaxsYaxsItgr,3), levels=c(1e-4, 1e-3, 1e-2))
   
   #center aicraft alongwind location in plot, pad with zeroes
-  numCellXaxsDiff <- length(which(distXaxsCntr > 0)) - length(which(distXaxsCntr < 0))
-  wghtFootXaxsYaxsItgrCntr<- rbind(matrix(nrow=numCellXaxsDiff, ncol=ncol(wghtFootXaxsYaxsItgr), 0), wghtFootXaxsYaxsItgr)
+  numCellXaxsDiff <- base::length(base::which(distXaxsCntr > 0)) - base::length(base::which(distXaxsCntr < 0))
+  wghtFootXaxsYaxsItgrCntr<- base::rbind(matrix(nrow=numCellXaxsDiff, ncol=base::ncol(wghtFootXaxsYaxsItgr), 0), wghtFootXaxsYaxsItgr)
   #XcenUD <- seq(-max(distXaxsCntr), max(distXaxsCntr), by=distReso)
   #contour(YcenLR, XcenUD, matlab::rot90(wghtFootXaxsYaxsItgrCntr,1), levels=NIVo, col=colorRampPalette(c("black", "red"))(length(NIVo)), asp=1)
   
   #pad with zeroes if not rectangular matrix
-  if(nrow(wghtFootXaxsYaxsItgrCntr) == ncol(wghtFootXaxsYaxsItgrCntr)) {
+  if(base::nrow(wghtFootXaxsYaxsItgrCntr) == base::ncol(wghtFootXaxsYaxsItgrCntr)) {
     wghtFootXaxsYaxsItgrCntrSq  <- wghtFootXaxsYaxsItgrCntr
   } else {
-    if(nrow(wghtFootXaxsYaxsItgrCntr) > ncol(wghtFootXaxsYaxsItgrCntr)) {
-      wghtFootXaxsYaxsItgrCntrSq  <- cbind(
-        matrix(nrow=nrow(wghtFootXaxsYaxsItgrCntr), ncol=(nrow(wghtFootXaxsYaxsItgrCntr)-ncol(wghtFootXaxsYaxsItgrCntr)) / 2, 0),
+    if(base::nrow(wghtFootXaxsYaxsItgrCntr) > base::ncol(wghtFootXaxsYaxsItgrCntr)) {
+      wghtFootXaxsYaxsItgrCntrSq  <- base::cbind(
+        base::matrix(nrow=base::nrow(wghtFootXaxsYaxsItgrCntr), ncol=(base::nrow(wghtFootXaxsYaxsItgrCntr)-base::ncol(wghtFootXaxsYaxsItgrCntr)) / 2, 0),
         wghtFootXaxsYaxsItgrCntr,
-        matrix(nrow=nrow(wghtFootXaxsYaxsItgrCntr), ncol=(nrow(wghtFootXaxsYaxsItgrCntr)-ncol(wghtFootXaxsYaxsItgrCntr)) / 2, 0)
+        base::matrix(nrow=base::nrow(wghtFootXaxsYaxsItgrCntr), ncol=(base::nrow(wghtFootXaxsYaxsItgrCntr)-base::ncol(wghtFootXaxsYaxsItgrCntr)) / 2, 0)
       )
     }
-    if(nrow(wghtFootXaxsYaxsItgrCntr) < ncol(wghtFootXaxsYaxsItgrCntr)) {
-      wghtFootXaxsYaxsItgrCntrSq  <- rbind(
-        matrix(ncol=ncol(wghtFootXaxsYaxsItgrCntr), nrow=(ncol(wghtFootXaxsYaxsItgrCntr)-nrow(wghtFootXaxsYaxsItgrCntr)) / 2, 0),
+    if(base::nrow(wghtFootXaxsYaxsItgrCntr) < base::ncol(wghtFootXaxsYaxsItgrCntr)) {
+      wghtFootXaxsYaxsItgrCntrSq  <- base::rbind(
+        base::matrix(ncol=ncol(wghtFootXaxsYaxsItgrCntr), nrow=(base::ncol(wghtFootXaxsYaxsItgrCntr)-base::nrow(wghtFootXaxsYaxsItgrCntr)) / 2, 0),
         wghtFootXaxsYaxsItgrCntr,
-        matrix(ncol=ncol(wghtFootXaxsYaxsItgrCntr), nrow=(ncol(wghtFootXaxsYaxsItgrCntr)-nrow(wghtFootXaxsYaxsItgrCntr)) / 2, 0)
+        base::matrix(ncol=ncol(wghtFootXaxsYaxsItgrCntr), nrow=(base::ncol(wghtFootXaxsYaxsItgrCntr)-base::nrow(wghtFootXaxsYaxsItgrCntr)) / 2, 0)
       )
     }
   }
@@ -331,24 +333,24 @@ def.foot.k04 <- function(
   # upwind distance of 80% cumulative flux footprint
   wghtFootXaxsYaxsItgrCntrSqRot <- matlab::flipud(wghtFootXaxsYaxsItgrCntrSq )
   #wghtFootXaxsYaxsItgrCntrSqRot <- EBImage::rotate(wghtFootXaxsYaxsItgrCntrSq , 180-0)@.Data
-  distFootXaxsThshFootCum <- rev(rowSums(wghtFootXaxsYaxsItgrCntrSqRot))
+  distFootXaxsThshFootCum <- base::rev(rowSums(wghtFootXaxsYaxsItgrCntrSqRot))
   
   # upwind distance of peak
-  distFootXaxsMax <- (which(distFootXaxsThshFootCum == max(distFootXaxsThshFootCum)) - (length(distFootXaxsThshFootCum) - 1) / 2 + 1) *   distReso
-  names(distFootXaxsMax) <- ("distFootXaxsMax")
+  distFootXaxsMax <- (base::which(distFootXaxsThshFootCum == base::max(distFootXaxsThshFootCum)) - (length(distFootXaxsThshFootCum) - 1) / 2 + 1) *   distReso
+  base::names(distFootXaxsMax) <- ("distFootXaxsMax")
   
-  distFootXaxsThshFootCum <- cumsum(distFootXaxsThshFootCum)
-  distFootXaxsThshFootCum <- distFootXaxsThshFootCum/max(distFootXaxsThshFootCum, na.rm=TRUE)
-  distFootXaxsThshFootCum <- (which(distFootXaxsThshFootCum > thsh)[1] - (length(distFootXaxsThshFootCum) - 1) / 2 + 1) *   distReso
-  names(distFootXaxsThshFootCum) <- ("distFootXaxsThshFootCum")
+  distFootXaxsThshFootCum <- base::cumsum(distFootXaxsThshFootCum)
+  distFootXaxsThshFootCum <- distFootXaxsThshFootCum/base::max(distFootXaxsThshFootCum, na.rm=TRUE)
+  distFootXaxsThshFootCum <- (base::which(distFootXaxsThshFootCum > thsh)[1] - (base::length(distFootXaxsThshFootCum) - 1) / 2 + 1) *   distReso
+  base::names(distFootXaxsThshFootCum) <- ("distFootXaxsThshFootCum")
   
   # one-sided cross-wind distance of 80% cumulative flux footprint
-  distFootYaxsThshFootCum <- rev(colSums(wghtFootXaxsYaxsItgrCntrSqRot))
-  distFootYaxsThshFootCum <- distFootYaxsThshFootCum[((length(distFootYaxsThshFootCum) - 1) / 2 + 1):length(distFootYaxsThshFootCum)]
-  distFootYaxsThshFootCum <- cumsum(distFootYaxsThshFootCum)
-  distFootYaxsThshFootCum <- distFootYaxsThshFootCum/max(distFootYaxsThshFootCum, na.rm=TRUE)
-  distFootYaxsThshFootCum <- which(distFootYaxsThshFootCum > thsh)[1] * distReso
-  names(distFootYaxsThshFootCum) <- ("distFootYaxsThshFootCum")
+  distFootYaxsThshFootCum <- base::rev(base::colSums(wghtFootXaxsYaxsItgrCntrSqRot))
+  distFootYaxsThshFootCum <- distFootYaxsThshFootCum[((base::length(distFootYaxsThshFootCum) - 1) / 2 + 1):base::length(distFootYaxsThshFootCum)]
+  distFootYaxsThshFootCum <- base::cumsum(distFootYaxsThshFootCum)
+  distFootYaxsThshFootCum <- distFootYaxsThshFootCum/base::max(distFootYaxsThshFootCum, na.rm=TRUE)
+  distFootYaxsThshFootCum <- base::which(distFootYaxsThshFootCum > thsh)[1] * distReso
+  base::names(distFootYaxsThshFootCum) <- ("distFootYaxsThshFootCum")
   
   # rotate image clockwise (align footprint in mean wind)
   # specify output.dim, so that dimensions remain odd-numbered, and the tower at the center
@@ -358,7 +360,7 @@ def.foot.k04 <- function(
                             output.dim = base::rep(nrow(wghtFootXaxsYaxsItgrCntrSq ),2),
                             # output.origin = base::rep(((nrow(wghtFootXaxsYaxsItgrCntrSq ) - 1) / 2 + 1), 2)
   )@.Data
-  wghtFootXaxsYaxsItgrCntrSqRot <- wghtFootXaxsYaxsItgrCntrSqRot / sum(sum(wghtFootXaxsYaxsItgrCntrSqRot))
+  wghtFootXaxsYaxsItgrCntrSqRot <- wghtFootXaxsYaxsItgrCntrSqRot / base::sum(base::sum(wghtFootXaxsYaxsItgrCntrSqRot))
   
   # contour(
   #   x = 1:nrow(wghtFootXaxsYaxsItgrCntrSq ),
