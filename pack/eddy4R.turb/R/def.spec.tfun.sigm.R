@@ -33,7 +33,18 @@
 ########################################################
 #sigmoidal transfer function (Lorentzian) after Eugster and Senn (1995) in Aubinet et al. (2012) Eq. 4.21
 ########################################################
-fun_TSIG <- function(freq_0, freq) 1 / (1 + (freq / freq_0)^2)
-
+def.spec.tfun.sigm <- function(
+  #half-power / cut-off frequency
+  FreqCut, 
+  #Measured frequency
+  Freq
+  ){
+  #sigmoidal transfer function (Lorentzian) after Eugster and Senn (1995) in Aubinet et al. (2012) Eq. 4.21
+  tfunSigm <- 1 / (1 + (Freq / FreqCut)^2)
+  
+  #Return transfer function
+  return(tfunSigm)
+  
+} #End of function
 
 
