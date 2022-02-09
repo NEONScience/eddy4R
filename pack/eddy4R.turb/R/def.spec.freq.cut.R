@@ -33,32 +33,32 @@
 ########################################################
 #function to determine half-power / cut-off frequency
 ########################################################
-find_TF <- function(
+def.spec.freq.cut <- function(
   #half-power / cut-off frequency
-  F0 = 0.5,
+  FreqCut = 0.5,
   #frequency f at which fCO(f) reaches its maximum value
-  FX = fx_out$par * mean(SPEout$fr_obs / SPEout$fr_nor, na.rm=TRUE),
+  FreqPeak = fx_out$par * mean(SPEout$fr_obs / SPEout$fr_nor, na.rm=TRUE),
   #independent variable, preferabley f, but n is possible
-  IDE = SPEout$fr_obs[SPEout$fr_whr][which(SPEout$fr_obs[SPEout$fr_whr] >= 0.01)],
+  Idep = SPEout$fr_obs[SPEout$fr_whr][which(SPEout$fr_obs[SPEout$fr_whr] >= 0.01)],
   #dependent variable, spectra or cospectra
-  DEP = SPEout$FScosp[SPEout$fr_whr,fpo][which(SPEout$fr_obs[SPEout$fr_whr] >= 0.01)],
+  Depe = SPEout$FScosp[SPEout$fr_whr,fpo][which(SPEout$fr_obs[SPEout$fr_whr] >= 0.01)],
   #spectrum or cospectrum?
-  SC = c("spe", "cos")[2],
+  MethSpec = c("spec", "cosp")[2],
   #stability parameter
-  SI = OUT$REYN$mn$sigma[FILE],
+  paraStbl = OUT$REYN$mn$sigma[FILE],
   #use frequency-weighted (co)spectrum?
-  WEIGHT =FALSE,
+  MethWght =FALSE,
   #frequency range for determining optimiality criterion
-  WHR_CRIT = c(0.01, 10),
+  ThshFreqRng = c(0.01, 10),
   #correction factor for spectral attenuation
   corfac = corfac_out,
   #number of bins if binning shall be performed
-  BINS = 1000,
+  NumBin = 1000,
   #generate plot?
-  plot_path = NULL
+  MethPlot = NULL
 ) {
   
-  #assign indipendent value
+  #assign independent value
   ide <- IDE
   
   #correct measured coefficients for spectral attenuation
