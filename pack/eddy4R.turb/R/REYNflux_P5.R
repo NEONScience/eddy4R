@@ -1046,40 +1046,38 @@ REYNflux_FD_mole_dry <- function(
     #' @author
     #' Stefan Metzger \email{eddy4R.info@gmail.com}
     
-    #' @description Function definition. This function calculates eddy-covariances flux for vector quantities, such as the wind vector -> momentum flux and friction velocity.
+    #' @description Function definition. This function calculates eddy-covariance flux for vector quantities, such as the wind vector -> momentum flux and friction velocity.
     
-    #' @param inp A data frame containing 1) the wind vector in meteorological ENU convention with the variables veloXaxs (latitudinal wind speed, positive from west), veloYaxs (longitudinal wind speed, positive from south), and veloZaxs (vertical wind speed, positive from below) and 2) the wind vector in streamwise ENU convention with the variables veloXaxsHor (streamwise wind speed, positive from front), veloYaxsHor (cross-wind speed, positive from left), and veloZaxs (vertical wind speed, positive from below) derived from def.rot.ang.zaxs.erth, of class "numeric, each with unit attribute. [m s-1].
-    #' @param rot A list of rotation matrices with the list elements mtrxRot01 and mtrxRot02 derived from def.rot.ang.zaxs.erth, class "numeric", each with unit attribute. [-]
+    #' @param inp A data frame containing the instantaneous differences produced by ?def.stat.sta.diff() of 1) the wind vector in meteorological ENU convention with the variables veloXaxs (latitudinal wind speed, positive from west), veloYaxs (longitudinal wind speed, positive from south), and veloZaxs (vertical wind speed, positive from below), and 2) the wind vector in streamwise ENU convention with the variables veloXaxsHor (streamwise wind speed, positive from front), veloYaxsHor (cross-wind speed, positive from left), and veloZaxs (vertical wind speed, positive from below) derived from ?def.rot.ang.zaxs.erth, of class "numeric, each with unit attribute [m s-1]. The wind vector inputs can be viewed as a specific example that can be generalized through replacement by other vector quantities that share the same coordinate conventions and consistent unis among inp and Unit.
+    #' @param rot A list of rotation matrices with the list elements mtrxRot01 and mtrxRot02 derived from ?def.rot.ang.zaxs.erth, class "numeric", each with unit attribute. [-]
+    #' @param Unit A data frame with the entries In (input units), Out (output units), and OutSq (squared output units), of class "character".
     
     #' @return 
-    #' The returned object is a list containing the elements data and rot.
-    #' data is a dataframe with the same number of observations as the function call inputs. It contains the wind vector variables in streamwise convention veloXaxsHor (streamwise wind speed, positive from front), veloYaxsHor (cross-wind speed, positive from left) and veloZaxsHor (vertical wind speed, positive from below) [m s-1], and the wind direction angZaxsErth [rad], each of class "numeric and with unit attribute.
-    #' rot is a list with the objects used in the rotation, averaged over all observations in the function call inputs. It contains the mean wind direction angZaxsErth [rad], the resulting rotation matrix mtrxRot01 [-] and the transpose of the rotation matrix mtrxRot02 [-], each of class "numeric and with unit attribute. It should be noted that angZaxsErth is calculated by first averaging each horizontal component of the wind vector, which minimizes the mean cross-wind thus satisfying conditions for footprint modeling and separating shear into stream-wise and cross-wind terms.
+    #' The returned object is a list containing the element dataframes corr, diff, mean, and sd, each of class "numeric" and with unit attribute.
+    #' The elements corr, mean and sd are all calculated from the same stress tensor based on the inp (veloXaxs, veloYaxs, veloZaxs) and rot (mtrxRot01 and mtrxRot02) arguments. The element corr contains the horizontal-vertical correlations, the element mean contains the horizontal-vertical covariances, and the element sd contains the standard deviation for each wind vector component in streamwise ENU convention, with a single observation each.
+    #' The element diff contains the instantaneous horizontal-vertical products of inp (veloXaxsHor, veloYaxsHor, veloZaxsHor) with the same number of observations as inp.
     
     #' @references
     #' License: GNU AFFERO GENERAL PUBLIC LICENSE Version 3, 19 November 2007
     
-    #' @keywords rotation, stream-wise, mean wind, footprint, shear
+    #' @keywords correlation, flux, friction velocity, shear stress, standard deviation, vector
     
     #' @examples
-    #' Example 1, this will cause an error message due to inp01$veloYaxs is missing:
-    #' inp01 <- base::data.frame(
-    #'   veloXaxs = c(-1.889635, -1.661724, -1.615837, -1.711132, -1.223001),
-    #'   veloZaxs = c(0.176613897, 0.184947662, 0.344331819, 0.190230311, 0.239193186)
-    #' )
-    #' attr(inp01$veloXaxs,"unit") <- "m s-1"; attr(inp01$veloZaxs,"unit") <- "m s-1"
-    #' def.rot.ang.zaxs.erth(inp = inp01)
-    #' base::rm(inp01)
-    #' Example 2, make sure to assign all variables and units, the function should run ok.
-    #' inp02 <- base::data.frame(
+    #' Make sure to assign all variables and units, the function should run ok.
+    #' inp <- base::data.frame(
     #'   veloXaxs = c(-1.889635, -1.661724, -1.615837, -1.711132, -1.223001),
     #'   veloYaxs = c(1.365195, 1.277106, 1.394891, 1.180698, 1.283836),
     #'   veloZaxs = c(0.176613897, 0.184947662, 0.344331819, 0.190230311, 0.239193186)
     #' )
-    #' attr(inp02$veloXaxs,"unit") <- "m s-1"; attr(inp02$veloYaxs,"unit") <- "m s-1"; attr(inp02$veloZaxs,"unit") <- "m s-1"
-    #' out02 <- def.rot.ang.zaxs.erth(inp = inp02)
-    #' utils::str(out02)
-    #' base::rm(inp02, out02)
+    #' attr(inp$veloXaxs,"unit") <- "m s-1"; attr(inp$veloYaxs,"unit") <- "m s-1"; attr(inp$veloZaxs,"unit") <- "m s-1"
+    #' out <- def.flux.vect(
+    #'   inp = base::cbind(def.stat.sta.diff(inp = inp)$diff,
+    #'                     def.stat.sta.diff(inp = def.rot.ang.zaxs.erth(inp = inp)$data)$diff),
+    #'   rot = def.rot.ang.zaxs.erth(inp = inp)$rot,
+    #'   Unit = base::data.frame(In = "m s-1", Out = "m s-1", OutSq = "m2 s-2")
+    #' )
+    #' utils::str(out)
+    #' base::rm(inp, out)
     
     #' @seealso Currently none.
     
@@ -1098,7 +1096,7 @@ REYNflux_FD_mole_dry <- function(
       # input dataframe with variables veloXaxs, veloYaxs, and veloZaxs of class "numeric, each with unit attribute. [m s-1]
       # limit to required wind components, use def.rot.ang.zaxs.erth example above
       inp,
-      rot = rot,
+      rot,
       Unit = base::data.frame(In = "m s-1", Out = "m s-1", OutSq = "m2 s-2")
     
     ) {
@@ -1294,6 +1292,7 @@ REYNflux_FD_mole_dry <- function(
     rot = rot,
     Unit = base::data.frame(In = "m s-1", Out = "m s-1", OutSq = "m2 s-2")
   )
+
 
   
   
