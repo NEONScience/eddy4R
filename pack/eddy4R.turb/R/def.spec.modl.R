@@ -34,42 +34,46 @@
 #function to generate model (co)spectrum after Massman, 2005 (in Lee, 2005)
 #continuous approximation of the Kaimal (1972) cospectra
 ########################################################
-SPEmod <- function(
+def.spec.modl <- function(
   #independent variable, preferabley f, but n is possible
-  ide = SPEout$fr_obs[SPEout$fr_whr],
+  Idep = SPEout$fr_obs[SPEout$fr_whr],
   #spectrum or cospectrum?
-  sc = c("spe", "cos")[2],
+  MethSpec = c("spec", "cosp")[2],
   #stability parameter
-  si = OUT$REYN$mn$sigma[FILE],
+  paraStbl = OUT$REYN$mn$sigma[FILE],
   #frequency f at which fCO(f) reaches its maximum value
-  fx = 0.1,
+  FreqPeak = 0.1,
   #output frequency-weighted (co)spectrum?
-  weight = TRUE
+  MethWght = TRUE
 ){
   
   #(inertial subrange) slope parameter
   #3/2 for -5/3 (spectra) power law
-  if(sc == "spe") m <- 3/2
+  if(MethSpec == "spec") paraSlp <- 3/2
   #3/4 for -7/3 (cospectra), 
-  if(sc == "cos") m <- 3/4
+  if(MethSpec == "cosp") paraSlp <- 3/4
   
   #broadness parameter
   #1/2 for unstable
-  if(si <= 0) mue=1/2  
+  if(paraStbl <= 0) paraBrd <- 1/2  
   #7/6 for stable stratification 
-  if(si > 0)  mue=7/6
+  if(paraStbl > 0)  paraBrd <- 7/6
   
   #calculate non-scaled, frequency-weighted model Cospectrum (fCo or nCo)
-  COmM <- (ide / fx) / (
-    ( 1 + m * (ide / fx)^(2 * mue) )^( (1/(2*mue)) * ((m+1)/m) )
+  modlSpec <- (Idep / FreqPeak) / (
+    ( 1 + paraSlp * (Idep / FreqPeak)^(2 * paraBrd) )^( (1/(2*paraBrd)) * ((paraSlp+1)/paraSlp) )
   )
   
   #(un)weight the (co)spectrum if necessary
-  if(weight == FALSE) COmM <- COmM / ide
+  if(MethWght == FALSE) modlSpec <- modlSpec / Idep
   
   #normalize to sum of 1
-  COmM <- COmM / sum(COmM, na.rm=TRUE)
+  modlSpec <- modlSpec / base::sum(modlSpec, na.rm=TRUE)
+  
+  #return output
+  return(modlSpec)
+  
   
   ########################################################	  
-}
+} #end of function
 ########################################################
