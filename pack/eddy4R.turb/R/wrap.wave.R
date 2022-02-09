@@ -8,7 +8,7 @@
 #' Wrapper function. Calculate Wavelet spectrum/cospectrum using the Waves package. The frequency response correction using Wavelet techniques described in Norbo and Katul, 2012 (NK12)
 
 #' @param dfInp data.frame, consisting of the input data to perform the wavelet transformation
-#' @param DiffScale numeric, determining the step difference in scales for the wavelet transformation
+#' @param DiffScal numeric, determining the step difference in scales for the wavelet transformation
 #' @param FuncWave Waves package function, denoting the type of mother wavelet function to be used in the transformation
 #' @param FreqSamp numeric, that determines the time series objects points
 #' @param ThshMiss numeric, dimensionless fraction of missing values in each column of data allowed before the quality flag is tripped. Defaults to 0.1 or 10 percent.
@@ -131,25 +131,25 @@ rpt$cov <- lapply(names(rpt$wave)[-which(names(rpt$wave) == "w_hor")], function(
   eddy4R.turb::def.vari.wave(
   # def.vari.wave(
     #complex Wavelet coefficients variable 1
-    spec1 = rpt$wave[[var]]@spectrum,
+    spec01 = rpt$wave[[var]]@spectrum,
     #complex Wavelet coefficients variable 2
-    spec2 = rpt$wave[["w_hor"]]@spectrum,
+    spec02 = rpt$wave[["w_hor"]]@spectrum,
     #width of the wavelet [s]
     scal = rpt$wave[[var]]@scale,
     #approximate Fourier period [d]
-    peri = rpt$wave[[var]]@period,
+    prd = rpt$wave[[var]]@period,
     #half-power frequencies for individual variables [Hz]
     freq_0 = NA,
     #which wavelengths/spatial scales to consider
-    whr_peri = NULL,
-    #normalization factor specific to the choice of Wavelet parameters
-    fac_norm = rpt$coefNorm,
+    SetPrd = NULL,
+    #normalization factor/coefficient specific to the choice of Wavelet parameters
+    CoefNorm = rpt$coefNorm,
     # Wavelet flag: process (0) or not
-    flag=rpt$qfMiss[[var]],
+    qfWave=rpt$qfMiss[[var]],
     #stability parameter
     paraStbl = paraStbl,
     #spectrum or cospectrum?
-    SC = c("spe", "cos")[2]
+    MethSpec = c("spe", "cos")[2]
   )
 ); base::names(rpt$cov) <- base::names(rpt$wave)[-base::which(base::names(rpt$wave) == "w_hor")]
 
