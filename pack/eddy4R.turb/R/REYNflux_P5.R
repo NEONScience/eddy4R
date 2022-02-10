@@ -1293,9 +1293,6 @@ REYNflux_FD_mole_dry <- function(
     Unit = base::data.frame(In = "m s-1", Out = "m s-1", OutSq = "m2 s-2")
   )
 
-
-  
-  
   
   
   ############################################################
@@ -1303,10 +1300,92 @@ REYNflux_FD_mole_dry <- function(
   ############################################################
   
   
+  # definition function (to be exported)
+  def.flux.sclr <- function(
+    inp,
+    conv,
+    Unit
+  ) {
+      
+    ### check presence of input arguments and consistent units
+    
+    
+    # perform calculations
+      
+      # instantaneous fluxes from instantaneous vector and scalar differences in input (typically kinematic) units
+    
+        # calculation
+        diff <- inp$vect * inp$sclr
+        
+        ### conversion with conv
+        
+        # assign units
+        base::attr(diff, which = "unit") <- Unit$Out
+      
+      
+      # average fluxes
+      
+        # calculation
+        mean <- base::mean(diff, na.rm = TRUE)
+      
+        # assign units
+        base::attr(mean, which = "unit") <- Unit$Out
+      
+      
+      # correlation
+        
+        # calculation
+        corr <- stats::cor(inp$vect, inp$sclr, use = "pairwise.complete.obs")
+        
+        # assign units
+        base::attr(corr, which = "unit") <- "-"
+    
+        
+    # create object for export
+      
+      # create list
+      rpt <- base::list()
+      
+      # populate list
+      rpt$corr <- corr
+      rpt$diff <- diff
+      rpt$mean <- mean
+      
+      # clean up
+      base::rm(corr, diff, mean)
+      
+      
+    # return results
+    return(rpt)
+      
+  }
+  
+  
+  # define inputs
+  
+    # must have units - test
+    inp = data.frame(vect = statStaDiff$diff$veloZaxsHor,
+                     sclr = statStaDiff$diff$tempAir)
+    # must have units - test
+    conv = NULL
+    
+    # Out unit is product of InVect, InSclr, Conv units
+    Unit = base::data.frame(InVect = "m s-1", InSclr = "K", Conv = "-", Out = "K m s-1")
+  
+  # test function
+  tst <- def.flux.sclr(
+    inp = inp,
+    conv = conv,
+    Unit = Unit
+  )
+  str(tst)
+  
+  
+  
   #SENSIBLE HEAT FLUX 
   #flux in kinematic units [K m s-1]
-  diff$F_H_kin <- diff$veloZaxsHor * diff$tempAir
-  mn$F_H_kin <- mean(diff$F_H_kin, na.rm=TRUE)
+  # diffF_H_kin <- statStaDiff$diff$veloZaxsHor * statStaDiff$diff$tempAir
+  # mnF_H_kin <- mean(diffF_H_kin, na.rm=TRUE)
   
   #conversion to units of energy [W m-2] == [kg s-3]
   diff$F_H_en <- (eddy4R.base::IntlNatu$CpDry * base$densMoleAirDry * eddy4R.base::IntlNatu$MolmDry + eddy4R.base::IntlNatu$CpH2o * base$densMoleH2o * eddy4R.base::IntlNatu$MolmH2o) * diff$F_H_kin
@@ -1318,9 +1397,9 @@ REYNflux_FD_mole_dry <- function(
   mn$F_H_kin_v_0 <- mean(diff$F_H_kin_v_0, na.rm=TRUE)
   
   #CORRELATIONS
-  corr$F_H_kin <- stats::corr(diff$veloZaxsHor, diff$tempAir, use="pairwise.complete.obs")
+  corr$F_H_kin <- stats::cor(diff$veloZaxsHor, diff$tempAir, use="pairwise.complete.obs")
   corr$F_H_en <- corr$F_H_kin
-  corr$F_H_kin_v_0 <- stats::corr(diff$veloZaxsHor, diff$tempVirtPot00, use="pairwise.complete.obs")
+  corr$F_H_kin_v_0 <- stats::cor(diff$veloZaxsHor, diff$tempVirtPot00, use="pairwise.complete.obs")
   
   
   
@@ -1335,7 +1414,7 @@ REYNflux_FD_mole_dry <- function(
   diff$F_LE_en <- base$heatH2oGas * eddy4R.base::IntlNatu$MolmH2o * diff$F_LE_kin
   mn$F_LE_en <- mean(diff$F_LE_en, na.rm=TRUE)
   #correlation
-  corr$F_LE_kin <- stats::corr(diff$veloZaxsHor, diff$rtioMoleDryH2o, use="pairwise.complete.obs")
+  corr$F_LE_kin <- stats::cor(diff$veloZaxsHor, diff$rtioMoleDryH2o, use="pairwise.complete.obs")
   corr$F_LE_en <- corr$F_LE_kin
   
   ############################################################
@@ -1349,7 +1428,7 @@ REYNflux_FD_mole_dry <- function(
     diff$F_CH4_mass <- diff$F_CH4_kin * eddy4R.base::IntlNatu$MolmCh4 * 1e6 * 3600
     mn$F_CH4_mass <- mean(diff$F_CH4_mass, na.rm=TRUE)
     #correlation
-    corr$F_CH4_kin <- stats::corr(diff$veloZaxsHor, diff$rtioMoleDryCo2, use="pairwise.complete.obs")
+    corr$F_CH4_kin <- stats::cor(diff$veloZaxsHor, diff$rtioMoleDryCo2, use="pairwise.complete.obs")
     corr$F_CH4_mass <- corr$F_CH4_kin
   }
   ############################################################
