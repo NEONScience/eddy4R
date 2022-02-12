@@ -1369,6 +1369,17 @@ REYNflux_FD_mole_dry <- function(
     # must have units - test
     conv = NULL
     
+    
+    # volumentric heat capacity; move to pre-calculation similar to base$heatH2oGas
+    # dry air
+    eddy4R.base::IntlNatu$CpDry * statStaDiff$base$densMoleAirDry * eddy4R.base::IntlNatu$MolmDry + 
+    
+    # water vapor  
+    eddy4R.base::IntlNatu$CpH2o * statStaDiff$base$densMoleH2o * eddy4R.base::IntlNatu$MolmH2o    
+    
+    
+    
+    
     # Out unit is product of InVect, InSclr, Conv units
     Unit = base::data.frame(InVect = "m s-1", InSclr = "K", Conv = "-", Out = "K m s-1")
   
