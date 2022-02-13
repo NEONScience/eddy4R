@@ -926,7 +926,7 @@ REYNflux_FD_mole_dry <- function(
           }; base::rm(tmp02)
     
           
-      # base states; AlgBase <- c("mean", "trnd", "ord03")[2]
+      # base states; AlgBase <- c("mean", "trnd", "ord03")[1]
           
           # re-assign mean data if AlgBase == "mean"
           if(AlgBase == "mean") {
@@ -1304,10 +1304,16 @@ REYNflux_FD_mole_dry <- function(
   def.flux.sclr <- function(
     inp,
     conv,
-    Unit
+    Unit,
+    # also need to add to fluxVect ... function:
+    AlgBase = c("mean", "trnd", "ord03")[1],
+    # also need to add to statSta ... function:
+    idep = NULL
   ) {
       
-    ### check presence of input arguments and consistent units
+    ### check presence of input arguments, consistent lenghts and units
+    # Out unit is product of InVect, InSclr, Conv units
+    # check that conv is either of lenght 1 or same lenght as inp
     
     
     # perform calculations
@@ -1323,15 +1329,22 @@ REYNflux_FD_mole_dry <- function(
         # assign units
         base::attr(diff, which = "unit") <- Unit$Out
       
-      
-      # average fluxes
+      # descriptive statistics incl. mean fluxes
       
         # calculation
+        min <- base::min(diff, na.rm = TRUE)
+        max <- base::max(diff, na.rm = TRUE)
         mean <- base::mean(diff, na.rm = TRUE)
-      
+        sd <- stats::sd(diff, na.rm = TRUE)
+        if(AlgBase == "mean") base <- mean else base <- eddy4R.base::def.base.ec(
+          idxTime = idep, var = diff, AlgBase = AlgBase)
+
         # assign units
+        base::attr(base, which = "unit") <- Unit$Out
+        base::attr(min, which = "unit") <- Unit$Out
+        base::attr(max, which = "unit") <- Unit$Out
         base::attr(mean, which = "unit") <- Unit$Out
-      
+        base::attr(sd, which = "unit") <- Unit$Out
       
       # correlation
         
@@ -1348,12 +1361,16 @@ REYNflux_FD_mole_dry <- function(
       rpt <- base::list()
       
       # populate list
+      rpt$base <- base
       rpt$corr <- corr
       rpt$diff <- diff
+      rpt$max <- max
       rpt$mean <- mean
+      rpt$min <- min
+      rpt$sd <- sd
       
       # clean up
-      base::rm(corr, diff, mean)
+      base::rm(corr, diff, max, mean, min, sd)
       
       
     # return results
@@ -1364,12 +1381,6 @@ REYNflux_FD_mole_dry <- function(
   
   # define inputs
   
-    # must have units - test
-    inp = 
-    
-    # must have units - test
-    conv = NULL
-    
     # move to pre-calculation similar to base$heatH2oGas
     # volumentric heat capacity [kg m-1 s2 K-1] =
     # specific heat [J kg-1 K-1] x mole density [mol m-3] x mole mass [kg mol-1]
@@ -1382,20 +1393,7 @@ REYNflux_FD_mole_dry <- function(
     # assign units
     base::attr(heatAirWet, which = "unit") <- "kg m-1 s2 K-1"
     
-    conv = heatAirWet
     
-    # Out unit is product of InVect, InSclr, Conv units
-    # kg s-3 = W m-2
-    Unit = base::data.frame(InVect = "m s-1", InSclr = "K", Conv = "kg m-1 s2 K-1", Out = "W m-2")
-    
-
-  
-  # test function
-  tst <- def.flux.sclr(
-    inp = inp,
-    conv = conv,
-    Unit = Unit
-  )
   # check how the fluxes are currently called in the h5 file
   # fluxTemp, fluxTempEngy, fluxTempVirtPot00
   # fluxH2o, fluxH2oEngy, fluxH2OEvtr
@@ -1405,49 +1403,49 @@ REYNflux_FD_mole_dry <- function(
   # initiate dataframe to store correlations
   statStaDiff$corr <- data.frame(fluxTemp = NaN)
 
-  # calculation
-  fluxTemp <- def.flux.sclr(
-    inp = data.frame(vect = statStaDiff$diff$veloZaxsHor, sclr = statStaDiff$diff$tempAir),
-    conv = NULL,
-    Unit = base::data.frame(InVect = "m s-1", InSclr = "K", Conv = "-", Out = "K m s-1")
-  )
+  # SENSIBLE HEAT FLUX 
   
-  # data assignments
-  for(idx in base::names(fluxTemp)) statStaDiff[[idx]]$fluxTemp <- fluxTemp[[idx]]
-
-  # clean up
-  base::rm(fluxTemp, idx)
+    # sensible heat flux in kinematic units [K m s-1]
     
-
-  
-  
-  
+      # calculation
+      fluxTmp <- def.flux.sclr(
+        inp = data.frame(vect = statStaDiff$diff$veloZaxsHor, sclr = statStaDiff$diff$tempAir),
+        conv = NULL,
+        Unit = base::data.frame(InVect = "m s-1", InSclr = "K", Conv = "-", Out = "K m s-1")
+      )
       
-    str(statStaDiff[[idx]])
-    str(statStaDiff[[idx]])
+      # data assignments
+      for(idx in base::names(fluxTmp)) statStaDiff[[idx]]$fluxTemp <- fluxTmp[[idx]]
+    
+      # clean up
+      base::rm(fluxTmp, idx)
+      
+    # sensible heat flux in units of energy [kg s-3] = [W m-2]
+      
+      # calculation
+      fluxTmp <- def.flux.sclr(
+        inp = data.frame(vect = statStaDiff$diff$veloZaxsHor, sclr = statStaDiff$diff$tempAir),
+        conv = heatAirWet,
+        Unit = base::data.frame(InVect = "m s-1", InSclr = "K", Conv = "kg m-1 s2 K-1", Out = "W m-2")
+      )
+      
+      # data assignments
+      for(idx in base::names(fluxTmp)) statStaDiff[[idx]]$fluxTempEngy <- fluxTmp[[idx]]
+      
+      # clean up
+      base::rm(fluxTmp, idx)
+      
+      
+      str(statStaDiff)
+      
+      plot(statStaDiff$base$fluxTempEngy, type = "l")
+      
+      
+      # visually compare results to gold file
+      # apply to additional fluxes
 
-    
-    
-    
-  
-  # for loop for assignments to workspace data objects
-  # rm
-    
-    
-  str(fluxTemp)
   
   
-  
-  #SENSIBLE HEAT FLUX 
-  #flux in kinematic units [K m s-1]
-  # diffF_H_kin <- statStaDiff$diff$veloZaxsHor * statStaDiff$diff$tempAir
-  # mnF_H_kin <- mean(diffF_H_kin, na.rm=TRUE)
-  
-  statStaDiff$mean$
-  
-  #conversion to units of energy [W m-2] == [kg s-3]
-  # diffF_H_en <- (eddy4R.base::IntlNatu$CpDry * statStaDiff$base$densMoleAirDry * eddy4R.base::IntlNatu$MolmDry + eddy4R.base::IntlNatu$CpH2o * statStaDiff$base$densMoleH2o * eddy4R.base::IntlNatu$MolmH2o) * diffF_H_kin
-  # mnF_H_en <- mean(diffF_H_en, na.rm=TRUE)
   
   #BUOYANCY FLUX considering water vapor buoyancy and NIST standard pressure (1013.15 hPa) reference (virt. pot. temp.) -> z/L
   #flux in kinematic units  [K m s-1]
