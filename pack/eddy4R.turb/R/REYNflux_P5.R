@@ -1317,7 +1317,8 @@ REYNflux_FD_mole_dry <- function(
         # calculation
         diff <- inp$vect * inp$sclr
         
-        ### conversion with conv
+        # conversion with optional argument conv
+        if(!is.null(conv)) diff <- diff * conv
         
         # assign units
         base::attr(diff, which = "unit") <- Unit$Out
@@ -1364,24 +1365,30 @@ REYNflux_FD_mole_dry <- function(
   # define inputs
   
     # must have units - test
-    inp = data.frame(vect = statStaDiff$diff$veloZaxsHor,
-                     sclr = statStaDiff$diff$tempAir)
+    inp = 
+    
     # must have units - test
     conv = NULL
     
+    # move to pre-calculation similar to base$heatH2oGas
+    # volumentric heat capacity [kg m-1 s2 K-1] =
+    # specific heat [J kg-1 K-1] x mole density [mol m-3] x mole mass [kg mol-1]
+    heatAirWet <- 
+      # dry air 
+      eddy4R.base::IntlNatu$CpDry * statStaDiff$base$densMoleAirDry * eddy4R.base::IntlNatu$MolmDry + 
+      # water vapor  
+      eddy4R.base::IntlNatu$CpH2o * statStaDiff$base$densMoleH2o * eddy4R.base::IntlNatu$MolmH2o    
     
-    # volumentric heat capacity; move to pre-calculation similar to base$heatH2oGas
-    # dry air
-    eddy4R.base::IntlNatu$CpDry * statStaDiff$base$densMoleAirDry * eddy4R.base::IntlNatu$MolmDry + 
+    # assign units
+    base::attr(heatAirWet, which = "unit") <- "kg m-1 s2 K-1"
     
-    # water vapor  
-    eddy4R.base::IntlNatu$CpH2o * statStaDiff$base$densMoleH2o * eddy4R.base::IntlNatu$MolmH2o    
-    
-    
-    
+    conv = heatAirWet
     
     # Out unit is product of InVect, InSclr, Conv units
-    Unit = base::data.frame(InVect = "m s-1", InSclr = "K", Conv = "-", Out = "K m s-1")
+    # kg s-3 = W m-2
+    Unit = base::data.frame(InVect = "m s-1", InSclr = "K", Conv = "kg m-1 s2 K-1", Out = "W m-2")
+    
+
   
   # test function
   tst <- def.flux.sclr(
@@ -1389,7 +1396,45 @@ REYNflux_FD_mole_dry <- function(
     conv = conv,
     Unit = Unit
   )
-  str(tst)
+  # check how the fluxes are currently called in the h5 file
+  # fluxTemp, fluxTempEngy, fluxTempVirtPot00
+  # fluxH2o, fluxH2oEngy, fluxH2OEvtr
+  # fluxCo2
+
+  
+  # initiate dataframe to store correlations
+  statStaDiff$corr <- data.frame(fluxTemp = NaN)
+
+  # calculation
+  fluxTemp <- def.flux.sclr(
+    inp = data.frame(vect = statStaDiff$diff$veloZaxsHor, sclr = statStaDiff$diff$tempAir),
+    conv = NULL,
+    Unit = base::data.frame(InVect = "m s-1", InSclr = "K", Conv = "-", Out = "K m s-1")
+  )
+  
+  # data assignments
+  for(idx in base::names(fluxTemp)) statStaDiff[[idx]]$fluxTemp <- fluxTemp[[idx]]
+
+  # clean up
+  base::rm(fluxTemp, idx)
+    
+
+  
+  
+  
+      
+    str(statStaDiff[[idx]])
+    str(statStaDiff[[idx]])
+
+    
+    
+    
+  
+  # for loop for assignments to workspace data objects
+  # rm
+    
+    
+  str(fluxTemp)
   
   
   
@@ -1398,9 +1443,11 @@ REYNflux_FD_mole_dry <- function(
   # diffF_H_kin <- statStaDiff$diff$veloZaxsHor * statStaDiff$diff$tempAir
   # mnF_H_kin <- mean(diffF_H_kin, na.rm=TRUE)
   
+  statStaDiff$mean$
+  
   #conversion to units of energy [W m-2] == [kg s-3]
-  diff$F_H_en <- (eddy4R.base::IntlNatu$CpDry * base$densMoleAirDry * eddy4R.base::IntlNatu$MolmDry + eddy4R.base::IntlNatu$CpH2o * base$densMoleH2o * eddy4R.base::IntlNatu$MolmH2o) * diff$F_H_kin
-  mn$F_H_en <- mean(diff$F_H_en, na.rm=TRUE)
+  # diffF_H_en <- (eddy4R.base::IntlNatu$CpDry * statStaDiff$base$densMoleAirDry * eddy4R.base::IntlNatu$MolmDry + eddy4R.base::IntlNatu$CpH2o * statStaDiff$base$densMoleH2o * eddy4R.base::IntlNatu$MolmH2o) * diffF_H_kin
+  # mnF_H_en <- mean(diffF_H_en, na.rm=TRUE)
   
   #BUOYANCY FLUX considering water vapor buoyancy and NIST standard pressure (1013.15 hPa) reference (virt. pot. temp.) -> z/L
   #flux in kinematic units  [K m s-1]
