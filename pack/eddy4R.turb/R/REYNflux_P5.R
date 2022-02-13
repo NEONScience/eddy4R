@@ -1395,7 +1395,6 @@ REYNflux_FD_mole_dry <- function(
     
     
   # check how the fluxes are currently called in the h5 file
-  # fluxTemp, fluxTempEngy, fluxTempVirtPot00
   # fluxH2o, fluxH2oEngy, fluxH2OEvtr
   # fluxCo2
 
@@ -1403,74 +1402,66 @@ REYNflux_FD_mole_dry <- function(
   # initiate dataframe to store correlations
   statStaDiff$corr <- data.frame(fluxTemp = NaN)
 
-  # SENSIBLE HEAT FLUX 
+  # SENSIBLE HEAT FLUX, BUOYANCY FLUX
   
     # sensible heat flux in kinematic units [K m s-1]
-    
-      # calculation
-      fluxTmp <- def.flux.sclr(
-        inp = data.frame(vect = statStaDiff$diff$veloZaxsHor, sclr = statStaDiff$diff$tempAir),
-        conv = NULL,
-        Unit = base::data.frame(InVect = "m s-1", InSclr = "K", Conv = "-", Out = "K m s-1")
-      )
-      
-      # data assignments
-      for(idx in base::names(fluxTmp)) statStaDiff[[idx]]$fluxTemp <- fluxTmp[[idx]]
-    
-      # clean up
-      base::rm(fluxTmp, idx)
+    fluxTmp <- def.flux.sclr(
+      inp = data.frame(vect = statStaDiff$diff$veloZaxsHor, sclr = statStaDiff$diff$tempAir),
+      conv = NULL,
+      Unit = base::data.frame(InVect = "m s-1", InSclr = "K", Conv = "-", Out = "K m s-1")
+    )
+    for(idx in base::names(fluxTmp)) statStaDiff[[idx]]$fluxTemp <- fluxTmp[[idx]]
+    base::rm(fluxTmp, idx)
       
     # sensible heat flux in units of energy [kg s-3] = [W m-2]
-      
-      # calculation
-      fluxTmp <- def.flux.sclr(
-        inp = data.frame(vect = statStaDiff$diff$veloZaxsHor, sclr = statStaDiff$diff$tempAir),
-        conv = heatAirWet,
-        Unit = base::data.frame(InVect = "m s-1", InSclr = "K", Conv = "kg m-1 s2 K-1", Out = "W m-2")
-      )
-      
-      # data assignments
-      for(idx in base::names(fluxTmp)) statStaDiff[[idx]]$fluxTempEngy <- fluxTmp[[idx]]
-      
-      # clean up
-      base::rm(fluxTmp, idx)
+    fluxTmp <- def.flux.sclr(
+      inp = data.frame(vect = statStaDiff$diff$veloZaxsHor, sclr = statStaDiff$diff$tempAir),
+      conv = heatAirWet,
+      Unit = base::data.frame(InVect = "m s-1", InSclr = "K", Conv = "kg m-1 s2 K-1", Out = "W m-2")
+    )
+    for(idx in base::names(fluxTmp)) statStaDiff[[idx]]$fluxTempEngy <- fluxTmp[[idx]]
+    base::rm(fluxTmp, idx)
+    
+    # buoyancy flux in kinematic units [K m s-1]
+    # considering water vapor buoyancy and NIST standard pressure (1013.15 hPa) reference (virt. pot. temp.) -> z/L
+    fluxTmp <- def.flux.sclr(
+      inp = data.frame(vect = statStaDiff$diff$veloZaxsHor, sclr = statStaDiff$diff$tempVirtPot00),
+      conv = NULL,
+      Unit = base::data.frame(InVect = "m s-1", InSclr = "K", Conv = "-", Out = "K m s-1")
+    )
+    for(idx in base::names(fluxTmp)) statStaDiff[[idx]]$fluxTempVirtPot00 <- fluxTmp[[idx]]
+    base::rm(fluxTmp, idx)
+
+  # LATENT HEAT FLUX, EVAPOTRANSPIRATION
+    
+    # latent heat flux in kinematic units [mol m-2 s-1]
+    fluxTmp <- def.flux.sclr(
+      inp = data.frame(vect = statStaDiff$diff$veloZaxsHor, sclr = statStaDiff$diff$rtioMoleDryH2o),
+      conv = statStaDiff$base$densMoleAirDry,
+      Unit = base::data.frame(InVect = "m s-1", InSclr = "-", Conv = "mol m-3", Out = "mol m-2 s-1")
+    )
+    for(idx in base::names(fluxTmp)) statStaDiff[[idx]]$fluxTemp <- fluxTmp[[idx]]
+    base::rm(fluxTmp, idx)
       
       
       str(statStaDiff)
-      
+      str(fluxTmp$base)
       plot(statStaDiff$base$fluxTempEngy, type = "l")
       
       
-      # visually compare results to gold file
-      # apply to additional fluxes
+str(statStaDiff$base$densMoleAirDry)
 
   
   
-  
-  #BUOYANCY FLUX considering water vapor buoyancy and NIST standard pressure (1013.15 hPa) reference (virt. pot. temp.) -> z/L
-  #flux in kinematic units  [K m s-1]
-  diff$F_H_kin_v_0 <- diff$veloZaxsHor * diff$tempVirtPot00
-  mn$F_H_kin_v_0 <- mean(diff$F_H_kin_v_0, na.rm=TRUE)
-  
-  #CORRELATIONS
-  corr$F_H_kin <- stats::cor(diff$veloZaxsHor, diff$tempAir, use="pairwise.complete.obs")
-  corr$F_H_en <- corr$F_H_kin
-  corr$F_H_kin_v_0 <- stats::cor(diff$veloZaxsHor, diff$tempVirtPot00, use="pairwise.complete.obs")
-  
-  
-  
-  ############################################################
-  #LATENT HEAT FLUX
-  ############################################################
-  
+
   #latent heat flux in kinematic units [mol m-2 s-1]
-  diff$F_LE_kin <- base$densMoleAirDry * diff$veloZaxsHor * diff$rtioMoleDryH2o
-  mn$F_LE_kin <- mean(diff$F_LE_kin, na.rm=TRUE)
+  # diffF_LE_kin <- statStaDiff$base$densMoleAirDry * statStaDiff$diff$veloZaxsHor * statStaDiff$diff$rtioMoleDryH2o
+  # mnF_LE_kin <- mean(diffF_LE_kin, na.rm=TRUE)
   #latent heat flux in units of energy  [W m-2] == [kg s-3]
   diff$F_LE_en <- base$heatH2oGas * eddy4R.base::IntlNatu$MolmH2o * diff$F_LE_kin
   mn$F_LE_en <- mean(diff$F_LE_en, na.rm=TRUE)
   #correlation
-  corr$F_LE_kin <- stats::cor(diff$veloZaxsHor, diff$rtioMoleDryH2o, use="pairwise.complete.obs")
+  # corr$F_LE_kin <- stats::cor(statStaDiff$diff$veloZaxsHor, statStaDiff$diff$rtioMoleDryH2o, use="pairwise.complete.obs")
   corr$F_LE_en <- corr$F_LE_kin
   
   ############################################################
