@@ -1382,7 +1382,7 @@ REYNflux_FD_mole_dry <- function(
   # define inputs
   
     # move to pre-calculation similar to base$heatH2oGas
-    # volumentric heat capacity [kg m-1 s2 K-1] =
+    # volumentric heat capacity [kg m-1 s-2 K-1] =
     # specific heat [J kg-1 K-1] x mole density [mol m-3] x mole mass [kg mol-1]
     heatAirWet <- 
       # dry air 
@@ -1440,9 +1440,36 @@ REYNflux_FD_mole_dry <- function(
       conv = statStaDiff$base$densMoleAirDry,
       Unit = base::data.frame(InVect = "m s-1", InSclr = "-", Conv = "mol m-3", Out = "mol m-2 s-1")
     )
-    for(idx in base::names(fluxTmp)) statStaDiff[[idx]]$fluxTemp <- fluxTmp[[idx]]
+    for(idx in base::names(fluxTmp)) statStaDiff[[idx]]$fluxH2o <- fluxTmp[[idx]]
     base::rm(fluxTmp, idx)
-      
+    
+    # latent heat flux in units of energy [kg s-3] = [W m-2]
+    fluxTmp <- def.flux.sclr(
+      inp = data.frame(vect = statStaDiff$diff$veloZaxsHor, sclr = statStaDiff$diff$rtioMoleDryH2o),
+      # conv: dry air density [mol m-3] x latent heat of vaporization [J kg-1] x molar mass [kg mol-1] = 
+      # [J m-3] = [kg m-1 s-1]
+      conv = statStaDiff$base$densMoleAirDry * statStaDiff$base$heatH2oGas * eddy4R.base::IntlNatu$MolmH2o,
+      Unit = base::data.frame(InVect = "m s-1", InSclr = "-", Conv = "kg m-1 s-1", Out = "W m-2")
+    )
+    for(idx in base::names(fluxTmp)) statStaDiff[[idx]]$fluxH2oEngy <- fluxTmp[[idx]]
+    base::rm(fluxTmp, idx)
+    
+    # evapotranspiration depth [m s-1]
+    # resources: https://www.fao.org/3/X0490E/x0490e04.htm
+    # https://github.com/stefanmet/NEON-FIU-algorithm-stefanmet/commit/86c368cfe367aac6f5c90aa8704ed0caf6558e4b
+    # https://chemistry.stackexchange.com/questions/23643/calculating-the-volume-of-1-mole-of-liquid-water
+    fluxTmp <- def.flux.sclr(
+      inp = data.frame(vect = statStaDiff$diff$veloZaxsHor, sclr = statStaDiff$diff$rtioMoleDryH2o),
+      # conv: dry air mole density [mol m-3] x 
+      # (H2O molar mass [kg mol-1] / liquid H2O mass density at 4C and 1 Atm [kg m-3]) = [-]
+      conv = statStaDiff$base$densMoleAirDry * IntlNatu$MolmH2o / 1e3,
+      Unit = base::data.frame(InVect = "m s-1", InSclr = "-", Conv = "-", Out = "m s-1")
+    )
+    for(idx in base::names(fluxTmp)) statStaDiff[[idx]]$fluxH2oVelo <- fluxTmp[[idx]]
+    base::rm(fluxTmp, idx)
+    
+    
+    statStaDiff$mean$fluxH2oEvtr * 1e3 * 86400
       
       str(statStaDiff)
       str(fluxTmp$base)
@@ -1451,18 +1478,21 @@ REYNflux_FD_mole_dry <- function(
       
 str(statStaDiff$base$densMoleAirDry)
 
-  
-  
+# https://www.fao.org/3/X0490E/x0490e04.htm ratio mm day-1 / W m-2 = 0.03517241
+0.408 / 11.6
 
-  #latent heat flux in kinematic units [mol m-2 s-1]
-  # diffF_LE_kin <- statStaDiff$base$densMoleAirDry * statStaDiff$diff$veloZaxsHor * statStaDiff$diff$rtioMoleDryH2o
-  # mnF_LE_kin <- mean(diffF_LE_kin, na.rm=TRUE)
-  #latent heat flux in units of energy  [W m-2] == [kg s-3]
-  diff$F_LE_en <- base$heatH2oGas * eddy4R.base::IntlNatu$MolmH2o * diff$F_LE_kin
-  mn$F_LE_en <- mean(diff$F_LE_en, na.rm=TRUE)
-  #correlation
-  # corr$F_LE_kin <- stats::cor(statStaDiff$diff$veloZaxsHor, statStaDiff$diff$rtioMoleDryH2o, use="pairwise.complete.obs")
-  corr$F_LE_en <- corr$F_LE_kin
+# eddy4R ratio mm day-1 / W m-2 = 0.03517241 = 45.52
+# molar volume of liquid H2O at 4C and 1 Atm
+# https://chemistry.stackexchange.com/questions/23643/calculating-the-volume-of-1-mole-of-liquid-water
+statStaDiff$mean$fluxH2oEvtr * 1e3 * 86400 / statStaDiff$base$fluxH2oEngy
+
+
+
+1/statStaDiff$base$densMoleH2o
+1/statStaDiff$base$densMoleAirDry
+
+1e6 / 86400
+
   
   ############################################################
   #CH4 FLUX - legacy, include CH4 via the chemistry flux settings
