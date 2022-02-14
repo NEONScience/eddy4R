@@ -1468,8 +1468,18 @@ REYNflux_FD_mole_dry <- function(
     for(idx in base::names(fluxTmp)) statStaDiff[[idx]]$fluxH2oVelo <- fluxTmp[[idx]]
     base::rm(fluxTmp, idx)
     
+  # OTHER SCALAR FLUXES INCL. CO2, CH4 ETC.
     
-
+    # CO2 flux in kinematic units [mol m-2 s-1]
+    fluxTmp <- def.flux.sclr(
+      inp = data.frame(vect = statStaDiff$diff$veloZaxsHor, sclr = statStaDiff$diff$rtioMoleDryCo2),
+      conv = statStaDiff$base$densMoleAirDry,
+      Unit = base::data.frame(InVect = "m s-1", InSclr = "-", Conv = "mol m-3", Out = "mol m-2 s-1")
+    )
+    for(idx in base::names(fluxTmp)) statStaDiff[[idx]]$fluxCo2 <- fluxTmp[[idx]]
+    base::rm(fluxTmp, idx)
+    
+    
   
   ############################################################
   #CH4 FLUX - legacy, include CH4 via the chemistry flux settings
