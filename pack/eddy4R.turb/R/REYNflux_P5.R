@@ -1469,29 +1469,6 @@ REYNflux_FD_mole_dry <- function(
     base::rm(fluxTmp, idx)
     
     
-    statStaDiff$mean$fluxH2oEvtr * 1e3 * 86400
-      
-      str(statStaDiff)
-      str(fluxTmp$base)
-      plot(statStaDiff$base$fluxTempEngy, type = "l")
-      
-      
-str(statStaDiff$base$densMoleAirDry)
-
-# https://www.fao.org/3/X0490E/x0490e04.htm ratio mm day-1 / W m-2 = 0.03517241
-0.408 / 11.6
-
-# eddy4R ratio mm day-1 / W m-2 = 0.03517241 = 45.52
-# molar volume of liquid H2O at 4C and 1 Atm
-# https://chemistry.stackexchange.com/questions/23643/calculating-the-volume-of-1-mole-of-liquid-water
-statStaDiff$mean$fluxH2oEvtr * 1e3 * 86400 / statStaDiff$base$fluxH2oEngy
-
-
-
-1/statStaDiff$base$densMoleH2o
-1/statStaDiff$base$densMoleAirDry
-
-1e6 / 86400
 
   
   ############################################################
