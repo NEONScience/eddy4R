@@ -525,13 +525,14 @@ wrap.irga.vali <- function(
   
   #remove corrected data if validation fails benchmarking test
   if (valiEval$valiEvalPass == FALSE){
-    rpt[[DateProc]]$rtioMoleDryCo2Cor$rtioMoleDryCo2Cor <- NaN
+    rpt[[DateProc]]$rtioMoleDryCo2Cor$rtioMoleDryCo2Cor <- NaN #data are removed if the validation does not pass the thresholds set for evaluation slope and offset
     #raise quality flag in validation table to indicate validation status
     rpt[[DateProc]]$rtioMoleDryCo2Mlf$qfEvalThsh <-  c(NA, 1)
   } else if (valiEval$valiEvalPass == TRUE) {
-    rpt[[DateProc]]$rtioMoleDryCo2Mlf$qfEvalThsh <- c(NA, 0)
+    rpt[[DateProc]]$rtioMoleDryCo2Mlf$qfEvalThsh <- c(NA, 0) #corrected data will be included in teh processed file in this case
   } else {
     rpt[[DateProc]]$rtioMoleDryCo2Mlf$qfEvalThsh <- c(NA, -1)
+    rpt[[DateProc]]$rtioMoleDryCo2Cor$rtioMoleDryCo2Cor <- NaN #also remove data in the -1 missing validation case, prevents unexpected inclusion of questionable validations and also removes data if the eval regression can't run due to lack of span gasses
   }
   
   #add additional coefficients to mlf table

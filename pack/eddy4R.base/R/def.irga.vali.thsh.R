@@ -75,7 +75,7 @@ def.irga.vali.thsh <- function(
   #run benchmarking least squares regression on corrected mean values from the reference gasses vs. the reference values
   #adding logic to avoid an error when one of the lists passed into lm() is entirely NA
   
-  if(all(!is.na(refeVals)) == TRUE & all(!is.na(meanCor)) == TRUE){
+  if(sum(!is.na(refeVals)) > 1 & sum(!is.na(meanCor)) > 0){ #lm() will fail if one list is entirely NA, or if both lists have only one value.
   valiEval <- stats::lm(meanCor ~ refeVals)
   valiEvalSe <- sqrt(diag(vcov(valiEval)))
   valiEvalSlp <- valiEval$coefficient[[2]]
