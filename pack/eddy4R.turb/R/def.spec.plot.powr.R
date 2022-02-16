@@ -1,7 +1,3 @@
-
-
-
-
 ##############################################################################################
 #' @title Definition function: Plot power spectra of up to three variables
 
@@ -16,16 +12,30 @@
 #     original creation
 #   Stefan Metzger (2015-11-28)
 #     re-formualtion as function() to allow packaging
+#   David Durden (2022-02-12)
+#     terms update
 
 #' @description Plot power spectra of up to three variables.
 
-#' @param Currently none
+#' @param FileOut character, output location and filename for plot
+#' @param idep one independent variable, e.g. frequencey, wavenumber...
+#' @param depe spectra of up to three dependent variables, same length as idep
+#' @param DescVar one description (character or expression) for each variable for the legend
+#' @param Labx character (NA), description for abscissa
+#' @param Laby character (NA), description for ordinate
+#' @param Colr (NULL) colors for plotting, as many colors as dependent variables
+#' @param Limx (NULL) limits for abscissa
+#' @param Limy (NULL) limits for ordinate
+#' @param Ofst (NULL) offsets different variables from each other to improve legibility (only if CoefPowrSlp is set)
+#' @param CoefPowrSlp (NULL) coefficient of the power law c("-5/3", "-2/3") for unweighted / weighted spectra
+#' @param FreqSub frequency range of initial subrange, used to fit the power law which defaults to (0.05,Inf) 
 
-#' @return Currently none
+#' @return Plot output to FileOut
 
-#' @references Currently none
+#' @references 
+#' License: GNU AFFERO GENERAL PUBLIC LICENSE Version 3, 19 November 2007
 
-#' @keywords Currently none
+#' @keywords Fast Fourier Transform, FFT, spectral
 
 #' @examples Currently none
 
@@ -37,77 +47,77 @@
 ########################################################
 #PLOT POWER SPECTRA OF UP TO THREE VARIABLES
 ########################################################
-SPEC.plot <- function(name, IDE, DEP, legtext, labx=NA, laby=NA, colvec=NULL, limx=NULL, limy=NULL, setoff=NULL, powerc=NULL, inisub=c(0.05,Inf)) {
-  #name: (no default) output location and filename for plot
-  #IDE: (no default) one independent variable, e.g. frequencey, wavenumber...
-  #DEP: (no default) spectra of up to three dependent variables, same length as IDE
-  #legtext: (no default) one discription (character or expression) for each variable for the legend
-  #labx: (NA) description for abscissa
-  #laby: (NA) description for ordinate
-  #colvec: (NULL) colors for plotting, as many colors as dependent variables
-  #limx: (NULL) limits for abscissa
-  #limy: (NULL) limits for ordinate
-  #setoff: (NULL) offsets different variables from each other to improve legibility (only of powerc is set)
-  #powerc: (NULL) coefficient of the power law c("-5/3", "-2/3") for unweighted / weighted spectra
-  #inisub: (c(0.05,Inf)) frequency range of initial subrange, used to fit the power law
-  
+def.spec.plot.powr <- function( 
+  FileOut,   #FileOut: (no default) output location and filename for plot
+  idep,   #idep: (no default) one independent variable, e.g. frequencey, wavenumber...
+  depe,  #depe: (no default) spectra of up to three dependent variables, same length as idep
+  DescVar, #DescVar: (no default) one description (character or expression) for each variable for the legend
+  Labx=NA, #Labx: (NA) description for abscissa
+  Laby=NA, #Laby: (NA) description for ordinate
+  Colr=NULL, #Colr: (NULL) colors for plotting, as many colors as dependent variables
+  Limx=NULL, #Limx: (NULL) limits for abscissa
+  Limy=NULL, #Limy: (NULL) limits for ordinate
+  Ofst=NULL, #Ofst: (NULL) offsets different variables from each other to improve legibility (only if CoefPowrSlp is set)
+  CoefPowrSlp=NULL, #CoefPowrSlp: (NULL) coefficient of the power law c("-5/3", "-2/3") for unweighted / weighted spectra
+  FreqSub=c(0.05,Inf)   #FreqSub: (c(0.05,Inf)) frequency range of initial subrange, used to fit the power law
+){
+
   #defaults for color vector
-  coln <- ncol(as.matrix(DEP))
-  if(is.null(colvec)) colvec <- c(2:(coln+1))
-  if(is.null(setoff)) setoff <- rep(1,coln)
+  numCol <- base::ncol(base::as.matrix(depe))
+  if(base::is.null(Colr)) Colr <- c(2:(numCol+1))
+  if(base::is.null(Ofst)) Ofst <- base::rep(1,numCol)
   
   #call graphics device
-  png(filename=name, width=830*2, height=1170,pointsize=2000/50,bg = "white")
+  grDevinces::png(filename=FileOut, width=830*2, height=1170,pointsize=2000/50,bg = "white")
   cexvar=3; par(mfrow=c(1,3),las=0,cex.axis=cexvar*0.4,cex.lab=cexvar*0.4,font.lab=2, mar=c(4,4,2,2),mgp=c(2.8,0.8,0), family="times",lwd=cexvar*1,cex.main=cexvar*0.6)
   
   #plotting
   #pick variables
-  ide <- IDE
-  if(is.null(powerc)) dep <- as.matrix(DEP)[,1] else dep <- setoff[1] * as.matrix(DEP)[,1]
+  if(base::is.null(CoefPowrSlp)) depeLoca <- base::as.matrix(depe)[,1] else depeLoca <- Ofst[1] * base::as.matrix(depe)[,1]
   
   #estimate slope for reference line
-  if(!is.null(powerc)) {
-    powercn <- as.integer(strsplit(powerc,"/")[[1]])
-    powercn <- powercn[1] / powercn[2]
-    whr <- which(ide >= inisub[1] & ide < inisub[2])
-    lm_slope <- robustbase::lmrob(I(dep[whr]^(1/powercn)) ~ 0 + ide[whr])
-    slope <- lm_slope$coefficients
-    powerl <- (slope * ide)^powercn
+  if(!base::is.null(CoefPowrSlp)) {
+    numCoefPowrSlp <- base::as.integer(strsplit(CoefPowrSlp,"/")[[1]])
+    numCoefPowrSlp <- numCoefPowrSlp[1] / numCoefPowrSlp[2]
+    setFreq <- base::which(idep >= FreqSub[1] & idep < FreqSub[2])
+    modlLin <- robustbase::lmrob(I(depeLoca[setFreq]^(1/numCoefPowrSlp)) ~ 0 + idep[setFreq])
+    slp <- modlLin$coefficients
+    linePowrSlpRefe <- (slp * idep)^numCoefPowrSlp
   }
   
   #actual plotting
-  plot(dep ~ ide, type="l", log="xy", xaxt="n", yaxt="n", xlim=limx, ylim=limy, xlab=labx, ylab=laby, col=colvec[1])
-  if(!is.null(powerc)) lines(powerl ~ ide, col=1, lty=2) #, lwd=5
+  graphics::plot(depeLoca ~ idep, type="l", log="xy", xaxt="n", yaxt="n", xlim=Limx, ylim=Limy, xlab=Labx, ylab=Laby, col=Colr[1])
+  if(!is.null(CoefPowrSlp)) lines(linePowrSlpRefe ~ idep, col=1, lty=2) #, lwd=5
   
   #max. two additional variables
-  if(coln > 1 & coln <= 3) {
-    for (i in c(2:coln)) {
+  if(numCol > 1 & numCol <= 3) {
+    for (idxCol in c(2:numCol)) {
       #pick next dependend variable
-      if(is.null(powerc)) dep <- as.matrix(DEP)[,i] else dep <- setoff[i] * as.matrix(DEP)[,i]
+      if(base::is.null(CoefPowrSlp)) depeLoca <- as.matrix(depe)[,idxCol] else depeLoca <- Ofst[idxCol] * as.matrix(depe)[,idxCol]
       
       #estimate slope for reference line
-      if(!is.null(powerc)) {
-        lm_slope <- robustbase::lmrob(I(dep[whr]^(1/powercn)) ~ 0 + ide[whr])
-        slope <- lm_slope$coefficients
-        powerl <- (slope * ide)^powercn
+      if(!base::is.null(CoefPowrSlp)) {
+        modlLin <- robustbase::lmrob(I(depeLoca[setFreq]^(1/numCoefPowrSlp)) ~ 0 + idep[setFreq])
+        slp <- modlLin$coefficients
+        linePowrSlpRefe <- (slp * idep)^numCoefPowrSlp
       }
       
       #actual plotting
-      lines(dep ~ ide, col=colvec[i])
-      if(!is.null(powerc)) lines(powerl ~ ide, col=1, lty=2) #, lwd=5
+      graphics::lines(depeLoca ~ idep, col=Colr[idxCol])
+      if(!is.null(CoefPowrSlp)) graphics::lines(linePowrSlpRefe ~ idep, col=1, lty=2) #, lwd=5
     }
   }
   sfsmisc::eaxis(side=1,labels=NA,las=0)
   sfsmisc::eaxis(side=2,labels=NA,las=0)
-  if(is.null(powerc)) {
-    legend(x="bottomleft", lty=rep(1,coln), bty="n", col=colvec, cex=cexvar*0.4, xjust = 0, yjust = 0, lwd=rep(par()$lwd,coln), legend=legtext)
+  if(base::is.null(CoefPowrSlp)) {
+    graphics::legend(x="bottomleft", lty=base::rep(1,numCol), bty="n", col=Colr, cex=cexvar*0.4, xjust = 0, yjust = 0, lwd=base::rep(graphics::par()$lwd,numCol), legend=DescVar)
   } else {
-    legend(x="bottomleft", lty=c(rep(1,coln),2), bty="n", col=c(colvec, 1), cex=cexvar*0.4, xjust = 0, yjust = 0, lwd=c(rep(par()$lwd,coln),par()$lwd), legend=c(legtext, substitute(paste("f"^{powerc}, " law", sep=""), list(powerc=powerc))))
+    graphics::legend(x="bottomleft", lty=c(rep(1,numCol),2), bty="n", col=c(Colr, 1), cex=cexvar*0.4, xjust = 0, yjust = 0, lwd=c(base::rep(graphics::par()$lwd,numCol),par()$lwd), legend=c(DescVar, base::substitute(paste("f"^{CoefPowrSlp}, " law", sep=""), base::list(CoefPowrSlp=CoefPowrSlp))))
   }
-  box()
+  graphics::box()
   
   #close graphics device
-  dev.off()
+  grDevices::dev.off()
   ########################################################
 }
 ########################################################
