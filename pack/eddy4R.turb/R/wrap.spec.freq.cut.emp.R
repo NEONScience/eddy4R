@@ -12,6 +12,8 @@
 #     original creation
 #   Stefan Metzger (2015-11-28)
 #     re-formualtion as function() to allow packaging
+#   David Durden (2022-02-09)
+#     terms update
 
 #' @description Determine cutoff frequency empirically .
 
@@ -33,31 +35,31 @@
 ########################################################
 #determine cutoff frequency empirically 
 ########################################################
-find_F0 <- function(
+def.spec.freq.cut.emp <- function(
   #cutoff frequency
-  f0,
+  FreqCut,
   #independent variable, preferabley f, but n is possible
-  ide = SPEout$fr_obs[SPEout$fr_whr][which(SPEout$fr_obs[SPEout$fr_whr] >= 0.01)],
+  idep,
   #dependent variable, spectra or cospectra
-  dep = SPEout$FSunfold[SPEout$fr_whr,fpo][which(SPEout$fr_obs[SPEout$fr_whr] >= 0.01)],
+  depe,
   #reference correction factor
-  corfac_ref = corfac_out
+  CoefCorRefe
 ) {
   
-  #calculate transfer function
-  fun_tsig <- fun_TSIG(freq_0=f0, freq=ide)
+  #sigmoidal transfer function (Lorentzian) after Eugster and Senn (1995) in Aubinet et al. (2012) Eq. 4.21
+  tfunSigm <- eddy4R.turb::def.spec.tfun.sigm(FreqCut=FreqCut, Freq=idep)
   
   #plotting
   #       plot(fun_tsig ~ ide)
   
   #calculate resulting correction factor over all frequencies
-  corfac <- sum(dep / fun_tsig, na.rm=TRUE) / sum(dep, na.rm=TRUE)
+  CoefCor <- base::sum(depe / tfunSigm, na.rm=TRUE) / base::sum(depe, na.rm=TRUE)
   
   #calculate optimality criterion
-  crit <- abs(corfac_ref - corfac)
+  critOptm <- base::abs(CoefCorRefe - CoefCor)
   
   #return results
-  return(crit)
+  return(critOptm)
   
   ########################################################  
 }

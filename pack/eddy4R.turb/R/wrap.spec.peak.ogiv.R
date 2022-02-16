@@ -1,5 +1,5 @@
 ##############################################################################################
-#' @title Definition function: Determine half-power / cut-off frequency
+#' @title Definition function: Determine spectral peak using an Ogive method
 
 # type (one of function defintion, function wrapper, workflow, demo): function defintion
 
@@ -12,8 +12,10 @@
 #     original creation
 #   Stefan Metzger (2015-11-28)
 #     re-formualtion as function() to allow packaging
+#   David Durden (2022-02-09)
+#     terms update
 
-#' @description Determine half-power / cut-off frequency.
+#' @description Determine spectral peak using an Ogive method.
 
 #' @param Currently none
 
@@ -31,44 +33,35 @@
 ##############################################################################################
 
 ########################################################
-#function to determine half-power / cut-off frequency
+#function to determine spectral peak using an Ogive method
 ########################################################
-def.spec.freq.cut <- function(
-  #half-power / cut-off frequency
-  FreqCut = 0.5,
+def.spec.peak.ogiv <- function(
   #frequency f at which fCO(f) reaches its maximum value
-  FreqPeak = fx_out$par * mean(SPEout$fr_obs / SPEout$fr_nor, na.rm=TRUE),
+  FreqPeak,
   #independent variable, preferabley f, but n is possible
-  Idep = SPEout$fr_obs[SPEout$fr_whr][which(SPEout$fr_obs[SPEout$fr_whr] >= 0.01)],
+  idep,
   #dependent variable, spectra or cospectra
-  Depe = SPEout$FScosp[SPEout$fr_whr,fpo][which(SPEout$fr_obs[SPEout$fr_whr] >= 0.01)],
+  depe,
   #spectrum or cospectrum?
   MethSpec = c("spec", "cosp")[2],
   #stability parameter
-  paraStbl = OUT$REYN$mn$sigma[FILE],
+  paraStbl,
   #use frequency-weighted (co)spectrum?
-  MethWght =FALSE,
+  MethWght =TRUE,
   #frequency range for determining optimiality criterion
-  ThshFreqRng = c(0.01, 10),
-  #correction factor for spectral attenuation
-  corfac = corfac_out,
-  #number of bins if binning shall be performed
-  NumBin = 1000,
+  ThshFreqRng = c(0.01, 1),
+  #cumulative flux contribution for which measured (co)-spectrum is scaled to model (co)-spectrum
+  crit_cum = 0.6,
   #generate plot?
-  MethPlot = NULL
+  FilePlot = NULL,
+  #determine peak frequency or output spectral correction factor?
+  Meth = c("peak", "corfac")[1]
 ) {
-  
-  #assign independent value
-  ide <- IDE
-  
-  #correct measured coefficients for spectral attenuation
-  #flaw: corrects coefficients at all frequencies by the same amount
-  dep <- DEP / sum(DEP, na.rm=TRUE) / corfac
   
   #generate spectral model for range of frequencies
   spemod <- SPEmod(
     #independent variable, preferabley f, but n is possible
-    ide = ide,
+    ide = IDE,
     #spectrum or cospectrum?
     sc = SC,
     #stability parameter
@@ -77,45 +70,39 @@ def.spec.freq.cut <- function(
     fx=FX,
     #output frequency-weighted (co)spectrum?
     weight=WEIGHT
-  )      
-  #plot(dep ~ ide, log = "x", ylim = limy, col=2)
-  #lines(spemod ~ ide, col=1)
-  #abline(h=0, lty=2)
+  )
+  #cumulate to Ogive from lowest to highest frequency
+  spemod_cum <- cumsum(spemod)
   
-  #calculate empirical transfer function
-  trans_dat <- dep / spemod
-  #plot(trans_dat ~ ide, log="x")
+  #assign measured variables
+  #independent variable
+  ide <- IDE
   
-  #binning
-  if(!is.null(BINS)) {
-    
-    dummy_bin <- def.bin(
-      idep=ide,
-      depe=trans_dat,
-      RngMinMax=NULL,
-      NumBin=BINS,
-      widtBin=c("lin", "log10", "exp10", "logExp", "expLog")[1],
-      meanFunc=c("mean", "median")[2]
-    )
-    ide <- dummy_bin$idep
-    trans_dat <- dummy_bin$depe
-    rm(dummy_bin)          
-    
+  #dependent variable
+  #frequency-weighted
+  if(WEIGHT == TRUE) {
+    dep <- ide * DEP
+    #not frequency weighted  
+  } else {
+    dep <- DEP  
   }
-  
-  #sigmoidal transfer function (Lorentzian) after Eugster and Senn (1995) in Aubinet et al. (2012) Eq. 4.21
-  tfumod <- fun_TSIG(freq_0=F0, freq=ide)
-  
+  #normalize to sum of 1
+  dep <- dep / sum(dep, na.rm=TRUE)
+  #cumulate to Ogive from lowest to highest frequency
+  dep_cum <- cumsum(dep)
+  #scaling factor to intersect with modelled Ogive at pre-determined level
+  whr_fac_scal <- GenKern::nearest(dep_cum, crit_cum)
+  fac_scal <- spemod_cum[whr_fac_scal] / crit_cum
+  #scale to intersect with modelled Ogive at pre-determined level
+  dep_cum_scal <- dep_cum * fac_scal  
   #indices of observations in the frequency range for determining optimiality criterion
   whr_crit <- which(ide > WHR_CRIT[1] & ide < WHR_CRIT[2])
   
   #optimiality criterion
-  #crit <- sd((tfumod - trans_dat)[whr_crit])
-  crit <- def.rmsd.diff.prcs.rsq(refe = trans_dat[whr_crit], test = tfumod[whr_crit])[1,1]
+  #crit <- sd((spemod_cum - dep_cum_scal)[whr_crit])  
+  crit <- def.rmsd.diff.prcs.rsq(refe = spemod_cum[whr_crit], test = dep_cum_scal[whr_crit])[1,1]
   #crit <- cor(x = spemod_cum[whr_crit], y = dep_cum_scal[whr_crit], use = "pairwise.complete.obs")
-  #dum_MEDmad <- def.med.mad((tfumod - trans_dat)[whr_crit])
-  #crit <- sqrt(dum_MEDmad[1,1]^2 + dum_MEDmad[1,2]^2)
-  #rm(dum_MED)
+  #crit <- sqrt(def.med.mad((spemod_cum - dep_cum_scal)[whr_crit])[1,1]^2 + def.med.mad((spemod_cum - dep_cum_scal)[whr_crit])[1,2]^2)
   
   #plotting
   if(!is.null(plot_path)) {
@@ -127,12 +114,16 @@ def.spec.freq.cut <- function(
                   mar=c(4,4,2,2), mgp=c(2.6,0.8,0), family="times", lwd=cexvar, cex.main=cexvar*0.5)
     
     #actual plotting
-    plot(trans_dat ~ ide, log="x", type="p", main=paste("half power frequency = ", round(F0,2), " Hz", sep=""), 
-         xlab="frequency", ylab="transfer function")
-    lines(tfumod ~ ide, col=4)
-    abline(h=0, lty=2)
-    abline(v=F0, lty=3)
-    #points(tfumod[GenKern::nearest(ide, F0)] ~ ide[GenKern::nearest(ide, F0)], col=4)
+    #Ogive
+    plot(spemod_cum ~ ide, log="x", type="l", main=paste("peak = ", round(FX,2), sep=""), 
+         xlab="frequency", ylab="relative contribution")
+    lines(dep_cum ~ ide, col=2)
+    lines(dep_cum_scal ~ ide, col=4)
+    abline(h=c(crit_cum, spemod_cum[whr_fac_scal]), lty=2)
+    abline(v=ide[whr_fac_scal], lty=2)
+    abline(v=WHR_CRIT, lty=5)
+    points(I(ide[whr_fac_scal]), crit_cum, col=2, cex=2)
+    points(I(ide[whr_fac_scal]), I(spemod_cum[whr_fac_scal]), col=4, cex=2)
     
     #close graphics device
     dev.off()
@@ -140,7 +131,8 @@ def.spec.freq.cut <- function(
   }
   
   #return result
-  if(is.null(plot_path)) return(crit)
+  if(meth == "peak") return(crit)
+  if(meth == "corfac") return(list(ide_fac_scal=ide[whr_fac_scal], fac_cor=1/max(dep_cum_scal, na.rm=TRUE)))
   
   ########################################################
 }
