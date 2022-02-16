@@ -37,6 +37,8 @@
 #     adding logic to prevent errors if data are missing
 #   Chris Florian (2021-08-18)
 #     updating terms to replace bnch with eval, adding additional coef outputs and adding offset criteria
+#   Chris Florian (2021-02-15)
+#     updating logic for failsafe to prevent lm() error due to missing values
 ##############################################################################################
 
 def.irga.vali.thsh <- function(
@@ -75,12 +77,14 @@ def.irga.vali.thsh <- function(
   #run benchmarking least squares regression on corrected mean values from the reference gasses vs. the reference values
   #adding logic to avoid an error when one of the lists passed into lm() is entirely NA
   
-  if(all(!is.na(refeVals)) == TRUE & all(!is.na(meanCor)) == TRUE){
+  if(sum(!is.na(refeVals)) > 1 & sum(!is.na(meanCor)) > 0){ #lm() will fail if one list is entirely NA, or if both lists have only one value.
   valiEval <- stats::lm(meanCor ~ refeVals)
   valiEvalSe <- sqrt(diag(vcov(valiEval)))
   valiEvalSlp <- valiEval$coefficient[[2]]
   valiEvalOfst <- valiEval$coefficient[[1]]
   } else {
+    msg <- paste0("valiEval coefficients set to NA beacuse of insufficent refe or measured values")
+    tryCatch({rlog$debug(msg)}, error=function(cond){print(msg)})
     valiEval <- NA
     valiEvalSe <- NA
     valiEvalSlp <- NA
