@@ -12,6 +12,8 @@
 #     original creation
 #   Stefan Metzger (2015-11-28)
 #     re-formualtion as function() to allow packaging
+#   David Durden (2022-02-09)
+#     terms update
 
 #' @description Model (co)spectrum after Massman, 2005 (in Lee, 2005).
 
@@ -36,11 +38,11 @@
 ########################################################
 def.spec.modl <- function(
   #independent variable, preferabley f, but n is possible
-  Idep = SPEout$fr_obs[SPEout$fr_whr],
+  Idep,
   #spectrum or cospectrum?
   MethSpec = c("spec", "cosp")[2],
   #stability parameter
-  paraStbl = OUT$REYN$mn$sigma[FILE],
+  paraStbl,
   #frequency f at which fCO(f) reaches its maximum value
   FreqPeak = 0.1,
   #output frequency-weighted (co)spectrum?

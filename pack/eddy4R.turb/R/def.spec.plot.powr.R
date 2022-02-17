@@ -1,11 +1,8 @@
 ##############################################################################################
 #' @title Definition function: Plot power spectra of up to three variables
 
-# type (one of function defintion, function wrapper, workflow, demo): function defintion
-
-# license: Terms of use of the NEON FIU algorithm repository dated 2015-01-16
-
 #' @author Stefan Metzger \email{eddy4R.info@gmail.com}
+#' @author David Durden 
 
 # changelog and author contributions / copyrights
 #   Stefan Metzger (2014-09-22)
@@ -20,7 +17,7 @@
 #' @param FileOut character, output location and filename for plot
 #' @param idep one independent variable, e.g. frequencey, wavenumber...
 #' @param depe spectra of up to three dependent variables, same length as idep
-#' @param DescVar one description (character or expression) for each variable for the legend
+#' @param DscrVar one description (character or expression) for each variable for the legend
 #' @param Labx character (NA), description for abscissa
 #' @param Laby character (NA), description for ordinate
 #' @param Colr (NULL) colors for plotting, as many colors as dependent variables
@@ -51,7 +48,7 @@ def.spec.plot.powr <- function(
   FileOut,   #FileOut: (no default) output location and filename for plot
   idep,   #idep: (no default) one independent variable, e.g. frequencey, wavenumber...
   depe,  #depe: (no default) spectra of up to three dependent variables, same length as idep
-  DescVar, #DescVar: (no default) one description (character or expression) for each variable for the legend
+  DscrVar, #DscrVar: (no default) one description (character or expression) for each variable for the legend
   Labx=NA, #Labx: (NA) description for abscissa
   Laby=NA, #Laby: (NA) description for ordinate
   Colr=NULL, #Colr: (NULL) colors for plotting, as many colors as dependent variables
@@ -110,9 +107,9 @@ def.spec.plot.powr <- function(
   sfsmisc::eaxis(side=1,labels=NA,las=0)
   sfsmisc::eaxis(side=2,labels=NA,las=0)
   if(base::is.null(CoefPowrSlp)) {
-    graphics::legend(x="bottomleft", lty=base::rep(1,numCol), bty="n", col=Colr, cex=cexvar*0.4, xjust = 0, yjust = 0, lwd=base::rep(graphics::par()$lwd,numCol), legend=DescVar)
+    graphics::legend(x="bottomleft", lty=base::rep(1,numCol), bty="n", col=Colr, cex=cexvar*0.4, xjust = 0, yjust = 0, lwd=base::rep(graphics::par()$lwd,numCol), legend=DscrVar)
   } else {
-    graphics::legend(x="bottomleft", lty=c(rep(1,numCol),2), bty="n", col=c(Colr, 1), cex=cexvar*0.4, xjust = 0, yjust = 0, lwd=c(base::rep(graphics::par()$lwd,numCol),par()$lwd), legend=c(DescVar, base::substitute(paste("f"^{CoefPowrSlp}, " law", sep=""), base::list(CoefPowrSlp=CoefPowrSlp))))
+    graphics::legend(x="bottomleft", lty=c(rep(1,numCol),2), bty="n", col=c(Colr, 1), cex=cexvar*0.4, xjust = 0, yjust = 0, lwd=c(base::rep(graphics::par()$lwd,numCol),par()$lwd), legend=c(DscrVar, base::substitute(paste("f"^{CoefPowrSlp}, " law", sep=""), base::list(CoefPowrSlp=CoefPowrSlp))))
   }
   graphics::box()
   

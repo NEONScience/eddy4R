@@ -1,27 +1,45 @@
 ##############################################################################################
 #' @title Definition function: Plot cospectra
 
-# type (one of function defintion, function wrapper, workflow, demo): function defintion
-
-# license: Terms of use of the NEON FIU algorithm repository dated 2015-01-16
-
 #' @author Stefan Metzger \email{eddy4R.info@gmail.com}
+#' @author David Durden 
 
 # changelog and author contributions / copyrights
 #   Stefan Metzger (2014-09-22)
 #     original creation
 #   Stefan Metzger (2015-11-28)
 #     re-formualtion as function() to allow packaging
+#   David Durden (2022-02-14)
+#     terms update
+
 
 #' @description Plot cospectra.
 
-#' @param Currently none
+#' @param FileOut (no default) output location and filename for plot
+#' @param idep (no default) one independent variable, e.g. frequencey, wavenumber...
+#' @param depe (no default) spectra of up to three dependent variables, same length as idep
+#' @param DscrPlot (no default) one discription (character or expression) for each variable for the title
+#' @param Labx (NA) description for abscissa
+#' @param Laby (NA) description for ordinate
+#' @param Colr (c(1,2,1)) colors for plotting of measurement, model and evaluation rang
+#' @param Limx (NULL) limits for abscissa
+#' @param Limy (NULL) limits for ordinate
+#' @param MethWght (T) weight the spectra for independent variable (wavelength / frequency)?
+#' @param MethDistWave (F) is wavelength used as independent variable?
+#' @param CoefNorm (NULL) normalizes sum(cospectrum) to a given quantity, e.g. unity or the total flux per variable, else NULL
+#' @param CoefScalPlot (1) allows to plot measured cospectrum with scaling factor that is different from norm
+#' @param MethModlSpec (T) shall model cospetra be calculated and plotted?
+#' @param paraStbl (no default) atmospheric stability to choose the reference cospectrum
+#' @param FreqPeakCosp (NULL) frequency at which fCO(f) reaches its maximum value; will be determined from measured data if NULL
+#' @param FreqRngEval (NULL) range to assess sum((cospectrum - model)[setFreq]) / sum(model) [%]; only valid for equidistant data
+#' @param MethPlot logical to determine if plot should be output to FileOut
 
-#' @return Currently none
+#' @return The Correction Coefficient (\code{CoefCor}) is returned if \code{FreqRngEval} is defined. Additionally, if \code{MethPlot == TRUE} plots will be generated and output to \code{FileOut}.
 
-#' @references Currently none
+#' @references 
+#' License: GNU AFFERO GENERAL PUBLIC LICENSE Version 3, 19 November 2007
 
-#' @keywords Currently none
+#' @keywords Fast Fourier Transform, FFT, spectral, cospectra
 
 #' @examples Currently none
 
@@ -33,152 +51,134 @@
 ########################################################
 #PLOT COSPECTRA
 ########################################################
-COSP.plot <- function(
-  name,
-  IDE,
-  DEP,
-  title,
-  labx=NA,
-  laby=NA,
-  colvec=c(1,2,1),
-  limx=NULL,
-  limy=NULL,
-  weight=T,
-  wl=F,
-  norm=NULL,
-  part_cov=1,
-  modspec=T,
-  zeta,
-  FX=NULL,
-  devran=NULL,
-  plotting=T
+def.spec.plot.cosp <- function(
+  FileOut, #FileOut: (no default) output location and filename for plot
+  idep, #idep: (no default) one independent variable, e.g. frequencey, wavenumber...
+  depe, #depe: (no default) spectra of up to three dependent variables, same length as idep
+  DscrPlot, #DscrPlot: (no default) one discription (character or expression) for each variable for the title
+  Labx=NA, #Labx: (NA) description for abscissa
+  Laby=NA, #Laby: (NA) description for ordinate
+  Colr=c(1,2,1), #Colr: (c(1,2,1)) colors for plotting of measurement, model and evaluation range
+  Limx=NULL, #Limx: (NULL) limits for abscissa
+  Limy=NULL, #Limy: (NULL) limits for ordinate
+  MethWght=TRUE, #MethWght (T) weight the spectra for independent variable (wavelength / frequency)?
+  MethDistWave=FALSE, #MethDistWave: (F) is wavelength used as independent variable?
+  CoefNorm=NULL, #CoefNorm: (NULL) normalizes sum(cospectrum) to a given quantity, e.g. unity or the total flux per variable, else NULL
+  CoefScalPlot=1, #CoefScalPlot: (1) allows to plot measured cospectrum with scaling factor that is different from norm
+  MethModlSpec=TRUE, #MethModlSpec: (T) shall model cospetra be calculated and plotted?
+  paraStbl, #paraStbl: (no default) atmospheric stability to choose the reference cospectrum
+  FreqPeakCosp=NULL, #FreqPeakCosp: (NULL) frequency at which fCO(f) reaches its maximum value; will be determined from measured data if NULL
+  FreqRngEval=NULL, #FreqRngEval: (NULL) range to assess sum((cospectrum - model)[setFreq]) / sum(model) [%]; only valid for equidistant data
+  MethPlot=TRUE #MethPlot: logical to determine if plot should be output to FileOut
 ) {
-  #name: (no default) output location and filename for plot
-  #IDE: (no default) one independent variable, e.g. frequencey, wavenumber...
-  #DEP: (no default) spectra of up to three dependent variables, same length as IDE
-  #title: (no default) one discription (character or expression) for each variable for the title
-  #labx: (NA) description for abscissa
-  #laby: (NA) description for ordinate
-  #colvec: (c(1,2,1)) colors for plotting of measurement, model and evaluation range
-  #limx: (NULL) limits for abscissa
-  #limy: (NULL) limits for ordinate
-  #weight (T) weight the spectra for independent variable (wavelength / frequency)?
-  #wl: (F) is wavelength used as independent variable?
-  #norm: (NULL) normalizes sum(cospectrum) to a given quantity, e.g. unity or the total flux per variable, else NULL
-  #part_cov: (1) allows to plot measured cospectrum with scaling factor that is different from norm
-  #modspec: (T) shall model cospetra be calculated and plotted?
-  #zeta: (no default) atmospheric stability to choose the reference cospectrum
-  #FX: (NULL) frequency at which fCO(f) reaches its maximum value; will be determined from measured data if NULL
-  #devran: (NULL) range to assess sum((cospectrum - model)[whr]) / sum(model) [%]; only valid for equidistant data
   
   #prepare variables
-  ide <- IDE
-  fs <- as.matrix(DEP)
+  depe <- base::as.matrix(depe)
   
   #weighting of the cospectrum: divide for wavelenght, multiply for frequencies
-  if(weight == T) {
-    if(wl==T) fs <- as.matrix(fs / ide) else fs <- as.matrix(fs * ide)
+  if(MethWght == TRUE) {
+    if(MethDistWave==TRUE) depe <- base::as.matrix(depe / idep) else depe <- base::as.matrix(depe * idep)
   }
   
   #normalize each cospectrum
-  if(!is.null(norm)) {
-    if(length(norm) == 1) norm <- rep(norm, ncol(fs))
-    FSsum <- sapply(1:ncol(fs), function(x) sum(fs[,x], na.rm=TRUE))
-    fs <- sapply(1:length(FSsum), function(x) as.matrix(fs[,x] / FSsum[x] * norm[x]))
+  if(!base::is.null(CoefNorm)) {
+    if(base::length(CoefNorm) == 1) CoefNorm <- base::rep(CoefNorm, base::ncol(depe))
+    sumDepe <- base::sapply(1:ncol(depe), function(x) base::sum(depe[,x], na.rm=TRUE))
+    depe <- base::sapply(1:base::length(sumDepe), function(x) base::as.matrix(depe[,x] / sumDepe[x] * CoefNorm[x]))
   }
   
   #call graphics device
-  if(plotting == T) {
+  if(MethPlot == TRUE) {
     
-    png(filename=name, width = 1000, height = 1000, units = "px", pointsize = 20, bg = "white")
-    cexvar=3; par(mfrow=c(2,2), las=0, cex.axis=cexvar*0.4, cex.lab=cexvar*0.4, font.main=1, font.lab=1,
+    graphics::png(filename=FileOut, width = 1000, height = 1000, units = "px", pointsize = 20, bg = "white")
+    cexvar=3; graphics::par(mfrow=c(2,2), las=0, cex.axis=cexvar*0.4, cex.lab=cexvar*0.4, font.main=1, font.lab=1,
                   mar=c(4,4,2,2), mgp=c(2.6,0.8,0), family="times", lwd=cexvar, cex.main=cexvar*0.5)
     
   }
   
   ##loop around variables
-  for(i in 1:ncol(fs)) {
+  for(idx in 1:base::ncol(depe)) {
     ##
     
     #Model cospectrum after Massman, 2005 (in Lee, 2005); continuous approximation of the Kaimal (1972) cospectra
-    if(modspec == T) {
+    if(MethModlSpec == TRUE) {
       #(inertial subrange) slope parameter; 3/4 for -7/3 (cospectra), and 3/2 for -5/3 (spectra) power law
-      m=3/4
+      paraSlp=3/4
       #broadness parameter; 1/2 for unstable, 7/6 for stable stratification 
-      if(zeta <= 0) mue=1/2  else mue=7/6
+      if(paraStbl <= 0) paraBrd=1/2  else paraBrd=7/6
       #frequency at which fCO(f) reaches its maximum value
-      if(!is.null(FX)) fx=FX else fx=ide[which(fs[,i] == max(fs[,i]))]
+      if(!base::is.null(FreqPeakCosp)) FreqPeakCosp=FreqPeakCosp else FreqPeakCosp=idep[base::which(depe[,idx] == base::max(depe[,idx]))]
       #calculate non-scaled, frequency-weighted model Cospectrum (fCo or nCo)
-      COmM <- (ide / fx) / (
-        ( 1 + m * (ide / fx)^(2 * mue) )^( (1/(2*mue)) * ((m+1)/m) )
+      modlSpec <- (idep / FreqPeakCosp) / (
+        ( 1 + paraSlp * (idep / FreqPeakCosp)^(2 * paraBrd) )^( (1/(2*paraBrd)) * ((paraSlp+1)/paraSlp) )
       )
-      if(weight == F) COmM <- COmM / ide
+      if(MethWght == FALSE) modlSpec <- modlSpec / idep
       #individual normalisation parameter for each variable
-      A0 <- sum(fs[,i], na.rm=T) / sum(COmM, na.rm=T)
-      COmM <- A0 * COmM
+      CoefNormVar <- base::sum(depe[,idx], na.rm=T) / base::sum(modlSpec, na.rm=T)
+      modlSpec <- CoefNormVar * modlSpec
     }
     
     #Assessment of deviation(cospectrum - model) in given frequency range
     #only valid for equidistantly binned data; else multiply with bin width
-    if(modspec == T & !is.null(devran)) {
+    if(MethModlSpec == TRUE & !base::is.null(FreqRngEval)) {
       #range to assess    
-      whr <- which(ide >= devran[1] & ide <= devran[2])
+      setFreq <- base::which(idep >= FreqRngEval[1] & idep <= FreqRngEval[2])
       #weighted or unweighted?
-      if(weight == T) {
+      if(MethWght == TRUE) {
         
-        if(wl==T) {
-          fac <- 1 - ( sum(((fs[,i] - COmM) * ide)[whr], na.rm=T) / abs( sum(fs[,i] * ide, na.rm=T) ) )
+        if(MethDistWave==TRUE) {
+          CoefCorCalc <- 1 - ( base::sum(((depe[,idx] - modlSpec) * idep)[setFreq], na.rm=T) / base::abs( base::sum(depe[,idx] * idep, na.rm=T) ) )
         } else {
-          fac <- 1 - ( sum(((fs[,i] - COmM) / ide)[whr], na.rm=T) / abs( sum(fs[,i] / ide, na.rm=T) ) )
+          CoefCorCalc <- 1 - ( base::sum(((depe[,idx] - modlSpec) / idep)[setFreq], na.rm=T) / base::abs( base::sum(depe[,idx] / idep, na.rm=T) ) )
         }
       } else {
+        #Critical 
+        critThsh <- 1
+        idxCrit <- 0
+        CoefCorInit <- 1
         
-        crit <- 1
-        crit_run <- 0
-        fac_0 <- 1
-        
-        while(crit > 1e-2) {
-          crit_run <- crit_run + 1
+        while(critThsh > 1e-2) {
+          idxCrit <- idxCrit + 1
           
-          #fac_dum <- 1 - ( sum((fs[,i] - COmM * fac_0)[whr], na.rm=T) / sum(fs[,i], na.rm=T) )
-          fac_dum <- 1 - ( sum((fs[,i] / fac_0 - COmM)[whr], na.rm=T) / sum(fs[,i], na.rm=T) )
+          #CoefCorTmp <- 1 - ( sum((depe[,idx] - modlSpec * CoefCorInit)[setFreq], na.rm=T) / sum(depe[,idx], na.rm=T) )
+          CoefCorTmp <- 1 - ( base::sum((depe[,idx] / CoefCorInit - modlSpec)[setFreq], na.rm=T) / base::sum(depe[,idx], na.rm=T) )
           
-          crit <- fac_dum - fac_0
-          fac_0 <- fac_dum
+          critThsh <- CoefCorTmp - CoefCorInit
+          CoefCorInit <- CoefCorTmp
           
         }
-        fac <- fac_dum
+        CoefCorCalc <- CoefCorTmp
         
       }
       #store      
-      if(i == 1) corfac <- fac else corfac <- c(corfac, fac)
+      if(idx == 1) CoefCor <- CoefCorCalc else CoefCor <- c(CoefCor, CoefCorCalc)
     }
     
     #plot cospectrum  
     
-    if(plotting == T) {
+    if(MethPlot == TRUE) {
       
-      plot(fs[,i] * part_cov ~ ide, type="l", log="x", xaxt="n", yaxt="n", xlim=limx, ylim=limy, main=title[i], xlab=labx,
-           ylab=laby, col=colvec[1])
+      graphics::plot(depe[,idx] * CoefScalPlot ~ idep, type="l", log="x", xaxt="n", yaxt="n", xlim=Limx, ylim=Limy, main=DscrPlot[idx], xlab=Labx,
+           ylab=Laby, col=Colr[1])
       
-      abline(h=0, col="grey")
+      graphics::abline(h=0, col="grey")
       
-      if(modspec == T) lines(COmM ~ ide, lty=2, col=colvec[2], lwd=5)
-      if(modspec == T & !is.null(devran)) abline(v=c(devran), lty=2, col=colvec[3])
+      if(MethModlSpec == TRUE) graphics::lines(modlSpec ~ idep, lty=2, col=Colr[2], lwd=5)
+      if(MethModlSpec == TRUE & !base::is.null(FreqRngEval)) graphics::abline(v=c(FreqRngEval), lty=2, col=Colr[3])
       
       sfsmisc::eaxis(side=1,labels=NA,las=0)
       sfsmisc::eaxis(side=2,labels=NA,las=0)
       
-      legend(x="topleft", lty=c(1,2,2,1,1), bty="n", col=c(colvec,NA,NA), xjust = 0, yjust = 0,
-             lwd=c(par()$lwd,5,par()$lwd,1,1), legend = c(
+      graphics::legend(x="topleft", lty=c(1,2,2,1,1), bty="n", col=c(Colr,NA,NA), xjust = 0, yjust = 0,
+             lwd=c(graphics::par()$lwd,5,graphics::par()$lwd,1,1), legend = c(
                "measured",
                "Massman (2005)",
                "evaluated range",
-               paste("stability", " = ", round(zeta,1), sep=""),
-               paste("N = ", length(ide), sep="")
+               base::paste("stability", " = ", base::round(paraStbl,1), sep=""),
+               base::paste("N = ", base::length(idep), sep="")
              ))
       
-      box()
+      graphics::box()
       
     }
     
@@ -188,12 +188,12 @@ COSP.plot <- function(
   
   
   #close graphics device
-  if(plotting == T) {
-    dev.off()
+  if(MethPlot == TRUE) {
+    grDevices::dev.off()
   }
   
   #export results
-  if(!is.null(devran)) return(corfac)
+  if(!base::is.null(FreqRngEval)) return(CoefCor)
   
   ########################################################
 }

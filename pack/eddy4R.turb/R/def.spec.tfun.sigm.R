@@ -12,6 +12,8 @@
 #     original creation
 #   Stefan Metzger (2015-11-28)
 #     re-formualtion as function() to allow packaging
+#   David Durden (2022-02-09)
+#     terms update
 
 #' @description Sigmoidal transfer function (Lorentzian) after Eugster and Senn (1995) in Aubinet et al. (2012) Eq. 4.21.
 
@@ -36,7 +38,7 @@
 def.spec.tfun.sigm <- function(
   #half-power / cut-off frequency
   FreqCut, 
-  #Measured frequency
+  #frequency
   Freq
   ){
   #sigmoidal transfer function (Lorentzian) after Eugster and Senn (1995) in Aubinet et al. (2012) Eq. 4.21
