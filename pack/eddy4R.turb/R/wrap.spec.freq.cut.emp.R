@@ -1,11 +1,8 @@
 ##############################################################################################
 #' @title Definition function: Determine cutoff frequency empirically 
 
-# type (one of function defintion, function wrapper, workflow, demo): function defintion
-
-# license: Terms of use of the NEON FIU algorithm repository dated 2015-01-16
-
 #' @author Stefan Metzger \email{eddy4R.info@gmail.com}
+#' @author David Durden 
 
 # changelog and author contributions / copyrights
 #   Stefan Metzger (2014-09-22)
@@ -17,13 +14,20 @@
 
 #' @description Determine cutoff frequency empirically .
 
-#' @param Currently none
+#' @param FreqCut cutoff frequency
+#' @param idep independent variable, preferabley f, but n is possible
+#' @param depe dependent variable, spectra or cospectra
+#' @param CoefCorRefe reference correction factor
 
-#' @return Currently none
+#' @return Optimality criterion from the difference of the reference correction and the derived correction.
 
-#' @references Currently none
+#' @references 
+#' License: GNU AFFERO GENERAL PUBLIC LICENSE Version 3, 19 November 2007
+#' Aubinet et al. (2012)
+#' Eugster and Senn (1995)
 
-#' @keywords Currently none
+
+#' @keywords Fast Fourier Transform, FFT, spectral, cut-off frequency, transfer function
 
 #' @examples Currently none
 

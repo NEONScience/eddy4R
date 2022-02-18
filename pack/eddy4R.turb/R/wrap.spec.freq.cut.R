@@ -1,11 +1,8 @@
 ##############################################################################################
 #' @title Definition function: Determine half-power / cut-off frequency
 
-# type (one of function defintion, function wrapper, workflow, demo): function defintion
-
-# license: Terms of use of the NEON FIU algorithm repository dated 2015-01-16
-
 #' @author Stefan Metzger \email{eddy4R.info@gmail.com}
+#' @author David Durden 
 
 # changelog and author contributions / copyrights
 #   Stefan Metzger (2014-09-22)
@@ -17,13 +14,26 @@
 
 #' @description Determine half-power / cut-off frequency.
 
-#' @param Currently none
+#' @param FreqCut half-power / cut-off frequency
+#' @param FreqPeak frequency f at which fCO(f) reaches its maximum value
+#' @param idep independent variable, preferabley f, but n is possible
+#' @param depe dependent variable, spectra or cospectra
+#' @param MethSpec spectrum or cospectrum?
+#' @param paraStbl stability parameter
+#' @param MethWght use frequency-weighted (co)spectrum?
+#' @param ThshFreqRng frequency range for determining optimiality criterion
+#' @param CoefCor correction factor for spectral attenuation
+#' @param NumBin number of bins if binning shall be performed
+#' @param FilePlot generate plot?
 
-#' @return Currently none
+#' @return Optimality criterion for transfer function to correct the data to model specta
 
-#' @references Currently none
+#' @references 
+#' License: GNU AFFERO GENERAL PUBLIC LICENSE Version 3, 19 November 2007
+#' Aubinet et al. (2012)
+#' Eugster and Senn (1995)
 
-#' @keywords Currently none
+#' @keywords Fast Fourier Transform, FFT, spectral, cut-off frequency, half-power
 
 #' @examples Currently none
 
@@ -41,9 +51,9 @@ def.spec.freq.cut <- function(
   #frequency f at which fCO(f) reaches its maximum value
   FreqPeak,
   #independent variable, preferabley f, but n is possible
-  Idep,
+  idep,
   #dependent variable, spectra or cospectra
-  Depe,
+  depe,
   #spectrum or cospectrum?
   MethSpec = c("spec", "cosp")[2],
   #stability parameter
@@ -60,17 +70,14 @@ def.spec.freq.cut <- function(
   FilePlot = NULL
 ) {
   
-  #assign independent value
-  idep <- Idep
-  
   #correct measured coefficients for spectral attenuation
   #flaw: corrects coefficients at all frequencies by the same amount
-  depe <- Depe / base::sum(Depe, na.rm=TRUE) / CoefCor
+  depe <- depe / base::sum(depe, na.rm=TRUE) / CoefCor
   
   #generate spectral model for range of frequencies
   modlSpec <- eddy4R.turb::def.spec.modl(
     #independent variable, preferabley f, but n is possible
-    Idep = idep,
+    idep = idep,
     #spectrum or cospectrum?
     MethSpec = MethSpec,
     #stability parameter

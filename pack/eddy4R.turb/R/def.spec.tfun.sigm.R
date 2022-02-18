@@ -1,11 +1,8 @@
 ##############################################################################################
 #' @title Definition function: Sigmoidal transfer function (Lorentzian)
 
-# type (one of function defintion, function wrapper, workflow, demo): function defintion
-
-# license: Terms of use of the NEON FIU algorithm repository dated 2015-01-16
-
 #' @author Stefan Metzger \email{eddy4R.info@gmail.com}
+#' @author David Durden 
 
 # changelog and author contributions / copyrights
 #   Stefan Metzger (2014-09-22)
@@ -17,13 +14,17 @@
 
 #' @description Sigmoidal transfer function (Lorentzian) after Eugster and Senn (1995) in Aubinet et al. (2012) Eq. 4.21.
 
-#' @param Currently none
+#' @param FreqCut half-power / cut-off frequency
+#' @param Freq frequency
 
-#' @return Currently none
+#' @return A Sigmoidal transfer function for the defined frequencies and cut-off frequency.
 
-#' @references Currently none
+#' @references 
+#' License: GNU AFFERO GENERAL PUBLIC LICENSE Version 3, 19 November 2007
+#' Aubinet et al. (2012)
+#' Eugster and Senn (1995)
 
-#' @keywords Currently none
+#' @keywords Fast Fourier Transform, FFT, spectral
 
 #' @examples Currently none
 

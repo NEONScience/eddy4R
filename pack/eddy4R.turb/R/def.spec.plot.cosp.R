@@ -18,7 +18,7 @@
 #' @param FileOut (no default) output location and filename for plot
 #' @param idep (no default) one independent variable, e.g. frequencey, wavenumber...
 #' @param depe (no default) spectra of up to three dependent variables, same length as idep
-#' @param DscrPlot (no default) one discription (character or expression) for each variable for the title
+#' @param DscrPlot (no default) one description (character or expression) for each variable for the title
 #' @param Labx (NA) description for abscissa
 #' @param Laby (NA) description for ordinate
 #' @param Colr (c(1,2,1)) colors for plotting of measurement, model and evaluation rang
@@ -38,6 +38,8 @@
 
 #' @references 
 #' License: GNU AFFERO GENERAL PUBLIC LICENSE Version 3, 19 November 2007
+#' Kaimal (1972)
+#' Massman, 2005 (in Lee, 2005)
 
 #' @keywords Fast Fourier Transform, FFT, spectral, cospectra
 

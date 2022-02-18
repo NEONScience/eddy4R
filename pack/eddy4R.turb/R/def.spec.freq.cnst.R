@@ -20,6 +20,7 @@
 
 #' @references 
 #' License: GNU AFFERO GENERAL PUBLIC LICENSE Version 3, 19 November 2007
+#' Aubinet (2012)
 
 #' @keywords Fast Fourier Transform, FFT, spectral
 

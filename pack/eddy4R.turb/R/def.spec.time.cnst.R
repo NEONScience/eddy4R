@@ -16,24 +16,25 @@
 
 #' @param inpFreq numeric, frequency in Hertz (Hz)
 
-#' @return A numeric vector \code{prdOut} of equivalent time periods to the input frequencies
+#' @return A numeric vector \code{prdOut} of equivalent time periods to the input frequencies in seconds (sec) 
 
 #' @references 
 #' License: GNU AFFERO GENERAL PUBLIC LICENSE Version 3, 19 November 2007
+#' Aubinet (2012)
 
 #' @keywords Fast Fourier Transform, FFT, spectral
 
 #' @examples 
 #' 
 #' inpFreq <- seq(1, 0.02, by = -0.02)
-#' def.spec.prd.cnst(inpFreq = inpFreq)
+#' def.spec.time.cnst(inpFreq = inpFreq)
 
 #' @seealso Currently none
 
 #' @export
 ##############################################################################################
 
-def.spec.prd.cnst <- function(inpFreq) {
+def.spec.time.cnst <- function(inpFreq) {
  
   #Calculate period from frequency
   prdOut <- 1 / (2 * pi * inpFreq)

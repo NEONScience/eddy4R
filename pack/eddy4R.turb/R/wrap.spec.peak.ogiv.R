@@ -1,11 +1,8 @@
 ##############################################################################################
 #' @title Definition function: Determine spectral peak using an Ogive method
 
-# type (one of function defintion, function wrapper, workflow, demo): function defintion
-
-# license: Terms of use of the NEON FIU algorithm repository dated 2015-01-16
-
 #' @author Stefan Metzger \email{eddy4R.info@gmail.com}
+#' @author David Durden 
 
 # changelog and author contributions / copyrights
 #   Stefan Metzger (2014-09-22)
@@ -17,13 +14,23 @@
 
 #' @description Determine spectral peak using an Ogive method.
 
-#' @param Currently none
+#' @param FreqPeak frequency f at which fCO(f) reaches its maximum value
+#' @param idep independent variable, preferabley f, but n is possible
+#' @param depe dependent variable, spectra or cospectra
+#' @param MethSpec spectrum or cospectrum?
+#' @param paraStbl stability parameter
+#' @param MethWght use frequency-weighted (co)spectrum?
+#' @param ThshFreqRng frequency range for determining optimiality criterion
+#' @param CoefCumScal cumulative flux contribution for which measured (co)-spectrum is scaled to model (co)-spectrum
+#' @param FilePlot generate plot?
+#' @param Meth determine peak frequency or output spectral correction factor?  
 
-#' @return Currently none
+#' @return If \code{meth = "peak"} the optimality criterion is returned. If \code{meth = "CoefCor"} the cumulative (Ogive) correction coefficient is returned for the calculated independent variable (frequency/wavenumber) scaling index for the depedent variables (spectra or cospectra). If \code{FilePlot} is provided, a plot will be generated and output.
 
-#' @references Currently none
+#' @references
+#' License: GNU AFFERO GENERAL PUBLIC LICENSE Version 3, 19 November 2007
 
-#' @keywords Currently none
+#' @keywords Fast Fourier Transform, FFT, spectral, Ogive
 
 #' @examples Currently none
 
@@ -51,88 +58,84 @@ def.spec.peak.ogiv <- function(
   #frequency range for determining optimiality criterion
   ThshFreqRng = c(0.01, 1),
   #cumulative flux contribution for which measured (co)-spectrum is scaled to model (co)-spectrum
-  crit_cum = 0.6,
+  CoefCumScal = 0.6,
   #generate plot?
   FilePlot = NULL,
   #determine peak frequency or output spectral correction factor?
-  Meth = c("peak", "corfac")[1]
+  Meth = c("peak", "CoefCor")[1]
 ) {
   
   #generate spectral model for range of frequencies
-  spemod <- SPEmod(
+  modlSpec <- eddy4R.turb::def.spec.modl(
     #independent variable, preferabley f, but n is possible
-    ide = IDE,
+    Idep = idep,
     #spectrum or cospectrum?
-    sc = SC,
+    MethSpec  = MethSpec,
     #stability parameter
-    si = SI,
+    paraStbl = paraStbl,
     #frequency f at which fCO(f) reaches its maximum value
-    fx=FX,
+    FreqPeak=FreqPeak,
     #output frequency-weighted (co)spectrum?
-    weight=WEIGHT
+    MethWght=MethWght
   )
   #cumulate to Ogive from lowest to highest frequency
-  spemod_cum <- cumsum(spemod)
+  modlSpecCum <- base::cumsum(modlSpec)
   
   #assign measured variables
-  #independent variable
-  ide <- IDE
   
   #dependent variable
   #frequency-weighted
-  if(WEIGHT == TRUE) {
-    dep <- ide * DEP
-    #not frequency weighted  
-  } else {
-    dep <- DEP  
-  }
+  if(MethWght == TRUE) {
+    depe <- idep * depe
+  } 
+  
   #normalize to sum of 1
-  dep <- dep / sum(dep, na.rm=TRUE)
+  depe <- depe / base::sum(depe, na.rm=TRUE)
   #cumulate to Ogive from lowest to highest frequency
-  dep_cum <- cumsum(dep)
+  depeCum <- base::cumsum(depe)
   #scaling factor to intersect with modelled Ogive at pre-determined level
-  whr_fac_scal <- GenKern::nearest(dep_cum, crit_cum)
-  fac_scal <- spemod_cum[whr_fac_scal] / crit_cum
+  idxScal <- GenKern::nearest(depeCum, CoefCumScal)
+  coefScal <- modlSpecCum[idxScal] / CoefCumScal
   #scale to intersect with modelled Ogive at pre-determined level
-  dep_cum_scal <- dep_cum * fac_scal  
+  depeCumScal <- depeCum * coefScal  
   #indices of observations in the frequency range for determining optimiality criterion
-  whr_crit <- which(ide > WHR_CRIT[1] & ide < WHR_CRIT[2])
+  setFreqCritOptm <- base::which(idep > ThshFreqRng[1] & idep < ThshFreqRng[2])
   
   #optimiality criterion
-  #crit <- sd((spemod_cum - dep_cum_scal)[whr_crit])  
-  crit <- def.rmsd.diff.prcs.rsq(refe = spemod_cum[whr_crit], test = dep_cum_scal[whr_crit])[1,1]
-  #crit <- cor(x = spemod_cum[whr_crit], y = dep_cum_scal[whr_crit], use = "pairwise.complete.obs")
-  #crit <- sqrt(def.med.mad((spemod_cum - dep_cum_scal)[whr_crit])[1,1]^2 + def.med.mad((spemod_cum - dep_cum_scal)[whr_crit])[1,2]^2)
+  #critOptm <- sd((modlSpecCum - depeCumScal)[setFreqCritOptm])  
+  critOptm <- eddy4R.base::def.rmsd.diff.prcs.rsq(refe = modlSpecCum[setFreqCritOptm], test = depeCumScal[setFreqCritOptm])[1,1]
+  #critOptm <- cor(x = modlSpecCum[setFreqCritOptm], y = depeCumScal[setFreqCritOptm], use = "pairwise.complete.obs")
+  #critOptm <- sqrt(def.med.mad((modlSpecCum - depeCumScal)[setFreqCritOptm])[1,1]^2 + def.med.mad((modlSpecCum - depeCumScal)[setFreqCritOptm])[1,2]^2)
   
   #plotting
-  if(!is.null(plot_path)) {
+  if(!base::is.null(FilePlot)) {
     
     #graphics device
-    png(filename=plot_path, width = 1000, 
+    grDevices::png(filename=FilePlot, width = 1000, 
         height = 1000, units = "px", pointsize = 20, bg = "white")
     cexvar=3; par(mfcol=c(2,2), las=0, cex.axis=cexvar*0.4, cex.lab=cexvar*0.4, font.main=1, font.lab=1,
                   mar=c(4,4,2,2), mgp=c(2.6,0.8,0), family="times", lwd=cexvar, cex.main=cexvar*0.5)
     
     #actual plotting
     #Ogive
-    plot(spemod_cum ~ ide, log="x", type="l", main=paste("peak = ", round(FX,2), sep=""), 
+    graphics::plot(modlSpecCum ~ idep, log="x", type="l", main=paste("peak = ", round(FX,2), sep=""), 
          xlab="frequency", ylab="relative contribution")
-    lines(dep_cum ~ ide, col=2)
-    lines(dep_cum_scal ~ ide, col=4)
-    abline(h=c(crit_cum, spemod_cum[whr_fac_scal]), lty=2)
-    abline(v=ide[whr_fac_scal], lty=2)
-    abline(v=WHR_CRIT, lty=5)
-    points(I(ide[whr_fac_scal]), crit_cum, col=2, cex=2)
-    points(I(ide[whr_fac_scal]), I(spemod_cum[whr_fac_scal]), col=4, cex=2)
+    graphics::lines(depeCum ~ idep, col=2)
+    graphics::lines(depeCumScal ~ idep, col=4)
+    graphics::abline(h=c(CoefCumScal, modlSpecCum[idxScal]), lty=2)
+    graphics::abline(v=idep[idxScal], lty=2)
+    graphics::abline(v=ThshFreqRng, lty=5)
+    graphics::points(base::I(idep[idxScal]), CoefCumScal, col=2, cex=2)
+    graphics::points(base::I(idep[idxScal]), base::I(modlSpecCum[idxScal]), col=4, cex=2)
     
     #close graphics device
-    dev.off()
+    grDevices::dev.off()
     
   }
   
   #return result
-  if(meth == "peak") return(crit)
-  if(meth == "corfac") return(list(ide_fac_scal=ide[whr_fac_scal], fac_cor=1/max(dep_cum_scal, na.rm=TRUE)))
+  if(meth == "peak") return(critOptm)
+  if(meth == "CoefCor") return(base::list(IdepScal=idep[idxScal], CoefCor=1/base::max(depeCumScal, na.rm=TRUE)))
   
   ########################################################
 }

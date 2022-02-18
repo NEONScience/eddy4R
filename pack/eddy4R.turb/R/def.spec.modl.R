@@ -1,11 +1,8 @@
 #############################################################################################
 #' @title Definition function: Model (co)spectrum after Massman, 2005 (in Lee, 2005)
 
-# type (one of function defintion, function wrapper, workflow, demo): function defintion
-
-# license: Terms of use of the NEON FIU algorithm repository dated 2015-01-16
-
 #' @author Stefan Metzger \email{eddy4R.info@gmail.com}
+#' @author David Durden 
 
 # changelog and author contributions / copyrights
 #   Stefan Metzger (2014-09-22)
@@ -17,13 +14,21 @@
 
 #' @description Model (co)spectrum after Massman, 2005 (in Lee, 2005).
 
-#' @param Currently none
+#' @param idep independent variable, preferabley f, but n is possible
+#' @param MethSpec spectrum or cospectrum?
+#' @param paraStbl stability parameter
+#' @param FreqPeak frequency f at which fCO(f) reaches its maximum value
+#' @param MethWght output frequency-weighted (co)spectrum?
 
-#' @return Currently none
+#' @return Return a (co)spectrum model after Massman, 2005 (in Lee, 2005).
 
-#' @references Currently none
+#' @references 
+#' License: GNU AFFERO GENERAL PUBLIC LICENSE Version 3, 19 November 2007
+#' Massman, 2005 (in Lee, 2005)
+#' Kaimal (1972) 
 
-#' @keywords Currently none
+
+#' @keywords Fast Fourier Transform, FFT, spectral
 
 #' @examples Currently none
 
@@ -38,7 +43,7 @@
 ########################################################
 def.spec.modl <- function(
   #independent variable, preferabley f, but n is possible
-  Idep,
+  idep,
   #spectrum or cospectrum?
   MethSpec = c("spec", "cosp")[2],
   #stability parameter
@@ -62,12 +67,12 @@ def.spec.modl <- function(
   if(paraStbl > 0)  paraBrd <- 7/6
   
   #calculate non-scaled, frequency-weighted model Cospectrum (fCo or nCo)
-  modlSpec <- (Idep / FreqPeak) / (
-    ( 1 + paraSlp * (Idep / FreqPeak)^(2 * paraBrd) )^( (1/(2*paraBrd)) * ((paraSlp+1)/paraSlp) )
+  modlSpec <- (idep / FreqPeak) / (
+    ( 1 + paraSlp * (idep / FreqPeak)^(2 * paraBrd) )^( (1/(2*paraBrd)) * ((paraSlp+1)/paraSlp) )
   )
   
   #(un)weight the (co)spectrum if necessary
-  if(MethWght == FALSE) modlSpec <- modlSpec / Idep
+  if(MethWght == FALSE) modlSpec <- modlSpec / idep
   
   #normalize to sum of 1
   modlSpec <- modlSpec / base::sum(modlSpec, na.rm=TRUE)
