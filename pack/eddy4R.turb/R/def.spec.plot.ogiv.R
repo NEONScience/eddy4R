@@ -123,12 +123,14 @@ def.spec.plot.ogiv <- function(
     ogiv <- ogiv / base::max(ogiv) * CoefNorm[idxVar]
     
     #determine wavelength for given flux contribution level
-    #find first value exceeding given contribution level
-    zeroCros <- zeroCross(ogiv - ThshFluxLvl, slope="positive") + 1
+    #find first value exceeding given contribution level by calculating differences when sign changes and looking for positive (> 0) index values when evaluating the difference between the ogive and the thresholds for flux contribution
+    idxZeroCros <- base::which(base::diff(base::sign(ogiv - ThshFluxLvl)) > 0) # Not sure why + 1 previously
+    
+    #idxZeroCros <- zeroCross(ogiv - ThshFluxLvl, slope="positive") + 1
     #flag whether zero crossing is singular (s) or multiple (m)
-    if(base::length(zeroCros == 1)) flagOgiv <- "single" else flagOgiv <- "multiple"
+    if(base::length(idxZeroCros == 1)) flagOgiv <- "single" else flagOgiv <- "multiple"
     #wavelength corresponding to given contribution level
-    DistWaveFluxLvl <- idepRaw[(zeroCros[1]-1)]
+    DistWaveFluxLvl <- idepRaw[idxZeroCros[1]] # Not sure why - 1 previously
     
     #determine flux contribution level for given wavelength
     idxPrd <- GenKern::nearest(idepRaw, PrdFluxLvl)
