@@ -128,7 +128,7 @@ def.spec.freq.cut <- function(
   
   
   #plotting
-  if(!base::is.null(FilePlot))) {
+  if(!base::is.null(FilePlot)) {
     
     #graphics device
     grDevices::png(filename=FilePlot, width = 1000, 
