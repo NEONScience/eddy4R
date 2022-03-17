@@ -11,7 +11,7 @@
 #' @param gasRefe List containing the values of the reference gases. [mol mol-1]
 #' @param DateProc A vector of class "character" containing the processing date.
 #' @param ScalMax Maximum scale value. The validation correction will not apply if scale (resulted from maximum-likelihood fitting of a functional relationship (MLFR)) is greater than ScalMax or ScalMax = FALSE. Defaults to FALSE.
-#' @param FracSlpMax Maximum fraction of slope value. The validation correction will not apply if slope (resulted from regression fitting) is greater than the FracSlpMax or FracSlpMax = FALSE. Defaults to FALSE.
+#' @param FracSlp Upper and lower bounds of slope values. The validation correction will not apply if slope (resulted from regression fitting) is greater/lower than the FracSlp maximum or minimum value or FracSlp = FALSE. Defaults to FALSE.
 #' @param OfstMax Maximum offset value. The validation correction will not apply if slope (resulted from regression fitting) is greater than the OfstMax (unit in mol mol-1) or OfstMax = FALSE. Defaults to FALSE.
 
 
@@ -94,6 +94,8 @@
 #     resetting attributes on rtioMoleDryCo2Cor to fix issues when the corrected data was removed
 #   Chris Florian (2021-02-15)
 #     setting corrected data to NaN if qfEvalThsh is -1 to prevent bad data passing through if the evaluation doesn't run
+#   Chris Florian (2022-03-02)
+#     Updating the slope filter to allow for values not evenly centered around 1
 ##############################################################################################
 
 wrap.irga.vali <- function(
@@ -102,7 +104,7 @@ wrap.irga.vali <- function(
   gasRefe,
   DateProc,
   ScalMax = FALSE,
-  FracSlpMax = FALSE,
+  FracSlp = FALSE,
   OfstMax = FALSE
 ) {
 
@@ -520,7 +522,7 @@ wrap.irga.vali <- function(
 
   #applying the calculated coefficients to measured data
   #Calculate time-series (20Hz) of slope and zero offset
-  rpt[[DateProc]]$rtioMoleDryCo2Cor <- eddy4R.base::def.irga.vali.cor(data = data, DateProc = DateProc, coef = tmpCoef, valiData = valiData, valiCrit = valiCrit, ScalMax = ScalMax, FracSlpMax = FracSlpMax, OfstMax = OfstMax, Freq = 20)
+  rpt[[DateProc]]$rtioMoleDryCo2Cor <- eddy4R.base::def.irga.vali.cor(data = data, DateProc = DateProc, coef = tmpCoef, valiData = valiData, valiCrit = valiCrit, ScalMax = ScalMax, FracSlp = FracSlp, OfstMax = OfstMax, Freq = 20)
   
   #run the benchmarking regression to determine if the validation was good
   valiEval <- eddy4R.base::def.irga.vali.thsh(data = rpt[[DateProc]], DateProc = DateProc, evalSlpMax = 1.05, evalSlpMin = 0.95, evalOfstMax = 100, evalOfstMin = -100)
@@ -533,11 +535,19 @@ wrap.irga.vali <- function(
     msg <- paste0("validation did not pass evaluation threshold, corrected data were set to NaN")
     tryCatch({rlog$debug(msg)}, error=function(cond){print(msg)})
   } else if (valiEval$valiEvalPass == TRUE) {
-    rpt[[DateProc]]$rtioMoleDryCo2Mlf$qfEvalThsh <- c(NA, 0) #corrected data will be included in teh processed file in this case
+    rpt[[DateProc]]$rtioMoleDryCo2Mlf$qfEvalThsh <- c(NA, 0) #corrected data will be included in the processed file in this case
   } else {
     rpt[[DateProc]]$rtioMoleDryCo2Mlf$qfEvalThsh <- c(NA, -1)
     rpt[[DateProc]]$rtioMoleDryCo2Cor$rtioMoleDryCo2Cor <- NaN #also remove data in the -1 missing validation case, prevents unexpected inclusion of questionable validations and also removes data if the eval regression can't run due to lack of span gasses
   }
+  
+  #force qfValiEval to -1 if slope is outside the threshold because this validation can't be applied
+  
+  if (rpt[[DateProc]]$rtioMoleDryCo2Mlf$coef[2] < base::min(FracSlp) | rpt[[DateProc]]$rtioMoleDryCo2Mlf$coef[2] > base::max(FracSlp)){
+    rpt[[DateProc]]$rtioMoleDryCo2Mlf$qfEvalThsh <- c(NA, -1)
+  }
+  
+  
   
   #add additional coefficients to mlf table
   rpt[[DateProc]]$rtioMoleDryCo2Mlf$evalCoef <- valiEval$evalCoef
