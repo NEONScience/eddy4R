@@ -1468,7 +1468,7 @@ REYNflux_FD_mole_dry <- function(
     for(idx in base::names(fluxTmp)) statStaDiff[[idx]]$fluxH2oVelo <- fluxTmp[[idx]]
     base::rm(fluxTmp, idx)
     
-  # OTHER SCALAR FLUXES INCL. CO2, CH4 ETC.
+  # OTHER SCALAR FLUXES INCL. CO2, CH4, NOx, VOCs ETC.
     
     # CO2 flux in kinematic units [mol m-2 s-1]
     fluxTmp <- def.flux.sclr(
@@ -1480,42 +1480,7 @@ REYNflux_FD_mole_dry <- function(
     base::rm(fluxTmp, idx)
     
     
-  
-  ############################################################
-  #CH4 FLUX - legacy, include CH4 via the chemistry flux settings
-  ############################################################
-  if(flagCh4 == TRUE){
-    #CH4 flux in kinematic units [mol m-2 s-1]
-    diff$F_CH4_kin <- base$densMoleAirDry * diff$veloZaxsHor * diff$rtioMoleDryCo2
-    mn$F_CH4_kin <- mean(diff$F_CH4_kin, na.rm=TRUE)
-    #CH4 flux in mass units [mg m-2 h-1]
-    diff$F_CH4_mass <- diff$F_CH4_kin * eddy4R.base::IntlNatu$MolmCh4 * 1e6 * 3600
-    mn$F_CH4_mass <- mean(diff$F_CH4_mass, na.rm=TRUE)
-    #correlation
-    corr$F_CH4_kin <- stats::cor(diff$veloZaxsHor, diff$rtioMoleDryCo2, use="pairwise.complete.obs")
-    corr$F_CH4_mass <- corr$F_CH4_kin
-  }
-  ############################################################
-  # CHEMISTRY FLUX
-  ############################################################
-  if(!is.null(spcs) & !is.null(rmm)){
-    # calculate flux
-    fluxChem = def.flux.chem(imfl = diff,
-                             mn = mn,
-                             corr = corr,
-                             base = base,
-                             spcs = spcs,
-                             rmm = rmm)
-    
-    # tidy output
-    # When REYNflux becomes wrapper - the arguments/return of this function should be changed such that both
-    # the input and output are the same data structure, and this tidy step is no longer required
-    # more like how functions can operate on the REYN object (the result of REYNflux)
-    diff = fluxChem$imfl
-    mn = fluxChem$mn
-    corr = fluxChem$corr
-  }
-  
+
   ############################################################
   #AUXILARY PARAMETERS
   ############################################################
