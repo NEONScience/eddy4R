@@ -23,9 +23,8 @@
 #' @param ThshFreqRng frequency range for determining optimiality criterion
 #' @param CoefCumScal cumulative flux contribution for which measured (co)-spectrum is scaled to model (co)-spectrum
 #' @param FilePlot generate plot?
-#' @param Meth determine peak frequency or output spectral correction factor?  
 
-#' @return If \code{meth = "peak"} the optimality criterion is returned. If \code{meth = "CoefCor"} the cumulative (Ogive) correction coefficient is returned for the calculated independent variable (frequency/wavenumber) scaling index for the depedent variables (spectra or cospectra). If \code{FilePlot} is provided, a plot will be generated and output.
+#' @return The optimality criterion and the cumulative (Ogive) correction coefficient is returned for the calculated independent variable (frequency/wavenumber) scaling index for the dependent variables (spectra or cospectra). If \code{FilePlot} is provided, a plot will be generated and output.
 
 #' @references
 #' License: GNU AFFERO GENERAL PUBLIC LICENSE Version 3, 19 November 2007
@@ -61,8 +60,6 @@ def.spec.peak.ogiv <- function(
   CoefCumScal = 0.6,
   #generate plot?
   FilePlot = NULL,
-  #determine peak frequency or output spectral correction factor?
-  Meth = c("peak", "CoefCor")[1]
 ) {
   
   #generate spectral model for range of frequencies
@@ -133,9 +130,10 @@ def.spec.peak.ogiv <- function(
     
   }
   
+  #Create output list
+  rpt <- base::list("PeakFreq" = critOptm, "CoefCorIdepScal"=idep[idxScal], "CoefCor"=1/base::max(depeCumScal, na.rm=TRUE)))
   #return result
-  if(meth == "peak") return(critOptm)
-  if(meth == "CoefCor") return(base::list(IdepScal=idep[idxScal], CoefCor=1/base::max(depeCumScal, na.rm=TRUE)))
+  return(rpt)
   
   ########################################################
 }
