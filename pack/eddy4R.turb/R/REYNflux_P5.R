@@ -1392,7 +1392,7 @@ REYNflux_FD_mole_dry <- function(
   ############################################################
   #SENSIBLE HEAT FLUX
   ############################################################
-  
+
   
   # definition function (to be exported)
   {
@@ -1404,11 +1404,11 @@ REYNflux_FD_mole_dry <- function(
     
     #' @description Function definition. This function calculates eddy-covariance flux for scalar quantities, such as temperature, moisture, CO2, CH4, NOx, VOCs etc.
     
-    #' @param inp A data frame with the variables vect and sclr that contain the instantaneous differences produced by ?def.stat.sta.diff(). In a typical eddy-covariance application, vect would be the vertical wind speed in streamwise ENU convention (positive from below), e.g.  veloZaxs derived from ?def.rot.ang.zaxs.erth, of class "numeric" and with unit attribute [m s-1]. scal woudl be any scalar quantity in SI base units that do not require Webb-Pearman-Leuning density correction, i.e. [K] for temperature and [mol m-3] for gas dry mole fractions, of class "numeric" and with unit attribute. These inputs can be viewed as a specific example that can be generalized through replacement by other variables that share the same coordinate conventions and consistent units among inp and Unit.
-    #' @param conv An optional vector of class "numeric" with unit attribute to permit conversion of the results, e.g. to different units. conv must be either of length = 1 or have the same length as number of observations in inp. If conv is of length = 1, then the same conversion factor is applied to all observations in inp (e.g., unit conversion). On the other hand, if conv is of the same length as number of observations in inp, then a point-by-point conversion is performed individually for each observation in inp (e.g., different weights for each observation).
-    #' 
-    
-    #' @param Unit A data frame with the entries In (input units), Out (output units), and OutSq (squared output units), of class "character".
+    #' @param inp A data frame with the variables vect and sclr that contain the instantaneous differences produced by ?def.stat.sta.diff(). In a typical eddy-covariance application, vect would be the vertical wind speed in streamwise ENU convention (positive from below), e.g.  veloZaxs derived from ?def.rot.ang.zaxs.erth, of class "numeric" and with unit attribute [m s-1]. scal would be any scalar quantity in SI base units that does not require Webb-Pearman-Leuning density correction, i.e. [K] for temperature and [mol m-3] for gas dry mole fractions, of class "numeric" and with unit attribute. These inputs can be viewed as a specific example that can be generalized through replacement by other variables that share the same coordinate conventions and consistent units among inp and Unit.
+    #' @param conv An optional vector of class "numeric" with unit attribute to permit conversion of the results, e.g. to different output units. conv must be either of length = 1 or have the same length as number of observations in inp. If conv is of length = 1, then the same conversion factor is applied to all observations supplied in inp (e.g., unit conversion). On the other hand, if conv is of the same length as number of observations in inp, then a point-by-point conversion is performed individually for each observation supplied in inp (e.g., different weights for each observation).
+    #' @param Unit A data frame with the entries InpVect, InpSclr, Conv, Out, of class "character". If the function call argument conv is not specified, then Unit$Conv should be supplied as = "-".
+    #' @param AlgBase A vector of length 1 that defines the base state with respect to which the element dataframe base in the returned object is calculated, of class "character" and no unit attribute. Contains one of AlgBase <- c("mean", "trnd", "ord03")[1] and defaults to "mean", with the additional options detrending "trnd" and 3rd-order polynomial "ord03". See ?eddy4R.base::def.base.ec() for additional details.
+    #' @param idep An optional vector of class "numeric" with unit attribute. idep only needs to be specified if argument AlgBase is set to "trnd" or "ord03", in which case idep provides the independent variable for interpolation.
     
     #' @return 
     #' The returned object is a list containing the element dataframes corr, diff, mean, and sd, each of class "numeric" and with unit attribute.
@@ -1451,7 +1451,7 @@ REYNflux_FD_mole_dry <- function(
     # Eddy-covariance flux calculation for scalar quantities
     def.flux.sclr <- function(
       inp,
-      conv,
+      conv = NULL,
       Unit,
       # also need to add to fluxVect ... function:
       AlgBase = c("mean", "trnd", "ord03")[1],
@@ -1460,7 +1460,7 @@ REYNflux_FD_mole_dry <- function(
     ) {
         
       ### check presence of input arguments, consistent lengths and units
-      # Out unit is product of InVect, InSclr, Conv units
+      # Out unit is product of InpVect, InpSclr, Conv units
       # check that conv is either of lenght 1 or same lenght as inp
       
       
@@ -1538,7 +1538,7 @@ REYNflux_FD_mole_dry <- function(
     fluxTmp <- def.flux.sclr(
       inp = data.frame(vect = statStaDiff$diff$veloZaxsHor, sclr = statStaDiff$diff$tempAir),
       conv = NULL,
-      Unit = base::data.frame(InVect = "m s-1", InSclr = "K", Conv = "-", Out = "K m s-1")
+      Unit = base::data.frame(InpVect = "m s-1", InpSclr = "K", Conv = "-", Out = "K m s-1")
     )
     for(idx in base::names(fluxTmp)) statStaDiff[[idx]]$fluxTemp <- fluxTmp[[idx]]
     base::rm(fluxTmp, idx)
@@ -1547,7 +1547,7 @@ REYNflux_FD_mole_dry <- function(
     fluxTmp <- def.flux.sclr(
       inp = data.frame(vect = statStaDiff$diff$veloZaxsHor, sclr = statStaDiff$diff$tempAir),
       conv = statStaDiff$base$heatAirWet,
-      Unit = base::data.frame(InVect = "m s-1", InSclr = "K", Conv = "kg m-1 s2 K-1", Out = "W m-2")
+      Unit = base::data.frame(InpVect = "m s-1", InpSclr = "K", Conv = "kg m-1 s2 K-1", Out = "W m-2")
     )
     for(idx in base::names(fluxTmp)) statStaDiff[[idx]]$fluxTempEngy <- fluxTmp[[idx]]
     base::rm(fluxTmp, idx)
@@ -1557,7 +1557,7 @@ REYNflux_FD_mole_dry <- function(
     fluxTmp <- def.flux.sclr(
       inp = data.frame(vect = statStaDiff$diff$veloZaxsHor, sclr = statStaDiff$diff$tempVirtPot00),
       conv = NULL,
-      Unit = base::data.frame(InVect = "m s-1", InSclr = "K", Conv = "-", Out = "K m s-1")
+      Unit = base::data.frame(InpVect = "m s-1", InpSclr = "K", Conv = "-", Out = "K m s-1")
     )
     for(idx in base::names(fluxTmp)) statStaDiff[[idx]]$fluxTempVirtPot00 <- fluxTmp[[idx]]
     base::rm(fluxTmp, idx)
@@ -1568,7 +1568,7 @@ REYNflux_FD_mole_dry <- function(
     fluxTmp <- def.flux.sclr(
       inp = data.frame(vect = statStaDiff$diff$veloZaxsHor, sclr = statStaDiff$diff$rtioMoleDryH2o),
       conv = statStaDiff$base$densMoleAirDry,
-      Unit = base::data.frame(InVect = "m s-1", InSclr = "-", Conv = "mol m-3", Out = "mol m-2 s-1")
+      Unit = base::data.frame(InpVect = "m s-1", InpSclr = "-", Conv = "mol m-3", Out = "mol m-2 s-1")
     )
     for(idx in base::names(fluxTmp)) statStaDiff[[idx]]$fluxH2o <- fluxTmp[[idx]]
     base::rm(fluxTmp, idx)
@@ -1579,7 +1579,7 @@ REYNflux_FD_mole_dry <- function(
       # conv: dry air density [mol m-3] x latent heat of vaporization [J kg-1] x molar mass [kg mol-1] = 
       # [J m-3] = [kg m-1 s-1]
       conv = statStaDiff$base$densMoleAirDry * statStaDiff$base$heatH2oGas * eddy4R.base::IntlNatu$MolmH2o,
-      Unit = base::data.frame(InVect = "m s-1", InSclr = "-", Conv = "kg m-1 s-1", Out = "W m-2")
+      Unit = base::data.frame(InpVect = "m s-1", InpSclr = "-", Conv = "kg m-1 s-1", Out = "W m-2")
     )
     for(idx in base::names(fluxTmp)) statStaDiff[[idx]]$fluxH2oEngy <- fluxTmp[[idx]]
     base::rm(fluxTmp, idx)
@@ -1593,7 +1593,7 @@ REYNflux_FD_mole_dry <- function(
       # conv: dry air mole density [mol m-3] x 
       # (H2O molar mass [kg mol-1] / liquid H2O mass density at 4C and 1 Atm [kg m-3]) = [-]
       conv = statStaDiff$base$densMoleAirDry * IntlNatu$MolmH2o / 1e3,
-      Unit = base::data.frame(InVect = "m s-1", InSclr = "-", Conv = "-", Out = "m s-1")
+      Unit = base::data.frame(InpVect = "m s-1", InpSclr = "-", Conv = "-", Out = "m s-1")
     )
     for(idx in base::names(fluxTmp)) statStaDiff[[idx]]$fluxH2oVelo <- fluxTmp[[idx]]
     base::rm(fluxTmp, idx)
@@ -1604,7 +1604,7 @@ REYNflux_FD_mole_dry <- function(
     fluxTmp <- def.flux.sclr(
       inp = data.frame(vect = statStaDiff$diff$veloZaxsHor, sclr = statStaDiff$diff$rtioMoleDryCo2),
       conv = statStaDiff$base$densMoleAirDry,
-      Unit = base::data.frame(InVect = "m s-1", InSclr = "-", Conv = "mol m-3", Out = "mol m-2 s-1")
+      Unit = base::data.frame(InpVect = "m s-1", InpSclr = "-", Conv = "mol m-3", Out = "mol m-2 s-1")
     )
     for(idx in base::names(fluxTmp)) statStaDiff[[idx]]$fluxCo2 <- fluxTmp[[idx]]
     base::rm(fluxTmp, idx)
