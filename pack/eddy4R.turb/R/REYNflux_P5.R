@@ -1411,9 +1411,9 @@ REYNflux_FD_mole_dry <- function(
     #' @param idep An optional vector of class "numeric" with unit attribute. idep only needs to be specified if argument AlgBase is set to "trnd" or "ord03", in which case idep provides the independent variable for interpolation.
     
     #' @return 
-    #' The returned object is a list containing the element dataframes corr, diff, mean, and sd, each of class "numeric" and with unit attribute.
-    #' The elements corr, mean and sd are all calculated from the same stress tensor based on the inp (veloXaxs, veloYaxs, veloZaxs) and rot (mtrxRot01 and mtrxRot02) arguments. The element corr contains the horizontal-vertical correlations, the element mean contains the horizontal-vertical covariances, and the element sd contains the standard deviation for each wind vector component in streamwise ENU convention, with a single observation each.
-    #' The element diff contains the instantaneous horizontal-vertical products of inp (veloXaxsHor, veloYaxsHor, veloZaxsHor) with the same number of observations as inp.
+    #' The returned object is a list containing the element vectors base, corr, diff, max, mean, min, sd, each of class "numeric" and with unit attribute.
+    #' All elements with exception of corr are calculated from the instantaneous products inp$vect * inp$scal * conv with the same number of observations as inp. diff provides these instantaneous products themselves, base provides their base state as specified per argument AlgBase, and max, mean, min and sd their maximum, mean, minimum and standard deviation, respectively. The element corr is calculated from inp$vect and inp$scal without invoking conv, and provides the correlation between vector and scalar quantity.
+
     
     #' @references
     #' License: GNU AFFERO GENERAL PUBLIC LICENSE Version 3, 19 November 2007
