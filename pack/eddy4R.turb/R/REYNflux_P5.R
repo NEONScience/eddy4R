@@ -1141,7 +1141,7 @@ REYNflux_FD_mole_dry <- function(
     
     #' @description Function definition. This function calculates eddy-covariance flux for vector quantities, such as the wind vector -> momentum flux and friction velocity.
     
-    #' @param inp A data frame containing the instantaneous differences produced by ?def.stat.sta.diff() of 1) the wind vector in meteorological ENU convention with the variables veloXaxs (latitudinal wind speed, positive from west), veloYaxs (longitudinal wind speed, positive from south), and veloZaxs (vertical wind speed, positive from below), and 2) the wind vector in streamwise ENU convention with the variables veloXaxsHor (streamwise wind speed, positive from front), veloYaxsHor (cross-wind speed, positive from left), and veloZaxs (vertical wind speed, positive from below) derived from ?def.rot.ang.zaxs.erth, of class "numeric, each with unit attribute [m s-1]. The wind vector inputs can be viewed as a specific example that can be generalized through replacement by other vector quantities that share the same coordinate conventions and consistent unis among inp and Unit.
+    #' @param inp A data frame containing the instantaneous differences produced by ?def.stat.sta.diff() of 1) the wind vector in meteorological ENU convention with the variables veloXaxs (latitudinal wind speed, positive from west), veloYaxs (longitudinal wind speed, positive from south), and veloZaxs (vertical wind speed, positive from below), and 2) the wind vector in streamwise ENU convention with the variables veloXaxsHor (streamwise wind speed, positive from front), veloYaxsHor (cross-wind speed, positive from left), and veloZaxsHor (vertical wind speed, positive from below) derived from ?def.rot.ang.zaxs.erth, of class "numeric", each with unit attribute [m s-1]. The wind vector inputs can be viewed as a specific example that can be generalized through replacement by other vector quantities that share the same coordinate conventions and consistent units among inp and Unit.
     #' @param rot A list of rotation matrices with the list elements mtrxRot01 and mtrxRot02 derived from ?def.rot.ang.zaxs.erth, class "numeric", each with unit attribute. [-]
     #' @param Unit A data frame with the entries In (input units), Out (output units), and OutSq (squared output units), of class "character".
     
@@ -1386,7 +1386,6 @@ REYNflux_FD_mole_dry <- function(
     Unit = base::data.frame(In = "m s-1", Out = "m s-1", OutSq = "m2 s-2")
   )
   
-  # assignment to statStaDiff similar to def.flux.sclr below
 
   
   
@@ -1396,81 +1395,137 @@ REYNflux_FD_mole_dry <- function(
   
   
   # definition function (to be exported)
-  def.flux.sclr <- function(
-    inp,
-    conv,
-    Unit,
-    # also need to add to fluxVect ... function:
-    AlgBase = c("mean", "trnd", "ord03")[1],
-    # also need to add to statSta ... function:
-    idep = NULL
-  ) {
-      
-    ### check presence of input arguments, consistent lenghts and units
-    # Out unit is product of InVect, InSclr, Conv units
-    # check that conv is either of lenght 1 or same lenght as inp
+  {
+    ##############################################################################################
+    #' @title Definition function: Eddy-covariance flux calculation for scalar quantities
     
+    #' @author
+    #' Stefan Metzger \email{eddy4R.info@gmail.com}
     
-    # perform calculations
-      
-      # instantaneous fluxes from instantaneous vector and scalar differences in input (typically kinematic) units
+    #' @description Function definition. This function calculates eddy-covariance flux for scalar quantities, such as temperature, moisture, CO2, CH4, NOx, VOCs etc.
     
-        # calculation
-        diff <- inp$vect * inp$sclr
-        
-        # conversion with optional argument conv
-        if(!is.null(conv)) diff <- diff * conv
-        
-        # assign units
-        base::attr(diff, which = "unit") <- Unit$Out
-      
-      # descriptive statistics incl. mean fluxes
-      
-        # calculation
-        min <- base::min(diff, na.rm = TRUE)
-        max <- base::max(diff, na.rm = TRUE)
-        mean <- base::mean(diff, na.rm = TRUE)
-        sd <- stats::sd(diff, na.rm = TRUE)
-        if(AlgBase == "mean") base <- mean else base <- eddy4R.base::def.base.ec(
-          idxTime = idep, var = diff, AlgBase = AlgBase)
+    #' @param inp A data frame with the variables vect and sclr that contain the instantaneous differences produced by ?def.stat.sta.diff(). In a typical eddy-covariance application, vect would be the vertical wind speed in streamwise ENU convention (positive from below), e.g.  veloZaxs derived from ?def.rot.ang.zaxs.erth, of class "numeric" and with unit attribute [m s-1]. scal woudl be any scalar quantity in SI base units that do not require Webb-Pearman-Leuning density correction, i.e. [K] for temperature and [mol m-3] for gas dry mole fractions, of class "numeric" and with unit attribute. These inputs can be viewed as a specific example that can be generalized through replacement by other variables that share the same coordinate conventions and consistent units among inp and Unit.
+    #' @param conv An optional vector of class "numeric" with unit attribute to permit conversion of the results, e.g. to different units. conv must be either of length = 1 or have the same length as number of observations in inp. If conv is of length = 1, then the same conversion factor is applied to all observations in inp (e.g., unit conversion). On the other hand, if conv is of the same length as number of observations in inp, then a point-by-point conversion is performed individually for each observation in inp (e.g., different weights for each observation).
+    #' 
+    
+    #' @param Unit A data frame with the entries In (input units), Out (output units), and OutSq (squared output units), of class "character".
+    
+    #' @return 
+    #' The returned object is a list containing the element dataframes corr, diff, mean, and sd, each of class "numeric" and with unit attribute.
+    #' The elements corr, mean and sd are all calculated from the same stress tensor based on the inp (veloXaxs, veloYaxs, veloZaxs) and rot (mtrxRot01 and mtrxRot02) arguments. The element corr contains the horizontal-vertical correlations, the element mean contains the horizontal-vertical covariances, and the element sd contains the standard deviation for each wind vector component in streamwise ENU convention, with a single observation each.
+    #' The element diff contains the instantaneous horizontal-vertical products of inp (veloXaxsHor, veloYaxsHor, veloZaxsHor) with the same number of observations as inp.
+    
+    #' @references
+    #' License: GNU AFFERO GENERAL PUBLIC LICENSE Version 3, 19 November 2007
+    
+    #' @keywords correlation, flux, friction velocity, shear stress, standard deviation, vector
+    
+    #' @examples
+    #' Make sure to assign all variables and units, the function should run ok.
+    #' inp <- base::data.frame(
+    #'   veloXaxs = c(-1.889635, -1.661724, -1.615837, -1.711132, -1.223001),
+    #'   veloYaxs = c(1.365195, 1.277106, 1.394891, 1.180698, 1.283836),
+    #'   veloZaxs = c(0.176613897, 0.184947662, 0.344331819, 0.190230311, 0.239193186)
+    #' )
+    #' attr(inp$veloXaxs,"unit") <- "m s-1"; attr(inp$veloYaxs,"unit") <- "m s-1"; attr(inp$veloZaxs,"unit") <- "m s-1"
+    #' out <- def.flux.vect(
+    #'   inp = base::cbind(def.stat.sta.diff(inp = inp)$diff,
+    #'                     def.stat.sta.diff(inp = def.rot.ang.zaxs.erth(inp = inp)$data)$diff),
+    #'   rot = def.rot.ang.zaxs.erth(inp = inp)$rot,
+    #'   Unit = base::data.frame(In = "m s-1", Out = "m s-1", OutSq = "m2 s-2")
+    #' )
+    #' utils::str(out)
+    #' base::rm(inp, out)
+    
+    #' @seealso Currently none.
+    
+    #' @export
+    
+    # changelog and author contributions / copyrights
+    #   Stefan Metzger (2011-03-04)
+    #     original creation
+    #   Stefan Metzger (2022-02-08)
+    #     update to eddy4R terminology and modularize into definition function
+    ###############################################################################################
 
-        # assign units
-        base::attr(base, which = "unit") <- Unit$Out
-        base::attr(min, which = "unit") <- Unit$Out
-        base::attr(max, which = "unit") <- Unit$Out
-        base::attr(mean, which = "unit") <- Unit$Out
-        base::attr(sd, which = "unit") <- Unit$Out
-      
-      # correlation
+    # Eddy-covariance flux calculation for scalar quantities
+    def.flux.sclr <- function(
+      inp,
+      conv,
+      Unit,
+      # also need to add to fluxVect ... function:
+      AlgBase = c("mean", "trnd", "ord03")[1],
+      # also need to add to statSta ... function:
+      idep = NULL
+    ) {
         
-        # calculation
-        corr <- stats::cor(inp$vect, inp$sclr, use = "pairwise.complete.obs")
+      ### check presence of input arguments, consistent lengths and units
+      # Out unit is product of InVect, InSclr, Conv units
+      # check that conv is either of lenght 1 or same lenght as inp
+      
+      
+      # perform calculations
         
-        # assign units
-        base::attr(corr, which = "unit") <- "-"
-    
+        # instantaneous fluxes from instantaneous vector and scalar differences in input (typically kinematic) units
+      
+          # calculation
+          diff <- inp$vect * inp$sclr
+          
+          # conversion with optional argument conv
+          if(!is.null(conv)) diff <- diff * conv
+          
+          # assign units
+          base::attr(diff, which = "unit") <- Unit$Out
         
-    # create object for export
+        # descriptive statistics incl. mean fluxes
+        
+          # calculation
+          min <- base::min(diff, na.rm = TRUE)
+          max <- base::max(diff, na.rm = TRUE)
+          mean <- base::mean(diff, na.rm = TRUE)
+          sd <- stats::sd(diff, na.rm = TRUE)
+          if(AlgBase == "mean") base <- mean else base <- eddy4R.base::def.base.ec(
+            idxTime = idep, var = diff, AlgBase = AlgBase)
+  
+          # assign units
+          base::attr(base, which = "unit") <- Unit$Out
+          base::attr(min, which = "unit") <- Unit$Out
+          base::attr(max, which = "unit") <- Unit$Out
+          base::attr(mean, which = "unit") <- Unit$Out
+          base::attr(sd, which = "unit") <- Unit$Out
+        
+        # correlation
+          
+          # calculation
+          corr <- stats::cor(inp$vect, inp$sclr, use = "pairwise.complete.obs")
+          
+          # assign units
+          base::attr(corr, which = "unit") <- "-"
       
-      # create list
-      rpt <- base::list()
-      
-      # populate list
-      rpt$base <- base
-      rpt$corr <- corr
-      rpt$diff <- diff
-      rpt$max <- max
-      rpt$mean <- mean
-      rpt$min <- min
-      rpt$sd <- sd
-      
-      # clean up
-      base::rm(corr, diff, max, mean, min, sd)
-      
-      
-    # return results
-    return(rpt)
-      
+          
+      # create object for export
+        
+        # create list
+        rpt <- base::list()
+        
+        # populate list
+        rpt$base <- base
+        rpt$corr <- corr
+        rpt$diff <- diff
+        rpt$max <- max
+        rpt$mean <- mean
+        rpt$min <- min
+        rpt$sd <- sd
+        
+        # clean up
+        base::rm(corr, diff, max, mean, min, sd)
+        
+        
+      # return results
+      return(rpt)
+        
+    }
+  
   }
   
 
