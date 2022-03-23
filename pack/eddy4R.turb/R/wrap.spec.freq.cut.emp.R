@@ -23,8 +23,8 @@
 
 #' @references 
 #' License: GNU AFFERO GENERAL PUBLIC LICENSE Version 3, 19 November 2007
-#' Aubinet et al. (2012)
-#' Eugster and Senn (1995)
+#' Foken T., Leuning R., Oncley S.R., Mauder M., Aubinet M. (2012) Corrections and Data Quality Control. In: Aubinet M., Vesala T., Papale D. (eds) Eddy Covariance. Springer Atmospheric Sciences. Springer, Dordrecht. https://doi.org/10.1007/978-94-007-2351-1_4
+#' Eugster, W. and W. Senn (1995). "A COSPECTRAL CORRECTION MODEL FOR MEASUREMENT OF TURBULENT NO2 FLUX." Boundary-Layer Meteorology 74(4): 321-340.
 
 
 #' @keywords Fast Fourier Transform, FFT, spectral, cut-off frequency, transfer function
