@@ -59,7 +59,7 @@ def.spec.peak.ogiv <- function(
   #cumulative flux contribution for which measured (co)-spectrum is scaled to model (co)-spectrum
   CoefCumScal = 0.6,
   #generate plot?
-  FilePlot = NULL,
+  FilePlot = NULL
 ) {
   
   #generate spectral model for range of frequencies
