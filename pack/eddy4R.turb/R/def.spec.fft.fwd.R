@@ -75,15 +75,15 @@ def.spec.fft.fwd <- function(
   dataSpecInp <- dataSpecInp[,-1]
   
   #separate variables
-  distZaxsMeas <- dataSpecInp[,(ncol(dataSpecInp)-1)]
-  veloRltv <- dataSpecInp[,ncol(dataSpecInp)]
+  distZaxsMeas <- dataSpecInp[,(base::ncol(dataSpecInp)-1)]
+  veloRltv <- dataSpecInp[,base::ncol(dataSpecInp)]
   dataSpecInp <- base::as.matrix(dataSpecInp[,1:(ncol(dataSpecInp)-2)])
   base::dimnames(dataSpecInp)[[2]] <- base::dimnames(data)[[2]]
   
   #demeaning
   if(MethMeanRmv == TRUE & MethTrndRmv == FALSE) {
-    for(idx in 1:ncol(dataSpecInp)) {
-      dataSpecInp[,idx] <- dataSpecInp[,idx] - mean(dataSpecInp[,idx], na.rm=T)
+    for(idx in 1:base::ncol(dataSpecInp)) {
+      dataSpecInp[,idx] <- dataSpecInp[,idx] - base::mean(dataSpecInp[,idx], na.rm=T)
     }
   }
   
@@ -115,9 +115,9 @@ def.spec.fft.fwd <- function(
   #corresponding 'observation' frequency
   freqMeas <- freqRltv * FreqSamp
   #corresponding wavelength according to taylor's hypothesis (mean relative motion, Foken, 2008 Eq. 2.106)
-  distWave <- mean(veloRltv, na.rm=T) / freqMeas
+  distWave <- base::mean(veloRltv, na.rm=TRUE) / freqMeas
   #corresponding normalized frequency
-  freqNorm <- mean(distZaxsMeas, na.rm=T) / distWave
+  freqNorm <- base::mean(distZaxsMeas, na.rm=TRUE) / distWave
   #corresponding wavenumber
   numWave <- (2 * pi) / distWave
   
@@ -142,7 +142,7 @@ def.spec.fft.fwd <- function(
     specFft,	#variables in frequency space; complex numbers [input units]
     specFftEngy		#unfolded spectral energy in frequency space[(input units)^2]
   )
-  attributes(rpt)$names <- c("setFreqRng", "freqRltv", "freqMeas", "distWave", "freqNorm", "numWave", "dataSpecInp", "specFft", "specFftEngy")
+  base::attributes(rpt)$names <- c("setFreqRng", "freqRltv", "freqMeas", "distWave", "freqNorm", "numWave", "dataSpecInp", "specFft", "specFftEngy")
   
   #export results
   return(rpt)
