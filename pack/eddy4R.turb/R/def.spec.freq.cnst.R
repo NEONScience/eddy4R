@@ -16,28 +16,28 @@
 
 #' @param inpPrd numeric, time period in seconds
 
-#' @return A numeric vector \code{freqOut} of equivalent frequencies to the input time periods
+#' @return A numeric vector \code{freqOut} of equivalent frequencies to the input time constant
 
 #' @references 
 #' License: GNU AFFERO GENERAL PUBLIC LICENSE Version 3, 19 November 2007
-#' Aubinet (2012)
+#' Foken T., Leuning R., Oncley S.R., Mauder M., Aubinet M. (2012) Corrections and Data Quality Control. In: Aubinet M., Vesala T., Papale D. (eds) Eddy Covariance. Springer Atmospheric Sciences. Springer, Dordrecht. https://doi.org/10.1007/978-94-007-2351-1_4
 
 #' @keywords Fast Fourier Transform, FFT, spectral
 
 #' @examples 
 #' 
-#' inpPrd <- seq(1, 3600, by = 10)
-#' def.spec.freq.cnst(inpPrd = inpPrd)
+#' inpTime <- seq(1, 3600, by = 10)
+#' def.spec.freq.cnst(inpTime = inpTime)
 
 #' @seealso Currently none
 
 #' @export
 ##############################################################################################
 
-def.spec.freq.cnst <- function(inpPrd) {
+def.spec.freq.cnst <- function(inpTime) {
   
   #Convert time/period constant values to frequency
-  freqOut <- 1 / (2 * pi * inpPrd)
+  freqOut <- 1 / (2 * pi * inpTime)
   
   #Return output
   return(freqOut)

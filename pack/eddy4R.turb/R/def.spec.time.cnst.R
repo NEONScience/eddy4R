@@ -20,7 +20,7 @@
 
 #' @references 
 #' License: GNU AFFERO GENERAL PUBLIC LICENSE Version 3, 19 November 2007
-#' Aubinet (2012)
+#' Foken T., Leuning R., Oncley S.R., Mauder M., Aubinet M. (2012) Corrections and Data Quality Control. In: Aubinet M., Vesala T., Papale D. (eds) Eddy Covariance. Springer Atmospheric Sciences. Springer, Dordrecht. https://doi.org/10.1007/978-94-007-2351-1_4
 
 #' @keywords Fast Fourier Transform, FFT, spectral
 
@@ -37,9 +37,9 @@
 def.spec.time.cnst <- function(inpFreq) {
  
   #Calculate period from frequency
-  prdOut <- 1 / (2 * pi * inpFreq)
+  timeOut <- 1 / (2 * pi * inpFreq)
   
  #Return calculated period
- return(prdOut)
+ return(timeOut)
  
 } #End of function
