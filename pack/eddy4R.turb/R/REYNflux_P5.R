@@ -55,7 +55,7 @@
 REYNflux_FD_mole_dry <- function(
   data = eddy.data,
   AlgBase = c("mean", "trnd", "ord03")[1],
-  slctPot = TRUE,
+  slctPot = FALSE,
   presPot = NULL,
   PltfEc = "airc",
   flagCh4 = TRUE,
@@ -1704,8 +1704,8 @@ REYNflux_FD_mole_dry <- function(
     for(idx in base::names(fluxTmp)) statStaDiff[[idx]]$fluxCo2 <- fluxTmp[[idx]]
     base::rm(fluxTmp, idx)
     
-    
 
+    
   ############################################################
   #AUXILARY PARAMETERS
   ############################################################
