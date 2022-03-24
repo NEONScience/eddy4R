@@ -1460,7 +1460,7 @@ REYNflux_FD_mole_dry <- function(
         
       # check presence of input arguments, consistent lengths and units
           
-        # conv 1/2
+        # conv check 1 of 2
           
           # if conv defaults to NULL, convert to 1 and assign unit attribute. Also specify Unit$Conv if not already present (failsafe)
           if(is.null(conv)) {
@@ -1526,11 +1526,15 @@ REYNflux_FD_mole_dry <- function(
             if(attributes(inp$sclr)$unit != Unit$InpSclr) {
               stop(base::paste0("def.flux.sclr(): inp$sclr unit attribute does not match Unit$InpSclr, please check."))}
       
-          # conv 2/2
+          # conv check 2 of 2
       
             # test for consistent units - do this after the Unit dataframe has been tested
             if(attributes(conv)$unit != Unit$Conv) {
               stop(base::paste0("def.flux.sclr(): conv unit attribute does not match Unit$Conv, please check."))}
+      
+          # AlgBase and idep
+          if(AlgBase != "mean" & is.null(idep)) {
+            stop(base::paste0("def.flux.sclr(): please specify function argument idep if AlgBase != 'mean'."))}
 
       
       # convert conv to the same number of observations as inp
