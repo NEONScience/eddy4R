@@ -1134,12 +1134,12 @@ REYNflux_FD_mole_dry <- function(
   # definition function (to be exported)
   {
     ##############################################################################################
-    #' @title Definition function: Eddy-covariance flux calculation for vector quantities
+    #' @title Definition function: Eddy-covariance turbulent flux calculation for vector quantities
     
     #' @author
     #' Stefan Metzger \email{eddy4R.info@gmail.com}
     
-    #' @description Function definition. This function calculates eddy-covariance flux for vector quantities, such as the wind vector -> momentum flux and friction velocity.
+    #' @description Function definition. This function calculates eddy-covariance turbulent flux for vector quantities, such as the wind vector -> momentum flux and friction velocity.
     
     #' @param inp A data frame containing the instantaneous differences produced by ?def.stat.sta.diff() of 1) the wind vector in meteorological ENU convention with the variables veloXaxs (latitudinal wind speed, positive from west), veloYaxs (longitudinal wind speed, positive from south), and veloZaxs (vertical wind speed, positive from below), and 2) the wind vector in streamwise ENU convention with the variables veloXaxsHor (streamwise wind speed, positive from front), veloYaxsHor (cross-wind speed, positive from left), and veloZaxsHor (vertical wind speed, positive from below) derived from ?def.rot.ang.zaxs.erth, of class "numeric", each with unit attribute [m s-1]. The wind vector inputs can be viewed as a specific example that can be generalized through replacement by other vector quantities that share the same coordinate conventions and consistent units among inp and Unit.
     #' @param rot A list of rotation matrices with the list elements mtrxRot01 and mtrxRot02 derived from ?def.rot.ang.zaxs.erth, class "numeric", each with unit attribute. [-]
@@ -1397,28 +1397,29 @@ REYNflux_FD_mole_dry <- function(
   # definition function (to be exported)
   {
     ##############################################################################################
-    #' @title Definition function: Eddy-covariance flux calculation for scalar quantities
+    #' @title Definition function: Eddy-covariance turbulent flux calculation for scalar quantities
     
     #' @author
     #' Stefan Metzger \email{eddy4R.info@gmail.com}
     
-    #' @description Function definition. This function calculates eddy-covariance flux for scalar quantities, such as temperature, moisture, CO2, CH4, NOx, VOCs etc.
+    #' @description Function definition. This function calculates eddy-covariance turbulent flux for scalar quantities, such as temperature, moisture, CO2, CH4, NOx, VOCs etc.
     
-    #' @param inp A data frame with the variables vect and sclr that contain the instantaneous differences produced by ?def.stat.sta.diff(). In a typical eddy-covariance application, vect would be the vertical wind speed in streamwise ENU convention (positive from below), e.g.  veloZaxs derived from ?def.rot.ang.zaxs.erth, of class "numeric" and with unit attribute [m s-1]. scal would be any scalar quantity in SI base units that does not require Webb-Pearman-Leuning density correction, i.e. [K] for temperature and [mol m-3] for gas dry mole fractions, of class "numeric" and with unit attribute. These inputs can be viewed as a specific example that can be generalized through replacement by other variables that share the same coordinate conventions and consistent units among inp and Unit.
-    #' @param conv An optional vector of class "numeric" with unit attribute to permit conversion of the results, e.g. to different output units. conv must be either of length = 1 or have the same length as number of observations in inp. If conv is of length = 1, then the same conversion factor is applied to all observations supplied in inp (e.g., unit conversion). On the other hand, if conv is of the same length as number of observations in inp, then a point-by-point conversion is performed individually for each observation supplied in inp (e.g., different weights for each observation).
-    #' @param Unit A data frame with the entries InpVect, InpSclr, Conv, Out, of class "character". If the function call argument conv is not specified, then Unit$Conv should be supplied as = "-".
-    #' @param AlgBase A vector of length 1 that defines the base state with respect to which the element dataframe base in the returned object is calculated, of class "character" and no unit attribute. Contains one of AlgBase <- c("mean", "trnd", "ord03")[1] and defaults to "mean", with the additional options detrending "trnd" and 3rd-order polynomial "ord03". See ?eddy4R.base::def.base.ec() for additional details.
-    #' @param idep An optional vector of class "numeric" with unit attribute. idep only needs to be specified if argument AlgBase is set to "trnd" or "ord03", in which case idep provides the independent variable for interpolation.
+    #' @param inp A data frame with the variables vect and sclr that each contain the instantaneous differences initially produced by ?def.stat.sta.diff(). In a typical eddy-covariance application, vect would be the vertical wind speed in streamwise ENU convention (positive from below), e.g.  veloZaxs derived from ?def.rot.ang.zaxs.erth, of class "numeric" and with unit attribute [m s-1]. scal would be any scalar quantity in SI base units that does not require WPL density correction (Webb et al., 1980), i.e. temperature in unit [K] and gas concentration in dry mole fraction [mol m-3], of class "numeric" and with unit attribute. These inputs can be viewed as a specific example that can be generalized through replacement by other variables that share the same coordinate conventions and consistent units among inp and Unit.
+    #' @param conv An optional vector of class "numeric" with unit attribute to permit conversion of the results, e.g. to output units that are different from the product of the inp$vect unit and the inp$sclr unit. conv must be either of length = 1 or have the same length as number of observations in inp. If conv is of length = 1, then the same conversion factor is applied to all observations supplied in inp (e.g., unit conversion). On the other hand, if conv is of the same length as number of observations in inp, then a point-by-point conversion is performed individually for each observation supplied in inp (e.g., different weights for each observation).
+    #' @param Unit A data frame with the entries InpVect, InpSclr, Conv, Out, of class "character". To ensure consistent units of the returned object, Unit needs to be specified with the constraint that Unit$Out = Unit$InpVect * Unit$InpSclr * Unit$Conv. If the function call argument conv is not specified, then Unit$Conv should be supplied as = "-".
+    #' @param AlgBase A vector of length 1 that defines the base state with respect to which the element-dataframe base in the returned object is calculated, of class "character" and no unit attribute. Is set to one of AlgBase <- c("mean", "trnd", "ord03")[1] and defaults to "mean", with the additional options detrending "trnd" and 3rd-order polynomial "ord03". See ?eddy4R.base::def.base.ec() for additional details.
+    #' @param idep An optional vector of class "numeric" with unit attribute. idep is only required to be specified if argument AlgBase is set to "trnd" or "ord03", in which case idep provides the independent variable for interpolation.
     
     #' @return 
-    #' The returned object is a list containing the element vectors base, corr, diff, max, mean, min, sd, each of class "numeric" and with unit attribute.
-    #' All elements with exception of corr are calculated from the instantaneous products inp$vect * inp$scal * conv with the same number of observations as inp. diff provides these instantaneous products themselves, base provides their base state as specified per argument AlgBase, and max, mean, min and sd their maximum, mean, minimum and standard deviation, respectively. The element corr is calculated from inp$vect and inp$scal without invoking conv, and provides the correlation between vector and scalar quantity.
+    #' The returned object is a list containing the element vectors base, conv, corr, diff, max, mean, min, sd, each of class "numeric" and with unit attribute.
+    #' All elements with the exception of conv and corr are calculated from the instantaneous products inp$vect * inp$scal * conv with the same number of observations as inp and assigned the Unit$Out unit attribute. diff provides these instantaneous products themselves, base provides their base state as specified per argument AlgBase, and max, mean, min and sd their maximum, mean, minimum and standard deviation, respectively. The element conv reports the conversion vector with unit attribute if specified in the function arguments, or NULL with unit attribute "-" otherwise. The element corr is calculated from inp$vect and inp$scal without invoking conv, and provides the correlation between vector and scalar quantity with unit attribute "-".
 
     
     #' @references
     #' License: GNU AFFERO GENERAL PUBLIC LICENSE Version 3, 19 November 2007
+    #' Webb, E. K., Pearman, G. I., and Leuning, R.: Correction of flux measurements for density effects due to heat and water vapour transfer, Q. J. R. Meteorolog. Soc., 106, 85-100, doi:10.1002/qj.49710644707, 1980.
     
-    #' @keywords correlation, flux, friction velocity, shear stress, standard deviation, vector
+    #' @keywords correlation, flux, temperature, moisture, water, humidity, H2O, CO2, CH4, NOx, VOC, standard deviation, scalar
     
     #' @examples
     #' Make sure to assign all variables and units, the function should run ok.
@@ -1444,7 +1445,7 @@ REYNflux_FD_mole_dry <- function(
     # changelog and author contributions / copyrights
     #   Stefan Metzger (2011-03-04)
     #     original creation
-    #   Stefan Metzger (2022-02-08)
+    #   Stefan Metzger (2022-03-24)
     #     update to eddy4R terminology and modularize into definition function
     ###############################################################################################
 
