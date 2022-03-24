@@ -1526,15 +1526,15 @@ REYNflux_FD_mole_dry <- function(
             if(attributes(inp$sclr)$unit != Unit$InpSclr) {
               stop(base::paste0("def.flux.sclr(): inp$sclr unit attribute does not match Unit$InpSclr, please check."))}
       
-          # conv check 2 of 2
-      
-            # test for consistent units - do this after the Unit dataframe has been tested
-            if(attributes(conv)$unit != Unit$Conv) {
-              stop(base::paste0("def.flux.sclr(): conv unit attribute does not match Unit$Conv, please check."))}
-      
-          # AlgBase and idep
-          if(AlgBase != "mean" & is.null(idep)) {
-            stop(base::paste0("def.flux.sclr(): please specify function argument idep if AlgBase != 'mean'."))}
+        # conv check 2 of 2
+    
+          # test for consistent units - do this after the Unit dataframe has been tested
+          if(attributes(conv)$unit != Unit$Conv) {
+            stop(base::paste0("def.flux.sclr(): conv unit attribute does not match Unit$Conv, please check."))}
+    
+        # AlgBase and idep
+        if(AlgBase != "mean" & is.null(idep)) {
+          stop(base::paste0("def.flux.sclr(): please specify function argument idep if AlgBase != 'mean'."))}
 
       
       # convert conv to the same number of observations as inp
@@ -1551,11 +1551,8 @@ REYNflux_FD_mole_dry <- function(
         # instantaneous fluxes from instantaneous vector and scalar differences in input (typically kinematic) units
       
           # calculation
-          diff <- inp$vect * inp$sclr
-          
-          # conversion with optional argument conv
-          if(!is.null(conv)) diff <- diff * conv
-          
+          diff <- inp$vect * inp$sclr * conv
+
           # assign units
           base::attr(diff, which = "unit") <- Unit$Out
         
@@ -1592,6 +1589,7 @@ REYNflux_FD_mole_dry <- function(
         
         # populate list
         rpt$base <- base
+        rpt$conv <- conv
         rpt$corr <- corr
         rpt$diff <- diff
         rpt$max <- max
@@ -1600,7 +1598,7 @@ REYNflux_FD_mole_dry <- function(
         rpt$sd <- sd
         
         # clean up
-        base::rm(corr, diff, max, mean, min, sd)
+        base::rm(base, conv, corr, diff, max, mean, min, sd)
         
         
       # return results
@@ -1611,7 +1609,8 @@ REYNflux_FD_mole_dry <- function(
   }
   
 
-  # initiate dataframe to store correlations
+  # initiate dataframe to store conversion factors and correlations
+  statStaDiff$conv <- data.frame(fluxTemp = base::rep(NaN, length.out = nrow(statStaDiff$diff)))
   statStaDiff$corr <- data.frame(fluxTemp = NaN)
 
   # SENSIBLE HEAT FLUX, BUOYANCY FLUX
@@ -1656,29 +1655,43 @@ REYNflux_FD_mole_dry <- function(
     base::rm(fluxTmp, idx)
     
     # latent heat flux in units of energy [kg s-3] = [W m-2]
-    fluxTmp <- def.flux.sclr(
-      inp = data.frame(vect = statStaDiff$diff$veloZaxsHor, sclr = statStaDiff$diff$rtioMoleDryH2o),
-      # conv: dry air density [mol m-3] x latent heat of vaporization [J kg-1] x molar mass [kg mol-1] = 
-      # [J m-3] = [kg m-1 s-1]
-      conv = statStaDiff$base$densMoleAirDry * statStaDiff$base$heatH2oGas * eddy4R.base::IntlNatu$MolmH2o,
-      Unit = base::data.frame(InpVect = "m s-1", InpSclr = "-", Conv = "kg m-1 s-1", Out = "W m-2")
-    )
-    for(idx in base::names(fluxTmp)) statStaDiff[[idx]]$fluxH2oEngy <- fluxTmp[[idx]]
-    base::rm(fluxTmp, idx)
+    
+      # define conversion from kinematic units to units of energy
+      # dry air density [mol m-3] x latent heat of vaporization [J kg-1] x molar mass [kg mol-1] = [J m-3] = [kg m-1 s-1]
+      conv <- statStaDiff$base$densMoleAirDry * statStaDiff$base$heatH2oGas * eddy4R.base::IntlNatu$MolmH2o
+      base::attr(conv, which = "unit") <- "kg m-1 s-1"
+      
+      # actual flux calculation
+      fluxTmp <- def.flux.sclr(
+        inp = data.frame(vect = statStaDiff$diff$veloZaxsHor, sclr = statStaDiff$diff$rtioMoleDryH2o),
+        conv = conv,
+        Unit = base::data.frame(InpVect = "m s-1", InpSclr = "-", Conv = "kg m-1 s-1", Out = "W m-2")
+      )
+      
+      # transfer results
+      for(idx in base::names(fluxTmp)) statStaDiff[[idx]]$fluxH2oEngy <- fluxTmp[[idx]]
+      base::rm(conv, fluxTmp, idx)
     
     # evapotranspiration depth [m s-1]
     # resources: https://www.fao.org/3/X0490E/x0490e04.htm
     # https://github.com/stefanmet/NEON-FIU-algorithm-stefanmet/commit/86c368cfe367aac6f5c90aa8704ed0caf6558e4b
     # https://chemistry.stackexchange.com/questions/23643/calculating-the-volume-of-1-mole-of-liquid-water
-    fluxTmp <- def.flux.sclr(
-      inp = data.frame(vect = statStaDiff$diff$veloZaxsHor, sclr = statStaDiff$diff$rtioMoleDryH2o),
-      # conv: dry air mole density [mol m-3] x 
-      # (H2O molar mass [kg mol-1] / liquid H2O mass density at 4C and 1 Atm [kg m-3]) = [-]
-      conv = statStaDiff$base$densMoleAirDry * IntlNatu$MolmH2o / 1e3,
-      Unit = base::data.frame(InpVect = "m s-1", InpSclr = "-", Conv = "-", Out = "m s-1")
-    )
-    for(idx in base::names(fluxTmp)) statStaDiff[[idx]]$fluxH2oVelo <- fluxTmp[[idx]]
-    base::rm(fluxTmp, idx)
+      
+      # define conversion from kinematic units to units of evapotranspiration depth
+      # dry air mole density [mol m-3] x (H2O molar mass [kg mol-1] / liquid H2O mass density at 4C and 1 Atm [kg m-3]) = [-]
+      conv <- statStaDiff$base$densMoleAirDry * IntlNatu$MolmH2o / 1e3
+      base::attr(conv, which = "unit") <- "-"
+      
+      # actual flux calculation
+      fluxTmp <- def.flux.sclr(
+        inp = data.frame(vect = statStaDiff$diff$veloZaxsHor, sclr = statStaDiff$diff$rtioMoleDryH2o),
+        conv = conv,
+        Unit = base::data.frame(InpVect = "m s-1", InpSclr = "-", Conv = "-", Out = "m s-1")
+      )
+
+      # transfer results
+      for(idx in base::names(fluxTmp)) statStaDiff[[idx]]$fluxH2oVelo <- fluxTmp[[idx]]
+      base::rm(conv, fluxTmp, idx)
     
   # OTHER SCALAR FLUXES INCL. CO2, CH4, NOx, VOCs ETC.
     
