@@ -1454,15 +1454,92 @@ REYNflux_FD_mole_dry <- function(
       inp,
       conv = NULL,
       Unit,
-      # also need to add to fluxVect ... function:
       AlgBase = c("mean", "trnd", "ord03")[1],
-      # also need to add to statSta ... function:
       idep = NULL
     ) {
         
-      ### check presence of input arguments, consistent lengths and units
-      # Out unit is product of InpVect, InpSclr, Conv units
-      # check that conv is either of lenght 1 or same lenght as inp
+      # check presence of input arguments, consistent lengths and units
+          
+        # conv 1/2
+          
+          # if conv defaults to NULL, convert to 1 and assign unit attribute. Also specify Unit$Conv if not already present (failsafe)
+          if(is.null(conv)) {
+            conv <- 1
+            base::attr(conv, which = "unit") <- "-"
+            if(!("Conv" %in% base::names(Unit))) Unit$Conv <- "-"
+          }
+          
+          # check that conv is either of length 1 or of the same length as inp
+          if(!(base::length(conv) %in% c(1, base::nrow(inp)))) {
+            stop(base::paste0("def.flux.sclr(): conv needs to be either of length 1 or have the same number of observations as inp, please check."))}  
+      
+        # Unit
+        
+          # check that Unit is of class data.frame
+          if(base::class(Unit) != "data.frame") {
+            stop(base::paste0("def.flux.sclr(): Unit is not of class data.frame, please check."))  
+          }
+
+          # test unit variables
+          for(idx in c("InpVect", "InpSclr", "Conv", "Out")){
+            # idx <- "InpVect"
+            
+            # test for presence/absence of variables
+            if(!(idx %in% base::names(Unit))) {
+              stop(base::paste0("def.flux.sclr(): Unit$", idx, " is missing."))}
+            
+            # test for character type
+            if(base::typeof(Unit[[idx]]) != "character") {
+              stop(base::paste0("def.flux.sclr(): Unit$", idx, 
+                                " is not of type character, please check."))}
+            
+          }; base::rm(idx)
+      
+        # inp
+      
+          # check that input is of class data.frame
+          if(base::class(inp) != "data.frame") {
+            stop(base::paste0("def.flux.sclr(): inp is not of class data.frame, please check."))  
+          }
+          
+          # test for presence/absence of input variables and unit attributes
+          for(idx in c("vect", "sclr")){
+            # idx <- "vect"
+            
+            # test for presence/absence of variables
+            if(!(idx %in% base::names(inp))) {
+              stop(base::paste0("def.flux.sclr(): inp$", idx, " is missing."))}
+            
+            # test for presence/absence of unit attribute
+            if(!("unit" %in% base::names(attributes(inp[[idx]])))) {
+              stop(base::paste0("def.flux.sclr(): inp$", idx, " is missing unit attribute."))}
+            
+          }; base::rm(idx)
+      
+          # test for consistent units
+            
+            # inp$vect
+            if(attributes(inp$vect)$unit != Unit$InpVect) {
+              stop(base::paste0("def.flux.sclr(): inp$vect unit attribute does not match Unit$InpVect, please check."))}
+      
+            # inp$sclr
+            if(attributes(inp$sclr)$unit != Unit$InpSclr) {
+              stop(base::paste0("def.flux.sclr(): inp$sclr unit attribute does not match Unit$InpSclr, please check."))}
+      
+          # conv 2/2
+      
+            # test for consistent units - do this after the Unit dataframe has been tested
+            if(attributes(conv)$unit != Unit$Conv) {
+              stop(base::paste0("def.flux.sclr(): conv unit attribute does not match Unit$Conv, please check."))}
+
+      
+      # convert conv to the same number of observations as inp
+      if(base::length(conv) == 1){
+        convTmp <- base::rep(x = conv, length.out = base::nrow(inp))
+        base::attr(convTmp, which = "unit") <- base::attr(conv, which = "unit")
+        conv <- convTmp
+        base::rm(convTmp)
+      }
       
       
       # perform calculations
