@@ -1618,8 +1618,8 @@ REYNflux_FD_mole_dry <- function(
 
   
   # initiate dataframe to store conversion factors and correlations
-  statStaDiff$conv <- data.frame(fluxTemp = base::rep(NaN, length.out = nrow(statStaDiff$diff)))
-  statStaDiff$corr <- data.frame(fluxTemp = NaN)
+  statStaDiff$conv <- base::data.frame(fluxTemp = base::rep(NaN, length.out = nrow(statStaDiff$diff)))
+  statStaDiff$corr <- base::data.frame(fluxTemp = NaN)
 
   # SENSIBLE HEAT FLUX, BUOYANCY FLUX
   
@@ -1718,16 +1718,17 @@ REYNflux_FD_mole_dry <- function(
   #AUXILARY PARAMETERS
   ############################################################
   
-    
-  def.para.abl <- function(
+  # para or var -> capitalization?
+  # outputs reported along the same timestep as fluxes etc., so probably var?
+  def.var.abl <- function(
     
   ) {
   # default to NaN so that function procedes what it can with the data provided
   velo = data[c("veloXaxs", "veloYaxs", "veloZaxs")],
     base::dimnames(velo)[[2]] <- c("Xaxs", "Yaxs", "Zaxs")
-  distZaxsMeas = statStaDiff$mean$d_z_m
-  distZaxsAbl = statStaDiff$mean$d_z_ABL
-  densMoleAirDry = statStaDiff$base$densMoleAirDry
+  distZaxsMeas = statStaDiff$mean$d_z_m,
+  distZaxsAbl = statStaDiff$mean$d_z_ABL,
+  densMoleAirDry = statStaDiff$base$densMoleAirDry,
   tempVirtPot00 = statStaDiff$mean$tempVirtPot00,
   veloFric = fluxVect$mean$veloFric,
   fluxTemp = statStaDiff$mean$fluxTemp,
@@ -1735,59 +1736,67 @@ REYNflux_FD_mole_dry <- function(
   fluxH2o = statStaDiff$mean$fluxH2o
   }
     
+  # create empty object for export
+  rpt <- base::data.frame(qiItcVeloXaxsYaxsZaxs = NaN)
+    
   # turbulence intensity from total wind vector (Stull, Eq. 1.4d)
     
     # total wind vector [m s-1]
     veloXaxsYaxsZaxs <- base::sqrt(velo$Xaxs^2 + velo$Yaxs^2 + velo$Zaxs^2)
+    base::attr(veloXaxsYaxsZaxs, which = "unit") <- "m s-1"
     
     # turbulence intensity should be <0.5 to allow for Taylor's hypothesis [-]
-    qiItcVeloXaxsYaxsZaxs <- stats::sd(veloXaxsYaxsZaxs, na.rm=TRUE) / base::mean(veloXaxsYaxsZaxs, na.rm=TRUE)
-    base::attr(qiItcVeloXaxsYaxsZaxs, which = "unit") <- "-"
-    
-    # clean up
-    rm(veloXaxsYaxsZaxs)
-  
+    rpt$qiItcVeloXaxsYaxsZaxs <- stats::sd(veloXaxsYaxsZaxs, na.rm=TRUE) / base::mean(veloXaxsYaxsZaxs, na.rm=TRUE)
+    base::attr(rpt$qiItcVeloXaxsYaxsZaxs, which = "unit") <- "-"
+
   # Obukhov length and atmospheric stability
     
     # Obukhov length (used positive g!) [m]
-    distObkv <- (-(((veloFric)^3 / (eddy4R.base::IntlNatu$VonkFokn * eddy4R.base::IntlNatu$Grav / tempVirtPot00 * fluxTempVirtPot00 ))))
-    base::attr(distObkv, which = "unit") <- "m"
+    rpt$distObkv <- (-(((veloFric)^3 / (eddy4R.base::IntlNatu$VonkFokn * eddy4R.base::IntlNatu$Grav / tempVirtPot00 * fluxTempVirtPot00 ))))
+    base::attr(rpt$distObkv, which = "unit") <- "m"
     
     # atmospheric stability [-]
-    paraStbl <- distZaxsMeas / distObkv
-    base::attr(distObkv, which = "unit") <- "-"
+    rpt$paraStbl <- distZaxsMeas / rpt$distObkv
+    base::attr(rpt$paraStbl, which = "unit") <- "-"
   
   # convective velocity and timescale
   
     # convective (Deardorff) velocity [m s-1]
     # missing values in Deardorff velocity and resulting variables when buoyancy flux is negative!
-    veloScalCvct <- ( eddy4R.base::IntlNatu$Grav * distZaxsAbl / tempVirtPot00 * fluxTempVirtPot00 )^(1/3)
-    base::attr(veloScalCvct, which = "unit") <- "m s-1"
+    rpt$veloScalCvct <- ( eddy4R.base::IntlNatu$Grav * distZaxsAbl / tempVirtPot00 * fluxTempVirtPot00 )^(1/3)
+    base::attr(rpt$veloScalCvct, which = "unit") <- "m s-1"
 
     # (free) convective time scale [s], often in the order of 5-15 min
-    timeScalCvct <- distZaxsAbl / veloScalCvct
-    base::attr(timeScalCvct, which = "unit") <- "s"
+    rpt$timeScalCvct <- distZaxsAbl / rpt$veloScalCvct
+    base::attr(rpt$timeScalCvct, which = "unit") <- "s"
     
   # atmospheric temperature scale (eddy temperature fluctuations) [K]
     
     # surface layer
-    # tempScalAtmSurf <- - fluxTempVirtPot00 / veloFric	#according to Stull (1988) p. 356
-    tempScalAtmSurf <- - fluxTemp / veloFric	#according to Foken (2008) p.42, fits with ITC assessment
-    base::attr(tempScalAtmSurf, which = "unit") <- "K"
+    # rpt$tempScalAtmSurf <- - fluxTempVirtPot00 / veloFric	#according to Stull (1988) p. 356
+    rpt$tempScalAtmSurf <- - fluxTemp / veloFric	#according to Foken (2008) p.42, fits with ITC assessment
+    base::attr(rpt$tempScalAtmSurf, which = "unit") <- "K"
     
     # mixed layer
-    tempScalAbl <- fluxTemp / veloScalCvct #according to Stull (1988) p. 356
-    base::attr(tempScalAbl, which = "unit") <- "K"
+    rpt$tempScalAbl <- fluxTemp / rpt$veloScalCvct #according to Stull (1988) p. 356
+    base::attr(rpt$tempScalAbl, which = "unit") <- "K"
 
   # atmospheric humidity scale (eddy moisture fluctuations) [mol mol-1 dry air]
     
     # surface layer
-    rtioMoleDryH2oScalAtmSurf <- - base::mean(fluxH2o / densMoleAirDry, na.rm=TRUE) / veloFric
-    base::attr(rtioMoleDryH2oScalAtmSurf, which = "unit") <- "molH2o mol-1Dry"
+    rpt$rtioMoleDryH2oScalAtmSurf <- - base::mean(fluxH2o / densMoleAirDry, na.rm=TRUE) / veloFric
+    base::attr(rpt$rtioMoleDryH2oScalAtmSurf, which = "unit") <- "molH2o mol-1Dry"
     
     # mixed layer layer
-    rtioMoleDryH2oScalAbl <-   base::mean(fluxH2o / densMoleAirDry, na.rm=TRUE) / veloScalCvct
-    base::attr(rtioMoleDryH2oScalAbl, which = "unit") <- "molH2o mol-1Dry"
+    rpt$rtioMoleDryH2oScalAbl <-   base::mean(fluxH2o / densMoleAirDry, na.rm=TRUE) / rpt$veloScalCvct
+    base::attr(rpt$rtioMoleDryH2oScalAbl, which = "unit") <- "molH2o mol-1Dry"
+
+  # clean up
+  base::rm(veloXaxsYaxsZaxs)
+    
+  # return results
+  return(rpt)
+    
     
     
     
