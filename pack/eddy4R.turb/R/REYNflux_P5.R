@@ -1729,38 +1729,47 @@ REYNflux_FD_mole_dry <- function(
   tempVirtPot00 = statStaDiff$mean$tempVirtPot00,
   fluxTempVirtPot00 = statStaDiff$mean$fluxTempVirtPot00,
   distZaxsMeas = statStaDiff$mean$d_z_m
+  distZaxsAbl = statStaDiff$mean$d_z_ABL
     
   }
     
   # turbulence intensity from total wind vector (Stull, Eq. 1.4d)
     
-    # total wind vector
+    # total wind vector [m s-1]
     veloXaxsYaxsZaxs <- base::sqrt(velo$Xaxs^2 + velo$Yaxs^2 + velo$Zaxs^2)
     
-    # turbulence intensity should be <0.5 to allow for Taylor's hypothesis
+    # turbulence intensity should be <0.5 to allow for Taylor's hypothesis [-]
     qiItcVeloXaxsYaxsZaxs <- stats::sd(veloXaxsYaxsZaxs, na.rm=TRUE) / base::mean(veloXaxsYaxsZaxs, na.rm=TRUE)
     base::attr(qiItcVeloXaxsYaxsZaxs, which = "unit") <- "-"
     
     # clean up
     rm(veloXaxsYaxsZaxs)
   
-  # Obukhov length (used positive g!)
-  distObkv <- (-(((veloFric)^3 / (eddy4R.base::IntlNatu$VonkFokn * eddy4R.base::IntlNatu$Grav / tempVirtPot00 * fluxTempVirtPot00 ))))
-  base::attr(distObkv, which = "unit") <- "m"
+  # Obukhov length and atmospheric stability
+    
+    # Obukhov length (used positive g!) [m]
+    distObkv <- (-(((veloFric)^3 / (eddy4R.base::IntlNatu$VonkFokn * eddy4R.base::IntlNatu$Grav / tempVirtPot00 * fluxTempVirtPot00 ))))
+    base::attr(distObkv, which = "unit") <- "m"
+    
+    # atmospheric stability [-]
+    paraStbl <- distZaxsMeas / distObkv
+    base::attr(distObkv, which = "unit") <- "-"
   
-  # atmospheric stability
-  paraStbl <- distZaxsMeas / distObkv
-  base::attr(distObkv, which = "unit") <- "-"
+  # convective velocity and timescale
   
+    # convective (Deardorff) velocity [m s-1]
+    # missing values in Deardorff velocity and resulting variables when buoyancy flux is negative!
+    veloCvct <- ( eddy4R.base::IntlNatu$Grav * distZaxsAbl / tempVirtPot00 * fluxTempVirtPot00 )^(1/3)
+    base::attr(veloCvct, which = "unit") <- "m s-1"
 
+    # (free) convective time scale [s], often in the order of 5-15 min
+    timeCvct <- distZaxsAbl / veloCvct
+    base::attr(timeCvct, which = "unit") <- "s"
+    
   
-  #convective (Deardorff) velocity [m s-1]
-  #missing values in Deardorff velocity and resulting variables when buoyancy flux is negative!
-  mn$w_star <- ( eddy4R.base::IntlNatu$Grav * mn$d_z_ABL / mn$tempVirtPot00 * mn$F_H_kin_v_0 )^(1/3)
   
-  #(free) convective time scale [s], often in the order of 5-15 min
-  mn$t_star <- mn$d_z_ABL / mn$w_star
   
+    
   #temperature scale (eddy temperature fluctuations) [K]
   #surface layer
   #mn$T_star_SL <- - mn$F_H_kin_v_0 / veloFric	#according to Stull (1988) p. 356
@@ -1779,6 +1788,8 @@ REYNflux_FD_mole_dry <- function(
   mn$I <- qiItcVeloXaxsYaxsZaxs # turbulence intensity
   mn$d_L_v_0 <- distObkv # Obukhov length
   mn$sigma <- paraStbl # atmospheric stability
+  mn$w_star <- veloCvct
+  mn$t_star <- timeCvct
   
   
   
