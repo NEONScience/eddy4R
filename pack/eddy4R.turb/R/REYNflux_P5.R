@@ -834,7 +834,7 @@ REYNflux_FD_mole_dry <- function(
     
     #' @param inp A data frame containing the variables for which to perform the calculations, class "numeric", each with unit attribute.
     #' @param refe A list of reference quantities that can be supplied to overwrite internal calculations, class "numeric", each with unit attribute. Currently implemented only for refe$mean in combination with inp variables in units [rad].
-    #' @param AlgBase A vector of length 1 that defines the base state with respect to which instantaneous differences and standard deviations are calculated, of class "character" and no unit attribute. Contains one of AlgBase <- c("mean", "trnd", "ord03")[1] and defaults to "mean", with the additional options detrending "trnd" and 3rd-order polynomial "ord03". See ?eddy4R.base::def.base.ec() for additional details.
+    #' @param AlgBase A vector of length 1 that defines the base state with respect to which instantaneous differences and standard deviations are calculated, of class "character" and no unit attribute. Contains one of AlgBase <- c("mean", "trnd", "ord03")[1] and defaults to "mean", with the additional options detrending "trnd" and 3rd-order polynomial "ord03". See ?eddy4R.base::def.base.ec() for additional details. When AlgBase is set to "trnd" or "ord03", the variable inp$idep is required, which provides the independent variable for interpolation.
     
     #' @return 
     #' The returned object is a list containing the element dataframes min, max, mean, base, diff, and sd, each of class "numeric" and with unit attributes. The elements min, max and mean are the minimum, maximum and mean of the variables in inp with a single observation. The element base is the base state for each of the variables in inp, with a single observation (AlgBase == "mean") or the same number of observations as inp (AlgBase %in% c("trnd", "ord03")). The element diff are the point-by-point differences from the selected base state for each of the variables in inp, with the same number of observations as inp. The element sd are the standard deviations of diff for each of the variables in inp, with a single observation. It should be noted that the mean (and base state for AlgBase == "mean") for angular quantities with unit [rad] is computed from 1) point-wise unit vector decomposition to polar coordinates [-], 2) averaging the polar coordinates [-], and 3) re-composing the mean polar coordinates to Cartesian angle [rad]. In the special case of wind direction (example: angZaxsErth) it is recommended to supply the argument refe$mean$angZaxsErth to the function call as provided from ?def.rot.ang.zaxs.erth. This ensures consistency with downstream applications for footprint modeling, separating shear into stream-wise and cross-wind terms etc. (minimizes the mean cross-wind from directly averaging the wind vector horizontal components instead of unit vector components).
@@ -915,7 +915,11 @@ REYNflux_FD_mole_dry <- function(
             stop(base::paste0("def.rot.ang.zaxs.erth(): inp$", idx, " is missing unit attribute."))        }
       
         }; base::rm(idx)
-    
+      
+        # check that inp$idep is present in case AlgBase != "mean"
+        if(AlgBase != "mean" & !("idep" %in% base::names(inp))) {
+          stop(base::paste0("def.stat.sta.diff(): please specify function argument inp$idep when AlgBase != 'mean'."))}
+      
       
       # minimum and maximum
       
@@ -1121,7 +1125,7 @@ REYNflux_FD_mole_dry <- function(
   statStaDiff <- def.stat.sta.diff(
     inp = data,
     refe = base::list("mean" = base::list("angZaxsErth" = rot$angZaxsErth)),
-    AlgBase = c("mean", "trnd", "ord03")[1]
+    AlgBase = AlgBase
     )
 
   
@@ -1538,7 +1542,7 @@ REYNflux_FD_mole_dry <- function(
     
         # AlgBase and idep
         if(AlgBase != "mean" & is.null(idep)) {
-          stop(base::paste0("def.flux.sclr(): please specify function argument idep if AlgBase != 'mean'."))}
+          stop(base::paste0("def.flux.sclr(): please specify function argument idep when AlgBase != 'mean'."))}
 
       
       # convert conv to the same number of observations as inp
