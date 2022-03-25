@@ -1718,14 +1718,37 @@ REYNflux_FD_mole_dry <- function(
   #AUXILARY PARAMETERS
   ############################################################
   
-  #turbulence intensity from total wind vector (Stull, Eq. 1.4d)
-  #total wind vector
-  tot <- sqrt(data$veloXaxs^2 + data$veloYaxs^2 + data$veloZaxs^2)
-  #turbulence intensity should be <0.5 to allow for Taylors hypothesis
-  mn$I <- sd(tot, na.rm=TRUE) / mean(tot, na.rm=TRUE)
+    
+  def.para.abl <- function(
+    
+  ) {
+  # default to NaN so that function procedes what it can with the data provided
+  velo = data[c("veloXaxs", "veloYaxs", "veloZaxs")],
+    base::dimnames(velo)[[2]] <- c("Xaxs", "Yaxs", "Zaxs")
+  veloFric = fluxVect$mean$veloFric,
+  tempVirtPot00 = statStaDiff$mean$tempVirtPot00,
+  fluxTempVirtPot00 = statStaDiff$mean$fluxTempVirtPot00
+    
+  }
+    
+  # turbulence intensity from total wind vector (Stull, Eq. 1.4d)
+    
+    # total wind vector
+    veloXaxsYaxsZaxs <- base::sqrt(velo$Xaxs^2 + velo$Yaxs^2 + velo$Zaxs^2)
+    
+    # turbulence intensity should be <0.5 to allow for Taylor's hypothesis
+    qiItcVeloXaxsYaxsZaxs <- stats::sd(veloXaxsYaxsZaxs, na.rm=TRUE) / base::mean(veloXaxsYaxsZaxs, na.rm=TRUE)
+    base::attr(qiItcVeloXaxsYaxsZaxs, which = "unit") <- "-"
+    
+    # clean up
+    rm(veloXaxsYaxsZaxs)
   
-  #Obukhov length (used positive g!)
-  mn$d_L_v_0 <- (-(((veloFric)^3 / (eddy4R.base::IntlNatu$VonkFokn * eddy4R.base::IntlNatu$Grav / mn$tempVirtPot00 * mn$F_H_kin_v_0 ))))
+  
+    
+  # Obukhov length (used positive g!)
+  distStbl <- (-(((veloFric)^3 / (eddy4R.base::IntlNatu$VonkFokn * eddy4R.base::IntlNatu$Grav / tempVirtPot00 * fluxTempVirtPot00 ))))
+  
+  
   
   #stability
   mn$sigma <- mn$d_z_m / mn$d_L_v_0
@@ -1750,8 +1773,12 @@ REYNflux_FD_mole_dry <- function(
   #mixed layer layer
   mn$rtioMoleDryH2o_star_ML <-   mean(mn$F_LE_kin / base$densMoleAirDry, na.rm=TRUE) / mn$w_star 
 
-  #clean up
-  rm(tot)
+  
+  # mapping outputs
+  mn$I <- qiItcVeloXaxsYaxsZaxs # turbulence intensity
+  mn$d_L_v_0 <- distStbl # Obukhov length
+  
+  
   
   ############################################################
   #EXPORT RESULTS
