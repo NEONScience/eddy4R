@@ -1728,6 +1728,7 @@ REYNflux_FD_mole_dry <- function(
   veloFric = fluxVect$mean$veloFric,
   tempVirtPot00 = statStaDiff$mean$tempVirtPot00,
   fluxTempVirtPot00 = statStaDiff$mean$fluxTempVirtPot00,
+  fluxTemp = statStaDiff$mean$fluxTemp,
   distZaxsMeas = statStaDiff$mean$d_z_m
   distZaxsAbl = statStaDiff$mean$d_z_ABL
     
@@ -1759,25 +1760,27 @@ REYNflux_FD_mole_dry <- function(
   
     # convective (Deardorff) velocity [m s-1]
     # missing values in Deardorff velocity and resulting variables when buoyancy flux is negative!
-    veloCvct <- ( eddy4R.base::IntlNatu$Grav * distZaxsAbl / tempVirtPot00 * fluxTempVirtPot00 )^(1/3)
-    base::attr(veloCvct, which = "unit") <- "m s-1"
+    veloScalCvct <- ( eddy4R.base::IntlNatu$Grav * distZaxsAbl / tempVirtPot00 * fluxTempVirtPot00 )^(1/3)
+    base::attr(veloScalCvct, which = "unit") <- "m s-1"
 
     # (free) convective time scale [s], often in the order of 5-15 min
-    timeCvct <- distZaxsAbl / veloCvct
-    base::attr(timeCvct, which = "unit") <- "s"
+    timeScalCvct <- distZaxsAbl / veloScalCvct
+    base::attr(timeScalCvct, which = "unit") <- "s"
     
-  
-  
+  # atmospheric temperature scale (eddy temperature fluctuations) [K]
+    
+    # surface layer
+    # tempScalAtmSurf <- - fluxTempVirtPot00 / veloFric	#according to Stull (1988) p. 356
+    tempScalAtmSurf <- - fluxTemp / veloFric	#according to Foken (2008) p.42, fits with ITC assessment
+    base::attr(tempScalAtmSurf, which = "unit") <- "K"
+    
+    # mixed layer
+    tempScalAbl <- fluxTemp / veloScalCvct #according to Stull (1988) p. 356
+    base::attr(tempScalAbl, which = "unit") <- "K"
   
     
-  #temperature scale (eddy temperature fluctuations) [K]
-  #surface layer
-  #mn$T_star_SL <- - mn$F_H_kin_v_0 / veloFric	#according to Stull (1988) p. 356
-  mn$T_star_SL <- - mn$F_H_kin / veloFric	#according to Foken (2008) p.42, fits with ITC assessment
-  #mixed layer
-  mn$T_star_ML <-   mn$F_H_kin / mn$w_star #according to Stull (1988) p. 356
-  
-  #humidity scale (eddy moisture fluctuations) [mol mol-1 dry air]
+    
+  # atmospheric humidity scale (eddy moisture fluctuations) [mol mol-1 dry air]
   #surface layer
   mn$rtioMoleDryH2o_star_SL <- - mean(mn$F_LE_kin / base$densMoleAirDry, na.rm=TRUE) / veloFric
   #mixed layer layer
@@ -1788,8 +1791,10 @@ REYNflux_FD_mole_dry <- function(
   mn$I <- qiItcVeloXaxsYaxsZaxs # turbulence intensity
   mn$d_L_v_0 <- distObkv # Obukhov length
   mn$sigma <- paraStbl # atmospheric stability
-  mn$w_star <- veloCvct
-  mn$t_star <- timeCvct
+  mn$w_star <- veloScalCvct
+  mn$t_star <- timeScalCvct
+  mn$T_star_SL <- tempScalSurf
+  mn$T_star_ML <- tempScalAbl
   
   
   
