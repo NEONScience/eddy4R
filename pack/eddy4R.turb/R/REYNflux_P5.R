@@ -1727,7 +1727,8 @@ REYNflux_FD_mole_dry <- function(
     base::dimnames(velo)[[2]] <- c("Xaxs", "Yaxs", "Zaxs")
   veloFric = fluxVect$mean$veloFric,
   tempVirtPot00 = statStaDiff$mean$tempVirtPot00,
-  fluxTempVirtPot00 = statStaDiff$mean$fluxTempVirtPot00
+  fluxTempVirtPot00 = statStaDiff$mean$fluxTempVirtPot00,
+  distZaxsMeas = statStaDiff$mean$d_z_m
     
   }
     
@@ -1743,15 +1744,15 @@ REYNflux_FD_mole_dry <- function(
     # clean up
     rm(veloXaxsYaxsZaxs)
   
-  
-    
   # Obukhov length (used positive g!)
-  distStbl <- (-(((veloFric)^3 / (eddy4R.base::IntlNatu$VonkFokn * eddy4R.base::IntlNatu$Grav / tempVirtPot00 * fluxTempVirtPot00 ))))
+  distObkv <- (-(((veloFric)^3 / (eddy4R.base::IntlNatu$VonkFokn * eddy4R.base::IntlNatu$Grav / tempVirtPot00 * fluxTempVirtPot00 ))))
+  base::attr(distObkv, which = "unit") <- "m"
   
+  # atmospheric stability
+  paraStbl <- distZaxsMeas / distObkv
+  base::attr(distObkv, which = "unit") <- "-"
   
-  
-  #stability
-  mn$sigma <- mn$d_z_m / mn$d_L_v_0
+
   
   #convective (Deardorff) velocity [m s-1]
   #missing values in Deardorff velocity and resulting variables when buoyancy flux is negative!
@@ -1776,7 +1777,8 @@ REYNflux_FD_mole_dry <- function(
   
   # mapping outputs
   mn$I <- qiItcVeloXaxsYaxsZaxs # turbulence intensity
-  mn$d_L_v_0 <- distStbl # Obukhov length
+  mn$d_L_v_0 <- distObkv # Obukhov length
+  mn$sigma <- paraStbl # atmospheric stability
   
   
   
