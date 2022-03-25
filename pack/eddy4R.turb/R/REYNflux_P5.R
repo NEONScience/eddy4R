@@ -118,10 +118,10 @@ REYNflux_FD_mole_dry <- function(
       base::attr(x = data$tempAir, which = "unit") <- "K"
     data$rtioMoleDryH2o <- data$FD_mole_H2O
       data$FD_mole_H2O <- NULL
-      base::attr(x = data$rtioMoleDryH2o, which = "unit") <- "-"
+      base::attr(x = data$rtioMoleDryH2o, which = "unit") <- "molH2o mol-1Dry"
     data$rtioMoleDryCo2 <- data$FD_mole_CH4
       data$FD_mole_CH4 <- NULL
-      base::attr(x = data$rtioMoleDryCo2, which = "unit") <- "-"
+      base::attr(x = data$rtioMoleDryCo2, which = "unit") <- "molCo2 mol-1Dry"
   
   
   
@@ -449,7 +449,7 @@ REYNflux_FD_mole_dry <- function(
     
     #' @description Function definition. Calculation of the thermodynamic properties of a mix of dry air and water vapor.
     
-    #' @param rtioMoleDryH2o A vector containing the water vapor dry mole fraction, of class "numeric". [-]
+    #' @param rtioMoleDryH2o A vector containing the water vapor dry mole fraction, of class "numeric". [molH2o mol-1Dry]
     
     #' @return 
     #' The returned object is a data frame with the same number of observations as rtioMoleDryH2o, containing the following variables:
@@ -469,7 +469,7 @@ REYNflux_FD_mole_dry <- function(
     #' def.natu.air.wet(rtioMoleDryH2o = 0.0003)
     #' Example 2, assign values and units to variables first, the function should run ok.
     #' rtioMoleDryH2o <- 0.0003
-    #' attributes(rtioMoleDryH2o)$unit <- "-"
+    #' attributes(rtioMoleDryH2o)$unit <- "molH2o mol-1Dry"
     #' def.natu.air.wet(rtioMoleDryH2o)
     
     #' @seealso Currently none.
@@ -500,7 +500,7 @@ REYNflux_FD_mole_dry <- function(
       }
       
       # test for correct units of input variables
-      if(attributes(rtioMoleDryH2o)$unit != "-") {
+      if(attributes(rtioMoleDryH2o)$unit != "molH2o mol-1Dry") {
         
         stop("def.natu.air.wet(): input units are not matching internal units, please check.")
         
@@ -1657,7 +1657,7 @@ REYNflux_FD_mole_dry <- function(
     fluxTmp <- def.flux.sclr(
       inp = data.frame(vect = statStaDiff$diff$veloZaxsHor, sclr = statStaDiff$diff$rtioMoleDryH2o),
       conv = statStaDiff$base$densMoleAirDry,
-      Unit = base::data.frame(InpVect = "m s-1", InpSclr = "-", Conv = "mol m-3", Out = "mol m-2 s-1")
+      Unit = base::data.frame(InpVect = "m s-1", InpSclr = "molH2o mol-1Dry", Conv = "mol m-3", Out = "mol m-2 s-1")
     )
     for(idx in base::names(fluxTmp)) statStaDiff[[idx]]$fluxH2o <- fluxTmp[[idx]]
     base::rm(fluxTmp, idx)
@@ -1673,7 +1673,7 @@ REYNflux_FD_mole_dry <- function(
       fluxTmp <- def.flux.sclr(
         inp = data.frame(vect = statStaDiff$diff$veloZaxsHor, sclr = statStaDiff$diff$rtioMoleDryH2o),
         conv = conv,
-        Unit = base::data.frame(InpVect = "m s-1", InpSclr = "-", Conv = "kg m-1 s-1", Out = "W m-2")
+        Unit = base::data.frame(InpVect = "m s-1", InpSclr = "molH2o mol-1Dry", Conv = "kg m-1 s-1", Out = "W m-2")
       )
       
       # transfer results
@@ -1694,7 +1694,7 @@ REYNflux_FD_mole_dry <- function(
       fluxTmp <- def.flux.sclr(
         inp = data.frame(vect = statStaDiff$diff$veloZaxsHor, sclr = statStaDiff$diff$rtioMoleDryH2o),
         conv = conv,
-        Unit = base::data.frame(InpVect = "m s-1", InpSclr = "-", Conv = "-", Out = "m s-1")
+        Unit = base::data.frame(InpVect = "m s-1", InpSclr = "molH2o mol-1Dry", Conv = "-", Out = "m s-1")
       )
 
       # transfer results
@@ -1707,7 +1707,7 @@ REYNflux_FD_mole_dry <- function(
     fluxTmp <- def.flux.sclr(
       inp = data.frame(vect = statStaDiff$diff$veloZaxsHor, sclr = statStaDiff$diff$rtioMoleDryCo2),
       conv = statStaDiff$base$densMoleAirDry,
-      Unit = base::data.frame(InpVect = "m s-1", InpSclr = "-", Conv = "mol m-3", Out = "mol m-2 s-1")
+      Unit = base::data.frame(InpVect = "m s-1", InpSclr = "molCo2 mol-1Dry", Conv = "mol m-3", Out = "mol m-2 s-1")
     )
     for(idx in base::names(fluxTmp)) statStaDiff[[idx]]$fluxCo2 <- fluxTmp[[idx]]
     base::rm(fluxTmp, idx)
@@ -1725,13 +1725,14 @@ REYNflux_FD_mole_dry <- function(
   # default to NaN so that function procedes what it can with the data provided
   velo = data[c("veloXaxs", "veloYaxs", "veloZaxs")],
     base::dimnames(velo)[[2]] <- c("Xaxs", "Yaxs", "Zaxs")
-  veloFric = fluxVect$mean$veloFric,
-  tempVirtPot00 = statStaDiff$mean$tempVirtPot00,
-  fluxTempVirtPot00 = statStaDiff$mean$fluxTempVirtPot00,
-  fluxTemp = statStaDiff$mean$fluxTemp,
   distZaxsMeas = statStaDiff$mean$d_z_m
   distZaxsAbl = statStaDiff$mean$d_z_ABL
-    
+  densMoleAirDry = statStaDiff$base$densMoleAirDry
+  tempVirtPot00 = statStaDiff$mean$tempVirtPot00,
+  veloFric = fluxVect$mean$veloFric,
+  fluxTemp = statStaDiff$mean$fluxTemp,
+  fluxTempVirtPot00 = statStaDiff$mean$fluxTempVirtPot00,
+  fluxH2o = statStaDiff$mean$fluxH2o
   }
     
   # turbulence intensity from total wind vector (Stull, Eq. 1.4d)
@@ -1777,14 +1778,19 @@ REYNflux_FD_mole_dry <- function(
     # mixed layer
     tempScalAbl <- fluxTemp / veloScalCvct #according to Stull (1988) p. 356
     base::attr(tempScalAbl, which = "unit") <- "K"
-  
-    
-    
+
   # atmospheric humidity scale (eddy moisture fluctuations) [mol mol-1 dry air]
-  #surface layer
-  mn$rtioMoleDryH2o_star_SL <- - mean(mn$F_LE_kin / base$densMoleAirDry, na.rm=TRUE) / veloFric
-  #mixed layer layer
-  mn$rtioMoleDryH2o_star_ML <-   mean(mn$F_LE_kin / base$densMoleAirDry, na.rm=TRUE) / mn$w_star 
+    
+    # surface layer
+    rtioMoleDryH2oScalAtmSurf <- - base::mean(fluxH2o / densMoleAirDry, na.rm=TRUE) / veloFric
+    base::attr(rtioMoleDryH2oScalAtmSurf, which = "unit") <- "molH2o mol-1Dry"
+    
+    # mixed layer layer
+    rtioMoleDryH2oScalAbl <-   base::mean(fluxH2o / densMoleAirDry, na.rm=TRUE) / veloScalCvct
+    base::attr(rtioMoleDryH2oScalAbl, which = "unit") <- "molH2o mol-1Dry"
+    
+    
+    
 
   
   # mapping outputs
@@ -1795,6 +1801,8 @@ REYNflux_FD_mole_dry <- function(
   mn$t_star <- timeScalCvct
   mn$T_star_SL <- tempScalSurf
   mn$T_star_ML <- tempScalAbl
+  mn$rtioMoleDryH2o_star_SL <- rtioMoleDryH2oScalAtmSurf
+  mn$rtioMoleDryH2o_star_ML <- rtioMoleDryH2oScalAbl
   
   
   
