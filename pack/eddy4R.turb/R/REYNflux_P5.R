@@ -1718,107 +1718,135 @@ REYNflux_FD_mole_dry <- function(
   #AUXILARY PARAMETERS
   ############################################################
   
-  # para or var -> capitalization?
-  # outputs reported along the same timestep as fluxes etc., so probably var?
-  def.var.abl <- function(
+  # definition function (to be exported)
+  {
+    def.var.abl <- function(
+      velo = NULL,
+      distZaxsMeas = NULL,
+      distZaxsAbl = NULL,
+      densMoleAirDry = NULL,
+      tempVirtPot00 = NULL,
+      veloFric = NULL,
+      fluxTemp = NULL,
+      fluxTempVirtPot00 = NULL,
+      fluxH2o = NULL
+    ) {
+      
     
-  ) {
-  # default to NaN so that function procedes what it can with the data provided
-  velo = data[c("veloXaxs", "veloYaxs", "veloZaxs")],
-    base::dimnames(velo)[[2]] <- c("Xaxs", "Yaxs", "Zaxs")
-  distZaxsMeas = statStaDiff$mean$d_z_m,
-  distZaxsAbl = statStaDiff$mean$d_z_ABL,
-  densMoleAirDry = statStaDiff$base$densMoleAirDry,
-  tempVirtPot00 = statStaDiff$mean$tempVirtPot00,
-  veloFric = fluxVect$mean$veloFric,
-  fluxTemp = statStaDiff$mean$fluxTemp,
-  fluxTempVirtPot00 = statStaDiff$mean$fluxTempVirtPot00,
-  fluxH2o = statStaDiff$mean$fluxH2o
+      
+      
+      
+      
+      
+      # create empty object for export
+      rpt <- base::data.frame(qiItcVeloXaxsYaxsZaxs = NaN)
+        
+      # turbulence intensity from total wind vector (Stull, Eq. 1.4d)
+        
+        # total wind vector [m s-1]
+        veloXaxsYaxsZaxs <- base::sqrt(velo$Xaxs^2 + velo$Yaxs^2 + velo$Zaxs^2)
+        base::attr(veloXaxsYaxsZaxs, which = "unit") <- "m s-1"
+        
+        # turbulence intensity should be <0.5 to allow for Taylor's hypothesis [-]
+        rpt$qiItcVeloXaxsYaxsZaxs <- stats::sd(veloXaxsYaxsZaxs, na.rm=TRUE) / base::mean(veloXaxsYaxsZaxs, na.rm=TRUE)
+        base::attr(rpt$qiItcVeloXaxsYaxsZaxs, which = "unit") <- "-"
+    
+      # Obukhov length and atmospheric stability
+        
+        # Obukhov length (used positive g!) [m]
+        rpt$distObkv <- (-(((veloFric)^3 / (eddy4R.base::IntlNatu$VonkFokn * eddy4R.base::IntlNatu$Grav / tempVirtPot00 * fluxTempVirtPot00 ))))
+        base::attr(rpt$distObkv, which = "unit") <- "m"
+        
+        # atmospheric stability [-]
+        rpt$paraStbl <- distZaxsMeas / rpt$distObkv
+        base::attr(rpt$paraStbl, which = "unit") <- "-"
+      
+      # convective velocity and timescale
+      
+        # convective (Deardorff) velocity [m s-1]
+        # missing values in Deardorff velocity and resulting variables when buoyancy flux is negative!
+        rpt$veloScalCvct <- ( eddy4R.base::IntlNatu$Grav * distZaxsAbl / tempVirtPot00 * fluxTempVirtPot00 )^(1/3)
+        base::attr(rpt$veloScalCvct, which = "unit") <- "m s-1"
+    
+        # (free) convective time scale [s], often in the order of 5-15 min
+        rpt$timeScalCvct <- distZaxsAbl / rpt$veloScalCvct
+        base::attr(rpt$timeScalCvct, which = "unit") <- "s"
+        
+      # atmospheric temperature scale (eddy temperature fluctuations) [K]
+        
+        # surface layer
+        # rpt$tempScalAtmSurf <- - fluxTempVirtPot00 / veloFric	#according to Stull (1988) p. 356
+        rpt$tempScalAtmSurf <- - fluxTemp / veloFric	#according to Foken (2008) p.42, fits with ITC assessment
+        base::attr(rpt$tempScalAtmSurf, which = "unit") <- "K"
+        
+        # mixed layer
+        rpt$tempScalAbl <- fluxTemp / rpt$veloScalCvct #according to Stull (1988) p. 356
+        base::attr(rpt$tempScalAbl, which = "unit") <- "K"
+    
+      # atmospheric humidity scale (eddy moisture fluctuations) [mol mol-1 dry air]
+        
+        # surface layer
+        rpt$rtioMoleDryH2oScalAtmSurf <- - base::mean(fluxH2o / densMoleAirDry, na.rm=TRUE) / veloFric
+        base::attr(rpt$rtioMoleDryH2oScalAtmSurf, which = "unit") <- "molH2o mol-1Dry"
+        
+        # mixed layer layer
+        rpt$rtioMoleDryH2oScalAbl <-   base::mean(fluxH2o / densMoleAirDry, na.rm=TRUE) / rpt$veloScalCvct
+        base::attr(rpt$rtioMoleDryH2oScalAbl, which = "unit") <- "molH2o mol-1Dry"
+    
+      # clean up
+      base::rm(veloXaxsYaxsZaxs)
+        
+      # return results
+      return(rpt)
+      
+    }
   }
     
-  # create empty object for export
-  rpt <- base::data.frame(qiItcVeloXaxsYaxsZaxs = NaN)
-    
-  # turbulence intensity from total wind vector (Stull, Eq. 1.4d)
-    
-    # total wind vector [m s-1]
-    veloXaxsYaxsZaxs <- base::sqrt(velo$Xaxs^2 + velo$Yaxs^2 + velo$Zaxs^2)
-    base::attr(veloXaxsYaxsZaxs, which = "unit") <- "m s-1"
-    
-    # turbulence intensity should be <0.5 to allow for Taylor's hypothesis [-]
-    rpt$qiItcVeloXaxsYaxsZaxs <- stats::sd(veloXaxsYaxsZaxs, na.rm=TRUE) / base::mean(veloXaxsYaxsZaxs, na.rm=TRUE)
-    base::attr(rpt$qiItcVeloXaxsYaxsZaxs, which = "unit") <- "-"
 
-  # Obukhov length and atmospheric stability
+  # actual function call
     
-    # Obukhov length (used positive g!) [m]
-    rpt$distObkv <- (-(((veloFric)^3 / (eddy4R.base::IntlNatu$VonkFokn * eddy4R.base::IntlNatu$Grav / tempVirtPot00 * fluxTempVirtPot00 ))))
-    base::attr(rpt$distObkv, which = "unit") <- "m"
+    # prepare input data    
+    velo <- data[c("veloXaxs", "veloYaxs", "veloZaxs")]
+    base::dimnames(velo)[[2]] <- c("Xaxs", "Yaxs", "Zaxs")
     
-    # atmospheric stability [-]
-    rpt$paraStbl <- distZaxsMeas / rpt$distObkv
-    base::attr(rpt$paraStbl, which = "unit") <- "-"
+    # call function
+    varAblTmp <- def.var.abl(
+      velo = velo,
+      distZaxsMeas = statStaDiff$mean$d_z_m,
+      distZaxsAbl = statStaDiff$mean$d_z_ABL,
+      densMoleAirDry = statStaDiff$base$densMoleAirDry,
+      tempVirtPot00 = statStaDiff$mean$tempVirtPot00,
+      veloFric = fluxVect$mean$veloFric,
+      fluxTemp = statStaDiff$mean$fluxTemp,
+      fluxTempVirtPot00 = statStaDiff$mean$fluxTempVirtPot00,
+      fluxH2o = statStaDiff$mean$fluxH2o
+    )
+    
+    # assign outputs
+    for(idx in base::names(varAblTmp)) statStaDiff$mean[[idx]] <- varAblTmp[[idx]]
+
+    # clean up
+    base::rm(idx, varAblTmp, velo)
+    
+
+    
+    
+############################################################
+#EXPORT RESULTS
+############################################################
   
-  # convective velocity and timescale
-  
-    # convective (Deardorff) velocity [m s-1]
-    # missing values in Deardorff velocity and resulting variables when buoyancy flux is negative!
-    rpt$veloScalCvct <- ( eddy4R.base::IntlNatu$Grav * distZaxsAbl / tempVirtPot00 * fluxTempVirtPot00 )^(1/3)
-    base::attr(rpt$veloScalCvct, which = "unit") <- "m s-1"
-
-    # (free) convective time scale [s], often in the order of 5-15 min
-    rpt$timeScalCvct <- distZaxsAbl / rpt$veloScalCvct
-    base::attr(rpt$timeScalCvct, which = "unit") <- "s"
-    
-  # atmospheric temperature scale (eddy temperature fluctuations) [K]
-    
-    # surface layer
-    # rpt$tempScalAtmSurf <- - fluxTempVirtPot00 / veloFric	#according to Stull (1988) p. 356
-    rpt$tempScalAtmSurf <- - fluxTemp / veloFric	#according to Foken (2008) p.42, fits with ITC assessment
-    base::attr(rpt$tempScalAtmSurf, which = "unit") <- "K"
-    
-    # mixed layer
-    rpt$tempScalAbl <- fluxTemp / rpt$veloScalCvct #according to Stull (1988) p. 356
-    base::attr(rpt$tempScalAbl, which = "unit") <- "K"
-
-  # atmospheric humidity scale (eddy moisture fluctuations) [mol mol-1 dry air]
-    
-    # surface layer
-    rpt$rtioMoleDryH2oScalAtmSurf <- - base::mean(fluxH2o / densMoleAirDry, na.rm=TRUE) / veloFric
-    base::attr(rpt$rtioMoleDryH2oScalAtmSurf, which = "unit") <- "molH2o mol-1Dry"
-    
-    # mixed layer layer
-    rpt$rtioMoleDryH2oScalAbl <-   base::mean(fluxH2o / densMoleAirDry, na.rm=TRUE) / rpt$veloScalCvct
-    base::attr(rpt$rtioMoleDryH2oScalAbl, which = "unit") <- "molH2o mol-1Dry"
-
-  # clean up
-  base::rm(veloXaxsYaxsZaxs)
-    
-  # return results
-  return(rpt)
-    
-    
-    
-    
-
   
   # mapping outputs
-  mn$I <- qiItcVeloXaxsYaxsZaxs # turbulence intensity
-  mn$d_L_v_0 <- distObkv # Obukhov length
-  mn$sigma <- paraStbl # atmospheric stability
-  mn$w_star <- veloScalCvct
-  mn$t_star <- timeScalCvct
-  mn$T_star_SL <- tempScalSurf
-  mn$T_star_ML <- tempScalAbl
-  mn$rtioMoleDryH2o_star_SL <- rtioMoleDryH2oScalAtmSurf
-  mn$rtioMoleDryH2o_star_ML <- rtioMoleDryH2oScalAbl
-  
-  
-  
-  ############################################################
-  #EXPORT RESULTS
-  ############################################################
-  
+  # mn$I <- qiItcVeloXaxsYaxsZaxs # turbulence intensity
+  # mn$d_L_v_0 <- distObkv # Obukhov length
+  # mn$sigma <- paraStbl # atmospheric stability
+  # mn$w_star <- veloScalCvct
+  # mn$t_star <- timeScalCvct
+  # mn$T_star_SL <- tempScalSurf
+  # mn$T_star_ML <- tempScalAbl
+  # mn$rtioMoleDryH2o_star_SL <- rtioMoleDryH2oScalAtmSurf
+  # mn$rtioMoleDryH2o_star_ML <- rtioMoleDryH2oScalAbl
+
   
   #convert the sd date to the mn date (as sd of the date range is meaningless)
   sd$date = mn$date
