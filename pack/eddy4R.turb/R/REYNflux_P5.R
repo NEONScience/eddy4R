@@ -1717,7 +1717,8 @@ REYNflux_FD_mole_dry <- function(
   ############################################################
   #AUXILARY PARAMETERS
   ############################################################
-  
+
+    
   # definition function (to be exported)
   {
     def.var.abl <- function(
@@ -1884,7 +1885,7 @@ REYNflux_FD_mole_dry <- function(
     # prepare input data    
     velo <- data[c("veloXaxs", "veloYaxs", "veloZaxs")]
     base::dimnames(velo)[[2]] <- c("Xaxs", "Yaxs", "Zaxs")
-    
+
     # call function
     varAblTmp <- def.var.abl(
       velo = velo,
