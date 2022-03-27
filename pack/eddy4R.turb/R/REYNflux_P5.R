@@ -1734,12 +1734,24 @@ REYNflux_FD_mole_dry <- function(
       
       # check presence of input arguments and consistent units
       
-        # velo
+        # list of expected units for function arguments
+        UnitExpc <- base::list()
+        UnitExpc$velo <- "m s-1"
+        UnitExpc$distZaxsMeas <- "m"
+        UnitExpc$distZaxsAbl <- "m"
+        UnitExpc$densMoleAirDry <- "mol m-3"
+        UnitExpc$tempVirtPot00 <- "K"
+        UnitExpc$veloFric <- "m s-1"
+        UnitExpc$fluxTemp <- "K m s-1"
+        UnitExpc$fluxTempVirtPot00 <- "K m s-1"
+        UnitExpc$fluxH2o <- "mol m-2 s-1"
+      
+        # velo - separate checks because the only dataframe among the function arguments
       
           # presence or absence of object
           if(is.null(velo)) {
             velo <- base::data.frame(Xaxs = NaN, Yaxs = NaN, Zaxs = NaN)
-            for(idx in c("Xaxs", "Yaxs", "Zaxs")) base::attr(velo[[idx]], which = "unit") <- "m s-1"
+            for(idx in c("Xaxs", "Yaxs", "Zaxs")) base::attr(velo[[idx]], which = "unit") <- UnitExpc$velo
             base::rm(idx)
           }
       
@@ -1762,145 +1774,45 @@ REYNflux_FD_mole_dry <- function(
               stop(base::paste0("def.var.abl(): velo$", idx, " is missing unit attribute."))}
 
             # correct units of object elements            
-            if(attributes(velo[[idx]])$unit != "m s-1") {
-              stop(base::paste0("def.var.abl(): velo$", idx, " unit attribute is different from 'm s-1', please check."))}
+            if(attributes(velo[[idx]])$unit != UnitExpc$velo) {
+              stop(base::paste0("def.var.abl(): velo$", idx, " unit attribute is different from ",  base::dQuote(UnitExpc$velo), ", please check."))}
+            
+          }; base::rm(idx)
+      
+        # loop around all function arguments other than velo
+        
+          # add namespace to base::formals() call once compiled into eddy4R.turb
+          for(idx in base::names(base::formals(fun = def.var.abl))[-which(base::names(base::formals(fun = def.var.abl)) == "velo")]) {
+          # idx <- base::names(base::formals(fun = def.var.abl))[-which(base::names(base::formals(fun = def.var.abl)) == "velo")][3]
+            
+            
+            # work with temporary variable, so that it is possible to assign attributes
+            tmp <- base::get(idx)
+            
+            # presence or absence of object; re-assign to workspace object once done
+            if(is.null(tmp)) {
+              tmp <- NaN
+              base::attr(tmp, which = "unit") <- UnitExpc[[idx]]
+              base::assign(x = idx, value = tmp)
+            }
+            
+            # check that object is of class numeric vector
+            if(base::class(tmp) != "numeric") {
+              stop(base::paste0("def.var.abl(): ", idx, " velo is not of class numeric vector, please check."))}
+            
+            # presence/absence of unit attribute
+            if(!("unit" %in% base::names(attributes(tmp)))) {
+              stop(base::paste0("def.var.abl(): ", idx, " is missing unit attribute."))}
+            
+            # correct units of object elements            
+            if(attributes(tmp)$unit != UnitExpc[[idx]]) {
+              stop(base::paste0("def.var.abl(): ", idx, " unit attribute is different from ",  base::dQuote(UnitExpc[[idx]]), ", please check."))}
+          
+            # clean up prior to next iteration
+            base::rm (tmp)  
             
           }; base::rm(idx)
 
-
-        
-
-        
-      
-          
-
-      
-      
-      base::attr(velo[[idx]], which = "unit") <- "m s-1"
-      
-      
-      
-      
-      
-      
-        # list of expected units for function arguments
-        unitExpc <- base::list()
-        unitExpc$velo$Xaxs <- "m s-1"
-        unitExpc$velo$Yaxs <- "m s-1"
-        unitExpc$velo$Zaxs <- "m s-1"
-        unitExpc$distZaxsMeas <- "m"
-        unitExpc$distZaxsAbl <- "m"
-        unitExpc$densMoleAirDry <- "mol m-3"
-        unitExpc$tempVirtPot00 <- "K"
-        unitExpc$veloFric <- "m s-1"
-        unitExpc$fluxTemp <- "K m s-1"
-        unitExpc$fluxTempVirtPot00 <- "K m s-1"
-        unitExpc$fluxH2o <- "mol m-2 s-1"
-      
-        # loop around all function arguments
-        # add namespace to base::formals() call once compiled into eddy4R.turb
-        for(idx in base::names(base::formals(fun = def.var.abl))) {
-        # idx <- base::names(base::formals(fun = def.var.abl))[3]
-          
-          if(base::is.null(base::get(idx))) {
-            
-            base::assign(x = idx, value = NaN)
-            
-            
-            base::attr(base::get(idx), which = "unit") <- unitExpc[[idx]]
-            
-            
-            
-          }
-          
-          
-          
-        }
-  
-        # clean up
-        base::rm (idx, unitExpc)
-      
-      
-      
-      # conv check 1 of 2
-      
-      # if conv defaults to NULL, convert to 1 and assign unit attribute. Also specify Unit$Conv if not already present (failsafe)
-      if(is.null(conv)) {
-        conv <- 1
-        base::attr(conv, which = "unit") <- "-"
-        if(!("Conv" %in% base::names(Unit))) Unit$Conv <- "-"
-      }
-      
-      # check that conv is either of length 1 or of the same length as inp
-      if(!(base::length(conv) %in% c(1, base::nrow(inp)))) {
-        stop(base::paste0("def.flux.sclr(): conv needs to be either of length 1 or have the same number of observations as inp, please check."))}  
-      
-      # Unit
-      
-      # check that Unit is of class data.frame
-      if(base::class(Unit) != "data.frame") {
-        stop(base::paste0("def.flux.sclr(): Unit is not of class data.frame, please check."))  
-      }
-      
-      # test unit variables
-      for(idx in c("InpVect", "InpSclr", "Conv", "Out")){
-        # idx <- "InpVect"
-        
-        # test for presence/absence of variables
-        if(!(idx %in% base::names(Unit))) {
-          stop(base::paste0("def.flux.sclr(): Unit$", idx, " is missing."))}
-        
-        # test for character type
-        if(base::typeof(Unit[[idx]]) != "character") {
-          stop(base::paste0("def.flux.sclr(): Unit$", idx, 
-                            " is not of type character, please check."))}
-        
-      }; base::rm(idx)
-      
-      # inp
-      
-      # check that input is of class data.frame
-      if(base::class(inp) != "data.frame") {
-        stop(base::paste0("def.flux.sclr(): inp is not of class data.frame, please check."))  
-      }
-      
-      # test for presence/absence of input variables and unit attributes
-      for(idx in c("vect", "sclr")){
-        # idx <- "vect"
-        
-        # test for presence/absence of variables
-        if(!(idx %in% base::names(inp))) {
-          stop(base::paste0("def.flux.sclr(): inp$", idx, " is missing."))}
-        
-        # test for presence/absence of unit attribute
-        if(!("unit" %in% base::names(attributes(inp[[idx]])))) {
-          stop(base::paste0("def.flux.sclr(): inp$", idx, " is missing unit attribute."))}
-        
-      }; base::rm(idx)
-      
-      # test for consistent units
-      
-      # inp$vect
-      if(attributes(inp$vect)$unit != Unit$InpVect) {
-        stop(base::paste0("def.flux.sclr(): inp$vect unit attribute does not match Unit$InpVect, please check."))}
-      
-      # inp$sclr
-      if(attributes(inp$sclr)$unit != Unit$InpSclr) {
-        stop(base::paste0("def.flux.sclr(): inp$sclr unit attribute does not match Unit$InpSclr, please check."))}
-      
-      # conv check 2 of 2
-      
-      # test for consistent units - do this after the Unit dataframe has been tested
-      if(attributes(conv)$unit != Unit$Conv) {
-        stop(base::paste0("def.flux.sclr(): conv unit attribute does not match Unit$Conv, please check."))}
-      
-      # AlgBase and idep
-      if(AlgBase != "mean" & is.null(idep)) {
-        stop(base::paste0("def.flux.sclr(): please specify function argument idep when AlgBase != 'mean'."))}
-      
-      
-      
-      
       
       # create empty object for export
       rpt <- base::data.frame(qiItcVeloXaxsYaxsZaxs = NaN)
@@ -1958,7 +1870,7 @@ REYNflux_FD_mole_dry <- function(
         base::attr(rpt$rtioMoleDryH2oScalAbl, which = "unit") <- "molH2o mol-1Dry"
     
       # clean up
-      base::rm(veloXaxsYaxsZaxs)
+      base::rm(UnitExpc, veloXaxsYaxsZaxs)
         
       # return results
       return(rpt)
