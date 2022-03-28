@@ -131,7 +131,7 @@ def.spec.peak.ogiv <- function(
   }
   
   #Create output list
-  rpt <- base::list("PeakFreq" = critOptm, "CoefCorIdepScal"=idep[idxScal], "CoefCor"=1/base::max(depeCumScal, na.rm=TRUE)))
+  rpt <- base::list("PeakFreq" = critOptm, "CoefCorIdepScal"=idep[idxScal], "CoefCor"=1/base::max(depeCumScal, na.rm=TRUE))
   #return result
   return(rpt)
   
