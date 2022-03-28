@@ -40,6 +40,7 @@
 #' License: GNU AFFERO GENERAL PUBLIC LICENSE Version 3, 19 November 2007
 #' Kaimal, J.C., Wyngaard, J.C., Izumi, Y. and Coté, O.R. (1972), Spectral characteristics of surface-layer turbulence. Q.J.R. Meteorol. Soc., 98: 563-589. https://doi.org/10.1002/qj.49709841707
 #' Massman W. (2004) Concerning the Measurement of Atmospheric Trace Gas Fluxes with Open- and Closed-Path Eddy Covariance System: The WPL Terms and Spectral Attenuation. In: Lee X., Massman W., Law B. (eds) Handbook of Micrometeorology. Atmospheric and Oceanographic Sciences Library, vol 29. Springer, Dordrecht. https://doi.org/10.1007/1-4020-2265-4_7
+#' Foken, Thomas. (2017). Micrometeorology. 10.1007/978-3-642-25440-6. 
 
 #' @keywords Fast Fourier Transform, FFT, spectral, cospectra
 
