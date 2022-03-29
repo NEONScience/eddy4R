@@ -4,25 +4,26 @@
 \alias{def.spec.freq.cnst}
 \title{Definition function: 63\% frequency constant after Aubinet (2012) Eq. 4.22}
 \usage{
-def.spec.freq.cnst(inpPrd)
+def.spec.freq.cnst(inpTime)
 }
 \arguments{
 \item{inpPrd}{numeric, time period in seconds}
 }
 \value{
-A numeric vector \code{freqOut} of equivalent frequencies to the input time periods
+A numeric vector \code{freqOut} of equivalent frequencies to the input time constant
 }
 \description{
 63\% frequency constant after Aubinet (2012) Eq. 4.22.
 }
 \examples{
 
-inpPrd <- seq(1, 3600, by = 10)
-def.spec.freq.cnst(inpPrd = inpPrd)
+inpTime <- seq(1, 3600, by = 10)
+def.spec.freq.cnst(inpTime = inpTime)
 }
 \references{
 License: GNU AFFERO GENERAL PUBLIC LICENSE Version 3, 19 November 2007
-Aubinet (2012)
+Foken T., Leuning R., Oncley S.R., Mauder M., Aubinet M. (2012) Corrections and Data Quality Control. In: Aubinet M., Vesala T., Papale D. (eds) Eddy Covariance. Springer Atmospheric Sciences. Springer, Dordrecht. https://doi.org/10.1007/978-94-007-2351-1_4
+Foken, Thomas. (2017). Micrometeorology. 10.1007/978-3-642-25440-6.
 }
 \seealso{
 Currently none

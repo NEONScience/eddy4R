@@ -13,8 +13,7 @@ def.spec.peak.ogiv(
   MethWght = TRUE,
   ThshFreqRng = c(0.01, 1),
   CoefCumScal = 0.6,
-  FilePlot = NULL,
-  Meth = c("peak", "CoefCor")[1]
+  FilePlot = NULL
 )
 }
 \arguments{
@@ -35,11 +34,9 @@ def.spec.peak.ogiv(
 \item{CoefCumScal}{cumulative flux contribution for which measured (co)-spectrum is scaled to model (co)-spectrum}
 
 \item{FilePlot}{generate plot?}
-
-\item{Meth}{determine peak frequency or output spectral correction factor?}
 }
 \value{
-If \code{meth = "peak"} the optimality criterion is returned. If \code{meth = "CoefCor"} the cumulative (Ogive) correction coefficient is returned for the calculated independent variable (frequency/wavenumber) scaling index for the depedent variables (spectra or cospectra). If \code{FilePlot} is provided, a plot will be generated and output.
+The optimality criterion and the cumulative (Ogive) correction coefficient is returned for the calculated independent variable (frequency/wavenumber) scaling index for the dependent variables (spectra or cospectra). If \code{FilePlot} is provided, a plot will be generated and output.
 }
 \description{
 Determine spectral peak using an Ogive method.

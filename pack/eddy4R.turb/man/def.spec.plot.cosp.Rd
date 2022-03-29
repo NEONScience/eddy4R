@@ -58,7 +58,7 @@ def.spec.plot.cosp(
 
 \item{FreqPeakCosp}{(NULL) frequency at which fCO(f) reaches its maximum value; will be determined from measured data if NULL}
 
-\item{FreqRngEval}{(NULL) range to assess sum((cospectrum - model)[setFreq]) / sum(model) [%]; only valid for equidistant data}
+\item{FreqRngEval}{(NULL) range to assess sum((cospectrum - model)[setFreq]) / sum(model) [percentage]; only valid for equidistant data}
 
 \item{MethPlot}{logical to determine if plot should be output to FileOut}
 }
@@ -73,8 +73,9 @@ Currently none
 }
 \references{
 License: GNU AFFERO GENERAL PUBLIC LICENSE Version 3, 19 November 2007
-Kaimal (1972)
-Massman, 2005 (in Lee, 2005)
+Kaimal, J.C., Wyngaard, J.C., Izumi, Y. and Cote, O.R. (1972), Spectral characteristics of surface-layer turbulence. Q.J.R. Meteorol. Soc., 98: 563-589. https://doi.org/10.1002/qj.49709841707
+Foken, Thomas. (2017). Micrometeorology. 10.1007/978-3-642-25440-6.
+Massman W. (2004) Concerning the Measurement of Atmospheric Trace Gas Fluxes with Open- and Closed-Path Eddy Covariance System: The WPL Terms and Spectral Attenuation. In: Lee X., Massman W., Law B. (eds) Handbook of Micrometeorology. Atmospheric and Oceanographic Sciences Library, vol 29. Springer, Dordrecht. https://doi.org/10.1007/1-4020-2265-4_7
 }
 \seealso{
 Currently none
