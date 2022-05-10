@@ -49,6 +49,8 @@
 #     convert qmBeta and qmAlph to fraction
 #   David Durden(2020-07-02)
 #     updating function to check physical locations of reingest sensors exist before pulling from API
+#   Chris Florian (2022-05-09)
+#     updating to use SOM API function due to Noble package bug that replicated data from the highest horver in a missing horver
 ##############################################################################################
 
 def.hdf5.wrte.dp01.api <- function(
@@ -74,7 +76,7 @@ date <- lubridate::as_datetime(date)
 #get only year and month
 yearMnth <- as.character.Date(date, format = "%Y-%m")
 
-timeBgn <- date - lubridate::seconds(1)
+timeBgn <- date 
 
 timeEnd <- date + lubridate::days(1)
 
@@ -117,10 +119,71 @@ if(DpName == "presBaro") TblName <- c("presCor", "presAtm")
 #Grab 30 minute data to be written
 msg <- paste0("downloading ", TimeAgr, " min data from the portal")
 tryCatch({rlog$debug(msg)}, error=function(cond){print(msg)})
-data <- try(expr = Noble::pull.date(site = SiteLoca, dpID = DpNum, bgn.date = timeBgn, end.date = timeEnd, package = "expanded", time.agr = TimeAgr), silent = TRUE) #Currently requires to subtract 1 minute otherwise (1 index will be cut from the beginning)
+#old Noble data pull
+#data <- try(expr = Noble::pull.date(site = SiteLoca, dpID = DpNum, bgn.date = timeBgn, end.date = timeEnd, package = "expanded", time.agr = TimeAgr), silent = TRUE) #Currently requires to subtract 1 minute otherwise (1 index will be cut from the beginning)
+
+data <- list()
+
+for(idxLvl in LvlTowr[[DpName]]){
+  #idxLvl <- LvlTowr[[DpName]][2]
+  #extract hor and ver for each data product as a character string of three values e.g. "000" and "010"
+  locHor <- substr(idxLvl, start = 1, stop = 3) 
+  locVer <- substr(idxLvl, start = 5, stop = 7) 
+  #pad TimeAgr with zero/s to fit the expected three digit format for wndwAgr 
+  if(nchar(TimeAgr) == 1){
+    wndwAgr <- paste0("00", TimeAgr)
+  } else if(nchar(TimeAgr) == 2){
+    wndwAgr <- paste0("0", TimeAgr)
+  } 
+  
+  data[[idxLvl]] <- try(expr = som::def.neon.api.get.data(site = SiteLoca, idDpMain = DpNum, locHor = locHor, locVer = locVer, wndwAgr = wndwAgr, year = lubridate::year(timeBgn), mnth = lubridate::month(timeBgn), Pack = "expanded"), silent = TRUE) #need to generalize TimeAgr to wndwAgr, Time Agr is 1,30 and wndwAgr needs "001" and "030"
+  
+}
+
+#compile noble-like data format if not all the datasets have a try-error class
+if(!all(sapply(data, class) == "try-error")){
+  #fill in the try error datasets and paste horver to names
+  for(idxLvl in 1:length(data)){
+    if(class(data[[idxLvl]]) == "try-error"){
+      #find the first dataset that wasn't a try error
+      whrData <- which(lapply(data,class) == "data.frame")[1]
+      #get timestamps
+      timeBgnOut <- data[[whrData]][which(grepl(x = names(data[[whrData]]), pattern = "startdatetime", ignore.case = T))]
+      timeEndOut <- data[[whrData]][which(grepl(x = names(data[[whrData]]), pattern = "enddatetime", ignore.case = T))]
+      colNamesOut <- colnames(data[[whrData]])
+      #create dataframe of NaNs to fill with
+      dataFill <- data.frame(matrix("NaN", nrow=nrow(timeBgnOut), ncol=length(colnames(data[[whrData]])[which(!grepl(x = names(data[[whrData]]), pattern = "time", ignore.case = T))])))
+      #create placeholder data.frame
+      data[[idxLvl]] <- data.frame(timeBgnOut, timeEndOut, dataFill)
+      #apply names 
+      colnames(data[[idxLvl]]) <- colNamesOut
+      #remove data fill 
+      rm(dataFill)
+      #fill QFQM
+      data[[idxLvl]]$alphaQM <- 0.0
+      data[[idxLvl]]$betaQM <- 1.0
+      data[[idxLvl]]$finalQF <- 1L
+      data[[idxLvl]]$finalQFSciRvw <- 0L
+    }
+    #idxLvl <- 1
+    LocMeas <- gsub("\\_", ".", names(data[idxLvl]))
+    #append horver to names of each ML's dataset
+    colnames(data[[idxLvl]])[which(!grepl(x = names(data[[idxLvl]]), pattern = "time", ignore.case = T))] <- 
+      paste0(colnames(data[[idxLvl]][which(!grepl(x = names(data[[idxLvl]]), pattern = "time", ignore.case = T))]), ".", LocMeas)
+  }
+}
+
+#join list of data into wide format
+
+data <- data.frame(base::Reduce(function(x, y) merge(x, y, all=TRUE), data))
+
+#restrict API data to the processing date, TODO: is there any way to grab data from the API for just one day?
+
+data <- data[grep(pattern = date, x = data$startDateTime),]
+
 
 #Failsafe test if API pull produced an error
-if(class(data) == "try-error"){
+if(all(sapply(data, class) == "try-error")){
   #Initialize lists
   rpt <- list(data = list(), qfqm = list(), ucrt = list())
   #get sensor HOR and VER
