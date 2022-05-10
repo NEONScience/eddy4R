@@ -152,7 +152,7 @@ if(!all(sapply(data, class) == "try-error")){
       timeEndOut <- data[[whrData]][which(grepl(x = names(data[[whrData]]), pattern = "enddatetime", ignore.case = T))]
       colNamesOut <- colnames(data[[whrData]])
       #create dataframe of NaNs to fill with
-      dataFill <- data.frame(matrix("NaN", nrow=nrow(timeBgnOut), ncol=length(colnames(data[[whrData]])[which(!grepl(x = names(data[[whrData]]), pattern = "time", ignore.case = T))])))
+      dataFill <- data.frame(matrix(NaN, nrow=nrow(timeBgnOut), ncol=length(colnames(data[[whrData]])[which(!grepl(x = names(data[[whrData]]), pattern = "time", ignore.case = T))])))
       #create placeholder data.frame
       data[[idxLvl]] <- data.frame(timeBgnOut, timeEndOut, dataFill)
       #apply names 
@@ -171,15 +171,18 @@ if(!all(sapply(data, class) == "try-error")){
     colnames(data[[idxLvl]])[which(!grepl(x = names(data[[idxLvl]]), pattern = "time", ignore.case = T))] <- 
       paste0(colnames(data[[idxLvl]][which(!grepl(x = names(data[[idxLvl]]), pattern = "time", ignore.case = T))]), ".", LocMeas)
   }
+  
+  #join list of data into wide format
+  
+  data <- data.frame(base::Reduce(function(x, y) merge(x, y, all=TRUE), data))
+  
+  #restrict API data to the processing date, TODO: is there any way to grab data from the API for just one day?
+  
+  data <- data[grep(pattern = date, x = data$startDateTime),]
+  
 }
 
-#join list of data into wide format
 
-data <- data.frame(base::Reduce(function(x, y) merge(x, y, all=TRUE), data))
-
-#restrict API data to the processing date, TODO: is there any way to grab data from the API for just one day?
-
-data <- data[grep(pattern = date, x = data$startDateTime),]
 
 
 #Failsafe test if API pull produced an error
@@ -253,7 +256,7 @@ if(all(sapply(data, class) == "try-error")){
 } else {
 
 #Convert times to POSIXct
-data$startDateTime <- as.POSIXct(data$startDateTime)
+data$startDateTime <- as.POSIXct(data$startDateTime, format = "%Y-%m-%dT%H:%M:%OSZ", tz = "UTC")
 data$endDateTime <- as.POSIXct(data$endDateTime, format = "%Y-%m-%dT%H:%M:%OSZ", tz = "UTC")
 
 
