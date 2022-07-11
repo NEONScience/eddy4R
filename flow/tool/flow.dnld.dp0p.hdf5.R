@@ -47,7 +47,7 @@ PrdWndwDnld <- base::as.character(DateSeq)
 fileInBase <- paste0("NEON.",dom,".",site,".IP0.00200.001.",sys,".")
 
 #Create URL for data files
-urlDnld <- paste0("https://neon-ec-files.s3.data.neonscience.org/ods/dataproducts/IP0/",PrdWndwDnld,"/",site,"/",fileInBase,PrdWndwDnld,".l0p.h5")
+urlDnld <- paste0("https://storage.cloud.google.com/neon-sae-files/ods/dataproducts/IP0/",PrdWndwDnld,"/",site,"/",fileInBase,PrdWndwDnld,".l0p.h5")
 
 #Download filename (full path)
 fileDnld <-  paste0(DirDnld,"/",base::toupper(sys),"_dp0p_",site,"_",PrdWndwDnld,".h5")
