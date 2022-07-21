@@ -523,7 +523,7 @@ wrap.irga.vali <- function(
   #applying the calculated coefficients to measured data
   #Calculate time-series (20Hz) of slope and zero offset
   rpt[[DateProc]]$rtioMoleDryCo2Cor <- eddy4R.base::def.irga.vali.cor(data = data, DateProc = DateProc, coef = tmpCoef, valiData = valiData, valiCrit = valiCrit, ScalMax = ScalMax, FracSlp = FracSlp, OfstMax = OfstMax, Freq = 20)
-  
+
   #run the benchmarking regression to determine if the validation was good
   valiEval <- eddy4R.base::def.irga.vali.thsh(data = rpt[[DateProc]], DateProc = DateProc, evalSlpMax = 1.05, evalSlpMin = 0.95, evalOfstMax = 100, evalOfstMin = -100)
   
@@ -559,7 +559,7 @@ wrap.irga.vali <- function(
   
   
   #add corrected reference gas values to vali table 
-  
+
   if(base::nrow(rpt[[DateProc]]$rtioMoleDryCo2Vali) == base::length(valiEval$meanCor)+1){ # failsafe for row mismatches, valiEval$meanCor will always be one short because the archive gas is not included
     
     rpt[[DateProc]]$rtioMoleDryCo2Vali$meanCor <- c(NaN, valiEval$meanCor) # need to add the NaN to account for the archive gas in the first position of the vali table
@@ -578,7 +578,7 @@ wrap.irga.vali <- function(
     
     names(rpt[[DateProc]]$rtioMoleDryCo2Vali) <- c("mean", "min", "max", "vari", "numSamp", "refe", "meanCor", "timeBgn", "timeEnd")
   }
-  
+
   #rename rtioMoleDryH2oRefe to refe to match CO2
   names(rpt[[DateProc]]$rtioMoleDryH2oVali) <- c("mean", "min", "max", "vari", "numSamp", "refe", "timeBgn", "timeEnd")
   
@@ -593,7 +593,7 @@ wrap.irga.vali <- function(
                                                            "molCo2 mol-1Dry",#gasRefeCor
                                                            "NA", #"timeBgn"
                                                            "NA")#"timeEnd"
- 
+
   attributes(rpt[[DateProc]]$rtioMoleDryCo2Cor$rtioMoleDryCo2Cor)$unit <- "molCo2 mol-1Dry"
    
 #return results
