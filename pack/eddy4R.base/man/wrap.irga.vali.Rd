@@ -10,7 +10,7 @@ wrap.irga.vali(
   gasRefe,
   DateProc,
   ScalMax = FALSE,
-  FracSlpMax = FALSE,
+  FracSlp = FALSE,
   OfstMax = FALSE
 )
 }
@@ -25,7 +25,7 @@ wrap.irga.vali(
 
 \item{ScalMax}{Maximum scale value. The validation correction will not apply if scale (resulted from maximum-likelihood fitting of a functional relationship (MLFR)) is greater than ScalMax or ScalMax = FALSE. Defaults to FALSE.}
 
-\item{FracSlpMax}{Maximum fraction of slope value. The validation correction will not apply if slope (resulted from regression fitting) is greater than the FracSlpMax or FracSlpMax = FALSE. Defaults to FALSE.}
+\item{FracSlp}{Upper and lower bounds of slope values. The validation correction will not apply if slope (resulted from regression fitting) is greater/lower than the FracSlp maximum or minimum value or FracSlp = FALSE. Defaults to FALSE.}
 
 \item{OfstMax}{Maximum offset value. The validation correction will not apply if slope (resulted from regression fitting) is greater than the OfstMax (unit in mol mol-1) or OfstMax = FALSE. Defaults to FALSE.}
 }
