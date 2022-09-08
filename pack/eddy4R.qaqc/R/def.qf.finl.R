@@ -51,6 +51,8 @@
 #     update @param format
 #   David Durden (2021-08-18)
 #     Removing quality indicators (qi) from qfFinal determination
+#   David Durden (2021-08-18)
+# Remove flags that are filled with NAN (represents flags that are not expected for a sensor [i.e. soni diagnostics for soni3B])
 ##############################################################################################
 def.qf.finl <- function (
   qf,
@@ -64,6 +66,9 @@ def.qf.finl <- function (
   if(!base::is.data.frame(qf)) {
     base::stop("Input qf must be a data frame. See documentation.")
   }
+  
+  # Remove columns where all values are NAN (represents flags that are not expected for a sensor [i.e. soni diagnostics for soni3B])
+  qf <- dplyr::select(qf, where(~!base::all(base::is.nan(.))))
   
   if(base::sum(!(base::as.matrix(qf) %in% c(-1,0,1))) != 0){
     stop("Values of qf must be equal to -1, 0, or 1")
@@ -79,6 +84,8 @@ def.qf.finl <- function (
   
   #Remove quality indicators from being qfFinal determination
   qf <- qf[,grep("^qi", x = names(qf), invert = TRUE)]
+
+  
   
 # Compute Quality metric ---------------------------------------------------
   #compute qfAlpha and qfBeta
