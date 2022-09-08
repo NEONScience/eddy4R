@@ -51,7 +51,7 @@
 #     update @param format
 #   David Durden (2021-08-18)
 #     Removing quality indicators (qi) from qfFinal determination
-#   David Durden (2021-08-18)
+#   David Durden  (2022-09-08)
 # Remove flags that are filled with NAN (represents flags that are not expected for a sensor [i.e. soni diagnostics for soni3B])
 ##############################################################################################
 def.qf.finl <- function (
