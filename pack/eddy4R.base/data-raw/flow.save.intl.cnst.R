@@ -434,7 +434,7 @@ IntlNatu <- list() # Natural constants
       attr(IntlNatu$VonkFokn,"unit") <- "-"
     
   #molar masses
-    IntlNatu$MolmDry <- 28.97e-3			#dry air [kg mol-1]
+    IntlNatu$MolmDry <- 28.9645e-3			#dry air [kg mol-1]
       attr(IntlNatu$MolmDry,"unit") <- "kgDry mol-1"
     IntlNatu$MolmH2o <- 18.02e-3			#water vapor [kg mol-1]
       attr(IntlNatu$MolmH2o,"unit") <- "kgH2o mol-1"
