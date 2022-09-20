@@ -80,6 +80,8 @@
 #     adding rtioMoleDryCh4Refe data to validation time period
 #   Chris Florian
 #     updating the columns used to select data from 15 to 8 for ch4Conc to get rid of extra dataframes 
+#   Rich Fiorella (2022-09-20)
+#     based on analysis done for ATM ISO TWG, changing isoCo2 to 6 minute product from 9 minute
 ##############################################################################################
 wrap.dp01.ecse <- function(
   dp01 = c("co2Stor", "h2oStor", "tempAirLvl", "tempAirTop", "isoCo2", "isoH2o", "ch4Conc")[1],
@@ -634,16 +636,16 @@ wrap.dp01.ecse <- function(
       #subset only
       wrk$qfqm$crdCo2 <- qfInp$crdCo2[[lvl]]
       
-      if (PrdMeas == PrdAgr) {
-        #PrdAgr <- 9
-        #9 minutely sampling data
+      if (PrdMeas == PrdAgr) { 
+        #PrdAgr <- 6 # RF - now a 6 minute product based on TWG input!    
+        #6 minutely sampling data
         #idxLvLPrdAgr <- paste0(lvl, "_", sprintf("%02d", PrdAgr), "m")
         #rpt[[dp01]][[idxLvLPrdAgr]] <- list()
         
         #if there is at least one measurement
         if(length(which(!is.na(wrk$qfqm$crdCo2$qfRngTemp))) > 0){
           #determine the index of each measurement  
-          wrk$idx <- eddy4R.base::def.idx.agr(time = data$time, PrdAgr = (PrdMeas*60), FreqLoca = 1, MethIdx = "specBgn", data = wrk$qfqm$crdCo2$qfRngTemp, CritTime = 60)
+          wrk$idx <- eddy4R.base::def.idx.agr(time = data$time, PrdAgr = (PrdMeas*60), FreqLoca = 1, MethIdx = "specBgn", data = wrk$qfqm$crdCo2$qfRngTemp, CritTime = 240)
           #delete row if last timeBgn and timeEnd is NA
           wrk$idx <- wrk$idx[rowSums(is.na(wrk$idx)) != 2,]
           #if last timeEnd is NA, replce that time to the last time value in data$time
