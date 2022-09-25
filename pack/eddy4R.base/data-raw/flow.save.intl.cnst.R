@@ -16,6 +16,7 @@
 
 #' @references
 #' NEON Algorithm Theoretical Basis Document Atmospheric Properties and Units (NEON.DOC.000651) \cr
+#' Foken, T., Hellmuth, O., Huwe, B., Sonntag, D. (2021). Physical Quantities. In: Foken, T. (eds) Springer Handbook of Atmospheric Measurements. Springer Handbooks. Springer, Cham. https://doi.org/10.1007/978-3-030-52171-4_5
 
 #' @keywords natural constants, unit conversions, unit symbols, internal units
 
