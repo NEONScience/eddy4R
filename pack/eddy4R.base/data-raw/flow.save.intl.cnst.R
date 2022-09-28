@@ -103,15 +103,15 @@
 #        IntlNatu$MolmC7H8    -   Toluene
 #        IntlNatu$MolmC8H10   -   Xylene
 #        IntlNatu$MolmC9H12   -   1,2,4-Trimethyl benzene
-#   David Durden (2022-09-25) Updating gas constants for dry air to match Springer textbook
+#   David Durden (2022-09-25) Updating gas constants to match ATBD for MVP solution to provide standardized constants
 
 ##############################################################################################
 
 library(devtools)
 
 # Package directory
-dirPack <- "~/eddy/Github/Docker/NEON-FIU-algorithm/NEON-FIU-algorithm/ext/eddy4R/pack"
-#"/home/ddurden/eddy/code/NEON-FIU-algorithm-ddurden/ext/eddy4R/pack"# 
+dirPack <- #"~/eddy/Github/Docker/NEON-FIU-algorithm/NEON-FIU-algorithm/ext/eddy4R/pack"
+"/home/ddurden/eddy/code/NEON-FIU-algorithm-ddurden/ext/eddy4R/pack"# 
 namePack <- "eddy4R.base"
 
 # WARNING: Do not change/delete constants here without updating the package functions that depend on them
@@ -431,7 +431,7 @@ IntlNatu <- list() # Natural constants
       attr(IntlNatu$Pres00,"unit") <- "Pa"
     IntlNatu$Temp00 <- 293.15     # NIST standard temperature [K] 
       attr(IntlNatu$Temp00,"unit") <- "K"
-    IntlNatu$Rg <- 8.314510	# ideal gas constant [J mol-1 K-1 == kg m2 s-2 mol-1 K-1]
+    IntlNatu$Rg <- 8.3144621# ideal gas constant [J mol-1 K-1 == kg m2 s-2 mol-1 K-1]
       attr(IntlNatu$Rg,"unit") <- "J mol-1 K-1"
     IntlNatu$VonkFokn <- 0.40				#von-Karman constant accordig to Foken (2008) [-]
       attr(IntlNatu$VonkFokn,"unit") <- "-"
@@ -439,7 +439,7 @@ IntlNatu <- list() # Natural constants
   #molar masses
     IntlNatu$MolmDry <- 28.9645e-3			#dry air [kg mol-1]
       attr(IntlNatu$MolmDry,"unit") <- "kgDry mol-1"
-    IntlNatu$MolmH2o <- 18.01528e-3			#water vapor [kg mol-1]
+    IntlNatu$MolmH2o <- 18.0753e-3			#water vapor [kg mol-1]
       attr(IntlNatu$MolmH2o,"unit") <- "kgH2o mol-1"
     IntlNatu$MolmCo2 <- 44.01e-3			#co2 [kg mol-1]
       attr(IntlNatu$MolmCo2,"unit") <- "kgCo2 mol-1"
@@ -500,15 +500,15 @@ IntlNatu <- list() # Natural constants
       
     
   #dry air (Dry)
-    IntlNatu$CpDry <- 1006.0	#dry air specific heat at constant pressure 	[J kg-1 K-1]
+    IntlNatu$CpDry <- 1004.64	#dry air specific heat at constant pressure 	[J kg-1 K-1]
       attr(IntlNatu$CpDry,"unit") <- "J kg-1 K-1"
-    IntlNatu$CvDry <- 717.5	#dry air specific heat at constant volume	[J kg-1 K-1]
+    IntlNatu$CvDry <- 717.6	#dry air specific heat at constant volume	[J kg-1 K-1]
       attr(IntlNatu$CvDry,"unit") <- "J kg-1 K-1"
-    IntlNatu$RsDry <- 287.0586		#specific gas constant for dry air		[J kg-1 K-1] # before ==> IntlNatu$CpDry - IntlNatu$CvDry
+    IntlNatu$RsDry <- IntlNatu$CpDry - IntlNatu$CvDry		#specific gas constant for dry air		[J kg-1 K-1] # before ==> IntlNatu$CpDry - IntlNatu$CvDry
       attr(IntlNatu$RsDry,"unit") <- "J kg-1 K-1"
-    IntlNatu$GmmaDry <- round(IntlNatu$CpDry / IntlNatu$CvDry, digits = 2)	# Ratio of specific heat of dry air at contant pressure to specific heat of dry air at constant volume [-], rounding to match Springer handbook
+    IntlNatu$GmmaDry <- IntlNatu$CpDry / IntlNatu$CvDry	# Ratio of specific heat of dry air at contant pressure to specific heat of dry air at constant volume [-], rounding to match Springer handbook
       attr(IntlNatu$GmmaDry,"unit") <- "-"
-    IntlNatu$KppaDry <- round(IntlNatu$RsDry / IntlNatu$CpDry, digits = 3)		#Kappa exponent for ideal gas law (Poisson)	[-]
+    IntlNatu$KppaDry <- IntlNatu$RsDry / IntlNatu$CpDry		#Kappa exponent for ideal gas law (Poisson)	[-]
       attr(IntlNatu$KppaDry,"unit") <- "-"
     
   #water vapor (H2o)
