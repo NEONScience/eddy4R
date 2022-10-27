@@ -17,7 +17,7 @@ def.pf.derv.coef(veloXaxs, veloYaxs, veloZaxs)
 A data.frame \code{coefPf} containing the planar fit coefficients (\code{angEnuYaxs} = Alpha,\code{angEnuXaxs} = Beta,\code{Ofst} = Offset).
 }
 \description{
-Function defintion. Determines planar fit coefficients on wind vector in right-hand body coordinate system, e.g. CSAT3: Positive from front, left, below. Met: positive from west, south and below
+Function defintion. Determines planar fit coefficients on wind vector in right-hand body coordinate system, e.g. CSAT3: Positive from front, left, below. Met: positive from west, south and below. The coefficients don't have to be in the East-North-Up (ENU) coordinate system (AngEnuXaxs); however, the names are consistent with NEON data terminology and in our data pipeline are in ENU.
 }
 \examples{
 Currently none
