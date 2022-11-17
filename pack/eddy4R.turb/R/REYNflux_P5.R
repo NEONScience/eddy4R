@@ -271,7 +271,7 @@ REYNflux_FD_mole_dry <- function(
     presH2o = data$presH2o,
     presAtm = data$presAtm)
 
-  # volumentric heat capacity [kg m-1 s-2 K-1] = specific heat [J kg-1 K-1] x mole density [mol m-3] x mole mass [kg mol-1]
+  # volumetric heat capacity [kg m-1 s-2 K-1] = specific heat [J kg-1 K-1] x mole density [mol m-3] x mole mass [kg mol-1]
   # definition function (to be exported)
   {
     ##############################################################################################
