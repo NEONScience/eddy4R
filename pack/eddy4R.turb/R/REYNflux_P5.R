@@ -68,6 +68,9 @@ REYNflux_FD_mole_dry <- function(
 {
   
   ### rename input data in preparation of terms update (replace with unit test when completing refactoring)
+  # keep "data" data.frame object with minimum required variables that are tested for in the beginning of the wrapper
+  # in that way additional variables can be supplied (e.g., UTM coordinates for aircraft) and stats calculated
+  # algorithm / processing settings as separate, individual specifications of the function call
   
     # to be consolidated
     # $ t_utc         : num 0.25
