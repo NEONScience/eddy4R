@@ -54,9 +54,11 @@
 
 REYNflux_FD_mole_dry <- function(
   data = eddy.data,
+# -------------------------------------- optional, can omit here for simplicity, just make sure to include ...
   AlgBase = c("mean", "trnd", "ord03")[1],
   SlctPot = FALSE,
-  PresPot = NULL,
+  PresPot = eddy4R.base::IntlNatu$Pres00,  
+# -------------------------------------- these should go away
   PltfEc = "airc",
   flagCh4 = TRUE,
   spcs = NULL,
