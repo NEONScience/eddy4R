@@ -55,8 +55,8 @@
 REYNflux_FD_mole_dry <- function(
   data = eddy.data,
   AlgBase = c("mean", "trnd", "ord03")[1],
-  slctPot = FALSE,
-  presPot = NULL,
+  SlctPot = FALSE,
+  PresPot = NULL,
   PltfEc = "airc",
   flagCh4 = TRUE,
   spcs = NULL,
@@ -563,30 +563,30 @@ REYNflux_FD_mole_dry <- function(
     Kppa = KppaWet)
   
   # use potential temperature and densities?
-  if(slctPot == TRUE) {
+  if(SlctPot == TRUE) {
     
     # check correct units if potential pressure reference is provided
-    if(!is.null(presPot)){
+    if(!is.null(PresPot)){
     
       # test for presence of unit attribute
-      if(!("unit" %in% names(attributes(presPot)))) {
-        stop("presPot is missing unit attribute.")}
+      if(!("unit" %in% names(attributes(PresPot)))) {
+        stop("PresPot is missing unit attribute.")}
       
       # test for correct unit
-      if(attributes(presPot)$unit != "Pa") {
-        stop("presPot units are not matching internal units, please check.")}
+      if(attributes(PresPot)$unit != "Pa") {
+        stop("PresPot units are not matching internal units, please check.")}
       
     }
     
     # define pressure level for potential quantities
-    presPotLoca <- ifelse(!is.null(presPot), presPot, base::mean(data$presAtm, na.rm=TRUE))
-    base::attr(x = presPotLoca, which = "unit") <- "Pa"
+    PresPotLoca <- ifelse(!is.null(PresPot), PresPot, base::mean(data$presAtm, na.rm=TRUE))
+    base::attr(x = PresPotLoca, which = "unit") <- "Pa"
     
     # potential temperature at defined pressure level
     data$tempAir <- eddy4R.base::def.temp.pres.pois(
       temp01 = data$tempAir,
       pres01 = data$presAtm,
-      pres02 = presPotLoca,
+      pres02 = PresPotLoca,
       Kppa = KppaWet)
     
     # potential densities at defined pressure level
@@ -595,25 +595,25 @@ REYNflux_FD_mole_dry <- function(
       data$densMoleAirDry <- eddy4R.base::def.dens.pres.pois(
         dens01 = data$densMoleAirDry,
         pres01 = data$presAtm,
-        pres02 = presPotLoca,
+        pres02 = PresPotLoca,
         Kppa = KppaWet)
       
       # H2O
       data$densMoleH2o <- eddy4R.base::def.dens.pres.pois(
         dens01 = data$densMoleH2o,
         pres01 = data$presAtm,
-        pres02 = presPotLoca,
+        pres02 = PresPotLoca,
         Kppa=KppaWet)
       
       # wet air
       data$densMoleAir <- eddy4R.base::def.dens.pres.pois(
         dens01 = data$densMoleAir,
         pres01 = data$presAtm,
-        pres02 = presPotLoca,
+        pres02 = PresPotLoca,
         Kppa = KppaWet)
       
       # clean up
-      rm(presPotLoca)
+      rm(PresPotLoca)
     
   }
   
