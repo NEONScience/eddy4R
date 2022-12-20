@@ -1849,7 +1849,7 @@ REYNflux_FD_mole_dry <- function(
         rpt$veloScalCvct <- ( eddy4R.base::IntlNatu$Grav * distZaxsAbl / tempVirtPot00 * fluxTempVirtPot00 )^(1/3)
         base::attr(rpt$veloScalCvct, which = "unit") <- "m s-1"
     
-        # (free) convective time scale [s], often in the order of 5-15 min
+        # (free) convective time scale [s], often on the order of 5-15 min
         rpt$timeScalCvct <- distZaxsAbl / rpt$veloScalCvct
         base::attr(rpt$timeScalCvct, which = "unit") <- "s"
         
@@ -1870,7 +1870,7 @@ REYNflux_FD_mole_dry <- function(
         rpt$rtioMoleDryH2oScalAtmSurf <- - base::mean(fluxH2o / densMoleAirDry, na.rm=TRUE) / veloFric
         base::attr(rpt$rtioMoleDryH2oScalAtmSurf, which = "unit") <- "molH2o mol-1Dry"
         
-        # mixed layer layer
+        # mixed layer
         rpt$rtioMoleDryH2oScalAbl <-   base::mean(fluxH2o / densMoleAirDry, na.rm=TRUE) / rpt$veloScalCvct
         base::attr(rpt$rtioMoleDryH2oScalAbl, which = "unit") <- "molH2o mol-1Dry"
     
