@@ -1791,7 +1791,6 @@ REYNflux_FD_mole_dry <- function(
           for(idx in base::names(base::formals(fun = def.var.abl))[-which(base::names(base::formals(fun = def.var.abl)) == "velo")]) {
           # idx <- base::names(base::formals(fun = def.var.abl))[-which(base::names(base::formals(fun = def.var.abl)) == "velo")][3]
             
-            
             # work with temporary variable, so that it is possible to assign attributes
             tmp <- base::get(idx)
             
@@ -1804,13 +1803,13 @@ REYNflux_FD_mole_dry <- function(
             
             # check that object is of class numeric vector
             if(base::class(tmp) != "numeric") {
-              stop(base::paste0("def.var.abl(): ", idx, " velo is not of class numeric vector, please check."))}
+              stop(base::paste0("def.var.abl(): ", idx, " is not of class numeric vector, please check."))}
             
             # presence/absence of unit attribute
             if(!("unit" %in% base::names(attributes(tmp)))) {
               stop(base::paste0("def.var.abl(): ", idx, " is missing unit attribute."))}
             
-            # correct units of object elements            
+            # correct units
             if(attributes(tmp)$unit != UnitExpc[[idx]]) {
               stop(base::paste0("def.var.abl(): ", idx, " unit attribute is different from ",  base::dQuote(UnitExpc[[idx]]), ", please check."))}
           
@@ -1821,17 +1820,17 @@ REYNflux_FD_mole_dry <- function(
 
       
       # create empty object for export
-      rpt <- base::data.frame(qiItcVeloXaxsYaxsZaxs = NaN)
+      rpt <- base::data.frame(coefSdMeanVelo = NaN)
         
-      # turbulence intensity from total wind vector (Stull, Eq. 1.4d)
+      # turbulence intensity (aka coefficient of variation) from total wind vector (Stull, Eq. 1.4d)
         
         # total wind vector [m s-1]
         veloXaxsYaxsZaxs <- base::sqrt(velo$Xaxs^2 + velo$Yaxs^2 + velo$Zaxs^2)
         base::attr(veloXaxsYaxsZaxs, which = "unit") <- "m s-1"
         
-        # turbulence intensity should be <0.5 to allow for Taylor's hypothesis [-]
-        rpt$qiItcVeloXaxsYaxsZaxs <- stats::sd(veloXaxsYaxsZaxs, na.rm=TRUE) / base::mean(veloXaxsYaxsZaxs, na.rm=TRUE)
-        base::attr(rpt$qiItcVeloXaxsYaxsZaxs, which = "unit") <- "-"
+        # turbulence intensity (aka coefficient of variation) should be <0.5 to allow for Taylor's hypothesis [-]
+        rpt$coefSdMeanVelo <- stats::sd(veloXaxsYaxsZaxs, na.rm=TRUE) / base::mean(veloXaxsYaxsZaxs, na.rm=TRUE)
+        base::attr(rpt$coefSdMeanVelo, which = "unit") <- "-"
     
       # Obukhov length and atmospheric stability
         
@@ -1919,7 +1918,7 @@ REYNflux_FD_mole_dry <- function(
   
   
   # mapping outputs
-  # mn$I <- qiItcVeloXaxsYaxsZaxs # turbulence intensity
+  # mn$I <- coefSdMeanVelo # turbulence intensity
   # mn$d_L_v_0 <- distObkv # Obukhov length
   # mn$sigma <- paraStbl # atmospheric stability
   # mn$w_star <- veloScalCvct
