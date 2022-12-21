@@ -1854,14 +1854,19 @@ REYNflux_FD_mole_dry <- function(
         base::attr(rpt$timeScalCvct, which = "unit") <- "s"
         
       # atmospheric temperature scale (eddy temperature fluctuations) [K]
+      # negative sign for SL scales vs. positive sign for ML scales per convention in Stull (1988) p. 356
         
         # surface layer
-        # rpt$tempScalAtmSurf <- - fluxTempVirtPot00 / veloFric	#according to Stull (1988) p. 356
-        rpt$tempScalAtmSurf <- - fluxTemp / veloFric	#according to Foken (2008) p.42, fits with ITC assessment
+        # rpt$tempScalAtmSurf <- - fluxTempVirtPot00 / veloFric	# per Stull (1988) p. 356, would be overall more consistent
+        rpt$tempScalAtmSurf <- - fluxTemp / veloFric	# per Foken (2008) p.42, fits with / feeds into def.itc()
         base::attr(rpt$tempScalAtmSurf, which = "unit") <- "K"
         
         # mixed layer
-        rpt$tempScalAbl <- fluxTemp / rpt$veloScalCvct #according to Stull (1988) p. 356
+        # according to Stull (1988) p. 356
+        # pre-2022-12-21: consistent with Foken ITC above but inconsistent with derivation of rpt$veloScalCvct
+        # rpt$tempScalAbl <- fluxTemp / rpt$veloScalCvct
+        # post-2022-12-21: consistent with derivation of rpt$veloScalCvct based on virtual potential temperature
+        rpt$tempScalAbl <- fluxTempVirtPot00 / rpt$veloScalCvct
         base::attr(rpt$tempScalAbl, which = "unit") <- "K"
     
       # atmospheric humidity scale (eddy moisture fluctuations) [mol mol-1 dry air]
