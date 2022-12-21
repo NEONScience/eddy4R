@@ -1891,13 +1891,15 @@ REYNflux_FD_mole_dry <- function(
 
   # actual function call
     
-    # prepare input data    
+    # prepare input data
     velo <- data[c("veloXaxs", "veloYaxs", "veloZaxs")]
     base::dimnames(velo)[[2]] <- c("Xaxs", "Yaxs", "Zaxs")
 
     # call function
     varAblTmp <- def.var.abl(
+      # NULL failsafe OK; needed for: coefSdMeanVelo
       velo = velo,
+      # NULL failsafe OK; needed for: paraStbl
       distZaxsMeas = statStaDiff$mean$d_z_m,
       distZaxsAbl = statStaDiff$mean$d_z_ABL,
       densMoleAirDry = statStaDiff$base$densMoleAirDry,
