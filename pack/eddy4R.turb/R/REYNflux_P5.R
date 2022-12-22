@@ -1897,16 +1897,23 @@ REYNflux_FD_mole_dry <- function(
 
     # call function
     varAblTmp <- def.var.abl(
-      # NULL failsafe OK; needed for: coefSdMeanVelo
+      # needed to produce: coefSdMeanVelo
       velo = velo,
-      # NULL failsafe OK; needed for: paraStbl
+      # needed to produce: paraStbl
       distZaxsMeas = statStaDiff$mean$d_z_m,
+      # needed to produce: veloScalCvct, timeScalCvct, tempScalAbl, rtioMoleDryH2oScalAbl
       distZaxsAbl = statStaDiff$mean$d_z_ABL,
+      # needed to produce: rtioMoleDryH2oScalAtmSurf, rtioMoleDryH2oScalAbl
       densMoleAirDry = statStaDiff$base$densMoleAirDry,
+      # needed to produce: distObkv, paraStbl, veloScalCvct, timeScalCvct, tempScalAbl, rtioMoleDryH2oScalAbl
       tempVirtPot00 = statStaDiff$mean$tempVirtPot00,
+      # needed to produce: distObkv, paraStbl, tempScalAtmSurf, rtioMoleDryH2oScalAtmSurf
       veloFric = fluxVect$mean$veloFric,
+      # needed to produce: tempScalAtmSurf
       fluxTemp = statStaDiff$mean$fluxTemp,
+      # needed to produce: distObkv, paraStbl, veloScalCvct, timeScalCvct, tempScalAbl, rtioMoleDryH2oScalAbl
       fluxTempVirtPot00 = statStaDiff$mean$fluxTempVirtPot00,
+      # needed to produce: rtioMoleDryH2oScalAtmSurf, rtioMoleDryH2oScalAbl
       fluxH2o = statStaDiff$mean$fluxH2o
     )
     
