@@ -1735,23 +1735,26 @@ REYNflux_FD_mole_dry <- function(
     
     #' @description Function definition. This function calculates turbulence intensity, Obukhov length, atmospheric stability, convective velocity, convective timescale, temperature scale, and humidity scale.
     
-    #' @param inp A data frame with the variables vect and sclr that each contain the instantaneous differences reported by ?def.stat.sta.diff. In a typical eddy-covariance application, vect would be the vertical wind speed in streamwise ENU convention (positive from below), e.g.  veloZaxs derived from ?def.rot.ang.zaxs.erth and further processed in ?def.stat.sta.diff, of class "numeric" and with unit attribute [m s-1]. scal would be any scalar quantity in SI base units that does not require WPL density correction (Webb et al., 1980), i.e. temperature in unit [K] and gas concentration in dry mole fraction [mol m-3], of class "numeric" and with unit attribute. These inputs can be viewed as a specific example that can be generalized through replacement by other variables that share the same coordinate conventions and consistent units among inp and Unit.
-    #' @param conv An optional vector of class "numeric" with unit attribute to permit conversion of the results, e.g. to output units that are different from the product of the inp$vect unit and the inp$sclr unit. conv must be either of length = 1 or have the same length as number of observations in inp. If conv is of length = 1, then the same conversion factor is applied to all observations supplied in inp (e.g., unit conversion). On the other hand, if conv is of the same length as number of observations in inp, then a point-by-point conversion is performed individually for each observation supplied in inp (e.g., different weights for each observation).
-    #' @param Unit A data frame with the entries InpVect, InpSclr, Conv, Out, of class "character". To ensure consistent units of the returned object, Unit needs to be specified with the constraint that Unit$Out = Unit$InpVect * Unit$InpSclr * Unit$Conv. If the function call argument conv is not specified, then Unit$Conv should be supplied as = "-".
-    #' @param AlgBase A vector of length 1 that defines the base state with respect to which the element-dataframe base in the returned object is calculated, of class "character" and no unit attribute. Is set to one of AlgBase <- c("mean", "trnd", "ord03")[1] and defaults to "mean", with the additional options detrending "trnd" and 3rd-order polynomial "ord03". See ?eddy4R.base::def.base.ec() for additional details.
-    #' @param idep An optional vector of class "numeric" with unit attribute. idep is only required to be specified if argument AlgBase is set to "trnd" or "ord03", in which case idep provides the independent variable for interpolation.
-    
+    #' @param velo A data frame of the 3-dimensional wind vector in any orthogonal coordinate representation. Contains the variables Xaxs, Yaxs, Xaxs, each of class "numeric" and with unit attribute [m s-1]. Required to return coefSdMeanVelo.
+    #' @param distZaxsMeas A vector of length 1 containing the effective measurement height (i.e. vertical distance of the measurement above displacement height), of class "numeric" and with unit attribute [m]. Required to return paraStbl.
+    #' @param distZaxsAbl A vector of length 1 containing the boundary layer height above ground, of class "numeric" and with unit attribute [m]. Required to return veloScalCvct, timeScalCvct, tempScalAbl, rtioMoleDryH2oScalAbl.
+    #' @param densMoleAirDry A vector of length 1 containing the dry air density, of class "numeric" and with unit attribute [mol m-3]. Required to return rtioMoleDryH2oScalAtmSurf, rtioMoleDryH2oScalAbl.
+    #' @param tempVirtPot00 [K] A vector of length 1 containing the virtual potential temperature, of class "numeric" and with unit attribute [K]. Required to return distObkv, paraStbl, veloScalCvct, timeScalCvct, tempScalAbl, rtioMoleDryH2oScalAbl.
+    #' @param veloFric A vector of length 1 containing the friction velocity, of class "numeric" and with unit attribute [m s-1]. Required to return distObkv, paraStbl, tempScalAtmSurf, rtioMoleDryH2oScalAtmSurf.
+    #' @param fluxTemp A vector of length 1 containing the sensible heat flux in kinematic units, of class "numeric" and with unit attribute [K m s-1]. Required to return tempScalAtmSurf, which in turn feeds into def.itc().
+    #' @param fluxTempVirtPot00 [K m s-1] A vector of length 1 containing the buoyancy flux in kinematic units, of class "numeric" and with unit attribute [K m s-1]. Required to return distObkv, paraStbl, veloScalCvct, timeScalCvct, tempScalAbl, rtioMoleDryH2oScalAbl.
+    #' @param fluxH2o A vector of length 1 containing the latent heat flux in kinematic units, of class "numeric" and with unit attribute [mol m-2 s-1]. Required to return rtioMoleDryH2oScalAtmSurf, rtioMoleDryH2oScalAbl.
+
     #' @return 
     #' The returned object is a list containing the element vectors base, conv, corr, diff, max, mean, min, sd, each of class "numeric" and with unit attribute.
     #' All elements with the exception of conv and corr are calculated from the instantaneous products inp$vect * inp$scal * conv with the same number of observations as inp and assigned the Unit$Out unit attribute. diff provides these instantaneous products themselves, base provides their base state as specified per argument AlgBase, and max, mean, min and sd their maximum, mean, minimum and standard deviation, respectively. The element conv reports the conversion vector with unit attribute if specified in the function arguments, or NULL with unit attribute "-" otherwise. The element corr is calculated from inp$vect and inp$scal without invoking conv, and provides the correlation between vector and scalar quantity with unit attribute "-".
-    
     
     #' @references
     #' License: GNU AFFERO GENERAL PUBLIC LICENSE Version 3, 19 November 2007
     #' Stull, R. B.: An Introduction to Boundary Layer Meteorology, Kluwer Academic Publishers, Dordrecht, The Netherlands, 670 pp., 1988.
     #' Foken, T.: Micrometeorology, Springer, Berlin, Heidelberg, 306 pp., 2008.
     
-    #' @keywords turbulence intensity, coefficient of variation, Obukhov length, atmospheric stability, convective velocity, convective timescale, temperature scale, humidity scale
+    #' @keywords turbulence intensity, coefficient of variation, Obukhov length, atmospheric stability, convective velocity, Deardorff velocity, convective timescale, temperature scale, humidity scale
     
     #' @examples
     #' Sensible heat flux in units of energy [kg s-3] = [W m-2]
@@ -1835,6 +1838,10 @@ REYNflux_FD_mole_dry <- function(
               stop(base::paste0("def.var.abl(): velo$", idx, " is not provided, please check."))  
             }
             
+            # check that object is of class numeric vector
+            if(base::class(velo[[idx]]) != "numeric") {
+              stop(base::paste0("def.var.abl(): velo$", idx, " is not of class numeric vector, please check."))}
+            
             # presence/absence of unit attribute
             if(!("unit" %in% base::names(attributes(velo[[idx]])))) {
               stop(base::paste0("def.var.abl(): velo$", idx, " is missing unit attribute."))}
@@ -1860,6 +1867,10 @@ REYNflux_FD_mole_dry <- function(
               base::attr(tmp, which = "unit") <- UnitExpc[[idx]]
               base::assign(x = idx, value = tmp)
             }
+            
+            # check that object is of length = 1
+            if(base::length(tmp) != 1) {
+              stop(base::paste0("def.var.abl(): ", idx, " is not of length = 1, please check."))}
             
             # check that object is of class numeric vector
             if(base::class(tmp) != "numeric") {
