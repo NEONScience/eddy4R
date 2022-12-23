@@ -1720,7 +1720,7 @@ REYNflux_FD_mole_dry <- function(
 
     
   ############################################################
-  #AUXILARY PARAMETERS
+  # BOUNDARY LAYER VARIABLES
   ############################################################
 
     
@@ -1728,12 +1728,12 @@ REYNflux_FD_mole_dry <- function(
   {
     
     ##############################################################################################
-    #' @title Definition function: Eddy-covariance turbulent flux calculation for scalar quantities
+    #' @title Definition function: Boundary layer variables
     
     #' @author
     #' Stefan Metzger \email{eddy4R.info@gmail.com}
     
-    #' @description Function definition. This function calculates eddy-covariance turbulent flux for scalar quantities, such as temperature, moisture, CO2, CH4, NOx, VOCs etc.
+    #' @description Function definition. This function calculates turbulence intensity, Obukhov length, atmospheric stability, convective velocity, convective timescale, temperature scale, and humidity scale.
     
     #' @param inp A data frame with the variables vect and sclr that each contain the instantaneous differences reported by ?def.stat.sta.diff. In a typical eddy-covariance application, vect would be the vertical wind speed in streamwise ENU convention (positive from below), e.g.  veloZaxs derived from ?def.rot.ang.zaxs.erth and further processed in ?def.stat.sta.diff, of class "numeric" and with unit attribute [m s-1]. scal would be any scalar quantity in SI base units that does not require WPL density correction (Webb et al., 1980), i.e. temperature in unit [K] and gas concentration in dry mole fraction [mol m-3], of class "numeric" and with unit attribute. These inputs can be viewed as a specific example that can be generalized through replacement by other variables that share the same coordinate conventions and consistent units among inp and Unit.
     #' @param conv An optional vector of class "numeric" with unit attribute to permit conversion of the results, e.g. to output units that are different from the product of the inp$vect unit and the inp$sclr unit. conv must be either of length = 1 or have the same length as number of observations in inp. If conv is of length = 1, then the same conversion factor is applied to all observations supplied in inp (e.g., unit conversion). On the other hand, if conv is of the same length as number of observations in inp, then a point-by-point conversion is performed individually for each observation supplied in inp (e.g., different weights for each observation).
@@ -1748,9 +1748,10 @@ REYNflux_FD_mole_dry <- function(
     
     #' @references
     #' License: GNU AFFERO GENERAL PUBLIC LICENSE Version 3, 19 November 2007
-    #' Webb, E. K., Pearman, G. I., and Leuning, R.: Correction of flux measurements for density effects due to heat and water vapour transfer, Q. J. R. Meteorolog. Soc., 106, 85-100, doi:10.1002/qj.49710644707, 1980.
+    #' Stull, R. B.: An Introduction to Boundary Layer Meteorology, Kluwer Academic Publishers, Dordrecht, The Netherlands, 670 pp., 1988.
+    #' Foken, T.: Micrometeorology, Springer, Berlin, Heidelberg, 306 pp., 2008.
     
-    #' @keywords correlation, flux, temperature, moisture, water, humidity, H2O, CO2, CH4, NOx, VOC, standard deviation, scalar
+    #' @keywords turbulence intensity, coefficient of variation, Obukhov length, atmospheric stability, convective velocity, convective timescale, temperature scale, humidity scale
     
     #' @examples
     #' Sensible heat flux in units of energy [kg s-3] = [W m-2]
@@ -1780,7 +1781,7 @@ REYNflux_FD_mole_dry <- function(
     # changelog and author contributions / copyrights
     #   Stefan Metzger (2011-03-04)
     #     original creation
-    #   Stefan Metzger (2022-03-24)
+    #   Stefan Metzger (2022-12-23)
     #     update to eddy4R terminology and modularize into definition function
     ###############################################################################################
     
