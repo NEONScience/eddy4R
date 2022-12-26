@@ -1734,16 +1734,16 @@ REYNflux_FD_mole_dry <- function(
     #' Stefan Metzger \email{eddy4R.info@gmail.com}
     
     #' @description Function definition. This function calculates turbulence intensity, Obukhov length, atmospheric stability, convective velocity, convective timescale, temperature scale, and humidity scale.
-    
-    #' @param velo A data frame of the 3-dimensional wind vector in any orthogonal coordinate representation. Contains the variables Xaxs, Yaxs, Xaxs, each of class "numeric" and with unit attribute [m s-1]. Required to return coefSdMeanVelo.
+
+    #' @param densMoleAirDry A vector of length 1 containing the dry air density, of class "numeric" and with unit attribute [mol m-3]. Required to return rtioMoleDryH2oScalAbl, rtioMoleDryH2oScalAtmSurf.
+    #' @param distZaxsAbl A vector of length 1 containing the atmospheric boundary layer height above ground, of class "numeric" and with unit attribute [m]. Required to return rtioMoleDryH2oScalAbl, tempScalAbl, timeScalCvct, veloScalCvct.
     #' @param distZaxsMeas A vector of length 1 containing the effective measurement height (i.e. vertical distance of the measurement above displacement height), of class "numeric" and with unit attribute [m]. Required to return paraStbl.
-    #' @param distZaxsAbl A vector of length 1 containing the atmospheric boundary layer height above ground, of class "numeric" and with unit attribute [m]. Required to return veloScalCvct, timeScalCvct, tempScalAbl, rtioMoleDryH2oScalAbl.
-    #' @param densMoleAirDry A vector of length 1 containing the dry air density, of class "numeric" and with unit attribute [mol m-3]. Required to return rtioMoleDryH2oScalAtmSurf, rtioMoleDryH2oScalAbl.
-    #' @param tempVirtPot00 [K] A vector of length 1 containing the virtual potential temperature, of class "numeric" and with unit attribute [K]. Required to return distObkv, paraStbl, veloScalCvct, timeScalCvct, tempScalAbl, rtioMoleDryH2oScalAbl.
-    #' @param veloFric A vector of length 1 containing the friction velocity, of class "numeric" and with unit attribute [m s-1]. Required to return distObkv, paraStbl, tempScalAtmSurf, rtioMoleDryH2oScalAtmSurf.
+    #' @param fluxH2o A vector of length 1 containing the latent heat flux in kinematic units, of class "numeric" and with unit attribute [mol m-2 s-1]. Required to return rtioMoleDryH2oScalAbl, rtioMoleDryH2oScalAtmSurf.
     #' @param fluxTemp A vector of length 1 containing the sensible heat flux in kinematic units, of class "numeric" and with unit attribute [K m s-1]. Required to return tempScalAtmSurf, which in turn feeds into def.itc().
-    #' @param fluxTempVirtPot00 [K m s-1] A vector of length 1 containing the buoyancy flux in kinematic units, of class "numeric" and with unit attribute [K m s-1]. Required to return distObkv, paraStbl, veloScalCvct, timeScalCvct, tempScalAbl, rtioMoleDryH2oScalAbl.
-    #' @param fluxH2o A vector of length 1 containing the latent heat flux in kinematic units, of class "numeric" and with unit attribute [mol m-2 s-1]. Required to return rtioMoleDryH2oScalAtmSurf, rtioMoleDryH2oScalAbl.
+    #' @param fluxTempVirtPot00 [K m s-1] A vector of length 1 containing the buoyancy flux in kinematic units, of class "numeric" and with unit attribute [K m s-1]. Required to return distObkv, paraStbl, rtioMoleDryH2oScalAbl, tempScalAbl, timeScalCvct, veloScalCvct.
+    #' @param tempVirtPot00 [K] A vector of length 1 containing the virtual potential temperature, of class "numeric" and with unit attribute [K]. Required to return distObkv, paraStbl, rtioMoleDryH2oScalAbl,  tempScalAbl, timeScalCvct, veloScalCvct.
+    #' @param velo A data frame of the 3-dimensional wind vector in any orthogonal coordinate representation. Contains the variables Xaxs, Yaxs, Xaxs, each of class "numeric" and with unit attribute [m s-1]. Required to return coefSdMeanVelo.
+    #' @param veloFric A vector of length 1 containing the friction velocity, of class "numeric" and with unit attribute [m s-1]. Required to return distObkv, paraStbl, rtioMoleDryH2oScalAtmSurf, tempScalAtmSurf.
 
     #' @return 
     #' The returned object is a list containing the element vectors base, conv, corr, diff, max, mean, min, sd, each of class "numeric" and with unit attribute.
