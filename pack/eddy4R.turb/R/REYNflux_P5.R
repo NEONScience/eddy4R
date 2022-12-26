@@ -1745,10 +1745,19 @@ REYNflux_FD_mole_dry <- function(
     #' @param velo A data frame of the 3-dimensional wind vector in any orthogonal coordinate representation. Contains the variables Xaxs, Yaxs, Xaxs, each of class "numeric" and with unit attribute [m s-1]. Required to return coefSdMeanVelo.
     #' @param veloFric A vector of length 1 containing the friction velocity, of class "numeric" and with unit attribute [m s-1]. Required to return distObkv, paraStbl, rtioMoleDryH2oScalAtmSurf, tempScalAtmSurf.
 
-    #' @return 
-    #' The returned object is a list containing the element vectors base, conv, corr, diff, max, mean, min, sd, each of class "numeric" and with unit attribute.
-    #' All elements with the exception of conv and corr are calculated from the instantaneous products inp$vect * inp$scal * conv with the same number of observations as inp and assigned the Unit$Out unit attribute. diff provides these instantaneous products themselves, base provides their base state as specified per argument AlgBase, and max, mean, min and sd their maximum, mean, minimum and standard deviation, respectively. The element conv reports the conversion vector with unit attribute if specified in the function arguments, or NULL with unit attribute "-" otherwise. The element corr is calculated from inp$vect and inp$scal without invoking conv, and provides the correlation between vector and scalar quantity with unit attribute "-".
+    #' @return
+    #' The returned object is a data frame with a single observation, containing the following variables:
+    #'    $coefSdMeanVelo: turbulence intensity (aka coefficient of variation) of the  total wind vector in unit [-]. Requires the following numeric function argument to be supplied for non-NaN result: velo.
+    #'    $distObkv: Obukhov length in unit [m]. Requires the following numeric function arguments to be supplied for non-NaN result: fluxTempVirtPot00, tempVirtPot00, veloFric.
+    #'    $paraStbl: Atmospheric stability in unit [-]. Requires the following numeric function arguments to be supplied for non-NaN result: distZaxsMeas, fluxTempVirtPot00, tempVirtPot00, veloFric.
+    #'    $rtioMoleDryH2oScalAbl: Humidity scale in the atmospheric boundary layer in units [molH2o mol-1Dry]. Requires the following numeric function arguments to be supplied for non-NaN result: densMoleAirDry, distZaxsAbl, fluxH2o, fluxTempVirtPot00, tempVirtPot00.
+    #'    $rtioMoleDryH2oScalAtmSurf: Humidity scale in the atmospheric surface layer in units [molH2o mol-1Dry]. Requires the following numeric function arguments to be supplied for non-NaN result: densMoleAirDry, fluxH2o, veloFric.
+    #'    $tempScalAbl: Temperature scale in the atmospheric boundary layer in unit [K]. Requires the following numeric function arguments to be supplied for non-NaN result: distZaxsAbl, fluxTempVirtPot00, tempVirtPot00.
+    #'    $tempScalAtmSurf: Temperature scale in the atmospheric surface layer in unit [K]. Requires the following numeric function arguments to be supplied for non-NaN result: fluxTemp, veloFric.
+    #'    $timeScalCvct: Convective time scale in the atmospheric boundary layer in unit [s]. Requires the following numeric function arguments to be supplied for non-NaN result: distZaxsAbl, fluxTempVirtPot00, tempVirtPot00.
+    #'    $veloScalCvct: Convective velocity scale in the atmospheric boundary layer (aka Deardorff velocity) in units [m s-1]. Requires the following numeric function arguments to be supplied for non-NaN result: distZaxsAbl, fluxTempVirtPot00, tempVirtPot00.
     
+
     #' @references
     #' License: GNU AFFERO GENERAL PUBLIC LICENSE Version 3, 19 November 2007
     #' Stull, R. B.: An Introduction to Boundary Layer Meteorology, Kluwer Academic Publishers, Dordrecht, The Netherlands, 670 pp., 1988.
@@ -1893,7 +1902,7 @@ REYNflux_FD_mole_dry <- function(
       # create empty object for export
       rpt <- base::data.frame(coefSdMeanVelo = NaN)
         
-      # turbulence intensity (aka coefficient of variation) from total wind vector (Stull, Eq. 1.4d)
+      # turbulence intensity (aka coefficient of variation) of the  total wind vector (Stull, Eq. 1.4d)
         
         # total wind vector [m s-1]
         veloXaxsYaxsZaxs <- base::sqrt(velo$Xaxs^2 + velo$Yaxs^2 + velo$Zaxs^2)
