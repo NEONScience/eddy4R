@@ -1766,93 +1766,99 @@ REYNflux_FD_mole_dry <- function(
     #' @keywords turbulence intensity, coefficient of variation, Obukhov length, atmospheric stability, convective velocity, Deardorff velocity, convective timescale, temperature scale, humidity scale
     
     #' @examples
-    #' Sensible heat flux in units of energy [kg s-3] = [W m-2]
-    #' make sure to assign all variables and units, the function should run ok.
-    #' input data: vertical wind speed and temperature instantaneous differences from base state, see ?def.stat.sta.diff for details
-    #' inp <- base::data.frame(
-    #'   vect = c(0.2259224, 0.2342562, 0.3936403, 0.2395388, 0.2885017),
-    #'   sclr = c(0.1067013, 0.1015043, 0.1324425, 0.1732023, 0.1262345)
-    #' )
-    #' attr(inp$vect,"unit") <- "m s-1"; attr(inp$sclr,"unit") <- "K"
-    #' volumetric heat capacity for conversion from kinematic units [K m s-1] to units of energy [W m-2], see ?def.heat.air.wet for details
-    #' conv <- 1220.079
-    #' attr(conv,"unit") <- "kg m-1 s2 K-1"
-    #' function call
-    #' out <- def.flux.sclr(
-    #'   inp = inp,
-    #'   conv = conv,
-    #'   Unit = base::data.frame(InpVect = "m s-1", InpSclr = "K", Conv = "kg m-1 s2 K-1", Out = "W m-2")
-    #' )
-    #' utils::str(out)
-    #' base::rm(inp, conv, out)
-    
-    
-    
-    
-    
-    # prepare input data
-      
-      # dry air density
-      densMoleAirDry <- 41.91337
-      base::attr(densMoleAirDry,"unit") <- "mol m-3"
-      
-      # atmospheric boundary layer height
-      distZaxsAbl = 1000
-      base::attr(distZaxsAbl,"unit") <- "m"
-      
-      # effective measurement height
-      distZaxsMeas = 8
-      base::attr(distZaxsMeas,"unit") <- "m"
-      
-      # latent heat flux in kinematic units
-      fluxH2o = 9.019642e-06
-      base::attr(fluxH2o,"unit") <- "mol m-2 s-1"
-      
-      # sensible heat flux in kinematic units
-      fluxTemp = 0.001527586
-      base::attr(fluxTemp,"unit") <- "K m s-1"
-      
-      # buoyancy flux in kinematic units
-      fluxTempVirtPot00 = 0.001355592
-      base::attr(fluxTempVirtPot00,"unit") <- "K m s-1"
-      
-      # virtual potential temperature
-      tempVirtPot00 = 274.1534
-      base::attr(tempVirtPot00,"unit") <- "K"
-      
-      # 3-dimensional wind vector
-      velo <- base::data.frame(
-        Xaxs = c(-1.889635, -1.661724, -1.615837, -1.711132, -1.223001),
-        Yaxs = c(1.365195, 1.277106, 1.394891, 1.180698, 1.283836),
-        Zaxs = c(0.1766139, 0.1849477, 0.3443318, 0.1902303, 0.2391932)
-        )
-      base::attr(velo$Xaxs,"unit") <- "m s-1"
-      base::attr(velo$Yaxs,"unit") <- "m s-1"
-      base::attr(velo$Zaxs,"unit") <- "m s-1"
-      
-      # friction velocity
-      veloFric = 0.15489
-      base::attr(veloFric,"unit") <- "m s-1"
-    
-    # call function
-    def.var.abl(
-      densMoleAirDry = statStaDiff$base$densMoleAirDry,
-      distZaxsAbl = statStaDiff$mean$d_z_ABL,
-      distZaxsMeas = statStaDiff$mean$d_z_m,
-      fluxH2o = statStaDiff$mean$fluxH2o,
-      fluxTemp = statStaDiff$mean$fluxTemp,
-      fluxTempVirtPot00 = statStaDiff$mean$fluxTempVirtPot00,
-      tempVirtPot00 = statStaDiff$mean$tempVirtPot00,
-      velo = velo,
-      veloFric = fluxVect$mean$veloFric
-    )
-    
-    
-    
-    
-    
-    
-    
+    #' prepare input data
+    #' 
+    #'   create emptly list for inputs
+    #'   inp <- base::list()
+    #'   
+    #'   dry air density
+    #'   inp$densMoleAirDry <- 41.91337
+    #'   base::attr(inp$densMoleAirDry,"unit") <- "mol m-3"
+    #'   
+    #'   atmospheric boundary layer height
+    #'   inp$distZaxsAbl = 1000
+    #'   base::attr(inp$distZaxsAbl,"unit") <- "m"
+    #'   
+    #'   effective measurement height
+    #'   inp$distZaxsMeas = 8
+    #'   base::attr(inp$distZaxsMeas,"unit") <- "m"
+    #'   
+    #'   latent heat flux in kinematic units
+    #'   inp$fluxH2o = 9.019642e-06
+    #'   base::attr(inp$fluxH2o,"unit") <- "mol m-2 s-1"
+    #'   
+    #'   sensible heat flux in kinematic units
+    #'   inp$fluxTemp = 0.001527586
+    #'   base::attr(inp$fluxTemp,"unit") <- "K m s-1"
+    #'   
+    #'   buoyancy flux in kinematic units
+    #'   inp$fluxTempVirtPot00 = 0.001355592
+    #'   base::attr(inp$fluxTempVirtPot00,"unit") <- "K m s-1"
+    #'   
+    #'   virtual potential temperature
+    #'   inp$tempVirtPot00 = 274.1534
+    #'   base::attr(inp$tempVirtPot00,"unit") <- "K"
+    #'   
+    #'   3-dimensional wind vector
+    #'   inp$velo <- base::data.frame(
+    #'     Xaxs = c(-1.889635, -1.661724, -1.615837, -1.711132, -1.223001),
+    #'     Yaxs = c(1.365195, 1.277106, 1.394891, 1.180698, 1.283836),
+    #'     Zaxs = c(0.1766139, 0.1849477, 0.3443318, 0.1902303, 0.2391932)
+    #'   )
+    #'   base::attr(inp$velo$Xaxs,"unit") <- "m s-1"
+    #'   base::attr(inp$velo$Yaxs,"unit") <- "m s-1"
+    #'   base::attr(inp$velo$Zaxs,"unit") <- "m s-1"
+    #'   
+    #'   friction velocity
+    #'   inp$veloFric = 0.15489
+    #'   base::attr(inp$veloFric,"unit") <- "m s-1"
+    #'   
+    #' call function
+    #' 
+    #'   Example 1. All function argument values and units supplied - works.
+    #'   out <- def.var.abl(
+    #'     densMoleAirDry = inp$densMoleAirDry,
+    #'     distZaxsAbl = inp$distZaxsAbl,
+    #'     distZaxsMeas = inp$distZaxsMeas,
+    #'     fluxH2o = inp$fluxH2o,
+    #'     fluxTemp = inp$fluxTemp,
+    #'     fluxTempVirtPot00 = inp$fluxTempVirtPot00,
+    #'     tempVirtPot00 = inp$tempVirtPot00,
+    #'     velo = inp$velo,
+    #'     veloFric = inp$veloFric
+    #'   )
+    #'   utils::str(out)
+    #'   base::rm(out)
+    #'   
+    #'   Example 2. fluxTemp is missing unit attribute - throws error.
+    #'   base::attr(inp$fluxTemp,"unit") <- NULL
+    #'   
+    #'   out <- def.var.abl(
+    #'     densMoleAirDry = inp$densMoleAirDry,
+    #'     distZaxsAbl = inp$distZaxsAbl,
+    #'     distZaxsMeas = inp$distZaxsMeas,
+    #'     fluxH2o = inp$fluxH2o,
+    #'     fluxTemp = inp$fluxTemp,
+    #'     fluxTempVirtPot00 = inp$fluxTempVirtPot00,
+    #'     tempVirtPot00 = inp$tempVirtPot00,
+    #'     velo = inp$velo,
+    #'     veloFric = inp$veloFric
+    #'   )
+    #'   
+    #'   Example 3. fluxTemp is not supplied as function argument - tempScalAtmSurf reported as NaN.
+    #'   out <- def.var.abl(
+    #'     densMoleAirDry = inp$densMoleAirDry,
+    #'     distZaxsAbl = inp$distZaxsAbl,
+    #'     distZaxsMeas = inp$distZaxsMeas,
+    #'     fluxH2o = inp$fluxH2o,
+    #'     fluxTempVirtPot00 = inp$fluxTempVirtPot00,
+    #'     tempVirtPot00 = inp$tempVirtPot00,
+    #'     velo = inp$velo,
+    #'     veloFric = inp$veloFric
+    #'   )
+    #'   utils::str(out)
+    #'   base::rm(inp, out)
+
     #' @seealso Currently none.
     
     #' @export
@@ -1860,7 +1866,7 @@ REYNflux_FD_mole_dry <- function(
     # changelog and author contributions / copyrights
     #   Stefan Metzger (2011-03-04)
     #     original creation
-    #   Stefan Metzger (2022-12-23)
+    #   Stefan Metzger (2022-12-23 - 2022-12-27)
     #     update to eddy4R terminology and modularize into definition function
     ###############################################################################################
     
