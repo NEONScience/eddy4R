@@ -1786,6 +1786,33 @@ REYNflux_FD_mole_dry <- function(
     #' utils::str(out)
     #' base::rm(inp, conv, out)
     
+    
+    
+    
+    
+    # prepare input data
+    velo <- data[c("veloXaxs", "veloYaxs", "veloZaxs")]
+    base::dimnames(velo)[[2]] <- c("Xaxs", "Yaxs", "Zaxs")
+    
+    # call function
+    varAblTmp <- def.var.abl(
+      densMoleAirDry = statStaDiff$base$densMoleAirDry,
+      distZaxsAbl = statStaDiff$mean$d_z_ABL,
+      distZaxsMeas = statStaDiff$mean$d_z_m,
+      fluxH2o = statStaDiff$mean$fluxH2o,
+      fluxTemp = statStaDiff$mean$fluxTemp,
+      fluxTempVirtPot00 = statStaDiff$mean$fluxTempVirtPot00,
+      tempVirtPot00 = statStaDiff$mean$tempVirtPot00,
+      velo = velo,
+      veloFric = fluxVect$mean$veloFric
+    )
+    
+    
+    
+    
+    
+    
+    
     #' @seealso Currently none.
     
     #' @export
@@ -1799,30 +1826,30 @@ REYNflux_FD_mole_dry <- function(
     
     
     def.var.abl <- function(
-      velo = NULL,
-      distZaxsMeas = NULL,
-      distZaxsAbl = NULL,
       densMoleAirDry = NULL,
-      tempVirtPot00 = NULL,
-      veloFric = NULL,
+      distZaxsAbl = NULL,
+      distZaxsMeas = NULL,
+      fluxH2o = NULL,
       fluxTemp = NULL,
       fluxTempVirtPot00 = NULL,
-      fluxH2o = NULL
+      tempVirtPot00 = NULL,
+      velo = NULL,
+      veloFric = NULL
     ) {
       
       # check presence of input arguments and consistent units
       
         # list of expected units for function arguments
         UnitExpc <- base::list()
-        UnitExpc$velo <- "m s-1"
-        UnitExpc$distZaxsMeas <- "m"
+        UnitExpc$densMoleAirDry <- "mol m-3"  
         UnitExpc$distZaxsAbl <- "m"
-        UnitExpc$densMoleAirDry <- "mol m-3"
-        UnitExpc$tempVirtPot00 <- "K"
-        UnitExpc$veloFric <- "m s-1"
+        UnitExpc$distZaxsMeas <- "m"
+        UnitExpc$fluxH2o <- "mol m-2 s-1"
         UnitExpc$fluxTemp <- "K m s-1"
         UnitExpc$fluxTempVirtPot00 <- "K m s-1"
-        UnitExpc$fluxH2o <- "mol m-2 s-1"
+        UnitExpc$tempVirtPot00 <- "K"
+        UnitExpc$velo <- "m s-1"
+        UnitExpc$veloFric <- "m s-1"
       
         # velo - separate checks because the only dataframe among the function arguments
       
@@ -1978,15 +2005,15 @@ REYNflux_FD_mole_dry <- function(
 
     # call function
     varAblTmp <- def.var.abl(
-      velo = velo,
-      distZaxsMeas = statStaDiff$mean$d_z_m,
-      distZaxsAbl = statStaDiff$mean$d_z_ABL,
       densMoleAirDry = statStaDiff$base$densMoleAirDry,
-      tempVirtPot00 = statStaDiff$mean$tempVirtPot00,
-      veloFric = fluxVect$mean$veloFric,
+      distZaxsAbl = statStaDiff$mean$d_z_ABL,
+      distZaxsMeas = statStaDiff$mean$d_z_m,
+      fluxH2o = statStaDiff$mean$fluxH2o,
       fluxTemp = statStaDiff$mean$fluxTemp,
       fluxTempVirtPot00 = statStaDiff$mean$fluxTempVirtPot00,
-      fluxH2o = statStaDiff$mean$fluxH2o
+      tempVirtPot00 = statStaDiff$mean$tempVirtPot00,
+      velo = velo,
+      veloFric = fluxVect$mean$veloFric
     )
     
     # assign outputs
