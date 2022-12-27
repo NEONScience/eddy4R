@@ -1791,11 +1791,51 @@ REYNflux_FD_mole_dry <- function(
     
     
     # prepare input data
-    velo <- data[c("veloXaxs", "veloYaxs", "veloZaxs")]
-    base::dimnames(velo)[[2]] <- c("Xaxs", "Yaxs", "Zaxs")
+      
+      # dry air density
+      densMoleAirDry <- 41.91337
+      base::attr(densMoleAirDry,"unit") <- "mol m-3"
+      
+      # atmospheric boundary layer height
+      distZaxsAbl = 1000
+      base::attr(distZaxsAbl,"unit") <- "m"
+      
+      # effective measurement height
+      distZaxsMeas = 8
+      base::attr(distZaxsMeas,"unit") <- "m"
+      
+      # latent heat flux in kinematic units
+      fluxH2o = 9.019642e-06
+      base::attr(fluxH2o,"unit") <- "mol m-2 s-1"
+      
+      # sensible heat flux in kinematic units
+      fluxTemp = 0.001527586
+      base::attr(fluxTemp,"unit") <- "K m s-1"
+      
+      # buoyancy flux in kinematic units
+      fluxTempVirtPot00 = 0.001355592
+      base::attr(fluxTempVirtPot00,"unit") <- "K m s-1"
+      
+      # virtual potential temperature
+      tempVirtPot00 = 274.1534
+      base::attr(tempVirtPot00,"unit") <- "K"
+      
+      # 3-dimensional wind vector
+      velo <- base::data.frame(
+        Xaxs = c(-1.889635, -1.661724, -1.615837, -1.711132, -1.223001),
+        Yaxs = c(1.365195, 1.277106, 1.394891, 1.180698, 1.283836),
+        Zaxs = c(0.1766139, 0.1849477, 0.3443318, 0.1902303, 0.2391932)
+        )
+      base::attr(velo$Xaxs,"unit") <- "m s-1"
+      base::attr(velo$Yaxs,"unit") <- "m s-1"
+      base::attr(velo$Zaxs,"unit") <- "m s-1"
+      
+      # friction velocity
+      veloFric = 0.15489
+      base::attr(veloFric,"unit") <- "m s-1"
     
     # call function
-    varAblTmp <- def.var.abl(
+    def.var.abl(
       densMoleAirDry = statStaDiff$base$densMoleAirDry,
       distZaxsAbl = statStaDiff$mean$d_z_ABL,
       distZaxsMeas = statStaDiff$mean$d_z_m,
