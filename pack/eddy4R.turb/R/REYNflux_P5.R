@@ -1152,7 +1152,7 @@ REYNflux_FD_mole_dry <- function(
     
     #' @param inp A data frame containing the instantaneous differences produced by ?def.stat.sta.diff() of 1) the wind vector in meteorological ENU convention with the variables veloXaxs (latitudinal wind speed, positive from west), veloYaxs (longitudinal wind speed, positive from south), and veloZaxs (vertical wind speed, positive from below), and 2) the wind vector in streamwise ENU convention with the variables veloXaxsHor (streamwise wind speed, positive from front), veloYaxsHor (cross-wind speed, positive from left), and veloZaxsHor (vertical wind speed, positive from below) derived from ?def.rot.ang.zaxs.erth, of class "numeric", each with unit attribute [m s-1]. The wind vector inputs can be viewed as a specific example that can be generalized through replacement by other vector quantities that share the same coordinate conventions and consistent units among inp and Unit.
     #' @param rot A list of rotation matrices with the list elements mtrxRot01 and mtrxRot02 derived from ?def.rot.ang.zaxs.erth, class "numeric", each with unit attribute. [-]
-    #' @param Unit A data frame with the entries In (input units), Out (output units), and OutSq (squared output units), of class "character".
+    #' @param Unit A data frame with the entries Inp (input units), Out (output units), and OutSq (squared output units), of class "character".
     
     #' @return 
     #' The returned object is a list containing the element dataframes corr, diff, mean, and sd, each of class "numeric" and with unit attribute.
@@ -1176,7 +1176,7 @@ REYNflux_FD_mole_dry <- function(
     #'   inp = base::cbind(def.stat.sta.diff(inp = inp)$diff,
     #'                     def.stat.sta.diff(inp = def.rot.ang.zaxs.erth(inp = inp)$data)$diff),
     #'   rot = def.rot.ang.zaxs.erth(inp = inp)$rot,
-    #'   Unit = base::data.frame(In = "m s-1", Out = "m s-1", OutSq = "m2 s-2")
+    #'   Unit = base::data.frame(Inp = "m s-1", Out = "m s-1", OutSq = "m2 s-2")
     #' )
     #' utils::str(out)
     #' base::rm(inp, out)
@@ -1199,7 +1199,7 @@ REYNflux_FD_mole_dry <- function(
       # limit to required wind components, use def.rot.ang.zaxs.erth example above
       inp,
       rot,
-      Unit = base::data.frame(In = "m s-1", Out = "m s-1", OutSq = "m2 s-2")
+      Unit = base::data.frame(Inp = "m s-1", Out = "m s-1", OutSq = "m2 s-2")
     
     ) {
 
@@ -1225,9 +1225,9 @@ REYNflux_FD_mole_dry <- function(
               stop(base::paste0("def.flux.vect(): inp$", idx, " is missing unit attribute."))}
             
             # test for correct units
-            if(attributes(inp[[idx]])$unit != Unit$In) {
+            if(attributes(inp[[idx]])$unit != Unit$Inp) {
               stop(base::paste0("def.flux.vect(): inp$", idx, 
-                                " input units are not matching Unit$In, please check."))}
+                                " input units are not matching Unit$Inp, please check."))}
             
           }; base::rm(idx)
         
@@ -1265,8 +1265,8 @@ REYNflux_FD_mole_dry <- function(
           }
         
           # test that input and output Unit are identical
-          if(!(Unit$In == Unit$Out)) {
-            stop(base::paste0("def.flux.vect(): Unit$Out differs from Unit$In, please check"))}
+          if(!(Unit$Inp == Unit$Out)) {
+            stop(base::paste0("def.flux.vect(): Unit$Out differs from Unit$Inp, please check"))}
   
       
       # instantaneous fluxes from instantaneous wind component differences in streamline coordinates
@@ -1392,7 +1392,7 @@ REYNflux_FD_mole_dry <- function(
   fluxVect <- def.flux.vect(
     inp = statStaDiff$diff[c("veloXaxs", "veloYaxs", "veloZaxs", "veloXaxsHor", "veloYaxsHor", "veloZaxsHor")],
     rot = rot,
-    Unit = base::data.frame(In = "m s-1", Out = "m s-1", OutSq = "m2 s-2")
+    Unit = base::data.frame(Inp = "m s-1", Out = "m s-1", OutSq = "m2 s-2")
   )
   
 
