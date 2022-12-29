@@ -1205,6 +1205,17 @@ REYNflux_FD_mole_dry <- function(
 
       # check presence of input arguments and consistent units
       
+        # Unit
+          
+          # check that Unit is of class data.frame
+          if(base::class(Unit) != "data.frame") {
+            stop(base::paste0("def.flux.vect(): Unit is not of class data.frame, please check."))  
+          }
+          
+          # test that input and output Unit are identical
+          if(!(Unit$Inp == Unit$Out)) {
+            stop(base::paste0("def.flux.vect(): Unit$Out differs from Unit$Inp, please check"))}
+      
         # inp
         
           # check that input is of class data.frame
@@ -1256,18 +1267,6 @@ REYNflux_FD_mole_dry <- function(
                                 " input units are not matching internal units, please check."))}
             
           }; base::rm(idx)
-      
-        # Unit
-        
-          # check that Unit is of class data.frame
-          if(base::class(Unit) != "data.frame") {
-            stop(base::paste0("def.flux.vect(): Unit is not of class data.frame, please check."))  
-          }
-        
-          # test that input and output Unit are identical
-          if(!(Unit$Inp == Unit$Out)) {
-            stop(base::paste0("def.flux.vect(): Unit$Out differs from Unit$Inp, please check"))}
-  
       
       # instantaneous fluxes from instantaneous wind component differences in streamline coordinates
       # for downstream calculation of integral length scales and statistical errors
