@@ -4,14 +4,21 @@
 \alias{wrap.qfqm.rpt}
 \title{Wrapper function: QFQM quality report for eddy-covariance dp04 HDF5 files}
 \usage{
-wrap.qfqm.rpt(File, Dp = NULL, Vrbs = FALSE)
+wrap.qfqm.rpt(
+  FileName,
+  Dp = NULL,
+  Vrbs = FALSE,
+  MethQm = c("Pass", "Fail", "Na")[1]
+)
 }
 \arguments{
-\item{File}{character vector for the full path to the HDF5 file to perform the quality report [-]}
-
 \item{Dp}{A vector of data products to check the quality report for. Defaults to NULL which will test all dp's found in HDF5 file. Of type character. [-]}
 
 \item{Vrbs}{A logical parameter that determines if all failed quality times should be reported (defaults to FALSE).}
+
+\item{MethQm}{A character string that determines which quality metric to pull ("Pass", "Fail", "Na").}
+
+\item{File}{character vector for the full path to the HDF5 file to perform the quality report [-]}
 }
 \value{
 A list for all dp's provided including either summary or verbose quality report: \cr

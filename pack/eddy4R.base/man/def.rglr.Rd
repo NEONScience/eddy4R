@@ -15,13 +15,15 @@ def.rglr(
   MethRglr = c("CybiEc", "CybiEcTimeMeas", "zoo")[1],
   WndwRglr = c("Cntr", "Lead", "Trlg")[1],
   IdxWndw = c("Clst", "IdxWndwMin", "IdxWndwMax")[1],
+  DropNotNumc = TRUE,
+  RptTimeWndw = FALSE,
   PrcsSec = 6
 )
 }
 \arguments{
-\item{timeMeas}{A vector containing the observation times. Of class "POSIXlt" including timezone attribute, and of the same length as \code{dataMeas}. [-]}
+\item{timeMeas}{A vector containing the observation times. Of class "POSIXlt" including timezone attribute, and of the same row length as \code{dataMeas}. [-]}
 
-\item{dataMeas}{A named data.frame containing the observations. Columns may be of class "numeric" or "integer", and of the same length as \code{timeMeas}. Columns of classes other than "numeric" or "integer" are removed and not included in the returned \code{dataRegl}. [user-defined]}
+\item{dataMeas}{A named data.frame containing the observations, with row length matching that of \code{timeMeas}. Not that if the zoo method is chosen in \code{MethRglr} or input \code{DropNotNumc} is TRUE, any columns with class other than "numeric" or "integer" are removed and not included in the returned \code{dataRegl}. [user-defined]}
 
 \item{unitMeas}{A vector containing the unit of each column in \code{dataMeas}. Of class "character". It is recommended to conform to the "unit representation" guidelines documented in the eddy4R.base package.}
 
@@ -43,10 +45,15 @@ Method "zoo" implements the regularization method using the zoo::na.approx funct
 
 \item{IdxWndw}{Determines which observation to allocate to a bin if multiple observations fall into a single bin when using the "CybiEc" method.. \code{IdxWndw} can be set to closest [Clst], first [IdxWndwMin], or last [IdxWndwMax] (defaults to closest).\cr}
 
+\item{DropNotNumc}{Logical. TRUE (default) for removing any non-numeric data columns prior to regularization (this is done automatically for zoo method). FALSE to attempt to regularize all data columns.}
+
+\item{RptTimeWndw}{Logical. TRUE for including the start and end time of each bin with the output, in list element timeWndw. Defaults to FALSE. Not available as TRUE for zoo method.}
+
 \item{PrcsSec}{A single numeric (integer) value indicating the operational precision of the seconds field of time vectors. Defaults to 6 (microsecond-precision). Values higher than 6 cannot be guaranteed to produce desired results.}
 }
 \value{
-Returns a list with elements \code{TzRglr}, \code{FreqRglr}, \code{MethRglr}, \code{timeRglr}, and \code{dataRglr}.
+Returns a list with elements \code{TzRglr}, \code{FreqRglr}, \code{MethRglr}, \code{timeRglr}, and \code{dataRglr}. 
+An additional list element \code{timeWndw} will be included if input \code{RptTimeWndw=TRUE}
 }
 \description{
 Function defintion. 

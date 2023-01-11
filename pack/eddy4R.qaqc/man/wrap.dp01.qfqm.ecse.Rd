@@ -5,7 +5,8 @@
 \title{Wrapper function:  Preprocessing and calculating quality metrics, alpha and beta quality metrics, and final quality flag for the NEON eddy-covariance stroage exchange L1 data products}
 \usage{
 wrap.dp01.qfqm.ecse(
-  dp01 = c("co2Stor", "h2oStor", "tempAirLvl", "tempAirTop", "isoCo2", "isoH2o")[1],
+  dp01 = c("co2Stor", "h2oStor", "tempAirLvl", "tempAirTop", "isoCo2", "isoH2o",
+    "ch4Conc")[1],
   RptExpd = FALSE,
   lvl,
   lvlMfcSampStor = NULL,
