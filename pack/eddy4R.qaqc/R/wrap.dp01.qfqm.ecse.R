@@ -721,7 +721,7 @@ wrap.dp01.qfqm.ecse <- function(
         #if there is at least one measurement
         if(length(which(!is.na(wrk$qfqm$crdCo2$qfRngTemp))) > 0){
           #determine the index of each measurement  
-          wrk$idx <- eddy4R.base::def.idx.agr(time = data$time, PrdAgr = (PrdMeas*60), FreqLoca = 1, MethIdx = "specBgn", data = wrk$qfqm$crdCo2$qfRngTemp, CritTime = 60)
+          wrk$idx <- eddy4R.base::def.idx.agr(time = data$time, PrdAgr = (PrdMeas*60), FreqLoca = 1, MethIdx = "specBgn", data = wrk$qfqm$crdCo2$qfRngTemp, CritTime = 240)
           #delete row if last timeBgn and timeEnd is NA
           wrk$idx <- wrk$idx[rowSums(is.na(wrk$idx)) != 2,]
           #replace last idxEnd > 86400 by 86400
@@ -808,7 +808,7 @@ wrap.dp01.qfqm.ecse <- function(
         if(length(which(!is.na(wrk$qfqm$crdCo2$qfRngTemp))) > 0){
           
           #determine the index of each measurement  
-          wrk$idx <- eddy4R.base::def.idx.agr(time = data$time, PrdAgr = (PrdMeas*60), FreqLoca = 1, MethIdx = "specBgn", data = wrk$qfqm$crdCo2$qfRngTemp, CritTime = 60)
+          wrk$idx <- eddy4R.base::def.idx.agr(time = data$time, PrdAgr = (PrdMeas*60), FreqLoca = 1, MethIdx = "specBgn", data = wrk$qfqm$crdCo2$qfRngTemp, CritTime = 240)
           #delete row if last timeBgn and timeEnd is NA
           wrk$idx <- wrk$idx[rowSums(is.na(wrk$idx)) != 2,]
           #if last timeEnd is NA, replce that time to the last time value in data$time
@@ -909,7 +909,7 @@ wrap.dp01.qfqm.ecse <- function(
         #if there is at least one measurement
         if(length(which(!is.na(wrk$qfqm$crdCo2$qfRngTemp))) > 0){
           #determine the end time of each measurement
-          wrk$idx <- eddy4R.base::def.idx.agr(time = data$time, PrdAgr = (PrdMeas*60), FreqLoca = 1, MethIdx = "specBgn", data = wrk$qfqm$crdCo2$qfRngTemp, CritTime = 60)
+          wrk$idx <- eddy4R.base::def.idx.agr(time = data$time, PrdAgr = (PrdMeas*60), FreqLoca = 1, MethIdx = "specBgn", data = wrk$qfqm$crdCo2$qfRngTemp, CritTime = 240)
           #delete row if last timeBgn and timeEnd is NA
           wrk$idx <- wrk$idx[rowSums(is.na(wrk$idx)) != 2,]
           #if last timeEnd is NA, replce that time to the last time value in data$time
@@ -999,7 +999,7 @@ wrap.dp01.qfqm.ecse <- function(
         #if there is at least one measurement
         if(length(which(!is.na(wrk$qfqm$crdCo2$qfRngTemp))) > 0){
           #   #determine the end time of each measurement  
-          wrk$idx <- eddy4R.base::def.idx.agr(time = data$time, PrdAgr = (PrdMeas*60), FreqLoca = 1, MethIdx = "specBgn", data = wrk$qfqm$crdCo2$qfRngTemp, CritTime = 60)
+          wrk$idx <- eddy4R.base::def.idx.agr(time = data$time, PrdAgr = (PrdMeas*60), FreqLoca = 1, MethIdx = "specBgn", data = wrk$qfqm$crdCo2$qfRngTemp, CritTime = 240)
           #delete row if last timeBgn and timeEnd is NA
           wrk$idx <- wrk$idx[rowSums(is.na(wrk$idx)) != 2,]
           #if last timeEnd is NA, replce that time to the last time value in data$time
