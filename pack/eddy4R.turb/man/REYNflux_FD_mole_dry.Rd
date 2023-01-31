@@ -7,8 +7,8 @@
 REYNflux_FD_mole_dry(
   data = eddy.data,
   AlgBase = c("mean", "trnd", "ord03")[1],
-  FcorPOT = TRUE,
-  FcorPOTl = NULL,
+  SlctPot = FALSE,
+  PresPot = eddy4R.base::IntlNatu$Pres00,
   PltfEc = "airc",
   flagCh4 = TRUE,
   spcs = NULL,
