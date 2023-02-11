@@ -69,22 +69,6 @@ wrap.flux <- function(
   # algorithm / processing settings as separate, individual specifications of the function call
   
     # to be consolidated
-    # $ t_utc         : num 0.25
-    base::attr(x = data$t_utc, which = "unit") <- "h"
-    # $ t_doy_utc     : num 332
-    base::attr(x = data$t_doy_utc, which = "unit") <- "d"
-    # $ t_doy_local   : num 332
-    base::attr(x = data$t_doy_local, which = "unit") <- "d"
-    # $ d_x_utm       : num 710730
-    base::attr(x = data$d_x_utm, which = "unit") <- "m"
-    # $ d_y_utm       : num 4330788
-    base::attr(x = data$d_y_utm, which = "unit") <- "m"
-    # $ d_z_m         : num 8
-    base::attr(x = data$d_z_m, which = "unit") <- "m"
-    # $ d_xy_travel   : num 900
-    base::attr(x = data$d_xy_travel, which = "unit") <- "s"
-    # re-assign as independent variable, which can be used exchangably for tower, aircraft etc. with corresponding units
-    data$idep <- data$d_xy_travel
     # $ d_xy_flow     : num 900
     base::attr(x = data$d_xy_flow, which = "unit") <- "s"
     # $ PSI_aircraft  : num 290
@@ -99,7 +83,18 @@ wrap.flux <- function(
     # $ d_z_ABL       : num 1000
     base::attr(x = data$d_z_ABL, which = "unit") <- "m"
   
-    # wind vector
+    # def.stat.sta.diff
+    # independent variable for interpolation; can be used interchangeably for tower, aircraft etc. with corresponding units
+      # stationary platform, e.g. tower
+      data$idep <- data$t_utc
+        data$t_utc <- NULL
+        base::attr(x = data$idep, which = "unit") <- "h"
+      # moving platform, e.g. aircraft
+      data$idep <- data$d_xy_travel
+        data$d_xy_travel <- NULL
+        base::attr(x = data$idep, which = "unit") <- "s"
+      
+    # def.flux.vect
     data$veloXaxs <- data$u_met
       data$u_met <- NULL
       base::attr(x = data$veloXaxs, which = "unit") <- "m s-1"
@@ -110,7 +105,7 @@ wrap.flux <- function(
       data$w_met <- NULL
       base::attr(x = data$veloZaxs, which = "unit") <- "m s-1"
     
-    # scalars
+    # def.flux.sclr
     data$presAtm <- data$p_air
       data$p_air <- NULL
       base::attr(x = data$presAtm, which = "unit") <- "Pa"
@@ -123,6 +118,17 @@ wrap.flux <- function(
     data$rtioMoleDryCo2 <- data$FD_mole_CH4
       data$FD_mole_CH4 <- NULL
       base::attr(x = data$rtioMoleDryCo2, which = "unit") <- "molCo2 mol-1Dry"
+      
+    # def.var.abl
+    data$distZaxsMeas <- data$d_z_m
+      data$d_z_m <- NULL
+      base::attr(x = data$distZaxsMeas, which = "unit") <- "molH2o mol-1Dry"
+
+    # optional: pass-through
+    base::attr(x = data$t_doy_utc, which = "unit") <- "d"
+    base::attr(x = data$t_doy_local, which = "unit") <- "d"
+    base::attr(x = data$d_x_utm, which = "unit") <- "m"
+    base::attr(x = data$d_y_utm, which = "unit") <- "m"
   
   
   
