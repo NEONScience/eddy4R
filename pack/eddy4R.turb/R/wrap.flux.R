@@ -1,11 +1,11 @@
 ##############################################################################################
-#' @title Definition function: Calculate turbulent vertical flux and auxiliary variables
+#' @title Wrappter function: Calculate turbulent vertical flux and auxiliary variables
 
 #' @author
 #' Stefan Metzger \email{eddy4R.info@gmail.com}
 
 #' @description 
-#' Function defintion. Calculate turbulent vertical flux and auxiliary variables.
+#' Function wrapper. Calculate turbulent vertical flux and auxiliary variables.
 
 #' @param Currently none
 
@@ -42,6 +42,8 @@
 #     Removed SiteInfo dependance, added switches as explicit variables
 #   Will Drysdale (2019-02-16)
 #     Convert Chemistry Flux to def.flux.chem and rotation to def.rot. Update some related variable names
+#   Stefan Metzger (2023-02-11)
+#     rename from REYNflux_P5.R to wrap.flux.R - integrate modularization w/ separated definition functions
 ##############################################################################################
 
 
