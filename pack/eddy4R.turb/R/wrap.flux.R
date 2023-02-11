@@ -75,10 +75,12 @@ wrap.flux <- function(
       # data$idep <- data$t_utc
       #   data$t_utc <- NULL
       #   base::attr(x = data$idep, which = "unit") <- "h"
+      #   base::attr(x = data$d_xy_travel, which = "unit") <- "s"
       # moving platform, e.g. aircraft
       data$idep <- data$d_xy_travel
         data$d_xy_travel <- NULL
         base::attr(x = data$idep, which = "unit") <- "s"
+        base::attr(x = data$t_utc, which = "unit") <- "h"
       
     # def.flux.vect
     data$veloXaxs <- data$u_met
