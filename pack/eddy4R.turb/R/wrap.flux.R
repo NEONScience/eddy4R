@@ -54,17 +54,11 @@
 # [17] "d_z_ABL"      "T_surface"    "R_SW_down"
 
 
-REYNflux_FD_mole_dry <- function(
-  data = eddy.data,
-# -------------------------------------- optional, can omit here for simplicity, just make sure to include ...
+wrap.flux <- function(
+  data,
   AlgBase = c("mean", "trnd", "ord03")[1],
   SlctPot = FALSE,
-  PresPot = eddy4R.base::IntlNatu$Pres00,  
-# -------------------------------------- these should go away
-  PltfEc = "airc",
-  flagCh4 = TRUE,
-  spcs = NULL,
-  rmm = NULL,
+  PresPot = eddy4R.base::IntlNatu$Pres00,
   ...
 )
 {
