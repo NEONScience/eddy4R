@@ -68,64 +68,65 @@ wrap.flux <- function(
   # in that way additional variables can be supplied (e.g., UTM coordinates for aircraft) and stats calculated
   # algorithm / processing settings as separate, individual specifications of the function call
   
-    # def.stat.sta.diff
-    # independent variable, required only if AlgBase != mean
-    # can be assigned flexibly for tower, aircraft etc. with corresponding units
-      # fixed platform, e.g. tower
-      # data$idep <- data$t_utc
-      #   data$t_utc <- NULL
-      #   base::attr(x = data$idep, which = "unit") <- "h"
-      #   base::attr(x = data$d_xy_travel, which = "unit") <- "s"
-      # moving platform, e.g. aircraft
-      data$idep <- data$d_xy_travel
-        data$d_xy_travel <- NULL
-        base::attr(x = data$idep, which = "unit") <- "s"
-        base::attr(x = data$t_utc, which = "unit") <- "h"
-      
-    # def.flux.vect
-    data$veloXaxs <- data$u_met
-      data$u_met <- NULL
-      base::attr(x = data$veloXaxs, which = "unit") <- "m s-1"
-    data$veloYaxs <- data$v_met
-      data$v_met <- NULL
-      base::attr(x = data$veloYaxs, which = "unit") <- "m s-1"
-    data$veloZaxs <- data$w_met
-      data$w_met <- NULL
-      base::attr(x = data$veloZaxs, which = "unit") <- "m s-1"
-    
-    # def.flux.sclr
-    data$presAtm <- data$p_air
-      data$p_air <- NULL
-      base::attr(x = data$presAtm, which = "unit") <- "Pa"
-    data$tempAir <- data$T_air
-      data$T_air <- NULL
-      base::attr(x = data$tempAir, which = "unit") <- "K"
-    data$rtioMoleDryH2o <- data$FD_mole_H2O
-      data$FD_mole_H2O <- NULL
-      base::attr(x = data$rtioMoleDryH2o, which = "unit") <- "molH2o mol-1Dry"
-    data$rtioMoleDryCo2 <- data$FD_mole_CH4
-      data$FD_mole_CH4 <- NULL
-      base::attr(x = data$rtioMoleDryCo2, which = "unit") <- "molCo2 mol-1Dry"
-      
-    # def.var.abl
-    data$distZaxsMeas <- data$d_z_m
-      data$d_z_m <- NULL
-      base::attr(x = data$distZaxsMeas, which = "unit") <- "m"
-    data$distZaxsAbl <- data$d_z_ABL
-      data$d_z_ABL <- NULL
-      base::attr(x = data$distZaxsAbl, which = "unit") <- "m"
-
-    # optional: pass-through
-    base::attr(x = data$t_doy_utc, which = "unit") <- "d"
-    base::attr(x = data$t_doy_local, which = "unit") <- "d"
-    base::attr(x = data$d_x_utm, which = "unit") <- "m"
-    base::attr(x = data$d_y_utm, which = "unit") <- "m"
-    base::attr(x = data$d_xy_flow, which = "unit") <- "s"
-    data$PSI_aircraft <- eddy4R.base::def.conv.poly(data = data$PSI_aircraft, coefPoly = eddy4R.base::IntlConv$DegRad)
-      attributes(data$PSI_aircraft)$unit <- "rad"
-    base::attr(x = data$uvw_aircraft, which = "unit") <- "m s-1"
-    base::attr(x = data$uv_met, which = "unit") <- "m s-1"
-    base::attr(x = data$d_z_terrain, which = "unit") <- "m"
+    # moved to main workflow
+    # # def.stat.sta.diff
+    # # independent variable, required only if AlgBase != mean
+    # # can be assigned flexibly for tower, aircraft etc. with corresponding units
+    #   # fixed platform, e.g. tower
+    #   # data$idep <- data$t_utc
+    #   #   data$t_utc <- NULL
+    #   #   base::attr(x = data$idep, which = "unit") <- "h"
+    #   #   base::attr(x = data$d_xy_travel, which = "unit") <- "s"
+    #   # moving platform, e.g. aircraft
+    #   data$idep <- data$d_xy_travel
+    #     data$d_xy_travel <- NULL
+    #     base::attr(x = data$idep, which = "unit") <- "s"
+    #     base::attr(x = data$t_utc, which = "unit") <- "h"
+    #   
+    # # def.flux.vect
+    # data$veloXaxs <- data$u_met
+    #   data$u_met <- NULL
+    #   base::attr(x = data$veloXaxs, which = "unit") <- "m s-1"
+    # data$veloYaxs <- data$v_met
+    #   data$v_met <- NULL
+    #   base::attr(x = data$veloYaxs, which = "unit") <- "m s-1"
+    # data$veloZaxs <- data$w_met
+    #   data$w_met <- NULL
+    #   base::attr(x = data$veloZaxs, which = "unit") <- "m s-1"
+    # 
+    # # def.flux.sclr
+    # data$presAtm <- data$p_air
+    #   data$p_air <- NULL
+    #   base::attr(x = data$presAtm, which = "unit") <- "Pa"
+    # data$tempAir <- data$T_air
+    #   data$T_air <- NULL
+    #   base::attr(x = data$tempAir, which = "unit") <- "K"
+    # data$rtioMoleDryH2o <- data$FD_mole_H2O
+    #   data$FD_mole_H2O <- NULL
+    #   base::attr(x = data$rtioMoleDryH2o, which = "unit") <- "molH2o mol-1Dry"
+    # data$rtioMoleDryCo2 <- data$FD_mole_CH4
+    #   data$FD_mole_CH4 <- NULL
+    #   base::attr(x = data$rtioMoleDryCo2, which = "unit") <- "molCo2 mol-1Dry"
+    #   
+    # # def.var.abl
+    # data$distZaxsMeas <- data$d_z_m
+    #   data$d_z_m <- NULL
+    #   base::attr(x = data$distZaxsMeas, which = "unit") <- "m"
+    # data$distZaxsAbl <- data$d_z_ABL
+    #   data$d_z_ABL <- NULL
+    #   base::attr(x = data$distZaxsAbl, which = "unit") <- "m"
+    # 
+    # # optional: pass-through
+    # base::attr(x = data$t_doy_utc, which = "unit") <- "d"
+    # base::attr(x = data$t_doy_local, which = "unit") <- "d"
+    # base::attr(x = data$d_x_utm, which = "unit") <- "m"
+    # base::attr(x = data$d_y_utm, which = "unit") <- "m"
+    # base::attr(x = data$d_xy_flow, which = "unit") <- "s"
+    # data$PSI_aircraft <- eddy4R.base::def.conv.poly(data = data$PSI_aircraft, coefPoly = eddy4R.base::IntlConv$DegRad)
+    #   attributes(data$PSI_aircraft)$unit <- "rad"
+    # base::attr(x = data$uvw_aircraft, which = "unit") <- "m s-1"
+    # base::attr(x = data$uv_met, which = "unit") <- "m s-1"
+    # base::attr(x = data$d_z_terrain, which = "unit") <- "m"
 
   
   
