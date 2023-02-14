@@ -294,9 +294,22 @@ wrap.flux <- function(
     rot = rot,
     Unit = base::data.frame(Inp = "m s-1", Out = "m s-1", OutSq = "m2 s-2")
   )
-  
 
+  # output data assignments
   
+    # re-assign SDs for consistency among all shear-stress-related quantities, analogous to legacy workflow
+    # context: SDs are already computed in def.stat.sta.diff with deviations < 2%
+    for(idx in base::names(fluxVect$sd)) statStaDiff$sd[[idx]] <- fluxVect$sd[[idx]]
+    base::rm(idx)
+    
+    # initiate dataframe to store correlations and assign fluxVect results
+    statStaDiff$corr <- fluxVect$corr
+    
+    # also assign fluxVect diff and mean results
+    for(idx in c("diff", "mean")) statStaDiff[[idx]] <- base::cbind(statStaDiff[[idx]], fluxVect[[idx]])
+    base::rm(fluxVect, idx)
+  
+    
   
   ############################################################
   #SENSIBLE HEAT FLUX
@@ -304,7 +317,7 @@ wrap.flux <- function(
 
   # initiate dataframe to store conversion factors and correlations
   statStaDiff$conv <- base::data.frame(fluxTemp = base::rep(NaN, length.out = nrow(statStaDiff$diff)))
-  statStaDiff$corr <- base::data.frame(fluxTemp = NaN)
+  # statStaDiff$corr <- base::data.frame(fluxTemp = NaN)
 
   # SENSIBLE HEAT FLUX, BUOYANCY FLUX
   
@@ -419,7 +432,7 @@ wrap.flux <- function(
       fluxTempVirtPot00 = statStaDiff$mean$fluxTempVirtPot00,
       tempVirtPot00 = statStaDiff$mean$tempVirtPot00,
       velo = velo,
-      veloFric = fluxVect$mean$veloFric
+      veloFric = statStaDiff$mean$veloFric
     )
     
     # assign outputs
