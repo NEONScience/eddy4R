@@ -99,9 +99,9 @@ def.stna <- function(
     
     #deviation [%]
     if(vrbs == TRUE)
-      rptStna01 <- ((detr$mn - trnd$mn) / trnd$mn * 100)[whrVar]
+      rptStna01 <- ((detr$mean - trnd$mean) / trnd$mean * 100)[whrVar]
     else
-      rptStna01 <- suppressWarnings(((detr$mn - trnd$mn) / trnd$mn * 100)[whrVar])
+      rptStna01 <- suppressWarnings(((detr$mean - trnd$mean) / trnd$mean * 100)[whrVar])
     #replace NA with NaN
     lapply(names(rptStna01), function(x)  {rptStna01[[x]][is.na(rptStna01[[x]])] <<- NaN})
     #calculate the flag; pass (0) if abs(rptStna01) =< 100% or NaN; failed (1) abs(rptStna01)>100%
@@ -123,16 +123,15 @@ def.stna <- function(
     idxSubSamp <- base::sapply(1:(length(rngClas) - 1), function(x) base::seq(rngClas[x], rngClas[x + 1] - 1))
     
     #results for the subsamples
-    outSubSamp <- base::sapply(1:NumSubSamp, function(x) eddy4R.turb::REYNflux_FD_mole_dry(
-      data=data[idxSubSamp[[x]],],
-      AlgBase="mean",
-      FcorPOT=corTempPot,
-      FcorPOTl=presTempPot,
-      PltfEc = PltfEc,
-      flagCh4 = flagCh4,
-      ...
-    )$mn[,whrVar]
+    outSubSamp <- base::sapply(1:NumSubSamp, function(x) eddy4R.turb::wrap.flux(
+        data = eddy4R.base::def.unit.var(samp = data[idxSubSamp[[x]],],
+                                         refe = data),
+        AlgBase = "mean",
+        SlctPot = corTempPot,
+        PresPot = presTempPot
+      )$mean[,whrVar]
     )
+    
     outSubSamp <- data.frame(base::matrix(unlist(outSubSamp), ncol=length(whrVar), byrow=TRUE))
     dimnames(outSubSamp)[[2]] <- whrVar
     
