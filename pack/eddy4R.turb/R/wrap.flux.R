@@ -424,7 +424,7 @@ wrap.flux <- function(
 
     # call function
     varAblTmp <- def.var.abl(
-      densMoleAirDry = statStaDiff$base$densMoleAirDry,
+      densMoleAirDry = statStaDiff$mean$densMoleAirDry,
       distZaxsAbl = statStaDiff$mean$distZaxsAbl,
       distZaxsMeas = statStaDiff$mean$distZaxsMeas,
       fluxH2o = statStaDiff$mean$fluxH2o,
