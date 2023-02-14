@@ -445,41 +445,26 @@ wrap.flux <- function(
     
     
 ############################################################
-#EXPORT RESULTS
+# RETURN RESULTS
 ############################################################
-  
-  
-  # mapping outputs
-  # mn$I <- coefSdMeanVelo # turbulence intensity
-  # mn$d_L_v_0 <- distObkv # Obukhov length
-  # mn$sigma <- paraStbl # atmospheric stability
-  # mn$w_star <- veloScalCvct
-  # mn$t_star <- timeScalCvct
-  # mn$T_star_SL <- tempScalSurf
-  # mn$T_star_ML <- tempScalAbl
-  # mn$rtioMoleDryH2o_star_SL <- rtioMoleDryH2oScalAtmSurf
-  # mn$rtioMoleDryH2o_star_ML <- rtioMoleDryH2oScalAbl
 
-  
-  #convert the sd date to the mn date (as sd of the date range is meaningless)
-  sd$date = mn$date
-  
-  #assemble export list
-  export <- list(
-    data=data,	#data including internal calculations
-    base=base, #base state
-    min=mi,		#min
-    max=ma,		#max
-    mn=mn,		#mean
-    sd=sd,		#standard deviation
-    diff=diff,	#instantaneous fluctuations
-    corr=corr,		#correlation coefficient
-    mtrxRot01=mtrxRot01       #transformation matrix for stress tensor
-  )
-  
+  # complete list to be returned
+    # "min" # minimums
+    # "max" # maximums
+    # "mean" # means
+    # "base" # base states
+    # "diff" # instantaneous differences
+    # "sd" # standard deviations
+    # "corr" # correlations
+    # "conv" # scalar flux conversion factors
+    statStaDiff$data <- data #data including internal calculations
+    statStaDiff$mtrxRot01 <- rot$mtrxRot01# transformation matrix for stress tensor
+    statStaDiff <- statStaDiff[base::sort(base::names(statStaDiff))]
+
   #clean up
-  rm(mtrxRot01, base, data, mi, ma, mn, sd, diff, corr)
+  rm(data, rot)
   
   #return result
-  return(export)
+  return(statStaDiff)
+
 }
