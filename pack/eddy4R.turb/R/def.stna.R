@@ -54,6 +54,8 @@
 #     add Perc and Thsh to input parameter;
 #     update output of qi when Perc equal TRUE or FALSE
 #     update qf algorithm to be 0 when qi is NaN
+#   Stefan Metzger (2023-02-14)
+#     adjust to work with refactored wrap.flux() function
 ##############################################################################################
 #STATIONARITY TESTS
 
@@ -64,8 +66,8 @@ def.stna <- function(
   NumSubSamp=6,		#number of subsamples for trend==FALSE
   corTempPot=TRUE,
   presTempPot=NULL,
-  PltfEc = "airc",
-  flagCh4 = TRUE,
+  # PltfEc = "airc",
+  # flagCh4 = TRUE,
   vrbs = TRUE,
   Thsh = 100,
   Perc = TRUE,
@@ -76,29 +78,23 @@ def.stna <- function(
   #BASIC SETUP
   
   #fluxes including trend
-  trnd <- eddy4R.turb::REYNflux_FD_mole_dry(
-    data=data,
-    AlgBase="mean",
-    FcorPOT=corTempPot,
-    FcorPOTl=presTempPot,
-    PltfEc = PltfEc,
-    flagCh4 = flagCh4,
-    ...
-  )
+  trnd <- eddy4R.turb::wrap.flux(
+      data = data,
+      AlgBase = "mean",
+      SlctPot = corTempPot,
+      PresPot = presTempPot
+    )
   
   if(MethStna %in% c(1, 3)) { 
     #-----------------------------------------------------------
     #TREND EFFECT
     
     #fluxes after trend removal
-    detr <- eddy4R.turb::REYNflux_FD_mole_dry(
-      data=data,
-      AlgBase="trnd",
-      FcorPOT=corTempPot,
-      FcorPOTl=presTempPot,
-      PltfEc = PltfEc,
-      flagCh4 = flagCh4,
-      ...
+    detr <- eddy4R.turb::wrap.flux(
+      data = data,
+      AlgBase = "trnd",
+      SlctPot = corTempPot,
+      PresPot = presTempPot
     )
     
     #deviation [%]
