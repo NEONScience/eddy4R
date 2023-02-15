@@ -66,8 +66,6 @@ def.stna <- function(
   NumSubSamp=6,		#number of subsamples for trend==FALSE
   corTempPot=TRUE,
   presTempPot=NULL,
-  # PltfEc = "airc",
-  # flagCh4 = TRUE,
   vrbs = TRUE,
   Thsh = 100,
   Perc = TRUE,
@@ -137,9 +135,9 @@ def.stna <- function(
     
     #stationarity criteria
     if(vrbs == TRUE)
-      rptStna02 <- (base::colMeans(outSubSamp) - trnd$mn[whrVar]) / trnd$mn[whrVar] * 100
+      rptStna02 <- (base::colMeans(outSubSamp) - trnd$mean[whrVar]) / trnd$mean[whrVar] * 100
     else
-      rptStna02 <- suppressWarnings((base::colMeans(outSubSamp) - trnd$mn[whrVar]) / trnd$mn[whrVar] * 100)
+      rptStna02 <- suppressWarnings((base::colMeans(outSubSamp) - trnd$mean[whrVar]) / trnd$mean[whrVar] * 100)
     
     #replace NA with NaN
     lapply(names(rptStna02), function(x)  {rptStna02[[x]][is.na(rptStna02[[x]])] <<- NaN})
