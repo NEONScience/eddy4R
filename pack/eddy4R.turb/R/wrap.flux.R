@@ -1,5 +1,5 @@
 ##############################################################################################
-#' @title Wrappter function: Calculate turbulent vertical flux and auxiliary variables
+#' @title Wrapper function: Calculate turbulent vertical flux and auxiliary variables
 
 #' @author
 #' Stefan Metzger \email{eddy4R.info@gmail.com}
@@ -7,11 +7,15 @@
 #' @description 
 #' Function wrapper. Calculate turbulent vertical flux and auxiliary variables.
 
-#' @param Currently none
+#' @param data A data frame of class "numeric" and each variable with independent unit attribute assigned. The minimum requirements are: 1) In order to return shear stress, i.e. for the internal call to def.flux.vect() to succeed: the wind vector in meteorological ENU convention with the variables data$veloXaxs (latitudinal wind speed, positive from west), data$veloYaxs (longitudinal wind speed, positive from south), and data$veloZaxs (vertical wind speed, positive from below), each with unit attribute [m s-1]. 2) In order to return scalar fluxes of temperature, H2O and CO2, i.e. for the internal call to def.flux.sclr() to succeed: atmospheric pressure data$presAtm with unit attribute [Pa], air temperature data$tempAir with unit attribute [K], water vapor dry mole fraction data$rtioMoleDryH2o with unit attribute [molH2o mol-1Dry], and CO2 dry mole fraction data$rtioMoleDryCo2 with unit attribute [molCo2 mol-1Dry]. 3) In order to return boundary layer scaling variables, i.e. for the internal call to def.var.abl() to succeed: effective measurement height data$distZaxsMeas with unit attribute [m], and atmospheric boundary layer depth data$distZaxsAbl with unit attribute [m]. 4) Only if AlgBase != mean, for the internal call to def.stat.sta.diff() to succeed: the independent variable data$idep needs to be provided to perform detrending or polynomical regression. data$idep can be assigned flexibly, e.g. for tower measurements the passed time in units [s] or [h], or for aircraft measurements the stretch of air flown through in units [km] or [m]. 5) Optionally, additional variables data$ can be passed through, provided they have the same number of observations as the variables in 1) - 4), and each variable has an independent unit attribute assigned. The following outputs are reported for optional variables: $base (base states), $data (data including internal calculations), $diff (instantaneous differences), $max (maximums), $mean (means), $min (minimums), and $sd (standard deviations).
+#' @param AlgBase A vector of length 1 that defines the base state with respect to which instantaneous differences and standard deviations are calculated, of class "character" and no unit attribute. Contains one of AlgBase <- c("mean", "trnd", "ord03")[1] and defaults to "mean", with the additional options detrending "trnd" and 3rd-order polynomial "ord03". See ?eddy4R.base::def.base.ec() for additional details. When AlgBase is set to "trnd" or "ord03", the variable inp$idep is required, which provides the independent variable for interpolation.
+#' @param SlctPot A logical TRUE or FALSE: use potential temperature and densities? [-]
+#' @param PresPot A vector of length 1 and of class "numeric". If is.true(SlctPot) it provides the reference pressure level for which potential temperature and densities are calculated. [-]
+#' @param ... Additional arguments that can be passed to the wrapper function.
 
-#' @return Currently none
+#' @return A list with the elements $base (base states), $conv (scalar flux conversion factors), $corr (correlations), $data (data including internal calculations), $diff (instantaneous differences), $max (maximums), $mean (means), $min (minimums), $mtrxRot01 (transformation matrix for stress tensor), and $sd (standard deviations).
 
-#' @references Currently none
+#' @references Metzger, S., Durden, D., Sturtevant, C., Luo, H., Pingintha-Durden, N., Sachs, T., Serafimovich, A., Hartmann, J., Li, J., Xu, K., and Desai, A. R.: eddy4R 0.2.0: a DevOps model for community-extensible processing and analysis of eddy-covariance data based on R, Git, Docker, and HDF5, Geosci. Model Dev., 10, 3189-3206, doi:10.5194/gmd-10-3189-2017, 2017.
 
 #' @keywords eddy-covariance, turbulent flux
 
@@ -47,13 +51,6 @@
 ##############################################################################################
 
 
-
-# attributes(data)$names
-# [1] "t_utc"        "d_x_utm"      "d_y_utm"      "d_z_m"        "d_xy_travel"  "d_xy_flow"    "PSI_aircraft" "uvw"         
-# [9] "u_met"        "v_met"        "w_met"        "p_air"        "T_air"        "FD_mole_H2O"  "FD_mole_CH4"  "d_z_terrain" 
-# [17] "d_z_ABL"      "T_surface"    "R_SW_down"
-
-
 wrap.flux <- function(
   data,
   AlgBase = c("mean", "trnd", "ord03")[1],
@@ -62,73 +59,7 @@ wrap.flux <- function(
   ...
 )
 {
-  
-  ### rename input data in preparation of terms update (replace with unit test when completing refactoring)
-  # keep "data" data.frame object with minimum required variables that are tested for in the beginning of the wrapper
-  # in that way additional variables can be supplied (e.g., UTM coordinates for aircraft) and stats calculated
-  # algorithm / processing settings as separate, individual specifications of the function call
-  
-    # moved to main workflow
-    # # def.stat.sta.diff
-    # # independent variable, required only if AlgBase != mean
-    # # can be assigned flexibly for tower, aircraft etc. with corresponding units
-    #   # fixed platform, e.g. tower
-    #   # data$idep <- data$t_utc
-    #   #   data$t_utc <- NULL
-    #   #   base::attr(x = data$idep, which = "unit") <- "h"
-    #   #   base::attr(x = data$d_xy_travel, which = "unit") <- "s"
-    #   # moving platform, e.g. aircraft
-    #   data$idep <- data$d_xy_travel
-    #     data$d_xy_travel <- NULL
-    #     base::attr(x = data$idep, which = "unit") <- "s"
-    #     base::attr(x = data$t_utc, which = "unit") <- "h"
-    #   
-    # # def.flux.vect
-    # data$veloXaxs <- data$u_met
-    #   data$u_met <- NULL
-    #   base::attr(x = data$veloXaxs, which = "unit") <- "m s-1"
-    # data$veloYaxs <- data$v_met
-    #   data$v_met <- NULL
-    #   base::attr(x = data$veloYaxs, which = "unit") <- "m s-1"
-    # data$veloZaxs <- data$w_met
-    #   data$w_met <- NULL
-    #   base::attr(x = data$veloZaxs, which = "unit") <- "m s-1"
-    # 
-    # # def.flux.sclr
-    # data$presAtm <- data$p_air
-    #   data$p_air <- NULL
-    #   base::attr(x = data$presAtm, which = "unit") <- "Pa"
-    # data$tempAir <- data$T_air
-    #   data$T_air <- NULL
-    #   base::attr(x = data$tempAir, which = "unit") <- "K"
-    # data$rtioMoleDryH2o <- data$FD_mole_H2O
-    #   data$FD_mole_H2O <- NULL
-    #   base::attr(x = data$rtioMoleDryH2o, which = "unit") <- "molH2o mol-1Dry"
-    # data$rtioMoleDryCo2 <- data$FD_mole_CH4
-    #   data$FD_mole_CH4 <- NULL
-    #   base::attr(x = data$rtioMoleDryCo2, which = "unit") <- "molCo2 mol-1Dry"
-    #   
-    # # def.var.abl
-    # data$distZaxsMeas <- data$d_z_m
-    #   data$d_z_m <- NULL
-    #   base::attr(x = data$distZaxsMeas, which = "unit") <- "m"
-    # data$distZaxsAbl <- data$d_z_ABL
-    #   data$d_z_ABL <- NULL
-    #   base::attr(x = data$distZaxsAbl, which = "unit") <- "m"
-    # 
-    # # optional: pass-through
-    # base::attr(x = data$t_doy_utc, which = "unit") <- "d"
-    # base::attr(x = data$t_doy_local, which = "unit") <- "d"
-    # base::attr(x = data$d_x_utm, which = "unit") <- "m"
-    # base::attr(x = data$d_y_utm, which = "unit") <- "m"
-    # base::attr(x = data$d_xy_flow, which = "unit") <- "s"
-    # data$PSI_aircraft <- eddy4R.base::def.conv.poly(data = data$PSI_aircraft, coefPoly = eddy4R.base::IntlConv$DegRad)
-    #   attributes(data$PSI_aircraft)$unit <- "rad"
-    # base::attr(x = data$uvw_aircraft, which = "unit") <- "m s-1"
-    # base::attr(x = data$uv_met, which = "unit") <- "m s-1"
-    # base::attr(x = data$d_z_terrain, which = "unit") <- "m"
 
-  
   
   ############################################################
   # THERMODYNAMICS: MOISTURE, DENSITIES AND TEMPERATURES
