@@ -11,8 +11,6 @@ def.stna(
   NumSubSamp = 6,
   corTempPot = TRUE,
   presTempPot = NULL,
-  PltfEc = "airc",
-  flagCh4 = TRUE,
   vrbs = TRUE,
   Thsh = 100,
   Perc = TRUE,
