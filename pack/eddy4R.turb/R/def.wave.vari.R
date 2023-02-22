@@ -1,22 +1,22 @@
 ##############################################################################################
-#' @title Definition function: funtion to determine the temporally resolved variance/covariance from continuous wavelet transform
+#' @title Definition function: function to determine the temporally resolved variance/covariance from continuous wavelet transform
 
 #' @author
 #' David Durden \email{ddurden@battelleecology.org}
 #' Stefan Metzger
 
 #' @description 
-#' Definition function. Function to determine the temporally resolved variance/covariance from continuous wavelet transform including high-frequency spectral correction and selectable low-frequency cutoff The frequency response correction using Wavelet techniques described in Norbo and Katul, 2012 (NK12)
+#' Definition function. Function to determine the temporally resolved variance/covariance from continuous wavelet transform including high-frequency spectral correction and selectable low-frequency cutoff. The frequency response correction using Wavelet techniques described in Norbo and Katul, 2012 (NK12)
 
-#' @param spec1 Waves package output object spectrum, continuous wavelet transform output object complex spectrum for the first variable (typically w')denoted as \code{object1@spectrum}.
-#' @param spec2 Waves package output object spectrum, continuous wavelet transform output object complex spectrum for the second variable for cospectra denoted as \code{object2@spectrum}.
+#' @param spec01 Waves package output object spectrum, continuous wavelet transform output object complex spectrum for the first variable (typically w')denoted as \code{object1@spectrum}.
+#' @param spec02 Waves package output object spectrum, continuous wavelet transform output object complex spectrum for the second variable for cospectra denoted as \code{object2@spectrum}.
 #' @param scal Waves package output object scale, width of the wavelet at each scale [s] denoted as \code{object1@scale}
-#' @param peri Waves package output object period, approximate corresponding Fourier period [s] denoted as \code{object1@period}
+#' @param prd Waves package output object period, approximate corresponding Fourier period [s] denoted as \code{object1@period}
 #' @param freq_0 vector, half-power frequencies for individual variables [Hz] for determining transfer function to correct frequency response
 #' @param whr_peri numeric, which wavelengths/spatial scales to consider if you want to only consider high frequency values
-#' @param fac_norm numeric, normalization factor specific to the choice of Wavelet parameters.
+#' @param coefNorm numeric, normalization factor specific to the choice of Wavelet parameters.
 #' @param flag Wavelet flag: process (0) or not (1)
-#' @param SI stability parameter (numeric)
+#' @param paraStbl stability parameter (numeric)
 #' @param SC spectrum or cospectrum  c("spe", "cos")?
 #' 
 #' @return A vector constaining temporally resolved variance/covariance from the continuous wavelet transform.
@@ -46,29 +46,29 @@
 # start function def.vari.wave()
 
 
-#funtion to determine the temporally resolved variance/covariance from CWT
+#function to determine the temporally resolved variance/covariance from CWT
 #including high-frequency spectral correction and selectable low-frequency cutoff
 def.vari.wave <- function(
   #complex Wavelet coefficients variable 1
-  spec1 = mycwt[["w_met"]]@spectrum,
+  spec01 = mycwt[["w_met"]]@spectrum,
   #complex Wavelet coefficients variable 2
-  spec2 = NULL,
-  #        spec2 = mycwt[[FREQ_0_map[[vari]][2]]]@spectrum,
+  spec02 = NULL,
+  #        spec02 = mycwt[[FREQ_0_map[[vari]][2]]]@spectrum,
   #width of the wavelet at each scale [s]
   scal = mycwt[[vari]]@scale,
   #approximate corresponding Fourier period [s]
-  peri = mycwt[[vari]]@period,
+  prd = mycwt[[vari]]@period,
   #half-power frequencies for individual variables [Hz]
   freq_0 = NA,
   #which wavelengths/spatial scales to consider
   whr_peri = NULL,
   #        whr_peri = whr_peri_20,
-  #normalization factor specific to the choice of Wavelet parameters
-  fac_norm = rpt$coefNorm,
+  #normalization coefficient specific to the choice of Wavelet parameters
+  coefNorm = rpt$coefNorm,
   # Wavelet flag: process (0) or not (1)
   flag,
   #stability parameter
-  SI,
+  paraStbl,
   #spectrum or cospectrum?
   SC
 ) {
@@ -77,18 +77,18 @@ def.vari.wave <- function(
 # only process if < 10% NAs
 if(flag == 0) {
 
-  if(is.null(spec2)) {
+  if(base::is.null(spec02)) {
     #un-weighted wavelet scalogram
     #two approaches identical, see Mauder et al. (2008) and Stull (1988, Sect. 8.6.2 and 8.8.2)
-    cwt_vc1 <- abs(spec1)^2
-    #cwt_vc1 <- Re(spec1 * Conj(spec1))
+    cwt_vc1 <- base::abs(spec01)^2
+    #cwt_vc1 <- Re(spec01 * Conj(spec01))
     
   } else {
     
     #un-weighted wavelet cross-scalogram
     #two approaches identical, see Mauder et al. (2008) and Stull (1988, Sect. 8.6.2 and 8.8.2)
-    cwt_vc1 <- Re(spec1 * Conj(spec2))
-    #cwt_vc1 <- Re(spec1) * Re(spec2) + Im(spec1) * Im(spec2)
+    cwt_vc1 <- base::Re(spec01 * base::Conj(spec02))
+    #cwt_vc1 <- Re(spec01) * Re(spec02) + Im(spec01) * Im(spec02)
     
   }
   
@@ -109,15 +109,15 @@ if(flag == 0) {
     # variance contribution of each scale [unit^2]
     # use absolute value for determining power-law decay and transfer function only
       # important to take the absolute value of the Wavelet coefficients (not scale integrated "Fourier" coefficients)
-      # the "Fourier" coefficients are already attenuated through summing over positive and negative Wavelet coefficients, such don't express teh total variance on that scale anymore
-    # the transfer function then still needs to be applied over the cross-scalogram with positive an negative Wavelet coefficients
+      # the "Fourier" coefficients are already attenuated through summing over positive and negative Wavelet coefficients, such don't express the total variance on that scale anymore
+    # the transfer function then still needs to be applied over the cross-scalogram with positive and negative Wavelet coefficients
     # sum results in total variance for dataset, e.g. 30 min
     # then normalize to sum of unity
-    spec <- colSums(abs(cwt_vc1))
-    spec <- spec / sum(spec, na.rm=TRUE)
+    spec <- base::colSums(base::abs(cwt_vc1))
+    spec <- spec / base::sum(spec, na.rm=TRUE)
     
     # frequency [Hz]
-    freq <- 1/(peri/20)
+    freq <- 1/(prd/20) #??? Why is 20 hardcoded here?
 
     # #determine spectral peak empirically
     # fx_out <- optim(
@@ -131,7 +131,7 @@ if(flag == 0) {
     #   #spectrum or cospectrum?
     #   SC = SC,
     #   #stability parameter
-    #   SI = SI,
+    #   paraStbl = paraStbl,
     #   #use frequency-weighted (co)spectrum?
     #   WEIGHT = FALSE,
     #   #frequency range for determining optimiality criterion
@@ -164,28 +164,28 @@ if(flag == 0) {
       # linear model to determine regression slope between peak frequency and 1 Hz
       # robust::lmRob() is doing a similar MM-estimation as robustbase::lmrob(), but appears to be less error-prone
       # for overview page 18 of http://use-r-carlvogt.github.io/PDFs/2017Avril_Cantoni_Rlunch.pdf
-      LM <-
+      modlLin <-
         # robustbase::lmrob(log10(spec[idxFreqMax:idxPeak]) ~ log10(freq[idxFreqMax:idxPeak]))
         robust::lmRob(log10(spec[idxFreqMax:idxPeak]) ~ log10(freq[idxFreqMax:idxPeak]))
       
       # plot(log10(tst[idxFreqMax:idxPeak]) ~ log10(freq[idxFreqMax:idxPeak]))
-      # points(LM$fitted.values ~ log10(freq[idxFreqMax:idxPeak]), col = 2)
+      # points(modlLin$fitted.values ~ log10(freq[idxFreqMax:idxPeak]), col = 2)
   
       # if the regression slope (power law coefficient) exceeds the bounds -1.8 ... -1.3, the conventional -5/3 slope is used as alternative
-      if(!(LM$coefficients[2] > -1.8 & LM$coefficients[2] < -1.3)) {
-        LM$coefficients[1] <- mean(log10(spec[idxFreqMax:idxPeak]) - (-5/3 * log10(freq[idxFreqMax:idxPeak])), na.rm = TRUE)
-        LM$coefficients[2] <- -5/3
+      if(!(modlLin$coefficients[2] > -1.8 & modlLin$coefficients[2] < -1.3)) {
+        modlLin$coefficients[1] <- base::mean(base::log10(spec[idxFreqMax:idxPeak]) - (-5/3 * base::log10(freq[idxFreqMax:idxPeak])), na.rm = TRUE)
+        modlLin$coefficients[2] <- -5/3
       }
   
       # calculate the reference spectral coefficients following the power slope
-      specRefe <- 10^(LM$coefficients[1] + LM$coefficients[2] * log10(freq))
+      specRefe <- 10^(modlLin$coefficients[1] + modlLin$coefficients[2] * base::log10(freq))
   
       # calculate transfer function
       # apply only to frequencies > 1 Hz
-      tf <- spec / specRefe
-      tf[which(freq < 0.5)] <- 1
-      # tf[idxPeak:length(tf)] <- 1
-      # plot(tf ~ freq, log = "x")
+      funcTfm <- spec / specRefe
+      funcTfm[base::which(freq < 0.5)] <- 1
+      # funcTfm[idxPeak:length(funcTfm)] <- 1
+      # plot(funcTfm ~ freq, log = "x")
       
       # # plotting
       # 
@@ -196,7 +196,7 @@ if(flag == 0) {
       #     #spectrum or cospectrum?
       #     sc = SC,
       #     #stability parameter
-      #     si = wrk$reyn$mn$sigma,
+      #     paraStbl = wrk$reyn$mn$sigma,
       #     #frequency f at which fCO(f) reaches its maximum value
       #     fx=freq[idxPeak],
       #     #output frequency-weighted (co)spectrum?
@@ -213,19 +213,19 @@ if(flag == 0) {
          
       # apply transfer function
       cwt_vc1t <- 
-          sapply(1:ncol(cwt_vc1), function(x) cwt_vc1[,x] / tf[x] )
-          # t(sapply(1:nrow(cwt_vc1), function(x) cwt_vc1[x,] / tf ))
+          base::sapply(1:base::ncol(cwt_vc1), function(x) cwt_vc1[,x] / funcTfm[x] )
+          # t(sapply(1:nrow(cwt_vc1), function(x) cwt_vc1[x,] / funcTfm ))
       
     #weighted wavelet scalogram
       
       # uncorrected
       cwt_vc2 <-
-        sapply(1:ncol(cwt_vc1), function(x) cwt_vc1[,x] / scal[x] )
+        base::sapply(1:base::ncol(cwt_vc1), function(x) cwt_vc1[,x] / scal[x] )
         # t(sapply(1:nrow(cwt_vc1), function(x) cwt_vc1[x,] / scal ))
       
       # corrected
       cwt_vc2t <-
-        sapply(1:ncol(cwt_vc1t), function(x) cwt_vc1t[,x] / scal[x] )
+        base::sapply(1:base::ncol(cwt_vc1t), function(x) cwt_vc1t[,x] / scal[x] )
         # t(sapply(1:nrow(cwt_vc1t), function(x) cwt_vc1t[x,] / scal ))
       
       
@@ -239,7 +239,7 @@ if(flag == 0) {
     # if(!is.na(freq_0)) {
     #   
     #   #transfer function
-    #   fun_tsig <- fun_TSIG(freq_0 = freq_0, freq = 1/peri)
+    #   fun_tsig <- fun_TSIG(freq_0 = freq_0, freq = 1/prd)
     #   cwt_vc3 <- t(sapply(1:nrow(cwt_vc2), function(x) cwt_vc2[x,] / fun_tsig ))
     #   
     # } else {
@@ -249,28 +249,28 @@ if(flag == 0) {
     # }
     
     #time/space series of variance at native resolution
-    if(is.null(whr_peri)) whr_peri <- 1:ncol(cwt_vc2)
-    myvc2 <- fac_norm * base:::rowSums(cwt_vc2[,whr_peri])
-    myvc2t <- fac_norm * base:::rowSums(cwt_vc2t[,whr_peri])
+    if(base::is.null(whr_peri)) whr_peri <- 1:base::ncol(cwt_vc2)
+    myvc2 <- coefNorm * base:::rowSums(cwt_vc2[,whr_peri])
+    myvc2t <- coefNorm * base:::rowSums(cwt_vc2t[,whr_peri])
     
     #conversion from variance fraction to total local variance
-    myvc2 <- myvc2 * length(myvc2)
-    myvc2t <- myvc2t * length(myvc2t)
+    myvc2 <- myvc2 * base::length(myvc2)
+    myvc2t <- myvc2t * base::length(myvc2t)
   
     #
     
     
     # prepare outputs
-    rpt <- list()
+    rpt <- base::list()
     
       # peak frequency
       rpt$freqPeak <- freq[idxPeak]
       
       # uncorrected
-      rpt$mean <- mean(myvc2, na.rm = TRUE)
+      rpt$mean <- base::mean(myvc2, na.rm = TRUE)
       
       # corrected
-      rpt$corr <- mean(myvc2t, na.rm = TRUE)
+      rpt$corr <- base::mean(myvc2t, na.rm = TRUE)
       
       # ratio
       rpt$fac <- rpt$corr / rpt$mean
@@ -282,9 +282,9 @@ if(flag == 0) {
   } else {
     
     # prepare outputs
-    rpt <- list(
+    rpt <- base::list(
       freqPeak = freq[idxPeak],
-      mean = mean(myvc2, na.rm = TRUE),
+      mean = base::mean(myvc2, na.rm = TRUE),
       corr = NA,
       fac = 1,
       flag = 1
@@ -296,7 +296,7 @@ if(flag == 0) {
 } else {
   
   # prepare outputs
-  rpt <- list(
+  rpt <- base::list(
     freqPeak = NA,
     mean = NA,
     corr = NA,

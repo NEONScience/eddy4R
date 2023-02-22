@@ -10,11 +10,13 @@ wrap.wave(
   FuncWave = Waves::morlet(),
   FreqSamp = 20,
   ThshMiss = 0.1,
-  SI
+  paraStbl
 )
 }
 \arguments{
 \item{dfInp}{data.frame, consisting of the input data to perform the wavelet transformation}
+
+\item{DiffScal}{numeric, determining the step difference in scales for the wavelet transformation}
 
 \item{FuncWave}{Waves package function, denoting the type of mother wavelet function to be used in the transformation}
 
@@ -22,9 +24,7 @@ wrap.wave(
 
 \item{ThshMiss}{numeric, dimensionless fraction of missing values in each column of data allowed before the quality flag is tripped. Defaults to 0.1 or 10 percent.}
 
-\item{SI}{stability parameter (numeric)}
-
-\item{DiffScale}{numeric, determining the step difference in scales for the wavelet transformation}
+\item{paraStbl}{stability parameter (numeric)}
 }
 \value{
 An list constaining wavelet spectra, quality flags if data was available to perform correction, and frequency reponse correction parameters if activated.
