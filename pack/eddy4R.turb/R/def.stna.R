@@ -54,6 +54,8 @@
 #     add Perc and Thsh to input parameter;
 #     update output of qi when Perc equal TRUE or FALSE
 #     update qf algorithm to be 0 when qi is NaN
+#   Stefan Metzger (2023-02-14)
+#     adjust to work with refactored wrap.flux() function
 ##############################################################################################
 #STATIONARITY TESTS
 
@@ -64,8 +66,6 @@ def.stna <- function(
   NumSubSamp=6,		#number of subsamples for trend==FALSE
   corTempPot=TRUE,
   presTempPot=NULL,
-  PltfEc = "airc",
-  flagCh4 = TRUE,
   vrbs = TRUE,
   Thsh = 100,
   Perc = TRUE,
@@ -76,36 +76,30 @@ def.stna <- function(
   #BASIC SETUP
   
   #fluxes including trend
-  trnd <- eddy4R.turb::REYNflux_FD_mole_dry(
-    data=data,
-    AlgBase="mean",
-    FcorPOT=corTempPot,
-    FcorPOTl=presTempPot,
-    PltfEc = PltfEc,
-    flagCh4 = flagCh4,
-    ...
-  )
+  trnd <- eddy4R.turb::wrap.flux(
+      data = data,
+      AlgBase = "mean",
+      SlctPot = corTempPot,
+      PresPot = presTempPot
+    )
   
   if(MethStna %in% c(1, 3)) { 
     #-----------------------------------------------------------
     #TREND EFFECT
     
     #fluxes after trend removal
-    detr <- eddy4R.turb::REYNflux_FD_mole_dry(
-      data=data,
-      AlgBase="trnd",
-      FcorPOT=corTempPot,
-      FcorPOTl=presTempPot,
-      PltfEc = PltfEc,
-      flagCh4 = flagCh4,
-      ...
+    detr <- eddy4R.turb::wrap.flux(
+      data = data,
+      AlgBase = "trnd",
+      SlctPot = corTempPot,
+      PresPot = presTempPot
     )
     
     #deviation [%]
     if(vrbs == TRUE)
-      rptStna01 <- ((detr$mn - trnd$mn) / trnd$mn * 100)[whrVar]
+      rptStna01 <- ((detr$mean - trnd$mean) / trnd$mean * 100)[whrVar]
     else
-      rptStna01 <- suppressWarnings(((detr$mn - trnd$mn) / trnd$mn * 100)[whrVar])
+      rptStna01 <- suppressWarnings(((detr$mean - trnd$mean) / trnd$mean * 100)[whrVar])
     #replace NA with NaN
     lapply(names(rptStna01), function(x)  {rptStna01[[x]][is.na(rptStna01[[x]])] <<- NaN})
     #calculate the flag; pass (0) if abs(rptStna01) =< 100% or NaN; failed (1) abs(rptStna01)>100%
@@ -127,24 +121,23 @@ def.stna <- function(
     idxSubSamp <- base::sapply(1:(length(rngClas) - 1), function(x) base::seq(rngClas[x], rngClas[x + 1] - 1))
     
     #results for the subsamples
-    outSubSamp <- base::sapply(1:NumSubSamp, function(x) eddy4R.turb::REYNflux_FD_mole_dry(
-      data=data[idxSubSamp[[x]],],
-      AlgBase="mean",
-      FcorPOT=corTempPot,
-      FcorPOTl=presTempPot,
-      PltfEc = PltfEc,
-      flagCh4 = flagCh4,
-      ...
-    )$mn[,whrVar]
+    outSubSamp <- base::sapply(1:NumSubSamp, function(x) eddy4R.turb::wrap.flux(
+        data = eddy4R.base::def.unit.var(samp = data[idxSubSamp[[x]],],
+                                         refe = data),
+        AlgBase = "mean",
+        SlctPot = corTempPot,
+        PresPot = presTempPot
+      )$mean[,whrVar]
     )
+    
     outSubSamp <- data.frame(base::matrix(unlist(outSubSamp), ncol=length(whrVar), byrow=TRUE))
     dimnames(outSubSamp)[[2]] <- whrVar
     
     #stationarity criteria
     if(vrbs == TRUE)
-      rptStna02 <- (base::colMeans(outSubSamp) - trnd$mn[whrVar]) / trnd$mn[whrVar] * 100
+      rptStna02 <- (base::colMeans(outSubSamp) - trnd$mean[whrVar]) / trnd$mean[whrVar] * 100
     else
-      rptStna02 <- suppressWarnings((base::colMeans(outSubSamp) - trnd$mn[whrVar]) / trnd$mn[whrVar] * 100)
+      rptStna02 <- suppressWarnings((base::colMeans(outSubSamp) - trnd$mean[whrVar]) / trnd$mean[whrVar] * 100)
     
     #replace NA with NaN
     lapply(names(rptStna02), function(x)  {rptStna02[[x]][is.na(rptStna02[[x]])] <<- NaN})
