@@ -25,9 +25,10 @@
 ##############################################################################################
 
 #site to download data for
-site <- "GUAN"
+site <- "CPER"
 #domain
-dom <- "D04"
+dom <- "D10"
+
 #SAE system (ecte vs. ecse)
 sys <- "ecte"
 
@@ -36,8 +37,8 @@ DirDnld <- paste0("~/eddy/data/turbTow/inpRefe/",site)
 if(!dir.exists(DirDnld)) dir.create(DirDnld, recursive = TRUE)
 
 #Create data download string
-DateBgn <- as.Date("2019-05-01")
-DateEnd <- as.Date("2019-11-30")
+DateBgn <- as.Date("2022-11-11")
+DateEnd <- as.Date("2022-11-21")
 DateSeq <- seq.Date(from = DateBgn,to = DateEnd, by = "day")
 PrdWndwDnld <- base::as.character(DateSeq)
 
