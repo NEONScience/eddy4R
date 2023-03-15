@@ -24,7 +24,7 @@ def.pf.rot(
 A data.frame \code{veloWindPf} containing data rotated using the planar fit transformation with the same dimensions as \code{veloWind}.
 }
 \description{
-Function defintion. Performs planar fit transformation on wind vector in right-hand body coordinate system, e.g. CSAT3: Positive from front, left, below.
+Function defintion. Performs planar fit transformation on wind vector in right-hand body coordinate system, e.g. CSAT3: Positive from front, left, below. Met: positive from west, south and below. The coefficients don't have to be in the East-North-Up (ENU) coordinate system (AngEnuXaxs); however, the names are consistent with NEON data terminology and in our data pipeline are in ENU.
 }
 \examples{
 Currently none

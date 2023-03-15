@@ -8,11 +8,12 @@
 #' Wrapper function. Calculate Wavelet spectrum/cospectrum using the Waves package. The frequency response correction using Wavelet techniques described in Norbo and Katul, 2012 (NK12)
 
 #' @param dfInp data.frame, consisting of the input data to perform the wavelet transformation
-#' @param DiffScale numeric, determining the step difference in scales for the wavelet transformation
+#' @param DiffScal numeric, determining the step difference in scales for the wavelet transformation
 #' @param FuncWave Waves package function, denoting the type of mother wavelet function to be used in the transformation
 #' @param FreqSamp numeric, that determines the time series objects points
+#' @param SetPrd numeric, which wavelengths/spatial scales to consider if you want to only consider high frequency values
 #' @param ThshMiss numeric, dimensionless fraction of missing values in each column of data allowed before the quality flag is tripped. Defaults to 0.1 or 10 percent.
-#' @param SI stability parameter (numeric)
+#' @param paraStbl stability parameter (numeric)
 
 #'
 #' @return An list constaining wavelet spectra, quality flags if data was available to perform correction, and frequency reponse correction parameters if activated.
@@ -40,6 +41,8 @@
 #     Added failsafe for ts object creation in case all dfInp values are NaN's
 #   Stefan Metzger (2018-02-24)
 #     Added failsafe in case the vertical wind is not available
+#   David Durden (2023-03-12)
+#     Updating terms, fixing ts bug, and adding cutoff frequencies
 ##############################################################################################
 
 
@@ -50,21 +53,22 @@ dfInp,
 DiffScal = 1/8,
 FuncWave = Waves::morlet(),
 FreqSamp = 20, #Defaults to 20Hz
+SetPrd = NULL,
 ThshMiss = .1,
-SI
+paraStbl
 ){
 
 #Create output list
-rpt <- list()
+rpt <- base::list()
 
 ####Check quality of data###########################################
 #Create a logical flag if more data is missing than the threshold
-rpt$qfMiss <- as.list(colMeans(is.na(dfInp)) > ThshMiss)
+rpt$qfMiss <- base::as.list(base::colMeans(base::is.na(dfInp)) > ThshMiss)
 #Turn the flags into integers
-rpt$qfMiss <- lapply(rpt$qfMiss, as.integer)
+rpt$qfMiss <- lapply(rpt$qfMiss, base::as.integer)
 # in case the vertical wind is not available, no cospectral correction can be performed
 # then flag all scalars
-if(rpt$qfMiss$w_hor == 1) base::invisible(lapply(names(rpt$qfMiss), function(x) rpt$qfMiss[x] <<- 1))
+if(rpt$qfMiss$veloZaxsHor == 1) base::invisible(lapply(base::names(rpt$qfMiss), function(x) rpt$qfMiss[x] <<- 1))
 ####################################################################
 
 # fill missing values through linear interpolation
@@ -75,7 +79,7 @@ tmp <- zoo::na.approx(dfInp, na.rm = TRUE, rule = 2) #Rule 2 allows extropolatin
 if(base::nrow(tmp) > 1) dfInp <- tmp
 
 #time series
-dfInp <- as.data.frame(ts(
+dfInp <- base::as.data.frame(stats::ts(
   dfInp,                   #discard rows with bogus w
   start = 0,      		        #compensate for missing first row
   frequency = FreqSamp			#time unit is 20 Hz
@@ -84,74 +88,82 @@ dfInp <- as.data.frame(ts(
 
 # perform CWT
 # in the future, can consider package "wmtsa" could enable transition to R 3.x (http://cran.at.r-project.org/web/packages/wmtsa/wmtsa.pdf)
-rpt$wave <- list()
-for (c in colnames(dfInp)) {
-    rpt$wave[[c]] <- Waves::cwt(dfInp[[c]], wavelet = FuncWave, dj = DiffScal)
-    msg <- paste(c, "... done.")
+rpt$wave <- base::list()
+for (idxCol in base::colnames(dfInp)) {
+  #Creating ts vector
+  vectTmp <- stats::ts(
+    dfInp[,idxCol],                   #discard rows with bogus w
+    start = 0,      		        #compensate for missing first row
+    frequency = FreqSamp			#time unit is 20 Hz
+  )
+    rpt$wave[[idxCol]] <- Waves::cwt(vectTmp, wavelet = FuncWave, dj = DiffScal)
+    msg <- paste(idxCol, "... done.")
     tryCatch({rlog$debug(msg)}, error=function(cond){print(msg)})
   }
 
 #normalization factor specific to the choice of Wavelet parameters
-rpt$coefNorm <- rpt$wave[["w_hor"]]@dj * rpt$wave[["w_hor"]]@dt / rpt$wave[["w_hor"]]@wavelet@cdelta / length(rpt$wave[["w_hor"]]@series)
+rpt$coefNorm <- rpt$wave[["veloZaxsHor"]]@dj * rpt$wave[["veloZaxsHor"]]@dt / rpt$wave[["veloZaxsHor"]]@wavelet@cdelta / base::length(rpt$wave[["veloZaxsHor"]]@series)
 
 
 # # variance for all wavelengths
 # # not currently used; commented out to conserve computation time
 # # var <- names(rpt$wave)[3]
 # rpt$var <- lapply(names(rpt$wave), function(var)
-#   eddy4R.turb::def.vari.wave(
-#   # def.vari.wave(
+#   eddy4R.turb::def.wave.vari(
+#   # def.wave.vari(
 #     #complex Wavelet coefficients variable 1
-#     spec1 = rpt$wave[[var]]@spectrum,
+#     spec01 = rpt$wave[[var]]@spectrum,
 #     #complex Wavelet coefficients variable 2
-#     # spec2 = rpt$wave[[var]]@spectrum,
+#     # spec02 = rpt$wave[[var]]@spectrum,
 #     #width of the wavelet [s]
 #     scal = rpt$wave[[var]]@scale,
 #     #approximate Fourier period [d]
-#     peri = rpt$wave[[var]]@period,
+#     prd = rpt$wave[[var]]@period,
 #     #half-power frequencies for individual variables [Hz]
-#     freq_0 = NA,
+#     FreqCut  = NA,
 #     #which wavelengths/spatial scales to consider
-#     whr_peri = NULL,
+#     SetPrd = NULL,
 #     #normalization factor specific to the choice of Wavelet parameters
-#     fac_norm = rpt$coefNorm,
+#     CoefNorm = rpt$coefNorm,
 #     # Wavelet flag: process (0) or not
-#     flag=rpt$qfMiss[[var]],
+#     qfWave = rpt$qfWave[[var]],
 #     #stability parameter
-#     SI = wrk$reyn$mn$sigma,
+#     paraStbl = paraStbl,
 #     #spectrum or cospectrum?
-#     SC = c("spe", "cos")[1]
+#     metSpec = c("spec", "cosp")[1]
 #   )
 # ); names(rpt$var) <- names(rpt$wave)
 
 
 # covariance for all wavelengths
 # not currently implemented for friction velocity as approach to negative
-rpt$cov <- lapply(names(rpt$wave)[-which(names(rpt$wave) == "w_hor")], function(var)
-  eddy4R.turb::def.vari.wave(
+rpt$cov <- lapply(names(rpt$wave)[-which(names(rpt$wave) == "veloZaxsHor")], function(var)
+  eddy4R.turb::def.wave.vari(
   # def.vari.wave(
     #complex Wavelet coefficients variable 1
-    spec1 = rpt$wave[[var]]@spectrum,
+    spec01 = rpt$wave[[var]]@spectrum,
     #complex Wavelet coefficients variable 2
-    spec2 = rpt$wave[["w_hor"]]@spectrum,
+    spec02 = rpt$wave[["veloZaxsHor"]]@spectrum,
     #width of the wavelet [s]
     scal = rpt$wave[[var]]@scale,
     #approximate Fourier period [d]
-    peri = rpt$wave[[var]]@period,
-    #half-power frequencies for individual variables [Hz]
-    freq_0 = NA,
+    prd = rpt$wave[[var]]@period,
+    
+    
+    #half-power frequencies for individual variables [Hz] - cutoff frequencies
+    FreqCut = NA,
     #which wavelengths/spatial scales to consider
-    whr_peri = NULL,
-    #normalization factor specific to the choice of Wavelet parameters
-    fac_norm = rpt$coefNorm,
+    SetPrd = NULL,
+    #normalization factor/coefficient specific to the choice of Wavelet parameters
+    CoefNorm = rpt$coefNorm,
     # Wavelet flag: process (0) or not
-    flag=rpt$qfMiss[[var]],
+    qfWave=rpt$qfMiss[[var]],
     #stability parameter
-    SI = SI,
+    paraStbl = paraStbl,
     #spectrum or cospectrum?
-    SC = c("spe", "cos")[2]
+    MethSpec = c("spec", "cosp")[2]
   )
-); names(rpt$cov) <- names(rpt$wave)[-which(names(rpt$wave) == "w_hor")]
+); base::names(rpt$cov) <- base::names(rpt$wave)[-base::which(base::names(rpt$wave) == "veloZaxsHor")]
 
 #return all output from the wave function
 return(rpt)
