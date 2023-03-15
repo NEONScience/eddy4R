@@ -53,14 +53,14 @@
 #including high-frequency spectral correction and selectable low-frequency cutoff
 def.wave.vari <- function(
   #complex Wavelet coefficients variable 1
-  spec01 = mycwt[["veloZaxsHor"]]@spectrum,
+  spec01 = rpt$wave[["veloZaxsHor"]]@spectrum,
   #complex Wavelet coefficients variable 2
   spec02 = NULL,
   #        spec02 = mycwt[[FREQ_0_map[[vari]][2]]]@spectrum,
   #width of the wavelet at each scale [s]
-  scal = mycwt[[var]]@scale,
+  scal = rpt$wave[[var]]@scale,
   #approximate corresponding Fourier period [s]
-  prd = mycwt[[var]]@period,
+  prd = rpt$wave[[var]]@period,
   #Sampling frequency (Defaults to 20 Hz)
   FreqSamp = 20,
   #half-power frequencies for individual variables [Hz]
@@ -85,15 +85,15 @@ if(qfWave == 0) {
   if(base::is.null(spec02)) {
     #un-weighted wavelet scalogram
     #two approaches identical, see Mauder et al. (2008) and Stull (1988, Sect. 8.6.2 and 8.8.2)
-    cwt_vc1 <- base::abs(spec01)^2
-    #cwt_vc1 <- Re(spec01 * Conj(spec01))
+    waveScal<- base::abs(spec01)^2
+    #waveScal<- Re(spec01 * Conj(spec01))
     
   } else {
     
     #un-weighted wavelet cross-scalogram
     #two approaches identical, see Mauder et al. (2008) and Stull (1988, Sect. 8.6.2 and 8.8.2)
-    cwt_vc1 <- base::Re(spec01 * base::Conj(spec02))
-    #cwt_vc1 <- Re(spec01) * Re(spec02) + Im(spec01) * Im(spec02)
+    waveScal<- base::Re(spec01 * base::Conj(spec02))
+    #waveScal<- Re(spec01) * Re(spec02) + Im(spec01) * Im(spec02)
     
   }
   
@@ -109,7 +109,7 @@ if(qfWave == 0) {
   
     # rows from first obs to last obs
     # columns from high-frequency to low-frequency
-    # str(cwt_vc1)
+    # str(waveScal)
   
     # variance contribution of each scale [unit^2]
     # use absolute value for determining power-law decay and transfer function only
@@ -118,7 +118,7 @@ if(qfWave == 0) {
     # the transfer function then still needs to be applied over the cross-scalogram with positive and negative Wavelet coefficients
     # sum results in total variance for dataset, e.g. 30 min
     # then normalize to sum of unity
-    spec <- base::colSums(base::abs(cwt_vc1))
+    spec <- base::colSums(base::abs(waveScal))
     spec <- spec / base::sum(spec, na.rm=TRUE)
     
     # frequency [Hz]
@@ -255,12 +255,12 @@ if(qfWave == 0) {
     
     #time/space series of variance at native resolution
     if(base::is.null(SetPrd)) SetPrd <- 1:base::ncol(waveScalWght)
-    waveVari <- coefNorm * base:::rowSums(waveScalWght[,SetPrd])
+    waveVari <- CoefNorm * base:::rowSums(waveScalWght[,SetPrd])
     waveVariCor <- CoefNorm * base:::rowSums(waveScalCorWght[,SetPrd])
     
     #conversion from variance fraction to total local variance
     waveVari <- waveVari * base::length(waveVari)
-    waveVariCor <- waveVariCorr  * base::length(waveVariCor)
+    waveVariCor <- waveVariCor * base::length(waveVariCor)
   
     #
     

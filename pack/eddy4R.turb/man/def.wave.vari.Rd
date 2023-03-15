@@ -5,10 +5,10 @@
 \title{Definition function: function to determine the temporally resolved variance/covariance from continuous wavelet transform}
 \usage{
 def.wave.vari(
-  spec01 = mycwt[["veloZaxsHor"]]@spectrum,
+  spec01 = rpt$wave[["veloZaxsHor"]]@spectrum,
   spec02 = NULL,
-  scal = mycwt[[var]]@scale,
-  prd = mycwt[[var]]@period,
+  scal = rpt$wave[[var]]@scale,
+  prd = rpt$wave[[var]]@period,
   FreqSamp = 20,
   FreqCut = NA,
   SetPrd = NULL,
