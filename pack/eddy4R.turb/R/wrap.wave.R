@@ -41,7 +41,7 @@
 #     Added failsafe for ts object creation in case all dfInp values are NaN's
 #   Stefan Metzger (2018-02-24)
 #     Added failsafe in case the vertical wind is not available
-#   David Durden (2018-01-12)
+#   David Durden (2023-03-12)
 #     Updating terms, fixing ts bug, and adding cutoff frequencies
 ##############################################################################################
 

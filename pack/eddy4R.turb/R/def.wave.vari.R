@@ -282,6 +282,9 @@ if(qfWave == 0) {
       
       # flag
       rpt$qfWave <- qfWave
+      
+      # Total local variance/covariance
+      rpt$waveVariCor <- waveVariCor 
 
   # in case peak frequency > 1 Hz
   } else {
@@ -292,7 +295,8 @@ if(qfWave == 0) {
       mean = base::mean(waveVari, na.rm = TRUE),
       cor = NA,
       coefCor = 1,
-      qfWave = 1
+      qfWave = 1,
+      waveVariCor = NA
     )
       
   }
@@ -306,7 +310,8 @@ if(qfWave == 0) {
     mean = NA,
     cor = NA,
     coefCor = 1,
-    qfWave = qfWave
+    qfWave = qfWave,
+    waveVariCor = NA
   )
   
 }
