@@ -9,6 +9,7 @@ wrap.wave(
   DiffScal = 1/8,
   FuncWave = Waves::morlet(),
   FreqSamp = 20,
+  SetPrd = NULL,
   ThshMiss = 0.1,
   paraStbl
 )
@@ -21,6 +22,8 @@ wrap.wave(
 \item{FuncWave}{Waves package function, denoting the type of mother wavelet function to be used in the transformation}
 
 \item{FreqSamp}{numeric, that determines the time series objects points}
+
+\item{SetPrd}{numeric, which wavelengths/spatial scales to consider if you want to only consider high frequency values}
 
 \item{ThshMiss}{numeric, dimensionless fraction of missing values in each column of data allowed before the quality flag is tripped. Defaults to 0.1 or 10 percent.}
 
