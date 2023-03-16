@@ -28,10 +28,7 @@
 site <- "CPER"
 #domain
 dom <- "D10"
-<<<<<<< HEAD
 
-=======
->>>>>>> 3a0d628f969835edec4839c8449fdf730fa557e7
 #SAE system (ecte vs. ecse)
 sys <- "ecte"
 
@@ -64,7 +61,4 @@ download.file(url = urlDnld[x], destfile = fileDnld[x])
 #ungzip file
 gzFile <- list.files(DirDnld, pattern = ".gz", full.names = TRUE)
 lapply(gzFile, R.utils::gunzip)
-<<<<<<< HEAD
-=======
 
->>>>>>> 3a0d628f969835edec4839c8449fdf730fa557e7
