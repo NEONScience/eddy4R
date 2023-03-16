@@ -43,6 +43,8 @@
 #     adding command to save irgaTurb data before removing the bad quality data   
 #   Natchaya P-Durden (2019-03-12)
 #     applying the function to remove bad quality data (excluded qfCal and qfRng) to validation data
+#   David Durden (2022-07-26)
+#    Removing calculation of tempSoni in workflow since this is performed by CI for CSAT3 and CSAT3B provides tempSoni directly
 ##############################################################################################
     
     

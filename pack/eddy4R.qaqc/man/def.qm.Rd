@@ -9,7 +9,7 @@ def.qm(qf, nameQmOut = NULL)
 \arguments{
 \item{qf}{A data frame of quality flags, class integer. Each column contains the quality flag values [-1,0,1] for that flag. Note: This is the Vrbs output from def.plau, def.dspk.wndw, and def.dspk.br86. See def.conv.qf.vrbs for converting from non-verbose to verbose output.}
 
-\item{nameQmOut}{Optional. A vector of class "character" containing the base name of the output quality metrics for each flag in \code{qf}. These names will be ammended with "Pass", "Fail", or "Na" at the end when outputting their respective quality metrics. Default behavoir is to autoassign names based on the column names of \code{qf} [-]}
+\item{nameQmOut}{Optional. A vector of class "character" containing the base name of the output quality metrics for each flag in \code{qf}. These names will be ammended with "Pass", "Fail", or "Na" at the end when outputting their respective quality metrics. Default behavior is to auto assign names based on the column names of \code{qf} [-]}
 }
 \value{
 A dataframe containing quality metrics (fractions) of failed, pass, and NA for each of the individual flag defined in \code{qf}.
