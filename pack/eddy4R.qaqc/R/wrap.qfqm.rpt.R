@@ -11,6 +11,7 @@
 #' @param Dp A vector of data products to check the quality report for. Defaults to NULL which will test all dp's found in HDF5 file. Of type character. [-]
 
 #' @param Vrbs A logical parameter that determines if all failed quality times should be reported (defaults to FALSE).
+#' @param MethQm A character string that determines which quality metric to pull ("Pass", "Fail", "Na"). 
 
 #' @return A list for all dp's provided including either summary or verbose quality report: \cr
 #' \code{qm}   quality metrics (percent) passed sub-data products if Vrbs = TRUE. [percent] \cr
@@ -33,20 +34,24 @@
 
 # changelog and author contributions / copyrights 
 #   David Durden (2019-04-30)
+# Original creation
+#   David Durden (2020-03-18)
+# Adding argument to grab quality metric desired for submetrics
 ##############################################################################################
 
 
 # start function wrap.qfqm.rpt()
 wrap.qfqm.rpt <- function(
-  File,
+  FileName,
   Dp = NULL,
-  Vrbs = FALSE
+  Vrbs = FALSE,
+  MethQm = c("Pass", "Fail","Na")[1]
 ) {
   
 #Check if dp's are provided for quality report, otherwise check all dp's in qfqm portion of HDF5 file
 if(is.null(Dp)){
   # List of objects in the HDF5 file
-  listObj <- rhdf5::h5ls(file = fileName, datasetinfo = FALSE)
+  listObj <- rhdf5::h5ls(file = FileName, datasetinfo = FALSE)
   #Vector of data product names in the qfqm tabs in the HDF5 file
   Dp <- listObj[grep(pattern = "/qfqm$", x = listObj$group),"name"]
 } # End of if statement is.null(dp) if statement
@@ -55,7 +60,7 @@ if(is.null(Dp)){
 qfqmVarBase <- c("timeBgn","timeEnd","qfFinl","qfSciRevw","qmAlph","qmBeta")
 
 #Extract all the groups, data, and attributes from the HDF5 file
-listHdf5 <- eddy4R.base::def.hdf5.extr(FileInp = fileName)
+listHdf5 <- eddy4R.base::def.hdf5.extr(FileInp = FileName)
 
 #Initialize lists
 qfqm <- list()
@@ -74,7 +79,7 @@ for (idxDp in Dp) {
     
     rpt <- list()
     #Check if any final quality flags (qfFinl) are tripped
-    if(sum(x$qfFinl) > 0) {
+    if(sum(x$qfFinl, na.rm = TRUE) > 0) {
       
       #Subset rows where the final quality flag is failed
       rpt <- x[x$qfFinl == 1,]
@@ -83,7 +88,7 @@ for (idxDp in Dp) {
       qfqmVarBaseSub <- dplyr::intersect(qfqmVarBase, base::names(rpt))
       
       #Determine all qf expanded variables
-      qfqmVarExp <- base::grep(pattern = "Pass", x = dplyr::setdiff(base::names(rpt),qfqmVarBaseSub), value = TRUE)
+      qfqmVarExp <- base::grep(pattern = MethQm, x = dplyr::setdiff(base::names(rpt),qfqmVarBaseSub), value = TRUE)
       #Rearrange the data with the base variables at the front of the data.frame
       rpt <- rpt[,c(qfqmVarBaseSub,qfqmVarExp)]
       #############################################################################################################
@@ -100,7 +105,8 @@ for (idxDp in Dp) {
       qmMean <- as.data.frame(t(colMeans(rpt[,grep(pattern = "qm", names(rpt))], na.rm = TRUE)))
       
       #Convert units to percent
-      if(length(qmMean) > 0) qmMean <- eddy4R.base::def.unit.conv(qmMean, unitFrom = "-", unitTo = "%", MethGc = FALSE)
+      #if(length(qmMean) > 0) qmMean <- eddy4R.base::def.unit.conv(qmMean, unitFrom = "-", unitTo = "%", MethGc = FALSE)
+      if(length(qmMean) > 0) qmMean <- qmMean * 100
       
       #Check if qmAlph and qmBeta are present to order the quality metrics
       if("qmAlph" %in% names(qmMean) & "qmBeta" %in% names(qmMean)){

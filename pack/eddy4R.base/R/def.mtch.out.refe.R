@@ -39,6 +39,8 @@
 #     rename to def.mtch.out.refe()
 #   Natchaya P-Durden (2018-04-03)
 #     update @param format
+#   David Durden (2020-07-16)
+#     add some information when it falls
 ##############################################################################################
 
 def.mtch.out.refe <- function(
@@ -55,7 +57,7 @@ def.mtch.out.refe <- function(
 
   #Compare the first numLine lines of the data between the output and reference
   if(!isTRUE(base::all.equal(dataOut[1:NumLine,],dataRefe[1:NumLine,]))){
-      base::stop("Bummer! The current output DOES NOT MATCH the reference output :(")
+      base::stop(cat("Summary output: \n dataOut & dataRefe \n", str(dataOut[1:NumLine,]),"\n\n", str(dataRefe[1:NumLine,]),"Bummer! The current output DOES NOT MATCH the reference output :( ==> diferences are: \n", base::all.equal(dataOut[1:NumLine,],dataRefe[1:NumLine,]), "\n\n" ))
   } else {
     tryCatch({rlog$debug("Yay! The current output MATCHES the reference output :)")},
              error=function(cond){

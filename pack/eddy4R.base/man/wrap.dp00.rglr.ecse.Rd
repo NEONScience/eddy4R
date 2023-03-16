@@ -4,8 +4,15 @@
 \alias{wrap.dp00.rglr.ecse}
 \title{Wrapper function: Time regularization for ECSE dp00}
 \usage{
-wrap.dp00.rglr.ecse(DirInp, Date, Site = "CPER", Dom = "D10", Freq,
-  IdDp00, horVer)
+wrap.dp00.rglr.ecse(
+  DirInp,
+  Date,
+  Site = "CPER",
+  Dom = "D10",
+  Freq,
+  IdDp00,
+  horVer
+)
 }
 \arguments{
 \item{DirInp}{Character: Input directory. [-]}

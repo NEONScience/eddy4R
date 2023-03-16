@@ -4,8 +4,13 @@
 \alias{wrap.dp01.qfqm.ecte}
 \title{Wrapper function: Create NEON Level 1 data product quality flags and quality metrics across list elements}
 \usage{
-wrap.dp01.qfqm.ecte(qfqm, idx = NULL, TypeMeas = "samp",
-  MethMeas = c("ecte", "ecse")[1], RptExpd = FALSE)
+wrap.dp01.qfqm.ecte(
+  qfqm,
+  idx = NULL,
+  TypeMeas = "samp",
+  MethMeas = c("ecte", "ecse")[1],
+  RptExpd = FALSE
+)
 }
 \arguments{
 \item{qfqm}{A data.frame or list containing the L0p input data quality flags (sensor and plausibility flags) at native resolution. Of type numeric or integer. [-]}

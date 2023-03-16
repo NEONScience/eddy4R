@@ -32,6 +32,18 @@
 #     original creation
 #   Ke Xu (2018-07-01)
 #     apply eddy4R terms: from gap to Wndw
+#   Natchaya P-Durden (2020-03-17)
+#     remove na value before applying linear interpolation if like that maxgap will not work
+#   Natchaya P-Durden (2020-04-01)
+#     added failsafe for not to break the zoo::na.approx function when timeFrac are duplicate
+#   Natchaya P-Durden (2020-04-24)
+#     added failsafe replace NaN in numSamp with zero
+#   David Durden (2020-07-10)
+#     added failsafe to make sure the time and data lengths are the same for cases with setLgth = 2
+#   David Durden(2020-07-24)
+#     Failsafe if multiple lines exist, but removed due to NaN
+#   David Durden(2020-12-24)
+#     Added numSamp > 1 since na.omit below would remove later since variance can not be calculated
 ##############################################################################################################
 #Start of function call
 ##############################################################################################################
@@ -66,6 +78,9 @@ def.itpl.time <- function(
   #convert to POSIXct, so the full date and time can be stored in as accessed as a single vector
   timeInp <- as.POSIXlt(dataInp$timeBgn, format="%Y-%m-%dT%H:%M:%OSZ", tz="UTC")
   
+  #failsafe replace NaN in numSamp with zero
+  dataInp$numSamp[is.na(dataInp$numSamp)] <- 0
+  
   #if(idxDp == "co2Stor" | idxDp == "h2oStor"){
     #timeBgn + numSamp/2/* 1/1Hz
     timeInp <- as.POSIXlt(timeInp + dataInp$numSamp/2*1/1, format="%Y-%m-%d %H:%M:%OS", tz="UTC")
@@ -85,7 +100,7 @@ def.itpl.time <- function(
   
   
   #data: determine which datapoints to assess            
-  setLgth <- length(which(!is.na(dataInp$mean)))
+  setLgth <- length(which(!is.na(dataInp$mean) & dataInp$numSamp > 1)) #Added numSamp > 1 since na.omit below would remove later since variance can not be calculated
   
   
   #less than 2 values (minimum required by approx() function)
@@ -95,12 +110,24 @@ def.itpl.time <- function(
     
     #interpolate actual data
   } else {
-    
+    #Failsafe for not to break the zoo::na.approx function
+    #if only two data are available and as.integer(dataInp$timeFrac * 60) are the same value, add 1 to timeFrac of the 2nd value
+    tmpTimeFrac <- as.integer(dataInp$timeFrac * 60)
+    if (setLgth == 2 & tmpTimeFrac[1]==tmpTimeFrac[2]) tmpTimeFrac[2] <- tmpTimeFrac[2]+1
     if(methItpl == "linear"){
+      #remove na value if like that maxgap will not work
+      dataInp <- na.omit(dataInp)
+      #make sure use the right inpTime before interpolating
+      if (setLgth == 2 && length(tmpTimeFrac) == setLgth){
+        inpTime <- tmpTimeFrac
+      }else{
+          inpTime <- as.integer(dataInp$timeFrac * 60)
+          if (setLgth == 2 & inpTime[1]==inpTime[2]) inpTime[2] <- inpTime[2]+1 #Failsafe if multiple lines exist, but removed due to NaN
+          } #End if for setLgth == 2 and length of tmpTime == to setLgth
       rpt <- zoo::na.approx(object=as.vector(dataInp$mean), x=#dataInp$timeFrac
-                                  as.integer(dataInp$timeFrac * 60)
+                              inpTime
                                 , xout=as.integer(timeFracOut * 60)
-                                , method = "linear", maxgap=(WndwMax/60), na.rm=FALSE, rule=1, f=0)
+                                , method = "linear", maxgap=(WndwMax/60), na.rm=FALSE, rule=1, f=0,ties = mean)
       
     }
     

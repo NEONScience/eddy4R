@@ -49,6 +49,8 @@
 #     Added exclusion of Null test failures from qmBeta (to avoid double-counting)
 #   Natchaya P-Durden (2018-04-03)
 #     update @param format
+#   David Durden (2021-08-18)
+#     Removing quality indicators (qi) from qfFinal determination
 ##############################################################################################
 def.qf.finl <- function (
   qf,
@@ -74,6 +76,9 @@ def.qf.finl <- function (
   if((base::length(Thsh) != 1) || !(base::is.numeric(Thsh))) {
     stop("Input parameter Thsh must be a numeric vector of length 1")
   }
+  
+  #Remove quality indicators from being qfFinal determination
+  qf <- qf[,grep("^qi", x = names(qf), invert = TRUE)]
   
 # Compute Quality metric ---------------------------------------------------
   #compute qfAlpha and qfBeta

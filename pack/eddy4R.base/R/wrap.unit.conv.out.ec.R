@@ -38,6 +38,15 @@
 #     adding units conversion for ecse
 #   Natchaya P-Durden (2019-07-23)
 #     converting time format in ecse qfqm
+#   Natchaya P-Durden (2020-01-17)
+#     adding unit conversion for rtioMoleDryH2o during validation
+
+#   Chris Florian (2021-06-22)
+#     adding CH4 unit conversion  
+#   Chris Florian (2021-08-05)
+#     adding units for rtioMoleDryCo2RefeCor 
+#   Chris Florian (2021-08-18)
+#     updating naming convention, removing redundant rtioMoleDryCo2 from validation table
 ############################################################################################
 
 wrap.unit.conv.out.ec <- function(
@@ -83,6 +92,8 @@ outAttr$co2Turb <- base::list(
 
 outAttr$h2oTurb <- base::list(
   "rtioMoleDryH2o"= c("mean" = "mmolH2o mol-1Dry", "min" = "mmolH2o mol-1Dry", "max" = "mmolH2o mol-1Dry", "vari" = "mmolH2o mol-1Dry", "numSamp" = "NA", "timeBgn" = "NA", "timeEnd" = "NA"),
+  "rtioMoleDryH2oCor"= c("mean" = "mmolH2o mol-1Dry", "min" = "mmolH2o mol-1Dry", "max" = "mmolH2o mol-1Dry", "vari" = "mmolH2o mol-1Dry", "numSamp" = "NA", "timeBgn" = "NA", "timeEnd" = "NA"),
+  "rtioMoleDryH2oRaw"= c("mean" = "mmolH2o mol-1Dry", "min" = "mmolH2o mol-1Dry", "max" = "mmolH2o mol-1Dry", "vari" = "mmolH2o mol-1Dry", "numSamp" = "NA", "timeBgn" = "NA", "timeEnd" = "NA"),
   "densMoleH2o"= c("mean" = "mmolH2o m-3", "min" = "mmolH2o m-3", "max" = "mmolH2o m-3", "vari" = "mmolH2o m-3", "numSamp" = "NA", "timeBgn" = "NA", "timeEnd" = "NA"),
   "tempDew"= c("mean" = "C", "min" = "C", "max" = "C", "vari" = "C", "numSamp" = "NA", "timeBgn" = "NA", "timeEnd" = "NA"),
   "presAtm"= c("mean" = "kPa", "min" = "kPa", "max" = "kPa", "vari" = "kPa", "numSamp" = "NA", "timeBgn" = "NA", "timeEnd" = "NA"),
@@ -118,6 +129,8 @@ if(MethType == "ucrt"){
 
   outAttr$h2oTurb <- base::list(
     "rtioMoleDryH2o"= c("mean" = "mmolH2o mol-1Dry",  "vari" = "mmolH2o mol-1Dry", "se" = "mmolH2o mol-1Dry", "timeBgn" = "NA", "timeEnd" = "NA"),
+    "rtioMoleDryH2oCor"= c("mean" = "mmolH2o mol-1Dry",  "vari" = "mmolH2o mol-1Dry", "se" = "mmolH2o mol-1Dry", "timeBgn" = "NA", "timeEnd" = "NA"),
+    "rtioMoleDryH2oRaw"= c("mean" = "mmolH2o mol-1Dry",  "vari" = "mmolH2o mol-1Dry", "se" = "mmolH2o mol-1Dry", "timeBgn" = "NA", "timeEnd" = "NA"),
     "densMoleH2o"= c("mean" = "mmolH2o m-3", "vari" = "mmolH2o m-3", "se" = "mmolH2o m-3", "timeBgn" = "NA", "timeEnd" = "NA"),
     "tempDew"= c("mean" = "C", "vari" = "C", "se" = "C", "timeBgn" = "NA", "timeEnd" = "NA"),
     "presAtm"= c("mean" = "kPa", "vari" = "kPa", "se" = "kPa", "timeBgn" = "NA", "timeEnd" = "NA"),
@@ -128,7 +141,9 @@ if(MethType == "ucrt"){
 
 if(MethType == "vali"){
   outAttr$co2Turb <- base::list(
-    "rtioMoleDryCo2Vali"= c("mean" = "umolCo2 mol-1Dry", "min" = "umolCo2 mol-1Dry", "max" = "umolCo2 mol-1Dry", "vari" = "umolCo2 mol-1Dry", "numSamp" = "NA", "rtioMoleDryCo2Refe" = "umolCo2 mol-1Dry", "timeBgn" = "NA", "timeEnd" = "NA"))
+    "rtioMoleDryCo2Vali"= c("mean" = "umolCo2 mol-1Dry", "min" = "umolCo2 mol-1Dry", "max" = "umolCo2 mol-1Dry", "vari" = "umolCo2 mol-1Dry", "numSamp" = "NA", "refe" = "umolCo2 mol-1Dry", "meanCor" = "umolCo2 mol-1Dry", "timeBgn" = "NA", "timeEnd" = "NA"))
+  outAttr$h2oTurb <- base::list(
+    "rtioMoleDryH2oVali"= c("mean" = "mmolH2o mol-1Dry", "min" = "mmolH2o mol-1Dry", "max" = "mmolH2o mol-1Dry", "vari" = "mmolH2o mol-1Dry", "numSamp" = "NA", "refe" = "mmolH2o mol-1Dry", "timeBgn" = "NA", "timeEnd" = "NA"))
 }
 
 #assign output attributes
@@ -153,6 +168,9 @@ outAttr$vari <- base::list(
   "frt00Samp"= "dm6 min-2",
   "tempAve"= "C2",
   "rtioMoleDryH2o"= "mmol2H2o mol-2Dry",
+  "rtioMoleDryH2oCor"= "mmol2H2o mol-2Dry",
+  "rtioMoleDryH2oRaw"= "mmol2H2o mol-2Dry",
+  "rtioMoleDryH2oVali"= "mmol2H2o mol-2Dry",
   "densMoleH2o"= "mmol2H2o m-6",
   "tempDew"= "C2"
   )
@@ -198,9 +216,9 @@ for(idxDp in base::names(rpt)){
 
     if(MethType == "vali"){
       #refeName <- names(outAttr[[idxDp]][[idxVar]][6])
-      nameAttr <- c("mean", "min", "max", "vari", "numSamp" , names(outAttr[[idxDp]][[idxVar]][6]), "timeBgn", "timeEnd" )
+      nameAttr <- c("mean", "min", "max", "vari", "numSamp" , names(outAttr[[idxDp]][[idxVar]][6]), names(outAttr[[idxDp]][[idxVar]][7]), "timeBgn", "timeEnd" )
       #wrkAttr[[idxDp]][[idxVar]] <- c("mean"= baseAttr, "min" = baseAttr, "max" = baseAttr, "vari" = baseAttr, "numSamp" = baseAttr,  refeName = baseAttr, "timeBgn" = "NA", "timeEnd" = "NA")
-      wrkAttr[[idxDp]][[idxVar]] <- c(baseAttr, baseAttr, baseAttr, baseAttr, baseAttr,  baseAttr, "NA", "NA")
+      wrkAttr[[idxDp]][[idxVar]] <- c(baseAttr, baseAttr, baseAttr, baseAttr, "NA",  baseAttr, baseAttr, "NA", "NA")
       names(wrkAttr[[idxDp]][[idxVar]]) <- nameAttr
     }
 
@@ -230,6 +248,9 @@ if(MethMeas == "ecse"){
                     "rtioMoleDryCo2" = "umol2Co2 mol-2",
                     "rtioMoleWetCo2" = "umol2Co2 mol-2",
                     "rtioMoleDryCo2Refe" = "umol2Co2 mol-2",
+                    "rtioMoleDryCh4" = "umol2Ch4 mol-2",
+                    "rtioMoleWetCh4" = "umol2Ch4 mol-2",
+                    "rtioMoleDryCh4Refe" = "umol2Ch4 mol-2",
                     "temp" = "C2",
                     "tempEnvHut" = "C2",
                     "rtioMoleDryH2o" = "mmol2H2o mol-2",
@@ -256,6 +277,9 @@ if(MethMeas == "ecse"){
     wrkAttr$rtioMoleDryCo2 <- c("mean" = "molCo2 mol-1", "min" = "molCo2 mol-1", "max" = "molCo2 mol-1", "vari" = "molCo2 mol-1", "numSamp" = "NA", "timeBgn" = "NA", "timeEnd" = "NA")
     wrkAttr$rtioMoleWetCo2 <- c("mean" = "molCo2 mol-1", "min" = "molCo2 mol-1", "max" = "molCo2 mol-1", "vari" = "molCo2 mol-1", "numSamp" = "NA", "timeBgn" = "NA", "timeEnd" = "NA")
     wrkAttr$rtioMoleDryCo2Refe <- c("mean" = "molCo2 mol-1", "min" = "molCo2 mol-1", "max" = "molCo2 mol-1", "vari" = "molCo2 mol-1", "numSamp" = "NA", "timeBgn" = "NA", "timeEnd" = "NA")
+    wrkAttr$rtioMoleDryCh4 <- c("mean" = "molCh4 mol-1", "min" = "molCh4 mol-1", "max" = "molCh4 mol-1", "vari" = "molCh4 mol-1", "numSamp" = "NA", "timeBgn" = "NA", "timeEnd" = "NA")
+    wrkAttr$rtioMoleWetCh4 <- c("mean" = "molCh4 mol-1", "min" = "molCh4 mol-1", "max" = "molCh4 mol-1", "vari" = "molCh4 mol-1", "numSamp" = "NA", "timeBgn" = "NA", "timeEnd" = "NA")
+    wrkAttr$rtioMoleDryCh4Refe <- c("mean" = "molCh4 mol-1", "min" = "molCh4 mol-1", "max" = "molCh4 mol-1", "vari" = "molCh4 mol-1", "numSamp" = "NA", "timeBgn" = "NA", "timeEnd" = "NA")
     wrkAttr$temp <- c("mean" = "K", "min" = "K", "max" = "K", "vari" = "C", "numSamp" = "NA", "timeBgn" = "NA", "timeEnd" = "NA")#with means removed unit of wrk vari of temp is equal to out
     wrkAttr$tempEnvHut <- c("mean" = "K", "min" = "K", "max" = "K", "vari" = "C", "numSamp" = "NA", "timeBgn" = "NA", "timeEnd" = "NA")
     wrkAttr$rtioMoleDryH2o <- c("mean" = "molH2o mol-1", "min" = "molH2o mol-1", "max" = "molH2o mol-1", "vari" = "molH2o mol-1", "numSamp" = "NA", "timeBgn" = "NA", "timeEnd" = "NA")
@@ -293,6 +317,9 @@ if(MethMeas == "ecse"){
     outAttr$rtioMoleDryCo2 <- c("mean" = "umolCo2 mol-1", "min" = "umolCo2 mol-1", "max" = "umolCo2 mol-1", "vari" = "umolCo2 mol-1", "numSamp" = "NA", "timeBgn" = "NA", "timeEnd" = "NA")
     outAttr$rtioMoleWetCo2 <- c("mean" = "umolCo2 mol-1", "min" = "umolCo2 mol-1", "max" = "umolCo2 mol-1", "vari" = "umolCo2 mol-1", "numSamp" = "NA", "timeBgn" = "NA", "timeEnd" = "NA")
     outAttr$rtioMoleDryCo2Refe <- c("mean" = "umolCo2 mol-1", "min" = "umolCo2 mol-1", "max" = "umolCo2 mol-1", "vari" = "umolCo2 mol-1", "numSamp" = "NA", "timeBgn" = "NA", "timeEnd" = "NA")
+    outAttr$rtioMoleDryCh4 <- c("mean" = "umolCh4 mol-1", "min" = "umolCh4 mol-1", "max" = "umolCh4 mol-1", "vari" = "umolCh4 mol-1", "numSamp" = "NA", "timeBgn" = "NA", "timeEnd" = "NA")
+    outAttr$rtioMoleWetCh4 <- c("mean" = "umolCh4 mol-1", "min" = "umolCh4 mol-1", "max" = "umolCh4 mol-1", "vari" = "umolCh4 mol-1", "numSamp" = "NA", "timeBgn" = "NA", "timeEnd" = "NA")
+    outAttr$rtioMoleDryCh4Refe <- c("mean" = "umolCh4 mol-1", "min" = "umolCh4 mol-1", "max" = "umolCh4 mol-1", "vari" = "umolCh4 mol-1", "numSamp" = "NA", "timeBgn" = "NA", "timeEnd" = "NA")
     outAttr$temp <- c("mean" = "C", "min" = "C", "max" = "C", "vari" = "C", "numSamp" = "NA", "timeBgn" = "NA", "timeEnd" = "NA")
     outAttr$tempEnvHut <- c("mean" = "C", "min" = "C", "max" = "C", "vari" = "C", "numSamp" = "NA", "timeBgn" = "NA", "timeEnd" = "NA")
     outAttr$rtioMoleDryH2o <- c("mean" = "mmolH2o mol-1", "min" = "mmolH2o mol-1", "max" = "mmolH2o mol-1", "vari" = "mmolH2o mol-1", "numSamp" = "NA", "timeBgn" = "NA", "timeEnd" = "NA")
@@ -515,6 +542,9 @@ if(MethMeas == "ecse"){
     wrkAttr$rhEnvHut <- c("mean" = "-", "vari" = "-", "se" = "-", "timeBgn" = "NA", "timeEnd" = "NA")
     wrkAttr$rtioMoleDryCo2 <- c("mean" = "molCo2 mol-1", "vari" = "molCo2 mol-1", "se" = "molCo2 mol-1", "timeBgn" = "NA", "timeEnd" = "NA")
     wrkAttr$rtioMoleWetCo2 <- c("mean" = "molCo2 mol-1", "vari" = "molCo2 mol-1", "se" = "molCo2 mol-1", "timeBgn" = "NA", "timeEnd" = "NA")
+    wrkAttr$rtioMoleDryCh4 <- c("mean" = "molCh4 mol-1", "vari" = "molCh4 mol-1", "se" = "molCh4 mol-1", "timeBgn" = "NA", "timeEnd" = "NA")
+    wrkAttr$rtioMoleWetCh4 <- c("mean" = "molCh4 mol-1", "vari" = "molCh4 mol-1", "se" = "molCh4 mol-1", "timeBgn" = "NA", "timeEnd" = "NA")
+    wrkAttr$rtioMoleDryCh4Refe <- c("mean" = "molCh4 mol-1", "vari" = "molCh4 mol-1", "se" = "molCh4 mol-1", "timeBgn" = "NA", "timeEnd" = "NA")
     wrkAttr$temp <- c("mean" = "C", "vari" = "C", "se" = "C", "NA", "NA")#with means removed unit of wrk mean, vari, and se of temp is equal to out
     wrkAttr$tempEnvHut <- c("mean" = "C", "vari" = "C", "se" = "C", "timeBgn" = "NA", "timeEnd" = "NA")
     wrkAttr$rtioMoleDryH2o <- c("mean" = "molH2o mol-1", "vari" = "molH2o mol-1", "se" = "molH2o mol-1", "timeBgn" = "NA", "timeEnd" = "NA")
@@ -536,6 +566,9 @@ if(MethMeas == "ecse"){
     outAttr$rhEnvHut <- c("mean" = "%", "vari" = "%", "se" = "%", "timeBgn" = "NA", "timeEnd" = "NA")
     outAttr$rtioMoleDryCo2 <- c("mean" = "umolCo2 mol-1", "vari" = "umolCo2 mol-1", "se" = "umolCo2 mol-1", "timeBgn" = "NA", "timeEnd" = "NA")
     outAttr$rtioMoleWetCo2 <- c("mean" = "umolCo2 mol-1", "vari" = "umolCo2 mol-1", "se" = "umolCo2 mol-1", "timeBgn" = "NA", "timeEnd" = "NA")
+    outAttr$rtioMoleDryCh4 <- c("mean" = "umolCh4 mol-1", "vari" = "umolCh4 mol-1", "se" = "umolCh4 mol-1", "timeBgn" = "NA", "timeEnd" = "NA")
+    outAttr$rtioMoleWetCh4 <- c("mean" = "umolCh4 mol-1", "vari" = "umolCh4 mol-1", "se" = "umolCh4 mol-1", "timeBgn" = "NA", "timeEnd" = "NA")
+    outAttr$rtioMoleDryCh4Refe <- c("mean" = "umolCh4 mol-1", "vari" = "umolCh4 mol-1", "se" = "umolCh4 mol-1", "timeBgn" = "NA", "timeEnd" = "NA")
     outAttr$temp <- c("mean" = "C", "vari" = "C", "se" = "C", "timeBgn" = "NA", "timeEnd" = "NA")
     outAttr$tempEnvHut <- c("mean" = "C", "vari" = "C", "se" = "C", "timeBgn" = "NA", "timeEnd" = "NA")
     outAttr$rtioMoleDryH2o <- c("mean" = "mmolH2o mol-1", "vari" = "mmolH2o mol-1", "se" = "mmolH2o mol-1", "timeBgn" = "NA", "timeEnd" = "NA")

@@ -7,12 +7,12 @@
 
 #' @description Wrapper function. Calculate quality metrics, alpha and beta quality metrics, and final quality flag for the NEON eddy-covariance turbulent and storage exchange L1 data products.
 
-#' @param qfInp A list of data frame containing the input quality flag data that related to L1 data products are being grouped. Of class integer". [-] 
-#' @param MethMeas A vector of class "character" containing the name of measurement method (eddy-covariance turbulent exchange or storage exchange), MethMeas = c("ecte", "ecse"). Defaults to "ecse". [-] 
+#' @param qfInp A list of data frame containing the input quality flag data that related to L1 data products are being grouped. Of class integer". [-]
+#' @param MethMeas A vector of class "character" containing the name of measurement method (eddy-covariance turbulent exchange or storage exchange), MethMeas = c("ecte", "ecse"). Defaults to "ecse". [-]
 #' @param TypeMeas A vector of class "character" containing the name of measurement type (sampling or validation), TypeMeas = c("samp", "ecse"). Defaults to "samp". [-]
 #' @param RptExpd A logical parameter that determines if the full quality metric \code{qm} is output in the returned list (defaults to FALSE).
 #' @param dp01 A vector of class "character" containing the name of NEON ECTE and ECSE L1 data products which the flags are being grouped, \cr
-#' c("envHut", "co2Turb", "h2oTurb", "isoCo2", "isoH2o", "soni", "soniAmrs", "tempAirLvl", "tempAirTop"). Defaults to "co2Turb". [-] 
+#' c("envHut", "co2Turb", "h2oTurb", "isoCo2", "isoH2o", "soni", "soniAmrs", "tempAirLvl", "tempAirTop"). Defaults to "co2Turb". [-]
 #' @param \code{idGas} A data frame contianing gas ID for isoCo2 measurement. Need to provide when dp01 = "isoCo2". Default to NULL. [-]
 
 #' @return A list of: \cr
@@ -27,7 +27,7 @@
 
 #' @keywords NEON QAQC, quality flags, quality metrics
 
-#' @examples 
+#' @examples
 #' #generate the fake quality flags for each sensor
 #' TimeBgn <- "2016-04-24 02:00:00.000"
 #' TimeEnd <- "2016-04-24 02:29:59.950"
@@ -57,7 +57,7 @@
 #     revised original function to wrap.neon.dp01.qfqm ()
 #     added ECSE quality flags
 #   Dave Durden (2017-04-24)
-#     Changed output to dataframes, added switch 
+#     Changed output to dataframes, added switch
 #     for expanded output and updated the output data type.
 #   Natchaya P-Durden (2017-08-02)
 #     added idGas and replaced isopCo2 and isopH2o by isoCo2 and isoH2o
@@ -70,14 +70,20 @@
 #     rename function from wrap.neon.dp01.qfqm() to wrap.dp01.qfqm.eddy()
 #   Natchaya P-Durden (2019-07-23)
 #     adding one row with qf = -1 in the empty dataframe to eliminate code break in def.qf.finl()
+#   Chris Florian (2021-04-09)
+#     adding ch4Conc to the dp01 list
+#   Chris Florian (2021-11-08)
+#     adding logic to allow for more missing data due to variable picarro sampling frequency
+#   Chris Florian (2021-11-12)
+#     setting the ch4Conc qmBeta weighting to 0.2, this is the lowest weighing we can assign while also flagging intervals that are fully missing
 ##############################################################################################
 
 wrap.dp01.qfqm.eddy <- function(
   qfInp = list(),
   MethMeas = c("ecte", "ecse")[1],
-  TypeMeas = c("samp", "vali")[1], 
+  TypeMeas = c("samp", "vali")[1],
   RptExpd = FALSE,
-  dp01 = c("envHut", "co2Turb", "h2oTurb", "co2Stor", "h2oStor", "isoCo2", "isoH2o", "soni", "soniAmrs", "tempAirLvl", "tempAirTop")[1],
+  dp01 = c("envHut", "co2Turb", "h2oTurb", "co2Stor", "h2oStor", "isoCo2", "ch4Conc", "isoH2o", "soni", "soniAmrs", "tempAirLvl", "tempAirTop")[1],
   idGas =NULL
 ) {
 
@@ -86,13 +92,20 @@ wrap.dp01.qfqm.eddy <- function(
   tmp <- list()
   #grouping qf
   inp <- eddy4R.qaqc::def.dp01.grp.qf(qfInp = qfInp, MethMeas = MethMeas, TypeMeas = TypeMeas, dp01=dp01, idGas = idGas)
-  
+
   #adding one row with qf = -1 in the empty dataframe to eliminate code break in def.qf.finl
   lapply(names(inp), function(x) if (nrow(inp[[x]]) == 0) inp[[x]][1,] <<- -1)
-  
+
   #calculate qmAlpha, qmBeta, qfFinl
-  tmp <- lapply(inp, FUN = eddy4R.qaqc::def.qf.finl)
   
+  #set qmBeta weight lower for methane to account for lower sampling frequency, use default 2:1 weighing for all other data products
+  if (dp01 %in% c("ch4Conc")){
+    tmp <- lapply(inp, FUN = eddy4R.qaqc::def.qf.finl, WghtAlphBeta=c(2,0.2))
+  } else {
+    tmp <- lapply(inp, FUN = eddy4R.qaqc::def.qf.finl)
+  }
+  
+
   #assign default qfSciRevw
   lapply(names(tmp), function(x) tmp[[x]]$qfqm$qfSciRevw <<- 0)
   #Only report expanded quality metrics if producing expanded file
@@ -103,28 +116,28 @@ wrap.dp01.qfqm.eddy <- function(
  lapply(names(tmp), function(x) rpt$qm[[x]] <<- tmp[[x]]$qm)
  #Add units to the output of expanded quality metrics
  for(idxVar in names(rpt$qm)){
- lapply(names(rpt$qm[[idxVar]]), function(x) attr(rpt$qm[[idxVar]][[x]], which = "unit") <<- "-") 
+ lapply(names(rpt$qm[[idxVar]]), function(x) attr(rpt$qm[[idxVar]][[x]], which = "unit") <<- "-")
  }
  }
-  
+
   #assign return results for basic results
   lapply(names(tmp), function(x) rpt$qmAlph[[x]] <<- tmp[[x]]$qfqm$qmAlph)
   lapply(names(tmp), function(x) rpt$qmBeta[[x]] <<- tmp[[x]]$qfqm$qmBeta)
   lapply(names(tmp), function(x) rpt$qfFinl[[x]] <<- as.integer(tmp[[x]]$qfqm$qfFinl))
   lapply(names(tmp), function(x) rpt$qfSciRevw[[x]] <<- as.integer(tmp[[x]]$qfqm$qfSciRevw))
-  
+
   # Convert output to dataframe's
-  rpt$qmAlph <- data.frame(t(rpt$qmAlph), row.names = NULL)
-  rpt$qmBeta <-  data.frame(t(rpt$qmBeta), row.names = NULL)
-  rpt$qfFinl <- data.frame(t(rpt$qfFinl), row.names = NULL)
-  rpt$qfSciRevw <- data.frame(t(rpt$qfSciRevw), row.names = NULL)
-  
+  rpt$qmAlph <- base::rbind.data.frame(rpt$qmAlph)
+  rpt$qmBeta <-  base::rbind.data.frame(rpt$qmBeta)
+  rpt$qfFinl <- base::rbind.data.frame(rpt$qfFinl)
+  rpt$qfSciRevw <- base::rbind.data.frame(rpt$qfSciRevw)
+
   lapply(names(rpt$qmAlph), function(x) attr(rpt$qmAlph[[x]], which = "unit") <<- "-")
   lapply(names(rpt$qmBeta), function(x) attr(rpt$qmBeta[[x]], which = "unit") <<- "-")
   lapply(names(rpt$qfFinl), function(x) attr(rpt$qfFinl[[x]], which = "unit") <<- "NA")
   lapply(names(rpt$qfSciRevw), function(x) attr(rpt$qfSciRevw[[x]], which = "unit") <<- "NA")
   #return results
   return(rpt)
-  
+
 }
 # end function wrap.neon.ecte.dp01.qfqm()

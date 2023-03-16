@@ -20,10 +20,12 @@
 #' @param VersDp is the data product level that will be output 
 #' @param VersEddy is the version of the eddy4R docker that is being used to perform the processing
 #' @param MethParaFlow is the method used to specify workflow parameters, "EnvVar" will grab ParaFlow parameters from environmental variable and "DfltInp" will use whatever is specified in the function call.
+#' @param MethDp01Api is a logical (TRUE/FALSE) determining if Dp01 reingest data for storage exchange workflow should be gathered from the API.
 #' @param UrlInpRefe A single-entry vector of class "character" containing the web address of the reference input data zip file to be downloaded.
 #' @param UrlOutRefe A single-entry vector of class "character" containing the web address of the reference output data zip file to be downloaded.
+#' @param MethCh4Conc is a logical (TRUE/FALSE) determining if Dp01 methane concentration from the Picarro G2131 should be run 
 
-#' @return \code{ParaFlow} is a list returned that indicates the workflow control parameters, including \code{ParaFlow$DirFilePara},\code{ParaFlow$DirInp}, \code{ParaFlow$DirMnt}, \code{ParaFlow$DirOut}, \code{ParaFlow$DirTmp}, \code{ParaFlow$DirWrk}, \code{ParaFlow$DateOut}, \code{ParaFlow$FileOutBase},  \code{ParaFlow$Read}, \code{ParaFlow$VersDp}, \code{ParaFlow$VersEddy}. 
+#' @return \code{ParaFlow} is a list returned that indicates the workflow control parameters, including \code{ParaFlow$DirFilePara},\code{ParaFlow$DirInp}, \code{ParaFlow$DirMnt}, \code{ParaFlow$DirOut}, \code{ParaFlow$DirTmp}, \code{ParaFlow$DirWrk}, \code{ParaFlow$DateOut}, \code{ParaFlow$FileOutBase},  \code{ParaFlow$Read}, \code{ParaFlow$VersDp}, \code{ParaFlow$VersEddy}, \code{ParaFlow$MethDp01Api}. 
 
 #' @references
 #' License: GNU AFFERO GENERAL PUBLIC LICENSE Version 3, 19 November 2007. \cr
@@ -51,6 +53,10 @@
 #     superseed parameter MethMeas with the ability to directly provide reference data urls as arguments UrlInpRefe and UrlOutRefe
 #   Stefan Metzger (2017-09-29)
 #     fixing construction of ParaFlow$DirFilePara for batch-processing (when not using gold file)
+#   Dave Durden (2020-07-06)
+#     adding MethDp01Api parameter
+#   Chris Florian (2021-09-21)
+#     adding MethCh4Conc parameter
 
 ##############################################################################################################
 #Start of function call to determine workflow parameters
@@ -70,12 +76,14 @@ def.para.flow <- function(
   VersDp  = c("001","004")[1],
   VersEddy  = "latest",
   MethParaFlow = c("DfltInp","EnvVar")[1],
+  MethDp01Api = TRUE,
   UrlInpRefe,
   UrlOutRefe,
+  MethCh4Conc = FALSE,
   ...
 ){
   
-  ParaFlow <- list(Deve = Deve, DirFilePara = DirFilePara,DirInp = DirInp,DirMnt = DirMnt,DirOut = DirOut,DirTmp = DirTmp,DirWrk = DirWrk, DateOut = DateOut, FileOutBase = FileOutBase, MethParaFlow = MethParaFlow,Read = Read,VersDp = VersDp,VersEddy = VersEddy, ...)
+  ParaFlow <- list(Deve = Deve, DirFilePara = DirFilePara,DirInp = DirInp,DirMnt = DirMnt,DirOut = DirOut,DirTmp = DirTmp,DirWrk = DirWrk, DateOut = DateOut, FileOutBase = FileOutBase, MethParaFlow = MethParaFlow,Read = Read,VersDp = VersDp,VersEddy = VersEddy, MethDp01Api = MethDp01Api, MethCh4Conc = MethCh4Conc, ...)
   
   if(MethParaFlow == "EnvVar"){
     #Create a list with all the specified function arguments

@@ -4,10 +4,14 @@
 \alias{def.dp01.grp.qf}
 \title{Definition function: Grouping the quality flags for each of NEON ECTE and ECSE L1 data product}
 \usage{
-def.dp01.grp.qf(qfInp = list(), MethMeas = c("ecte", "ecse")[1],
-  TypeMeas = c("samp", "vali")[1], dp01 = c("envHut", "co2Turb",
-  "h2oTurb", "co2Stor", "h2oStor", "isoCo2", "isoH2o", "soni", "amrs",
-  "tempAirLvl", "tempAirTop")[1], idGas = NULL)
+def.dp01.grp.qf(
+  qfInp = list(),
+  MethMeas = c("ecte", "ecse")[1],
+  TypeMeas = c("samp", "vali")[1],
+  dp01 = c("envHut", "co2Turb", "h2oTurb", "co2Stor", "h2oStor", "isoCo2", "ch4Conc",
+    "isoH2o", "soni", "amrs", "tempAirLvl", "tempAirTop")[1],
+  idGas = NULL
+)
 }
 \arguments{
 \item{qfInp}{A list of data frame containing the input quality flag data that related to L1 data products are being grouped. Of class integer". [-]}
@@ -17,7 +21,7 @@ def.dp01.grp.qf(qfInp = list(), MethMeas = c("ecte", "ecse")[1],
 \item{TypeMeas}{A vector of class "character" containing the name of measurement type (sampling or validation), TypeMeas = c("samp", "ecse"). Defaults to "samp". [-]}
 
 \item{dp01}{A vector of class "character" containing the name of NEON ECTE and ECSE L1 data products which the flags are being grouped, \cr
-c("envHut", "co2Turb", "h2oTurb", "isoCo2", "isoH2o", "soni", "amrs", "tempAirLvl", "tempAirTop"). Defaults to "co2Turb". [-]}
+c("envHut", "co2Turb", "h2oTurb", "isoCo2", "ch4Conc", isoH2o", "soni", "amrs", "tempAirLvl", "tempAirTop"). Defaults to "co2Turb". [-]}
 
 \item{idGas}{A data frame contianing gas ID for isoCo2 measurement. Need to provide when dp01 = "isoCo2". Default to NULL. [-]}
 }

@@ -4,11 +4,26 @@
 \alias{def.para.flow}
 \title{Definition function: Determine the workflow variables}
 \usage{
-def.para.flow(Deve = TRUE, DirFilePara = NULL, DirInp = NA,
-  DirMnt = NA, DirOut = NA, DirTmp = NA, DirWrk = NA,
-  DateOut = NULL, FileOutBase = NULL, Read = "hdf5",
-  VersDp = c("001", "004")[1], VersEddy = "latest",
-  MethParaFlow = c("DfltInp", "EnvVar")[1], UrlInpRefe, UrlOutRefe, ...)
+def.para.flow(
+  Deve = TRUE,
+  DirFilePara = NULL,
+  DirInp = NA,
+  DirMnt = NA,
+  DirOut = NA,
+  DirTmp = NA,
+  DirWrk = NA,
+  DateOut = NULL,
+  FileOutBase = NULL,
+  Read = "hdf5",
+  VersDp = c("001", "004")[1],
+  VersEddy = "latest",
+  MethParaFlow = c("DfltInp", "EnvVar")[1],
+  MethDp01Api = TRUE,
+  UrlInpRefe,
+  UrlOutRefe,
+  MethCh4Conc = FALSE,
+  ...
+)
 }
 \arguments{
 \item{Deve}{is logical that determines if only a subset of the data should be read in to reduce testing time during development (\code{Deve = TRUE}) or all the input data should be read in (\code{Deve = FALSE})}
@@ -37,12 +52,16 @@ def.para.flow(Deve = TRUE, DirFilePara = NULL, DirInp = NA,
 
 \item{MethParaFlow}{is the method used to specify workflow parameters, "EnvVar" will grab ParaFlow parameters from environmental variable and "DfltInp" will use whatever is specified in the function call.}
 
+\item{MethDp01Api}{is a logical (TRUE/FALSE) determining if Dp01 reingest data for storage exchange workflow should be gathered from the API.}
+
 \item{UrlInpRefe}{A single-entry vector of class "character" containing the web address of the reference input data zip file to be downloaded.}
 
 \item{UrlOutRefe}{A single-entry vector of class "character" containing the web address of the reference output data zip file to be downloaded.}
+
+\item{MethCh4Conc}{is a logical (TRUE/FALSE) determining if Dp01 methane concentration from the Picarro G2131 should be run}
 }
 \value{
-\code{ParaFlow} is a list returned that indicates the workflow control parameters, including \code{ParaFlow$DirFilePara},\code{ParaFlow$DirInp}, \code{ParaFlow$DirMnt}, \code{ParaFlow$DirOut}, \code{ParaFlow$DirTmp}, \code{ParaFlow$DirWrk}, \code{ParaFlow$DateOut}, \code{ParaFlow$FileOutBase},  \code{ParaFlow$Read}, \code{ParaFlow$VersDp}, \code{ParaFlow$VersEddy}.
+\code{ParaFlow} is a list returned that indicates the workflow control parameters, including \code{ParaFlow$DirFilePara},\code{ParaFlow$DirInp}, \code{ParaFlow$DirMnt}, \code{ParaFlow$DirOut}, \code{ParaFlow$DirTmp}, \code{ParaFlow$DirWrk}, \code{ParaFlow$DateOut}, \code{ParaFlow$FileOutBase},  \code{ParaFlow$Read}, \code{ParaFlow$VersDp}, \code{ParaFlow$VersEddy}, \code{ParaFlow$MethDp01Api}.
 }
 \description{
 Definition function. Function to determine the workflow variables by either reading them in from the environmental variables, defining them explicitly, or defining them by default values

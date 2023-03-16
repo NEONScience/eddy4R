@@ -4,9 +4,16 @@
 \alias{def.hdf5.read.qfqm}
 \title{Wrapper function: Reading quality flags from NEON HDF5 files}
 \usage{
-def.hdf5.read.qfqm(DirInpLoca, SiteLoca, DateLoca, VarLoca,
-  LvlTowr = c("000_040", "000_050", "000_060")[3], FreqLoca,
-  MethMeas = c("ecte", "ecse")[1])
+def.hdf5.read.qfqm(
+  DirInpLoca,
+  SiteLoca,
+  DateLoca,
+  VarLoca,
+  LvlTowr = c("000_040", "000_050", "000_060")[3],
+  FreqLoca,
+  DataType = c("data", "qfqm")[1],
+  MethMeas = c("ecte", "ecse")[1]
+)
 }
 \arguments{
 \item{DirInpLoca}{Character: Input directory.}
@@ -21,10 +28,12 @@ def.hdf5.read.qfqm(DirInpLoca, SiteLoca, DateLoca, VarLoca,
 
 \item{FreqLoca}{Integer: Measurement frequency.}
 
+\item{DataType}{Character: Specify between data and qfqm for read in.}
+
 \item{MethMeas}{A vector of class "character" containing the name of measurement method (eddy-covariance turbulent exchange or storage exchange), MethMeas = c("ecte", "ecse"). Defaults to "ecte".}
 }
 \value{
-Named list \code{qfqm} containing time-series of quality flags.
+Named list \code{rpt} containing time-series of quality flags.
 }
 \description{
 definition function. Reads an HDF5 input file in NEON standard format from \code{DirInpLoca}.

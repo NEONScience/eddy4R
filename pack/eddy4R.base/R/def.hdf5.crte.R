@@ -73,6 +73,8 @@
 #     Adding irga validation system sensors for ECTE (pressure sensors)
 #   Dave Durden (2019-07-14)
 #     Adding irga validation system sensors for ECTE (valve and pump)
+#   Dave Durden (2020-02-09)
+#     Grabbing objDesc and Readme from S3, removing dropbox link
 ##############################################################################################################
 #Start of function call to generate NEON HDF5 files
 ##############################################################################################################
@@ -102,8 +104,7 @@ def.hdf5.crte <- function(
 
     DirTmp <- tempdir()
     #Download file description readme and object list  
-    eddy4R.base::def.dld.zip(Inp = list(Url = "https://www.dropbox.com/s/dqq3j7epiy98y29/fileDesc.zip?dl=1",
-                                        Dir = DirTmp))
+    eddy4R.base::def.dld.zip(Inp = list(Url = "https://storage.googleapis.com/neon-ec-goldfiles/EC-turbulence-processing/fileDesc.zip", Dir = DirTmp))
     
     #Store the path to the readme file
     FileNameReadMe <- base::list.files( path = base::paste0(DirTmp,"/fileDesc"), pattern = ".txt", full.names = TRUE)
