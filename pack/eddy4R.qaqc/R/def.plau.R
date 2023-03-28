@@ -103,6 +103,8 @@
 #     fix bug in gap test. The code effectively hard-coded the gap test threshold to 4.
 #   Cove Sturtevant (2022-08-18)
 #     improve performance of persistence test, especially when there are a lot of persistence failures
+#   Cove Sturtevant (2023-02-13)
+#     improve performance of persistence test (again), especially with large datasets with a lot of persistence failures
 ##############################################################################################
 def.plau <- function (
   data,                               # a data frame containing the data to be evaluated (do not include the time stamp vector here). Required input.
@@ -342,6 +344,7 @@ def.plau <- function (
 
         # We've hit the threshold, now check whether we are beyond the allowable time interval
         if(timePers[idxData]-timeIdxBgn < WndwPersIdx) {
+          
           # Hooray! The data is not "stuck"
           idxDataBgn <- min(c(idxDataMin,idxDataMax))+1 # set start of next window to the next point after the earlier of the running min and max
 
@@ -367,7 +370,7 @@ def.plau <- function (
             
             # Data were all NA between the starting index and the current point, mark the non-NA points 
             # as cannot evaluate if they haven't already been marked for test failure
-            setNaAdd <- setdiff(idxDataBgn:(idxData-1),base::which(qfPersFailIdx == 1))
+            setNaAdd <- setdiff(idxDataBgn:(idxData-1),base::which(qfPersFailIdx[idxDataBgn:(idxData-1)] == 1)+idxDataBgn-1)
             qfPersNaIdx[setNaAdd] <- -1
             
           } else {
