@@ -38,13 +38,15 @@
 #     edited term name
 #   Natchaya P-Durden (2018-04-03)
 #     update @param format
+#   Dave Durden (2021-08-23)
+#     update to new ECTE dp01 names
 ##############################################################################################
 
 def.qf.ecte <- function(
   TimeBgn,
   TimeEnd,
   Freq = 20,
-  Sens = c("soni","irga","irgaMfcSamp","soniAmrs")[1],
+  Sens = c("soni","irgaTurb","mfcSampTurb","amrs")[1],
   PcntQf = 0.05
   ) {
   
@@ -79,21 +81,21 @@ def.qf.ecte <- function(
     varName <- c("veloSoni", "veloXaxs","veloYaxs","veloZaxs","tempSoni")
     qfNameSens <- c("qfSoniUnrs", "qfSoniData", "qfSoniTrig", "qfSoniComm", "qfSoniCode", "qfSoniTemp", "qfSoniSgnlPoor", "qfSoniSgnlHigh","qfSoniSgnlLow" )}
   
-  if(Sens == "irga"){
+  if(Sens == "irgaTurb"){
     varName <- c("asrpCo2", "asrpH2o", "densMoleCo2", "densMoleH2o", "tempRefe",  "presAtm","presDiff", "potCool", "rtioMoleDryCo2", "rtioMoleDryH2o", "tempIn","tempOut", "powrH2oSamp", "powrH2oRefe", "powrCo2Samp", "powrCo2Refe","ssiCo2", "ssiH2o","tempMean", "presSum")
     qfNameSens <- c("qfIrgaHead", "qfIrgaTempOut", "qfIrgaTempIn", "qfIrgaAux", "qfIrgaPres", "qfIrgaChop", "qfIrgaDetc", "qfIrgaPll","qfIrgaSync", "qfIrgaAgc" )}
   
-  if(Sens == "irgaMfcSamp"){
+  if(Sens == "mfcSampTurb"){
     varName <- c("presAtm", "temp", "frt", "frt00", "frtSet00")
     qfNameSens <- NULL}
   
-  if(Sens == "soniAmrs"){
+  if(Sens == "amrs"){
     varName <- c("angXaxs", "angYaxs", "angZaxs", "accXaxs", "accYaxs", "accZaxs", "accXaxsDiff", "accYaxsDiff", "accZaxsDiff", "avelXaxs", "avelYaxs", "avelZaxs")
     qfNameSens <- c("qfAmrsVal", "qfAmrsFilt", "qfAmrsVelo", "qfAmrsRng")}
 ################################################################################################################################
   
   # Name of prefixes for qaqc plausibility tests
-  qfNamePlau <- c("qfRng","qfStep", "qfPers", "qfCal" )
+  qfNamePlau <- c("qfRng","qfStep", "qfPers", "qfNull", "qfSpk" )
   
   #varNameUp <- paste(toupper(substr(varName, 1, 1)), substr(varName, 2, nchar(varName)), sep="")
   

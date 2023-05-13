@@ -1,0 +1,11 @@
+importFrom(graphics, plot)
+
+exportClasses("Wavelet")
+exportMethods(mother, daughter, plot)
+
+export(haar, mexicanHat, dog, morlet)
+
+exportClasses("CWT")
+
+export(cwt, compatible.cwt, var.cwt, cov.cwt, recon.cwt, plot.cwt,
+       spectrum.cwt)

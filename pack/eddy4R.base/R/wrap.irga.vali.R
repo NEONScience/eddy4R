@@ -11,7 +11,7 @@
 #' @param gasRefe List containing the values of the reference gases. [mol mol-1]
 #' @param DateProc A vector of class "character" containing the processing date.
 #' @param ScalMax Maximum scale value. The validation correction will not apply if scale (resulted from maximum-likelihood fitting of a functional relationship (MLFR)) is greater than ScalMax or ScalMax = FALSE. Defaults to FALSE.
-#' @param FracSlpMax Maximum fraction of slope value. The validation correction will not apply if slope (resulted from regression fitting) is greater than the FracSlpMax or FracSlpMax = FALSE. Defaults to FALSE.
+#' @param FracSlp Upper and lower bounds of slope values. The validation correction will not apply if slope (resulted from regression fitting) is greater/lower than the FracSlp maximum or minimum value or FracSlp = FALSE. Defaults to FALSE.
 #' @param OfstMax Maximum offset value. The validation correction will not apply if slope (resulted from regression fitting) is greater than the OfstMax (unit in mol mol-1) or OfstMax = FALSE. Defaults to FALSE.
 
 
@@ -81,6 +81,21 @@
 #     adjust workflow to run MLFR even missing one gas cylinder
 #   Natchaya P-Durden (2020-03-05)
 #     Set all thresholds to screen linear coefficients to FALSE.
+#   Chris Florian (2021-08-03)
+#     add thresholding based on benchmarking regression
+#   Chris Florian (2021-08-09)
+#     adding -1 flag for missing validations
+#   Chris Florian (2021-08-26)
+#     adding failsafe for extra validation gas rows
+#   Chris Florian (2021-08-27)
+#     retaining the rest of the rtioMoleDryCo2Cor for failed validations 
+#     adding NaNs for meanCor with failed validations to keep structure the same
+#   Chris Florian (2021-08-27)
+#     resetting attributes on rtioMoleDryCo2Cor to fix issues when the corrected data was removed
+#   Chris Florian (2021-02-15)
+#     setting corrected data to NaN if qfEvalThsh is -1 to prevent bad data passing through if the evaluation doesn't run
+#   Chris Florian (2022-03-02)
+#     Updating the slope filter to allow for values not evenly centered around 1
 ##############################################################################################
 
 wrap.irga.vali <- function(
@@ -89,7 +104,7 @@ wrap.irga.vali <- function(
   gasRefe,
   DateProc,
   ScalMax = FALSE,
-  FracSlpMax = FALSE,
+  FracSlp = FALSE,
   OfstMax = FALSE
 ) {
 
@@ -507,8 +522,80 @@ wrap.irga.vali <- function(
 
   #applying the calculated coefficients to measured data
   #Calculate time-series (20Hz) of slope and zero offset
-  rpt[[DateProc]]$rtioMoleDryCo2Cor <- eddy4R.base::def.irga.vali.cor(data = data, DateProc = DateProc, coef = tmpCoef, valiData = valiData, valiCrit = valiCrit, ScalMax = ScalMax, FracSlpMax = FracSlpMax, OfstMax = OfstMax, Freq = 20)
+  rpt[[DateProc]]$rtioMoleDryCo2Cor <- eddy4R.base::def.irga.vali.cor(data = data, DateProc = DateProc, coef = tmpCoef, valiData = valiData, valiCrit = valiCrit, ScalMax = ScalMax, FracSlp = FracSlp, OfstMax = OfstMax, Freq = 20)
 
+  #run the benchmarking regression to determine if the validation was good
+  valiEval <- eddy4R.base::def.irga.vali.thsh(data = rpt[[DateProc]], DateProc = DateProc, evalSlpMax = 1.05, evalSlpMin = 0.95, evalOfstMax = 100, evalOfstMin = -100)
+  
+  #remove corrected data if validation fails benchmarking test
+  if (valiEval$valiEvalPass == FALSE){
+    rpt[[DateProc]]$rtioMoleDryCo2Cor$rtioMoleDryCo2Cor <- NaN #data are removed if the validation does not pass the thresholds set for evaluation slope and offset
+    #raise quality flag in validation table to indicate validation status
+    rpt[[DateProc]]$rtioMoleDryCo2Mlf$qfEvalThsh <-  c(NA, 1)
+    msg <- paste0("validation did not pass evaluation threshold, corrected data were set to NaN")
+    tryCatch({rlog$debug(msg)}, error=function(cond){print(msg)})
+  } else if (valiEval$valiEvalPass == TRUE) {
+    rpt[[DateProc]]$rtioMoleDryCo2Mlf$qfEvalThsh <- c(NA, 0) #corrected data will be included in the processed file in this case
+  } else {
+    rpt[[DateProc]]$rtioMoleDryCo2Mlf$qfEvalThsh <- c(NA, -1)
+    rpt[[DateProc]]$rtioMoleDryCo2Cor$rtioMoleDryCo2Cor <- NaN #also remove data in the -1 missing validation case, prevents unexpected inclusion of questionable validations and also removes data if the eval regression can't run due to lack of span gasses
+  }
+  
+  #force qfValiEval to -1 if slope is outside the threshold because this validation can't be applied
+  
+  if(!is.na(rpt[[DateProc]]$rtioMoleDryCo2Mlf$coef[2])){ # only run if there are coefficients to check 
+
+    if (rpt[[DateProc]]$rtioMoleDryCo2Mlf$coef[2] < base::min(FracSlp) | rpt[[DateProc]]$rtioMoleDryCo2Mlf$coef[2] > base::max(FracSlp)){
+      rpt[[DateProc]]$rtioMoleDryCo2Mlf$qfEvalThsh <- c(NA, -1)
+    }
+  }
+  
+  
+  #add additional coefficients to mlf table
+  rpt[[DateProc]]$rtioMoleDryCo2Mlf$evalCoef <- valiEval$evalCoef
+  rpt[[DateProc]]$rtioMoleDryCo2Mlf$evalCoefSe <- valiEval$evalCoefSe
+  rpt[[DateProc]]$rtioMoleDryCo2Mlf$evalSlpThsh <- valiEval$evalSlpThsh
+  rpt[[DateProc]]$rtioMoleDryCo2Mlf$evalOfstThsh <- valiEval$evalOfstThsh
+  
+  
+  #add corrected reference gas values to vali table 
+
+  if(base::nrow(rpt[[DateProc]]$rtioMoleDryCo2Vali) == base::length(valiEval$meanCor)+1){ # failsafe for row mismatches, valiEval$meanCor will always be one short because the archive gas is not included
+    
+    rpt[[DateProc]]$rtioMoleDryCo2Vali$meanCor <- c(NaN, valiEval$meanCor) # need to add the NaN to account for the archive gas in the first position of the vali table
+    
+    #reorder to place the corrected reference values next to the original reference values
+    rpt[[DateProc]]$rtioMoleDryCo2Vali <- rpt[[DateProc]]$rtioMoleDryCo2Vali[c("mean", "min", "max", "vari", "numSamp", "rtioMoleDryCo2Refe", "meanCor", "timeBgn", "timeEnd")]
+    
+    #rename rtioMoleDryCo2Refe to refe, this could be implemented in the rest of the functions in the future
+    names(rpt[[DateProc]]$rtioMoleDryCo2Vali) <- c("mean", "min", "max", "vari", "numSamp", "refe", "meanCor", "timeBgn", "timeEnd")
+  } else {
+    #fill meanCor with NaN if there were extra validation gas rows
+    rpt[[DateProc]]$rtioMoleDryCo2Vali$meanCor <- NaN
+    
+    #reorder to place the corrected reference values next to the original reference values
+    rpt[[DateProc]]$rtioMoleDryCo2Vali <- rpt[[DateProc]]$rtioMoleDryCo2Vali[c("mean", "min", "max", "vari", "numSamp", "rtioMoleDryCo2Refe", "meanCor", "timeBgn", "timeEnd")]
+    
+    names(rpt[[DateProc]]$rtioMoleDryCo2Vali) <- c("mean", "min", "max", "vari", "numSamp", "refe", "meanCor", "timeBgn", "timeEnd")
+  }
+
+  #rename rtioMoleDryH2oRefe to refe to match CO2
+  names(rpt[[DateProc]]$rtioMoleDryH2oVali) <- c("mean", "min", "max", "vari", "numSamp", "refe", "timeBgn", "timeEnd")
+  
+  #reset attributes
+  
+  attributes(rpt[[DateProc]]$rtioMoleDryCo2Vali)$unit <- c("molCo2 mol-1Dry", #"mean"
+                                                           "molCo2 mol-1Dry", #"min"
+                                                           "molCo2 mol-1Dry", #"max"
+                                                           "molCo2 mol-1Dry",#"vari"
+                                                           "NA", #"numSamp"
+                                                           "molCo2 mol-1Dry",#gasRefe
+                                                           "molCo2 mol-1Dry",#gasRefeCor
+                                                           "NA", #"timeBgn"
+                                                           "NA")#"timeEnd"
+
+  attributes(rpt[[DateProc]]$rtioMoleDryCo2Cor$rtioMoleDryCo2Cor)$unit <- "molCo2 mol-1Dry"
+   
 #return results
   return(rpt)
 }

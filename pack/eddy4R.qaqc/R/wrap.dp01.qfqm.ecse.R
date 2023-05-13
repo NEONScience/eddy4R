@@ -87,9 +87,15 @@
 #     bug fix for qmBeta causing differing number of values between data and qfqm
 #   David Durden (2020-07-23)
 #     bug fix for valve issues where looks like consistently Stor data thrown off by Crd
+#   Chris Florian (2021-02-26)
+#     adding ch4Conc to dp01 list
+#   Chris Florian (2021-06-03)
+#     adjusting data input for crdCh4 validation time periods
+#   Chris Florian (2021-06-07)
+#     updating list to remove the CH4 reference values from qfqm
 ##############################################################################################
 wrap.dp01.qfqm.ecse <- function(
-  dp01 = c("co2Stor", "h2oStor", "tempAirLvl", "tempAirTop", "isoCo2", "isoH2o")[1],
+  dp01 = c("co2Stor", "h2oStor", "tempAirLvl", "tempAirTop", "isoCo2", "isoH2o", "ch4Conc")[1],
   RptExpd = FALSE,
   lvl,
   lvlMfcSampStor = NULL,
@@ -715,7 +721,7 @@ wrap.dp01.qfqm.ecse <- function(
         #if there is at least one measurement
         if(length(which(!is.na(wrk$qfqm$crdCo2$qfRngTemp))) > 0){
           #determine the index of each measurement  
-          wrk$idx <- eddy4R.base::def.idx.agr(time = data$time, PrdAgr = (PrdMeas*60), FreqLoca = 1, MethIdx = "specBgn", data = wrk$qfqm$crdCo2$qfRngTemp, CritTime = 60)
+          wrk$idx <- eddy4R.base::def.idx.agr(time = data$time, PrdAgr = (PrdMeas*60), FreqLoca = 1, MethIdx = "specBgn", data = wrk$qfqm$crdCo2$qfRngTemp, CritTime = 240)
           #delete row if last timeBgn and timeEnd is NA
           wrk$idx <- wrk$idx[rowSums(is.na(wrk$idx)) != 2,]
           #replace last idxEnd > 86400 by 86400
@@ -802,7 +808,7 @@ wrap.dp01.qfqm.ecse <- function(
         if(length(which(!is.na(wrk$qfqm$crdCo2$qfRngTemp))) > 0){
           
           #determine the index of each measurement  
-          wrk$idx <- eddy4R.base::def.idx.agr(time = data$time, PrdAgr = (PrdMeas*60), FreqLoca = 1, MethIdx = "specBgn", data = wrk$qfqm$crdCo2$qfRngTemp, CritTime = 60)
+          wrk$idx <- eddy4R.base::def.idx.agr(time = data$time, PrdAgr = (PrdMeas*60), FreqLoca = 1, MethIdx = "specBgn", data = wrk$qfqm$crdCo2$qfRngTemp, CritTime = 240)
           #delete row if last timeBgn and timeEnd is NA
           wrk$idx <- wrk$idx[rowSums(is.na(wrk$idx)) != 2,]
           #if last timeEnd is NA, replce that time to the last time value in data$time
@@ -903,7 +909,7 @@ wrap.dp01.qfqm.ecse <- function(
         #if there is at least one measurement
         if(length(which(!is.na(wrk$qfqm$crdCo2$qfRngTemp))) > 0){
           #determine the end time of each measurement
-          wrk$idx <- eddy4R.base::def.idx.agr(time = data$time, PrdAgr = (PrdMeas*60), FreqLoca = 1, MethIdx = "specBgn", data = wrk$qfqm$crdCo2$qfRngTemp, CritTime = 60)
+          wrk$idx <- eddy4R.base::def.idx.agr(time = data$time, PrdAgr = (PrdMeas*60), FreqLoca = 1, MethIdx = "specBgn", data = wrk$qfqm$crdCo2$qfRngTemp, CritTime = 240)
           #delete row if last timeBgn and timeEnd is NA
           wrk$idx <- wrk$idx[rowSums(is.na(wrk$idx)) != 2,]
           #if last timeEnd is NA, replce that time to the last time value in data$time
@@ -993,7 +999,7 @@ wrap.dp01.qfqm.ecse <- function(
         #if there is at least one measurement
         if(length(which(!is.na(wrk$qfqm$crdCo2$qfRngTemp))) > 0){
           #   #determine the end time of each measurement  
-          wrk$idx <- eddy4R.base::def.idx.agr(time = data$time, PrdAgr = (PrdMeas*60), FreqLoca = 1, MethIdx = "specBgn", data = wrk$qfqm$crdCo2$qfRngTemp, CritTime = 60)
+          wrk$idx <- eddy4R.base::def.idx.agr(time = data$time, PrdAgr = (PrdMeas*60), FreqLoca = 1, MethIdx = "specBgn", data = wrk$qfqm$crdCo2$qfRngTemp, CritTime = 240)
           #delete row if last timeBgn and timeEnd is NA
           wrk$idx <- wrk$idx[rowSums(is.na(wrk$idx)) != 2,]
           #if last timeEnd is NA, replce that time to the last time value in data$time
@@ -1041,6 +1047,382 @@ wrap.dp01.qfqm.ecse <- function(
           
           #output time for qf dp01; do not output reference gas
           for(idxVar in names(wrk$data)[which(!(names(wrk$data) %in% c("rtioMoleDryCo2Refe", "dlta13CCo2Refe", "idGas")))]){
+            rpt[[idxAgr]]$timeBgn[[idxVar]] <- data$time[idxTime[[paste0(PrdAgr, "min")]]$Bgn[idxAgr]]
+            rpt[[idxAgr]]$timeEnd[[idxVar]] <- data$time[idxTime[[paste0(PrdAgr, "min")]]$End[idxAgr]]
+          }; rm(idxVar)
+          
+        }; #rm(idxAgr)
+      } #end of PrdAgr == 30
+    }#end of TypeMeas %in% "vali" if statement
+  }##end of dp01 if statement 
+  
+
+  #calculate dp01 for "ch4Conc" ########################################################################################
+  if (dp01 %in% c("ch4Conc")){
+    #during sampling period 
+    if (TypeMeas %in% "samp"){
+      #assign lvlIrga for each measurement level
+      if (lvl == "000_010") {lvlCrdCo2 <- "lvl01"}
+      if (lvl == "000_020") {lvlCrdCo2 <- "lvl02"}
+      if (lvl == "000_030") {lvlCrdCo2 <- "lvl03"}
+      if (lvl == "000_040") {lvlCrdCo2 <- "lvl04"}
+      if (lvl == "000_050") {lvlCrdCo2 <- "lvl05"}
+      if (lvl == "000_060") {lvlCrdCo2 <- "lvl06"}
+      if (lvl == "000_070") {lvlCrdCo2 <- "lvl07"}
+      if (lvl == "000_080") {lvlCrdCo2 <- "lvl08"}
+      #assign lvlMfm
+      lvlMfm <- paste0("700_", strsplit(lvl, "_")[[1]][2])
+      
+      #input the whole day data
+      wrk$data <- data.frame(stringsAsFactors = FALSE,
+                             "pres" = data$crdCo2[[lvl]]$pres,
+                             "presEnvHut" = data$envHut[[lvlEnvHut]]$pres,
+                             "rhEnvHut" = data$envHut[[lvlEnvHut]]$rh,
+                             "rtioMoleDryCh4" = data$crdCo2[[lvl]]$rtioMoleDryCh4,
+                             "rtioMoleWetCh4" = data$crdCo2[[lvl]]$rtioMoleWetCh4,
+                             "rtioMoleWetH2oEnvHut" = data$envHut[[lvlEnvHut]]$rtioMoleWetH2o,
+                             "temp" = data$crdCo2[[lvl]]$temp, 
+                             "tempEnvHut" = data$envHut[[lvlEnvHut]]$temp,
+                             "lvlCrdCo2" = data$crdCo2ValvLvl[[lvlValv]]$lvlCrdCo2
+                             
+      )
+      
+      #input the whole day qfqm 
+      wrk$qfqm <- list()
+      #subset only
+      wrk$qfqm$crdCo2 <- qfInp$crdCo2[[lvl]]
+      wrk$qfqm$envHut <- qfInp$envHut[[lvlEnvHut]]
+      wrk$qfqm$mfm <- qfInp$mfm[[lvlMfm]]
+      if ("presInlt" %in% names(qfInp)) wrk$qfqm$presInlt <- qfInp$presInlt[[lvl]] 
+      if ("pumpStor" %in% names(qfInp)) wrk$qfqm$pumpStor <- qfInp$pumpStor[[lvlMfm]] 
+      
+      if (PrdMeas == PrdAgr) {
+        #PrdAgr <- 9
+        #9 minutely sampling data
+        #idxLvLPrdAgr <- paste0(lvl, "_", sprintf("%02d", PrdAgr), "m")
+        #rpt[[dp01]][[idxLvLPrdAgr]] <- list()
+        
+        #if there is at least one measurement
+        if(length(which(!is.na(wrk$qfqm$crdCo2$qfRngTemp))) > 0){
+          #determine the index of each measurement  
+          wrk$idx <- eddy4R.base::def.idx.agr(time = data$time, PrdAgr = (PrdMeas*60), FreqLoca = 1, MethIdx = "specBgn", data = wrk$qfqm$crdCo2$qfRngTemp, CritTime = 60)
+          #delete row if last timeBgn and timeEnd is NA
+          wrk$idx <- wrk$idx[rowSums(is.na(wrk$idx)) != 2,]
+          #replace last idxEnd > 86400 by 86400
+          wrk$idx$idxEnd <- ifelse(wrk$idx$idxEnd > 86400, 86400, wrk$idx$idxEnd)
+          #if last timeEnd is NA, replce that time to the last time value in data$time
+          wrk$idx$timeEnd <- as.POSIXct(ifelse(is.na(wrk$idx$timeEnd), data$time[length(data$time)], wrk$idx$timeEnd), origin = "1970-01-01", tz = "UTC")
+          #idxAgr2 <- 0
+          for (idxAgr in 1:length(wrk$idx$idxBgn)){
+            #idxAgr <- 25
+            #get data for each idxAgr
+            wrk$inpMask$data <- list()
+            wrk$inpMask$data <- wrk$data[wrk$idx$idxBgn[idxAgr]:wrk$idx$idxEnd[idxAgr],]
+            #wrk$inpMask for qfqm
+            wrk$inpMask$qfqm <- list()
+            lapply(names(wrk$qfqm), function (x) wrk$inpMask$qfqm[[x]] <<- wrk$qfqm[[x]][wrk$idx$idxBgn[idxAgr]:wrk$idx$idxEnd[idxAgr],] )
+            
+            for (idxSens in names(wrk$inpMask$qfqm)){
+              #replace qfqm with -1 when valve switch to measure to next level before schedule time (9 min)
+              wrk$inpMask$qfqm[[idxSens]][wrk$inpMask$data$lvlCrdCo2 != lvlCrdCo2, 1:length(wrk$inpMask$qfqm[[idxSens]])] <- -1
+            }
+            
+            #qfqm processing
+            rpt[[idxAgr]] <- eddy4R.qaqc::wrap.dp01.qfqm.eddy(
+              qfInp = wrk$inpMask$qfqm, 
+              MethMeas = "ecse",
+              TypeMeas = "samp",
+              RptExpd = FALSE,
+              dp01 = dp01,
+              idGas = wrk$inpMask$data$idGas
+            )
+            #grab and add both time begin and time end to rpt
+            rpt[[idxAgr]]$timeBgn <- list()
+            rpt[[idxAgr]]$timeEnd <- list()
+            
+            #output time for dp01
+            for(idxVar in names(wrk$data)[which(!(names(wrk$data) %in% c("idGas", "lvlCrdCo2")))]){
+              rpt[[idxAgr]]$timeBgn[[idxVar]] <- wrk$idx$timeBgn[idxAgr]
+              rpt[[idxAgr]]$timeEnd[[idxVar]] <- wrk$idx$timeEnd[idxAgr]
+            }; rm(idxVar)
+            
+            #}# end of there is at least one data
+            
+          }; rm(idxAgr)
+        } else {
+          
+          rpt[[1]] <- list()
+          #idxStat <- NameQf[1]
+          rpt[[1]]$qmAlph <- as.data.frame(matrix(0, nrow = 1, ncol = ncol(wrk$data)))
+          rpt[[1]]$qmBeta <- as.data.frame(matrix(1, nrow = 1, ncol = ncol(wrk$data)))
+          rpt[[1]]$qfFinl <- as.data.frame(matrix(1, nrow = 1, ncol = ncol(wrk$data)))
+          rpt[[1]]$qfSciRevw <- as.data.frame(matrix(0, nrow = 1, ncol = ncol(wrk$data)))
+          #change data type
+          rpt[[1]]$qfFinl[,1:ncol(wrk$data)] <- sapply(rpt[[1]]$qfFinl[,1:ncol(wrk$data)], as.integer)
+          rpt[[1]]$qfSciRevw[,1:ncol(wrk$data)] <- sapply(rpt[[1]]$qfSciRevw[,1:ncol(wrk$data)], as.integer)
+          
+          for(idxQf in NameQf){
+            #assign name to each column
+            names(rpt[[1]][[idxQf]]) <- names(wrk$data)
+            #not report lvlIrga
+            rpt[[1]][[idxQf]] <- rpt[[1]][[idxQf]][which(!(names(rpt[[1]][[idxQf]]) %in% c("idGas", "lvlCrdCo2")))]
+          }; rm(idxQf)
+          
+          #add both time begin and time end to rpt
+          rpt[[1]]$timeBgn <- list()
+          rpt[[1]]$timeEnd <- list()
+          
+          #output time for dp01
+          for(idxVar in names(wrk$data)[which(!(names(wrk$data) %in% c("idGas", "lvlCrdCo2")))]){
+            rpt[[1]]$timeBgn[[idxVar]] <- data$time[1]
+            rpt[[1]]$timeEnd[[idxVar]] <- data$time[length(data$time)]
+            #unit
+            attributes(rpt[[1]]$qmAlph[[idxVar]])$unit <- "-"
+            attributes(rpt[[1]]$qmBeta[[idxVar]])$unit <- "-"
+            attributes(rpt[[1]]$qfFinl[[idxVar]])$unit <- "NA"
+            attributes(rpt[[1]]$qfSciRevw[[idxVar]])$unit <- "NA"
+          }; rm(idxVar)
+          
+        }#end of if no measurement data at all in the whole day
+      } #end of PrdAgr
+      
+      if (PrdMeas != PrdAgr) {
+        #PrdAgr <- 30
+        #if there is at least one measurement
+        if(length(which(!is.na(wrk$qfqm$crdCo2$qfRngTemp))) > 0){
+          
+          #determine the index of each measurement  
+          wrk$idx <- eddy4R.base::def.idx.agr(time = data$time, PrdAgr = (PrdMeas*60), FreqLoca = 1, MethIdx = "specBgn", data = wrk$qfqm$crdCo2$qfRngTemp, CritTime = 60)
+          #delete row if last timeBgn and timeEnd is NA
+          wrk$idx <- wrk$idx[rowSums(is.na(wrk$idx)) != 2,]
+          #if last timeEnd is NA, replce that time to the last time value in data$time
+          wrk$idx$timeEnd <- as.POSIXct(ifelse(is.na(wrk$idx$timeEnd), data$time[length(data$time)], wrk$idx$timeEnd), origin = "1970-01-01", tz = "UTC")
+          whrSamp <- wrk$idx$idxBgn[1]:wrk$idx$idxEnd[1]
+          if (length (wrk$idx$idxBgn) > 1 ){
+            for(ii in 2:length (wrk$idx$idxBgn)){
+              whrSamp <- c(whrSamp, wrk$idx$idxBgn[ii]:wrk$idx$idxEnd[ii])
+            }
+          }
+          wrk$data[-whrSamp, 1:16] <- NaN
+          
+          for (idxSens in names(wrk$qfqm)){
+            #replace qfqm with -1 when valve switch to measure to next level before schedule time (9 min)
+            wrk$qfqm[[idxSens]][wrk$data$lvlCrdCo2 != lvlCrdCo2, 1:length(wrk$qfqm[[idxSens]])] <- -1
+            #replace all qf that not belong to that measurement level by NaN
+            wrk$qfqm[[idxSens]][-whrSamp, 1:length(wrk$qfqm[[idxSens]])] <- NaN
+          }
+        }
+        
+        for(idxAgr in c(1:length(idxTime[[paste0(PrdAgr, "min")]]$Bgn))) {
+          #idxAgr <- 48
+          #get data for each idxAgr
+          wrk$inpMask$data <- list()
+          idxLvLPrdAgr <- paste0(lvl, "_", sprintf("%02d", PrdAgr), "m")
+          
+          wrk$inpMask$data <- wrk$data[idxTime[[paste0(PrdAgr, "min")]]$Bgn[idxAgr]:idxTime[[paste0(PrdAgr, "min")]]$End[idxAgr],]
+          # for qfqm
+          wrk$inpMask$qfqm <- list()
+          lapply(names(wrk$qfqm), function (x) wrk$inpMask$qfqm[[x]] <<- wrk$qfqm[[x]][idxTime[[paste0(PrdAgr, "min")]]$Bgn[idxAgr]:idxTime[[paste0(PrdAgr, "min")]]$End[idxAgr],])
+          
+          #qfqm processing
+          rpt[[idxAgr]] <- eddy4R.qaqc::wrap.dp01.qfqm.eddy(
+            qfInp = wrk$inpMask$qfqm, 
+            MethMeas = "ecse",
+            TypeMeas = "samp",
+            RptExpd = RptExpd,
+            dp01 = dp01,
+            idGas = wrk$inpMask$data$idGas
+          )
+          
+          #grab and add both time begin and time end to rpt
+          rpt[[idxAgr]]$timeBgn <- list()
+          rpt[[idxAgr]]$timeEnd <- list()
+          
+          for(idxVar in names(wrk$data)[which(!(names(wrk$data) %in% c("idGas", "lvlCrdCo2")))]){
+            rpt[[idxAgr]]$timeBgn[[idxVar]] <- data$time[idxTime[[paste0(PrdAgr, "min")]]$Bgn[idxAgr]]
+            rpt[[idxAgr]]$timeEnd[[idxVar]] <- data$time[idxTime[[paste0(PrdAgr, "min")]]$End[idxAgr]]
+          }
+          
+        }; #rm(idxAgr)
+        
+      }#end of PrdAgr == 30
+    }#end of TypeMeas %in% "samp"
+    
+    #during validation period 
+    if (TypeMeas %in% "vali"){
+      #assign lvlPresValiRegInStor for each gas
+      if (lvl == "co2Arch") lvlPresValiRegInStor <- "710_000"
+      if (lvl == "co2Low") lvlPresValiRegInStor <- "712_000"
+      if (lvl == "co2Med") lvlPresValiRegInStor <- "713_000"
+      if (lvl == "co2High") lvlPresValiRegInStor <- "714_000"
+      #input the whole day data
+      wrk$data <- data.frame(stringsAsFactors = FALSE,
+                             "idGas" = data$crdCo2[[lvl]]$idGas,
+                             "pres" = data$crdCo2[[lvl]]$pres,
+                             "presEnvHut" = data$envHut[[lvlEnvHut]]$pres,
+                             "rhEnvHut" = data$envHut[[lvlEnvHut]]$rh,
+                             "rtioMoleDryCh4" = data$crdCo2[[lvl]]$rtioMoleDryCo2,
+                             "rtioMoleDryCh4Refe" = data$crdCo2[[lvl]]$rtioMoleDryCo2Refe,
+                             "rtioMoleWetCh4" = data$crdCo2[[lvl]]$rtioMoleWetCo2,
+                             "rtioMoleWetH2oEnvHut" = data$envHut[[lvlEnvHut]]$rtioMoleWetH2o,
+                             "temp" = data$crdCo2[[lvl]]$temp, 
+                             "tempEnvHut" = data$envHut[[lvlEnvHut]]$temp
+                             
+      )
+      #input the whole day qfqm 
+      wrk$qfqm <- list()
+      wrk$qfqm$crdCo2 <- qfInp$crdCo2[[lvl]]
+      wrk$qfqm$envHut <- qfInp$envHut[[lvlEnvHut]]
+      wrk$qfqm$mfcValiStor <- qfInp$mfcValiStor[[lvlMfcValiStor]]
+      if ("presValiRegInStor" %in% names(qfInp)) wrk$qfqm$presValiRegInStor <- qfInp$presValiRegInStor[[lvlPresValiRegInStor]]
+      
+      if (PrdMeas == PrdAgr) {
+        #PrdAgr <- 9
+        #9 minutely sampling data
+        #idxLvLPrdAgr <- paste0(lvl, "_", sprintf("%02d", PrdAgr), "m")
+        #rpt[[dp01]][[idxLvLPrdAgr]] <- list()
+        
+        #if there is at least one measurement
+        if(length(which(!is.na(wrk$qfqm$crdCo2$qfRngTemp))) > 0){
+          #determine the end time of each measurement
+          wrk$idx <- eddy4R.base::def.idx.agr(time = data$time, PrdAgr = (PrdMeas*60), FreqLoca = 1, MethIdx = "specBgn", data = wrk$qfqm$crdCo2$qfRngTemp, CritTime = 60)
+          #delete row if last timeBgn and timeEnd is NA
+          wrk$idx <- wrk$idx[rowSums(is.na(wrk$idx)) != 2,]
+          #if last timeEnd is NA, replce that time to the last time value in data$time
+          wrk$idx$timeEnd <- as.POSIXct(ifelse(is.na(wrk$idx$timeEnd), data$time[length(data$time)], wrk$idx$timeEnd), origin = "1970-01-01", tz = "UTC")
+          
+          #idxAgr2 <- 0
+          for (idxAgr in 1:length(wrk$idx$idxBgn)){
+            #idxAgr <- 1
+            #determine input data for each idxAgr
+            wrk$inpMask$data <- list()
+            wrk$inpMask$data <- wrk$data[wrk$idx$idxBgn[idxAgr]:wrk$idx$idxEnd[idxAgr],] 
+            #wrk$inpMask for qfqm
+            wrk$inpMask$qfqm <- list()
+            lapply(names(wrk$qfqm), function (x) wrk$inpMask$qfqm[[x]] <<- wrk$qfqm[[x]][wrk$idx$idxBgn[idxAgr]:wrk$idx$idxEnd[idxAgr],] )
+            
+            #qfqm processing
+            rpt[[idxAgr]] <- eddy4R.qaqc::wrap.dp01.qfqm.eddy(
+              qfInp = wrk$inpMask$qfqm, 
+              MethMeas = "ecse",
+              TypeMeas = "vali",
+              RptExpd = FALSE,
+              dp01 = dp01,
+              idGas = wrk$inpMask$data$idGas
+            )
+            
+            #grab and add both time begin and time end to rpt
+            rpt[[idxAgr]]$timeBgn <- list()
+            rpt[[idxAgr]]$timeEnd <- list()
+            
+            #output time for qf dp01; do not output reference gas
+            for(idxVar in names(wrk$data)[which(!(names(wrk$data) %in% c("rtioMoleDryCh4Refe", "idGas")))]){
+              rpt[[idxAgr]]$timeBgn[[idxVar]] <- wrk$idx$timeBgn[idxAgr]
+              rpt[[idxAgr]]$timeEnd[[idxVar]] <- wrk$idx$timeEnd[idxAgr]
+            }; rm(idxVar)
+            
+          }#; rm(idxAgr)
+          
+        } else {
+          
+          rpt[[1]] <- list()
+          
+          if(lvl %in% c("co2Arch")){
+            rpt[[1]]$qmAlph <- as.data.frame(matrix(NaN, nrow = 1, ncol = ncol(wrk$data)))
+            rpt[[1]]$qmBeta <- as.data.frame(matrix(NaN, nrow = 1, ncol = ncol(wrk$data)))
+            rpt[[1]]$qfFinl <- as.data.frame(matrix(NaN, nrow = 1, ncol = ncol(wrk$data)))
+            rpt[[1]]$qfSciRevw <- as.data.frame(matrix(0, nrow = 1, ncol = ncol(wrk$data)))
+            #change data type
+            rpt[[1]]$qfSciRevw[,1:ncol(wrk$data)] <- sapply(rpt[[1]]$qfSciRevw[,1:ncol(wrk$data)], as.integer)
+          }else{
+            rpt[[1]]$qmAlph <- as.data.frame(matrix(0, nrow = 1, ncol = ncol(wrk$data)))
+            rpt[[1]]$qmBeta <- as.data.frame(matrix(1, nrow = 1, ncol = ncol(wrk$data)))
+            rpt[[1]]$qfFinl <- as.data.frame(matrix(1, nrow = 1, ncol = ncol(wrk$data)))
+            rpt[[1]]$qfSciRevw <- as.data.frame(matrix(0, nrow = 1, ncol = ncol(wrk$data)))
+            #change data type
+            rpt[[1]]$qfFinl[,1:ncol(wrk$data)] <- sapply(rpt[[1]]$qfFinl[,1:ncol(wrk$data)], as.integer)
+            rpt[[1]]$qfSciRevw[,1:ncol(wrk$data)] <- sapply(rpt[[1]]$qfSciRevw[,1:ncol(wrk$data)], as.integer)
+          }
+          
+          for(idxQf in NameQf){
+            #assign name to each column
+            names(rpt[[1]][[idxQf]]) <- names(wrk$data)
+            #not report lvlIrga
+            rpt[[1]][[idxQf]] <- rpt[[1]][[idxQf]][which(!(names(rpt[[1]][[idxQf]]) %in% c("rtioMoleDryCh4Refe", "idGas")))]
+          }; rm(idxQf)
+          
+          #add both time begin and time end to rpt
+          rpt[[1]]$timeBgn <- list()
+          rpt[[1]]$timeEnd <- list()
+          
+          #output time for dp01
+          for(idxVar in names(wrk$data)[which(!(names(wrk$data) %in% c("rtioMoleDryCh4Refe", "idGas")))]){
+            rpt[[1]]$timeBgn[[idxVar]] <- data$time[1]
+            rpt[[1]]$timeEnd[[idxVar]] <- data$time[length(data$time)]
+            #unit
+            attributes(rpt[[1]]$qmAlph[[idxVar]])$unit <- "-"
+            attributes(rpt[[1]]$qmBeta[[idxVar]])$unit <- "-"
+            attributes(rpt[[1]]$qfFinl[[idxVar]])$unit <- "NA"
+            attributes(rpt[[1]]$qfSciRevw[[idxVar]])$unit <- "NA"
+          }; rm(idxVar)
+          
+        }#end of if no measurement data at all in the whole day
+        
+      } #end of PrdAgr == 9
+      
+      if (PrdMeas != PrdAgr) {
+        #PrdAgr <- 30
+        #if there is at least one measurement
+        if(length(which(!is.na(wrk$qfqm$crdCo2$qfRngTemp))) > 0){
+          #   #determine the end time of each measurement  
+          wrk$idx <- eddy4R.base::def.idx.agr(time = data$time, PrdAgr = (PrdMeas*60), FreqLoca = 1, MethIdx = "specBgn", data = wrk$qfqm$crdCo2$qfRngTemp, CritTime = 60)
+          #delete row if last timeBgn and timeEnd is NA
+          wrk$idx <- wrk$idx[rowSums(is.na(wrk$idx)) != 2,]
+          #if last timeEnd is NA, replce that time to the last time value in data$time
+          wrk$idx$timeEnd <- as.POSIXct(ifelse(is.na(wrk$idx$timeEnd), data$time[length(data$time)], wrk$idx$timeEnd), origin = "1970-01-01", tz = "UTC")
+          
+          whrSamp <- wrk$idx$idxBgn[1]:wrk$idx$idxEnd[1]
+          if (length (wrk$idx$idxBgn) > 1 ){
+            for(ii in 2:length (wrk$idx$idxBgn)){
+              whrSamp <- c(whrSamp, wrk$idx$idxBgn[ii]:wrk$idx$idxEnd[ii])
+            }
+          }
+          wrk$data[-whrSamp, ] <- NaN
+          for (idxSens in names(wrk$qfqm)){
+            #replace all qf that not belong to that measurement level by NaN
+            wrk$qfqm[[idxSens]][-whrSamp, 1:length(wrk$qfqm[[idxSens]])] <- NaN
+          }
+        } 
+        
+        for(idxAgr in c(1:length(idxTime[[paste0(PrdAgr, "min")]]$Bgn))) {
+          #idxAgr <- 1
+          
+          ## grab data at the selected mask data
+          # for data
+          wrk$inpMask$data <- list()
+          idxLvLPrdAgr <- paste0(lvl, "_", sprintf("%02d", PrdAgr), "m")      
+          wrk$inpMask$data <- wrk$data[idxTime[[paste0(PrdAgr, "min")]]$Bgn[idxAgr]:idxTime[[paste0(PrdAgr, "min")]]$End[idxAgr],]
+          
+          # for qfqm
+          wrk$inpMask$qfqm <- list()
+          lapply(names(wrk$qfqm), function (x) wrk$inpMask$qfqm[[x]] <<- wrk$qfqm[[x]][idxTime[[paste0(PrdAgr, "min")]]$Bgn[idxAgr]:idxTime[[paste0(PrdAgr, "min")]]$End[idxAgr],])
+          
+          #qfqm processing
+          rpt[[idxAgr]] <- eddy4R.qaqc::wrap.dp01.qfqm.eddy(
+            qfInp = wrk$inpMask$qfqm, 
+            MethMeas = "ecse",
+            TypeMeas = "vali",
+            RptExpd = RptExpd,
+            dp01 = dp01,
+            idGas = wrk$inpMask$data$idGas
+          )
+          
+          #grab and add both time begin and time end to rpt
+          rpt[[idxAgr]]$timeBgn <- list()
+          rpt[[idxAgr]]$timeEnd <- list()
+          
+          #output time for qf dp01; do not output reference gas
+          for(idxVar in names(wrk$data)[which(!(names(wrk$data) %in% c("rtioMoleDryCh4Refe", "idGas")))]){
             rpt[[idxAgr]]$timeBgn[[idxVar]] <- data$time[idxTime[[paste0(PrdAgr, "min")]]$Bgn[idxAgr]]
             rpt[[idxAgr]]$timeEnd[[idxVar]] <- data$time[idxTime[[paste0(PrdAgr, "min")]]$End[idxAgr]]
           }; rm(idxVar)

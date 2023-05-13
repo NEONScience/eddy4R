@@ -12,7 +12,7 @@
 #' @param coef List consists of linear regression coefficients (slope and offset) for DateProc - 1, DateProc, and DateProc + 1. 
 #' @param valiCrit A logical stating if there are more than one validation occurred within DateProc. 
 #' @param ScalMax Maximum scale value. The validation correction will not apply if scale (resulted from maximum-likelihood fitting of a functional relationship (MLFR)) is greater than ScalMax or ScalMax = FALSE. Defaults to FALSE.
-#' @param FracSlpMax Maximum fraction of slope value. The validation correction will not apply if slope (resulted from regression fitting) is greater than the FracSlpMax or FracSlpMax = FALSE. Defaults to FALSE.
+#' @param FracSlp Upper and lower bounds of slope values. The validation correction will not apply if slope (resulted from regression fitting) is greater/lower than the FracSlp maximum or minimum value or FracSlp = FALSE. Defaults to FALSE.
 #' @param OfstMax Maximum offset value. The validation correction will not apply if slope (resulted from regression fitting) is greater than the OfstMax (unit in mol mol-1) or OfstMax = FALSE. Defaults to FALSE.
 #' @param Freq Measurement frequency. Defaults to 20. [Hz]
 
@@ -59,6 +59,8 @@
 #     adding logical to handle the period that falling into the last day and first day of year
 #   David Durden (2020-05-26)
 #     Failsafe for when the valve is switched, but no validation occurs
+#   Chris Florian (2022-03-02)
+#     Updating the slope filter to allow for values not evenly centered around 1
 ##############################################################################################
 def.irga.vali.cor <- function(
  data,
@@ -67,7 +69,7 @@ def.irga.vali.cor <- function(
  valiData,
  valiCrit = FALSE,
  ScalMax = FALSE,
- FracSlpMax = FALSE,
+ FracSlp = FALSE,
  OfstMax = FALSE,
  Freq = 20
 ){
@@ -86,7 +88,7 @@ def.irga.vali.cor <- function(
   #create a list to keep all filters
   filt <- list()
   filt$ScalMax <- ScalMax
-  filt$FracSlpMax <- FracSlpMax
+  filt$FracSlp <- FracSlp
   filt$OfstMax <- OfstMax
   
   
@@ -110,10 +112,10 @@ def.irga.vali.cor <- function(
             }
           }#end ScalMax
           
-          if (idxFilt == "FracSlpMax"){
+          if (idxFilt == "FracSlp"){
             #calculate minimum and maximum slope
-            minSlp <- 1 - FracSlpMax
-            maxSlp <- 1 + FracSlpMax
+            minSlp <- base::min(FracSlp)
+            maxSlp <- base::max(FracSlp)
             if (!is.na(coef[[idxDate]][[idxData]]$coef[2]) & (coef[[idxDate]][[idxData]]$coef[2] >= minSlp & coef[[idxDate]][[idxData]]$coef[2] <= maxSlp)){
               coef[[idxDate]][[idxData]] <- coef[[idxDate]][[idxData]] 
             } else {
@@ -121,8 +123,8 @@ def.irga.vali.cor <- function(
               coef[[idxDate]][[idxData]]$se <- NA
               coef[[idxDate]][[idxData]]$scal <- NA
             }
-          }#end of FracSlpMax
-          
+          }#end of FracSlp
+
           if (idxFilt == "OfstMax"){
             if (!is.na(coef[[idxDate]][[idxData]]$coef[1]) & (abs(coef[[idxDate]][[idxData]]$coef[1]) <= OfstMax)){
               coef[[idxDate]][[idxData]] <- coef[[idxDate]][[idxData]] 

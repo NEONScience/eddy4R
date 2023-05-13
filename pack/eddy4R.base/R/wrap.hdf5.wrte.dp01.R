@@ -71,6 +71,10 @@
 #     adding timeBgn and timeEnd attributes
 #   David Durden (2020-05-01)
 #     adding Pfit coefficient output metadata
+#   David Durden (2021-08-17)
+#     Fixing attribute issues related to rhdf5 not being able to write lists
+#   David Durden (2021-08-17)
+#     Adding difference to UTC to output
 ##############################################################################################
 
 
@@ -177,7 +181,7 @@ if(MethDp04 == TRUE){
   idFile <- rhdf5::H5Fopen(FileOut)
 
   for(idxDp04 in names(inpList$dp04$data)){
-    #idxDp04 <- names(inpList$dp04$data)[5]
+    #idxDp04 <- names(inpList$dp04$data)[1]
     if(idxDp04 == "foot") {
       #Adding time to output dataframe
       rptDp04 <-  cbind(timeBgn = outList$data$soni$veloXaxsErth$timeBgn, timeEnd = outList$data$soni$veloXaxsErth$timeEnd, inpList$dp04$data[[idxDp04]]$stat, stringsAsFactors = FALSE)
@@ -225,7 +229,7 @@ if(MethDp04 == TRUE){
       tmpAttr <- c()
       attributes(tmpAttr)$unit[["timeBgn"]] <- "NA"
       attributes(tmpAttr)$unit[["timeEnd"]] <- "NA"
-      attributes(rptDp04Qfqm)$unit <- c(attributes(tmpAttr)$unit, attributes(rptDp04Qfqm)$unit)
+      attributes(rptDp04Qfqm)$unit <- base::as.character(c(attributes(tmpAttr)$unit, attributes(rptDp04Qfqm)$unit))
       
       #Open connection to dp04 data level
       idQfqmDp04 <- rhdf5::H5Gopen(idFile,paste0("/", SiteLoca, "/dp04/qfqm/",idxDp04))
@@ -239,7 +243,8 @@ if(MethDp04 == TRUE){
       rhdf5::h5writeAttribute(attributes(rptDp04Qfqm)$unit, h5obj = idQfqmDp04Df, name = "unit")
       
       
-    } else {
+    } 
+    else {
     #output only flux for fluxCo2 in basic file
       if (idxDp04 %in% c("fluxCo2", "fluxH2o") & MethExpd == FALSE){
         inpList$dp04$data[[idxDp04]]$turb$fluxCor <- NULL
@@ -256,7 +261,7 @@ if(MethDp04 == TRUE){
   tmpAttr <- c()
   attributes(tmpAttr)$unit[["timeBgn"]] <- "NA"
   attributes(tmpAttr)$unit[["timeEnd"]] <- "NA"
-  attributes(rptDp04)$unit <- c(attributes(tmpAttr)$unit, attributes(rptDp04)$unit)
+  attributes(rptDp04)$unit <- base::as.character(c(attributes(tmpAttr)$unit, attributes(rptDp04)$unit))
   
   #Open connection to dp04 data level
   idDataDp04 <- rhdf5::H5Gopen(idFile,paste0("/", SiteLoca, "/dp04/data/",idxDp04))
@@ -291,7 +296,7 @@ if(MethDp04 == TRUE){
   tmpAttr <- c()
   attributes(tmpAttr)$unit[["timeBgn"]] <- "NA"
   attributes(tmpAttr)$unit[["timeEnd"]] <- "NA"
-  attributes(rptDp04Qfqm)$unit <- c(attributes(tmpAttr)$unit, attributes(rptDp04Qfqm)$unit)
+  attributes(rptDp04Qfqm)$unit <- base::as.character(c(attributes(tmpAttr)$unit, attributes(rptDp04Qfqm)$unit))
   
   #Open connection to dp04 data level
   idQfqmDp04 <- rhdf5::H5Gopen(idFile,paste0("/", SiteLoca, "/dp04/qfqm/",idxDp04))
@@ -319,11 +324,12 @@ idFile <- rhdf5::H5Fopen(FileOut)
 #Open connection to dp04 data level
 idSite <- rhdf5::H5Gopen(idFile, paste0("/", SiteLoca))
   
-#Write updated Pfit coefficients to output file
+#Write updated Pfit coefficients and UTC time diff to output file
 #Output the attributes
 rhdf5::h5writeAttribute(round(Meta$Sci$`Pf$AngEnuXaxs`, digits = 6), h5obj = idSite, name = "Pf$AngEnuXaxs")
 rhdf5::h5writeAttribute(round(Meta$Sci$`Pf$AngEnuYaxs`, digits = 6), h5obj = idSite, name = "Pf$AngEnuYaxs")
 rhdf5::h5writeAttribute(round(Meta$Sci$`Pf$Ofst`, digits = 6), h5obj = idSite, name = "Pf$Ofst")
+rhdf5::h5writeAttribute(Meta$Site$TimeDiffUtcLt, h5obj = idSite, name = "TimeDiffUtcLt")
 
 #Close HDF5 connections
 rhdf5::h5closeAll() 

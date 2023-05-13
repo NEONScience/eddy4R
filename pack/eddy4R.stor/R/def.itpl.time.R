@@ -42,6 +42,8 @@
 #     added failsafe to make sure the time and data lengths are the same for cases with setLgth = 2
 #   David Durden(2020-07-24)
 #     Failsafe if multiple lines exist, but removed due to NaN
+#   David Durden(2020-12-24)
+#     Added numSamp > 1 since na.omit below would remove later since variance can not be calculated
 ##############################################################################################################
 #Start of function call
 ##############################################################################################################
@@ -98,7 +100,7 @@ def.itpl.time <- function(
   
   
   #data: determine which datapoints to assess            
-  setLgth <- length(which(!is.na(dataInp$mean)))
+  setLgth <- length(which(!is.na(dataInp$mean) & dataInp$numSamp > 1)) #Added numSamp > 1 since na.omit below would remove later since variance can not be calculated
   
   
   #less than 2 values (minimum required by approx() function)

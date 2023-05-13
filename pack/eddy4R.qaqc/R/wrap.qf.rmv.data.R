@@ -43,6 +43,8 @@
 #    added Sens and qfRmv into the function parameter list
 #   David Durden (2020-07-14)
 #    added despiking routine and output qfSpk and qfNull
+#   David Durden (2021-10-7)
+#    not removing identified spike in presAtm data stream as patch for 2021 data release
 ##############################################################################################
 
 
@@ -73,7 +75,7 @@ wrap.qf.rmv.data <- function(
  
   #Despiking routine 
 base::lapply(Sens, function(x){ 
-    #x <- Sens[2] #for testing
+    #x <- Sens[1] #for testing
     #print(x)
     varDspk <- names(outList[[x]]$inpData)[!names(outList[[x]]$inpData) %in% c("time","idx","frtSet00")]
       base::lapply(varDspk, function(y){
@@ -89,7 +91,9 @@ base::lapply(Sens, function(x){
           # resolution threshold
           ThshReso = as.numeric(ramattribs(inpList$data[[x]][[y]])$`Dspk$Br86$MaxReso`)
         ) #Remove high frequency data that is flagged by sensor specific flags or plausibility tests flags
+        if(!(x == "irgaTurb" & y == "presAtm")){
         outList[[x]]$inpData[[y]] <<- tmp$dataOut
+        } #Not removing qfSpk for irgaTurb presAtm TODO: fix once we have a better solution
         
         #Create flag name
         nameQf <- base::paste0("qfSpk",base::toupper(base::substring(y,1,1)),base::substring(y,2,base::nchar(y)))
