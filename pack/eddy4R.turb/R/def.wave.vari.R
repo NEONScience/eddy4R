@@ -45,6 +45,8 @@
 #     Adding Nordbo adn Katul, 2013 high frequency wavelet spectra correction coefficients and flags to output
 #   David Durden (2023-03-12)
 #     updating terms, fixing ts period issue
+#   David Durden (2023-05-12)
+#     Adding cospectra to the output, updating term name in function
 ##############################################################################################
 
 
@@ -120,8 +122,8 @@ if(qfWave == 0) {
     # the transfer function then still needs to be applied over the cross-scalogram with positive and negative Wavelet coefficients
     # sum results in total variance for dataset, e.g. 30 min
     # then normalize to sum of unity
-    spec <- base::colSums(base::abs(waveScal))
-    spec <- spec / base::sum(spec, na.rm=TRUE)
+    cosp <- base::colSums(base::abs(waveScal))
+    cospNorm <- cosp / base::sum(cosp, na.rm=TRUE)
     
     # frequency [Hz]
     freq <- 1/prd #??? Should this be divided by sampling frequency
@@ -134,7 +136,7 @@ if(qfWave == 0) {
     #   IDE = rev(freq),
     #   #dependent variable, spectra or cospectra
     #   # DEP = rev(tst * scal),
-    #   DEP = rev(spec),
+    #   DEP = rev(cospNorm),
     #   #spectrum or cospectrum?
     #   MethSpec = MethSpec,
     #   #stability parameter
@@ -173,16 +175,16 @@ if(qfWave == 0) {
       # for overview page 18 of http://use-r-carlvogt.github.io/PDFs/2017Avril_Cantoni_Rlunch.pdf
       modlLin <-
         # robustbase::lmrob(log10(spec[idxFreqMax:idxPeak]) ~ log10(freq[idxFreqMax:idxPeak]))
-        robust::lmRob(log10(spec[idxFreqMax:idxPeak]) ~ log10(freq[idxFreqMax:idxPeak]))
+        robust::lmRob(log10(cospNorm[idxFreqMax:idxPeak]) ~ log10(freq[idxFreqMax:idxPeak]))
       
       # plot(log10(tst[idxFreqMax:idxPeak]) ~ log10(freq[idxFreqMax:idxPeak]))
       # points(modlLin$fitted.values ~ log10(freq[idxFreqMax:idxPeak]), col = 2)
   
       # if the regression slope (power law coefficient) exceeds the bounds -1.8 ... -1.3, the conventional -5/3 slope is used as alternative
-      slpRegWave <- LM$coefficients[2]
+      slpRegWave <- modlLin$coefficients[2]
       qfWaveSlp <- 0
       if(!(modlLin$coefficients[2] > -1.8 & modlLin$coefficients[2] < -1.3)) {
-        modlLin$coefficients[1] <- base::mean(base::log10(spec[idxFreqMax:idxPeak]) - (-5/3 * base::log10(freq[idxFreqMax:idxPeak])), na.rm = TRUE)
+        modlLin$coefficients[1] <- base::mean(base::log10(cospNorm[idxFreqMax:idxPeak]) - (-5/3 * base::log10(freq[idxFreqMax:idxPeak])), na.rm = TRUE)
         modlLin$coefficients[2] <- -5/3
         qfWaveSlp <- 1
       }
@@ -192,7 +194,7 @@ if(qfWave == 0) {
   
       # calculate transfer function
       # apply only to frequencies > 1 Hz
-      funcTfm <- spec / specRefe
+      funcTfm <- cospNorm / specRefe
       funcTfm[base::which(freq < 0.5)] <- 1
       # funcTfm[idxPeak:length(funcTfm)] <- 1
       # plot(funcTfm ~ freq, log = "x")
@@ -296,6 +298,9 @@ if(qfWave == 0) {
       
       #Slope flag for high frequency correction if outside 1.3 - 1.8 bounds
       rpt$qfWaveSlp <- qfWaveSlp
+      
+      #Output the cospectra
+      rpt$cosp <- cosp
 
   # in case peak frequency > 1 Hz
   } else {
@@ -308,8 +313,9 @@ if(qfWave == 0) {
       coefCor = 1,
       qfWave = 1,
       waveVariCor = NA,
-      slpRegWave <- NA,
-      qfWaveSlp <- -1 )
+      slpRegWave = NA,
+      qfWaveSlp = -1,
+      cosp = NA)
       
   }
     
@@ -325,7 +331,8 @@ if(qfWave == 0) {
     qfWave = qfWave,
     waveVariCor = NA,
     slpRegWave <- NA,
-    qfWaveSlp <- -1
+    qfWaveSlp <- -1,
+    cosp = NA
   )
   
 }
