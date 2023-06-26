@@ -99,10 +99,16 @@ for (idxCol in base::colnames(dfInp)) {
     rpt$wave[[idxCol]] <- Waves::cwt(vectTmp, wavelet = FuncWave, dj = DiffScal)
     msg <- paste(idxCol, "... done.")
     tryCatch({rlog$debug(msg)}, error=function(cond){print(msg)})
+    
+    #Calculate global wavelet spec
+    waveScal<- base::abs(rpt$wave[[idxCol]]@spectrum)^2
+    rpt$spec[[idxCol]] <- base::colSums(base::abs(waveScal))
   }
 
 #normalization factor specific to the choice of Wavelet parameters
 rpt$coefNorm <- rpt$wave[["veloZaxsHor"]]@dj * rpt$wave[["veloZaxsHor"]]@dt / rpt$wave[["veloZaxsHor"]]@wavelet@cdelta / base::length(rpt$wave[["veloZaxsHor"]]@series)
+
+
 
 
 # # variance for all wavelengths
