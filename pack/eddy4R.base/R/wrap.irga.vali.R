@@ -124,10 +124,15 @@ wrap.irga.vali <- function(
   Freq <- 20  #measurement frequency (20 Hz)
   #standard error of zero gas (unit in mol mol-1)
   zeroRefeSe <- 1*10^(-6)
+  
+  reProcessFlag <- TRUE
+  gasRmv <- NULL
+  
+  while (reProcessFlag) {
 
   #calculation for each date in Date
   for (idxDate in Date){
-    #idxDate <- Date[1]
+    #idxDate <- Date[2]
     #processing date
     DateBgn <- base::as.Date(idxDate)
     #pre-processing date
@@ -169,9 +174,9 @@ wrap.irga.vali <- function(
 
       # case #1: first day (creation)
       if(numDate == 1) {
-        allSubData <- as.ffdf(data.frame(subData))
-        allSubQfqm <- as.ffdf(data.frame(subQfqmFlag))
-        allSubTime <- as.ffdf(data.frame(subTime))
+        allSubData <- ff::as.ffdf(data.frame(subData))
+        allSubQfqm <- ff::as.ffdf(data.frame(subQfqmFlag))
+        allSubTime <- ff::as.ffdf(data.frame(subTime))
       }else{
         # case #2: subsequent day (appending)
         allSubData <- ffbase::ffdfappend(allSubData, subData)
@@ -370,8 +375,8 @@ wrap.irga.vali <- function(
     #preparing data tables for calculating the regression
     #check if there are more than one validation occurred within one day
     if (length(which(rpt[[idxDate]]$rtioMoleDryCo2Vali$gasType == "qfIrgaTurbValiGas02")) == 2 &
-        length(which(rpt[[idxDate]]$rtioMoleDryCo2Vali$gasType == "qfIrgaTurbValiGas03")) == 2&
-        length(which(rpt[[idxDate]]$rtioMoleDryCo2Vali$gasType == "qfIrgaTurbValiGas04")) == 2&
+        length(which(rpt[[idxDate]]$rtioMoleDryCo2Vali$gasType == "qfIrgaTurbValiGas03")) == 2 &
+        length(which(rpt[[idxDate]]$rtioMoleDryCo2Vali$gasType == "qfIrgaTurbValiGas04")) == 2 &
         length(which(rpt[[idxDate]]$rtioMoleDryCo2Vali$gasType == "qfIrgaTurbValiGas05"))== 2){
       valiCrit <- TRUE
     } else{
@@ -379,7 +384,7 @@ wrap.irga.vali <- function(
     }
 
     #if valiCrit = TRUE, separate the data into 2 table
-    if (valiCrit == TRUE){
+    if (valiCrit == TRUE) {
       locGas <- which(rpt[[idxDate]]$rtioMoleDryCo2Vali$gasType == "qfIrgaTurbValiGas02")
       #defined the critical time by adding 30 min after the end of running zero gas
       timeCrit00 <- as.POSIXlt(rpt[[idxDate]]$rtioMoleDryCo2Vali$timeEnd[locGas[1]] + 30*60,format="%Y-%m-%d %H:%M:%OS", tz="UTC")
@@ -464,7 +469,7 @@ wrap.irga.vali <- function(
         }
       
       #do MLFR if more than 2 input data avaliable
-      if (nrow(tmpValiData) > 2){
+      if (nrow(tmpValiData) > 2) {
         #x are sensor readings; y are reference gas values
         rtioMoleDryCo2Mlfr <- deming::deming(rtioMoleDryCo2Refe[1:nrow(tmpValiData)] ~ mean[1:nrow(tmpValiData)], data = tmpValiData,
                                              xstd = se[1:nrow(tmpValiData)], ystd = rtioMoleDryCo2RefeSe[1:nrow(tmpValiData)])
@@ -526,6 +531,10 @@ wrap.irga.vali <- function(
 
   #run the benchmarking regression to determine if the validation was good
   valiEval <- eddy4R.base::def.irga.vali.thsh(data = rpt[[DateProc]], DateProc = DateProc, evalSlpMax = 1.05, evalSlpMin = 0.95, evalOfstMax = 100, evalOfstMin = -100)
+  
+  
+  
+  }
   
   #remove corrected data if validation fails benchmarking test
   if (valiEval$valiEvalPass == FALSE){
