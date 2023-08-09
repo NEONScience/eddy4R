@@ -105,7 +105,8 @@ wrap.irga.vali <- function(
   DateProc,
   ScalMax = FALSE,
   FracSlp = FALSE,
-  OfstMax = FALSE
+  OfstMax = FALSE,
+  evalSeMax = 0.015
 ) {
 
   #adding library
@@ -127,8 +128,11 @@ wrap.irga.vali <- function(
   
   reProcessFlag <- TRUE
   gasRmv <- NULL
+  whileLoopNum <- 0
   
   while (reProcessFlag) {
+    
+  whileLoopNum <- whileLoopNum + 1
 
   #calculation for each date in Date
   for (idxDate in Date){
@@ -470,6 +474,14 @@ wrap.irga.vali <- function(
       
       #do MLFR if more than 2 input data avaliable
       if (nrow(tmpValiData) > 2) {
+        
+        if (!is.null(gasRmv)) {
+          
+          tmpRegData <- tmpValiData
+          tmpValiData[tmpValiData$gasType == gasRmv, c("mean", "min", "max", "vari", "numSamp", "se")] <- NA
+          
+        }
+        
         #x are sensor readings; y are reference gas values
         rtioMoleDryCo2Mlfr <- deming::deming(rtioMoleDryCo2Refe[1:nrow(tmpValiData)] ~ mean[1:nrow(tmpValiData)], data = tmpValiData,
                                              xstd = se[1:nrow(tmpValiData)], ystd = rtioMoleDryCo2RefeSe[1:nrow(tmpValiData)])
@@ -517,9 +529,9 @@ wrap.irga.vali <- function(
   invisible(gc())
   #check if there are more than one validation occurred in DateProc
   if (length(which(rpt[[DateProc]]$rtioMoleDryCo2Vali$gasType == "qfIrgaTurbValiGas02")) == 2 &
-      length(which(rpt[[DateProc]]$rtioMoleDryCo2Vali$gasType == "qfIrgaTurbValiGas03")) == 2&
-      length(which(rpt[[DateProc]]$rtioMoleDryCo2Vali$gasType == "qfIrgaTurbValiGas04")) == 2&
-      length(which(rpt[[DateProc]]$rtioMoleDryCo2Vali$gasType == "qfIrgaTurbValiGas05"))== 2){
+      length(which(rpt[[DateProc]]$rtioMoleDryCo2Vali$gasType == "qfIrgaTurbValiGas03")) == 2 &
+      length(which(rpt[[DateProc]]$rtioMoleDryCo2Vali$gasType == "qfIrgaTurbValiGas04")) == 2 &
+      length(which(rpt[[DateProc]]$rtioMoleDryCo2Vali$gasType == "qfIrgaTurbValiGas05")) == 2) {
     valiCrit <- TRUE
   } else{
     valiCrit <- FALSE
@@ -532,7 +544,28 @@ wrap.irga.vali <- function(
   #run the benchmarking regression to determine if the validation was good
   valiEval <- eddy4R.base::def.irga.vali.thsh(data = rpt[[DateProc]], DateProc = DateProc, evalSlpMax = 1.05, evalSlpMin = 0.95, evalOfstMax = 100, evalOfstMin = -100)
   
+  if (whileLoopNum > 2) {
+    
+    reProcessFlag <- FALSE
+    
+  }
   
+  if valiEval$valiEvalPass & valiEval$evalCoefSe[2] > evalSeMax {
+    
+    absErrCor <- abs(valiEval$meanCor - rpt[[DateProc]]$rtioMoleDryCo2Vali$rtioMoleDryCo2Refe[!is.nan(rpt[[DateProc]]$rtioMoleDryCo2Vali$mean)])
+    idxMaxErr <- which(absErrCor == max(absErrCor))[1]
+    
+    gasRm <- nameQf[!is.nan(rpt[[DateProc]]$rtioMoleDryCo2Vali$mean)][idxMaxErr]
+    
+    numWhileFlag <- numWhileFlag + 1
+    
+    reProcessFlag <- TRUE
+    
+  } else {
+    
+    reProcessFlag <- FALSE
+    
+  }
   
   }
   
