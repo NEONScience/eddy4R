@@ -96,6 +96,9 @@
 #     setting corrected data to NaN if qfEvalThsh is -1 to prevent bad data passing through if the evaluation doesn't run
 #   Chris Florian (2022-03-02)
 #     Updating the slope filter to allow for values not evenly centered around 1
+#   Adam Young (2023-08-10)
+#     Adding check on valiThsh for standard error of slope to remove days with large outliers but are not
+#     flagged by check on slope coefficient estimate.
 ##############################################################################################
 
 wrap.irga.vali <- function(
@@ -126,16 +129,31 @@ wrap.irga.vali <- function(
   #standard error of zero gas (unit in mol mol-1)
   zeroRefeSe <- 1*10^(-6)
   
+  # Set to NULL, will be replaced with name of reference gas comparison that is 
+  # producing the biggest error between corrected and reference values, and this
+  # observation will be removed from regressions and further evaluation.
   gasRmv <- NULL
   
-  for (reRunLoop in c(1, 2)) {
+  # Outer for loop allows for option to reprocess and re-run main components of 
+  # wrap.irga.vali.R under the specific conditions that:
+  #   1. evalCoef passes test (i.e. > 0.95 & < 1.05) 
+  #     AND
+  #   2. evalCoefSe > 0.015
+  # Under these specific conditions there can be a large difference between 
+  # corrected and reference values but still pass the evaluation test. Under
+  # the reprocessing in loop 2 the largest outlier value is removed from 
+  # the deming regresion and def.irga.vali.thsh.R results. This ultimately 
+  # allows for the option to keep these data if the correction is still working
+  
+  for (idxReprLoop in c(1, 2)) {
     
-    if (reRunLoop == 2) {
+    # If we are reprocessing, then assign empty lists again
+    if (idxReprLoop == 2) {
       
       #assign list
       rpt <- list()
       valiData <- list()
-      #create temporary place to host coeficience values
+      #create temporary place to host coefficient values
       tmpCoef <- list()
       
     }
@@ -483,6 +501,9 @@ wrap.irga.vali <- function(
         
         tmpValiData01 <- tmpValiData
         
+        # If this is the second reprocessing loop (i.e. idxReprLoop = 2) then 
+        # remove the reference and mean values from the following regression to 
+        # see if this improves fit and allows us to keep this day of data.
         if (!is.null(gasRmv) & idxDate == DateProc) {
           
           tmpValiData01[tmpValiData01$gasType == gasRmv, c("mean", "min", "max", "vari", "numSamp", "se")] <- NA
@@ -549,26 +570,50 @@ wrap.irga.vali <- function(
   #Calculate time-series (20Hz) of slope and zero offset
   rpt[[DateProc]]$rtioMoleDryCo2Cor <- eddy4R.base::def.irga.vali.cor(data = data, DateProc = DateProc, coef = tmpCoef, valiData = valiData, valiCrit = valiCrit, ScalMax = ScalMax, FracSlp = FracSlp, OfstMax = OfstMax, Freq = 20)
 
+  # If this is the reprocessing loop then fill in the outlier reference gas with NaNs
   if (!is.null(gasRmv)) {
     
-    rpt[[DateProc]]$rtioMoleDryCo2Vali[rpt[[DateProc]]$rtioMoleDryCo2Vali$gasType == gasRmv, c("mean", "min", "max", "vari", "numSamp", "se", "rtioMoleDryCo2Refe", "rtioMoleDryCo2RefeSe")] <- NA
+    rpt[[DateProc]]$rtioMoleDryCo2Vali[rpt[[DateProc]]$rtioMoleDryCo2Vali$gasType == gasRmv, c("mean", "min", "max", "vari", "numSamp", "se", "rtioMoleDryCo2Refe", "rtioMoleDryCo2RefeSe")] <- NaN
     
   }
   
   #run the benchmarking regression to determine if the validation was good
   valiEval <- eddy4R.base::def.irga.vali.thsh(data = rpt[[DateProc]], DateProc = DateProc, evalSlpMax = 1.05, evalSlpMin = 0.95, evalOfstMax = 100, evalOfstMin = -100)
-    
+  
+  # Check for the rare occurrence that the valiEval passed but large outliers still exist between 
+  # reference and corrected values. Do this by looking at standard error estimate of slope parameter.
   if (valiEval$valiEvalPass & valiEval$evalCoefSe[2] > evalSeMax) {
     
     valiEval$valiEvalPass <- FALSE
     
-    absErrCor <- abs(valiEval$meanCor - rpt[[DateProc]]$rtioMoleDryCo2Vali$rtioMoleDryCo2Refe[!is.nan(rpt[[DateProc]]$rtioMoleDryCo2Vali$mean)])
-    idxMaxErr <- which(absErrCor == max(absErrCor))[1]
+    # If this is the first reprocessing loop, then check to see which reference gas comparison is 
+    # causing the biggest difference between corrected and reference values. Pass this information
+    # onto the second reprocessing loop so this reference comparison can be removed and fit can 
+    # be re-evaluated.
+    if (idxReprLoop == 1) {
+      
+      msg <- paste0("valiEvalPass == TRUE but evalCoefSe > evalSeMax, running second iteration and removing largest outlier.")
+      tryCatch({rlog$info(msg)}, error=function(cond){print(msg)})
     
-    gasRmv <- nameQf[!is.nan(rpt[[DateProc]]$rtioMoleDryCo2Vali$mean)][idxMaxErr]
+      absErrCor <- abs(valiEval$meanCor - rpt[[DateProc]]$rtioMoleDryCo2Vali$rtioMoleDryCo2Refe[!is.nan(rpt[[DateProc]]$rtioMoleDryCo2Vali$mean)])
+      idxMaxErr <- which(absErrCor == max(absErrCor))[1]
+      
+      gasRmv <- nameQf[!is.nan(rpt[[DateProc]]$rtioMoleDryCo2Vali$mean)][idxMaxErr]
+      
+      msg <- paste0(gasRmv, " is being set to NaN in next iteration of irga correction and validation.")
+      tryCatch({rlog$info(msg)}, error=function(cond){print(msg)})      
+      
+    } else {
+      
+      msg <- paste0("Second iteration of valiEval also failed, setting valiEvalPass to FALSE.")
+      tryCatch({rlog$info(msg)}, error=function(cond){print(msg)})
+      
+    }
     
   } else {
     
+    # If the specific conditions regarding evalCoefSe above are not met then 
+    # exit reprocessing loop using 'break' command and do not perform second iteration.
     break
     
   }
