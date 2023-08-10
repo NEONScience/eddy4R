@@ -19,8 +19,6 @@ Imports:
     reshape2 (>= 1.4.2),
     Rmisc (>= 1.5),
     RcppRoll (>= 0.3.0)
-Suggests:
-    NEONprocIS.base
 License: GNU AFFERO GENERAL PUBLIC LICENSE Version 3, 19 November 2007
 LazyData: true
 RoxygenNote: 7.1.1
