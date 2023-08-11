@@ -592,7 +592,7 @@ wrap.irga.vali <- function(
     # be re-evaluated.
     if (idxReprLoop == 1) {
       
-      msg <- paste0("valiEvalPass == TRUE but evalCoefSe > evalSeMax, running second iteration and removing largest outlier.")
+      msg <- paste0(DateProc, ": valiEvalPass == TRUE and evalCoefSe > evalSeMax, running second iteration after removing largest outlier.")
       tryCatch({rlog$info(msg)}, error=function(cond){print(msg)})
     
       absErrCor <- abs(valiEval$meanCor - rpt[[DateProc]]$rtioMoleDryCo2Vali$rtioMoleDryCo2Refe[!is.nan(rpt[[DateProc]]$rtioMoleDryCo2Vali$mean)])
@@ -600,12 +600,12 @@ wrap.irga.vali <- function(
       
       gasRmv <- nameQf[!is.nan(rpt[[DateProc]]$rtioMoleDryCo2Vali$mean)][idxMaxErr]
       
-      msg <- paste0(gasRmv, " is being set to NaN in next iteration of irga correction and validation.")
-      tryCatch({rlog$info(msg)}, error=function(cond){print(msg)})      
+      msg <- paste0(DateProc, ": ", gasRmv, " is being set to NaN in next iteration of irga correction and validation.")
+      tryCatch({rlog$debug(msg)}, error=function(cond){print(msg)})      
       
     } else {
       
-      msg <- paste0("Second iteration of valiEval also failed, setting valiEvalPass to FALSE.")
+      msg <- paste0(DateProc, ": Second iteration of valiEval also failed, setting valiEvalPass to FALSE.")
       tryCatch({rlog$info(msg)}, error=function(cond){print(msg)})
       
     }
