@@ -116,12 +116,6 @@ wrap.irga.vali <- function(
   #library(deming)
   #library(zoo)
 
-  #assign list
-  rpt <- list()
-  valiData <- list()
-  #create temporary place to host coeficience values
-  tmpCoef <- list()
-
   #dates that will be used in determination of slope and offset
   Date <- c(base::as.Date(DateProc) - 1, base::as.Date(DateProc), base::as.Date(DateProc) + 1)
   Date <- as.character(Date)
@@ -145,18 +139,13 @@ wrap.irga.vali <- function(
   # the deming regresion and def.irga.vali.thsh.R results. This ultimately 
   # allows for the option to keep these data if the correction is still working
   
-  for (idxReprLoop in c(1, 2)) {
+  for (idxLoop in c(1, 2)) {
     
-    # If we are reprocessing, then assign empty lists again
-    if (idxReprLoop == 2) {
-      
-      #assign list
-      rpt <- list()
-      valiData <- list()
-      #create temporary place to host coefficient values
-      tmpCoef <- list()
-      
-    }
+  #assign list
+  rpt <- list()
+  valiData <- list()
+  #create temporary place to host coeficience values
+  tmpCoef <- list()
 
   #calculation for each date in Date
   for (idxDate in Date){
@@ -470,6 +459,16 @@ wrap.irga.vali <- function(
     #calculate linear regression for each of valiData[[idxDate]]$data01 and valiData[[idxDate]]$data00
     #test if all inputs are NA
     for (idxData in names(valiData[[idxDate]])){
+      
+      # If this is the second reprocessing loop (i.e. idxReprLoop = 2) then 
+      # remove the reference and mean values from the following regression to 
+      # see if this improves fit and allows us to keep this day of data.
+      if (!is.null(gasRmv) & idxDate == DateProc) {
+        
+        valiData[[idxDate]][[idxData]][valiData[[idxDate]][[idxData]]$gasType == gasRmv, c("mean", "min", "max", "vari", "numSamp", "se")] <- NaN
+        
+      }
+      
       #create empty dataframe to keep intercept and slope output from MLFR
       tmpCoef[[idxDate]][[idxData]] <- data.frame(matrix(ncol = 3, nrow = 2))
       #assign column name
@@ -499,21 +498,9 @@ wrap.irga.vali <- function(
       #do MLFR if more than 2 input data avaliable
       if (nrow(tmpValiData) > 2) {
         
-        tmpValiData01 <- tmpValiData
-        
-        # If this is the second reprocessing loop (i.e. idxReprLoop = 2) then 
-        # remove the reference and mean values from the following regression to 
-        # see if this improves fit and allows us to keep this day of data.
-        if (!is.null(gasRmv) & idxDate == DateProc) {
-          
-          tmpValiData01[tmpValiData01$gasType == gasRmv, c("mean", "min", "max", "vari", "numSamp", "se")] <- NA
-          tmpValiData01 <- na.omit(tmpValiData01)
-          
-        }
-        
         #x are sensor readings; y are reference gas values
-        rtioMoleDryCo2Mlfr <- deming::deming(rtioMoleDryCo2Refe[1:nrow(tmpValiData01)] ~ mean[1:nrow(tmpValiData01)], data = tmpValiData01,
-                                             xstd = se[1:nrow(tmpValiData01)], ystd = rtioMoleDryCo2RefeSe[1:nrow(tmpValiData01)])
+        rtioMoleDryCo2Mlfr <- deming::deming(rtioMoleDryCo2Refe[1:nrow(tmpValiData)] ~ mean[1:nrow(tmpValiData)], data = tmpValiData,
+                                             xstd = se[1:nrow(tmpValiData)], ystd = rtioMoleDryCo2RefeSe[1:nrow(tmpValiData)])
         #write output to table
         #intercept
         tmpCoef[[idxDate]][[idxData]][1,1] <- rtioMoleDryCo2Mlfr$coefficients[[1]]
@@ -528,17 +515,17 @@ wrap.irga.vali <- function(
     #report output
     rpt[[idxDate]]$rtioMoleDryCo2Mlf <- tmpCoef[[idxDate]]$data00
     #close if idxVar == rtioMoleDryCo2
-    }else{
+    } else {
       rpt[[idxDate]]$rtioMoleDryH2oVali$rtioMoleDryH2oRefe <- ifelse(rpt[[idxDate]]$rtioMoleDryH2oVali$gasType == "qfIrgaTurbValiGas02", 0, NA)
     }
     #reorder column
-    rpt[[idxDate]][[valiTmp]] <- rpt[[idxDate]][[valiTmp]][,c(1:5, 10, 7, 8)]
+    rpt[[idxDate]][[valiTmp]] <- rpt[[idxDate]][[valiTmp]][,c(1:5, 10, 7, 8, 9)]
 
     #unit attributes
     unitVali <- attributes(data$irgaTurb[[idxVar]])$unit
     #unit attributes for gasRefe
     if (idxVar == "rtioMoleDryCo2") {
-      unitRefe <- attributes(gasRefe$rtioMoleDryCo2Refe01[[idxDate]]$`702_000`)$unit #"rtioMoleDryCo2Refe"
+      unitRefe <- attributes(gasRefe$rtioMoleDryCo2Refe[[idxDate]]$`702_000`)$unit #"rtioMoleDryCo2Refe"
     } else{
       unitRefe <- "molH2o mol-1"
     }
@@ -547,10 +534,12 @@ wrap.irga.vali <- function(
                                                    unitVali,  #"min"
                                                    unitVali,  #"max"
                                                    unitVali,  #"vari"
+                                                   unitVali,  #"se"
                                                    "NA",      #"numSamp"
-                                                   unitRefe,  #gasRefe
+                                                   unitRefe,  #"gasRefe"
                                                    "NA",      #"timeBgn"
-                                                   "NA")      #"timeEnd"
+                                                   "NA",      #"timeEnd"
+                                                   "NA")      #"gasType"
 
     }#end of for loop of idxVar
     }; rm(valiCrit, allSubData, allSubQfqm, allSubTime)#end of idxDate
@@ -570,16 +559,9 @@ wrap.irga.vali <- function(
   #Calculate time-series (20Hz) of slope and zero offset
   rpt[[DateProc]]$rtioMoleDryCo2Cor <- eddy4R.base::def.irga.vali.cor(data = data, DateProc = DateProc, coef = tmpCoef, valiData = valiData, valiCrit = valiCrit, ScalMax = ScalMax, FracSlp = FracSlp, OfstMax = OfstMax, Freq = 20)
 
-  # If this is the reprocessing loop then fill in the outlier reference gas with NaNs
-  if (!is.null(gasRmv)) {
-    
-    rpt[[DateProc]]$rtioMoleDryCo2Vali[rpt[[DateProc]]$rtioMoleDryCo2Vali$gasType == gasRmv, c("mean", "min", "max", "vari", "numSamp", "se", "rtioMoleDryCo2Refe", "rtioMoleDryCo2RefeSe")] <- NaN
-    
-  }
-  
   #run the benchmarking regression to determine if the validation was good
   valiEval <- eddy4R.base::def.irga.vali.thsh(data = rpt[[DateProc]], DateProc = DateProc, evalSlpMax = 1.05, evalSlpMin = 0.95, evalOfstMax = 100, evalOfstMin = -100)
-  
+
   # Check for the rare occurrence that the valiEval passed but large outliers still exist between 
   # reference and corrected values. Do this by looking at standard error estimate of slope parameter.
   if (valiEval$valiEvalPass & valiEval$evalCoefSe[2] > evalSeMax) {
@@ -590,22 +572,22 @@ wrap.irga.vali <- function(
     # causing the biggest difference between corrected and reference values. Pass this information
     # onto the second reprocessing loop so this reference comparison can be removed and fit can 
     # be re-evaluated.
-    if (idxReprLoop == 1) {
+    if (idxLoop == 1) {
       
-      msg <- paste0(DateProc, ": valiEvalPass == TRUE and evalCoefSe > evalSeMax, running second iteration after removing largest outlier.")
+      msg <- paste0("dataset ", DateProc, ": valiEvalPass == TRUE and evalCoefSe > evalSeMax, running second iteration after removing largest outlier.")
       tryCatch({rlog$info(msg)}, error=function(cond){print(msg)})
     
       absErrCor <- abs(valiEval$meanCor - rpt[[DateProc]]$rtioMoleDryCo2Vali$rtioMoleDryCo2Refe[!is.nan(rpt[[DateProc]]$rtioMoleDryCo2Vali$mean)])
       idxMaxErr <- which(absErrCor == max(absErrCor))[1]
       
-      gasRmv <- nameQf[!is.nan(rpt[[DateProc]]$rtioMoleDryCo2Vali$mean)][idxMaxErr]
+      gasRmv <- rpt[[DateProc]]$rtioMoleDryCo2Vali$gasType[idxMaxErr]
       
-      msg <- paste0(DateProc, ": ", gasRmv, " is being set to NaN in next iteration of irga correction and validation.")
+      msg <- paste0("dataset ", DateProc, ": ", gasRmv, " is being set to NaN in next iteration of irga correction and validation.")
       tryCatch({rlog$debug(msg)}, error=function(cond){print(msg)})      
       
     } else {
       
-      msg <- paste0(DateProc, ": Second iteration of valiEval also failed, setting valiEvalPass to FALSE.")
+      msg <- paste0("dataset ", DateProc, ": Second iteration of valiEval also failed, setting valiEvalPass to FALSE.")
       tryCatch({rlog$info(msg)}, error=function(cond){print(msg)})
       
     }
@@ -618,7 +600,7 @@ wrap.irga.vali <- function(
     
   }
   
-  }
+  };
   
   #remove corrected data if validation fails benchmarking test
   if (valiEval$valiEvalPass == FALSE){
@@ -657,23 +639,23 @@ wrap.irga.vali <- function(
     
     rpt[[DateProc]]$rtioMoleDryCo2Vali$meanCor <- c(NaN, valiEval$meanCor) # need to add the NaN to account for the archive gas in the first position of the vali table
     
-    #reorder to place the corrected reference values next to the original reference values
-    rpt[[DateProc]]$rtioMoleDryCo2Vali <- rpt[[DateProc]]$rtioMoleDryCo2Vali[c("mean", "min", "max", "vari", "numSamp", "rtioMoleDryCo2Refe", "meanCor", "timeBgn", "timeEnd")]
-    
-    #rename rtioMoleDryCo2Refe to refe, this could be implemented in the rest of the functions in the future
-    names(rpt[[DateProc]]$rtioMoleDryCo2Vali) <- c("mean", "min", "max", "vari", "numSamp", "refe", "meanCor", "timeBgn", "timeEnd")
   } else {
+    
     #fill meanCor with NaN if there were extra validation gas rows
     rpt[[DateProc]]$rtioMoleDryCo2Vali$meanCor <- NaN
     
-    #reorder to place the corrected reference values next to the original reference values
-    rpt[[DateProc]]$rtioMoleDryCo2Vali <- rpt[[DateProc]]$rtioMoleDryCo2Vali[c("mean", "min", "max", "vari", "numSamp", "rtioMoleDryCo2Refe", "meanCor", "timeBgn", "timeEnd")]
-    
-    names(rpt[[DateProc]]$rtioMoleDryCo2Vali) <- c("mean", "min", "max", "vari", "numSamp", "refe", "meanCor", "timeBgn", "timeEnd")
   }
 
-  #rename rtioMoleDryH2oRefe to refe to match CO2
-  names(rpt[[DateProc]]$rtioMoleDryH2oVali) <- c("mean", "min", "max", "vari", "numSamp", "refe", "timeBgn", "timeEnd")
+  for (idxVar in c("rtioMoleDryH2oVali", "rtioMoleDryCo2Vali")) {
+    
+    # Remove "gasType" column from final output and rename reference column to "refe" for Co2 and H2o
+    rpt[[DateProc]][[idxVar]] <- rpt[[DateProc]][[idxVar]][, colnames(rpt[[DateProc]][[idxVar]]) != "gasType"]
+    colnames(rpt[[DateProc]][[idxVar]])[grep("Refe", colnames(rpt[[DateProc]][[idxVar]]))] <- "refe"  
+    
+  }
+  
+  #reorder to place the corrected reference values next to the original reference values
+  rpt[[DateProc]]$rtioMoleDryCo2Vali <- rpt[[DateProc]]$rtioMoleDryCo2Vali[, c("mean", "min", "max", "vari", "numSamp", "refe", "meanCor", "timeBgn", "timeEnd")]
   
   #reset attributes
   
