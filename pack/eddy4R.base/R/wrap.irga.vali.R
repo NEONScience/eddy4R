@@ -218,7 +218,7 @@ wrap.irga.vali <- function(
       rptTmp <- list()
     #calculate statistical for each gas
     for (idxNameQf in nameQf){
-      #idxNameQf <- nameQf[1]
+      #idxNameQf <- nameQf[2]
       tryCatch({rlog$debug(idxNameQf)}, error=function(cond){print(idxNameQf)})
       #preparing the qfIrgaTurbValiGas01 to 05 data for def.idx.agr()
       #replace NA to the qf which are not equal to 1
@@ -364,7 +364,7 @@ wrap.irga.vali <- function(
                                                              unitTo = "intl")
           tmpGasRefe[idxRow,"rtioMoleDryCo2RefeDf"] <- gasRefe$rtioMoleDryCo2RefeDf01[[idxDate]][[loc]]
         } else {
-          if (rpt[[idxDate]]$rtioMoleDryCo2Vali$timeBgn[idxRow] >= gasRefe$rtioMoleDryCo2RefeTime02[[idxDate]][[loc]]){
+          if (rpt[[idxDate]]$rtioMoleDryCo2Vali$timeBgn[idxRow] >= gasRefe$rtioMoleDryCo2RefeTime02[[idxDate]][[loc]]) {
             tmpGasRefe[idxRow,"rtioMoleDryCo2Refe"] <- gasRefe$rtioMoleDryCo2Refe02[[idxDate]][[loc]]
             tmpGasRefe[idxRow,"rtioMoleDryCo2RefeSe"] <- eddy4R.base::def.unit.conv(data = gasRefe$rtioMoleDryCo2RefeSe02[[idxDate]][[loc]],
                                                                unitFrom = "umol mol-1",
@@ -420,12 +420,32 @@ wrap.irga.vali <- function(
 
     subVali <- list()
     subVali01 <- list()
-    if (valiCrit == FALSE){
+    if (valiCrit == FALSE) {
       #get rid of archive gas
-      valiData[[idxDate]]$data00 <- rpt[[idxDate]]$rtioMoleDryCo2Vali#[rpt[[idxDate]]$rtioMoleDryCo2Vali$gasType != "qfIrgaTurbValiGas01",]
-      if (length(valiData[[idxDate]]$data00$timeBgn) <= 5){
-        valiData[[idxDate]]$data00 <- valiData[[idxDate]]$data00
-      }else{
+      valiData[[idxDate]]$data00 <- rpt[[idxDate]]$rtioMoleDryCo2Vali #[rpt[[idxDate]]$rtioMoleDryCo2Vali$gasType != "qfIrgaTurbValiGas01",]
+      if (length(valiData[[idxDate]]$data00$timeBgn) <= 5) {
+        
+        if (length(unique(valiData[[idxDate]]$data00$gasType)) == 5) { 
+          valiData[[idxDate]]$data00 <- valiData[[idxDate]]$data00
+        } else {
+          # Find which gasType is missing
+          idxMiss <- which(!(nameQf %in% valiData[[idxDate]]$data00$gasType))
+          
+          # Add row for missing gasType
+          for (tmpIdxMiss in idxMiss) {
+            valiData[[idxDate]]$data00[nrow(valiData[[idxDate]]$data00) + 1, ] <- NaN
+            valiData[[idxDate]]$data00$gasType[nrow(valiData[[idxDate]]$data00)] <- nameQf[tmpIdxMiss]
+            valiData[[idxDate]]$data00$timeBgn[nrow(valiData[[idxDate]]$data00)] <- base::as.POSIXlt(paste(idxDate, " ", "00:00:00.000", sep=""), format="%Y-%m-%d %H:%M:%OS", tz="UTC")
+            valiData[[idxDate]]$data00$timeEnd[nrow(valiData[[idxDate]]$data00)] <- base::as.POSIXlt(paste(idxDate, " ", "23:59:59.950", sep=""), format="%Y-%m-%d %H:%M:%OS", tz="UTC")
+            if (nameQf[idxMiss] == "qfIrgaTurbValiGas02") {
+              valiData[[idxDate]]$data00$rtioMoleDryCo2Refe[nrow(valiData[[idxDate]]$data00)] <- 0
+              valiData[[idxDate]]$data00$rtioMoleDryCo2RefeSe[nrow(valiData[[idxDate]]$data00)] <- NA
+            }
+          }
+          
+        }
+      
+      } else {
       #in case of more data than expected; due to valves problem
         locGas00 <- which(valiData[[idxDate]]$data00$gasType == "qfIrgaTurbValiGas02")
         #in case of more then one location for locGas00, select the last one
@@ -458,7 +478,7 @@ wrap.irga.vali <- function(
         }#end else
       valiData[[idxDate]]$data01 <- valiData[[idxDate]]$data00
     }
-
+  
     #calculate linear regression between validation gas standard and sensor reading values
     #using maximum-likelihood fitting of a functional relationship (MLFR)
     #calculate linear regression for each of valiData[[idxDate]]$data01 and valiData[[idxDate]]$data00
@@ -607,7 +627,7 @@ wrap.irga.vali <- function(
     # causing the biggest difference between corrected and reference values. Pass this information
     # onto the second reprocessing loop so this reference comparison can be removed and fit can 
     # be re-evaluated.
-    if (valiEval$evalCoefSe[2] > evalSeMax & valiEval$valiEvalPass == TRUE) {
+    if (!is.na(valiEval$evalCoefSe[2]) & valiEval$evalCoefSe[2] > evalSeMax & valiEval$valiEvalPass == TRUE) {
       
       valiEval$valiEvalPass <- FALSE
       
@@ -619,8 +639,8 @@ wrap.irga.vali <- function(
       msg <- paste0("dataset ", DateProc, ": valiEvalPass == TRUE and evalCoefSe > evalSeMax, running second iteration after removing largest outlier.")
       tryCatch({rlog$info(msg)}, error=function(cond){print(msg)})
       
-      absErrCor <- abs(valiEval$meanCor - rpt[[DateProc]]$rtioMoleDryCo2Vali$rtioMoleDryCo2Refe[!is.nan(rpt[[DateProc]]$rtioMoleDryCo2Vali$mean)])
-      idxMaxErr <- which(absErrCor == max(absErrCor))[1]
+      absErrCor <- abs(valiEval$meanCor - rpt[[DateProc]]$rtioMoleDryCo2Vali$rtioMoleDryCo2Refe[rpt[[DateProc]]$rtioMoleDryCo2Vali$gasType != "qfIrgaTurbValiGas01"])
+      idxMaxErr <- which(absErrCor == max(absErrCor, na.rm = TRUE))[1]
       
       gasRmv <- rpt[[DateProc]]$rtioMoleDryCo2Vali$gasType[idxMaxErr]
       
@@ -638,7 +658,7 @@ wrap.irga.vali <- function(
     # If the specific conditions regarding evalCoefSe above are not met then 
     # exit reprocessing loop using 'break' command and do not perform second iteration.
     
-    if ((valiEval$evalCoefSe[2] > evalSeMax & valiEval$valiEvalPass == TRUE) | valiEval$valiEvalPass == FALSE) {
+    if ((!is.na(valiEval$evalCoefSe[2]) & valiEval$evalCoefSe[2] > evalSeMax & valiEval$valiEvalPass == TRUE) | valiEval$valiEvalPass == FALSE) {
       
       rpt[[DateProc]]$rtioMoleDryCo2Vali <- valiData00
       rpt[[DateProc]]$rtioMoleDryCo2Mlf <- rtioMoleDryCo2Mlfr00
