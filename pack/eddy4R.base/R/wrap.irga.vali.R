@@ -102,6 +102,10 @@
 #   Adam Young (2023-08-22)
 #     Modified to only pass 5 vali rows through the correction and eval scripts. Aimed to solve
 #     instances where more than 5 rows (1 for each reference gas) are output.
+#   Adam Young (2023-09-05)
+#     Added logic to account for instances where there are less than 5 rows in valiData. 
+#     Current version now ensures there are 5 rows (one for each refe gas) in each vali table
+#     that is exported from function.
 ##############################################################################################
 
 wrap.irga.vali <- function(
@@ -421,63 +425,77 @@ wrap.irga.vali <- function(
     subVali <- list()
     subVali01 <- list()
     if (valiCrit == FALSE) {
-      #get rid of archive gas
+      # Keep all rows to start
       valiData[[idxDate]]$data00 <- rpt[[idxDate]]$rtioMoleDryCo2Vali #[rpt[[idxDate]]$rtioMoleDryCo2Vali$gasType != "qfIrgaTurbValiGas01",]
-      if (length(valiData[[idxDate]]$data00$timeBgn) <= 5) {
-        
-        if (length(unique(valiData[[idxDate]]$data00$gasType)) == 5) { 
-          valiData[[idxDate]]$data00 <- valiData[[idxDate]]$data00
-        } else {
-          # Find which gasType is missing
-          idxMiss <- which(!(nameQf %in% valiData[[idxDate]]$data00$gasType))
-          
-          # Add row for missing gasType
-          for (tmpIdxMiss in idxMiss) {
-            valiData[[idxDate]]$data00[nrow(valiData[[idxDate]]$data00) + 1, ] <- NaN
-            valiData[[idxDate]]$data00$gasType[nrow(valiData[[idxDate]]$data00)] <- nameQf[tmpIdxMiss]
-            valiData[[idxDate]]$data00$timeBgn[nrow(valiData[[idxDate]]$data00)] <- base::as.POSIXlt(paste(idxDate, " ", "00:00:00.000", sep=""), format="%Y-%m-%d %H:%M:%OS", tz="UTC")
-            valiData[[idxDate]]$data00$timeEnd[nrow(valiData[[idxDate]]$data00)] <- base::as.POSIXlt(paste(idxDate, " ", "23:59:59.950", sep=""), format="%Y-%m-%d %H:%M:%OS", tz="UTC")
-            if (nameQf[idxMiss] == "qfIrgaTurbValiGas02") {
-              valiData[[idxDate]]$data00$rtioMoleDryCo2Refe[nrow(valiData[[idxDate]]$data00)] <- 0
-              valiData[[idxDate]]$data00$rtioMoleDryCo2RefeSe[nrow(valiData[[idxDate]]$data00)] <- NA
-            }
-          }
-          
-        }
       
+      gasTypeNum <- table(valiData[[idxDate]]$data00$gasType)
+      
+      if (sum(gasTypeNum) == 5 & all(gasTypeNum == 1)) {
+        
+        valiData[[idxDate]]$data01 <- valiData[[idxDate]]$data00
+        
       } else {
-      #in case of more data than expected; due to valves problem
-        locGas00 <- which(valiData[[idxDate]]$data00$gasType == "qfIrgaTurbValiGas02")
+        
+        # First, split table into two
+        tmpVali00 <- valiData[[idxDate]]$data00[valiData[[idxDate]]$data00$gasType %in% names(gasTypeNum[gasTypeNum > 1]), ]
+        tmpVali01 <- valiData[[idxDate]]$data00[valiData[[idxDate]]$data00$gasType %in% names(gasTypeNum[gasTypeNum <= 1]), ]
+        
+        #in case of more data than expected; due to valves problem
+        locGas00 <- which(tmpVali00$gasType == "qfIrgaTurbValiGas02")
+        
         #in case of more then one location for locGas00, select the last one
         if (length(locGas00) > 1) {
+          
           locGas00 <- locGas00[length(locGas00)]
+          
+          #defined the critical time by adding 30 min after the end of running zero gas
+          timeCrit00 <- as.POSIXlt(tmpVali00$timeEnd[locGas00[1]] + 30*60, format="%Y-%m-%d %H:%M:%OS", tz="UTC")
+          
+          idxKeep <- which(tmpVali00$timeEnd >= tmpVali00$timeEnd[locGas00[1]] & tmpVali00$timeEnd < timeCrit00)
+          tmpVali00 <- tmpVali00[idxKeep, ]
+          
         }
-        #defined the critical time by adding 30 min after the end of running zero gas
-        timeCrit00 <- as.POSIXlt(valiData[[idxDate]]$data00$timeEnd[locGas00[1]] + 30*60,format="%Y-%m-%d %H:%M:%OS", tz="UTC")
-        #select data within timeCrit
-        valiData[[idxDate]]$data00 <- valiData[[idxDate]]$data00[which((valiData[[idxDate]]$data00$timeEnd >= valiData[[idxDate]]$data00$timeEnd[locGas00[1]] &
-                                                                        valiData[[idxDate]]$data00$timeEnd < timeCrit00) | 
-                                                                        valiData[[idxDate]]$data00$gasType == "qfIrgaTurbValiGas01"), ]
-        #check if there are all data as expected
-        if (length(valiData[[idxDate]]$data00$timeBgn) <= 5){
-          valiData[[idxDate]]$data00 <- valiData[[idxDate]]$data00
-        }else{
+        
+        # Second check and solution if there are still too many rows -------------
+        if (any(table(tmpVali00$gasType) > 1)) {
           #incase of valves malfunction
           for (idxGas in c("qfIrgaTurbValiGas01", "qfIrgaTurbValiGas02", "qfIrgaTurbValiGas03", "qfIrgaTurbValiGas04", "qfIrgaTurbValiGas05")){
-            locGas01 <- which(valiData[[idxDate]]$data00$gasType == idxGas)
+            locGas01 <- which(tmpVali00$gasType == idxGas)
             if (length(locGas01) == 1){
-              subVali <- valiData[[idxDate]]$data00[locGas01,]
+              subVali <- tmpVali00[locGas01, ]
             }else{
               #keep the last value
-              subVali <- valiData[[idxDate]]$data00[locGas01[length(locGas01)],]
+              subVali <- tmpVali00[locGas01[length(locGas01)],]
             }#end else
             subVali01[[idxGas]] <- subVali
           }#end for
-          valiData[[idxDate]]$data00 <- do.call(rbind, subVali01)
-        }#end else
-        }#end else
-      valiData[[idxDate]]$data01 <- valiData[[idxDate]]$data00
-    }
+          tmpVali00 <- do.call(rbind, subVali01)
+        }
+        
+        # Find which gasType is missing
+        idxMiss <- which(!(nameQf %in% c(tmpVali00$gasType, tmpVali01$gasType)))
+        
+        # Add row for missing gasType
+        for (tmpIdxMiss in idxMiss) {
+          tmpVali01[nrow(tmpVali01) + 1, ] <- NaN
+          tmpVali01$gasType[nrow(tmpVali01)] <- nameQf[tmpIdxMiss]
+          tmpVali01$timeBgn[nrow(tmpVali01)] <- base::as.POSIXlt(paste(idxDate, " ", "00:00:00.000", sep=""), format="%Y-%m-%d %H:%M:%OS", tz="UTC")
+          tmpVali01$timeEnd[nrow(tmpVali01)] <- base::as.POSIXlt(paste(idxDate, " ", "23:59:59.950", sep=""), format="%Y-%m-%d %H:%M:%OS", tz="UTC")
+          if (nameQf[idxMiss] == "qfIrgaTurbValiGas02") {
+            tmpVali01$rtioMoleDryCo2Refe[nrow(tmpVali01)] <- 0
+            tmpVali01$rtioMoleDryCo2RefeSe[nrow(tmpVali01)] <- NA
+          }
+        }        
+        
+        valiData[[idxDate]]$data00 <- do.call(rbind, list(tmpVali00 = tmpVali00, tmpVali01 = tmpVali01))
+        rownames(valiData[[idxDate]]$data00) <- NULL
+        
+        valiData[[idxDate]]$data01 <- valiData[[idxDate]]$data00
+        
+      }
+      
+      
+    }; rm(tmpVali00, tmpVali01)
   
     #calculate linear regression between validation gas standard and sensor reading values
     #using maximum-likelihood fitting of a functional relationship (MLFR)
@@ -516,7 +534,7 @@ wrap.irga.vali <- function(
       if (nrow(tmpValiData) == 2){
         rtioMoleDryCo2Mlfr <- stats::lm(rtioMoleDryCo2Refe ~ mean, data = tmpValiData)
         
-        if (rtioMoleDryCo2Mlfr$coefficients[2] >= min(FracSlp) & rtioMoleDryCo2Mlfr$coefficients[2] <= max(FracSlp)) {
+        # if (rtioMoleDryCo2Mlfr$coefficients[2] >= min(FracSlp) & rtioMoleDryCo2Mlfr$coefficients[2] <= max(FracSlp)) {
           #write output to table
           #intercept
           tmpCoef[[idxDate]][[idxData]][1,1] <- rtioMoleDryCo2Mlfr$coefficients[[1]]
@@ -526,7 +544,7 @@ wrap.irga.vali <- function(
           tmpCoef[[idxDate]][[idxData]][,2] <- NA
           #scale
           tmpCoef[[idxDate]][[idxData]][1,3] <- NA
-        }
+        # }
       }
       
       #do MLFR if more than 2 input data avaliable
@@ -536,7 +554,7 @@ wrap.irga.vali <- function(
         rtioMoleDryCo2Mlfr <- deming::deming(rtioMoleDryCo2Refe[1:nrow(tmpValiData)] ~ mean[1:nrow(tmpValiData)], data = tmpValiData,
                                              xstd = se[1:nrow(tmpValiData)], ystd = rtioMoleDryCo2RefeSe[1:nrow(tmpValiData)])
         
-        if (rtioMoleDryCo2Mlfr$coefficients[2] >= min(FracSlp) & rtioMoleDryCo2Mlfr$coefficients[2] <= max(FracSlp)) {
+        # if (rtioMoleDryCo2Mlfr$coefficients[2] >= min(FracSlp) & rtioMoleDryCo2Mlfr$coefficients[2] <= max(FracSlp)) {
           
           #write output to table
           #intercept
@@ -548,7 +566,7 @@ wrap.irga.vali <- function(
           #scale
           tmpCoef[[idxDate]][[idxData]][1,3] <- rtioMoleDryCo2Mlfr$sigma
           
-        }
+        # }
         
     }
     }#end of for loop of idxData
@@ -686,6 +704,8 @@ wrap.irga.vali <- function(
   if(base::nrow(rpt[[DateProc]]$rtioMoleDryCo2Vali) == base::length(valiEval$meanCor)+1){ # failsafe for row mismatches, valiEval$meanCor will always be one short because the archive gas is not included
     
     rpt[[DateProc]]$rtioMoleDryCo2Vali$meanCor <- c(NaN, valiEval$meanCor) # need to add the NaN to account for the archive gas in the first position of the vali table
+    rpt[[DateProc]]$rtioMoleDryCo2Vali$meanCor[is.na(rpt[[DateProc]]$rtioMoleDryCo2Vali$meanCor)] <- NaN
+    
     
   } else {
     
@@ -709,6 +729,14 @@ wrap.irga.vali <- function(
   } else {
     rpt[[DateProc]]$rtioMoleDryCo2Mlf$qfEvalThsh <- c(NA, -1)
     rpt[[DateProc]]$rtioMoleDryCo2Cor$rtioMoleDryCo2Cor <- NaN #also remove data in the -1 missing validation case, prevents unexpected inclusion of questionable validations and also removes data if the eval regression can't run due to lack of span gasses
+  }
+  
+  #force qfValiEval to -1 if slope is outside the threshold because this validation can't be applied
+  if(!is.na(rpt[[DateProc]]$rtioMoleDryCo2Mlf$coef[2])){ # only run if there are coefficients to check 
+    
+    if (rpt[[DateProc]]$rtioMoleDryCo2Mlf$coef[2] < base::min(FracSlp) | rpt[[DateProc]]$rtioMoleDryCo2Mlf$coef[2] > base::max(FracSlp)){
+      rpt[[DateProc]]$rtioMoleDryCo2Mlf$qfEvalThsh <- c(NA, -1)
+    }
   }
   
   #add additional coefficients to mlf table
@@ -745,3 +773,4 @@ wrap.irga.vali <- function(
 #return results
   return(rpt)
 }
+
