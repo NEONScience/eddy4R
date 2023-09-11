@@ -106,6 +106,8 @@
 #     Added logic to account for instances where there are less than 5 rows in valiData. 
 #     Current version now ensures there are 5 rows (one for each refe gas) in each vali table
 #     that is exported from function.
+#   Adam Young (2023-09-11)
+#     Added units attributes back in for H2oVali.
 ##############################################################################################
 
 wrap.irga.vali <- function(
@@ -602,7 +604,7 @@ wrap.irga.vali <- function(
     #unit attributes for gasRefe
     if (idxVar == "rtioMoleDryCo2") {
       unitRefe <- attributes(gasRefe$rtioMoleDryCo2Refe[[idxDate]]$`702_000`)$unit #"rtioMoleDryCo2Refe"
-    } else{
+    } else {
       unitRefe <- "molH2o mol-1"
     }
 
@@ -699,7 +701,7 @@ wrap.irga.vali <- function(
   
   }
   
-  #add corrected reference gas values to vali table 
+   #add corrected reference gas values to vali table 
   
   if(base::nrow(rpt[[DateProc]]$rtioMoleDryCo2Vali) == base::length(valiEval$meanCor)+1){ # failsafe for row mismatches, valiEval$meanCor will always be one short because the archive gas is not included
     
@@ -751,10 +753,10 @@ wrap.irga.vali <- function(
     rpt[[DateProc]][[idxVar]] <- rpt[[DateProc]][[idxVar]][, colnames(rpt[[DateProc]][[idxVar]]) != "gasType"]
     colnames(rpt[[DateProc]][[idxVar]])[grep("Refe", colnames(rpt[[DateProc]][[idxVar]]))] <- "refe"  
     
+    #reorder to place the corrected reference values next to the original reference values
+    rpt[[DateProc]][[idxVar]] <- rpt[[DateProc]][[idxVar]][, c("mean", "min", "max", "vari", "numSamp", "refe", "meanCor", "timeBgn", "timeEnd")]
+    
   }
-  
-  #reorder to place the corrected reference values next to the original reference values
-  rpt[[DateProc]]$rtioMoleDryCo2Vali <- rpt[[DateProc]]$rtioMoleDryCo2Vali[, c("mean", "min", "max", "vari", "numSamp", "refe", "meanCor", "timeBgn", "timeEnd")]
   
   #reset attributes
   
@@ -767,10 +769,22 @@ wrap.irga.vali <- function(
                                                            "molCo2 mol-1Dry",#gasRefeCor
                                                            "NA", #"timeBgn"
                                                            "NA") #"timeEnd"
+  
+  attributes(rpt[[DateProc]]$rtioMoleDryH2oVali)$unit <- c("molH2o mol-1Dry", #"mean"
+                                                           "molH2o mol-1Dry", #"min"
+                                                           "molH2o mol-1Dry", #"max"
+                                                           "molH2o mol-1Dry", #"vari"
+                                                           "NA", #"numSamp"
+                                                           "molH2o mol-1",#gasRefe
+                                                           "NA", #"timeBgn"
+                                                           "NA") #"timeEnd"  
 
   attributes(rpt[[DateProc]]$rtioMoleDryCo2Cor$rtioMoleDryCo2Cor)$unit <- "molCo2 mol-1Dry"
+  
+  
    
 #return results
   return(rpt)
+  
 }
 
