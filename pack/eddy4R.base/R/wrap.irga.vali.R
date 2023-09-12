@@ -753,10 +753,12 @@ wrap.irga.vali <- function(
     rpt[[DateProc]][[idxVar]] <- rpt[[DateProc]][[idxVar]][, colnames(rpt[[DateProc]][[idxVar]]) != "gasType"]
     colnames(rpt[[DateProc]][[idxVar]])[grep("Refe", colnames(rpt[[DateProc]][[idxVar]]))] <- "refe"  
     
-    #reorder to place the corrected reference values next to the original reference values
-    rpt[[DateProc]][[idxVar]] <- rpt[[DateProc]][[idxVar]][, c("mean", "min", "max", "vari", "numSamp", "refe", "meanCor", "timeBgn", "timeEnd")]
-    
   }
+  
+  #reorder to place the corrected reference values next to the original reference values
+  rpt[[DateProc]]$rtioMoleDryCo2Vali <- rpt[[DateProc]]$rtioMoleDryCo2Vali[, c("mean", "min", "max", "vari", "numSamp", "refe", "meanCor", "timeBgn", "timeEnd")]
+  rpt[[DateProc]]$rtioMoleDryH2oVali <- rpt[[DateProc]]$rtioMoleDryH2oVali[, c("mean", "min", "max", "vari", "numSamp", "refe", "timeBgn", "timeEnd")]
+  
   
   #reset attributes
   
