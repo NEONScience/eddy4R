@@ -20,6 +20,6 @@ Imports:
 Suggests:
     DataCombine (>= 0.2.21),
     NEONprocIS.base
-License: Terms of use of the NEON FIU algorithm repository dated 2015-01-16
+License: GNU AFFERO GENERAL PUBLIC LICENSE Version 3, 19 November 2007
 LazyData: true
 RoxygenNote: 7.1.1
