@@ -21,4 +21,4 @@ Imports:
     RcppRoll (>= 0.3.0)
 License: GNU AFFERO GENERAL PUBLIC LICENSE Version 3, 19 November 2007
 LazyData: true
-RoxygenNote: 7.1.1
+RoxygenNote: 7.2.3
