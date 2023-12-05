@@ -580,7 +580,8 @@ wrap.irga.vali <- function(
     # with output and could contain more than 5 rows (1 for each reference gas). Also
     # re-order rows to correspond to qfIrgaTurbValiGas01-05 order.
     if (valiCrit) {
-      rpt[[idxDate]][[valiTmp]] <- rbind(valiData[[idxDate]]$data00[order(valiData[[idxDate]]$data00$gasType), ], valiData[[idxDate]]$data01[order(valiData[[idxDate]]$data01$gasType), ])
+      rpt[[idxDate]][[valiTmp]] <- rbind(valiData[[idxDate]]$data00, valiData[[idxDate]]$data01)
+      rpt[[idxDate]][[valiTmp]] <- rpt[[idxDate]][[valiTmp]][order(rpt[[idxDate]][[valiTmp]]$gasType), ]
     } else {
       rpt[[idxDate]][[valiTmp]] <- valiData[[idxDate]]$data00[order(valiData[[idxDate]]$data00$gasType), ]
     }
