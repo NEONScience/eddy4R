@@ -46,14 +46,12 @@ print(log_entries)
 \if{latex}{\out{\hypertarget{method-Logger.Singleton-new}{}}}
 \subsection{Method \code{new()}}{
 \subsection{Usage}{
-\if{html}{\out{<div class="r">}}\preformatted{Logger.Singleton$new(logging_level = "info", log_file = NULL)}\if{html}{\out{</div>}}
+\if{html}{\out{<div class="r">}}\preformatted{Logger.Singleton$new(log_file = NULL)}\if{html}{\out{</div>}}
 }
 
 \subsection{Arguments}{
 \if{html}{\out{<div class="arguments">}}
 \describe{
-\item{\code{logging_level}}{logging level to be set, default as info}
-
 \item{\code{log_file}}{file to store logging messages}
 }
 \if{html}{\out{</div>}}

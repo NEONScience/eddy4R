@@ -28,16 +28,15 @@
 
 # Define the extended Logger class with log levels
 Logger.Singleton <- R6::R6Class("Logger.Singleton", inherit = R6P::Singleton, public = list(
-  #' @param logging_level logging level to be set, default as info
   #' @param log_file file to store logging messages
-  initialize = function(logging_level = "info", log_file = NULL) {
+  initialize = function(log_file = NULL) {
     # Call the initialize method of the base class
     super$initialize()
     
     # Additional initialization for logging
     private$log_file <- log_file
     private$log_entries <- list()
-    private$logging_level <- logging_level
+    private$logging_level <- "info"  # Default logging level
   },
   
   #' @param level logging level
