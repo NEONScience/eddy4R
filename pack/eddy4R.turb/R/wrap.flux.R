@@ -11,6 +11,7 @@
 #' @param AlgBase A vector of length 1 that defines the base state with respect to which instantaneous differences and standard deviations are calculated, of class "character" and no unit attribute. Contains one of AlgBase <- c("mean", "trnd", "ord03")[1] and defaults to "mean", with the additional options detrending "trnd" and 3rd-order polynomial "ord03". See ?eddy4R.base::def.base.ec() for additional details. When AlgBase is set to "trnd" or "ord03", the variable inp$idep is required, which provides the independent variable for interpolation.
 #' @param SlctPot A logical TRUE or FALSE: use potential temperature and densities? [-]
 #' @param PresPot A vector of length 1 and of class "numeric". If is.true(SlctPot) it provides the reference pressure level for which potential temperature and densities are calculated. [-]
+#' @param ListGasSclr A list of gas scalars in data (not including water vapor) to pass to def.flux.sclr() function that includes the Unit data frame. A data frame with the entries InpVect, InpSclr, Conv, Out, of class "character". To ensure consistent units of the returned object, Unit needs to be specified with the constraint that Unit$Out = Unit$InpVect * Unit$InpSclr * Unit$Conv. If the function call argument conv is not specified, then Unit$Conv should be supplied as = "-". The Conv list is character variable that is used to grab the conversion factor from variables in the statStaDiff$base data.frame. If desired conversion factor is not available in can be added directly to data. This defaults to "densMoleAirDry" which is calculated in the function to provide molar fluxes [mol m-2 s-1]. Lastly, NameOut is a character variable for the output name (e.g. "fluxCo2")
 #' @param ... Additional arguments that can be passed to the wrapper function.
 
 #' @return A list with the elements $base (base states), $conv (scalar flux conversion factors), $corr (correlations), $data (data including internal calculations), $diff (instantaneous differences), $max (maximums), $mean (means), $min (minimums), $mtrxRot01 (transformation matrix for stress tensor), and $sd (standard deviations).
@@ -48,6 +49,8 @@
 #     Convert Chemistry Flux to def.flux.chem and rotation to def.rot. Update some related variable names
 #   Stefan Metzger (2023-02-11)
 #     rename from REYNflux_P5.R to wrap.flux.R - integrate modularization w/ separated definition functions
+#David Durden(2023-12-10)
+#     Adding input argument for scalar variables to allow additional calculations
 ##############################################################################################
 
 
@@ -56,6 +59,7 @@ wrap.flux <- function(
   AlgBase = c("mean", "trnd", "ord03")[1],
   SlctPot = FALSE,
   PresPot = eddy4R.base::IntlNatu$Pres00,
+  ListGasSclr = list(rtioMoleDryCo2 = list(Conv = "densMoleAirDry", Unit = base::data.frame(InpVect = "m s-1", InpSclr = "molCo2 mol-1Dry", Conv = "mol m-3", Out = "mol m-2 s-1"), NameOut = "fluxCo2")),
   ...
 )
 {
@@ -329,18 +333,41 @@ wrap.flux <- function(
       # transfer results
       for(idx in base::names(fluxTmp)) statStaDiff[[idx]]$fluxH2oVelo <- fluxTmp[[idx]]
       base::rm(conv, fluxTmp, idx)
-    
+
+#############################################################################          
   # OTHER SCALAR FLUXES INCL. CO2, CH4, NOx, VOCs ETC.
-    
+##########################################################################      
+
+    #For loop for additional scalar fluxes
+    for(idxGas in names(ListGasSclr)){
+      #idxGas <- names(ListGasSclr)[1]
+      
+      #Check scalar name in input data and assign as input scalar
+      if(!(idxGas %in% names(statStaDiff$diff))){
+        stop(paste0(idxGas," not found in input data"))}
+      inpSclr <- statStaDiff$diff[,idxGas]
+      # test for presence of unit attribute
+      if(!("unit" %in% names(attributes(inpSclr)))) {
+        stop(paste0(idxGas," is missing unit attribute."))}
+      
+      #Check for presence of scalar conversion factor and assign
+      if(!(ListGasSclr[[idxGas]]$Conv %in% names(statStaDiff$base))){
+        stop(paste0(idxGas, "not found in input data"))}
+        convSclr <- statStaDiff$base[,ListGasSclr[[idxGas]]$Conv]
+      
     # CO2 flux in kinematic units [mol m-2 s-1]
     fluxTmp <- def.flux.sclr(
-      inp = data.frame(vect = statStaDiff$diff$veloZaxsHor, sclr = statStaDiff$diff$rtioMoleDryCo2),
-      conv = statStaDiff$base$densMoleAirDry,
-      Unit = base::data.frame(InpVect = "m s-1", InpSclr = "molCo2 mol-1Dry", Conv = "mol m-3", Out = "mol m-2 s-1")
+      inp = data.frame(vect = statStaDiff$diff$veloZaxsHor, sclr = inpSclr),
+      conv = convSclr,
+      Unit = ListGasSclr[[idxGas]]$Unit
     )
-    for(idx in base::names(fluxTmp)) statStaDiff[[idx]]$fluxCo2 <- fluxTmp[[idx]]
-    base::rm(fluxTmp, idx)
     
+    for(idx in base::names(fluxTmp)) statStaDiff[[idx]][[ListGasSclr[[idxGas]]$NameOut]] <- fluxTmp[[idx]]
+    base::rm(fluxTmp, idx)
+
+    }#End loop around ListGasSclr
+    
+#############################################################################    
 
     
   ############################################################
