@@ -40,7 +40,7 @@ Logger.Singleton <- R6::R6Class("Logger.Singleton", inherit = R6P::Singleton, pu
     if (is.null(logging_level) || logging_level == "") {
       private$logging_level <- "info" # Default logging level
     } else {
-      private$logging_level <- logging_level
+      private$logging_level <- tolower(logging_level)
     }
   },
   
@@ -57,9 +57,6 @@ Logger.Singleton <- R6::R6Class("Logger.Singleton", inherit = R6P::Singleton, pu
   #' @param level logging level
   #' @param message logging message
   log_message = function(level, message) {
-    print(private$logging_level)
-    print(match(private$logging_level, c("debug", "info", "warn", "error")))
-    print(tolower(level))
     # Check if the message level is equal to or above the logging level
     if (match(tolower(level), c("debug", "info", "warn", "error")) >=
         match(private$logging_level, c("debug", "info", "warn", "error"))) {
