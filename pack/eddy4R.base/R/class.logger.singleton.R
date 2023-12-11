@@ -28,20 +28,30 @@
 
 # Define the extended Logger class with log levels
 Logger.Singleton <- R6::R6Class("Logger.Singleton", inherit = R6P::Singleton, public = list(
+  #' @param logging_level logging level
   #' @param log_file file to store logging messages
-  initialize = function(log_file = NULL) {
+  initialize = function(logging_level = NULL, log_file = NULL) {
     # Call the initialize method of the base class
     super$initialize()
     
     # Additional initialization for logging
     private$log_file <- log_file
     private$log_entries <- list()
-    private$logging_level <- "info"  # Default logging level
+    if (is.null(logging_level) || logging_level == "") {
+      private$logging_level <- "info" # Default logging level
+    } else {
+      private$logging_level <- logging_level
+    }
   },
   
   #' @param level logging level
   set_logging_level = function(level) {
     private$logging_level <- tolower(level)
+  },
+  
+  #' @param file logging file
+  set_log_file = function(file) {
+    private$log_file <- file
   },
   
   #' @param level logging level
@@ -54,7 +64,7 @@ Logger.Singleton <- R6::R6Class("Logger.Singleton", inherit = R6P::Singleton, pu
       log_entry <- paste(timestamp, " [", level, "]: ", message)
       private$log_entries <- c(private$log_entries, list(log_entry))
       cat(log_entry, "\n")
-      
+
       # If a log file is specified, write to it
       if (!is.null(private$log_file)) {
         cat(log_entry, "\n", file = private$log_file, append=TRUE)

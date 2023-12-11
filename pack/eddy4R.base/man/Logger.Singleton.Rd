@@ -30,6 +30,7 @@ print(log_entries)
 \itemize{
 \item \href{#method-Logger.Singleton-new}{\code{Logger.Singleton$new()}}
 \item \href{#method-Logger.Singleton-set_logging_level}{\code{Logger.Singleton$set_logging_level()}}
+\item \href{#method-Logger.Singleton-set_log_file}{\code{Logger.Singleton$set_log_file()}}
 \item \href{#method-Logger.Singleton-log_message}{\code{Logger.Singleton$log_message()}}
 \item \href{#method-Logger.Singleton-debug}{\code{Logger.Singleton$debug()}}
 \item \href{#method-Logger.Singleton-info}{\code{Logger.Singleton$info()}}
@@ -46,12 +47,14 @@ print(log_entries)
 \if{latex}{\out{\hypertarget{method-Logger.Singleton-new}{}}}
 \subsection{Method \code{new()}}{
 \subsection{Usage}{
-\if{html}{\out{<div class="r">}}\preformatted{Logger.Singleton$new(log_file = NULL)}\if{html}{\out{</div>}}
+\if{html}{\out{<div class="r">}}\preformatted{Logger.Singleton$new(logging_level = NULL, log_file = NULL)}\if{html}{\out{</div>}}
 }
 
 \subsection{Arguments}{
 \if{html}{\out{<div class="arguments">}}
 \describe{
+\item{\code{logging_level}}{logging level}
+
 \item{\code{log_file}}{file to store logging messages}
 }
 \if{html}{\out{</div>}}
@@ -69,6 +72,22 @@ print(log_entries)
 \if{html}{\out{<div class="arguments">}}
 \describe{
 \item{\code{level}}{logging level}
+}
+\if{html}{\out{</div>}}
+}
+}
+\if{html}{\out{<hr>}}
+\if{html}{\out{<a id="method-Logger.Singleton-set_log_file"></a>}}
+\if{latex}{\out{\hypertarget{method-Logger.Singleton-set_log_file}{}}}
+\subsection{Method \code{set_log_file()}}{
+\subsection{Usage}{
+\if{html}{\out{<div class="r">}}\preformatted{Logger.Singleton$set_log_file(file)}\if{html}{\out{</div>}}
+}
+
+\subsection{Arguments}{
+\if{html}{\out{<div class="arguments">}}
+\describe{
+\item{\code{file}}{logging file}
 }
 \if{html}{\out{</div>}}
 }
