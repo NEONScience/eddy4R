@@ -48,6 +48,10 @@ wrap.qfqm.rpt <- function(
   MethQm = c("Pass", "Fail","Na")[1]
 ) {
   
+library(eddy4R.base)
+rlog = Logger.Singleton$new() #class defined in eddy4R.base
+rlog$debug("in function wrap.qfqm.rpt(...)")
+  
 #Check if dp's are provided for quality report, otherwise check all dp's in qfqm portion of HDF5 file
 if(is.null(Dp)){
   # List of objects in the HDF5 file

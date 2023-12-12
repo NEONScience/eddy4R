@@ -58,6 +58,10 @@ wrap.hdf5.wrte.dp01.api <- function(
   TimeAgr = c(1,30)
 ){
 
+  library(eddy4R.base)
+  rlog = Logger.Singleton$new() #class defined in eddy4R.base
+  rlog$debug("in function wrap.hdf5.wrte.dp01.api(...)")
+  
   #Initialize the reporting data list
  rpt <- list()
 
