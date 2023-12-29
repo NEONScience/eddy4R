@@ -37,6 +37,8 @@
 # Original creation
 #   David Durden (2020-03-18)
 # Adding argument to grab quality metric desired for submetrics
+#   David Durden (2023-12-22)
+# Failsafe in case of strange qfFinal values > 1
 ##############################################################################################
 
 
@@ -79,7 +81,7 @@ for (idxDp in Dp) {
     
     rpt <- list()
     #Check if any final quality flags (qfFinl) are tripped
-    if(sum(x$qfFinl, na.rm = TRUE) > 0) {
+    if(sum(x$qfFinl == 1, na.rm = TRUE) > 0) {
       
       #Subset rows where the final quality flag is failed
       rpt <- x[x$qfFinl == 1,]
