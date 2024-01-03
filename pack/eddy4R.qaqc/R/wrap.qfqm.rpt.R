@@ -77,14 +77,22 @@ for (idxDp in Dp) {
   qfqm[[idxDp]] <- listHdf5$listData[grep(pattern = charSlct , x = names(listHdf5$listData))]
   
   #Report all qfqm values for periods where qfFinl = 1
-  rptQfqm[[idxDp]] <- lapply(qfqm[[idxDp]], function(x) {
+  rptQfqm[[idxDp]] <- lapply(names(qfqm[[idxDp]]), function(x) {
+    tmpDf <- qfqm[[idxDp]][[x]]
     
     rpt <- list()
+    
+    #A test for erroneous data in the qfFinl data
+    if(any(tmpDf$qfFinl > 1 | tmpDf$qfFinl < 0 )){
+      msg <- paste('qfFinal for ',x,' has invalid data values. Cannot proceed with these values: ', paste(utils::capture.output(base::table(tmpDf$qfFinl)), collapse = "\n")) 
+      stop(msg)
+    }  
+    
     #Check if any final quality flags (qfFinl) are tripped
-    if(sum(x$qfFinl == 1, na.rm = TRUE) > 0) {
+    if(sum(tmpDf$qfFinl == 1, na.rm = TRUE) > 0) {
       
       #Subset rows where the final quality flag is failed
-      rpt <- x[x$qfFinl == 1,]
+      rpt <- tmpDf[tmpDf$qfFinl == 1,]
       
       #Determine if all qfVarBase variables are present
       qfqmVarBaseSub <- dplyr::intersect(qfqmVarBase, base::names(rpt))
