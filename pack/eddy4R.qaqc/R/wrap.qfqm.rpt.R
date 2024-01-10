@@ -146,6 +146,9 @@ for (idxDp in Dp) {
     return(rpt)
   })
   
+  #Add names for multiple data levels
+  names(rptQfqm[[idxDp]]) <- names(qfqm[[idxDp]])
+  
   # Remove all empty lists
   if(length(rptQfqm[[idxDp]]) == 0){rptQfqm[[idxDp]] <- NULL}
   else
