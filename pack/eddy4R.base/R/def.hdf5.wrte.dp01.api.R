@@ -51,6 +51,7 @@
 #     updating function to check physical locations of reingest sensors exist before pulling from API
 #   Chris Florian (2022-05-09)
 #     updating to use SOM API function due to Noble package bug that replicated data from the highest horver in a missing horver
+ 
 ##############################################################################################
 
 def.hdf5.wrte.dp01.api <- function(
@@ -59,7 +60,8 @@ def.hdf5.wrte.dp01.api <- function(
   SiteLoca,
   DpName,
   LvlTowr,
-  TimeAgr
+  TimeAgr,
+  Tokn = NULL
 ){
 
 ##############################################################################
@@ -136,32 +138,34 @@ for(idxLvl in LvlTowr[[DpName]]){
     wndwAgr <- paste0("0", TimeAgr)
   } 
   
-  data[[idxLvl]] <- try(expr = som::def.neon.api.get.data(site = SiteLoca, idDpMain = DpNum, locHor = locHor, locVer = locVer, wndwAgr = wndwAgr, year = lubridate::year(timeBgn), mnth = lubridate::month(timeBgn), Pack = "expanded"), silent = TRUE) #need to generalize TimeAgr to wndwAgr, Time Agr is 1,30 and wndwAgr needs "001" and "030"
-  
+  data[[idxLvl]] <- try(expr = som::def.neon.api.get.data(site = SiteLoca, idDpMain = DpNum, locHor = locHor, locVer = locVer, wndwAgr = wndwAgr, year = lubridate::year(timeBgn), mnth = lubridate::month(timeBgn), Pack = "expanded", Tokn = Tokn), silent = TRUE) #need to generalize TimeAgr to wndwAgr, Time Agr is 1,30 and wndwAgr needs "001" and "030"
+  if(class(data[[idxLvl]]) == "try-error") rlog$info(paste0("Error in API call for ",DpName," at ",idxLvl,": ",data[[idxLvl]]))
 }
 
 #compile noble-like data format if not all the datasets have a try-error class
 if(!all(sapply(data, class) == "try-error")){
+  
+  #Data for filling if necessary
+  whrData <- which(lapply(data,class) == "data.frame")[1]
+  #get timestamps
+  timeBgnOut <- data[[whrData]][which(grepl(x = names(data[[whrData]]), pattern = "startdatetime", ignore.case = T))]
+  timeEndOut <- data[[whrData]][which(grepl(x = names(data[[whrData]]), pattern = "enddatetime", ignore.case = T))]
+  colNamesOut <- colnames(data[[whrData]])
+  #create dataframe of NaNs to fill with
+  dataFill <- data.frame(matrix(NaN, nrow=nrow(timeBgnOut), ncol=length(colnames(data[[whrData]])[which(!grepl(x = names(data[[whrData]]), pattern = "time", ignore.case = T))])))
+  
   #fill in the try error datasets and paste horver to names
   for(idxLvl in 1:length(data)){
     if(class(data[[idxLvl]]) == "try-error"){
-      #find the first dataset that wasn't a try error
-      whrData <- which(lapply(data,class) == "data.frame")[1]
-      #get timestamps
-      timeBgnOut <- data[[whrData]][which(grepl(x = names(data[[whrData]]), pattern = "startdatetime", ignore.case = T))]
-      timeEndOut <- data[[whrData]][which(grepl(x = names(data[[whrData]]), pattern = "enddatetime", ignore.case = T))]
-      colNamesOut <- colnames(data[[whrData]])
-      #create dataframe of NaNs to fill with
-      dataFill <- data.frame(matrix(NaN, nrow=nrow(timeBgnOut), ncol=length(colnames(data[[whrData]])[which(!grepl(x = names(data[[whrData]]), pattern = "time", ignore.case = T))])))
+      
       #create placeholder data.frame
       data[[idxLvl]] <- data.frame(timeBgnOut, timeEndOut, dataFill)
       #apply names 
       colnames(data[[idxLvl]]) <- colNamesOut
-      #remove data fill 
-      rm(dataFill)
+     
       #fill QFQM
       data[[idxLvl]]$alphaQM <- 0.0
-      data[[idxLvl]]$betaQM <- 1.0
+      data[[idxLvl]]$betaQM <- 100.0
       data[[idxLvl]]$finalQF <- 1L
       data[[idxLvl]]$finalQFSciRvw <- 0L
     }
@@ -171,6 +175,9 @@ if(!all(sapply(data, class) == "try-error")){
     colnames(data[[idxLvl]])[which(!grepl(x = names(data[[idxLvl]]), pattern = "time", ignore.case = T))] <- 
       paste0(colnames(data[[idxLvl]][which(!grepl(x = names(data[[idxLvl]]), pattern = "time", ignore.case = T))]), ".", LocMeas)
   }
+  
+  #remove data fill 
+  rm(dataFill)
   
   #join list of data into wide format
   
@@ -486,7 +493,7 @@ for (idxLvl in names(tmp$ucrt)){
   }
 }
 } #End of else statement
-#############################################################################
+##############################################################################
 #Writing output to existing dp0p HDF5 file
 #############################################################################
 #Create the file, create a class
