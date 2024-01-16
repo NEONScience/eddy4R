@@ -207,10 +207,10 @@ if(all(sapply(data, class) == "try-error")){
   names(LvlMeasOut) <- LvlMeas
 
   #Create the timeBgn vector for aggregation period specified (1, 30 minutes)
-  timeBgnOut <- seq(from = timeBgn + lubridate::seconds(1), to = base::as.POSIXlt(timeEnd) - lubridate::minutes(TimeAgr), by = paste(TimeAgr, "mins", sep = " "))
+  timeBgnOut <- seq(from = timeBgn, to = base::as.POSIXlt(timeEnd) - lubridate::minutes(TimeAgr), by = paste(TimeAgr, "mins", sep = " "))
 
   #Create the timeEnd vector for aggregation period specified (1, 30 minutes)
-  timeEndOut <- seq(from = timeBgn + lubridate::minutes(TimeAgr)+ lubridate::seconds(1), to = base::as.POSIXlt(timeEnd), by = paste(TimeAgr, "mins", sep = " "))
+  timeEndOut <- seq(from = timeBgn + lubridate::minutes(TimeAgr), to = base::as.POSIXlt(timeEnd), by = paste(TimeAgr, "mins", sep = " "))
 
   #Creating a vector of NaN's to fill data.frames
   dataNa <- rep(x = NaN, length = length(timeBgnOut))
