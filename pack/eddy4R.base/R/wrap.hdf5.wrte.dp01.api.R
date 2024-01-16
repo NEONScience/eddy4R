@@ -13,7 +13,8 @@
 #' @param Dp01 Character: A vector of data product names for the data to be gathered.
 #' @param LvlTowr Character: The tower level that the sensor data is being collected in NEON data product convention (HOR_VER).
 #' @param TimeAgr Integer: The time aggregation index in minutes (i.e. 30)
-#'
+#' @param Tokn Optional. Character string. An API token allowing additional permissions/access.
+
 #' @return An updated dp0p HDF5 file with dp01 data, qfqm, and uncertainty written
 #'
 #' @references
