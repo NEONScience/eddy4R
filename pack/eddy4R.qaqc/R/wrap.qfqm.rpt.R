@@ -39,6 +39,8 @@
 # Adding argument to grab quality metric desired for submetrics
 #   David Durden (2023-12-22)
 # Failsafe in case of strange qfFinal values > 1
+#   David Durden (2024-01-15)
+# Adding logging and testing for strange data values
 ##############################################################################################
 
 
@@ -71,6 +73,8 @@ rptQfqm <- list()
 #Loop around data products to create quality report
 for (idxDp in Dp) {
   #idxDp <- "soni"
+  #Starting loop around dps
+  rlog$info(paste0("Quality report processing for DP: ", idxDp))
   #Create character string for regular expression search
   charSlct <- paste0("/qfqm/",idxDp,".*_30m")
   #Select the qfqm data for idxDp
@@ -78,12 +82,19 @@ for (idxDp in Dp) {
   
   #Report all qfqm values for periods where qfFinl = 1
   rptQfqm[[idxDp]] <- lapply(names(qfqm[[idxDp]]), function(x) {
+    #Creae temporary datafram
     tmpDf <- qfqm[[idxDp]][[x]]
-    
+    #Create report output list
     rpt <- list()
     
+    #Debug logging for data instance
+    rlog$info(paste0("Processing ", x))
+    
+    #Add log for NA flags
+    if(any(is.na(tmpDf$qfFinl))){rlog$info(paste0("qfFinl has NA or NaN values for ", x))}
+    
     #A test for erroneous data in the qfFinl data
-    if(any(tmpDf$qfFinl > 1 | tmpDf$qfFinl < 0 )){
+    if(any(tmpDf$qfFinl > 1 | tmpDf$qfFinl < 0 , na.rm = TRUE)){
       msg <- paste('qfFinal for ',x,' has invalid data values. Cannot proceed with these values: ', paste(utils::capture.output(base::table(tmpDf$qfFinl)), collapse = "\n")) 
       stop(msg)
     }  
