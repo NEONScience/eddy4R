@@ -37,6 +37,10 @@
 # Original creation
 #   David Durden (2020-03-18)
 # Adding argument to grab quality metric desired for submetrics
+#   David Durden (2023-12-22)
+# Failsafe in case of strange qfFinal values > 1
+#   David Durden (2024-01-15)
+# Adding logging and testing for strange data values
 ##############################################################################################
 
 
@@ -73,20 +77,37 @@ rptQfqm <- list()
 #Loop around data products to create quality report
 for (idxDp in Dp) {
   #idxDp <- "soni"
+  #Starting loop around dps
+  rlog$info(paste0("Quality report processing for DP: ", idxDp))
   #Create character string for regular expression search
   charSlct <- paste0("/qfqm/",idxDp,".*_30m")
   #Select the qfqm data for idxDp
   qfqm[[idxDp]] <- listHdf5$listData[grep(pattern = charSlct , x = names(listHdf5$listData))]
   
   #Report all qfqm values for periods where qfFinl = 1
-  rptQfqm[[idxDp]] <- lapply(qfqm[[idxDp]], function(x) {
-    
+  rptQfqm[[idxDp]] <- lapply(names(qfqm[[idxDp]]), function(x) {
+    #Creae temporary datafram
+    tmpDf <- qfqm[[idxDp]][[x]]
+    #Create report output list
     rpt <- list()
+    
+    #Debug logging for data instance
+    rlog$info(paste0("Processing ", x))
+    
+    #Add log for NA flags
+    if(any(is.na(tmpDf$qfFinl))){rlog$info(paste0("qfFinl has NA or NaN values for ", x))}
+    
+    #A test for erroneous data in the qfFinl data
+    if(any(tmpDf$qfFinl > 1 | tmpDf$qfFinl < 0 , na.rm = TRUE)){
+      msg <- paste('qfFinal for ',x,' has invalid data values. Cannot proceed with these values: ', paste(utils::capture.output(base::table(tmpDf$qfFinl)), collapse = "\n")) 
+      stop(msg)
+    }  
+    
     #Check if any final quality flags (qfFinl) are tripped
-    if(sum(x$qfFinl, na.rm = TRUE) > 0) {
+    if(sum(tmpDf$qfFinl == 1, na.rm = TRUE) > 0) {
       
       #Subset rows where the final quality flag is failed
-      rpt <- x[x$qfFinl == 1,]
+      rpt <- tmpDf[tmpDf$qfFinl == 1,]
       
       #Determine if all qfVarBase variables are present
       qfqmVarBaseSub <- dplyr::intersect(qfqmVarBase, base::names(rpt))
@@ -139,6 +160,9 @@ for (idxDp in Dp) {
     #Return reported values
     return(rpt)
   })
+  
+  #Add names for multiple data levels
+  names(rptQfqm[[idxDp]]) <- names(qfqm[[idxDp]])
   
   # Remove all empty lists
   if(length(rptQfqm[[idxDp]]) == 0){rptQfqm[[idxDp]] <- NULL}
