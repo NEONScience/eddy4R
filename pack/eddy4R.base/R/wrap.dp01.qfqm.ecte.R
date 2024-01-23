@@ -62,6 +62,10 @@ wrap.dp01.qfqm.ecte <- function(
   RptExpd = FALSE
 ) {
   
+  library(eddy4R.base)
+  rlog = Logger.Singleton$new() #class defined in eddy4R.base
+  rlog$debug("in function wrap.dp01.qfqm.ecte(...)")
+  
   # stop if data is a list but idx is not specified  
   if(!is.list(qfqm)|is.null(idx)) stop("wrap.dp01.qfqm.ecte: qfqm is a list please specify idx.")
   

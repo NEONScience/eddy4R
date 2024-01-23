@@ -71,6 +71,10 @@ def.spec.freq.cut <- function(
   FilePlot = NULL
 ) {
   
+  library(eddy4R.base)
+  rlog = Logger.Singleton$new() #class defined in eddy4R.base
+  rlog$debug("in function wrap.spec.freq.cut.R")
+  
   #correct measured coefficients for spectral attenuation
   #flaw: corrects coefficients at all frequencies by the same amount
   depe <- depe / base::sum(depe, na.rm=TRUE) / CoefCor

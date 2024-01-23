@@ -71,6 +71,10 @@ wrap.dp01.qfqm <- function (
   NameQfExcl = base::as.list(base::character(length=base::length(data))) # A list of length equal to number of variables, each itself a list of strings naming the flags (matching a subset of setQf) for which to exclude the flagged indices of each variable from the L1 average. 
 ) {
   
+  library(eddy4R.base)
+  rlog = Logger.Singleton$new() #class defined in eddy4R.base
+  rlog$debug("in function wrap.dp01.qfqm(...)")
+  
   
 # Error Checking ----------------------------------------------------------
 

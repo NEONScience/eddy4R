@@ -72,6 +72,10 @@ wrap.agr.vari.seSq <- function(
   
 ){
   
+  library(eddy4R.base)
+  rlog = Logger.Singleton$new() #class defined in eddy4R.base
+  rlog$debug("in function wrap.agr.vari.seSq(...)")
+  
   rpt <- list()
   
   ################  Prepare data  #####################

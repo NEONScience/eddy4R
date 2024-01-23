@@ -56,7 +56,11 @@ wrap.derv.prd.day <- function(
   AngZaxsSoniInst
 ) {
 
-# time
+  library(eddy4R.base)
+  rlog = Logger.Singleton$new() #class defined in eddy4R.base
+  rlog$debug("in function wrap.derv.prd.day(...)")
+  
+  # time
 
   # create temporary variable holding POSIXlt object
   tmp <- as.POSIXlt(inpList$time$UTC[])
