@@ -39,13 +39,6 @@
 #
 # 
 ###############################################################################################
-# Load necessary libraries
-#library(ggplot2)
-#library(ggmap)
-#library(raster)
-#library(leaflet)
-#library(mapview)
-
 # Define the function with improved interactive HTML handling
 plot.flux.spatial <- function(input_path, output_path, colormap = 'viridis', opacity = 0.5, basemap_style = 'OpenStreetMap', interactive = FALSE) {
   # Load necessary libraries
