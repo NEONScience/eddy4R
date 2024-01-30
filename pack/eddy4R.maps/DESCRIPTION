@@ -1,0 +1,25 @@
+Package: eddy4R.maps
+Title: Eddy-covariance calculation for R: Flux Mapper™ source codes (basic)
+Version: 0.0.1
+Authors@R: c( person(given = "Stefan",
+              family = "Metzger",
+              role = c("aut", "cre"),
+              email = "smetzger@atmofacts.com",
+              comment = c(ORCID = "0000-0002-4201-852X")),
+              person(given = "Samuel",
+              family = "Bower",
+              role = c("aut"),
+              email = "sbower@atmofacts.com"),
+              person(given = "David",
+              family = "Durden",
+              role = c("aut"),
+              email = "ddurden@battelleecology.org")
+           )
+Description: Basic commonalities and tools for working with Flux Maps™ in R.
+Depends:
+    R (>= 4.0.5)
+License: GNU AFFERO GENERAL PUBLIC LICENSE Version 3, 19 November 2007
+Encoding: UTF-8
+LazyData: true
+Roxygen: list(markdown = TRUE)
+RoxygenNote: 7.1.1
