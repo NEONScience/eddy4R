@@ -40,7 +40,7 @@
 # 
 ###############################################################################################
 # Define the function with improved interactive HTML handling
-plot.flux.spatial <- function(input_path, output_path, colormap = 'viridis', opacity = 0.5, basemap_style = 'OpenStreetMap', interactive = FALSE) {
+def.plot.flux.spatial <- function(input_path, output_path, colormap = 'viridis', opacity = 0.5, basemap_style = 'OpenStreetMap', interactive = FALSE) {
   # Load necessary libraries
   library(raster)
   library(leaflet)
