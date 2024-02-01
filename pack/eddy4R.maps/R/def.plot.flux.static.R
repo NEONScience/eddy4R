@@ -1,5 +1,3 @@
-
-
 def.plot.flux.static <- function(inputPath, basemapStyle = 'osm', nodataValue = 0, outputPath = 'output') {
 
 # Change java system parameters to allow for headless operation (to disable under-the-hood java GUI which will not work in this Docker container) . 
@@ -32,13 +30,15 @@ def.plot.flux.static <- function(inputPath, basemapStyle = 'osm', nodataValue = 
       fileName <- basename(rasterFile)
       fileOutputPath <- paste0(outputPath, "/", sub("\\.tif$", ".png", fileName))
       processRaster(rasterFile, basemapStyle, nodataValue, fileOutputPath)}
-    else if file.exists(inputPath) && grepl("\\.tif$", inputPath)) {
-      processRasterStatic(inputPath, basemapStyle, nodataValue, paste0(outputPath, ".png")){
-      processRaster(rasterFile, basemapStyle, nodataValue, fileOutputPath)
-      }
+  else if (file.exists(inputPath) && grepl("\\.tif$", inputPath)) {
+    processRaster(inputPath, basemapStyle, nodataValue, paste0(outputPath, ".png"))
     }
   }
+  else {
+    stop("Input path is neither a valid raster file nor a directory containing raster files.")
+  }
 }
+
 # set nodata value.
   
 # create basemap layer with OpenStreetMap and tmaptools.
