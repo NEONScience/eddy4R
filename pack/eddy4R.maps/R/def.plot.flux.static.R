@@ -4,14 +4,36 @@ def.plot.flux.static <- function(inputPath, basemapStyle = 'osm', nodataValue = 
 
 # Change java system parameters to allow for headless operation (to disable under-the-hood java GUI which will not work in this Docker container) . 
   options(java.parameters = "-Djava.awt.headless=true")
+
+# Plotting function with tmap
   
-# read in single raster file.
+  processRasterStatic <- function(rasterFile, basemapStyle, nodataValue, outputPath) {
+    rasterLayer <- raster::raster(rasterFile)
+    rasterLayer[rasterLayer == nodataValue] <- NA
+    
+    osm_map <- tmaptools::read_osm(rasterLayer, type = basemapStyle)
+    map <- tm_shape(osm_map) +
+      tm_rgb() +
+      tm_shape(rasterLayer) +
+      tm_raster(style = "equal", alpha = 0.4) +
+      tm_layout(legend.outside = FALSE)
+    
+    tmap_save(map, file = outputPath)
+  }
   
+# Read in a raster file or folder of raster files
+
   if (dir.exists(inputPath)) {
     rasterFiles <- list.files(inputPath, pattern = "\\.tif$", full.names = TRUE)
     if (length(rasterFiles) == 0) {
       stop("No raster files found in the directory.")
     }
+    for (rasterFile in rasterFiles) {
+      fileName <- basename(rasterFile)
+      fileOutputPath <- paste0(outputPath, "/", sub("\\.tif$", ".png", fileName))}
+    else{
+      rasterFile <- raster::raster(inputPath)
+    } 
     
 # set nodata value.
   
