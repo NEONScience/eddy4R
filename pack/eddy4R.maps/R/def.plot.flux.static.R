@@ -7,7 +7,7 @@ def.plot.flux.static <- function(inputPath, basemapStyle = 'osm', nodataValue = 
 
 # Plotting function with tmap
   
-  processRasterStatic <- function(rasterFile, basemapStyle, nodataValue, outputPath) {
+  processRaster <- function(rasterFile, basemapStyle, nodataValue, outputPath) {
     rasterLayer <- raster::raster(rasterFile)
     rasterLayer[rasterLayer == nodataValue] <- NA
     
@@ -30,11 +30,15 @@ def.plot.flux.static <- function(inputPath, basemapStyle = 'osm', nodataValue = 
     }
     for (rasterFile in rasterFiles) {
       fileName <- basename(rasterFile)
-      fileOutputPath <- paste0(outputPath, "/", sub("\\.tif$", ".png", fileName))}
-    else{
-      rasterFile <- raster::raster(inputPath)
-    } 
-    
+      fileOutputPath <- paste0(outputPath, "/", sub("\\.tif$", ".png", fileName))
+      processRaster(rasterFile, basemapStyle, nodataValue, fileOutputPath)}
+    else if file.exists(inputPath) && grepl("\\.tif$", inputPath)) {
+      processRasterStatic(inputPath, basemapStyle, nodataValue, paste0(outputPath, ".png")){
+      processRaster(rasterFile, basemapStyle, nodataValue, fileOutputPath)
+      }
+    }
+  }
+}
 # set nodata value.
   
 # create basemap layer with OpenStreetMap and tmaptools.
@@ -48,5 +52,5 @@ def.plot.flux.static <- function(inputPath, basemapStyle = 'osm', nodataValue = 
 # Plot iteratively 
   
 # Save
-}}
+
 
