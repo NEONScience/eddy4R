@@ -1,0 +1,1 @@
+def.plot.flux.interactive
