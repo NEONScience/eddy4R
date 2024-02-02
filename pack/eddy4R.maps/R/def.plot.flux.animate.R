@@ -28,5 +28,28 @@ def.plot.flux.animate <- function(
   # Initialize a list to store file paths of individual map images
   temp_files <- vector("character", length(raster_files))
   
+  # Loop through each raster file to create a static map
+  for (i in seq_along(raster_files)) {
+    flux <- raster::raster(raster_files[i])
+    flux[flux == nodata_value] <- NA  # Apply nodata value
+    
+    osm_map <- tmaptools::read_osm(flux, type = basemap_style)
+    
+    map <- tm_shape(osm_map) +
+      tm_rgb() +
+      tm_shape(flux) +
+      tm_raster(style = palette_style, alpha = alpha, palette = colormap) +
+      tm_layout(legend.outside = legend)
+    
+    # Generate a temporary file path for the static map image
+    temp_file <- file.path(temp_dir, paste0("map_", i, ".png"))
+    temp_files[i] <- temp_file  # Store the file path
+    
+    # Save the map as an image
+    tmap_save(map, filename = temp_file, width = 800, height = 600, units = "px")
+  }
+  
+  
+  
   
 }
