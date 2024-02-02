@@ -1,11 +1,21 @@
 
 
 def.plot.flux.interactive <- function(
-  inputPath,
-  outputPath,
+  input_path,
+  output_path,
   nodata_value = 0,
-  basemap_Style = 'bing',
   alpha = 0.5,
-  colormap = 'YlOrRd',
-  style = 'equal',
-  color_n = 7) {
+  colormap = 'YlOrRd'
+  ) {
+  
+  # List all TIFF files in the folder
+  rasterFiles <- list.files(input_path, pattern = "\\.tif$", full.names = TRUE)
+  
+  
+  
+  
+  
+  
+  
+  
+}
