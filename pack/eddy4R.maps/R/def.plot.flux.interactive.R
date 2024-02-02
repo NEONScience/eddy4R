@@ -1,3 +1,39 @@
+##############################################################################################
+#' @title Definition function: Plot fluxes on an interactive map.
+
+#' @author
+#' Sam Bower \email{sbower@atmofacts.com}
+
+#' @description Function definition. This function creates an interactive flux map visualization that can be used in R viewer or in a web browser.
+#' 
+#' @param input_path A geotiff file or folder of geotiff files to plot on the basemap.
+#' @param nodata_value Nodata value from flux data
+#' @param alpha Raster opacity
+#' @param colormap palette_explorer() for palette options
+
+#' @return 
+#' 
+#' 
+
+#' @references
+#' License: GNU AFFERO GENERAL PUBLIC LICENSE Version 3, 19 November 2007
+
+#' @keywords visualization, flux mapping
+#' 
+
+
+#' @seealso Currently none.
+
+#' @export
+
+# changelog and author contributions / copyrights
+#   Sam Bower (2023-02-02)
+#     original creation
+#
+# 
+###############################################################################################
+
+
 def.plot.flux.interactive <- function(
   input_path,
   nodata_value = 0,
@@ -6,6 +42,8 @@ def.plot.flux.interactive <- function(
   save_path = NULL
 ) {
   
+  library(leaflet)
+  library(raster)
   
   # Determine if input_path is a directory or a single file
   if (dir.exists(input_path)) {
@@ -47,7 +85,7 @@ def.plot.flux.interactive <- function(
   map <- map %>% addLayersControl(overlayGroups = rasterGroups, baseGroups = c("Street", "Imagery", "Dark"))
   
   if (!is.null(save_path)) {
-    saveWidget(map, file = save_path, selfcontained = TRUE)
+    htmlwidgets::saveWidget(map, file = save_path, selfcontained = TRUE)
   } else {
     # Print the map to display it interactively
     print(map)
