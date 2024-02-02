@@ -49,7 +49,12 @@ def.plot.flux.animate <- function(
     tmap_save(map, filename = temp_file, width = 800, height = 600, units = "px")
   }
   
+  # Use gifski to create the GIF from the PNG files
+  gifski(png_files = temp_files, gif_file = output_file, width = 800, height = 600, delay = 1, progress = TRUE)
   
+  # After creating the GIF, clean up the temporary directory and its contents
+  unlink(temp_dir, recursive = TRUE)
   
+  cat("Animation created at:", output_file, "\n")
   
 }
