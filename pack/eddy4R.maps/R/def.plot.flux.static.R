@@ -40,7 +40,7 @@ def.plot.flux.static <- function(
   inputPath,
   outputPath,
   nodata_value = 0,
-  basemap_Style = 'bing',
+  basemap_style = 'bing',
   alpha = 0.5,
   colormap = 'YlOrRd',
   style = 'equal',
@@ -54,7 +54,7 @@ def.plot.flux.static <- function(
     
     #read in raster with raster library
     rasterLayer <- raster::raster(rasterFile)
-    rasterLayer[rasterLayer == nodataValue] <- NA
+    rasterLayer[rasterLayer == nodata_value] <- NA
   
     #grab baselayer from OpenStreetMap  
     osm_map <- tmaptools::read_osm(rasterLayer, type = basemap_style)
