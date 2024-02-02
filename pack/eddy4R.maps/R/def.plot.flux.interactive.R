@@ -27,6 +27,9 @@ def.plot.flux.interactive <- function(
     return(map)
   }
   
+  # Dynamically create a list of groups for the layers control based on the raster files
+  rasterGroups <- base::basename(rasterFiles)
+  
   
   
   
