@@ -1,4 +1,12 @@
-def.plot.flux.static <- function(inputPath, basemapStyle = 'osm', nodataValue = 0, outputPath = 'output') {
+def.plot.flux.static <- function(
+  inputPath,
+  outputPath = 'output',
+  nodataValue = 0,
+  basemapStyle = 'bing',
+  alpha = 0.5,
+  colormap = 'YlOrRd',
+  style = 'equal',
+  color_n = 7){ #palette_explorer()) {
   
   # Change java system parameters to allow for headless operation (to disable under-the-hood java GUI which will not work in this Docker container).
   options(java.parameters = "-Djava.awt.headless=true")
@@ -12,7 +20,7 @@ def.plot.flux.static <- function(inputPath, basemapStyle = 'osm', nodataValue = 
     map <- tm_shape(osm_map) +
       tm_rgb() +
       tm_shape(rasterLayer) +
-      tm_raster(style = "equal", alpha = 0.4) +
+      tm_raster(style = style, alpha = alpha, palette=get_brewer_pal(palette = colormap, n = color_n, plot=FALSE)) +
       tm_layout(legend.outside = FALSE)
     
     tmap_save(map, file = outputPath)
