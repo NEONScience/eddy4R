@@ -8,7 +8,7 @@
 #' 
 #' @param inputPath A spatial file or folder of spatial files to plot on the basemap.
 #' @param outputPath A string for the folder location to save output maps.
-#' @param nodata_value If FALSE - plots the flux(es) onto a static basemap. If TRUE, plots the flux(es) onto an interactive basemap.
+#' @param nodata_value The nodata value specified from the flux data.
 #' @param basemap_style Basemap styles in OpenStreetMap (more in openmap())
 #' @param alpha Raster opacity
 #' @param colormap palette_explorer() for palette options
