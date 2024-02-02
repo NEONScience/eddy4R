@@ -1,3 +1,55 @@
+##############################################################################################
+#' @title Definition function: Plot fluxes on an animated gif.
+
+#' @author
+#' Sam Bower \email{sbower@atmofacts.com}
+
+#' @description Function definition. This function creates an animated flux map visualization for temporal flux map data contained in a folder.
+#' 
+#' @param input_folder A folder of geotiff files.
+#' @param output_file The path of the output file (.gif)
+#' @param nodata_value Nodata value from flux data
+#' @param alpha Raster opacity
+#' @param colormap palette_explorer() for palette options
+#' @param palette_style quantile, equal, cont, cat
+#' @param legend Boolean. If legend plots on the map
+#' @param delay The delay time in the animation.
+#' 
+
+#' @return 
+#' 
+#' 
+
+#' @references
+#' License: GNU AFFERO GENERAL PUBLIC LICENSE Version 3, 19 November 2007
+
+#' @keywords visualization, flux mapping, animation
+#' 
+#' @examples 
+#' 
+#' def.plot.flux.animation(
+#' input_folder = "/path/to/input/folder",  # Replace with your input folder path
+#' output_file = "/path/to/output/animation.gif",  # Replace with your desired output GIF path
+#' nodata_value = 0,
+#' colormap = 'YlOrRd',
+#' basemap_style = 'osm',
+#' palette_style = 'equal',
+#' alpha = 0.4,
+#' legend = TRUE
+#' )
+
+
+#' @seealso Currently none.
+
+#' @export
+
+# changelog and author contributions / copyrights
+#   Sam Bower (2023-02-02)
+#     original creation
+#
+# 
+###############################################################################################
+
 def.plot.flux.animate <- function(
   input_folder,
   output_file,
@@ -6,7 +58,8 @@ def.plot.flux.animate <- function(
   basemap_style = 'osm',
   palette_style = 'equal',
   alpha = 0.4,
-  legend = TRUE
+  legend = TRUE,
+  delay = 1
   ) {
   
   # Load necessary libraries
@@ -50,7 +103,7 @@ def.plot.flux.animate <- function(
   }
   
   # Use gifski to create the GIF from the PNG files
-  gifski(png_files = temp_files, gif_file = output_file, width = 800, height = 600, delay = 1, progress = TRUE)
+  gifski(png_files = temp_files, gif_file = output_file, width = 800, height = 600, delay = delay, progress = TRUE)
   
   # After creating the GIF, clean up the temporary directory and its contents
   unlink(temp_dir, recursive = TRUE)
