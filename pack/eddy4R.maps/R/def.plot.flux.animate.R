@@ -60,7 +60,7 @@ def.plot.flux.animate <- function(
   alpha = 0.4,
   legend = TRUE,
   delay = 1
-  ) {
+) {
   
   # Load necessary libraries
   library(raster)

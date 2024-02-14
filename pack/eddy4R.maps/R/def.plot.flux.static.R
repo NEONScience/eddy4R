@@ -39,55 +39,72 @@
 def.plot.flux.static <- function(
   inputPath,
   outputPath,
-  nodata_value = 0,
   basemap_style = 'bing',
   alpha = 0.5,
+  nodata_value = 0,
   colormap = 'YlOrRd',
   style = 'equal',
-  color_n = 7) { #palette_explorer()) {
+  color_n = 7,
+  use_basemap = FALSE, 
+  background_color = "white", 
+  units = "Units",
+  legend_bg_alpha = 1
+) {
   
-  # Change java system parameters to allow for headless operation (to disable under-the-hood java GUI which will not work in this Docker container).
   options(java.parameters = "-Djava.awt.headless=true")
+  library(tmap)
+  library(tmaptools)
+  library(OpenStreetMap)
+  library(RColorBrewer)
   
-  # Function to load and process a single raster file and plot it with tmap
   plotRaster <- function(rasterFile, outputPath) {
     
-    #read in raster with raster library
-    rasterLayer <- raster::raster(rasterFile)
-    rasterLayer[rasterLayer == nodata_value] <- NA
-  
-    #grab baselayer from OpenStreetMap  
-    osm_map <- tmaptools::read_osm(rasterLayer, type = basemap_style)
+    rasterFile[rasterFile == nodata_value] <- NA
+    map <- NULL
     
-    #create tmap object with raster superimposed on basemap 
-    map <- tm_shape(osm_map) +
-      tm_rgb() +
-      tm_shape(rasterLayer) +
-      tm_raster(style = style, alpha = alpha, palette = get_brewer_pal(palette = colormap, n = color_n, plot = FALSE)) +
-      tm_layout(legend.outside = FALSE)
+    if (use_basemap && basemap_style != 'none') {
+      osm_map <- tmaptools::read_osm(rasterFile, type = basemap_style)
+      map <- tm_shape(osm_map) +
+        tm_rgb() +
+        tm_shape(rasterFile) +
+        tm_raster(style = style, alpha = alpha, palette = brewer.pal(n = color_n, name = colormap), title = units) +
+        tm_layout(
+          legend.bg.alpha = legend_bg_alpha,
+          legend.bg.color = 'white',
+          legend.outside = FALSE
+        )
+    } else {
+      map <- tm_shape(rasterFile) +
+        tm_raster(style = style, alpha = alpha, palette = brewer.pal(n = color_n, name = colormap), title = units) +
+        tm_layout(
+          bg.color = background_color,
+          legend.bg.alpha = legend_bg_alpha,
+          legend.bg.color = 'white',
+          frame = FALSE
+        )
+    }
     
-    #save tmap object
     tmap_save(map, file = outputPath)
   }
   
-  # Check if inputPath is a directory and make a list of the files.
-  if (dir.exists(inputPath)) {
+  if (inherits(inputPath, "RasterLayer") || inherits(inputPath, "RasterStack") || inherits(inputPath, "RasterBrick")) {
+    rasterLayer <- inputPath
+    fileOutputPath <- paste0(outputPath) 
+    plotRaster(rasterLayer, fileOutputPath)
+  } else if (dir.exists(inputPath)) {
     rasterFiles <- list.files(inputPath, pattern = "\\.tif$", full.names = TRUE)
     if (length(rasterFiles) == 0) {
       stop("No raster files found in the directory.")
     }
-    #iteratively create and save the maps
     for (rasterFile in rasterFiles) {
       fileName <- basename(rasterFile)
       fileOutputPath <- paste0(outputPath, "/", sub("\\.tif$", ".png", fileName))
       plotRaster(rasterFile, fileOutputPath)
     }
-    #Save a single file if the input is a single tiff
   } else if (file.exists(inputPath) && grepl("\\.tif$", inputPath)) {
-    # InputPath is a single file
-    fileOutputPath <- paste0(outputPath, "/", tools::file_path_sans_ext(base::basename(inputPath)), ".png")
+    fileOutputPath <- paste0(outputPath, "/", tools::file_path_sans_ext(basename(inputPath)), ".png")
     plotRaster(inputPath, fileOutputPath)
   } else {
-    stop("Input path is neither a valid raster file nor a directory containing raster files.")
+    stop("Input path is neither a valid raster object, file, nor a directory containing raster files.")
   }
 }

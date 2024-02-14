@@ -7,12 +7,16 @@
 def.plot.flux.static(
   inputPath,
   outputPath,
-  nodata_value = 0,
   basemap_style = "bing",
   alpha = 0.5,
+  nodata_value = 0,
   colormap = "YlOrRd",
   style = "equal",
-  color_n = 7
+  color_n = 7,
+  use_basemap = FALSE,
+  background_color = "white",
+  units = "Units",
+  legend_bg_alpha = 1
 )
 }
 \arguments{
@@ -20,11 +24,11 @@ def.plot.flux.static(
 
 \item{outputPath}{A string for the folder location to save output maps.}
 
-\item{nodata_value}{The nodata value specified from the flux data.}
-
 \item{basemap_style}{Basemap styles in OpenStreetMap (more in openmap())}
 
 \item{alpha}{Raster opacity}
+
+\item{nodata_value}{The nodata value specified from the flux data.}
 
 \item{colormap}{palette_explorer() for palette options}
 

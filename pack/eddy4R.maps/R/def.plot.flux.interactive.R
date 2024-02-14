@@ -44,18 +44,7 @@ def.plot.flux.interactive <- function(
   
   library(leaflet)
   library(raster)
-  
-  # Determine if input_path is a directory or a single file
-  if (dir.exists(input_path)) {
-    rasterFiles <- list.files(input_path, pattern = "\\.tif$", full.names = TRUE)
-    if (length(rasterFiles) == 0) {  # Check if no TIFF files found
-      stop("No TIFF files found in the directory.")
-    }
-  } else if (file.exists(input_path) && grepl("\\.tif$", input_path)) {
-    rasterFiles <- list(input_path)  # Ensure rasterFiles is a list
-  } else {
-    stop("Input path is neither a valid folder nor a TIFF file.")
-  }
+  library(RColorBrewer)
   
   # Initialize Leaflet map
   map <- leaflet() %>%
@@ -63,23 +52,54 @@ def.plot.flux.interactive <- function(
     addProviderTiles("Esri.WorldImagery", group = "Imagery") %>%
     addProviderTiles("CartoDB.DarkMatter", group = "Dark")
   
-  # Function to process and add each raster file to the map
-  processAndAddRaster <- function(filePath, map) {
-    flux <- raster(filePath)
+  # Function to process and add a raster object to the map
+  processAndAddRaster <- function(flux, map, layerName) {
     # Replace nodata_value with NA
     flux[flux == nodata_value] <- NA
-    # Add raster to the map using specified colormap and alpha
-    map <- map %>% addRasterImage(flux, group = base::basename(filePath), colors = colormap, opacity = alpha, layerId = base::basename(filePath))
+    
+    # Extract values from the raster while maintaining NA for nodata
+    rasterValues <- getValues(flux)  # This will return a vector of all raster values
+    validValues <- rasterValues[!is.na(rasterValues)]  # Filter out NA values
+    
+    if (length(validValues) == 0) {
+      validValues <- c(0)  # Fallback to avoid issues with empty data
+    }
+    
+    # Define the color palette function
+    colorPal <- colorNumeric(palette = colormap, domain = range(validValues, na.rm = TRUE), na.color = "transparent")
+    
+    # Add raster to the map with the correct color mapping
+    map <- map %>% addRasterImage(flux, group = layerName, colors = colorPal, opacity = alpha, layerId = layerName)
     return(map)
   }
   
-  # Apply the function to each raster file
-  for(filePath in rasterFiles) {
-    map <- processAndAddRaster(filePath, map)
+  # Check if input_path is a raster object
+  if (inherits(input_path, "RasterLayer") || inherits(input_path, "RasterStack") || inherits(input_path, "RasterBrick")) {
+    layerName <- "CustomRasterLayer" # Modify as needed or generate dynamically
+    map <- processAndAddRaster(input_path, map, layerName)
+    rasterGroups <- c(layerName)
+  } else {
+    # Determine if input_path is a directory or a single file
+    if (dir.exists(input_path)) {
+      rasterFiles <- list.files(input_path, pattern = "\\.tif$", full.names = TRUE)
+      if (length(rasterFiles) == 0) {  # Check if no TIFF files found
+        stop("No TIFF files found in the directory.")
+      }
+    } else if (file.exists(input_path) && grepl("\\.tif$", input_path)) {
+      rasterFiles <- list(input_path)  # Ensure rasterFiles is a list
+    } else {
+      stop("Input path is neither a valid raster object, folder, nor a TIFF file.")
+    }
+    
+    # Apply the function to each raster file
+    rasterGroups <- NULL
+    for(filePath in rasterFiles) {
+      layerName <- base::basename(filePath)
+      flux <- raster(filePath)
+      map <- processAndAddRaster(flux, map, layerName)
+      rasterGroups <- c(rasterGroups, layerName)
+    }
   }
-  
-  # Dynamically create a list of groups for the layers control based on the raster files
-  rasterGroups <- base::basename(rasterFiles)
   
   # Add layers control to the map
   map <- map %>% addLayersControl(overlayGroups = rasterGroups, baseGroups = c("Street", "Imagery", "Dark"))
