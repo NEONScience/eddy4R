@@ -80,7 +80,8 @@ def.stna <- function(
       data = data,
       AlgBase = "mean",
       SlctPot = corTempPot,
-      PresPot = presTempPot
+      PresPot = presTempPot,
+      ListGasSclr
     )
   
   if(MethStna %in% c(1, 3)) { 
@@ -92,7 +93,8 @@ def.stna <- function(
       data = data,
       AlgBase = "trnd",
       SlctPot = corTempPot,
-      PresPot = presTempPot
+      PresPot = presTempPot,
+      ListGasSclr
     )
     
     #deviation [%]
@@ -126,7 +128,8 @@ def.stna <- function(
                                          refe = data),
         AlgBase = "mean",
         SlctPot = corTempPot,
-        PresPot = presTempPot
+        PresPot = presTempPot,
+        ListGasSclr
       )$mean[,whrVar]
     )
     
