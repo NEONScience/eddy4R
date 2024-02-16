@@ -125,6 +125,10 @@ wrap.irga.vali <- function(
   #library(deming)
   #library(zoo)
 
+  library(eddy4R.base)
+  rlog = Logger.Singleton$new() #class defined in eddy4R.base
+  rlog$debug("in function wrap.irga.vali(...)")
+  
   #dates that will be used in determination of slope and offset
   Date <- c(base::as.Date(DateProc) - 1, base::as.Date(DateProc), base::as.Date(DateProc) + 1)
   Date <- as.character(Date)

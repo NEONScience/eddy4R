@@ -55,6 +55,10 @@ wrap.qf.rmv.data <- function(
   Vrbs = FALSE, 
   MethMeas = c("ecte",  "ecse")[1]){
   
+  library(eddy4R.base)
+  rlog = Logger.Singleton$new() #class defined in eddy4R.base
+  rlog$debug("in function wrap.qf.rmv.data(...)")
+  
   #Initialize reporting list
   rpt <- inpList
   outList <- list()

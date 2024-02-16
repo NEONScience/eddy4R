@@ -64,6 +64,10 @@ wrap.flux <- function(
 )
 {
 
+  library(eddy4R.base)
+  rlog = Logger.Singleton$new() #class defined in eddy4R.base
+  rlog$debug("in function wrap.flux(...)")
+  
   
   ############################################################
   # THERMODYNAMICS: MOISTURE, DENSITIES AND TEMPERATURES

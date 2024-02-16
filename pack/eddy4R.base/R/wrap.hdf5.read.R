@@ -83,7 +83,11 @@ wrap.hdf5.read <- function(
   DespLoca,
   MethMeas = c("ecte", "ecse")[1]
 ) {
-
+  
+  library(eddy4R.base)
+  rlog = Logger.Singleton$new() #class defined in eddy4R.base
+  rlog$debug("in function wrap.hdf5.read(...)")
+  
 # create regular time dimension
 # POSIX is rounding down, add time increment after last significant digit
 time <- seq.POSIXt(
