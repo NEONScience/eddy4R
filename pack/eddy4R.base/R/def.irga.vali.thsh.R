@@ -39,6 +39,12 @@
 #     updating terms to replace bnch with eval, adding additional coef outputs and adding offset criteria
 #   Chris Florian (2021-02-15)
 #     updating logic for failsafe to prevent lm() error due to missing values
+#   Adam Young (2023-08-18)
+#     - Removed hardcoding when indexing measured and reference data values to avoid unintentionally selecting wrong
+#       reference values. 
+#     - Altered coding for logic statement so that if there are at least 
+#       two complete set of observations (n >= 2) in data matrix used for linear model. 
+#     - Simplified correction calculations.
 ##############################################################################################
 
 def.irga.vali.thsh <- function(
@@ -51,25 +57,28 @@ def.irga.vali.thsh <- function(
   
   #get reference gas values for the processing date (in mol mol-1)
   
-  zeroRefe <- data$rtioMoleDryCo2Vali$rtioMoleDryCo2Refe[2]
-  lowRefe <- data$rtioMoleDryCo2Vali$rtioMoleDryCo2Refe[3]
-  midRefe <- data$rtioMoleDryCo2Vali$rtioMoleDryCo2Refe[4]
-  highRefe <- data$rtioMoleDryCo2Vali$rtioMoleDryCo2Refe[5]
+  zeroRefe <- data$rtioMoleDryCo2Vali$rtioMoleDryCo2Refe[data$rtioMoleDryCo2Vali$gasType == "qfIrgaTurbValiGas02"]
+  lowRefe  <- data$rtioMoleDryCo2Vali$rtioMoleDryCo2Refe[data$rtioMoleDryCo2Vali$gasType == "qfIrgaTurbValiGas03"]
+  midRefe  <- data$rtioMoleDryCo2Vali$rtioMoleDryCo2Refe[data$rtioMoleDryCo2Vali$gasType == "qfIrgaTurbValiGas04"]
+  highRefe <- data$rtioMoleDryCo2Vali$rtioMoleDryCo2Refe[data$rtioMoleDryCo2Vali$gasType == "qfIrgaTurbValiGas05"]
   
   refeVals <- c(zeroRefe, lowRefe, midRefe, highRefe)
   
   #get the mean measured values of the reference gas for the processing date
-  zeroMeas <- data$rtioMoleDryCo2Vali$mean[2]
-  lowMeas <- data$rtioMoleDryCo2Vali$mean[3]
-  midMeas <- data$rtioMoleDryCo2Vali$mean[4]
-  highMeas <- data$rtioMoleDryCo2Vali$mean[5]
+  zeroMeas <- data$rtioMoleDryCo2Vali$mean[data$rtioMoleDryCo2Vali$gasType == "qfIrgaTurbValiGas02"]
+  lowMeas <- data$rtioMoleDryCo2Vali$mean[data$rtioMoleDryCo2Vali$gasType == "qfIrgaTurbValiGas03"]
+  midMeas <- data$rtioMoleDryCo2Vali$mean[data$rtioMoleDryCo2Vali$gasType == "qfIrgaTurbValiGas04"]
+  highMeas <- data$rtioMoleDryCo2Vali$mean[data$rtioMoleDryCo2Vali$gasType == "qfIrgaTurbValiGas05"]
   
   #correct measured LI7200 validation gas data based on calibration coefficients 
   
-  meanZeroCor <- zeroMeas*data$rtioMoleDryCo2Mlf$coef[2] + data$rtioMoleDryCo2Mlf$coef[1]
-  meanLowCor <- lowMeas*data$rtioMoleDryCo2Mlf$coef[2] + data$rtioMoleDryCo2Mlf$coef[1]
-  meanMidCor <- midMeas*data$rtioMoleDryCo2Mlf$coef[2] + data$rtioMoleDryCo2Mlf$coef[1]
-  meanHighCor <- highMeas*data$rtioMoleDryCo2Mlf$coef[2] + data$rtioMoleDryCo2Mlf$coef[1]
+  ofst<- data$rtioMoleDryCo2Mlf$coef[1]
+  slp <- data$rtioMoleDryCo2Mlf$coef[2]
+  
+  meanZeroCor <- slp * zeroMeas + ofst
+  meanLowCor  <- slp * lowMeas  + ofst
+  meanMidCor  <- slp * midMeas  + ofst
+  meanHighCor <- slp * highMeas + ofst
   
   meanCor <- c(meanZeroCor, meanLowCor, meanMidCor, meanHighCor)
   
@@ -77,19 +86,36 @@ def.irga.vali.thsh <- function(
   #run benchmarking least squares regression on corrected mean values from the reference gasses vs. the reference values
   #adding logic to avoid an error when one of the lists passed into lm() is entirely NA
   
-  if(sum(!is.na(refeVals)) > 1 & sum(!is.na(meanCor)) > 0){ #lm() will fail if one list is entirely NA, or if both lists have only one value.
-  valiEval <- stats::lm(meanCor ~ refeVals)
-  valiEvalSe <- sqrt(diag(vcov(valiEval)))
-  valiEvalSlp <- valiEval$coefficient[[2]]
-  valiEvalOfst <- valiEval$coefficient[[1]]
+  # Simple data frame to feed into 'data' argument in lm() function
+  modlMtrx <- data.frame(refeVals = refeVals, meanCor = meanCor)
+  modlMtrx <- na.omit(modlMtrx)
+  
+  if (nrow(modlMtrx) >= 2) {
+    
+    valiEval <- stats::lm(meanCor ~ refeVals, data = modlMtrx)
+    valiEvalSe <- sqrt(diag(vcov(valiEval)))
+    valiEvalSlp <- valiEval$coefficient[[2]]
+    valiEvalOfst <- valiEval$coefficient[[1]]
+    
   } else {
+    
     msg <- paste0("valiEval coefficients set to NA beacuse of insufficent refe or measured values")
     tryCatch({rlog$debug(msg)}, error=function(cond){print(msg)})
     valiEval <- NA
     valiEvalSe <- NA
     valiEvalSlp <- NA
     valiEvalOfst <- NA
+    
   }
+  
+  # Old logic not used anymore 
+  # -----
+  # if(sum(!is.na(refeVals)) > 1 & sum(!is.na(meanCor)) > 0){ #lm() will fail if one list is entirely NA, or if both lists have only one value.
+  # 
+  # } else {
+  # 
+  # }
+  # -----
   
   #determine if slope passes
   
