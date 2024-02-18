@@ -124,7 +124,7 @@ def.irga.vali.cor <- function(
               coef[[idxDate]][[idxData]]$scal <- NA
             }
           }#end of FracSlp
-          
+
           if (idxFilt == "OfstMax"){
             if (!is.na(coef[[idxDate]][[idxData]]$coef[1]) & (abs(coef[[idxDate]][[idxData]]$coef[1]) <= OfstMax)){
               coef[[idxDate]][[idxData]] <- coef[[idxDate]][[idxData]] 

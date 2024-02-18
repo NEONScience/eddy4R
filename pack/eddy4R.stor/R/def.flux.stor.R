@@ -31,6 +31,8 @@
 #     original creation
 #   Ke Xu (2018-07-07)
 #     apply eddy4R terms: def.ecse.dp04 -> def.flux.stor
+#   David Durden (2020-09-16)
+#     changing workflow parameter call in function to function argument
 ##############################################################################################################
 #Start of function call
 ##############################################################################################################
@@ -53,7 +55,7 @@ def.flux.stor <- function(
   
   
   #mean of dp03*(tower height - displacement height)
-  rpt$mean <- rowMeans(dataInp) * (max(as.numeric(Para$Flow$Site$DistZaxsLvlMeasTow)))
+  rpt$mean <- rowMeans(dataInp) * (max(as.numeric(lvlTowr)))
   
   
   return(rpt)

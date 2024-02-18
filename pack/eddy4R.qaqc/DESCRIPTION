@@ -1,6 +1,6 @@
 Package: eddy4R.qaqc
 Title: Eddy-covariance calculation for R: Quality assurance and quality control
-Version: 0.2.14
+Version: 0.2.16
 Authors@R: c( person("Cove", "Sturtevant", email = "eddy4R.info@gmail.com", role = c("aut", "cre")),
               person("Stefan", "Metzger", email = "eddy4R.info@gmail.com", role = c("aut")),
               person("Natchaya", "Pingintha-Durden", email = "ndurden@battelleecology.org", role = c("aut")),
@@ -19,8 +19,6 @@ Imports:
     reshape2 (>= 1.4.2),
     Rmisc (>= 1.5),
     RcppRoll (>= 0.3.0)
-Suggests:
-    NEONprocIS.base
 License: GNU AFFERO GENERAL PUBLIC LICENSE Version 3, 19 November 2007
 LazyData: true
-RoxygenNote: 7.1.1
+RoxygenNote: 7.2.3

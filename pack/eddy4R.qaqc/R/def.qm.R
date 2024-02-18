@@ -9,7 +9,7 @@
 #' Function definition. Determine the quality metrics of failed, pass, and NA for each of the individual quality flag following the method described in Smith et.al. (2014). Performed for the entire set of input data.
 
 #' @param qf A data frame of quality flags, class integer. Each column contains the quality flag values [-1,0,1] for that flag. Note: This is the Vrbs output from def.plau, def.dspk.wndw, and def.dspk.br86. See def.conv.qf.vrbs for converting from non-verbose to verbose output.
-#' @param nameQmOut Optional. A vector of class "character" containing the base name of the output quality metrics for each flag in \code{qf}. These names will be ammended with "Pass", "Fail", or "Na" at the end when outputting their respective quality metrics. Default behavoir is to autoassign names based on the column names of \code{qf} [-] 
+#' @param nameQmOut Optional. A vector of class "character" containing the base name of the output quality metrics for each flag in \code{qf}. These names will be ammended with "Pass", "Fail", or "Na" at the end when outputting their respective quality metrics. Default behavior is to auto assign names based on the column names of \code{qf} [-] 
 
 #' @return A dataframe containing quality metrics (fractions) of failed, pass, and NA for each of the individual flag defined in \code{qf}.
 
@@ -47,6 +47,8 @@
 #     adjusted output of quality metrics to fractions (previously percentage)
 #   Natchaya P-Durden (2018-04-04)
 #    applied eddy4R term name convention; replaced posQf by setQf
+#   David Durden (2022-09-08)
+# Remove flags that are filled with NAN (represents flags that are not expected for a sensor [i.e. soni diagnostics for soni3B])
 ##############################################################################################
 def.qm <- function (
   qf, # A data frame of quality flags, class integer. Each column contains the quality flag values [-1,0,1] for that flag. Note: This is the Vrbs output from def.plau, def.dspk.wndw, and def.dspk.br86
@@ -59,6 +61,11 @@ def.qm <- function (
   if(!base::is.data.frame(qf)) {
     base::stop("Input qf must be a data frame. See documentation.")
   }
+  
+  # Save columns where all values are NAN (represents flags that are not expected for a sensor [i.e. soni diagnostics for soni3B])
+  qmRmv <- names(dplyr::select(qf, where(~base::all(base::is.nan(.)))))
+  # Remove columns where all values are NAN (represents flags that are not expected for a sensor [i.e. soni diagnostics for soni3B])
+  qf <- dplyr::select(qf, where(~!base::all(base::is.nan(.))))
   
   if(base::sum(!(base::as.matrix(qf) %in% c(-1,0,1))) != 0){
     stop("Values of qf must be equal to -1, 0, or 1")
@@ -115,6 +122,13 @@ def.qm <- function (
     qm[,(idxQf-1)*3+3] <- base::sum(qf[,idxQf]== -1, na.rm = TRUE)/base::nrow(qf) 
     
   }
+  
+  
+  #Create NaN flags names
+  qmRmv <- base::gsub("qf", "qm", qmRmv)
+  qmRmvOut <-  sapply(qmRmv, function(x) {base::paste0(x,nameQm)})
+  #Add NaN flags back to output to allow continuous data series
+  qm[,qmRmvOut] <- NaN
   
   return(qm)
 }

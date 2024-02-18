@@ -25,9 +25,10 @@
 ##############################################################################################
 
 #site to download data for
-site <- "STEI"
+site <- "CPER"
 #domain
-dom <- "D05"
+dom <- "D10"
+
 #SAE system (ecte vs. ecse)
 sys <- "ecte"
 
@@ -36,8 +37,8 @@ DirDnld <- paste0("~/eddy/data/turbTow/inpRefe/",site)
 if(!dir.exists(DirDnld)) dir.create(DirDnld, recursive = TRUE)
 
 #Create data download string
-DateBgn <- as.Date("2019-09-11")
-DateEnd <- as.Date("2019-09-21")
+DateBgn <- as.Date("2022-11-11")
+DateEnd <- as.Date("2022-11-21")
 DateSeq <- seq.Date(from = DateBgn,to = DateEnd, by = "day")
 PrdWndwDnld <- base::as.character(DateSeq)
 
@@ -47,12 +48,17 @@ PrdWndwDnld <- base::as.character(DateSeq)
 fileInBase <- paste0("NEON.",dom,".",site,".IP0.00200.001.",sys,".")
 
 #Create URL for data files
-urlDnld <- paste0("https://storage.cloud.google.com/neon-sae-files/ods/dataproducts/IP0/",PrdWndwDnld,"/",site,"/",fileInBase,PrdWndwDnld,".l0p.h5")
+urlDnld <- paste0("https://storage.googleapis.com/neon-sae-files/ods/dataproducts/IP0/",PrdWndwDnld,"/",site,"/",fileInBase,PrdWndwDnld,".l0p.h5.gz")
 
 #Download filename (full path)
-fileDnld <-  paste0(DirDnld,"/",base::toupper(sys),"_dp0p_",site,"_",PrdWndwDnld,".h5")
+fileDnld <-  paste0(DirDnld,"/",base::toupper(sys),"_dp0p_",site,"_",PrdWndwDnld,".h5.gz")
 
 #Download files
 sapply(seq_along(urlDnld), function(x){
 download.file(url = urlDnld[x], destfile = fileDnld[x])
 })
+
+#ungzip file
+gzFile <- list.files(DirDnld, pattern = ".gz", full.names = TRUE)
+lapply(gzFile, R.utils::gunzip)
+
