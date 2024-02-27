@@ -110,6 +110,16 @@ wrap.flux <- function(
   
   # latent heat of vaporization (Eq 2.55 Foken 2008) [J kg-1] == [m2 s-2]
   data$heatH2oGas <- def.heat.h2o.gas.temp(tempAir = data$tempAir)
+  
+  # define conversion from kinematic units to units of energy
+  # dry air density [mol m-3] x latent heat of vaporization [J kg-1] x molar mass [kg mol-1] = [J m-3] = [kg m-1 s-1]
+  data$convH2oEngy <- statStaDiff$base$densMoleAirDry * statStaDiff$base$heatH2oGas * eddy4R.base::IntlNatu$MolmH2o
+  base::attr(data$convH2oEngy, which = "unit") <- "kg m-1 s-1"
+  
+  # define conversion from kinematic units to units of evapotranspiration depth
+  # dry air mole density [mol m-3] x (H2O molar mass [kg mol-1] / liquid H2O mass density at 4C and 1 Atm [kg m-3]) = [-]
+  data$convH2oVelo <- statStaDiff$base$densMoleAirDry * IntlNatu$MolmH2o / 1e3
+  base::attr(data$convH2oVelo, which = "unit") <- "-"
 
   # Thermodynamic properties of a mix of dry air and water vapor
   data <- base::cbind(data, def.natu.air.wet(rtioMoleDryH2o = data$rtioMoleDryH2o))
@@ -300,43 +310,32 @@ wrap.flux <- function(
     base::rm(fluxTmp, idx)
     
     # latent heat flux in units of energy [kg s-3] = [W m-2]
-    
-      # define conversion from kinematic units to units of energy
-      # dry air density [mol m-3] x latent heat of vaporization [J kg-1] x molar mass [kg mol-1] = [J m-3] = [kg m-1 s-1]
-      conv <- statStaDiff$base$densMoleAirDry * statStaDiff$base$heatH2oGas * eddy4R.base::IntlNatu$MolmH2o
-      base::attr(conv, which = "unit") <- "kg m-1 s-1"
-      
       # actual flux calculation
       fluxTmp <- def.flux.sclr(
         inp = data.frame(vect = statStaDiff$diff$veloZaxsHor, sclr = statStaDiff$diff$rtioMoleDryH2o),
-        conv = conv,
+        conv = data$convH2oEngy,
         Unit = base::data.frame(InpVect = "m s-1", InpSclr = "molH2o mol-1Dry", Conv = "kg m-1 s-1", Out = "W m-2")
       )
       
       # transfer results
       for(idx in base::names(fluxTmp)) statStaDiff[[idx]]$fluxH2oEngy <- fluxTmp[[idx]]
-      base::rm(conv, fluxTmp, idx)
+      base::rm(fluxTmp, idx)
     
     # evapotranspiration depth [m s-1]
     # resources: https://www.fao.org/3/X0490E/x0490e04.htm
     # https://github.com/stefanmet/NEON-FIU-algorithm-stefanmet/commit/86c368cfe367aac6f5c90aa8704ed0caf6558e4b
     # https://chemistry.stackexchange.com/questions/23643/calculating-the-volume-of-1-mole-of-liquid-water
-      
-      # define conversion from kinematic units to units of evapotranspiration depth
-      # dry air mole density [mol m-3] x (H2O molar mass [kg mol-1] / liquid H2O mass density at 4C and 1 Atm [kg m-3]) = [-]
-      conv <- statStaDiff$base$densMoleAirDry * IntlNatu$MolmH2o / 1e3
-      base::attr(conv, which = "unit") <- "-"
-      
+
       # actual flux calculation
       fluxTmp <- def.flux.sclr(
         inp = data.frame(vect = statStaDiff$diff$veloZaxsHor, sclr = statStaDiff$diff$rtioMoleDryH2o),
-        conv = conv,
+        conv = data$convH2oVelo,
         Unit = base::data.frame(InpVect = "m s-1", InpSclr = "molH2o mol-1Dry", Conv = "-", Out = "m s-1")
       )
 
       # transfer results
       for(idx in base::names(fluxTmp)) statStaDiff[[idx]]$fluxH2oVelo <- fluxTmp[[idx]]
-      base::rm(conv, fluxTmp, idx)
+      base::rm(fluxTmp, idx)
 
 #############################################################################          
   # OTHER SCALAR FLUXES INCL. CO2, CH4, NOx, VOCs ETC.
