@@ -110,16 +110,7 @@ wrap.flux <- function(
   
   # latent heat of vaporization (Eq 2.55 Foken 2008) [J kg-1] == [m2 s-2]
   data$heatH2oGas <- def.heat.h2o.gas.temp(tempAir = data$tempAir)
-  
-  # define conversion from kinematic units to units of energy
-  # dry air density [mol m-3] x latent heat of vaporization [J kg-1] x molar mass [kg mol-1] = [J m-3] = [kg m-1 s-1]
-  data$convH2oEngy <- statStaDiff$base$densMoleAirDry * statStaDiff$base$heatH2oGas * eddy4R.base::IntlNatu$MolmH2o
-  base::attr(data$convH2oEngy, which = "unit") <- "kg m-1 s-1"
-  
-  # define conversion from kinematic units to units of evapotranspiration depth
-  # dry air mole density [mol m-3] x (H2O molar mass [kg mol-1] / liquid H2O mass density at 4C and 1 Atm [kg m-3]) = [-]
-  data$convH2oVelo <- statStaDiff$base$densMoleAirDry * IntlNatu$MolmH2o / 1e3
-  base::attr(data$convH2oVelo, which = "unit") <- "-"
+
 
   # Thermodynamic properties of a mix of dry air and water vapor
   data <- base::cbind(data, def.natu.air.wet(rtioMoleDryH2o = data$rtioMoleDryH2o))
@@ -230,6 +221,17 @@ wrap.flux <- function(
     refe = base::list("mean" = base::list("angZaxsErth" = rot$angZaxsErth)),
     AlgBase = AlgBase
     )
+  
+  
+  # define conversion from kinematic units to units of energy
+  # dry air density [mol m-3] x latent heat of vaporization [J kg-1] x molar mass [kg mol-1] = [J m-3] = [kg m-1 s-1]
+  statStaDiff$base$convH2oEngy <- statStaDiff$base$densMoleAirDry * statStaDiff$base$heatH2oGas * eddy4R.base::IntlNatu$MolmH2o
+  base::attr(statStaDiff$base$convH2oEngy, which = "unit") <- "kg m-1 s-1"
+  
+  # define conversion from kinematic units to units of evapotranspiration depth
+  # dry air mole density [mol m-3] x (H2O molar mass [kg mol-1] / liquid H2O mass density at 4C and 1 Atm [kg m-3]) = [-]
+  statStaDiff$base$convH2oVelo <- statStaDiff$base$densMoleAirDry * IntlNatu$MolmH2o / 1e3
+  base::attr(statStaDiff$base$convH2oVelo, which = "unit") <- "-"
 
   
   
@@ -313,7 +315,7 @@ wrap.flux <- function(
       # actual flux calculation
       fluxTmp <- def.flux.sclr(
         inp = data.frame(vect = statStaDiff$diff$veloZaxsHor, sclr = statStaDiff$diff$rtioMoleDryH2o),
-        conv = data$convH2oEngy,
+        conv = statStaDiff$base$convH2oEngy,
         Unit = base::data.frame(InpVect = "m s-1", InpSclr = "molH2o mol-1Dry", Conv = "kg m-1 s-1", Out = "W m-2")
       )
       
@@ -329,7 +331,7 @@ wrap.flux <- function(
       # actual flux calculation
       fluxTmp <- def.flux.sclr(
         inp = data.frame(vect = statStaDiff$diff$veloZaxsHor, sclr = statStaDiff$diff$rtioMoleDryH2o),
-        conv = data$convH2oVelo,
+        conv = statStaDiff$base$convH2oVelo,
         Unit = base::data.frame(InpVect = "m s-1", InpSclr = "molH2o mol-1Dry", Conv = "-", Out = "m s-1")
       )
 
