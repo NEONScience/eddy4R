@@ -78,6 +78,10 @@ wrap.dp01 <- function(
   idx = NULL
 ) {
   
+  library(eddy4R.base)
+  rlog = Logger.Singleton$new() #class defined in eddy4R.base
+  rlog$debug("in function wrap.dp01(...)")
+  
   # stop if data is a list but idx is not specified  
   if(!is.data.frame(data) & is.null(idx)) stop("wrap.dp01: data is not a data.frame; if data is a list please specify idx.")
   

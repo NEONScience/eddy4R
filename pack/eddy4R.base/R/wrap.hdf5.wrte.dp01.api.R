@@ -13,7 +13,8 @@
 #' @param Dp01 Character: A vector of data product names for the data to be gathered.
 #' @param LvlTowr Character: The tower level that the sensor data is being collected in NEON data product convention (HOR_VER).
 #' @param TimeAgr Integer: The time aggregation index in minutes (i.e. 30)
-#'
+#' @param Tokn Optional. Character string. An API token allowing additional permissions/access.
+
 #' @return An updated dp0p HDF5 file with dp01 data, qfqm, and uncertainty written
 #'
 #' @references
@@ -35,6 +36,8 @@
 #     applied term name convention; replace Levl by Lvl
 #   Natchaya P-Durden (2019-06-10)
 #     adding additional data products
+#   David Durden (2024-01-16)
+#     Adding token to API calls and logging
 ##############################################################################################
 
 # date <- "20170901"
@@ -55,9 +58,14 @@ wrap.hdf5.wrte.dp01.api <- function(
   SiteLoca,
   DpName = c("tempAirLvl", "tempAirTop", "fluxHeatSoil", "radiNet", "tempSoil", "h2oSoilVol", "presBaro"),
   LvlTowr,
-  TimeAgr = c(1,30)
+  TimeAgr = c(1,30),
+  Tokn = NULL 
 ){
 
+  library(eddy4R.base)
+  rlog = Logger.Singleton$new() #class defined in eddy4R.base
+  rlog$debug("in function wrap.hdf5.wrte.dp01.api(...)")
+  
   #Initialize the reporting data list
  rpt <- list()
 
@@ -65,11 +73,11 @@ wrap.hdf5.wrte.dp01.api <- function(
  for(idxDp in DpName){
    #print screen
    msg<-paste0("Begin to re-ingest ", idxDp, " dp01 data")
-   tryCatch({rlog$debug(msg)}, error=function(cond){print(msg)})
+   tryCatch({rlog$info(msg)}, error=function(cond){print(msg)})
    #Call the definition function for all the data product
    rpt[[idxDp]] <- lapply(TimeAgr, function(x) {
      #Use the definition function to grab reingest data
-     eddy4R.base::def.hdf5.wrte.dp01.api(date = date, SiteLoca = SiteLoca, FileOut = FileOut, DpName = idxDp, LvlTowr = LvlTowr, TimeAgr = x)
+     eddy4R.base::def.hdf5.wrte.dp01.api(date = date, SiteLoca = SiteLoca, FileOut = FileOut, DpName = idxDp, LvlTowr = LvlTowr, TimeAgr = x, Tokn = Tokn)
      })# End of lapply function
    } #End of for loop around dp01 data products
 

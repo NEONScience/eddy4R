@@ -45,6 +45,11 @@ wrap.para.thsh <- function(
   FileWrte = FALSE
 ){
 
+library(eddy4R.base)
+rlog = Logger.Singleton$new() #class defined in eddy4R.base
+rlog$debug("in function wrap.para.thsh(...)")
+  
+  
 #DpName <- c("IrgaTurb","MfcSampTurb","Soni","Amrs")#Only MVP sensors included currently
 
 #DpName <- c("CrdCo2","CrdH2o", "EnvHut", "Irga", "IrgaMfcSamp",
