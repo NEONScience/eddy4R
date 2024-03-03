@@ -7,6 +7,7 @@
     "eddy4R.erf",
     "eddy4R.stor",
     "eddy4R.qaqc",
+    "eddy4R.maps",
     "som",
     "Noble",
     "eddy4R.ucrt",
@@ -19,8 +20,6 @@
     "Depends",
     "LinkingTo"
   ],
-  "ppm.enabled": null,
-  "ppm.ignored.urls": [],
   "r.version": null,
   "snapshot.type": "implicit",
   "use.cache": true,
