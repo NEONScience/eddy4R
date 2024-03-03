@@ -15,7 +15,7 @@ wrap.spat.data.grab <- function(
     dateBgn = "2019-05-01",
     dateEnd = "2019-11-30",
     site = c("cheesehead")[1],
-    dt = "P1M"
+    dt = "P1M",
     dx = 0.1,
     dy = 0.1
 )
@@ -23,17 +23,17 @@ wrap.spat.data.grab <- function(
   
   print(paste0("Grabbing spatial data at ", Sys.time(), "for", site))
   
-  library(here)
-  library(sf)
-  library(lubridate)
-  library(gdalcubes)
-  library(rstac)
-  library(stars)
+  # library(here)
+  # library(sf)
+  # library(lubridate)
+  # library(gdalcubes)
+  # library(rstac)
+  # library(stars)
   
   
   
   #Source functions
-  for (f in list.files(here::here("R"), full.names = TRUE)) source (f)
+ # for (f in list.files(here::here("R"), full.names = TRUE)) source (f)
 
   #Create fire bounding box
   bbox <- def.bbox(lat =  45.94625, lon = -90.27276, pad_box = TRUE)

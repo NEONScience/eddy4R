@@ -18,6 +18,18 @@ Authors@R: c( person(given = "Stefan",
 Description: Basic commonalities and tools for working with Flux Maps™ in R.
 Depends:
     R (>= 4.0.5)
+Imports:
+      assertthat,
+      raster,
+      leaflet,
+      htmlwidgets,
+      mapview,
+      here,
+      sf,
+      lubridate,
+      gdalcubes,
+      rstac,
+      stars
 License: GNU AFFERO GENERAL PUBLIC LICENSE Version 3, 19 November 2007
 Encoding: UTF-8
 LazyData: true
