@@ -55,6 +55,10 @@ wrap.unit.conv.out.ec <- function(
   MethType = c("Data","Ucrt","Qfqm", "Vali")[1]
   ){
 
+library(eddy4R.base)
+rlog = Logger.Singleton$new() #class defined in eddy4R.base
+rlog$debug("in function wrap.unit.conv.out.ec(...)")
+  
 #Putting MethType to lowercase always
 MethType <- base::tolower(MethType)
 

@@ -11,7 +11,8 @@ wrap.hdf5.wrte.dp01.api(
   DpName = c("tempAirLvl", "tempAirTop", "fluxHeatSoil", "radiNet", "tempSoil",
     "h2oSoilVol", "presBaro"),
   LvlTowr,
-  TimeAgr = c(1, 30)
+  TimeAgr = c(1, 30),
+  Tokn = NULL
 )
 }
 \arguments{
@@ -24,6 +25,8 @@ wrap.hdf5.wrte.dp01.api(
 \item{LvlTowr}{Character: The tower level that the sensor data is being collected in NEON data product convention (HOR_VER).}
 
 \item{TimeAgr}{Integer: The time aggregation index in minutes (i.e. 30)}
+
+\item{Tokn}{Optional. Character string. An API token allowing additional permissions/access.}
 
 \item{Dp01}{Character: A vector of data product names for the data to be gathered.}
 }

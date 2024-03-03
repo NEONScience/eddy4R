@@ -87,6 +87,10 @@ wrap.dp01.qfqm.eddy <- function(
   idGas =NULL
 ) {
 
+  library(eddy4R.base)
+  rlog = Logger.Singleton$new() #class defined in eddy4R.base
+  rlog$debug("in function wrap.dp01.qfqm.eddy(...)")
+  
   #assign list
   rpt <- list()
   tmp <- list()

@@ -59,6 +59,10 @@ wrap.dp01.agr.prd <- function(
  inpList
  ){
 
+library(eddy4R.base)
+rlog = Logger.Singleton$new() #class defined in eddy4R.base
+rlog$debug("in function wrap.dp01.agr.prd(...)")
+  
 rpt <- list()
 tmp <- list()
 

@@ -58,6 +58,10 @@ ThshMiss = .1,
 paraStbl
 ){
 
+library(eddy4R.base)
+rlog = Logger.Singleton$new() #class defined in eddy4R.base
+rlog$debug("in function wrap.wave(...)")
+  
 #Create output list
 rpt <- base::list()
 
@@ -99,10 +103,20 @@ for (idxCol in base::colnames(dfInp)) {
     rpt$wave[[idxCol]] <- Waves::cwt(vectTmp, wavelet = FuncWave, dj = DiffScal)
     msg <- paste(idxCol, "... done.")
     tryCatch({rlog$debug(msg)}, error=function(cond){print(msg)})
+    
+    #Calculate global wavelet spec
+    waveScal<- base::abs(rpt$wave[[idxCol]]@spectrum)^2
+    rpt$spec[[idxCol]] <- base::colSums(base::abs(waveScal))
+    
   }
 
+#Output wavelet scale and converted Fourier period
+rpt$scal <- rpt$wave$veloZaxsHor@scale
+rpt$prd <- rpt$wave$veloZaxsHor@period
 #normalization factor specific to the choice of Wavelet parameters
 rpt$coefNorm <- rpt$wave[["veloZaxsHor"]]@dj * rpt$wave[["veloZaxsHor"]]@dt / rpt$wave[["veloZaxsHor"]]@wavelet@cdelta / base::length(rpt$wave[["veloZaxsHor"]]@series)
+
+
 
 
 # # variance for all wavelengths
