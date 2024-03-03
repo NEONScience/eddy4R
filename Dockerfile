@@ -31,11 +31,11 @@ ENV MAKEFLAGS='-j3'
 			      libssl-dev \
 			      libgdal-dev \
 			      libnetcdf-dev \
-			      # Library for git via ssh key
 			      ssh \
 			      vim \
             libxml2-dev \
-            mysql-common" \
+            mysql-common\
+            " \
 #            libtiff5 \
 #            libjpeg62-turbo \
 #            libnetcdf11 \
@@ -76,6 +76,6 @@ ENV MAKEFLAGS='-j3'
     && rm -rf /var/lib/apt/lists/* \
     # Clean up the rocker image leftovers
     && rm -rf /tmp/rstudio* \
-    && rm -rf /tmp/Rtmp* \
+    && rm -rf /tmp/Rtmp* 
 
 
