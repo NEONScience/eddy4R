@@ -24,7 +24,7 @@ def.spat.data.cube <- function(start_date,
                                   srs = "EPSG:4326",
                                   dx = 0.1, 
                                   dy = 0.1, 
-                                  dt = "P30D",
+                                  dt = "P1M",
                                   aggregation = "mean",
                                   resampling = "near"){
   
@@ -34,7 +34,7 @@ def.spat.data.cube <- function(start_date,
   # get STACItemCollection
   matches <-
     rstac::stac("https://planetarycomputer.microsoft.com/api/stac/v1") |>
-    stac_search(collections = collection,
+    rstac::stac_search(collections = collection,
                 datetime = paste(start_date, end_date, sep = "/"),
                 bbox = c(box)) |>
     get_request() |>

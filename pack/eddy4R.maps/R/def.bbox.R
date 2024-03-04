@@ -7,7 +7,7 @@
 #' @description Function definition. Read in shapefile or create a bounding box
 #'  by adding an extent to Lat/Lon for grabbing STAC data with a padding option.
 
-#' @param dir directory where shapefiles are located 
+#' @param site the site to use to grab the bounding box
 #' @param crs coordinate reference system (Defaults to "EPSG:4326")
 #' @param pad_box logical to determine if padding should be applied to bounding box (defaults to FALSE)
 #' @param pad_degree decimal degree of latitude and longitude to pad the bounding box (defaults to 0.1) 
@@ -30,7 +30,7 @@
 #     original creation 
 ##############################################################################################
 def.bbox <- function(
-    DirInp = NULL, 
+    site = c("CPER", "CHEESEHEAD")[2], 
     crs = "EPSG:4326",
     pad_box = FALSE,
     pad_degree = 0.5,
@@ -42,8 +42,15 @@ def.bbox <- function(
   out <- list()
   
   ## read shape file
-  if(!is.null(DirInp)) {
-    out$shp <- sf::read_sf(dsn = DirInp, "mask")
+  if(!is.null(site)) {
+    if(site == "CHEESEHEAD"){
+    
+    out$shp <-eddy4R.maps::CHEESEHEAD
+    }else{
+    
+    out$shp <- dplyr::filter(eddy4R.maps::NEON$siteID == site)
+    }
+      #sf::read_sf(dsn = DirInp, "mask")
     #generate bounding box
     out$bbox <- out$shp |> sf::st_transform(crs=crs) |> sf::st_bbox()
     
