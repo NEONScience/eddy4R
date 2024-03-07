@@ -34,7 +34,7 @@
 
 # ------ Choose options --------
 #Be sure to set repos to pull packages from (example from last release):
-options(repos = c( CRANNew = "https://packagemanager.rstudio.com/cran/2023-09-22", GCPFIX = "https://packagemanager.rstudio.com/cran/2023-04-17", FIX = "https://packagemanager.rstudio.com/cran/2022-11-30", CRAN =  "https://packagemanager.rstudio.com/cran/2022-02-28"))
+options(repos = c( CRANNew = "https://packagemanager.rstudio.com/cran/2023-10-22", GCPFIX = "https://packagemanager.rstudio.com/cran/2023-04-17", FIX = "https://packagemanager.rstudio.com/cran/2022-11-30", CRAN =  "https://packagemanager.rstudio.com/cran/2022-02-28"))
 
 
 

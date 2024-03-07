@@ -15,7 +15,7 @@ wrap.spat.data.grab <- function(
     dateBgn = "2019-05-01",
     dateEnd = "2019-10-31",
     site = c("CPER", "CHEESEHEAD")[2],
-    dt = "P30D",
+    dt = "P1M",
     dx = 0.1,
     dy = 0.1
 )
