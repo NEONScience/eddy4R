@@ -50,12 +50,13 @@
 
 wrap.wave <- function(
 dfInp,
-DiffScal = 1/8,
-FuncWave = Waves::morlet(),
+numScal = 15,
+# DiffScal = 1/8,
+FuncWave = "haar", #Waves::morlet(),
 FreqSamp = 20, #Defaults to 20Hz
 SetPrd = NULL,
 ThshMiss = .1,
-paraStbl
+paraStbl = NULL
 ){
 
 #Create output list
@@ -85,6 +86,7 @@ dfInp <- base::as.data.frame(stats::ts(
   frequency = FreqSamp			#time unit is 20 Hz
 ))
 
+dfInp <- dfInp[seq(1, 2^numScal), ]
 
 # perform CWT
 # in the future, can consider package "wmtsa" could enable transition to R 3.x (http://cran.at.r-project.org/web/packages/wmtsa/wmtsa.pdf)
@@ -96,21 +98,23 @@ for (idxCol in base::colnames(dfInp)) {
     start = 0,      		        #compensate for missing first row
     frequency = FreqSamp			#time unit is 20 Hz
   )
-    rpt$wave[[idxCol]] <- Waves::cwt(vectTmp, wavelet = FuncWave, dj = DiffScal)
+    rpt$wave[[idxCol]] <- wavelets::dwt(vectTmp, filter = FuncWave, n.levels = numScal) #Waves::cwt(vectTmp, wavelet = FuncWave, dj = DiffScal)
     msg <- paste(idxCol, "... done.")
     tryCatch({rlog$debug(msg)}, error=function(cond){print(msg)})
     
     #Calculate global wavelet spec
-    waveScal<- base::abs(rpt$wave[[idxCol]]@spectrum)^2
-    rpt$spec[[idxCol]] <- base::colSums(base::abs(waveScal))
+    # waveScal<- base::abs(rpt$wave[[idxCol]]@spectrum)^2
+    # rpt$spec[[idxCol]] <- base::colSums(base::abs(waveScal))
     
   }
 
-#Output wavelet scale and converted Fourier period
-rpt$scal <- rpt$wave$veloZaxsHor@scale
-rpt$prd <- rpt$wave$veloZaxsHor@period
-#normalization factor specific to the choice of Wavelet parameters
-rpt$coefNorm <- rpt$wave[["veloZaxsHor"]]@dj * rpt$wave[["veloZaxsHor"]]@dt / rpt$wave[["veloZaxsHor"]]@wavelet@cdelta / base::length(rpt$wave[["veloZaxsHor"]]@series)
+rpt$scal <- sapply(rpt$wave[[1]]@W, function(x) log(length(x), base = 2)); names(rpt$scal) <- NULL
+
+# #Output wavelet scale and converted Fourier period
+# rpt$scal <- rpt$wave$veloZaxsHor@scale
+# rpt$prd <- rpt$wave$veloZaxsHor@period
+# #normalization factor specific to the choice of Wavelet parameters
+# rpt$coefNorm <- rpt$wave[["veloZaxsHor"]]@dj * rpt$wave[["veloZaxsHor"]]@dt / rpt$wave[["veloZaxsHor"]]@wavelet@cdelta / base::length(rpt$wave[["veloZaxsHor"]]@series)
 
 
 
@@ -148,30 +152,31 @@ rpt$coefNorm <- rpt$wave[["veloZaxsHor"]]@dj * rpt$wave[["veloZaxsHor"]]@dt / rp
 # covariance for all wavelengths
 # not currently implemented for friction velocity as approach to negative
 rpt$cov <- lapply(names(rpt$wave)[-which(names(rpt$wave) == "veloZaxsHor")], function(var)
-  eddy4R.turb::def.wave.vari(
+  eddy4R.turb::def.spec.high.freq.cor(
   # def.vari.wave(
     #complex Wavelet coefficients variable 1
-    spec01 = rpt$wave[[var]]@spectrum,
+    varDwt = rpt$wave[[var]],
     #complex Wavelet coefficients variable 2
-    spec02 = rpt$wave[["veloZaxsHor"]]@spectrum,
+    veloZaxsDwt = rpt$wave[["veloZaxsHor"]],
+    scal = rpt$scal, 
     #width of the wavelet [s]
-    scal = rpt$wave[[var]]@scale,
+    # scal = rpt$wave[[var]]@scale, 
     #approximate Fourier period [d]
-    prd = rpt$wave[[var]]@period,
+    # prd = rpt$wave[[var]]@period, 
     
     
     #half-power frequencies for individual variables [Hz] - cutoff frequencies
-    FreqCut = NA,
+    # FreqCut = NA, 
     #which wavelengths/spatial scales to consider
-    SetPrd = NULL,
+    # SetPrd = NULL, 
     #normalization factor/coefficient specific to the choice of Wavelet parameters
-    CoefNorm = rpt$coefNorm,
+    # CoefNorm = rpt$coefNorm,
     # Wavelet flag: process (0) or not
     qfWave=rpt$qfMiss[[var]],
     #stability parameter
     paraStbl = paraStbl,
     #spectrum or cospectrum?
-    MethSpec = c("spec", "cosp")[2]
+    # MethSpec = c("spec", "cosp")[2]
   )
 ); base::names(rpt$cov) <- base::names(rpt$wave)[-base::which(base::names(rpt$wave) == "veloZaxsHor")]
 
