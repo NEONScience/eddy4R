@@ -45,142 +45,85 @@
 #     Updating terms, fixing ts bug, and adding cutoff frequencies
 ##############################################################################################
 
-
-# start function wrap.hdf5.wrte.dp01()
-
 wrap.wave <- function(
 dfInp,
-numScal = 15,
-# DiffScal = 1/8,
-FuncWave = "haar", #Waves::morlet(),
+numScal = 15, # Defaults to 15 for NEON SAE data, max allowable with 36000 observations (2^15 = 32768)
+FuncWave = "haar", # From Nordbo and Katul 2012, orthogonal wavelet basis is ideal
 FreqSamp = 20, #Defaults to 20Hz
-SetPrd = NULL,
-ThshMiss = .1,
-paraStbl = NULL
-){
+ThshMiss = 0.1,
+paraStbl = NULL # Stability not currently considered
+) {
 
 #Create output list
-rpt <- base::list()
+rpt <- list()
 
 ####Check quality of data###########################################
 #Create a logical flag if more data is missing than the threshold
-rpt$qfMiss <- base::as.list(base::colMeans(base::is.na(dfInp)) > ThshMiss)
+rpt$qfMiss <- as.list(base::colMeans(base::is.na(dfInp)) > ThshMiss)
 #Turn the flags into integers
 rpt$qfMiss <- lapply(rpt$qfMiss, base::as.integer)
 # in case the vertical wind is not available, no cospectral correction can be performed
 # then flag all scalars
-if(rpt$qfMiss$veloZaxsHor == 1) base::invisible(lapply(base::names(rpt$qfMiss), function(x) rpt$qfMiss[x] <<- 1))
+if(rpt$qfMiss$veloZaxsHor == 1) invisible(lapply(names(rpt$qfMiss), function(x) rpt$qfMiss[x] <<- 1))
 ####################################################################
 
 # fill missing values through linear interpolation
 # NAs at start and end are removed by setting na.rm = TRUE
-tmp <- zoo::na.approx(dfInp, na.rm = TRUE, rule = 2) #Rule 2 allows extropolating end values using the nearest value or explicitly using zoo::na.locf, could be replaced with zeros using na.fill with any value: see https://stackoverflow.com/questions/7317607/interpolate-na-values-in-a-data-frame-with-na-approx
+tmp <- zoo::na.approx(dfInp, na.rm = TRUE, rule = 2) #Rule 2 allows extrapolating end values using the nearest value or explicitly using zoo::na.locf, could be replaced with zeros using na.fill with any value: see https://stackoverflow.com/questions/7317607/interpolate-na-values-in-a-data-frame-with-na-approx
 
 #Failsafe in case all values are NaN
-if(base::nrow(tmp) > 1) dfInp <- tmp
+if(nrow(tmp) > 1) dfInp <- tmp
 
 #time series
-dfInp <- base::as.data.frame(stats::ts(
-  dfInp,                   #discard rows with bogus w
-  start = 0,      		        #compensate for missing first row
-  frequency = FreqSamp			#time unit is 20 Hz
+dfInp <- as.data.frame(stats::ts(
+  dfInp,
+  start = 0, 
+  frequency = FreqSamp
 ))
 
-dfInp <- dfInp[seq(1, 2^numScal), ]
+dfInp <- dfInp[seq(1, 2^numScal), ] # only used first 2^J observations
 
-# perform CWT
-# in the future, can consider package "wmtsa" could enable transition to R 3.x (http://cran.at.r-project.org/web/packages/wmtsa/wmtsa.pdf)
-rpt$wave <- base::list()
-for (idxCol in base::colnames(dfInp)) {
+rpt$wave <- list()
+
+for (idxCol in colnames(dfInp)) {
+  
   #Creating ts vector
   vectTmp <- stats::ts(
-    dfInp[,idxCol],                   #discard rows with bogus w
-    start = 0,      		        #compensate for missing first row
-    frequency = FreqSamp			#time unit is 20 Hz
+    dfInp[,idxCol],
+    start = 0,
+    frequency = FreqSamp
   )
-    rpt$wave[[idxCol]] <- wavelets::dwt(vectTmp, filter = FuncWave, n.levels = numScal) #Waves::cwt(vectTmp, wavelet = FuncWave, dj = DiffScal)
+    # compute discrete wavelet transform
+    rpt$wave[[idxCol]] <- wavelets::dwt(vectTmp, filter = FuncWave, n.levels = numScal)
     msg <- paste(idxCol, "... done.")
     tryCatch({rlog$debug(msg)}, error=function(cond){print(msg)})
-    
-    #Calculate global wavelet spec
-    # waveScal<- base::abs(rpt$wave[[idxCol]]@spectrum)^2
-    # rpt$spec[[idxCol]] <- base::colSums(base::abs(waveScal))
     
   }
 
 rpt$scal <- sapply(rpt$wave[[1]]@W, function(x) log(length(x), base = 2)); names(rpt$scal) <- NULL
-
-# #Output wavelet scale and converted Fourier period
-# rpt$scal <- rpt$wave$veloZaxsHor@scale
-# rpt$prd <- rpt$wave$veloZaxsHor@period
-# #normalization factor specific to the choice of Wavelet parameters
-# rpt$coefNorm <- rpt$wave[["veloZaxsHor"]]@dj * rpt$wave[["veloZaxsHor"]]@dt / rpt$wave[["veloZaxsHor"]]@wavelet@cdelta / base::length(rpt$wave[["veloZaxsHor"]]@series)
-
-
-
-
-# # variance for all wavelengths
-# # not currently used; commented out to conserve computation time
-# # var <- names(rpt$wave)[3]
-# rpt$var <- lapply(names(rpt$wave), function(var)
-#   eddy4R.turb::def.wave.vari(
-#   # def.wave.vari(
-#     #complex Wavelet coefficients variable 1
-#     spec01 = rpt$wave[[var]]@spectrum,
-#     #complex Wavelet coefficients variable 2
-#     # spec02 = rpt$wave[[var]]@spectrum,
-#     #width of the wavelet [s]
-#     scal = rpt$wave[[var]]@scale,
-#     #approximate Fourier period [d]
-#     prd = rpt$wave[[var]]@period,
-#     #half-power frequencies for individual variables [Hz]
-#     FreqCut  = NA,
-#     #which wavelengths/spatial scales to consider
-#     SetPrd = NULL,
-#     #normalization factor specific to the choice of Wavelet parameters
-#     CoefNorm = rpt$coefNorm,
-#     # Wavelet flag: process (0) or not
-#     qfWave = rpt$qfWave[[var]],
-#     #stability parameter
-#     paraStbl = paraStbl,
-#     #spectrum or cospectrum?
-#     metSpec = c("spec", "cosp")[1]
-#   )
-# ); names(rpt$var) <- names(rpt$wave)
-
 
 # covariance for all wavelengths
 # not currently implemented for friction velocity as approach to negative
 rpt$cov <- lapply(names(rpt$wave)[-which(names(rpt$wave) == "veloZaxsHor")], function(var)
   eddy4R.turb::def.spec.high.freq.cor(
   # def.vari.wave(
-    #complex Wavelet coefficients variable 1
+    # Wavelet coefficients variable 1
     varDwt = rpt$wave[[var]],
-    #complex Wavelet coefficients variable 2
+    # Wavelet coefficients vertical wind speed
     veloZaxsDwt = rpt$wave[["veloZaxsHor"]],
+    # Scale vector
     scal = rpt$scal, 
-    #width of the wavelet [s]
-    # scal = rpt$wave[[var]]@scale, 
-    #approximate Fourier period [d]
-    # prd = rpt$wave[[var]]@period, 
-    
-    
-    #half-power frequencies for individual variables [Hz] - cutoff frequencies
-    # FreqCut = NA, 
-    #which wavelengths/spatial scales to consider
-    # SetPrd = NULL, 
-    #normalization factor/coefficient specific to the choice of Wavelet parameters
-    # CoefNorm = rpt$coefNorm,
     # Wavelet flag: process (0) or not
     qfWave=rpt$qfMiss[[var]],
-    #stability parameter
-    paraStbl = paraStbl,
-    #spectrum or cospectrum?
-    # MethSpec = c("spec", "cosp")[2]
+    #stability parameter (not currently used)
+    paraStbl = paraStbl
   )
-); base::names(rpt$cov) <- base::names(rpt$wave)[-base::which(base::names(rpt$wave) == "veloZaxsHor")]
+)
+
+names(rpt$cov) <- names(rpt$wave)[-which(names(rpt$wave) == "veloZaxsHor")]
 
 #return all output from the wave function
 return(rpt)
+
 }
 
