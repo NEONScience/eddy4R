@@ -55,7 +55,7 @@
 
 #function to determine the temporally resolved variance/covariance from CWT
 #including high-frequency spectral correction and selectable low-frequency cutoff
-def.wave.vari <- function(
+def.spec.high.freq.cor <- function(
   # Wavelet coefficients variable
   varDwt,
   # Wavelet coefficients for vertical wind speed
