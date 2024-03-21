@@ -114,9 +114,7 @@ rpt$cov <- lapply(names(rpt$wave)[-which(names(rpt$wave) == "veloZaxsHor")], fun
     # Scale vector
     scal = rpt$scal, 
     # Wavelet flag: process (0) or not
-    qfWave=rpt$qfMiss[[var]],
-    #stability parameter (not currently used)
-    paraStbl = paraStbl
+    qfWave=rpt$qfMiss[[var]]
   )
 )
 

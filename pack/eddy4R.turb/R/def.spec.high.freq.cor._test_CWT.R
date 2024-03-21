@@ -205,7 +205,7 @@ if(qfWave == 0) {
       fluxMiss <- covOrig / covAdj # Flux attenuation for half-hour period as a percentage
       
       coefCor <- 1 / fluxMiss # Correction coefficient is inverse of flux attenuation
-      coefCor <- ifelse(coefCor < 1, 1, coefCor) # Correction coefficient can't be < 1.0 (i.e., cant make attenuation worse)
+      # coefCor <- ifelse(coefCor < 1, 1, coefCor) # Correction coefficient can't be < 1.0 (i.e., cant make attenuation worse)
       
       # Calculate and report cospectra, can be converted to frequency-weighted cospectra with other output variables
       cosp <- Re(spec01@spectrum * Conj(spec02@spectrum))

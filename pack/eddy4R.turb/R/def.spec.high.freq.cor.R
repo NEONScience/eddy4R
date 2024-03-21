@@ -184,7 +184,7 @@ if(qfWave == 0) {
       slpRegWave <- modlLin$coefficients[2]
       qfWaveSlp <- 0
       if(!(modlLin$coefficients[2] > -1.8 & modlLin$coefficients[2] < -1.3)) {
-        modlLin$coefficients[1] <- base::mean(log(waveSpec[seq(idxFreqLim01, idxFreqLim02)]) - (-5/3 * log(freq[seq(idxFreqLim01, idxFreqLim02)])), na.rm = TRUE)
+        modlLin$coefficients[1] <- base::mean(log(varSpecPowr[seq(idxFreqLim01, idxFreqLim02)]) - (-5/3 * log(freq[seq(idxFreqLim01, idxFreqLim02)])), na.rm = TRUE)
         modlLin$coefficients[2] <- -5/3
         qfWaveSlp <- 1
       }
@@ -201,7 +201,7 @@ if(qfWave == 0) {
       names(rtioAmpl) <- names(varDwt@W)
       
       # Get lorenz curve results
-      rptLorenz <- eddy4R.turb::def.lorenz.curve(lapply(veloZaxsDwt@W, function(x) x^2))
+      rptLorenz <- eddy4R.turb::def.wave.lorenz.calc(lapply(veloZaxsDwt@W, function(x) x^2))
       
       # Adjust only the most energetic Wavelet coefficients base on results from Lorenz curve (those that have 90% of the energy)
       waveScalAdjList <- lapply(
@@ -237,7 +237,7 @@ if(qfWave == 0) {
       fluxMiss <- covOrig / covAdj # Flux attenuation for half-hour period as a percentage
       
       coefCor <- 1 / fluxMiss # Correction coefficient is inverse of flux attenuation
-      coefCor <- ifelse(coefCor < 1, 1, coefCor) # Correction coefficient can't be < 1.0 (i.e., cant make attenuation worse)
+      # coefCor <- ifelse(coefCor < 1, 1, coefCor) # Correction coefficient can't be < 1.0 (i.e., cant make attenuation worse)
       
       # Calculate and report cospectra, can be converted to frequency-weighted cospectra with other output variables
       cosp <- sapply(names(varDwt@W), 
