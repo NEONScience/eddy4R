@@ -59,7 +59,7 @@ rpt <- list()
 
 ####Check quality of data###########################################
 #Create a logical flag if more data is missing than the threshold
-rpt$qfMiss <- as.list(base::colMeans(base::is.na(dfInp)) > ThshMiss)
+rpt$qfMiss <- as.list(base::colMeans(base::is.na(dfInp), na.rm = TRUE) > ThshMiss)
 #Turn the flags into integers
 rpt$qfMiss <- lapply(rpt$qfMiss, base::as.integer)
 # in case the vertical wind is not available, no cospectral correction can be performed
@@ -93,14 +93,33 @@ for (idxCol in colnames(dfInp)) {
     start = 0,
     frequency = FreqSamp
   )
+  
+  if (rpt$qfMis[[idxCol]] == 1) {
+    
+    rpt$wave[[idxCol]] <- NA
+    
+    if (idxCol == "veloZaxsHor") {
+      
+      rpt$scal <- seq(14, 0)
+      
+    }
+    
+  } else {
+    
     # compute discrete wavelet transform
     rpt$wave[[idxCol]] <- wavelets::dwt(vectTmp, filter = FuncWave, n.levels = numScal)
     msg <- paste(idxCol, "... done.")
     tryCatch({rlog$debug(msg)}, error=function(cond){print(msg)})
     
+    if (idxCol == "veloZaxsHor") {
+      
+      rpt$scal <- sapply(rpt$wave[["veloZaxsHor"]]@W, function(x) log(length(x), base = 2)); names(rpt$scal) <- NULL
+      
+    }
+    
   }
-
-rpt$scal <- sapply(rpt$wave[[1]]@W, function(x) log(length(x), base = 2)); names(rpt$scal) <- NULL
+    
+}
 
 # covariance for all wavelengths
 # not currently implemented for friction velocity as approach to negative
