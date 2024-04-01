@@ -175,7 +175,7 @@ if(qfWave == 0) {
   # idxFreqLim02 <- which.max(freq <= 1) # Inertial subrange can't occur at frequencies higher than 1 Hz
 
     # only continue if peak frequency < 1 Hz and there are at least 3 points to do regression on
-    if(freqPeak < 1 & length(seq(idxFreqLim01, idxFreqLim02)) >= 3) {
+    if(length(seq(idxFreqLim01, idxFreqLim02)) >= 3) {
 
       # for overview page 18 of http://use-r-carlvogt.github.io/PDFs/2017Avril_Cantoni_Rlunch.pdf
       modlLin <- lm(log(varSpecPowr[seq(idxFreqLim01, idxFreqLim02)]) ~ log(freq[seq(idxFreqLim01, idxFreqLim02)]))
@@ -215,7 +215,7 @@ if(qfWave == 0) {
           waveScalEngy <- mean(varDwt@W[[x]][idxEngy]^2) * length(idxEngy)
           waveScalNull <- mean(varDwt@W[[x]][idxNull]^2) * length(idxNull)
           
-          engyScal <- sqrt(rtioAmpl[[x]]^2 * (waveScalAll - waveScalNull) / waveScalEngy)
+          engyScal <- sqrt((rtioAmpl[[x]]^2 * waveScalAll - waveScalNull) / waveScalEngy)
       
           waveScalAdj <- varDwt@W[[x]][idxEngy] * engyScal
           
