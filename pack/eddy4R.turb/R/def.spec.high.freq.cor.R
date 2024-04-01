@@ -184,7 +184,7 @@ if(qfWave == 0) {
       slpRegWave <- modlLin$coefficients[2]
       qfWaveSlp <- 0
       if(!(modlLin$coefficients[2] > -1.8 & modlLin$coefficients[2] < -1.3)) {
-        modlLin$coefficients[1] <- base::mean(log(varSpecPowr[seq(idxFreqLim01, idxFreqLim02)]) - (-5/3 * log(freq[seq(idxFreqLim01, idxFreqLim02)])), na.rm = TRUE)
+        modlLin$coefficients[1] <- log(varSpecPowr[idxFreqLim01]) - (-5/3 * log(freq[idxFreqLim01]))
         modlLin$coefficients[2] <- -5/3
         qfWaveSlp <- 1
       }
@@ -301,7 +301,7 @@ if(qfWave == 0) {
     coefCor = 1,
     qfWave = qfWave,
     slpRegWave <- NA,
-    qfWaveSlp <- -1,
+    qfWaveSlp <- -1
   )
   
 }
