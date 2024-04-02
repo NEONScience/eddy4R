@@ -211,7 +211,7 @@ if(qfWave == 0) {
     rpt <- base::list(
       freqPeak = freqPeak,
       cosp = NA,
-      mean = covOrig,
+      mean = cov(veloZaxsDwt@series, varDwt@series),
       cor = NA,
       coefCor = 1,
       qfWave = qfWave,
