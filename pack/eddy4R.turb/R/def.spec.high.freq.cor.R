@@ -117,72 +117,22 @@ if(qfWave == 0) {
   
   freqPeak <- freq[which.min(abs(freq - freqItpl[idxFreqPeakItpl]))[1]]
 
-  idxFreqLim01 <- which.min(freq >= freqItpl[idxFreqPeakItpl]) # don't start evaluating Inertial Sub Range at peak, move one full scale higher (minus sign is due to order or freq values)
+  idxFreqLim01 <- which.min(freq >= freqItpl[idxFreqPeakItpl]) - 1 # don't start evaluating Inertial Sub Range at peak, move one full scale higher (minus sign is due to order or freq values)
   idxFreqLim01 <- ifelse(idxFreqLim01 > ceiling(length(scal) / 2) - 1, ceiling(length(scal) / 2) - 1, idxFreqLim01)
   # Evaluation of attenuation in inertial sub range max freq limits are set to 1 Hz (could adjust lower to 0.5)
   idxFreqLim02 <- idxFreqLim01 + 2 #which.max(freq <= 1)
-  
-  # 
-  # if(base::is.null(spec02)) {
-  #   #un-weighted wavelet scalogram
-  #   #two approaches identical, see Mauder et al. (2008) and Stull (1988, Sect. 8.6.2 and 8.8.2)
-  #   waveScal<- base::abs(spec01)^2
-  #   #waveScal<- Re(spec01 * Conj(spec01))
-  #   
-  # } else {
-  #   
-  #   #un-weighted wavelet cross-scalogram
-  #   #two approaches identical, see Mauder et al. (2008) and Stull (1988, Sect. 8.6.2 and 8.8.2)
-  #   waveScal <- abs(spec01)^2 #base::Re(spec01 * base::Conj(spec02))
-  #   #waveScal<- Re(spec01) * Re(spec02) + Im(spec01) * Im(spec02)
-  #   
-  #   # Also output spectral power for vertical wind speed (veloZaxsHor)
-  #   veloZaxsScal <- abs(spec02)^2
-  #   
-  # }
-  # 
-  # # frequency [Hz]
-  # freq <- 1 / prd 
-  # 
-  # # Normalized power spectra (both unweighted and weighted) for vertical wind speed (veloZaxs) and scalar
-  # veloZaxsSpec <- colSums(veloZaxsScal) / sum(veloZaxsScal)
-  # 
-  # # Frequency-weighted spectra for vert wind speed needed to find peak
-  # veloZaxsSpecWght <- do.call(rbind, lapply(1:nrow(veloZaxsScal), function(x) freq * veloZaxsScal[x,]))
-  # veloZaxsSpecWght <- colSums(veloZaxsSpecWght) / sum(veloZaxsSpecWght)
-  # 
-  # # Corrections evaluated on un-weighted spectra data for given variable
-  # waveSpec <- colSums(waveScal) / sum(waveScal)
-  # waveSpecAmpl <- sqrt(waveSpec) # Amplitude, see NK12 paper
-  # 
-  # # Find frequency that peak veloZaxsSpec occurs through optimization
-  # paraEst <- optim(
-  #   par = init, 
-  #   fn = function(para, freq, spec) mean((def.spec.peak.modl(para, freq) - spec)^2), 
-  #   freq = freq, spec = veloZaxsSpecWght, 
-  #   method = "Nelder-Mead"
-  # )
-  # 
-  # # Get spec model results for interpolated frequency values to generate smooth curve
-  # freqItpl <- 10^seq(log10(min(freq)), log10(max(freq)), length.out = 200)
-  # specItpl <- def.spec.peak.modl(para = paraEst$par, freq = freqItpl)
-  # 
-  # idxFreqPeakItpl <- which.max(specItpl) # Index of peak frequency
-  # idxFreqPeak <- which.min(abs(freqItpl[idxFreqPeakItpl] - freq)) # Peak frequency
-  # 
-  # idxFreqLim01 <- idxFreqPeak - 1 / dj # don't start evaluating Inertial Sub Range at peak, move one full scale higher (minus sign is due to order or freq values)
-  # # Evaluation of attenuation in inertial sub range max freq limits are set to 1 Hz (could adjust lower to 0.5)
-  # idxFreqLim02 <- which.max(freq <= 1) # Inertial subrange can't occur at frequencies higher than 1 Hz
 
-    # only continue if peak frequency < 1 Hz and there are at least 3 points to do regression on
-    if(length(seq(idxFreqLim01, idxFreqLim02)) >= 3) {
+    # # only continue if peak frequency < 1 Hz and there are at least 3 points to do regression on
+    # if(length(seq(idxFreqLim01, idxFreqLim02)) >= 3) {
 
       # for overview page 18 of http://use-r-carlvogt.github.io/PDFs/2017Avril_Cantoni_Rlunch.pdf
       modlLin <- lm(log(varSpecPowr[seq(idxFreqLim01, idxFreqLim02)]) ~ log(freq[seq(idxFreqLim01, idxFreqLim02)]))
-  
+      
       # if the regression slope (power law coefficient) exceeds the bounds -1.8 ... -1.3, the conventional -5/3 slope is used as alternative
       slpRegWave <- modlLin$coefficients[2]
+      modlLin$coefficients[1] <- log(varSpecPowr[idxFreqLim01]) - (slpRegWave * log(freq[idxFreqLim01]))
       qfWaveSlp <- 0
+      
       if(!(modlLin$coefficients[2] > -1.8 & modlLin$coefficients[2] < -1.3)) {
         modlLin$coefficients[1] <- log(varSpecPowr[idxFreqLim01]) - (-5/3 * log(freq[idxFreqLim01]))
         modlLin$coefficients[2] <- -5/3
@@ -273,21 +223,21 @@ if(qfWave == 0) {
       #Slope flag for high frequency correction if outside 1.3 - 1.8 bounds
       rpt$qfWaveSlp <- qfWaveSlp
 
-  # in case peak frequency > 1 Hz
-  } else {
-    
-    # prepare outputs
-    rpt <- base::list(
-      freqPeak = freqPeak,
-      cosp = NA,
-      mean = covOrig,
-      cor = NA,
-      coefCor = 1,
-      qfWave = 1,
-      slpRegWave = NA,
-      qfWaveSlp = -1)
-      
-  }
+  # # in case peak frequency > 1 Hz
+  # } else {
+  #   
+  #   # prepare outputs
+  #   rpt <- base::list(
+  #     freqPeak = freqPeak,
+  #     cosp = NA,
+  #     mean = covOrig,
+  #     cor = NA,
+  #     coefCor = 1,
+  #     qfWave = 1,
+  #     slpRegWave = NA,
+  #     qfWaveSlp = -1)
+  #     
+  # }
     
 # no Wavelet processing if > 10% NAs
 } else {
