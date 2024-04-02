@@ -131,7 +131,9 @@ rpt$cov <- lapply(names(rpt$wave)[-which(names(rpt$wave) == "veloZaxsHor")], fun
     # Wavelet coefficients vertical wind speed
     veloZaxsDwt = rpt$wave[["veloZaxsHor"]],
     # Scale vector
-    scal = rpt$scal, 
+    scal = rpt$scal,
+    # Initial parameters for optimzation routine to find peak frequency
+    init = c(1,1),
     # Wavelet flag: process (0) or not
     qfWave=rpt$qfMiss[[var]]
   )
