@@ -70,14 +70,28 @@ if(rpt$qfMiss$veloZaxsHor == 1) invisible(lapply(names(rpt$qfMiss), function(x) 
 # fill missing values through linear interpolation
 # NAs at start and end are removed by setting na.rm = TRUE
 tmp <- zoo::na.approx(dfInp, na.rm = TRUE, rule = 2) #Rule 2 allows extrapolating end values using the nearest value or explicitly using zoo::na.locf, could be replaced with zeros using na.fill with any value: see https://stackoverflow.com/questions/7317607/interpolate-na-values-in-a-data-frame-with-na-approx
+tmpNorm <- as.data.frame(scale(tmp, center = TRUE, scale = FALSE))
 
 #Failsafe in case all values are NaN
-if(nrow(tmp) > 1) dfInp <- tmp
+if(nrow(tmpNorm) > 1) dfInp <- tmpNorm
 
-#time series
+# Test code for padding time series with zeros
+# numZero <- 2^numScal - nrow(dfInp)
+# dfInpPad <- as.data.frame(matrix(0, nrow = nrow(dfInp) + numZero, ncol = ncol(dfInp)))
+# colnames(dfInpPad) <- colnames(dfInp)
+# 
+# dfInpPad[seq(numZero / 2 + 1, numZero / 2 + nrow(dfInp)), ] <- dfInp
+# rm(dfInp) 
+#
+# dfInp <- as.data.frame(stats::ts(
+#   dfInpPad,
+#   start = 0, 
+#   frequency = FreqSamp
+# ))
+
 dfInp <- as.data.frame(stats::ts(
   dfInp,
-  start = 0, 
+  start = 0,
   frequency = FreqSamp
 ))
 
@@ -85,7 +99,7 @@ dfInp <- dfInp[seq(1, 2^numScal), ] # only used first 2^J observations
 
 rpt$wave <- list()
 
-for (idxCol in colnames(dfInp)) {
+for (idxCol in colnames(dfInpPad)) {
   
   #Creating ts vector
   vectTmp <- stats::ts(
@@ -100,7 +114,7 @@ for (idxCol in colnames(dfInp)) {
     
     if (idxCol == "veloZaxsHor") {
       
-      rpt$scal <- seq(14, 0)
+      rpt$scal <- seq(numScal - 1, 0)
       
     }
     

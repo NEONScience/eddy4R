@@ -74,16 +74,15 @@ def.spec.high.freq.cor <- function(
 # only process if < 10% NAs
 if(qfWave == 0) {
 
-  freq <- 2^scal * FreqSamp / 2^length(scal); names(freq) <- NULL
+  freq <- 2^scal * FreqSamp / 2^length(scal); names(freq) <- NULL # Eq. 15 in NK12
     
+  # Unweighted spectra power (modification of Eq. 7 in NK12)
   varSpecPowr <- sapply(varDwt@W, function(x) mean(x^2) / log(2))
   veloZaxsSpecPowr <- sapply(veloZaxsDwt@W, function(x) mean(x^2) / log(2))
-  
   names(varSpecPowr) <- NULL; names(veloZaxsSpecPowr) <- NULL
   
-  # Find peak frequency of vertical wind speed using freq-weighted power spectra
+  # Find peak frequency of vertical wind speed using freq-weighted power spectra (Eq. 7 in NK12)
   veloZaxsPowrWght <- freq * veloZaxsSpecPowr / FreqSamp / var(as.numeric(veloZaxsDwt@series))
-  # varPowrWght <- freq * varSpecPowr / FreqSamp / var(as.numeric(varDwt@series))
 
   paraEst <- optim(
     par = init, 
@@ -108,7 +107,9 @@ if(qfWave == 0) {
   # Only do processing is there are at least the 3 highest scales left to adjust
   if(freqPeak <= 1.25) {
     
+    # Regression on spectra power in inertial subrange
     modlLin <- lm(log(varSpecPowr[seq(idxFreqLim01, idxFreqLim02)]) ~ log(freq[seq(idxFreqLim01, idxFreqLim02)]))
+    slpRegWave <- modlLin$coefficients[2] # Record original slope prior to evaluating range tolerance. For reporting purposes.
     
     # if the regression slope (power law coefficient) exceeds the bounds -1.8 ... -1.3, the conventional -5/3 slope is used as alternative
     modlLin$coefficients[1] <- log(varSpecPowr[idxFreqLim01]) - (modlLin$coefficients[2] * log(freq[idxFreqLim01]))
@@ -176,15 +177,26 @@ if(qfWave == 0) {
                      mean(varDwt@W[[x]] * veloZaxsDwt@W[[x]]) / log(2) 
                    })
     
+    cospCor <- sapply(names(varDwt@W), 
+                      function(x) { 
+                        mean(waveScalAdj@W[[x]] * veloZaxsDwt@W[[x]]) / log(2) 
+                      })
+    
     
     # prepare outputs
     rpt <- base::list()
     
+    # frequency vector 
+    rpt$freq <- freq
+    
     # peak frequency
     rpt$freqPeak <- freqPeak
     
-    #Output the cospectra
+    #Output the attenuated cospectra
     rpt$cosp <- cosp
+    
+    #Output the corrected cospectra
+    rpt$cosp <- cospCor
     
     # uncorrected covariance
     rpt$mean <- covOrig
@@ -192,14 +204,16 @@ if(qfWave == 0) {
     # corrected covariance
     rpt$cor <- covAdj
     
-    # correction coefficient (i.e., rpt$cor / rpt$mean)
+    # correction coefficient, inverse of flux attenuation
     rpt$coefCor <- coefCor
     
     # flag
     rpt$qfWave <- qfWave
     
-    #Slope of the wavelet high frequency correction
-    rpt$slpRegWave <- modlLin$coefficients[2]
+    rpt$modlLinScal = seq(idxFreqLim01, idxFreqLim02)
+    
+    #Slope of the original unmodified wavelet high frequency correction
+    rpt$slpRegWave <- slpRegWave
     
     #Slope flag for high frequency correction if outside 1.3 - 1.8 bounds
     rpt$qfWaveSlp <- qfWaveSlp
@@ -209,12 +223,14 @@ if(qfWave == 0) {
     
     # prepare outputs
     rpt <- base::list(
+      freq = NA, 
       freqPeak = freqPeak,
       cosp = NA,
       mean = cov(veloZaxsDwt@series, varDwt@series),
       cor = NA,
       coefCor = 1,
       qfWave = qfWave,
+      modlLinScal = NA, 
       slpRegWave = NA,
       qfWaveSlp = -1)
     
@@ -225,12 +241,14 @@ if(qfWave == 0) {
   
   # prepare outputs
   rpt <- base::list(
+    freq = NA, 
     freqPeak = NA,
     cosp = NA,
     mean = NA,
     cor = NA,
     coefCor = 1,
     qfWave = qfWave,
+    modlLinScal = NA,
     slpRegWave <- NA,
     qfWaveSlp <- -1
   )
