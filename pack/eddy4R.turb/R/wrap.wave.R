@@ -99,7 +99,7 @@ dfInp <- dfInp[seq(1, 2^numScal), ] # only used first 2^J observations
 
 rpt$wave <- list()
 
-for (idxCol in colnames(dfInpPad)) {
+for (idxCol in colnames(dfInp)) {
   
   #Creating ts vector
   vectTmp <- stats::ts(
