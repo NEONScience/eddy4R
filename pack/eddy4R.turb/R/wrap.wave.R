@@ -85,22 +85,29 @@ if (zeroPad) {
   dfInpPad <- as.data.frame(matrix(0, nrow = nrow(dfInp) + numZero, ncol = ncol(dfInp)))
   colnames(dfInpPad) <- colnames(dfInp)
   
-  dfInpPad[seq(numZero / 2 + 1, numZero / 2 + nrow(dfInp)), ] <- dfInp
+  idxData <- seq(numZero / 2 + 1, numZero / 2 + nrow(dfInp))
+  
+  dfInpPad[idxData, ] <- dfInp
   dfInp <- dfInpPad
   rm(dfInpPad)
   
 } else {
   
   numScal <- floor(log(nrow(dfInp), base = 2))
-  dfInp <- dfInp[seq(1, 2^numScal), ] # only used first 2^J observations
+  
+  idxData <- seq(1, 2^numScal)
+  
+  dfInp <- dfInp[idxData, ] # only used first 2^J observations
   
 }
 
-dfInp <- as.data.frame(stats::ts(
-  dfInp,
-  start = 0,
-  frequency = FreqSamp
-))
+
+# *** Not sure if following code is needed anymore ***
+# dfInp <- as.data.frame(stats::ts(
+#   dfInp,
+#   start = 0,
+#   frequency = FreqSamp
+# ))
 
 rpt$wave <- list()
 
@@ -153,6 +160,8 @@ rpt$cov <- lapply(names(rpt$wave)[-which(names(rpt$wave) == "veloZaxsHor")], fun
     scal = rpt$scal,
     # Initial parameters for optimzation routine to find peak frequency
     init = c(1,1),
+    # Data index for original time series (i.e., no zero padding)
+    idxData = idxData,
     # Wavelet flag: process (0) or not
     qfWave=rpt$qfMiss[[var]]
   )

@@ -66,6 +66,8 @@ def.spec.high.freq.cor <- function(
   FreqSamp = 20,
   # Initial parameterization for fitting model to find peak freq
   init = c(1, 1), 
+  # Data index for original time series, assumes no zero padding
+  idxData = seq(1, length(varDwt@series)),
   # Quality flag for missing data (>10%)
   qfWave
 ) {
@@ -163,8 +165,8 @@ if(qfWave == 0) {
     
     invDwt01 <- wavelets::idwt(waveScalAdj) # Time series reconstruction
     
-    covOrig <- cov(veloZaxsDwt@series, varDwt@series)
-    covAdj <- cov(veloZaxsDwt@series, invDwt01)
+    covOrig <- cov(veloZaxsDwt@series[idxData], varDwt@series[idxData])
+    covAdj <- cov(veloZaxsDwt@series[idxData], invDwt01[idxData])
     
     fluxMiss <- covOrig / covAdj # Flux attenuation for half-hour period as a percentage
     
@@ -196,7 +198,7 @@ if(qfWave == 0) {
     rpt$cosp <- cosp
     
     #Output the corrected cospectra
-    rpt$cosp <- cospCor
+    rpt$cospCor <- cospCor
     
     # uncorrected covariance
     rpt$mean <- covOrig
