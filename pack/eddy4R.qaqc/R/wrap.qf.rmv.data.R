@@ -13,6 +13,8 @@
 #' \code{Vrbs = FALSE}: (Default) cleaned data set with the bad high frequency quality flagged data replaced with NaN's as part of the \code{inpList} in the same format., or \cr
 #' \code{Vrbs = TRUE}: cleaned data set with the bad high frequency quality flagged data replaced with NaN's as part of the \code{inpList} in the same format. In addition, a separate list  \code{qfqmAnls} will be added to the output list \code{rpt} with a list of variables assessed, a list of quality flags for each variable assessed, the number of each quality flag tripped for each variable and the total number of bad data per variable.
 #' @param MethMeas A vector of class "character" containing the name of measurement method (eddy-covariance turbulent exchange or storage exchange), MethMeas = c("ecte", "ecse"). Defaults to "ecte". [-]
+#' @param MethFf A logical {FALSE/TRUE} value indicating whether to output as ff object or regular data.frame. Defaults to \code{MethFf = TRUE}
+
 
 #' 
 #' @return The returned object consistes of \code{inpList}, with the bad high frequency quality flagged data replaced with NaN's. Optionally, (\code{Vrbs = TRUE}) a separate list \code{qfqmAnls} will be added to the output list \code{rpt} with a list of variables assessed, a list of quality flags for each variable assessed, the number of each quality flag tripped for each variable and the total number of bad data per variable.
@@ -53,7 +55,8 @@ wrap.qf.rmv.data <- function(
   Sens = NULL,
   qfRmv = NULL,
   Vrbs = FALSE, 
-  MethMeas = c("ecte",  "ecse")[1]){
+  MethMeas = c("ecte",  "ecse")[1],
+  MethFf = TRUE){
   
   library(eddy4R.base)
   rlog = Logger.Singleton$new() #class defined in eddy4R.base
@@ -108,13 +111,23 @@ base::lapply(Sens, function(x){
   })#End lapply around sensors
   
   #Applying the bad quality flags to the reported output data
+  #Check if outputting as ff or not
+  if(MethFf == TRUE){
   base::lapply(base::names(outList), function(x) {
     #Outputting the data ffdf's
     rpt$data[[x]] <<- ff::as.ffdf(outList[[x]]$inpData) 
     rpt$data[[x]] <<- eddy4R.base::def.unit.var(samp = rpt$data[[x]], refe = inpList$data[[x]]) #Copy units
     rpt$qfqm[[x]] <<- ff::as.ffdf(base::cbind(rpt$qfqm[[x]][], outList[[x]]$qfNull, as.data.frame(outList[[x]]$qfSpk)))
   })
-  
+  }else{
+  base::lapply(base::names(outList), function(x) {
+    #Outputting the data ffdf's
+    rpt$data[[x]] <<- as.data.frame(outList[[x]]$inpData) 
+    rpt$data[[x]] <<- eddy4R.base::def.unit.var(samp = rpt$data[[x]], refe = inpList$data[[x]]) #Copy units
+    rpt$qfqm[[x]] <<- as.data.frame(base::cbind(rpt$qfqm[[x]][], outList[[x]]$qfNull, as.data.frame(outList[[x]]$qfSpk)))
+  })
+  }#End MethFf if statment
+
   #If verbose is true write out all the information about the quality flags applied to the raw data
   if(Vrbs == TRUE){
     base::lapply(base::names(outList), function(x) {
