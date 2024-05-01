@@ -335,6 +335,14 @@ rhdf5::h5writeAttribute(round(Meta$Sci$`Pf$AngEnuYaxs`, digits = 6), h5obj = idS
 rhdf5::h5writeAttribute(round(Meta$Sci$`Pf$Ofst`, digits = 6), h5obj = idSite, name = "Pf$Ofst")
 rhdf5::h5writeAttribute(Meta$Site$TimeDiffUtcLt, h5obj = idSite, name = "TimeDiffUtcLt")
 
+
+#Write lag time outputs
+idDataCo2Turb <- rhdf5::H5Gopen(idSite, "dp01/data/co2Turb")
+rhdf5::h5writeAttribute(inpList$Lag$Lag$rtioMoleDryCo2Raw, h5obj = idDataCo2Turb, name = "Lag$TimeDiff")
+idDataH2oTurb <- rhdf5::H5Gopen(idSite, "dp01/data/h2oTurb")
+rhdf5::h5writeAttribute(inpList$Lag$Lag$rtioMoleDryH2oRaw, h5obj = idDataH2oTurb, name = "Lag$TimeDiff")
+
+
 #Close HDF5 connections
 rhdf5::h5closeAll() 
 }
