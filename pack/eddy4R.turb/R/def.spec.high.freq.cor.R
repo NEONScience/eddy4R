@@ -8,19 +8,15 @@
 #' @description 
 #' Definition function. Function to determine the temporally resolved variance/covariance from continuous wavelet transform including high-frequency spectral correction and selectable low-frequency cutoff. The frequency response correction using Wavelet techniques described in Norbo and Katul, 2012 (NK12)
 
-#' @param spec01 Waves package output object spectrum, continuous wavelet transform output object complex spectrum for the first variable (typically w' ==> "veloZaxsHor")denoted as \code{object1@spectrum}.
-#' @param spec02 Waves package output object spectrum, continuous wavelet transform output object complex spectrum for the second variable for cospectra denoted as \code{object2@spectrum}.
-#' @param scal Waves package output object scale, width of the wavelet at each scale [s] denoted as \code{object1@scale}
-#' @param prd Waves package output object period, approximate corresponding Fourier period [s] denoted as \code{object1@period}
-#' @param FreqSamp numeric, that determines the time series objects points
-#' @param FreqCut vector, half-power frequencies for individual variables [Hz] for determining transfer function to correct frequency response
-#' @param SetPrd numeric, which wavelengths/spatial scales to consider if you want to only consider high frequency values
-#' @param CoefNorm numeric, normalization factor specific to the choice of Wavelet parameters.
-#' @param qfWave Wavelet flag: process (0) or not (1)
-#' @param paraStbl stability parameter (numeric)
-#' @param MethSpec spectrum or cospectrum  c("spec", "cosp")
+#' @param varDwt wavelets object output, discrete wavelet transform output object for a given scalar/variable (e.g., rtioMoleDryH2o)
+#' @param veloZaxsDwt wavelets object output, discrete wavelet transform output object for a vertical wind speed (i.e., w')
+#' @param scal vector of scales for wavelets objects
+#' @param FreqSamp numeric, sampling frequency defaults to 20Hz
+#' @param init initialization parameters for fitting two-parameter nonlinear model to frequency-weighted vertical wind speed data. Used to determine spectral peak
+#' @param idxData index of time sereis data to use and modify. Only needed if zero-padding is being done. Currently just defaults to every observation in dataset.
+#' @param qfWave Wavelet flag: process (0) or not (1) depending on if number of data points missing >10%
 #' 
-#' @return A vector constaining temporally resolved variance/covariance from the continuous wavelet transform.
+#' @return A list containing output from NK12 high frequency correction, including a correction coefficient (coefCor) providing a proportion of how much to adjust 30-minute flux values.
 #' 
 #' @references
 #' License: GNU AFFERO GENERAL PUBLIC LICENSE Version 3, 19 November 2007.
@@ -28,7 +24,6 @@
 #' @keywords Wavelet, spectrum, cospectrum, NK12, frequency response correction
 
 #' @examples Currently none.
-
 
 #' @seealso Currently none.
 
@@ -47,18 +42,22 @@
 #     updating terms, fixing ts period issue
 #   David Durden (2023-05-12)
 #     Adding cospectra to the output, updating term name in function
+#   Adam Young (2024-03-17)
+#     Initial commit of renaming def.wave.vari.R -> def.spec.high.freq.cor.R
+#   Adam Young (2024-05-07)
+#     Finalizing script for broader testing prior to data reprocessing
 ##############################################################################################
 
 
-# start function def.vari.wave()
+# start function def.spec.high.freq.cor()
 
 
-#function to determine the temporally resolved variance/covariance from CWT
-#including high-frequency spectral correction and selectable low-frequency cutoff
+#function to determine the temporally resolved variance/covariance from discrete wavelet transform
+#including high-frequency spectral correction 
 def.spec.high.freq.cor <- function(
-  # Wavelet coefficients variable
+  # Discrete wavelet coefficients for specific environmental variable (e.g., temp, rtioMoleDryCo2)
   varDwt,
-  # Wavelet coefficients for vertical wind speed
+  # Discrete wavelet coefficients for vertical wind speed
   veloZaxsDwt,
   # Scales of discrete wavelet transform
   scal = sapply(varDwt@W, function(x) log(length(x), base = 2)),
@@ -76,6 +75,7 @@ def.spec.high.freq.cor <- function(
 # only process if < 10% NAs
 if(qfWave == 0) {
 
+  # Convert scale to frequency values
   freq <- 2^scal * FreqSamp / 2^length(scal); names(freq) <- NULL # Eq. 15 in NK12
     
   # Unweighted spectra power (modification of Eq. 7 in NK12)
@@ -93,7 +93,7 @@ if(qfWave == 0) {
     method = "Nelder-Mead"
   )
   
-  freqItpl <- 10^seq(log10(min(freq)), log10(max(freq)), length.out = 100)
+  freqItpl <- exp(seq(log(min(freq)), log(max(freq)), length.out = 100))
   specItpl <- def.spec.peak.modl(para = paraEst$par, freq = freqItpl)
   
   idxFreqPeakItpl <- which.max(specItpl) # Index of peak frequency
@@ -106,8 +106,8 @@ if(qfWave == 0) {
   
   idxFreqLim02 <- idxFreqLim01 + 2 # Upper limit (i.e. lower frequencies) is two scales below idxFreqLim01
 
-  # Only do processing is there are at least the 3 highest scales left to adjust
-  if(freqPeak <= 1.25) {
+  # Only do processing is there are at least the 3 highest scales left to adjust. Also do not do any processing if frequency peak is too low (<0.05 Hz)
+  if(freqPeak >= 0.05 & freqPeak <= 1.25) {
     
     # Regression on spectra power in inertial subrange
     modlLin <- lm(log(varSpecPowr[seq(idxFreqLim01, idxFreqLim02)]) ~ log(freq[seq(idxFreqLim01, idxFreqLim02)]))
@@ -168,7 +168,7 @@ if(qfWave == 0) {
     covOrig <- cov(veloZaxsDwt@series[idxData], varDwt@series[idxData])
     covAdj <- cov(veloZaxsDwt@series[idxData], invDwt01[idxData])
     
-    fluxMiss <- covOrig / covAdj # Flux attenuation for half-hour period as a percentage
+    fluxMiss <- covOrig / covAdj # Flux attenuation for half-hour period as a proportion
     
     coefCor <- 1 / fluxMiss # Correction coefficient is inverse of flux attenuation
     # coefCor <- ifelse(coefCor < 1, 1, coefCor) # Correction coefficient can't be < 1.0 (i.e., cant make attenuation worse)
@@ -220,7 +220,7 @@ if(qfWave == 0) {
     #Slope flag for high frequency correction if outside 1.3 - 1.8 bounds
     rpt$qfWaveSlp <- qfWaveSlp
     
-    # in case peak frequency > 1.25 Hz
+    # in case peak frequency is not in range of [0.05Hz, 1.25 Hz]
   } else {
     
     # prepare outputs
@@ -259,16 +259,5 @@ if(qfWave == 0) {
   
   # return results
   return(rpt)
-
-  
-  # # some testing
-  # rng <- range(c(sqrt(waveVari), sqrt(dfInp$veloZaxsHor^2)))
-  # plot(sqrt(waveVari) ~ sqrt(dfInp$w_met^2), xlim = rng, ylim = rng, asp=1)
-  # lines(sqrt(waveVari), col=2)
-
-  #plot change in variance
-  #between 0% and 10% along flight line for H2O
-  #between 0% and 1% along flight line for T
-  #plot(I((waveVari / myvc3), log="y")
 
 }

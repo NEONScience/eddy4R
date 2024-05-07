@@ -47,7 +47,7 @@
 
 wrap.wave <- function(
 dfInp,
-FuncWave = "haar", # From Nordbo and Katul 2012, orthogonal wavelet basis is ideal
+FuncWave = "haar", # Default from Nordbo and Katul 2012, orthogonal wavelet basis is ideal
 FreqSamp = 20, #Defaults to 20Hz
 zeroPad = FALSE,
 ThshMiss = 0.1,
@@ -93,10 +93,9 @@ if (zeroPad) {
   
 } else {
   
+  # Calculate number of scales based on length of time series dataset
   numScal <- floor(log(nrow(dfInp), base = 2))
-  
-  idxData <- seq(1, 2^numScal)
-  
+  idxData <- seq(1, 2^numScal) # Index for data in this case is the first 2^J observations
   dfInp <- dfInp[idxData, ] # only used first 2^J observations
   
 }
@@ -137,7 +136,7 @@ for (idxCol in colnames(dfInp)) {
     msg <- paste(idxCol, "... done.")
     tryCatch({rlog$debug(msg)}, error=function(cond){print(msg)})
     
-    if (idxCol == "veloZaxsHor") {
+    if (idxCol == "veloZaxsHor") { # Only retrieve scale values one time
       
       rpt$scal <- sapply(rpt$wave[["veloZaxsHor"]]@W, function(x) log(length(x), base = 2)); names(rpt$scal) <- NULL
       
