@@ -8,12 +8,12 @@
 #' Wrapper function. Calculate Wavelet spectrum/cospectrum using the Waves package. The frequency response correction using Wavelet techniques described in Norbo and Katul, 2012 (NK12)
 
 #' @param dfInp data.frame, consisting of the input data to perform the wavelet transformation
-#' @param DiffScal numeric, determining the step difference in scales for the wavelet transformation
-#' @param FuncWave Waves package function, denoting the type of mother wavelet function to be used in the transformation
-#' @param FreqSamp numeric, that determines the time series objects points
-#' @param SetPrd numeric, which wavelengths/spatial scales to consider if you want to only consider high frequency values
+#' @param FuncWave numeric, wavelet function to be used, defaults to orthogonal 'haar'
+#' @param FreqSamp numeric, sampling frequency, defaults to 20Hz for NEON data
+#' @param zeroPad logical, should zero padding of time series be applied. If set to TRUE then detrending of time series is performed as well.
 #' @param ThshMiss numeric, dimensionless fraction of missing values in each column of data allowed before the quality flag is tripped. Defaults to 0.1 or 10 percent.
-#' @param paraStbl stability parameter (numeric)
+#' @param init numeric, initial values to perform optimization of fitting nonlinear model to frequency-weighted vertical wind speed. Passed on to def.spec.high.freq.cor.R
+#' @param paraStbl stability parameter (numeric). Not currently implemented.
 
 #'
 #' @return An list constaining wavelet spectra, quality flags if data was available to perform correction, and frequency reponse correction parameters if activated.
@@ -43,6 +43,10 @@
 #     Added failsafe in case the vertical wind is not available
 #   David Durden (2023-03-12)
 #     Updating terms, fixing ts bug, and adding cutoff frequencies
+#   Adam Young (2024-03-19)
+#     Initial commit for major changes that now use methods that more closely align with NK12
+#   Adam Young (2024-05-07)
+#     Clean and finalize code for broader testing.
 ##############################################################################################
 
 wrap.wave <- function(
