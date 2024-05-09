@@ -251,8 +251,8 @@ if(qfWave == 0) {
     coefCor = 1,
     qfWave = qfWave,
     modlLinScal = NA,
-    slpRegWave <- NA,
-    qfWaveSlp <- -1
+    slpRegWave = NA,
+    qfWaveSlp = -1
   )
   
 }
