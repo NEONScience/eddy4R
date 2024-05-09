@@ -1,5 +1,5 @@
 ##############################################################################################
-#' @title Wrapper function: Calculate Wavelet spectrum/cospectrum and frequency response correction
+#' @title Wrapper function: Calculate Wavelet cospectra and frequency response correction
 
 #' @author
 #' David Durden \email{ddurden@battelleecology.org}
@@ -16,7 +16,7 @@
 #' @param paraStbl stability parameter (numeric). Not currently implemented.
 
 #'
-#' @return An list constaining wavelet spectra, quality flags if data was available to perform correction, and frequency reponse correction parameters if activated.
+#' @return An list containing wavelet cospectra, quality flags if data was available to perform correction, and correction coefficients (coefCor) for each variable.
 #'
 #' @references
 #' License: GNU AFFERO GENERAL PUBLIC LICENSE Version 3, 19 November 2007.
@@ -55,7 +55,7 @@ FuncWave = "haar", # Default from Nordbo and Katul 2012, orthogonal wavelet basi
 FreqSamp = 20, #Defaults to 20Hz
 zeroPad = FALSE,
 ThshMiss = 0.1,
-init = c(1, 1), # Parameter initialization for optimized curve fitting of weighted spectra
+init = c(3, 5), # Parameter initialization for optimized curve fitting of weighted spectra
 paraStbl = NULL # Stability not currently considered
 ) {
 
@@ -115,6 +115,7 @@ if (zeroPad) {
 rpt$wave <- list()
 
 for (idxCol in colnames(dfInp)) {
+  # idxCol <- colnames(dfInp)[4]
   
   #Creating ts vector
   vectTmp <- stats::ts(
@@ -123,7 +124,7 @@ for (idxCol in colnames(dfInp)) {
     frequency = FreqSamp
   )
   
-  if (rpt$qfMis[[idxCol]] == 1) {
+  if (rpt$qfMiss[[idxCol]] == 1) {
     
     rpt$wave[[idxCol]] <- NA
     
@@ -162,7 +163,7 @@ rpt$cov <- lapply(names(rpt$wave)[-which(names(rpt$wave) == "veloZaxsHor")], fun
     # Scale vector
     scal = rpt$scal,
     # Initial parameters for optimzation routine to find peak frequency
-    init = c(1,1),
+    init = init,
     # Data index for original time series (i.e., no zero padding)
     idxData = idxData,
     # Wavelet flag: process (0) or not

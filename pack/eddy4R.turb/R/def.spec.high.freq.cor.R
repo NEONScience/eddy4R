@@ -1,5 +1,5 @@
 ##############################################################################################
-#' @title Definition function: function to determine the temporally resolved variance/covariance from continuous wavelet transform
+#' @title Definition function: function to determine the temporally resolved covariance from discrete wavelet transform and frequency response correction
 
 #' @author
 #' David Durden \email{ddurden@battelleecology.org}
@@ -12,8 +12,8 @@
 #' @param veloZaxsDwt wavelets object output, discrete wavelet transform output object for a vertical wind speed (i.e., w')
 #' @param scal vector of scales for wavelets objects
 #' @param FreqSamp numeric, sampling frequency defaults to 20Hz
-#' @param init initialization parameters for fitting two-parameter nonlinear model to frequency-weighted vertical wind speed data. Used to determine spectral peak
-#' @param idxData index of time sereis data to use and modify. Only needed if zero-padding is being done. Currently just defaults to every observation in dataset.
+#' @param init initialization parameters for fitting two-parameter nonlinear model to frequency-weighted vertical wind speed data. Used to determine spectral peak.
+#' @param idxData index of time series data to use and modify. Only needed if zero-padding is being done. Currently just defaults to every observation in dataset.
 #' @param qfWave Wavelet flag: process (0) or not (1) depending on if number of data points missing >10%
 #' 
 #' @return A list containing output from NK12 high frequency correction, including a correction coefficient (coefCor) providing a proportion of how much to adjust 30-minute flux values.
@@ -64,7 +64,7 @@ def.spec.high.freq.cor <- function(
   # Sampling Frequency in Hz
   FreqSamp = 20,
   # Initial parameterization for fitting model to find peak freq
-  init = c(1, 1), 
+  init = c(3, 5), 
   # Data index for original time series, assumes no zero padding
   idxData = seq(1, length(varDwt@series)),
   # Quality flag for missing data (>10%)
