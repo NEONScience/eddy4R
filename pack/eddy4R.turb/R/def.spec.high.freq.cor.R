@@ -74,8 +74,7 @@ def.spec.high.freq.cor <- function(
   
 # only process if < 10% NAs
 if(qfWave == 0) {
-
-  # Convert scale to frequency values
+  
   freq <- 2^scal * FreqSamp / 2^length(scal); names(freq) <- NULL # Eq. 15 in NK12
     
   # Unweighted spectra power (modification of Eq. 7 in NK12)
@@ -85,7 +84,7 @@ if(qfWave == 0) {
   
   # Find peak frequency of vertical wind speed using freq-weighted power spectra (Eq. 7 in NK12)
   veloZaxsPowrWght <- freq * veloZaxsSpecPowr / FreqSamp / var(as.numeric(veloZaxsDwt@series))
-
+  
   paraEst <- optim(
     par = init, 
     fn = function(para, freq, spec) mean((eddy4R.turb::def.spec.peak.modl(para, freq) - spec)^2), 
@@ -93,11 +92,12 @@ if(qfWave == 0) {
     method = "Nelder-Mead"
   )
   
+  # Interpolated 100-point function of freq-weighted vertical wind speed power spectra
   freqItpl <- exp(seq(log(min(freq)), log(max(freq)), length.out = 100))
   specItpl <- def.spec.peak.modl(para = paraEst$par, freq = freqItpl)
   
   idxFreqPeakItpl <- which.max(specItpl) # Index of peak frequency
-  freqPeak <- freqItpl[idxFreqPeakItpl]
+  freqPeak <- freqItpl[idxFreqPeakItpl] # Value of peak frequency
   
   # don't start evaluating Inertial Sub Range at peak, move one full scale higher
   idxFreqLim01 <- which(freq >= freqPeak) # First pick only frequency indices that are greater than the peak frequency
@@ -106,7 +106,8 @@ if(qfWave == 0) {
   
   idxFreqLim02 <- idxFreqLim01 + 2 # Upper limit (i.e. lower frequencies) is two scales below idxFreqLim01
 
-  # Only do processing is there are at least the 3 highest scales left to adjust. Also do not do any processing if frequency peak is too low (<0.05 Hz)
+  # Only do processing is there are at least the 3 highest scales left to adjust. Also do not do any processing if frequency peak is too low (<0.05 Hz). 
+  # So only 3-7 highest scales can be adjusted.
   if(freqPeak >= 0.05 & freqPeak <= 1.25) {
     
     # Regression on spectra power in inertial subrange
@@ -135,35 +136,36 @@ if(qfWave == 0) {
     names(rtioAmpl) <- names(varDwt@W)
     
     # Get lorenz curve results
-    rptLorenz <- eddy4R.turb::def.wave.lorenz.calc(lapply(veloZaxsDwt@W, function(x) x^2))
-    
+    rptLorenzWaveCoef <- eddy4R.turb::def.wave.lorenz.calc(lapply(veloZaxsDwt@W, function(x) x^2))
+
     # Adjust only the most energetic Wavelet coefficients base on results from Lorenz curve (those that have 90% of the energy)
-    waveScalAdjList <- lapply(
+    waveCoefAdjList <- lapply(
       names(varDwt@W),
       function(x) {
         
-        idxEngy <- rptLorenz$index[[x]][rptLorenz$lorenz[[x]] > 0.1]
-        idxNull <- rptLorenz$index[[x]][rptLorenz$lorenz[[x]] <= 0.1]
+        idxEngy <- rptLorenzWaveCoef$index[[x]][rptLorenzWaveCoef$lorenz[[x]] > 0.1]
+        idxNull <- rptLorenzWaveCoef$index[[x]][rptLorenzWaveCoef$lorenz[[x]] <= 0.1]
         
-        waveScalAll <- mean(varDwt@W[[x]]^2) * length(rptLorenz$index[[x]])
+        waveScalAll <- mean(varDwt@W[[x]]^2) * length(rptLorenzWaveCoef$index[[x]])
         waveScalEngy <- mean(varDwt@W[[x]][idxEngy]^2) * length(idxEngy)
         waveScalNull <- mean(varDwt@W[[x]][idxNull]^2) * length(idxNull)
         
         engyScal <- sqrt((rtioAmpl[[x]]^2 * waveScalAll - waveScalNull) / waveScalEngy)
         
-        waveScalAdj <- varDwt@W[[x]][idxEngy] * engyScal
+        waveCoefAdj <- varDwt@W[[x]][idxEngy] * engyScal
         
-        return(list(index = idxEngy, waveScalAdj = waveScalAdj))
+        return(list(index = idxEngy, waveAdj = waveCoefAdj))
         
       }
     )
-    
-    waveScalAdj <- varDwt
+
+    # Adjust only wavelet coefficients with highest energy    
+    varDwtAdj <- varDwt
     for (i in seq(idxFreqLim01 - 1, 1)) {
-      waveScalAdj@W[[i]][waveScalAdjList[[i]]$index] <- waveScalAdjList[[i]]$waveScalAdj
+      varDwtAdj@W[[i]][waveCoefAdjList[[i]]$index] <- waveCoefAdjList[[i]]$waveAdj
     }
     
-    invDwt01 <- wavelets::idwt(waveScalAdj) # Time series reconstruction
+    invDwt01 <- wavelets::idwt(varDwtAdj) # Time series reconstruction
     
     covOrig <- cov(veloZaxsDwt@series[idxData], varDwt@series[idxData])
     covAdj <- cov(veloZaxsDwt@series[idxData], invDwt01[idxData])
@@ -191,7 +193,7 @@ if(qfWave == 0) {
     # frequency vector 
     rpt$freq <- freq
     
-    # peak frequency
+    # peak frequency of vertical wind speed
     rpt$freqPeak <- freqPeak
     
     #Output the attenuated cospectra
@@ -228,6 +230,7 @@ if(qfWave == 0) {
       freq = NA, 
       freqPeak = freqPeak,
       cosp = NA,
+      cospCor = NA,
       mean = cov(veloZaxsDwt@series, varDwt@series),
       cor = NA,
       coefCor = 1,
@@ -246,6 +249,7 @@ if(qfWave == 0) {
     freq = NA, 
     freqPeak = NA,
     cosp = NA,
+    cospCor = NA,
     mean = NA,
     cor = NA,
     coefCor = 1,

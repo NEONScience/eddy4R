@@ -75,10 +75,10 @@ if(rpt$qfMiss$veloZaxsHor == 1) invisible(lapply(names(rpt$qfMiss), function(x) 
 # fill missing values through linear interpolation
 # NAs at start and end are removed by setting na.rm = TRUE
 tmp <- zoo::na.approx(dfInp, na.rm = TRUE, rule = 2) #Rule 2 allows extrapolating end values using the nearest value or explicitly using zoo::na.locf, could be replaced with zeros using na.fill with any value: see https://stackoverflow.com/questions/7317607/interpolate-na-values-in-a-data-frame-with-na-approx
-tmpNorm <- as.data.frame(scale(tmp, center = TRUE, scale = FALSE)) # Recenter time series after filling in NAs
+# tmpNorm <- as.data.frame(scale(tmp, center = TRUE, scale = FALSE)) # Recenter time series after filling in NAs
 
 #Failsafe in case all values are NaN
-if(nrow(tmpNorm) > 1) dfInp <- tmpNorm
+if(nrow(tmp) > 1) dfInp <- tmp
 
 # Determine number of scales based on whether zero padding of time series will be done AND current number of observations in time series
 if (zeroPad) {
@@ -93,7 +93,7 @@ if (zeroPad) {
   
   dfInpPad[idxData, ] <- dfInp
   dfInp <- dfInpPad
-  rm(dfInpPad)
+  rm(dfInpPad, numZero)
   
 } else {
   
@@ -104,6 +104,8 @@ if (zeroPad) {
   
 }
 
+# Re-center data after excluding observations after 1:2^numScal and filling in NAs
+dfInp <- as.data.frame(scale(dfInp, center = TRUE, scale = FALSE))
 
 # *** Not sure if following code is needed anymore ***
 # dfInp <- as.data.frame(stats::ts(
@@ -115,7 +117,7 @@ if (zeroPad) {
 rpt$wave <- list()
 
 for (idxCol in colnames(dfInp)) {
-  # idxCol <- colnames(dfInp)[4]
+  # idxCol <- colnames(dfInp)[6]
   
   #Creating ts vector
   vectTmp <- stats::ts(
@@ -123,6 +125,23 @@ for (idxCol in colnames(dfInp)) {
     start = 0,
     frequency = FreqSamp
   )
+  
+    # 'wavelets' (ver 0.3-0.2) package rounds to the nearest 5th decimal point (e.g., round(x, 5))
+    # For variables like rtioMoleDryCo2 this causes weird behavior as the time 
+    # series is interpreted mostly as zeros. Using the standard deviation of the 
+    # time series to estimate scale, the following lines of code multiply 
+    # variables that approach this rounding limit by a constant to ensure this 
+    # rounding does not affect results. Since the key value returned is based on a ratio
+    # of the covariances then multiplying by a constant should not impact results as 
+    # the constants will cancel out.
+    # Cov(aX,Y) = aCov(X,Y)
+    # https://en.wikipedia.org/wiki/Covariance#Covariance_of_linear_combinations
+    
+    sdVectTmp <- sd(vectTmp)
+    numZeroDecimal <- floor(log10(sdVectTmp)) 
+    
+    if (numZeroDecimal < -1) vectTmp <- 10^abs(numZeroDecimal) * vectTmp 
+  
   
   if (rpt$qfMiss[[idxCol]] == 1) {
     
@@ -137,7 +156,9 @@ for (idxCol in colnames(dfInp)) {
   } else {
     
     # compute discrete wavelet transform
-    rpt$wave[[idxCol]] <- wavelets::dwt(vectTmp, filter = FuncWave, n.levels = numScal)
+    rpt$wave[[idxCol]] <- wavelets::dwt(vectTmp, 
+                                        filter = FuncWave, 
+                                        n.levels = numScal) #, boundary = "reflection")
     msg <- paste(idxCol, "... done.")
     tryCatch({rlog$debug(msg)}, error=function(cond){print(msg)})
     
