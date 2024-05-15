@@ -114,6 +114,25 @@ dfInp <- as.data.frame(scale(dfInp, center = TRUE, scale = FALSE))
 #   frequency = FreqSamp
 # ))
 
+# 'wavelets' (ver 0.3-0.2) package rounds to the nearest 5th decimal point (e.g., round(x, 5))
+# For variables like rtioMoleDryCo2 this causes weird behavior as the time 
+# series is interpreted mostly as zeros. Using the standard deviation of the 
+# time series to estimate scale, the following lines of code multiply 
+# variables that approach this rounding limit by a scaling constant (scalCnst) to ensure this 
+# rounding does not affect results. Since the key value returned is based on a ratio
+# of the covariances then multiplying by a constant should not impact results as 
+# the constants will cancel out.
+# Cov(aX,Y) = aCov(X,Y)
+# https://en.wikipedia.org/wiki/Covariance#Covariance_of_linear_combinations
+
+sclrCnst <- sapply(dfInp, 
+                   function(x) {
+                     xSd <- sd(x) # Standard deviation to estimate scale (e.g., 1e-02, 1e-03)
+                     zeroLoc <- -1 * floor(log10(xSd))
+                     sclrCnst <- ifelse(zeroLoc <= 0, 1, 10^zeroLoc)
+                     return(sclrCnst)
+                     })
+
 rpt$wave <- list()
 
 for (idxCol in colnames(dfInp)) {
@@ -125,23 +144,6 @@ for (idxCol in colnames(dfInp)) {
     start = 0,
     frequency = FreqSamp
   )
-  
-    # 'wavelets' (ver 0.3-0.2) package rounds to the nearest 5th decimal point (e.g., round(x, 5))
-    # For variables like rtioMoleDryCo2 this causes weird behavior as the time 
-    # series is interpreted mostly as zeros. Using the standard deviation of the 
-    # time series to estimate scale, the following lines of code multiply 
-    # variables that approach this rounding limit by a constant to ensure this 
-    # rounding does not affect results. Since the key value returned is based on a ratio
-    # of the covariances then multiplying by a constant should not impact results as 
-    # the constants will cancel out.
-    # Cov(aX,Y) = aCov(X,Y)
-    # https://en.wikipedia.org/wiki/Covariance#Covariance_of_linear_combinations
-    
-    sdVectTmp <- sd(vectTmp)
-    numZeroDecimal <- floor(log10(sdVectTmp)) 
-    
-    if (numZeroDecimal < -1) vectTmp <- 10^abs(numZeroDecimal) * vectTmp 
-  
   
   if (rpt$qfMiss[[idxCol]] == 1) {
     
@@ -178,9 +180,11 @@ rpt$cov <- lapply(names(rpt$wave)[-which(names(rpt$wave) == "veloZaxsHor")], fun
   eddy4R.turb::def.spec.high.freq.cor(
   # def.vari.wave(
     # Wavelet coefficients variable 1
-    varDwt = rpt$wave[[var]],
+    sclrDwt = rpt$wave[[var]],
     # Wavelet coefficients vertical wind speed
     veloZaxsDwt = rpt$wave[["veloZaxsHor"]],
+    # Scaling constant for scalar and vertical wind speed, needed to account for rounding in 'wavelets' package
+    sclrCnst = as.numeric(sclrCnst[var]),
     # Scale vector
     scal = rpt$scal,
     # Initial parameters for optimzation routine to find peak frequency
@@ -188,7 +192,7 @@ rpt$cov <- lapply(names(rpt$wave)[-which(names(rpt$wave) == "veloZaxsHor")], fun
     # Data index for original time series (i.e., no zero padding)
     idxData = idxData,
     # Wavelet flag: process (0) or not
-    qfWave=rpt$qfMiss[[var]]
+    qfWave = rpt$qfMiss[[var]]
   )
 )
 

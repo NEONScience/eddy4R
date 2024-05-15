@@ -8,8 +8,9 @@
 #' @description 
 #' Definition function. Function to determine the temporally resolved variance/covariance from continuous wavelet transform including high-frequency spectral correction and selectable low-frequency cutoff. The frequency response correction using Wavelet techniques described in Norbo and Katul, 2012 (NK12)
 
-#' @param varDwt wavelets object output, discrete wavelet transform output object for a given scalar/variable (e.g., rtioMoleDryH2o)
+#' @param sclrDwt wavelets object output, discrete wavelet transform output object for a given scalar/variable (e.g., rtioMoleDryH2o)
 #' @param veloZaxsDwt wavelets object output, discrete wavelet transform output object for a vertical wind speed (i.e., w')
+#' @param sclrCnst scaling constant for scalar and vertical wind speed, needed to account for rounding in 'wavelets' package
 #' @param scal vector of scales for wavelets objects
 #' @param FreqSamp numeric, sampling frequency defaults to 20Hz
 #' @param init initialization parameters for fitting two-parameter nonlinear model to frequency-weighted vertical wind speed data. Used to determine spectral peak.
@@ -56,17 +57,19 @@
 #including high-frequency spectral correction 
 def.spec.high.freq.cor <- function(
   # Discrete wavelet coefficients for specific environmental variable (e.g., temp, rtioMoleDryCo2)
-  varDwt,
+  sclrDwt,
   # Discrete wavelet coefficients for vertical wind speed
   veloZaxsDwt,
+  # Scaling constant for scalar and vertical wind speed, needed to account for rounding in 'wavelets' package
+  sclrCnst = c(1, 1)
   # Scales of discrete wavelet transform
-  scal = sapply(varDwt@W, function(x) log(length(x), base = 2)),
+  scal = sapply(sclrDwt@W, function(x) log(length(x), base = 2)),
   # Sampling Frequency in Hz
   FreqSamp = 20,
   # Initial parameterization for fitting model to find peak freq
   init = c(3, 5), 
   # Data index for original time series, assumes no zero padding
-  idxData = seq(1, length(varDwt@series)),
+  idxData = seq(1, length(sclrDwt@series)),
   # Quality flag for missing data (>10%)
   qfWave
 ) {
@@ -78,7 +81,7 @@ if(qfWave == 0) {
   freq <- 2^scal * FreqSamp / 2^length(scal); names(freq) <- NULL # Eq. 15 in NK12
     
   # Unweighted spectra power (modification of Eq. 7 in NK12)
-  varSpecPowr <- sapply(varDwt@W, function(x) mean(x^2) / log(2))
+  sclrSpecPowr <- sapply(sclrDwt@W, function(x) mean(x^2) / log(2))
   veloZaxsSpecPowr <- sapply(veloZaxsDwt@W, function(x) mean(x^2) / log(2))
   names(varSpecPowr) <- NULL; names(veloZaxsSpecPowr) <- NULL
   
@@ -111,7 +114,7 @@ if(qfWave == 0) {
   if(freqPeak >= 0.05 & freqPeak <= 1.25) {
     
     # Regression on spectra power in inertial subrange
-    modlLin <- lm(log(varSpecPowr[seq(idxFreqLim01, idxFreqLim02)]) ~ log(freq[seq(idxFreqLim01, idxFreqLim02)]))
+    modlLin <- lm(log(sclrSpecPowr[seq(idxFreqLim01, idxFreqLim02)]) ~ log(freq[seq(idxFreqLim01, idxFreqLim02)]))
     slpRegWave <- modlLin$coefficients[2] # Record original slope prior to evaluating range tolerance. For reporting purposes.
     
     # if the regression slope (power law coefficient) exceeds the bounds -1.8 ... -1.3, the conventional -5/3 slope is used as alternative
@@ -119,7 +122,7 @@ if(qfWave == 0) {
     qfWaveSlp <- 0
     
     if(!(modlLin$coefficients[2] > -1.8 & modlLin$coefficients[2] < -1.3)) {
-      modlLin$coefficients[1] <- log(varSpecPowr[idxFreqLim01]) - (-5/3 * log(freq[idxFreqLim01]))
+      modlLin$coefficients[1] <- log(sclrSpecPowr[idxFreqLim01]) - (-5/3 * log(freq[idxFreqLim01]))
       modlLin$coefficients[2] <- -5/3
       qfWaveSlp <- 1
     }
@@ -127,32 +130,32 @@ if(qfWave == 0) {
     # calculate the reference spectral coefficients following the power slope
     specRefe <- exp(modlLin$coefficients[1] + modlLin$coefficients[2] * log(freq))
     
-    waveSpecAmpl <- sqrt(varSpecPowr)
+    waveSpecAmpl <- sqrt(sclrSpecPowr)
     
     # Get ratio of amplitudes for adjusted and original power spectra for 6 smallest scales, cannot be < 1
     rtioAmpl <- rep(1, length(freq))
     rtioAmpl[seq(idxFreqLim01 - 1, 1)] <- sqrt(specRefe[seq(idxFreqLim01 - 1, 1)]) / waveSpecAmpl[seq(idxFreqLim01 - 1, 1)]
     rtioAmpl[rtioAmpl < 1] <- 1 # No dampening following NK12
-    names(rtioAmpl) <- names(varDwt@W)
+    names(rtioAmpl) <- names(sclrDwt@W)
     
     # Get lorenz curve results
     rptLorenzWaveCoef <- eddy4R.turb::def.wave.lorenz.calc(lapply(veloZaxsDwt@W, function(x) x^2))
 
     # Adjust only the most energetic Wavelet coefficients base on results from Lorenz curve (those that have 90% of the energy)
     waveCoefAdjList <- lapply(
-      names(varDwt@W),
+      names(sclrDwt@W),
       function(x) {
         
         idxEngy <- rptLorenzWaveCoef$index[[x]][rptLorenzWaveCoef$lorenz[[x]] > 0.1]
         idxNull <- rptLorenzWaveCoef$index[[x]][rptLorenzWaveCoef$lorenz[[x]] <= 0.1]
         
-        waveScalAll <- mean(varDwt@W[[x]]^2) * length(rptLorenzWaveCoef$index[[x]])
-        waveScalEngy <- mean(varDwt@W[[x]][idxEngy]^2) * length(idxEngy)
-        waveScalNull <- mean(varDwt@W[[x]][idxNull]^2) * length(idxNull)
+        waveScalAll <- mean(sclrDwt@W[[x]]^2) * length(rptLorenzWaveCoef$index[[x]])
+        waveScalEngy <- mean(sclrDwt@W[[x]][idxEngy]^2) * length(idxEngy)
+        waveScalNull <- mean(sclrDwt@W[[x]][idxNull]^2) * length(idxNull)
         
         engyScal <- sqrt((rtioAmpl[[x]]^2 * waveScalAll - waveScalNull) / waveScalEngy)
         
-        waveCoefAdj <- varDwt@W[[x]][idxEngy] * engyScal
+        waveCoefAdj <- sclrDwt@W[[x]][idxEngy] * engyScal
         
         return(list(index = idxEngy, waveAdj = waveCoefAdj))
         
@@ -160,32 +163,37 @@ if(qfWave == 0) {
     )
 
     # Adjust only wavelet coefficients with highest energy    
-    varDwtAdj <- varDwt
-    for (i in seq(idxFreqLim01 - 1, 1)) {
-      varDwtAdj@W[[i]][waveCoefAdjList[[i]]$index] <- waveCoefAdjList[[i]]$waveAdj
+    sclrDwtAdj <- sclrDwt
+    for (idxScal in seq(idxFreqLim01 - 1, 1)) {
+      sclrDwtAdj@W[[idxScal]][waveCoefAdjList[[idxScal]]$index] <- waveCoefAdjList[[idxScal]]$waveAdj
     }
     
-    invDwt01 <- wavelets::idwt(varDwtAdj) # Time series reconstruction
+    # Apply scaling constant to wavelet coefficients before time series reconstruction, wavelets::idwt() is where the troublesome rounding occurs
+    for (idxScal in seq(1, length(sclrDwtAdj@W))) {
+      sclrDwtAdj@W[[idxScal]] <- sclrCnst * sclrDwtAdj@W[[idxScal]]
+    }
     
-    covOrig <- cov(veloZaxsDwt@series[idxData], varDwt@series[idxData])
-    covAdj <- cov(veloZaxsDwt@series[idxData], invDwt01[idxData])
+    # Do time series reconstruction with 
+    invSclrDwt01 <- wavelets::idwt(sclrDwtAdj) # Time series reconstruction
+    invSclrDwt01 <- invSclrDwt01 / sclrCnst # Re-scale back to original
+    
+    covOrig <- cov(veloZaxsDwt@series[idxData], sclrDwt@series[idxData])
+    covAdj <- cov(veloZaxsDwt@series[idxData], invSclrDwt01[idxData])
     
     fluxMiss <- covOrig / covAdj # Flux attenuation for half-hour period as a proportion
     
     coefCor <- 1 / fluxMiss # Correction coefficient is inverse of flux attenuation
     # coefCor <- ifelse(coefCor < 1, 1, coefCor) # Correction coefficient can't be < 1.0 (i.e., cant make attenuation worse)
     
-    # Calculate and report cospectra, can be converted to frequency-weighted cospectra with other output variables
-    cosp <- sapply(names(varDwt@W), 
-                   function(x) { 
-                     mean(varDwt@W[[x]] * veloZaxsDwt@W[[x]]) / log(2) 
-                   })
+    cospPowrWght    <- freq * sapply(names(sclrDwt@W), 
+                                     function(x) { 
+                                       mean(sclrDwt@W[[x]] * veloZaxsDwt@W[[x]]) / log(2) / FreqSamp / covOrig
+                                     })
     
-    cospCor <- sapply(names(varDwt@W), 
-                      function(x) { 
-                        mean(waveScalAdj@W[[x]] * veloZaxsDwt@W[[x]]) / log(2) 
-                      })
-    
+    cospPowrWghtCor <- freq * sapply(names(sclrDwtAdj@W), 
+                                     function(x) { 
+                                       mean(sclrDwtAdj@W[[x]] * veloZaxsDwt@W[[x]]) / log(2) / FreqSamp / covAdj 
+                                     })
     
     # prepare outputs
     rpt <- base::list()
@@ -197,10 +205,10 @@ if(qfWave == 0) {
     rpt$freqPeak <- freqPeak
     
     #Output the attenuated cospectra
-    rpt$cosp <- cosp
+    rpt$cosp <- cospPowrWght
     
     #Output the corrected cospectra
-    rpt$cospCor <- cospCor
+    rpt$cospCor <- cospPowrWghtCor
     
     # uncorrected covariance
     rpt$mean <- covOrig
@@ -214,7 +222,7 @@ if(qfWave == 0) {
     # flag
     rpt$qfWave <- qfWave
     
-    rpt$modlLinScal = seq(idxFreqLim01, idxFreqLim02)
+    rpt$modlLinScal <- seq(idxFreqLim01, idxFreqLim02)
     
     #Slope of the original unmodified wavelet high frequency correction
     rpt$slpRegWave <- slpRegWave
@@ -231,7 +239,7 @@ if(qfWave == 0) {
       freqPeak = freqPeak,
       cosp = NA,
       cospCor = NA,
-      mean = cov(veloZaxsDwt@series, varDwt@series),
+      mean = cov(veloZaxsDwt@series, sclrDwt@series),
       cor = NA,
       coefCor = 1,
       qfWave = qfWave,
