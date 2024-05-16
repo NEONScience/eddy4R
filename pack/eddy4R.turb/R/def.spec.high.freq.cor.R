@@ -61,7 +61,7 @@ def.spec.high.freq.cor <- function(
   # Discrete wavelet coefficients for vertical wind speed
   veloZaxsDwt,
   # Scaling constant for scalar and vertical wind speed, needed to account for rounding in 'wavelets' package
-  sclrCnst = c(1, 1)
+  sclrCnst = c(1, 1),
   # Scales of discrete wavelet transform
   scal = sapply(sclrDwt@W, function(x) log(length(x), base = 2)),
   # Sampling Frequency in Hz
