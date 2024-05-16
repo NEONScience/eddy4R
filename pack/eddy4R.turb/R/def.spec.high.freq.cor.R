@@ -61,7 +61,7 @@ def.spec.high.freq.cor <- function(
   # Discrete wavelet coefficients for vertical wind speed
   veloZaxsDwt,
   # Scaling constant for scalar and vertical wind speed, needed to account for rounding in 'wavelets' package
-  sclrCnst = c(1, 1),
+  sclrCnst = 1.0,
   # Scales of discrete wavelet transform
   scal = sapply(sclrDwt@W, function(x) log(length(x), base = 2)),
   # Sampling Frequency in Hz
@@ -83,7 +83,7 @@ if(qfWave == 0) {
   # Unweighted spectra power (modification of Eq. 7 in NK12)
   sclrSpecPowr <- sapply(sclrDwt@W, function(x) mean(x^2) / log(2))
   veloZaxsSpecPowr <- sapply(veloZaxsDwt@W, function(x) mean(x^2) / log(2))
-  names(varSpecPowr) <- NULL; names(veloZaxsSpecPowr) <- NULL
+  names(sclrSpecPowr) <- NULL; names(veloZaxsSpecPowr) <- NULL
   
   # Find peak frequency of vertical wind speed using freq-weighted power spectra (Eq. 7 in NK12)
   veloZaxsPowrWght <- freq * veloZaxsSpecPowr / FreqSamp / var(as.numeric(veloZaxsDwt@series))
@@ -118,7 +118,7 @@ if(qfWave == 0) {
     slpRegWave <- modlLin$coefficients[2] # Record original slope prior to evaluating range tolerance. For reporting purposes.
     
     # if the regression slope (power law coefficient) exceeds the bounds -1.8 ... -1.3, the conventional -5/3 slope is used as alternative
-    modlLin$coefficients[1] <- log(varSpecPowr[idxFreqLim01]) - (modlLin$coefficients[2] * log(freq[idxFreqLim01]))
+    modlLin$coefficients[1] <- log(sclrSpecPowr[idxFreqLim01]) - (modlLin$coefficients[2] * log(freq[idxFreqLim01]))
     qfWaveSlp <- 0
     
     if(!(modlLin$coefficients[2] > -1.8 & modlLin$coefficients[2] < -1.3)) {
