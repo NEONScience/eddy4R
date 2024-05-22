@@ -1,18 +1,18 @@
 ##############################################################################################
-#' @title Definition function: Function to define nonlinear model to fit to veloZaxsHor spectra to determine frequency peak
+#' @title Definition function: Function to determine frequency that peak normalized spectral values occur for a given variable.
 
 #' @author
 #' Adam Young \email{younga1@battelleecology.org}
 
 #' @description 
-#' Function to define nonlinear model to fit to veloZaxsHor spectra and determine frequency peak. The output from this model is then used with 'optim' function to the frequency at which vertical wind speak spectral power reaches it's peak value.
+#' Function to define nonlinear model to fit to veloZaxsHor spectra and determine frequency peak. The output from this model is then used with 'optim' to find the frequency at which vertical wind speak spectral power reaches it's peak value.
 
 #' @param specPowrWght Spectra to fit model to
 #' @param para Parameters to be fit model via optimization.
 #' @param freq frequency vector as independent variable.
 
 #' 
-#' @return List of spectra peak freq values and indices, as welll as best fit parameters and interpolated results.
+#' @return List of spectra peak freq values and indices, as well as best fit parameters and interpolated results.
 #' 
 #' @references
 #' License: GNU AFFERO GENERAL PUBLIC LICENSE Version 3, 19 November 2007.
@@ -35,7 +35,7 @@
 ##############################################################################################
 
 
-# start function def.spec.peak.modl()
+# start function def.spec.peak()
 
 def.spec.peak <- function(specPowrWght, para, freq) {
   

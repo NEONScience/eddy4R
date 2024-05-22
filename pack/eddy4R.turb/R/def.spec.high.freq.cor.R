@@ -10,11 +10,12 @@
 
 #' @param sclrDwt wavelets object output, discrete wavelet transform output object for a given scalar/variable (e.g., rtioMoleDryH2o)
 #' @param veloZaxsDwt wavelets object output, discrete wavelet transform output object for a vertical wind speed (i.e., w')
-#' @param sclrSpecPowr vector of spectral power estimates calculated for scalar variable of interest, derived from wavelet coefficients following Eqs. 7 & 11 in NK12
-#' @param freq list containing sampling frequency and a vector of frequencies for wavelets objects
-#' @param freqPeak  peak frequency values for scalar and vertical wind speed variables, vector of length 2
-#' @param idxFreqPeak indexes of peak frequency values for scalar and vertical wind speed variables
-#' @param sclrCnst scaling constant, needed to account for rounding in idwt.R in 'wavelets' package
+#' @param sclrSpecPowr vector of spectral power estimates calculated for sclrDwt, derived from wavelet coefficients from dwt.R output following Eq. 7 in NK12
+#' @param FreqSamp Sampling frequency, defaults to 20 Hz
+#' @param freq vector of frequencies for wavelet spectral results
+#' @param freqPeak vector (length = 2) for peak frequency values of scalar variable and vertical wind speed variable, respectively
+#' @param idxFreqPeak vector (length = 2) for index from 'freq' vector for peak frequency values of both scalar variable and vertical wind speed variable, respectively
+#' @param sclrCnst scaling constant in scientific notation (e.g., 1e06, 1e-04), needed to account for rounding in idwt.R in 'wavelets' package
 #' @param idxData index of time series data to use and modify. Only needed if zero-padding is being done. Currently just defaults to every observation in dataset.
 #' @param qfWave Wavelet flag: process (0) or not (1) depending on if number of data points missing >10%
 #' 
@@ -90,26 +91,31 @@ if(qfWave == 0) {
   covRaw <- cov(sclrDwt@series[idxData], veloZaxsDwt@series[idxData])
   
   # Cospectra power calculations for unadjusted/original time series data
-  # using output from 'wavelets' package
+  # using output from 'wavelets' package. Eq. 11 in NK12
   cospPowr <- sapply(names(sclrDwt@W), 
                      function(x) { 
                        mean(sclrDwt@W[[x]] * veloZaxsDwt@W[[x]]) / log(2)
                      })
   
-  cospPowrNorm <- freq * cospPowr / FreqSamp / covRaw # Eq 11 in NK12
+  cospPowrNorm <- freq * cospPowr / FreqSamp / covRaw # Normalize so integrates to 1.0
   
   
-  # If it is too low set it to default value of index 8 (of 15 scales), leaving max 7 scales available for adjustment
-  idxSclrFreqPeak <- idxFreqPeak[1]
-  idxVeloZaxsHorFreqPeak <- idxFreqPeak[2]
-  freqPeak <- freqPeak[2]
+  # Index and peak frequency values derived from eddy4R.turb::def.spec.peak.R
+  idxSclrFreqPeak <- idxFreqPeak[1] # scalar variable
+  idxVeloZaxsHorFreqPeak <- idxFreqPeak[2] # vertical wind speed
+  freqPeak <- freqPeak[2] # actual frequency where peak vertical wind speed spectra occurs at
   
+  # 'freq' vector is ordered reverse based on results from wavelets package, so 
+  # high index values indicate lower frequency values. If index is too high
+  # that means peak frequency was found under lower frequencies likely outside 
+  # inertial subrange. Limit this to half of max frequency on log scale.
   idxFreqLim01 <- idxVeloZaxsHorFreqPeak
-  idxFreqLim01 <- ifelse(idxFreqLim01 > ceiling(length(freq) / 2), ceiling(length(freq) / 2), idxFreqLim01) 
-  # If peak frequency is at lowest scales then just make sure there is vector to pass on a a failsafe, will be excluded from 
-  # correction algorithm because freqPeak not in the right range
-  idxFreqLim02 <- ifelse(idxFreqLim01 < length(freq) - 1, idxFreqLim01 + 2, idxFreqLim01) 
+  idxFreqLim01 <- ifelse(idxFreqLim01 > ceiling(length(freq) / 2), ceiling(length(freq) / 2), idxFreqLim01) # Leaves highest 7 scales available for adjustment 
   
+  # If peak frequency from veloZaxsHor is at lowest scales then just make sure 
+  # there is vector to pass on a a failsafe, will be excluded from high-freq 
+  # correction algorithm because freqPeak not in the right range
+  idxFreqLim02 <- ifelse(idxFreqLim01 < length(freq) - 1, idxFreqLim01 + 2, idxFreqLim01) # Only use 3 scales for regression anlaysis based on NK12 methods
   idxFreqLims <- seq(idxFreqLim01, idxFreqLim02)
   
   # The following conditional statement is implementing approach
@@ -157,7 +163,8 @@ if(qfWave == 0) {
     
     waveSpecAmpl <- sqrt(sclrSpecPowr) # Amplitude of spectra
     
-    # Get ratio of amplitudes for adjusted and original power spectra for 6 smallest scales, cannot be < 1
+    # Get ratio of amplitudes for adjusted and original power spectra for 6 
+    # smallest scales, cannot be < 1
     rtioAmpl <- rep(1, length(freq))
     rtioAmpl[seq(idxFreqLim01 - 1, 1)] <- sqrt(specRefe[seq(idxFreqLim01 - 1, 1)]) / waveSpecAmpl[seq(idxFreqLim01 - 1, 1)]
     rtioAmpl[rtioAmpl < 1] <- 1 # No dampening following NK12
@@ -166,7 +173,8 @@ if(qfWave == 0) {
     # Get lorenz curve results
     rptLorenzWaveCoef <- eddy4R.turb::def.wave.lorenz.calc(lapply(veloZaxsDwt@W, function(x) x^2))
 
-    # Adjust only the most energetic Wavelet coefficients base on results from Lorenz curve (those that have 90% of the energy)
+    # Adjust only the most energetic Wavelet coefficients base on results from 
+    # Lorenz curve (those that have 90% of the energy)
     waveCoefAdjList <- lapply(
       names(sclrDwt@W),
       function(x) {
@@ -269,8 +277,7 @@ if(qfWave == 0) {
     #Slope flag for high frequency correction if outside 1.3 - 1.8 bounds
     rpt$qfWaveSlp <- qfWaveSlp
     
-    # in case peak frequency is not in range of [0.05Hz, 1.25 Hz]
-  } else {
+  } else { # in case peak frequency is not in range of [0.05Hz, 1.25 Hz]
     
     # prepare outputs
     rpt <- base::list(
@@ -288,8 +295,7 @@ if(qfWave == 0) {
     
   }
   
-  # no Wavelet processing if > 10% NAs
-} else {
+} else { # no Wavelet processing if > 10% NAs
   
   # prepare outputs
   rpt <- base::list(

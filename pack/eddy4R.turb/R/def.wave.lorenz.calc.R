@@ -8,7 +8,7 @@
 #' Function to organize and define wavelet coefficients into a Lorenz curve. Used to find most energetic coefficients for adjustment in spectral corrections.
 
 
-#' @param waveCoef list of wavelet coefficients for different specific scale.
+#' @param waveCoef list of wavelet coefficients for each scale.
 #' 
 #' @return results from Lorenz curve calculations.
 #' 

@@ -3,16 +3,17 @@
 
 #' @author
 #' David Durden \email{ddurden@battelleecology.org}
+#' Adam Young \email{younga1@battelleecology.org}
 
 #' @description
 #' Wrapper function. Calculate Wavelet spectrum/cospectrum using the Waves package. The frequency response correction using Wavelet techniques described in Norbo and Katul, 2012 (NK12)
 
 #' @param dfInp data.frame, consisting of the input data to perform the wavelet transformation
-#' @param FuncWave numeric, wavelet function to be used, defaults to orthogonal 'haar'
+#' @param FuncWave numeric, wavelet function to be used within 'wavelets' package, defaults to orthogonal 'haar'
 #' @param FreqSamp numeric, sampling frequency, defaults to 20Hz for NEON data
-#' @param zeroPad logical, should zero padding of time series be applied. If set to TRUE then detrending of time series is performed as well.
+#' @param zeroPad logical, should zero padding of time series be applied? Not currently implemented, for potential future use.
 #' @param ThshMiss numeric, dimensionless fraction of missing values in each column of data allowed before the quality flag is tripped. Defaults to 0.1 or 10 percent.
-#' @param init numeric, initial values to perform optimization of fitting nonlinear model to frequency-weighted vertical wind speed. Passed on to def.spec.high.freq.cor.R
+#' @param init numeric, initial parameter values to perform optimization of fitting nonlinear model to frequency-weighted vertical wind speed and find frequency peak occurrs at. Passed on to eddy4R.turb::def.spec.peak.R
 #' @param paraStbl stability parameter (numeric). Not currently implemented.
 
 #'
@@ -20,6 +21,7 @@
 #'
 #' @references
 #' License: GNU AFFERO GENERAL PUBLIC LICENSE Version 3, 19 November 2007.
+#' Nordbo, A., Katul, G. A Wavelet-Based Correction Method for Eddy-Covariance High-Frequency Losses in Scalar Concentration Measurements. Boundary-Layer Meteorol 146, 81–102 (2013). https://doi.org/10.1007/s10546-012-9759-9
 
 #' @keywords Wavelet, spectrum, cospectrum, NK12, frequency response correction
 
@@ -156,12 +158,22 @@ for (idxCol in colnames(dfInp)) {
 }
 
 # The following code used to be internal to def.spec.high.freq.cor.R but it only needs to be done
-# once per half hour since it is only for vertical wind speed.
-rpt$scal <- seq(numScal - 1, 0)
+# once per half hour since it is only for vertical wind speed. If >10% veloZaxsHor data missing
+# then set to NA as processing of wavelet correction will not be done anyway.
 rpt$FreqSamp <- FreqSamp
-rpt$freq <- 2^rpt$scal * FreqSamp / 2^length(rpt$scal) # Eq. 15 in NK12
+if (rpt$qfMiss$veloZaxsHor == 0) {
+  
+  rpt$scal <- as.numeric(sapply(rpt$wave$veloZaxsHor@W, function(x) floor(log(length(x), base = 2))))
+  rpt$freq <- 2^rpt$scal * FreqSamp / 2^length(rpt$scal) # Eq. 15 in NK12  
+  
+} else {
+  
+  rpt$scal <- NA
+  rpt$freq <- NA
+  
+}
 
-# Time series variance estimate for each data variable
+# Time series variance estimate for each data variable, needed to normalize spectral and cospectra power
 variVect <- diag(cov(dfInp))
 
 for (idxCol in names(rpt$wave)) {
