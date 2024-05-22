@@ -47,6 +47,10 @@
 #     Initial commit for major changes that now use methods that more closely align with NK12
 #   Adam Young (2024-05-07)
 #     Clean and finalize code for broader testing.
+#   Adam Young (2024-05-21)
+#     Updated to account for rounding in 'wavelets' package and ensure inertial 
+#     sub-range estimates don't overlap with spectral peak for each data variable.
+#     Also updated output to include all the spectra/cospectra results, both unnormalized and normalized.
 ##############################################################################################
 
 wrap.wave <- function(
@@ -62,6 +66,9 @@ paraStbl = NULL # Stability not currently considered
 #Create output list
 rpt <- list()
 
+# Currently only output to make it easier to test in the future, can remove to save space
+rpt$input <- dfInp
+
 ####Check quality of data###########################################
 #Create a logical flag if more data is missing than the threshold
 rpt$qfMiss <- as.list(base::colMeans(base::is.na(dfInp), na.rm = TRUE) > ThshMiss)
@@ -75,12 +82,12 @@ if(rpt$qfMiss$veloZaxsHor == 1) invisible(lapply(names(rpt$qfMiss), function(x) 
 # fill missing values through linear interpolation
 # NAs at start and end are removed by setting na.rm = TRUE
 tmp <- zoo::na.approx(dfInp, na.rm = TRUE, rule = 2) #Rule 2 allows extrapolating end values using the nearest value or explicitly using zoo::na.locf, could be replaced with zeros using na.fill with any value: see https://stackoverflow.com/questions/7317607/interpolate-na-values-in-a-data-frame-with-na-approx
-# tmpNorm <- as.data.frame(scale(tmp, center = TRUE, scale = FALSE)) # Recenter time series after filling in NAs
 
 #Failsafe in case all values are NaN
 if(nrow(tmp) > 1) dfInp <- tmp
 
-# Determine number of scales based on whether zero padding of time series will be done AND current number of observations in time series
+# Determine number of scales based on whether zero padding of time series will 
+# be done AND current number of observations in time series
 if (zeroPad) {
   
   numScal <- ceiling(log(nrow(dfInp), base = 2))
@@ -107,29 +114,17 @@ if (zeroPad) {
 # Re-center data after excluding observations after 1:2^numScal and filling in NAs
 dfInp <- as.data.frame(scale(dfInp, center = TRUE, scale = FALSE))
 
-# *** Not sure if following code is needed anymore ***
-# dfInp <- as.data.frame(stats::ts(
-#   dfInp,
-#   start = 0,
-#   frequency = FreqSamp
-# ))
-
-# 'wavelets' (ver 0.3-0.2) package rounds to the nearest 5th decimal point (e.g., round(x, 5))
-# For variables like rtioMoleDryCo2 this causes weird behavior as the time 
-# series is interpreted mostly as zeros. Using the standard deviation of the 
-# time series to estimate scale, the following lines of code multiply 
-# variables that approach this rounding limit by a scaling constant (scalCnst) to ensure this 
-# rounding does not affect results. Since the key value returned is based on a ratio
-# of the covariances then multiplying by a constant should not impact results as 
-# the constants will cancel out.
-# Cov(aX,Y) = aCov(X,Y)
-# https://en.wikipedia.org/wiki/Covariance#Covariance_of_linear_combinations
-
+# idwt.R function in 'wavelets' (ver 0.3-0.2) package rounds to the nearest 5th 
+# decimal point (e.g., round(x, 5)). For variables like rtioMoleDryCo2 this causes 
+# weird behavior as the time series is interpreted mostly as zeros. Using the 
+# standard deviation of the time series to estimate scale, the following lines of 
+# code multiply variables that approach this rounding limit by a scaling constant 
+# (scalCnst) to ensure this rounding does not affect results.
 sclrCnst <- sapply(dfInp, 
                    function(x) {
                      xSd <- sd(x) # Standard deviation to estimate scale (e.g., 1e-02, 1e-03)
-                     zeroLoc <- -1 * floor(log10(xSd))
-                     sclrCnst <- ifelse(zeroLoc <= 0, 1, 10^zeroLoc)
+                     varScal <- 10^floor(log10(xSd)) # Scale magnitude (e.g., 1e-01, 1e-02, etc.)
+                     sclrCnst <- ifelse(varScal >= 1, 1, 1 / varScal) # Get inverse of variable scale if < 1
                      return(sclrCnst)
                      })
 
@@ -149,46 +144,80 @@ for (idxCol in colnames(dfInp)) {
     
     rpt$wave[[idxCol]] <- NA
     
-    if (idxCol == "veloZaxsHor") {
-      
-      rpt$scal <- seq(numScal - 1, 0)
-      
-    }
-    
   } else {
     
     # compute discrete wavelet transform
-    rpt$wave[[idxCol]] <- wavelets::dwt(vectTmp, 
-                                        filter = FuncWave, 
-                                        n.levels = numScal) #, boundary = "reflection")
+    rpt$wave[[idxCol]] <- wavelets::dwt(vectTmp, filter = FuncWave, n.levels = numScal)
     msg <- paste(idxCol, "... done.")
     tryCatch({rlog$debug(msg)}, error=function(cond){print(msg)})
     
-    if (idxCol == "veloZaxsHor") { # Only retrieve scale values one time
-      
-      rpt$scal <- sapply(rpt$wave[["veloZaxsHor"]]@W, function(x) log(length(x), base = 2)); names(rpt$scal) <- NULL
-      
-    }
-    
   }
     
+}
+
+# The following code used to be internal to def.spec.high.freq.cor.R but it only needs to be done
+# once per half hour since it is only for vertical wind speed.
+rpt$scal <- seq(numScal - 1, 0)
+rpt$FreqSamp <- FreqSamp
+rpt$freq <- 2^rpt$scal * FreqSamp / 2^length(rpt$scal) # Eq. 15 in NK12
+
+# Time series variance estimate for each data variable
+variVect <- diag(cov(dfInp))
+
+for (idxCol in names(rpt$wave)) {
+  # idxCol <- names(rpt$wave)[1]
+  
+  if (rpt$qfMiss[[idxCol]] == 0) {
+    
+    rpt$spec[[idxCol]]$vari <- variVect[idxCol] # Variance
+    rpt$spec[[idxCol]]$specPowr <- sapply(rpt$wave[[idxCol]]@W, function(x) mean(x^2) / log(2))
+    
+    # This is the frequency weighted spectra curve. Can calculate for spectra or cospectra
+    rpt$spec[[idxCol]]$specPowrNorm <- rpt$freq * rpt$spec[[idxCol]]$specPowr / rpt$FreqSamp / rpt$spec[[idxCol]]$vari # Normalized wavelet power spectrum (Eq. 7 in NK12)
+    
+    # Find and save frequency where peak of speectra occur
+    tmpFreqPeak <- eddy4R.turb::def.spec.peak(specPowrWght = rpt$spec[[idxCol]]$specPowrNorm, para = init, freq = rpt$freq)
+    rpt$spec[[idxCol]]$freqPeak <- tmpFreqPeak$freqPeak
+    rpt$spec[[idxCol]]$idxFreqPeak <- tmpFreqPeak$idxFreqPeak
+    rpt$spec[[idxCol]]$specModlPara <- tmpFreqPeak$para
+    rpt$spec[[idxCol]]$specModlItpl <- tmpFreqPeak$rptItpl
+    
+    rm(tmpFreqPeak)
+    
+  } else {
+   
+    rpt$spec[[idxCol]]$vari <- NA
+    rpt$spec[[idxCol]]$specPowr <- NA
+    rpt$spec[[idxCol]]$specPowrNorm <- NA
+    rpt$spec[[idxCol]]$freqPeak <- NA
+    rpt$spec[[idxCol]]$idxFreqPeak <- NA
+    rpt$spec[[idxCol]]$specModlPara <- NA
+    rpt$spec[[idxCol]]$specModlItpl <- NA
+     
+  }
+  
 }
 
 # covariance for all wavelengths
 # not currently implemented for friction velocity as approach to negative
 rpt$cov <- lapply(names(rpt$wave)[-which(names(rpt$wave) == "veloZaxsHor")], function(var)
   eddy4R.turb::def.spec.high.freq.cor(
-  # def.vari.wave(
     # Wavelet coefficients variable 1
     sclrDwt = rpt$wave[[var]],
     # Wavelet coefficients vertical wind speed
     veloZaxsDwt = rpt$wave[["veloZaxsHor"]],
+    # Spectral power for scalar variable of interest
+    sclrSpecPowr = rpt$spec[[var]]$specPowr,
+    # Sampling frequency 
+    FreqSamp = rpt$FreqSamp,
+    # Frequency list of sampling frequency and vector for wavelet analysis
+    freq = rpt$freq,
+    # Peak frequency values for veloZaxsHor and scalar variable, from interpolated/modeled spectra results
+    freqPeak = as.numeric(sapply(rpt$spec[c(var, "veloZaxsHor")], function(x) x$freqPeak)),
+    # Index of frequency vector for veloZaxsHor frequency peak of spectra 
+    idxFreqPeak = as.numeric(sapply(rpt$spec[c(var, "veloZaxsHor")], function(x) x$idxFreqPeak)),
     # Scaling constant for scalar and vertical wind speed, needed to account for rounding in 'wavelets' package
     sclrCnst = as.numeric(sclrCnst[var]),
-    # Scale vector
-    scal = rpt$scal,
-    # Initial parameters for optimzation routine to find peak frequency
-    init = init,
     # Data index for original time series (i.e., no zero padding)
     idxData = idxData,
     # Wavelet flag: process (0) or not

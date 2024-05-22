@@ -6,18 +6,19 @@
 #' Stefan Metzger
 
 #' @description 
-#' Definition function. Function to determine the temporally resolved variance/covariance from continuous wavelet transform including high-frequency spectral correction and selectable low-frequency cutoff. The frequency response correction using Wavelet techniques described in Norbo and Katul, 2012 (NK12)
+#' Definition function. Function to determine the temporally resolved variance/covariance from discrete wavelet transform and frequency response correction described in Nordbo and Katul (2012)
 
 #' @param sclrDwt wavelets object output, discrete wavelet transform output object for a given scalar/variable (e.g., rtioMoleDryH2o)
 #' @param veloZaxsDwt wavelets object output, discrete wavelet transform output object for a vertical wind speed (i.e., w')
-#' @param sclrCnst scaling constant for scalar and vertical wind speed, needed to account for rounding in 'wavelets' package
-#' @param scal vector of scales for wavelets objects
-#' @param FreqSamp numeric, sampling frequency defaults to 20Hz
-#' @param init initialization parameters for fitting two-parameter nonlinear model to frequency-weighted vertical wind speed data. Used to determine spectral peak.
+#' @param sclrSpecPowr vector of spectral power estimates calculated for scalar variable of interest, derived from wavelet coefficients following Eqs. 7 & 11 in NK12
+#' @param freq list containing sampling frequency and a vector of frequencies for wavelets objects
+#' @param freqPeak  peak frequency values for scalar and vertical wind speed variables, vector of length 2
+#' @param idxFreqPeak indexes of peak frequency values for scalar and vertical wind speed variables
+#' @param sclrCnst scaling constant, needed to account for rounding in idwt.R in 'wavelets' package
 #' @param idxData index of time series data to use and modify. Only needed if zero-padding is being done. Currently just defaults to every observation in dataset.
 #' @param qfWave Wavelet flag: process (0) or not (1) depending on if number of data points missing >10%
 #' 
-#' @return A list containing output from NK12 high frequency correction, including a correction coefficient (coefCor) providing a proportion of how much to adjust 30-minute flux values.
+#' @return A list containing output from NK12 high frequency correction, including a correction coefficients for use in flux data (coefCor)
 #' 
 #' @references
 #' License: GNU AFFERO GENERAL PUBLIC LICENSE Version 3, 19 November 2007.
@@ -47,6 +48,8 @@
 #     Initial commit of renaming def.wave.vari.R -> def.spec.high.freq.cor.R
 #   Adam Young (2024-05-07)
 #     Finalizing script for broader testing prior to data reprocessing
+#   Adam Young (2024-05-21) 
+#     Moved peak finding to its own function, set up to output cospectra results and reconstructed time series.
 ##############################################################################################
 
 
@@ -60,14 +63,18 @@ def.spec.high.freq.cor <- function(
   sclrDwt,
   # Discrete wavelet coefficients for vertical wind speed
   veloZaxsDwt,
+  # vector of spectra power estimates for a specific variable
+  sclrSpecPowr,  
+  # Sampling frequency
+  FreqSamp = veloZaxsDwt@attr.X$tsp[3], # Sampling frequency in time series object stored in wavelets output
+  # Frequency vector of discrete wavelet transform
+  freq = 2^(seq(veloZaxsDwt@level - 1, 0)) * FreqSamp / 2^veloZaxsDwt@level, # Can calculate frequency from wavelets output, 'level' is the number of scales
+  # Two-element vector of peak frequency values for both scalar variable (element 1) and vertical wind speed (element 2)
+  freqPeak = rep(10, 2),
+  # Two-element vector of indices for peak frequency for both scalar variable (element 1) and vertical wind speed (element 2)
+  idxFreqPeak = rep(ceiling(length(freq) / 2), 2),
   # Scaling constant for scalar and vertical wind speed, needed to account for rounding in 'wavelets' package
   sclrCnst = 1.0,
-  # Scales of discrete wavelet transform
-  scal = sapply(sclrDwt@W, function(x) log(length(x), base = 2)),
-  # Sampling Frequency in Hz
-  FreqSamp = 20,
-  # Initial parameterization for fitting model to find peak freq
-  init = c(3, 5), 
   # Data index for original time series, assumes no zero padding
   idxData = seq(1, length(sclrDwt@series)),
   # Quality flag for missing data (>10%)
@@ -78,59 +85,77 @@ def.spec.high.freq.cor <- function(
 # only process if < 10% NAs
 if(qfWave == 0) {
   
-  freq <- 2^scal * FreqSamp / 2^length(scal); names(freq) <- NULL # Eq. 15 in NK12
-    
-  # Unweighted spectra power (modification of Eq. 7 in NK12)
-  sclrSpecPowr <- sapply(sclrDwt@W, function(x) mean(x^2) / log(2))
-  veloZaxsSpecPowr <- sapply(veloZaxsDwt@W, function(x) mean(x^2) / log(2))
-  names(sclrSpecPowr) <- NULL; names(veloZaxsSpecPowr) <- NULL
+  # Covariance for the original "unadjusted" time series between the scalar 
+  # and vertical wind speed
+  covRaw <- cov(sclrDwt@series[idxData], veloZaxsDwt@series[idxData])
   
-  # Find peak frequency of vertical wind speed using freq-weighted power spectra (Eq. 7 in NK12)
-  veloZaxsPowrWght <- freq * veloZaxsSpecPowr / FreqSamp / var(as.numeric(veloZaxsDwt@series))
+  # Cospectra power calculations for unadjusted/original time series data
+  # using output from 'wavelets' package
+  cospPowr <- sapply(names(sclrDwt@W), 
+                     function(x) { 
+                       mean(sclrDwt@W[[x]] * veloZaxsDwt@W[[x]]) / log(2)
+                     })
   
-  paraEst <- optim(
-    par = init, 
-    fn = function(para, freq, spec) mean((eddy4R.turb::def.spec.peak.modl(para, freq) - spec)^2), 
-    freq = freq, spec = veloZaxsPowrWght, 
-    method = "Nelder-Mead"
-  )
+  cospPowrNorm <- freq * cospPowr / FreqSamp / covRaw # Eq 11 in NK12
   
-  # Interpolated 100-point function of freq-weighted vertical wind speed power spectra
-  freqItpl <- exp(seq(log(min(freq)), log(max(freq)), length.out = 100))
-  specItpl <- def.spec.peak.modl(para = paraEst$par, freq = freqItpl)
   
-  idxFreqPeakItpl <- which.max(specItpl) # Index of peak frequency
-  freqPeak <- freqItpl[idxFreqPeakItpl] # Value of peak frequency
+  # If it is too low set it to default value of index 8 (of 15 scales), leaving max 7 scales available for adjustment
+  idxSclrFreqPeak <- idxFreqPeak[1]
+  idxVeloZaxsHorFreqPeak <- idxFreqPeak[2]
+  freqPeak <- freqPeak[2]
   
-  # don't start evaluating Inertial Sub Range at peak, move one full scale higher
-  idxFreqLim01 <- which(freq >= freqPeak) # First pick only frequency indices that are greater than the peak frequency
-  idxFreqLim01 <- idxFreqLim01[abs(freq[idxFreqLim01] - freqPeak) == min(abs(freq[idxFreqLim01] - freqPeak))] # Then keep only the one closest to peak frequency
-  idxFreqLim01 <- ifelse(idxFreqLim01 > ceiling(length(scal) / 2) - 1, ceiling(length(scal) / 2) - 1, idxFreqLim01) # If it is too low set it to default value of index 7 (of 15 scales)
+  idxFreqLim01 <- idxVeloZaxsHorFreqPeak
+  idxFreqLim01 <- ifelse(idxFreqLim01 > ceiling(length(freq) / 2), ceiling(length(freq) / 2), idxFreqLim01) 
+  # If peak frequency is at lowest scales then just make sure there is vector to pass on a a failsafe, will be excluded from 
+  # correction algorithm because freqPeak not in the right range
+  idxFreqLim02 <- ifelse(idxFreqLim01 < length(freq) - 1, idxFreqLim01 + 2, idxFreqLim01) 
   
-  idxFreqLim02 <- idxFreqLim01 + 2 # Upper limit (i.e. lower frequencies) is two scales below idxFreqLim01
-
-  # Only do processing is there are at least the 3 highest scales left to adjust. Also do not do any processing if frequency peak is too low (<0.05 Hz). 
-  # So only 3-7 highest scales can be adjusted.
+  idxFreqLims <- seq(idxFreqLim01, idxFreqLim02)
+  
+  # The following conditional statement is implementing approach
+  # from MATLAB code that accompanies NK12: inertial subrange of scalar variable
+  # cannot contain peak frequency of that scalar.
+  idxFreqLims <- idxFreqLims[freq[idxFreqLims] > freq[idxSclrFreqPeak]]
+  
+  # Only do processing is there are at least the 3 highest scales left to adjust. 
+  # Also do not do any processing if frequency peak is too low (<0.05 Hz). So 
+  # only 3-7 highest scales can be adjusted. If it is outside this range do not
+  # do high frequency correction.
   if(freqPeak >= 0.05 & freqPeak <= 1.25) {
     
-    # Regression on spectra power in inertial subrange
-    modlLin <- lm(log(sclrSpecPowr[seq(idxFreqLim01, idxFreqLim02)]) ~ log(freq[seq(idxFreqLim01, idxFreqLim02)]))
-    slpRegWave <- modlLin$coefficients[2] # Record original slope prior to evaluating range tolerance. For reporting purposes.
-    
-    # if the regression slope (power law coefficient) exceeds the bounds -1.8 ... -1.3, the conventional -5/3 slope is used as alternative
-    modlLin$coefficients[1] <- log(sclrSpecPowr[idxFreqLim01]) - (modlLin$coefficients[2] * log(freq[idxFreqLim01]))
-    qfWaveSlp <- 0
-    
-    if(!(modlLin$coefficients[2] > -1.8 & modlLin$coefficients[2] < -1.3)) {
+    if (length(idxFreqLims) == 3) {
+      
+      # Regression on spectra power in inertial subrange
+      modlLin <- lm(log(sclrSpecPowr[idxFreqLims]) ~ log(freq[idxFreqLims]))
+      slpRegWave <- modlLin$coefficients[2] # Record original slope prior to evaluating range tolerance. For reporting purposes.
+      
+      # if the regression slope (power law coefficient) exceeds the bounds -1.8 ... -1.3, the conventional -5/3 slope is used as alternative
+      modlLin$coefficients[1] <- log(sclrSpecPowr[idxFreqLim01]) - (modlLin$coefficients[2] * log(freq[idxFreqLim01]))
+      qfWaveSlp <- 0
+      
+      if(!(modlLin$coefficients[2] > -1.8 & modlLin$coefficients[2] < -1.3)) {
+        
+        modlLin$coefficients[1] <- log(sclrSpecPowr[idxFreqLim01]) - (-5/3 * log(freq[idxFreqLim01]))
+        modlLin$coefficients[2] <- -5/3
+        qfWaveSlp <- 1
+        
+      }      
+      
+    } else if (length(idxFreqLims) < 3) {
+      
+      modlLin <- list()
+      slpRegWave <- NA
+      
       modlLin$coefficients[1] <- log(sclrSpecPowr[idxFreqLim01]) - (-5/3 * log(freq[idxFreqLim01]))
       modlLin$coefficients[2] <- -5/3
       qfWaveSlp <- 1
+      
     }
     
     # calculate the reference spectral coefficients following the power slope
     specRefe <- exp(modlLin$coefficients[1] + modlLin$coefficients[2] * log(freq))
     
-    waveSpecAmpl <- sqrt(sclrSpecPowr)
+    waveSpecAmpl <- sqrt(sclrSpecPowr) # Amplitude of spectra
     
     # Get ratio of amplitudes for adjusted and original power spectra for 6 smallest scales, cannot be < 1
     rtioAmpl <- rep(1, length(freq))
@@ -168,63 +193,77 @@ if(qfWave == 0) {
       sclrDwtAdj@W[[idxScal]][waveCoefAdjList[[idxScal]]$index] <- waveCoefAdjList[[idxScal]]$waveAdj
     }
     
-    # Apply scaling constant to wavelet coefficients before time series reconstruction, wavelets::idwt() is where the troublesome rounding occurs
+    # Apply scaling constant to wavelet coefficients before time series 
+    # reconstruction, wavelets::idwt() is where the troublesome rounding occurs
     for (idxScal in seq(1, length(sclrDwtAdj@W))) {
       sclrDwtAdj@W[[idxScal]] <- sclrCnst * sclrDwtAdj@W[[idxScal]]
     }
     
-    # Do time series reconstruction with 
+    # Do time series reconstruction with wavelets::idwt.R
     invSclrDwt01 <- wavelets::idwt(sclrDwtAdj) # Time series reconstruction
-    invSclrDwt01 <- invSclrDwt01 / sclrCnst # Re-scale back to original
     
-    covOrig <- cov(veloZaxsDwt@series[idxData], sclrDwt@series[idxData])
-    covAdj <- cov(veloZaxsDwt@series[idxData], invSclrDwt01[idxData])
+    # Re-scale everything back to original now that time series reconstruction is 
+    # finished
+    invSclrDwt01 <- invSclrDwt01 / sclrCnst 
     
-    fluxMiss <- covOrig / covAdj # Flux attenuation for half-hour period as a proportion
+    # Rescale wavelet coefficients back to original as well, needed for
+    # calculating corrected cospectra for output
+    for (idxScal in seq(1, length(sclrDwtAdj@W))) {
+      sclrDwtAdj@W[[idxScal]] <- sclrDwtAdj@W[[idxScal]] / sclrCnst
+    }
+    
+    # Calculate covariances between scalar and vertical wind speed for adjusted wavelet coefficients
+    covCor <- cov(invSclrDwt01[idxData], veloZaxsDwt@series[idxData])
+    
+    fluxMiss <- covRaw / covCor # Flux attenuation for half-hour period as a proportion
     
     coefCor <- 1 / fluxMiss # Correction coefficient is inverse of flux attenuation
     # coefCor <- ifelse(coefCor < 1, 1, coefCor) # Correction coefficient can't be < 1.0 (i.e., cant make attenuation worse)
     
-    cospPowrWght    <- freq * sapply(names(sclrDwt@W), 
-                                     function(x) { 
-                                       mean(sclrDwt@W[[x]] * veloZaxsDwt@W[[x]]) / log(2) / FreqSamp / covOrig
-                                     })
+    # Calculate cospectra power values for corrected/adjusted time series (Eq. 7 in NK12)
+    cospPowrCor <- sapply(names(sclrDwtAdj@W), 
+                       function(x) { 
+                         mean(sclrDwtAdj@W[[x]] * veloZaxsDwt@W[[x]]) / log(2)
+                       })
     
-    cospPowrWghtCor <- freq * sapply(names(sclrDwtAdj@W), 
-                                     function(x) { 
-                                       mean(sclrDwtAdj@W[[x]] * veloZaxsDwt@W[[x]]) / log(2) / FreqSamp / covAdj 
-                                     })
+    # Normalized corrected cospectra
+    cospPowrNormCor <- freq * cospPowrCor / FreqSamp / covCor # (Eq. 11 in NK12)
+    
     
     # prepare outputs
     rpt <- base::list()
     
-    # frequency vector 
-    rpt$freq <- freq
-    
-    # peak frequency of vertical wind speed
-    rpt$freqPeak <- freqPeak
-    
-    #Output the attenuated cospectra
-    rpt$cosp <- cospPowrWght
-    
-    #Output the corrected cospectra
-    rpt$cospCor <- cospPowrWghtCor
+    # Corrected time series, could be used to recalculate corrected wavelet coefficients and spectra
+    rpt$dataCor <- ts(invSclrDwt01, start = 0, frequency = FreqSamp)
     
     # uncorrected covariance
-    rpt$mean <- covOrig
+    rpt$covRaw <- covRaw
     
     # corrected covariance
-    rpt$cor <- covAdj
+    rpt$covCor <- covCor
     
-    # correction coefficient, inverse of flux attenuation
+    #Output the attenuated cospectra
+    rpt$cospPowr <- cospPowr
+    
+    # Output the attenuated cospectra (normalized)
+    rpt$cospPowrNorm <- cospPowrNorm
+    
+    #Output the corrected cospectra
+    rpt$cospPowrCor <- cospPowrCor
+    
+    #Output the corrected cospectra (normalized)
+    rpt$cospPowrNormCor <- cospPowrNormCor
+    
+    # correction coefficient (covCor / covRaw), inverse of flux attenuation
     rpt$coefCor <- coefCor
     
-    # flag
-    rpt$qfWave <- qfWave
+    # Indices that identify the inertial sub-range used in regression.
+    # NA's indicate scales where scalar peak frequency overlaps with inertial 
+    # sub-range identified from vertical wind peak frequency
+    rpt$modlLinScal <- c(rep(NA, 3 - length(idxFreqLims)), idxFreqLims)
     
-    rpt$modlLinScal <- seq(idxFreqLim01, idxFreqLim02)
-    
-    #Slope of the original unmodified wavelet high frequency correction
+    # Slope of the original unmodified wavelet high frequency correction. 
+    # NA if < 3 points available for fit
     rpt$slpRegWave <- slpRegWave
     
     #Slope flag for high frequency correction if outside 1.3 - 1.8 bounds
@@ -235,14 +274,14 @@ if(qfWave == 0) {
     
     # prepare outputs
     rpt <- base::list(
-      freq = NA, 
-      freqPeak = freqPeak,
-      cosp = NA,
-      cospCor = NA,
-      mean = cov(veloZaxsDwt@series, sclrDwt@series),
-      cor = NA,
+      dataCor = NA,
+      covRaw = covRaw,
+      covCor = NA,
+      cospPowr = cospPowr,
+      cospPowrNorm = cospPowrNorm,
+      cospPowrCor = NA,
+      cospPowrNormCor = NA,
       coefCor = 1,
-      qfWave = qfWave,
       modlLinScal = NA, 
       slpRegWave = NA,
       qfWaveSlp = -1)
@@ -254,18 +293,17 @@ if(qfWave == 0) {
   
   # prepare outputs
   rpt <- base::list(
-    freq = NA, 
-    freqPeak = NA,
-    cosp = NA,
-    cospCor = NA,
-    mean = NA,
-    cor = NA,
+    dataCor = NA,
+    covRaw = NA,
+    covCor = NA,
+    cospPowr = NA,
+    cospPowrNorm = NA,
+    cospPowrCor = NA,
+    cospPowrNormCor = NA,
     coefCor = 1,
-    qfWave = qfWave,
-    modlLinScal = NA,
+    modlLinScal = NA, 
     slpRegWave = NA,
-    qfWaveSlp = -1
-  )
+    qfWaveSlp = -1)
   
 }
   

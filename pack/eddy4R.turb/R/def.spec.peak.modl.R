@@ -5,7 +5,7 @@
 #' Adam Young \email{younga1@battelleecology.org}
 
 #' @description 
-#' Definition function. Function to define nonlinear model to fit to veloZaxsHor spectra and determine frequency peak. The output from this model is then used with 'optim' function to the frequency at which vertical wind speak spectral power reaches it's peak value.
+#'   # Simple non-linear model used in NK12 to model weighted vertical wind spectra and then use modeled spectral curve to identify frequency that spectral peak occurs at. Based on unpublished Matlab code provide to Stefan Metzger from authors of NK12.
 
 #' @param para Parameters to be fit model via optimization.
 #' @param freq frequency vector as independent variable.
@@ -37,10 +37,6 @@
 
 def.spec.peak.modl <- function(para, freq) {
   
-  # Simple non-linear model used in NK12 to model weighted vertical wind spectra
-  # and then use modeled spectral curve to identify frequency that spectral peak
-  # occurs at. Based on unpublished Matlab code provide to Stefan Metzger from 
-  # authors of NK12.
   specFit <- (para[1] * freq) / ((1 + para[2] * freq)^(5/3))
   
   return(specFit)
