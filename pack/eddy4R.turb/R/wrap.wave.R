@@ -20,7 +20,7 @@
 
 #' @references
 #' License: GNU AFFERO GENERAL PUBLIC LICENSE Version 3, 19 November 2007.
-#' Nordbo, A., Katul, G. A Wavelet-Based Correction Method for Eddy-Covariance High-Frequency Losses in Scalar Concentration Measurements. Boundary-Layer Meteorol 146, 81–102 (2013). https://doi.org/10.1007/s10546-012-9759-9
+#' Nordbo, A., Katul, G. A Wavelet-Based Correction Method for Eddy-Covariance High-Frequency Losses in Scalar Concentration Measurements. Boundary-Layer Meteorol 146, 81-102 (2013). https://doi.org/10.1007/s10546-012-9759-9
 
 #' @keywords Wavelet, spectrum, cospectrum, NK12, frequency response correction
 
@@ -55,12 +55,12 @@
 
 wrap.wave <- function(
 dfInp,
-FuncWave = "haar", # Default from Nordbo and Katul 2012, orthogonal wavelet basis is ideal
-FreqSamp = 20, #Defaults to 20Hz
+FuncWave = "haar",
+FreqSamp = 20,
 zeroPad = FALSE,
 ThshMiss = 0.1,
-init = c(3, 5), # Parameter initialization for optimized curve fitting of weighted spectra
-paraStbl = NULL # Stability not currently considered
+init = c(3, 5),
+paraStbl = NULL
 ) {
 
 #Create output list

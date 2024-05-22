@@ -19,9 +19,9 @@
 #' @param sclrCnst scaling constant in scientific notation (e.g., 1e06, 1e-04), needed to account for rounding in idwt.R in 'wavelets' package
 #' @param idxData index of time series data to use and modify. Only needed if zero-padding is being done. Currently just defaults to every observation in dataset.
 #' @param qfWave Wavelet flag: process (0) or not (1) depending on if number of data points missing >10%
-#' 
+ 
 #' @return A list containing output from NK12 high frequency correction, including a correction coefficients for use in flux data (coefCor)
-#' 
+ 
 #' @references
 #' License: GNU AFFERO GENERAL PUBLIC LICENSE Version 3, 19 November 2007.
 
