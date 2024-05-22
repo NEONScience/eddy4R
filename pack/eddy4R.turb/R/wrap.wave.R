@@ -2,8 +2,8 @@
 #' @title Wrapper function: Calculate Wavelet cospectra and frequency response correction
 
 #' @author
-#' David Durden \email{ddurden@battelleecology.org}
 #' Adam Young \email{younga1@battelleecology.org}
+#' David Durden
 
 #' @description
 #' Wrapper function. Calculate Wavelet spectrum/cospectrum using the Waves package. The frequency response correction using Wavelet techniques described in Norbo and Katul, 2012 (NK12)
@@ -13,12 +13,11 @@
 #' @param FreqSamp numeric, sampling frequency, defaults to 20Hz for NEON data
 #' @param zeroPad logical, should zero padding of time series be applied? Not currently implemented, for potential future use.
 #' @param ThshMiss numeric, dimensionless fraction of missing values in each column of data allowed before the quality flag is tripped. Defaults to 0.1 or 10 percent.
-#' @param init numeric, initial parameter values to perform optimization of fitting nonlinear model to frequency-weighted vertical wind speed and find frequency peak occurrs at. Passed on to eddy4R.turb::def.spec.peak.R
+#' @param init numeric, initial parameter values to perform optimization of fitting nonlinear model to frequency-weighted vertical wind speed and find frequency peak occurs at. Passed on to eddy4R.turb::def.spec.peak.R
 #' @param paraStbl stability parameter (numeric). Not currently implemented.
 
-#'
 #' @return An list containing wavelet cospectra, quality flags if data was available to perform correction, and correction coefficients (coefCor) for each variable.
-#'
+
 #' @references
 #' License: GNU AFFERO GENERAL PUBLIC LICENSE Version 3, 19 November 2007.
 #' Nordbo, A., Katul, G. A Wavelet-Based Correction Method for Eddy-Covariance High-Frequency Losses in Scalar Concentration Measurements. Boundary-Layer Meteorol 146, 81–102 (2013). https://doi.org/10.1007/s10546-012-9759-9
@@ -26,7 +25,6 @@
 #' @keywords Wavelet, spectrum, cospectrum, NK12, frequency response correction
 
 #' @examples Currently none.
-
 
 #' @seealso Currently none.
 

@@ -2,7 +2,8 @@
 #' @title Definition function: function to determine the temporally resolved covariance from discrete wavelet transform and frequency response correction
 
 #' @author
-#' David Durden \email{ddurden@battelleecology.org}
+#' Adam Young \email{younga1@battelleecology.org}
+#' David Durden
 #' Stefan Metzger
 
 #' @description 
