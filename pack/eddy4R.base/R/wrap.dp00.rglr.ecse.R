@@ -57,7 +57,11 @@ wrap.dp00.rglr.ecse <- function(
 
 #call Library
 require(zoo)
-
+require(eddy4R.base)
+rlog = Logger.Singleton$new() #class defined in eddy4R.base
+rlog$debug("in function wrap.dp00.rglr.ecse(...)")
+  
+  
 #add domain and site into IdDp00
 numDp00 <- paste0("NEON.",Dom,".",Site,".",IdDp00, sep="")
 

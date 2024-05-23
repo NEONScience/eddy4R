@@ -58,6 +58,10 @@ ThshMiss = .1,
 paraStbl
 ){
 
+library(eddy4R.base)
+rlog = Logger.Singleton$new() #class defined in eddy4R.base
+rlog$debug("in function wrap.wave(...)")
+  
 #Create output list
 rpt <- base::list()
 

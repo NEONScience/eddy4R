@@ -22,6 +22,7 @@ def.para.flow(
   UrlInpRefe,
   UrlOutRefe,
   MethCh4Conc = FALSE,
+  Tokn = NULL,
   ...
 )
 }
@@ -59,6 +60,8 @@ def.para.flow(
 \item{UrlOutRefe}{A single-entry vector of class "character" containing the web address of the reference output data zip file to be downloaded.}
 
 \item{MethCh4Conc}{is a logical (TRUE/FALSE) determining if Dp01 methane concentration from the Picarro G2131 should be run}
+
+\item{Tokn}{is a character vector for API token to prevent rate limiting and provide privileges}
 }
 \value{
 \code{ParaFlow} is a list returned that indicates the workflow control parameters, including \code{ParaFlow$DirFilePara},\code{ParaFlow$DirInp}, \code{ParaFlow$DirMnt}, \code{ParaFlow$DirOut}, \code{ParaFlow$DirTmp}, \code{ParaFlow$DirWrk}, \code{ParaFlow$DateOut}, \code{ParaFlow$FileOutBase},  \code{ParaFlow$Read}, \code{ParaFlow$VersDp}, \code{ParaFlow$VersEddy}, \code{ParaFlow$MethDp01Api}.

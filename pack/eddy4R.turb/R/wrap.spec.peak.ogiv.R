@@ -62,6 +62,10 @@ def.spec.peak.ogiv <- function(
   FilePlot = NULL
 ) {
   
+  library(eddy4R.base)
+  rlog = Logger.Singleton$new() #class defined in eddy4R.base
+  rlog$debug("in function wrap.spec.peak.ogiv.R")
+  
   #generate spectral model for range of frequencies
   modlSpec <- eddy4R.turb::def.spec.modl(
     #independent variable, preferabley f, but n is possible

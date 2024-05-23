@@ -51,6 +51,10 @@ def.spec.freq.cut.emp <- function(
   CoefCorRefe
 ) {
   
+  library(eddy4R.base)
+  rlog = Logger.Singleton$new() #class defined in eddy4R.base
+  rlog$debug("in function wrap.def.spec.freq.cut.emp.R")
+  
   #sigmoidal transfer function (Lorentzian) after Eugster and Senn (1995) in Aubinet et al. (2012) Eq. 4.21
   tfunSigm <- eddy4R.turb::def.spec.tfun.sigm(FreqCut=FreqCut, Freq=idep)
   
