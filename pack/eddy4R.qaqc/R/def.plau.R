@@ -105,6 +105,8 @@
 #     improve performance of persistence test, especially when there are a lot of persistence failures
 #   Cove Sturtevant (2023-02-13)
 #     improve performance of persistence test (again), especially with large datasets with a lot of persistence failures
+#   Cove Sturtevant (2024-02-28)
+#     handle infinite values (previously broke persistence test)
 ##############################################################################################
 def.plau <- function (
   data,                               # a data frame containing the data to be evaluated (do not include the time stamp vector here). Required input.
@@ -286,6 +288,12 @@ def.plau <- function (
     dataRealIdx <- dataReal[[idxVar]]
     DiffPersMinIdx <- DiffPersMin[idxVar]
     WndwPersIdx <- WndwPers[idxVar]
+    
+    # Set inf, -inf to min/max of machine
+    if(base::any(base::is.infinite(dataIdxVar))){
+      dataIdxVar[dataIdxVar == Inf] <- .Machine$double.xmax
+      dataIdxVar[dataIdxVar == -Inf] <- .Machine$double.xmin
+    }
     
     # Initialize fail and na indices
     setQf[[idxVar]]$setQfPers <- list(fail=numeric(0),na=numeric(0))

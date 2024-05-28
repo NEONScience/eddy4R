@@ -92,6 +92,10 @@ wrap.hdf5.wrte.dp01 <- function(
   Meta
 ){
 
+library(eddy4R.base)
+rlog = Logger.Singleton$new() #class defined in eddy4R.base
+rlog$debug("in function wrap.hdf5.wrte.dp01(...)")
+  
 #Determine if the output file should be expanded or basic by creating a logical determined from the filename
 MethExpd <- grepl(pattern = "expanded", x = FileOut)  
   

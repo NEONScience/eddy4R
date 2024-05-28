@@ -63,6 +63,10 @@ init = c(3, 5),
 paraStbl = NULL
 ) {
 
+library(eddy4R.base)
+rlog = Logger.Singleton$new() #class defined in eddy4R.base
+rlog$debug("in function wrap.wave(...)")
+  
 #Create output list
 rpt <- list()
 

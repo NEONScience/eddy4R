@@ -11,7 +11,8 @@ wrap.irga.vali(
   DateProc,
   ScalMax = FALSE,
   FracSlp = FALSE,
-  OfstMax = FALSE
+  OfstMax = FALSE,
+  evalSeMax = 0.015
 )
 }
 \arguments{

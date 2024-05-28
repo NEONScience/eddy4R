@@ -56,6 +56,7 @@ data <- data.frame(x=rnorm(1000,mean=0,sd=1)) # Start off with a vector of 1000 
 data$x[c(20,50,500,90)] <- 50 # insert some spikes
 data$x[600:699] <- rnorm(100,mean=0,sd=0.001) # Add some "stuck" data
 data$x[800:810] <- NA
+data$x[400:450] <- Inf # Results in Error
 RngMin <- -4
 RngMax <- 4
 DiffStepMax <- 6

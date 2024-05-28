@@ -98,6 +98,10 @@ wrap.dp01.ecse <- function(
   PrdAgr,
   idxTime = list() 
 ) {
+  library(eddy4R.base)
+  rlog = Logger.Singleton$new() #class defined in eddy4R.base
+  rlog$debug("in function wrap.dp01.ecse(...)")
+  
   #assign list
   wrk <- list()
   rpt <- list()

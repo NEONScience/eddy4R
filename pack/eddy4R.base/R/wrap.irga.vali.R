@@ -125,6 +125,10 @@ wrap.irga.vali <- function(
   #library(deming)
   #library(zoo)
 
+  library(eddy4R.base)
+  rlog = Logger.Singleton$new() #class defined in eddy4R.base
+  rlog$debug("in function wrap.irga.vali(...)")
+  
   #dates that will be used in determination of slope and offset
   Date <- c(base::as.Date(DateProc) - 1, base::as.Date(DateProc), base::as.Date(DateProc) + 1)
   Date <- as.character(Date)
@@ -580,7 +584,8 @@ wrap.irga.vali <- function(
     # with output and could contain more than 5 rows (1 for each reference gas). Also
     # re-order rows to correspond to qfIrgaTurbValiGas01-05 order.
     if (valiCrit) {
-      rpt[[idxDate]][[valiTmp]] <- rbind(valiData[[idxDate]]$data00[order(valiData[[idxDate]]$data00$gasType), ], valiData[[idxDate]]$data01[order(valiData[[idxDate]]$data01$gasType), ])
+      rpt[[idxDate]][[valiTmp]] <- rbind(valiData[[idxDate]]$data00, valiData[[idxDate]]$data01)
+      rpt[[idxDate]][[valiTmp]] <- rpt[[idxDate]][[valiTmp]][order(rpt[[idxDate]][[valiTmp]]$gasType), ]
     } else {
       rpt[[idxDate]][[valiTmp]] <- valiData[[idxDate]]$data00[order(valiData[[idxDate]]$data00$gasType), ]
     }

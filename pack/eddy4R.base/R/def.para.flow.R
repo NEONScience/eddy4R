@@ -24,6 +24,7 @@
 #' @param UrlInpRefe A single-entry vector of class "character" containing the web address of the reference input data zip file to be downloaded.
 #' @param UrlOutRefe A single-entry vector of class "character" containing the web address of the reference output data zip file to be downloaded.
 #' @param MethCh4Conc is a logical (TRUE/FALSE) determining if Dp01 methane concentration from the Picarro G2131 should be run 
+#' @param Tokn is a character vector for API token to prevent rate limiting and provide privileges 
 
 #' @return \code{ParaFlow} is a list returned that indicates the workflow control parameters, including \code{ParaFlow$DirFilePara},\code{ParaFlow$DirInp}, \code{ParaFlow$DirMnt}, \code{ParaFlow$DirOut}, \code{ParaFlow$DirTmp}, \code{ParaFlow$DirWrk}, \code{ParaFlow$DateOut}, \code{ParaFlow$FileOutBase},  \code{ParaFlow$Read}, \code{ParaFlow$VersDp}, \code{ParaFlow$VersEddy}, \code{ParaFlow$MethDp01Api}. 
 
@@ -57,6 +58,8 @@
 #     adding MethDp01Api parameter
 #   Chris Florian (2021-09-21)
 #     adding MethCh4Conc parameter
+#   David Durden (2024-01-16)
+#     adding API token
 
 ##############################################################################################################
 #Start of function call to determine workflow parameters
@@ -80,10 +83,11 @@ def.para.flow <- function(
   UrlInpRefe,
   UrlOutRefe,
   MethCh4Conc = FALSE,
+  Tokn = NULL,
   ...
 ){
   
-  ParaFlow <- list(Deve = Deve, DirFilePara = DirFilePara,DirInp = DirInp,DirMnt = DirMnt,DirOut = DirOut,DirTmp = DirTmp,DirWrk = DirWrk, DateOut = DateOut, FileOutBase = FileOutBase, MethParaFlow = MethParaFlow,Read = Read,VersDp = VersDp,VersEddy = VersEddy, MethDp01Api = MethDp01Api, MethCh4Conc = MethCh4Conc, ...)
+  ParaFlow <- list(Deve = Deve, DirFilePara = DirFilePara,DirInp = DirInp,DirMnt = DirMnt,DirOut = DirOut,DirTmp = DirTmp,DirWrk = DirWrk, DateOut = DateOut, FileOutBase = FileOutBase, MethParaFlow = MethParaFlow,Read = Read,VersDp = VersDp,VersEddy = VersEddy, MethDp01Api = MethDp01Api, MethCh4Conc = MethCh4Conc, Tokn = Tokn, ...)
   
   if(MethParaFlow == "EnvVar"){
     #Create a list with all the specified function arguments
