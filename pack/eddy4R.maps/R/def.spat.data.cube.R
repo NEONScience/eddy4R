@@ -1,5 +1,12 @@
-#' Download data from Microsoft planetary comuputer 
-#'
+##############################################################################################
+#' @title definition function to download data from Microsoft planetary computer
+
+#' @author 
+#' David Durden
+#' Stefan Metzger \email{smetzger@atmofacts.com}
+
+#' @description Function definition. Download data from Microsoft planetary computer
+
 #' @param start_date start date as character format yyyy-mm-dd
 #' @param end_date end date as character format yyyy-mm-dd
 #' @param box numberic vector in the format of (xmin, ymin, xmax, ymax)
@@ -11,11 +18,28 @@
 #' @param dt size of pixels in time-direction, expressed as ISO8601 period string (only 1 number and unit is allowed) such as "P16D"
 #' @param aggregation aggregation method as string, defining how to deal with pixels containing data from multiple images, can be "min", "max", "mean", "median", or "first"
 #' @param resampling resampling method used in gdalwarp when images are read, can be "near", "bilinear", "bicubic" or others as supported by gdalwarp (see https://gdal.org/programs/gdalwarp.html)
+
 #' @return A data cube proxy object
+
+#' @references
+#' License: GNU AFFERO GENERAL PUBLIC LICENSE Version 3, 19 November 2007
+
+#' @keywords Currently none
+
 #' @examples 
 #' ingest_planetary_data(start_date = "2022-01-01", end_date = "2023-07-01", box =  c("xmin" = -123, "ymin" = 39, "xmax" = -122, "ymax" = 40))
+
+#' @seealso Currently none
+
 #' @export
 #' 
+# changelog and author contributions
+#   David Durden (2024-01-23)
+#     original creation 
+#   Stefan Metzger (2024-03-01)
+#     complete Roxygen header
+#     workaround for native pipe operator to support both  R < 4.1 and R >= 4.1
+##############################################################################################
 def.spat.data.cube <- function(start_date,
                                   end_date,
                                   box,
@@ -32,14 +56,36 @@ def.spat.data.cube <- function(start_date,
   assertthat::are_equal(length(box), 4)
   
   # get STACItemCollection
-  matches <-
-    rstac::stac("https://planetarycomputer.microsoft.com/api/stac/v1") |>
-    rstac::stac_search(collections = collection,
-                datetime = paste(start_date, end_date, sep = "/"),
-                bbox = c(box)) |>
-    get_request() |>
-    items_fetch() |>
-    items_sign(sign_fn = sign_planetary_computer())
+    # Original pipe-based code (R > 4.1 only)
+    #   matches <-
+    # rstac::stac("https://planetarycomputer.microsoft.com/api/stac/v1") |>
+    # rstac::stac_search(collections = collection,
+    #                    datetime = paste(start_date, end_date, sep = "/"),
+    #                    bbox = c(box)) |>
+    # get_request() |>
+    # items_fetch() |>
+    # items_sign(sign_fn = sign_planetary_computer())
+
+    # workaround without pipe statements and using temporary objects:
+      # Step 1: Initialize STAC client
+        tmp01 <- rstac::stac("https://planetarycomputer.microsoft.com/api/stac/v1")
+        
+      # Step 2: Search STAC
+        tmp02 <- stac_search(tmp01, collections = collection,
+                             datetime = paste(start_date, end_date, sep = "/"),
+                             bbox = c(box))
+        
+      # Step 3: Send request
+        tmp03 <- get_request(tmp02)
+        
+      # Step 4: Fetch items
+        tmp04 <- items_fetch(tmp03)
+        
+      # Step 5: Sign items
+        matches <- items_sign(tmp04, sign_fn = sign_planetary_computer())
+  
+      # Cleanup of temporary objects at the end:
+        base::rm(tmp01, tmp02, tmp03, tmp04)
   
   # get image collection object
   cube <- gdalcubes::stac_image_collection(matches$features,

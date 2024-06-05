@@ -2,7 +2,11 @@
 % Please edit documentation in R/def.spat.data.cube.R
 \name{def.spat.data.cube}
 \alias{def.spat.data.cube}
+<<<<<<< HEAD
 \title{Download data from Microsoft planetary comuputer}
+=======
+\title{definition function to download data from Microsoft planetary computer}
+>>>>>>> atmo/maps
 \usage{
 def.spat.data.cube(
   start_date,
@@ -45,8 +49,27 @@ def.spat.data.cube(
 A data cube proxy object
 }
 \description{
+<<<<<<< HEAD
 Download data from Microsoft planetary comuputer
+=======
+Function definition. Download data from Microsoft planetary computer
+>>>>>>> atmo/maps
 }
 \examples{
 ingest_planetary_data(start_date = "2022-01-01", end_date = "2023-07-01", box =  c("xmin" = -123, "ymin" = 39, "xmax" = -122, "ymax" = 40))
 }
+<<<<<<< HEAD
+=======
+\references{
+License: GNU AFFERO GENERAL PUBLIC LICENSE Version 3, 19 November 2007
+}
+\seealso{
+Currently none
+}
+\author{
+David Durden
+Stefan Metzger \email{smetzger@atmofacts.com}
+}
+\keyword{Currently}
+\keyword{none}
+>>>>>>> atmo/maps

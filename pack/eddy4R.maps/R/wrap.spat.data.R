@@ -1,15 +1,35 @@
-#' Generate spatial targets
-#'
+##############################################################################################
+#' @title wrapper function to generate spatial targets
+
+#' @author 
+#' David Durden
+#' Stefan Metzger \email{smetzger@atmofacts.com}
+
+#' @description Wrapper definition. Generate spatial targets
+
 #' @param dir A directory of .tif files for scoring
 #' @param site_id The side ID of the area being forecasted. Currently "august_complex" is the only option.
-#'
+
 #' @return message from minio submission
-#' @export
-#'
+
+#' @references
+#' License: GNU AFFERO GENERAL PUBLIC LICENSE Version 3, 19 November 2007
+
+#' @keywords Currently none
+
 #' @examples spat4cast_submit(dir = "targets", site_id = "august_complex")
 
+#' @seealso Currently none
 
-
+#' @export
+#' 
+# changelog and author contributions
+#   David Durden (2024-01-23)
+#     original creation 
+#   Stefan Metzger (2024-03-01)
+#     complete Roxygen header
+#     fix attributes list in function call
+##############################################################################################
 wrap.spat.data.grab <- function(
     dir = tempdir(), 
     dateBgn = "2019-05-01",
