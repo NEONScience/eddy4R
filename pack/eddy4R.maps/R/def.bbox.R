@@ -1,8 +1,9 @@
 ##############################################################################################
 #' @title definition function to create bounding box
 
-#' @author David Durden
-
+#' @author 
+#' David Durden
+#' Stefan Metzger \email{smetzger@atmofacts.com}
 
 #' @description Function definition. Read in shapefile or create a bounding box
 #'  by adding an extent to Lat/Lon for grabbing STAC data with a padding option.
@@ -17,7 +18,7 @@
 #' @references
 #' License: GNU AFFERO GENERAL PUBLIC LICENSE Version 3, 19 November 2007
 
-#' @keywords natural constants
+#' @keywords Currently none
 
 #' @examples Currently none
 
@@ -28,6 +29,8 @@
 # changelog and author contributions
 #   David Durden (2024-01-23)
 #     original creation 
+#   Stefan Metzger (2024-03-01)
+#     workaround for native pipe operator to support both  R < 4.1 and R >= 4.1
 ##############################################################################################
 def.bbox <- function(
     site = c("CPER", "CHEESEHEAD")[2], 
@@ -52,7 +55,12 @@ def.bbox <- function(
     }
       #sf::read_sf(dsn = DirInp, "mask")
     #generate bounding box
-    out$bbox <- out$shp |> sf::st_transform(crs=crs) |> sf::st_bbox()
+    # native pipe operator |>; supported from R >= 4.1
+    # out$bbox <- out$shp |> sf::st_transform(crs=crs) |> sf::st_bbox()
+    # workaround: sequentially chain functions to support both  R < 4.1 and R >= 4.1
+    tmp01 <- sf::st_transform(out$shp, crs=crs)
+    out$bbox <- sf::st_bbox(tmp01)
+    base::rm(tmp01)
     
     #pad bounding box
     if(pad_box == TRUE){
@@ -63,7 +71,19 @@ def.bbox <- function(
     }
     
     #Create a mask layer
-    out$maskLayer <- sf::st_geometry(out$shp) |> sf::st_transform(crs=crs) 
+    # with pipe operator (R >= 4.1 only)
+    # out$maskLayer <- sf::st_geometry(out$shp) |> sf::st_transform(crs=crs) 
+    # w/o pipe operator
+
+      # First, extract the geometry from out$shp
+      tmp01 <- sf::st_geometry(out$shp)
+      
+      # Then, transform the geometry with the specified CRS
+      out$maskLayer <- sf::st_transform(tmp01, crs=crs)
+      
+      # clean up
+      base::rm(tmp01)
+    
     
   } else 
   {

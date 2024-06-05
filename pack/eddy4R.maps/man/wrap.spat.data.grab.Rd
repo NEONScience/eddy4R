@@ -2,6 +2,7 @@
 % Please edit documentation in R/wrap.spat.data.R
 \name{wrap.spat.data.grab}
 \alias{wrap.spat.data.grab}
+<<<<<<< HEAD
 \title{Generate spatial targets}
 \usage{
 wrap.spat.data.grab(
@@ -9,6 +10,15 @@ wrap.spat.data.grab(
   dateBgn = "2019-05-01",
   dateEnd = "2019-11-30",
   site = c("NEON:HARV", "CHEESEHEAD")[2],
+=======
+\title{wrapper function to generate spatial targets}
+\usage{
+wrap.spat.data.grab(
+  dir = "targets",
+  dateBgn = "2019-05-01",
+  dateEnd = "2019-11-30",
+  site = c("cheesehead")[1],
+>>>>>>> atmo/maps
   dt = "P1M",
   dx = 0.1,
   dy = 0.1
@@ -23,8 +33,27 @@ wrap.spat.data.grab(
 message from minio submission
 }
 \description{
+<<<<<<< HEAD
 Generate spatial targets
+=======
+Wrapper definition. Generate spatial targets
+>>>>>>> atmo/maps
 }
 \examples{
 spat4cast_submit(dir = "targets", site_id = "august_complex")
 }
+<<<<<<< HEAD
+=======
+\references{
+License: GNU AFFERO GENERAL PUBLIC LICENSE Version 3, 19 November 2007
+}
+\seealso{
+Currently none
+}
+\author{
+David Durden
+Stefan Metzger \email{smetzger@atmofacts.com}
+}
+\keyword{Currently}
+\keyword{none}
+>>>>>>> atmo/maps
