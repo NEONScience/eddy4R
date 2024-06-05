@@ -13,7 +13,7 @@
 wrap.spat.data.grab <- function(
     dir = tempdir(), 
     dateBgn = "2019-05-01",
-    dateEnd = "2019-10-31",
+    dateEnd = "2019-11-30",
     site = c("CPER", "CHEESEHEAD")[2],
     dt = "P1M",
     dx = 0.1,
@@ -23,12 +23,12 @@ wrap.spat.data.grab <- function(
   
   print(paste0("Grabbing spatial data at ", Sys.time(), " for ", site))
   
-  library(here)
   library(sf)
   library(lubridate)
   library(gdalcubes)
   library(rstac)
   library(stars)
+  library(dplyr)
   
   
   
@@ -36,7 +36,7 @@ wrap.spat.data.grab <- function(
  # for (f in list.files(here::here("R"), full.names = TRUE)) source (f)
 
   #Create fire bounding box
-  bbox <- def.bbox(site = site, pad_box = TRUE)
+  bbox  <- eddy4R.maps::def.bbox(site = site, pad_box = TRUE)
   
   #Target date
   dateBgn <- lubridate::floor_date(as.Date(dateBgn), "month") #first day of the month
@@ -46,15 +46,13 @@ wrap.spat.data.grab <- function(
   gdalcubes::gdalcubes_options(parallel=TRUE)
   
   # use ingest_planetary_data function to extract raster cube for fire bounding box between Jan 1 2002 and July 1 2023.
-  raster_cube <- def.spat.data.cube(start_date = dateBgn, 
+  raster_cube <- eddy4R.maps::def.spat.data.cube(start_date = dateBgn, 
                                        end_date = dateEnd, 
                                        box = bbox$bbox,
                                        srs = "EPSG:4326",
                                        dx = dx, 
                                        dy = dy, 
-                                       dt = dt,
-                                       collection = "modis-15A2H-061",
-                                       asset_name = "Lai_500m")
+                                       dt = dt)
   
   
   
@@ -66,5 +64,7 @@ wrap.spat.data.grab <- function(
   #                              bucket = "efi/spat4cast-targets",
   #                              mask = fire_box$maskLayer)
   # 
+  
+  return(raster_cube)
   
 } #End of function
