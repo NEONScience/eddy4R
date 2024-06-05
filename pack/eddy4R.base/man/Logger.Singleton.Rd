@@ -28,29 +28,23 @@ print(log_entries)
 \section{Methods}{
 \subsection{Public methods}{
 \itemize{
-\item \href{#method-new}{\code{Logger.Singleton$new()}}
-\item \href{#method-set_logging_level}{\code{Logger.Singleton$set_logging_level()}}
-\item \href{#method-set_log_file}{\code{Logger.Singleton$set_log_file()}}
-\item \href{#method-log_message}{\code{Logger.Singleton$log_message()}}
-\item \href{#method-debug}{\code{Logger.Singleton$debug()}}
-\item \href{#method-info}{\code{Logger.Singleton$info()}}
-\item \href{#method-warn}{\code{Logger.Singleton$warn()}}
-\item \href{#method-error}{\code{Logger.Singleton$error()}}
-\item \href{#method-get_log_entries}{\code{Logger.Singleton$get_log_entries()}}
-\item \href{#method-get_logging_level}{\code{Logger.Singleton$get_logging_level()}}
-\item \href{#method-get_log_file}{\code{Logger.Singleton$get_log_file()}}
-\item \href{#method-clone}{\code{Logger.Singleton$clone()}}
+\item \href{#method-Logger.Singleton-new}{\code{Logger.Singleton$new()}}
+\item \href{#method-Logger.Singleton-set_logging_level}{\code{Logger.Singleton$set_logging_level()}}
+\item \href{#method-Logger.Singleton-set_log_file}{\code{Logger.Singleton$set_log_file()}}
+\item \href{#method-Logger.Singleton-log_message}{\code{Logger.Singleton$log_message()}}
+\item \href{#method-Logger.Singleton-debug}{\code{Logger.Singleton$debug()}}
+\item \href{#method-Logger.Singleton-info}{\code{Logger.Singleton$info()}}
+\item \href{#method-Logger.Singleton-warn}{\code{Logger.Singleton$warn()}}
+\item \href{#method-Logger.Singleton-error}{\code{Logger.Singleton$error()}}
+\item \href{#method-Logger.Singleton-get_log_entries}{\code{Logger.Singleton$get_log_entries()}}
+\item \href{#method-Logger.Singleton-get_logging_level}{\code{Logger.Singleton$get_logging_level()}}
+\item \href{#method-Logger.Singleton-get_log_file}{\code{Logger.Singleton$get_log_file()}}
+\item \href{#method-Logger.Singleton-clone}{\code{Logger.Singleton$clone()}}
 }
-}
-\if{html}{
-\out{<details open ><summary>Inherited methods</summary>}
-\itemize{
-}
-\out{</details>}
 }
 \if{html}{\out{<hr>}}
-\if{html}{\out{<a id="method-new"></a>}}
-\if{latex}{\out{\hypertarget{method-new}{}}}
+\if{html}{\out{<a id="method-Logger.Singleton-new"></a>}}
+\if{latex}{\out{\hypertarget{method-Logger.Singleton-new}{}}}
 \subsection{Method \code{new()}}{
 \subsection{Usage}{
 \if{html}{\out{<div class="r">}}\preformatted{Logger.Singleton$new(logging_level = NULL, log_file = NULL)}\if{html}{\out{</div>}}
@@ -67,8 +61,8 @@ print(log_entries)
 }
 }
 \if{html}{\out{<hr>}}
-\if{html}{\out{<a id="method-set_logging_level"></a>}}
-\if{latex}{\out{\hypertarget{method-set_logging_level}{}}}
+\if{html}{\out{<a id="method-Logger.Singleton-set_logging_level"></a>}}
+\if{latex}{\out{\hypertarget{method-Logger.Singleton-set_logging_level}{}}}
 \subsection{Method \code{set_logging_level()}}{
 \subsection{Usage}{
 \if{html}{\out{<div class="r">}}\preformatted{Logger.Singleton$set_logging_level(level)}\if{html}{\out{</div>}}
@@ -83,8 +77,8 @@ print(log_entries)
 }
 }
 \if{html}{\out{<hr>}}
-\if{html}{\out{<a id="method-set_log_file"></a>}}
-\if{latex}{\out{\hypertarget{method-set_log_file}{}}}
+\if{html}{\out{<a id="method-Logger.Singleton-set_log_file"></a>}}
+\if{latex}{\out{\hypertarget{method-Logger.Singleton-set_log_file}{}}}
 \subsection{Method \code{set_log_file()}}{
 \subsection{Usage}{
 \if{html}{\out{<div class="r">}}\preformatted{Logger.Singleton$set_log_file(file)}\if{html}{\out{</div>}}
@@ -99,8 +93,8 @@ print(log_entries)
 }
 }
 \if{html}{\out{<hr>}}
-\if{html}{\out{<a id="method-log_message"></a>}}
-\if{latex}{\out{\hypertarget{method-log_message}{}}}
+\if{html}{\out{<a id="method-Logger.Singleton-log_message"></a>}}
+\if{latex}{\out{\hypertarget{method-Logger.Singleton-log_message}{}}}
 \subsection{Method \code{log_message()}}{
 \subsection{Usage}{
 \if{html}{\out{<div class="r">}}\preformatted{Logger.Singleton$log_message(level, message)}\if{html}{\out{</div>}}
@@ -117,8 +111,8 @@ print(log_entries)
 }
 }
 \if{html}{\out{<hr>}}
-\if{html}{\out{<a id="method-debug"></a>}}
-\if{latex}{\out{\hypertarget{method-debug}{}}}
+\if{html}{\out{<a id="method-Logger.Singleton-debug"></a>}}
+\if{latex}{\out{\hypertarget{method-Logger.Singleton-debug}{}}}
 \subsection{Method \code{debug()}}{
 \subsection{Usage}{
 \if{html}{\out{<div class="r">}}\preformatted{Logger.Singleton$debug(message)}\if{html}{\out{</div>}}
@@ -133,8 +127,8 @@ print(log_entries)
 }
 }
 \if{html}{\out{<hr>}}
-\if{html}{\out{<a id="method-info"></a>}}
-\if{latex}{\out{\hypertarget{method-info}{}}}
+\if{html}{\out{<a id="method-Logger.Singleton-info"></a>}}
+\if{latex}{\out{\hypertarget{method-Logger.Singleton-info}{}}}
 \subsection{Method \code{info()}}{
 \subsection{Usage}{
 \if{html}{\out{<div class="r">}}\preformatted{Logger.Singleton$info(message)}\if{html}{\out{</div>}}
@@ -149,8 +143,8 @@ print(log_entries)
 }
 }
 \if{html}{\out{<hr>}}
-\if{html}{\out{<a id="method-warn"></a>}}
-\if{latex}{\out{\hypertarget{method-warn}{}}}
+\if{html}{\out{<a id="method-Logger.Singleton-warn"></a>}}
+\if{latex}{\out{\hypertarget{method-Logger.Singleton-warn}{}}}
 \subsection{Method \code{warn()}}{
 \subsection{Usage}{
 \if{html}{\out{<div class="r">}}\preformatted{Logger.Singleton$warn(message)}\if{html}{\out{</div>}}
@@ -165,8 +159,8 @@ print(log_entries)
 }
 }
 \if{html}{\out{<hr>}}
-\if{html}{\out{<a id="method-error"></a>}}
-\if{latex}{\out{\hypertarget{method-error}{}}}
+\if{html}{\out{<a id="method-Logger.Singleton-error"></a>}}
+\if{latex}{\out{\hypertarget{method-Logger.Singleton-error}{}}}
 \subsection{Method \code{error()}}{
 \subsection{Usage}{
 \if{html}{\out{<div class="r">}}\preformatted{Logger.Singleton$error(message)}\if{html}{\out{</div>}}
@@ -181,8 +175,8 @@ print(log_entries)
 }
 }
 \if{html}{\out{<hr>}}
-\if{html}{\out{<a id="method-get_log_entries"></a>}}
-\if{latex}{\out{\hypertarget{method-get_log_entries}{}}}
+\if{html}{\out{<a id="method-Logger.Singleton-get_log_entries"></a>}}
+\if{latex}{\out{\hypertarget{method-Logger.Singleton-get_log_entries}{}}}
 \subsection{Method \code{get_log_entries()}}{
 \subsection{Usage}{
 \if{html}{\out{<div class="r">}}\preformatted{Logger.Singleton$get_log_entries()}\if{html}{\out{</div>}}
@@ -190,8 +184,8 @@ print(log_entries)
 
 }
 \if{html}{\out{<hr>}}
-\if{html}{\out{<a id="method-get_logging_level"></a>}}
-\if{latex}{\out{\hypertarget{method-get_logging_level}{}}}
+\if{html}{\out{<a id="method-Logger.Singleton-get_logging_level"></a>}}
+\if{latex}{\out{\hypertarget{method-Logger.Singleton-get_logging_level}{}}}
 \subsection{Method \code{get_logging_level()}}{
 \subsection{Usage}{
 \if{html}{\out{<div class="r">}}\preformatted{Logger.Singleton$get_logging_level()}\if{html}{\out{</div>}}
@@ -199,8 +193,8 @@ print(log_entries)
 
 }
 \if{html}{\out{<hr>}}
-\if{html}{\out{<a id="method-get_log_file"></a>}}
-\if{latex}{\out{\hypertarget{method-get_log_file}{}}}
+\if{html}{\out{<a id="method-Logger.Singleton-get_log_file"></a>}}
+\if{latex}{\out{\hypertarget{method-Logger.Singleton-get_log_file}{}}}
 \subsection{Method \code{get_log_file()}}{
 \subsection{Usage}{
 \if{html}{\out{<div class="r">}}\preformatted{Logger.Singleton$get_log_file()}\if{html}{\out{</div>}}
@@ -208,8 +202,8 @@ print(log_entries)
 
 }
 \if{html}{\out{<hr>}}
-\if{html}{\out{<a id="method-clone"></a>}}
-\if{latex}{\out{\hypertarget{method-clone}{}}}
+\if{html}{\out{<a id="method-Logger.Singleton-clone"></a>}}
+\if{latex}{\out{\hypertarget{method-Logger.Singleton-clone}{}}}
 \subsection{Method \code{clone()}}{
 The objects of this class are cloneable with this method.
 \subsection{Usage}{
