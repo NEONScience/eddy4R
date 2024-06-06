@@ -21,9 +21,6 @@ def.plot.flux.interactive(
 
 \item{colormap}{palette_explorer() for palette options}
 }
-\value{
-
-}
 \description{
 Function definition. This function creates an interactive flux map visualization that can be used in R viewer or in a web browser.
 }
