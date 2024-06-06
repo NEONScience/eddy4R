@@ -36,9 +36,6 @@ def.plot.flux.static(
 
 \item{color_n}{color categories in palette}
 }
-\value{
-
-}
 \description{
 Function definition. This function creates a flux map visualization on a user defined basemap.
 }

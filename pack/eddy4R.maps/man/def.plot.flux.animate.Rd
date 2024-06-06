@@ -33,9 +33,6 @@ def.plot.flux.animate(
 
 \item{delay}{The delay time in the animation.}
 }
-\value{
-
-}
 \description{
 Function definition. This function creates an animated flux map visualization for temporal flux map data contained in a folder.
 }
