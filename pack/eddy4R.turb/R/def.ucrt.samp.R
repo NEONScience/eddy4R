@@ -92,7 +92,7 @@ def.ucrt.samp <- function(
     }
 
     whrDistIsca = base::rbind(whrDistIsca,
-                              c(spcsNameFlux,spcsNameRtio))
+                              cbind(spcsNameFlux,spcsNameRtio))
   }
 
   #scalar length scales
