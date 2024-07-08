@@ -16,9 +16,11 @@ Imports:
     robustbase (>= 0.92-7),
     sfsmisc (>= 1.1-0),
     splus2R (>= 1.2-2),
-    plyr (>= 1.8.4)
+    plyr (>= 1.8.4),
+    wavelets (>= 0.3-0.2)
 Suggests:
     DataCombine (>= 0.2.21),
-License: Terms of use of the NEON FIU algorithm repository dated 2015-01-16
+    NEONprocIS.base
+License: GNU AFFERO GENERAL PUBLIC LICENSE Version 3, 19 November 2007
 LazyData: true
 RoxygenNote: 7.2.3
