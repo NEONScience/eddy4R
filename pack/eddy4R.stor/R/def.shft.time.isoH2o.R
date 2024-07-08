@@ -48,7 +48,7 @@ def.shft.time.isoH2o <- function (
   rpt <- list()
   rpt$dataList <- dataList
   rpt$qfqmList <- qfqmList
-  rpt$timeOfstMean <- NaN
+  rpt$timeOfstMean <- NA
   
   #determine number of measurement levels 
   lvlTow <- lvls

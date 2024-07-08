@@ -95,7 +95,7 @@ def.shft.time.isoCo2 <- function (
   rpt <- list()
   rpt$dataList <- dataList
   rpt$qfqmList <- qfqmList
-  rpt$timeOfstMean <- NaN
+  rpt$timeOfstMean <- NA
   
 	date <- substr(dataList$co2Low$time[1], 1, 10) # get date from first element of time vector.
 
