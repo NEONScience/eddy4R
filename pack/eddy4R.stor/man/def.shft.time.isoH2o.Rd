@@ -32,6 +32,8 @@ Currently none
 }
 \author{
 Natchaya Pingintha-Durden  \email{ndurden@battelleecology.org}
+Rich Fiorella  \email{rich.fiorella@utah.edu}
+Chris Florian  \email{cflorian@battelleecology.org}
 }
 \keyword{Picarro,}
 \keyword{crdH2o}
