@@ -30,7 +30,7 @@
 
 # changelog and author contributions / copyrights
 #   Natchaya Pingintha-Durden (2024-06-10)
-#     original creation based on def.shft.time.isoCo2
+#     original creation developed Rich's core work for def.shft.time.isoCo2
 ####################################################################################################
 def.shft.time.isoH2o <- function (
   dataList, 
