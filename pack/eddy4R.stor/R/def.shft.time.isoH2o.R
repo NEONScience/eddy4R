@@ -3,6 +3,8 @@
 
 #' @author 
 #' Natchaya Pingintha-Durden  \email{ndurden@battelleecology.org}
+#' Rich Fiorella  \email{rich.fiorella@utah.edu}
+#' Chris Florian  \email{cflorian@battelleecology.org}
 
 #' @description 
 #' Definition function. Identify the time offset and adjust the crdH2o data accordingly.
@@ -28,7 +30,7 @@
 
 # changelog and author contributions / copyrights
 #   Natchaya Pingintha-Durden (2024-06-10)
-#     original creation
+#     original creation based on def.shft.time.isoCo2
 ####################################################################################################
 def.shft.time.isoH2o <- function (
   dataList, 
@@ -161,7 +163,8 @@ def.shft.time.isoH2o <- function (
     return(rpt) 
   }
   
- #Time shift correction###################################################### 
+ #Time shift correction######################################################
+  #base on def.shft.time.isoCo2
   # constrain to standard time vector (e.g., seconds in day of interest)
   timeSkeleton <- as.POSIXct(dataList$`000_010`$time,
                              format = "%Y-%m-%dT%H:%M:%OSZ", tz = "UTC")
