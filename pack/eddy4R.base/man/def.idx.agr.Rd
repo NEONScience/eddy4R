@@ -8,7 +8,7 @@ def.idx.agr(
   time,
   PrdAgr,
   FreqLoca,
-  MethIdx = c("rglr", "specBgn", "specEnd")[1],
+  MethIdx = c("rglr", "specBgn", "specBgnIso", "specEnd")[1],
   crdH2oVali = FALSE,
   data = NULL,
   CritTime = 0

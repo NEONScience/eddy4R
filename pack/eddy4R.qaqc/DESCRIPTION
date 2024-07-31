@@ -1,6 +1,6 @@
 Package: eddy4R.qaqc
 Title: Eddy-covariance calculation for R: Quality assurance and quality control
-Version: 0.2.16
+Version: 0.2.17
 Authors@R: c( person("Cove", "Sturtevant", email = "eddy4R.info@gmail.com", role = c("aut", "cre")),
               person("Stefan", "Metzger", email = "eddy4R.info@gmail.com", role = c("aut")),
               person("Natchaya", "Pingintha-Durden", email = "ndurden@battelleecology.org", role = c("aut")),
