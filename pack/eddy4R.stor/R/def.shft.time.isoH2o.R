@@ -31,6 +31,8 @@
 # changelog and author contributions / copyrights
 #   Natchaya Pingintha-Durden (2024-06-10)
 #     original creation developed Rich's core work for def.shft.time.isoCo2
+#   Natchaya Pingintha-Durden (2024-08-20)
+#     added a failsafe in case all data at some/all measurement level are missing
 ####################################################################################################
 def.shft.time.isoH2o <- function (
   dataList, 
@@ -97,16 +99,27 @@ def.shft.time.isoH2o <- function (
     
     lvlData = cbind(subset(dataList[[x]], select=-c(time)), qfqmList[[x]], valvVali)
   })
-  #remove when row all data and qfqm are NA in every columns
+  #remove row when all data and qfqm are NA in every columns
   #adding level in sampling periods
   for (idxLvl in 1:length(wrkData)){
     wrkData[[idxLvl]] <- wrkData[[idxLvl]] %>% 
       filter(if_any(dlta18OH2o:qfStusN2, complete.cases))
-    wrkData[[idxLvl]]$level <- idxLvl + 3
+    #add one line of NaN when all data got remove
+    if (nrow(wrkData[[idxLvl]]) == 0){
+      wrkData[[idxLvl]][1,] <- NaN
+      wrkData[[idxLvl]]$level <- NaN
+    } else{ wrkData[[idxLvl]]$level <- idxLvl + 3
+    }
   }
   
   #recompile list of ML dataframes
   wrkLvlData <- do.call(rbind, wrkData)
+  #remove row when all data and qfqm are NA in every columns
+  wrkLvlData <- wrkLvlData %>% 
+    filter(if_any(dlta18OH2o:qfStusN2, complete.cases))
+  
+  #return the input list if data from all levels are missing:
+  if (nrow( wrkLvlData) == 0) {return(rpt)}
   
   # combine
   allData <- do.call(rbind, list(highData, medData, lowData, wrkLvlData))

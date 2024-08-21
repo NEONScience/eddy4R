@@ -41,6 +41,8 @@
 #     include k-means clustering method 
 #   Natchaya Pingintha-Durden (2024-03-07)
 #     add header and apply eddy4R terms
+#   Natchaya Pingintha-Durden (2024-08-20)
+#     added a failsafe in case all data at some/all measurement level are missing
 ####################################################################################################
 def.shft.time.isoCo2 <- function (
   dataList, 
@@ -257,11 +259,22 @@ def.shft.time.isoCo2 <- function (
 	for (idxLvl in 1:length(wrkData)){
 	  wrkData[[idxLvl]] <- wrkData[[idxLvl]] %>% 
 	    filter(if_any(dlta13CCo2:qfStepTempWbox, complete.cases))
-	  wrkData[[idxLvl]]$level <- idxLvl + 3
+	  #add one line of NaN when all data got remove
+	  if (nrow(wrkData[[idxLvl]]) == 0){
+	    wrkData[[idxLvl]][1,] <- NaN
+	    wrkData[[idxLvl]]$level <- NaN
+	  } else{ wrkData[[idxLvl]]$level <- idxLvl + 3
+	  }
 	}
-	
+	 
 	#recompile list of ML dataframes
 	wrkLvlData <- do.call(rbind, wrkData)
+	#remove row when all data and qfqm are NA in every columns
+	wrkLvlData <- wrkLvlData %>% 
+	  filter(if_any(dlta13CCo2:qfStepTempWbox, complete.cases))
+	
+	#return the input list if data from all levels are missing:
+	if (nrow( wrkLvlData) == 0) {return(rpt)}
 	
 	# combine
 	allData <- do.call(rbind, list(highData, medData, lowData, wrkLvlData))
