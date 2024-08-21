@@ -128,12 +128,13 @@ def.shft.time.isoH2o <- function (
   ###############################################################################
   #get first index when vaporizer 3-way valve turn on (1)
   idxValvHead <- head(which(allData$valv == 1), n=1)
-  #get first index when ValvCrdH2o turn on (not equal to 0)
-  idxValvCrdH2oHead <-  head(which(allData$valvCrdH2o != 0), n=1)
+  #get first index when ValvCrdH2o turn on (not equal to 0). 
+  #Note: ValvCrdH2o should be 0 during sampling, however, we detected an unusual value
+  idxValvCrdH2oHead <-  head(which(allData$valvCrdH2o != 0 & !is.na(allData$dlta18OH2o) & allData$stusN2 == 0), n=1)
   #get last index when vaporizer 3-way valve turn on (1)
   idxValvTail <- tail(which(allData$valv == 1), n=1)
   #get last index when ValvCrdH2o turn on (not equal to 0)
-  idxValvCrdH2oTail <-  tail(which(allData$valvCrdH2o != 0), n=1)
+  idxValvCrdH2oTail <-  tail(which(allData$valvCrdH2o != 0 & !is.na(allData$dlta18OH2o) & allData$stusN2 == 0), n=1)
   
   
   #calculate time difference between valvCrdH2o and vaporizer 3-way valve 
