@@ -31,7 +31,16 @@ install_github('NEONScience/NEON-geolocation/geoNEON', dependencies=TRUE)
 library(geoNEON)
 
 #Set the NEON site code
-Site <- "UNDE"
+Site <- "OSBS"
+
+#Angle of local tower coordinate reference system (x aligned with C face from CD corner)
+angRefeTowr <- c("BARR" = 255,"CLBJ" = 270,"MLBS" = 180,"DSNY" = 270,"NIWO" = 225,"ORNL" = 270,"OSBS" = 225,
+                    "SCBI" = 300,"LENO" = 315,"TALL" = 270,"CPER" = 270,"BART" = 270,"HARV" = 270,"BLAN" = 240,
+                    "SERC" = 230,"JERC" = 135,"GUAN" = 270,"LAJA" = 270,"STEI" = 225,"TREE" = 225,"UNDE" = 200,
+                    "KONA" = 290,"KONZ" = 290,"UKFS" = 230,"GRSM" = 230,"DELA" = 280,"DCFS" = 245,"NOGP" = 220,
+                    "WOOD" = 245,"RMNP" = 303,"OAES" = 270,"YELL" = 180,"MOAB" = 270,"STER" = 270,"JORN" = 220,
+                    "SRER" = 290,"ONAQ" = 180,"ABBY" = 270,"WREF" = 225,"SJER" = 270,"SOAP" = 180,"TEAK" = 270,
+                    "TOOL" = 270,"BONA" = 270,"DEJU" = 290,"HEAL" = 270,"PUUM" = 295)[Site]
 
 #Grab site location metadata for all configure locations for the current time with history = F
 locSite <- geoNEON::getLocBySite(Site, type="TIS", history=F)
@@ -43,12 +52,9 @@ locTowr <- locSite[grep(pattern = "TOWER", x = locSite$namedLocation),]
 #Grab a subset of ECTE sensor location metadata
 locSens <- locSite[grep(pattern = "ECTE IRGA L|3D Wind L", x = locSite$locationDescription),]
 
-#Grab a subset of ECTE sensor location metadata
-angRot <- as.numeric(locSite[grep(pattern = "3D Wind L", x = locSite$locationDescription),"gammaOrientation"])
-
 #perform actual rotation
-xOfst <- as.numeric(locSens$xOffset)*cos(angRot) - as.numeric(locSens$yOffset) * sin(angRot)  
-yOfst <- as.numeric(locSens$xOffset) * sin(angRot) + as.numeric(locSens$yOffset) * cos(angRot)
+xOfst <- as.numeric(locSens$xOffset)*cos(angRefeTowr) - as.numeric(locSens$yOffset) * sin(angRefeTowr)  
+yOfst <- as.numeric(locSens$xOffset) * sin(angRefeTowr) + as.numeric(locSens$yOffset) * cos(angRefeTowr)
 
 #Apply offsets to get UTM coordinates for sensors
 locSens$easting <- as.numeric(locTowr$easting) + xOfst
