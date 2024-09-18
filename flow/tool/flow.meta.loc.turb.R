@@ -31,7 +31,7 @@ install_github('NEONScience/NEON-geolocation/geoNEON', dependencies=TRUE)
 library(geoNEON)
 
 #Set the NEON site code
-Site <- "OSBS"
+Site <- "KONZ"
 
 #Angle of local tower coordinate reference system (x aligned with C face from CD corner)
 angRefeTowr <- c("BARR" = 255,"CLBJ" = 270,"MLBS" = 180,"DSNY" = 270,"NIWO" = 225,"ORNL" = 270,"OSBS" = 225,
@@ -64,7 +64,7 @@ locSensTowr$northing <-  as.numeric(locTowr$northing) + yOfst
 locSensTowr$utmZone <- locTowr$utmZone
 
 #Grab a subset of ECTE sensor location metadata
-locEcte <- locSite[grep(pattern = "ECTE IRGA L|3D Wind L", x = locSensTowr$locationDescription),]
+locEcte <- locSensTowr[grep(pattern = "ECTE IRGA L|3D Wind L", x = locSensTowr$locationDescription),]
 
 #Calculate Lat and Lon from UTM coordinates (needs terra installed)
 #latLon <- geoNEON::calcLatLong(locSens$easting, locSens$northing, utmZone = locSens$utmZone)
