@@ -49,17 +49,22 @@ locSite <- geoNEON::getLocBySite(Site, type="TIS", history=F)
 #Grab tower location metadata
 locTowr <- locSite[grep(pattern = "TOWER", x = locSite$namedLocation),]
 
-#Grab a subset of ECTE sensor location metadata
-locSens <- locSite[grep(pattern = "ECTE IRGA L|3D Wind L", x = locSite$locationDescription),]
+#Grab a subset of Tower sensor location metadata
+locSensTowr <- locSite[grep(pattern = "BOOM|LEVEL", x = locSite$locationParent),]
+locSensTowr <- locSensTowr[grep(pattern = "CFGLOC[0-9]{6}$", x = locSensTowr$namedLocation),]
+
 
 #perform actual rotation
-xOfst <- as.numeric(locSens$xOffset)*cos(angRefeTowr) - as.numeric(locSens$yOffset) * sin(angRefeTowr)  
-yOfst <- as.numeric(locSens$xOffset) * sin(angRefeTowr) + as.numeric(locSens$yOffset) * cos(angRefeTowr)
+xOfst <- as.numeric(locSensTowr$xOffset)*cos(angRefeTowr) - as.numeric(locSensTowr$yOffset) * sin(angRefeTowr)  
+yOfst <- as.numeric(locSensTowr$xOffset) * sin(angRefeTowr) + as.numeric(locSensTowr$yOffset) * cos(angRefeTowr)
 
 #Apply offsets to get UTM coordinates for sensors
-locSens$easting <- as.numeric(locTowr$easting) + xOfst
-locSens$northing <-  as.numeric(locTowr$northing) + yOfst
-locSens$utmZone <- locTowr$utmZone
+locSensTowr$easting <- as.numeric(locTowr$easting) + xOfst
+locSensTowr$northing <-  as.numeric(locTowr$northing) + yOfst
+locSensTowr$utmZone <- locTowr$utmZone
+
+#Grab a subset of ECTE sensor location metadata
+locEcte <- locSite[grep(pattern = "ECTE IRGA L|3D Wind L", x = locSensTowr$locationDescription),]
 
 #Calculate Lat and Lon from UTM coordinates (needs terra installed)
 #latLon <- geoNEON::calcLatLong(locSens$easting, locSens$northing, utmZone = locSens$utmZone)
