@@ -1,9 +1,10 @@
 # start with the ropensci image including debian:testing, r-base, rocker/rstudio, rocker/hadleyverse
 # https://hub.docker.com/r/rocker/ropensci/
-FROM rocker/rstudio:3.5.2
+FROM 	ghcr.io/rocker-org/geospatial:4.2.2
 
 WORKDIR /home/eddy/eddy4R
-# copy clone of GitHub source repo "NEONScience/NEON-FIU-algorithm" to the Docker image
+
+# copy clone of GitHub source repo "NEONScience/eddy4R" to the Docker image
 COPY . .
 
 # Build R dependencies using two cpu's worth of resources
@@ -16,22 +17,25 @@ ENV MAKEFLAGS='-j3'
     RUN apt-get update \
     && apt-get dist-upgrade -y \
     && RUNDEPS="fftw3 \
-            libudunits2-0 \
+            libudunits2-dev \
             udunits-bin \
             hdf5-helpers \
-            libhdf5-cpp-100 \
-            libnetcdf11 \
-            libhdf5-100 \
+            libhdf5-cpp-103 \
+            libhdf5-103 \
             libsz2 \
             libmysql++3v5 \
-            libmariadbclient18 \
+            libmariadb3 \
             libpng-tools \
             libproj-dev \
+            libgdal-dev \
 			      libssl-dev \
-			      # Library for git via ssh key
+			      libgdal-dev \
+			      libnetcdf-dev \
 			      ssh \
+			      vim \
             libxml2-dev \
-            mysql-common" \
+            mysql-common\
+            " \
 #            libtiff5 \
 #            libjpeg62-turbo \
 #            libnetcdf11 \
@@ -39,10 +43,8 @@ ENV MAKEFLAGS='-j3'
 #            libhdf5-100 \
 #            libhdf5-cpp-100
     && BUILDDEPS="fftw3-dev \
-                 libudunits2-dev \
                  libjpeg-dev \
                  libtiff5-dev \
-                 libnetcdf-dev \
                  libpng-dev \
                  libhdf5-dev \
                  libmysql++-dev \
@@ -57,15 +59,13 @@ ENV MAKEFLAGS='-j3'
     # eddy4R installation
     # install eddy4R packages
     # install eddy4R packages from clone
-    && R -e 'source("https://www.dropbox.com/s/xg8dxtmroo10qmm/flow.inst.eddy4r.R?dl=1")' \
-    
+    && R -e 'source("/home/eddy/eddy4R/utilities/flow.inst.dock.renv.R")' \
+
     # Installing R package dependencies that are only workflow related (including CI combiner)
     && install2.r --error \
-    Hmisc \
-    parsedate \
-    rowr \
-    urltools \
-    
+    #rowr \
+    optparse \
+
     # provide read and write access for default R library location to Rstudio users
     # TODO: PERHAPS THIS SHOULD JUST CHOWN TO rstudio instead of setting 777 perms? And at the end of the file -sj
     && chmod -R 777 /usr/local/lib/R/site-library \

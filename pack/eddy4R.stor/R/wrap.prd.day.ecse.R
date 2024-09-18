@@ -45,6 +45,10 @@ wrap.prd.day.ecse <- function(
   Desp
 ) {
 
+  library(eddy4R.base)
+  rlog = Logger.Singleton$new() #class defined in eddy4R.base
+  rlog$debug("in function wrap.prd.day.ecse(...)")
+  
   #Create a list to hold all the output
   rpt <- list()
 

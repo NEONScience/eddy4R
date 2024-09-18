@@ -19,6 +19,7 @@ Imports:
     ff (>= 2.2-13),
     ffbase (>= 0.12.3),
     polynom (>= 1.3-9),
+    R6P (>= 0.3.0),
     rhdf5 (>= 2.20.0),
     robfilter (>= 4.1.1),
     signal (>= 0.7-6),
