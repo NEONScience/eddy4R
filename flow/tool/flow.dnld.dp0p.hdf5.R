@@ -25,20 +25,20 @@
 ##############################################################################################
 
 #site to download data for
-site <- "CPER"
+site <- "KONZ"
 #domain
-dom <- "D10"
+dom <- "D06"
 
 #SAE system (ecte vs. ecse)
 sys <- "ecte"
 
 #Create download folder, create if it doesn't exist
-DirDnld <- paste0("~/eddy/data/turbTow/inpRefe/",site)
+DirDnld <- paste0("~/eddy/data/pfit/inp/",site)
 if(!dir.exists(DirDnld)) dir.create(DirDnld, recursive = TRUE)
 
 #Create data download string
-DateBgn <- as.Date("2022-11-11")
-DateEnd <- as.Date("2022-11-21")
+DateBgn <- as.Date("2023-07-18")
+DateEnd <- as.Date("2023-08-01")
 DateSeq <- seq.Date(from = DateBgn,to = DateEnd, by = "day")
 PrdWndwDnld <- base::as.character(DateSeq)
 
