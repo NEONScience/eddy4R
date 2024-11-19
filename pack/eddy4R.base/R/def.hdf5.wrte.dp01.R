@@ -157,7 +157,7 @@ lapply(names(inpList$qfqm[[Dp01]]), function(x)  {
   #convert to integer
   inpList$qfqm[[Dp01]][[x]]$qfFinl <<- as.integer(inpList$qfqm[[Dp01]][[x]]$qfFinl)
   #convert to integer
-  inpList$qfqm[[Dp01]][[x]]$qfSciRevw <<- as.integer(inpList$qfqm[[Dp01]][[x]]$qfSciRevw)
+  #inpList$qfqm[[Dp01]][[x]]$qfSciRevw <<- as.integer(inpList$qfqm[[Dp01]][[x]]$qfSciRevw)
   #Write 30-min qfqm output to HDF5
   rhdf5::h5writeDataset.data.frame(obj = inpList$qfqm[[Dp01]][[x]][,c("qfFinl","timeBgn","timeEnd")], h5loc = idQfqm30, name = x, DataFrameAsCompound = TRUE)})
 
@@ -167,7 +167,7 @@ lapply(names(inpList$dp01AgrSub$qfqm[[Dp01]]), function(x)  {
   #convert to integer
   inpList$dp01AgrSub$qfqm[[Dp01]][[x]]$qfFinl <<- as.integer(inpList$dp01AgrSub$qfqm[[Dp01]][[x]]$qfFinl) 
   #convert to integer
-  inpList$dp01AgrSub$qfqm[[Dp01]][[x]]$qfSciRevw <<- as.integer(inpList$dp01AgrSub$qfqm[[Dp01]][[x]]$qfSciRevw) 
+  #inpList$dp01AgrSub$qfqm[[Dp01]][[x]]$qfSciRevw <<- as.integer(inpList$dp01AgrSub$qfqm[[Dp01]][[x]]$qfSciRevw) 
   #Write 1-min output to HDF5
   rhdf5::h5writeDataset.data.frame(obj = inpList$dp01AgrSub$qfqm[[Dp01]][[x]][,c("qfFinl","timeBgn","timeEnd")], h5loc = idQfqm01, name = x, DataFrameAsCompound = TRUE)})
   }
@@ -178,7 +178,7 @@ lapply(names(inpList$dp01AgrSub$qfqm[[Dp01]]), function(x)  {
     #convert to integer
     inpList$qfqm[[Dp01]][[x]]$qfFinl <<- as.integer(inpList$qfqm[[Dp01]][[x]]$qfFinl) 
     #convert to integer
-    inpList$qfqm[[Dp01]][[x]]$qfSciRevw <<- as.integer(inpList$qfqm[[Dp01]][[x]]$qfSciRevw)
+    #inpList$qfqm[[Dp01]][[x]]$qfSciRevw <<- as.integer(inpList$qfqm[[Dp01]][[x]]$qfSciRevw)
     #Write 30-min qfqm output to HDF5
     rhdf5::h5writeDataset.data.frame(obj = inpList$qfqm[[Dp01]][[x]], h5loc = idQfqm30, name = x, DataFrameAsCompound = TRUE)})
 
@@ -189,7 +189,7 @@ if(MethSubAgr == TRUE){
     #convert to integer
     inpList$dp01AgrSub$qfqm[[Dp01]][[x]]$qfFinl <<- as.integer(inpList$dp01AgrSub$qfqm[[Dp01]][[x]]$qfFinl) 
     #convert to integer
-    inpList$dp01AgrSub$qfqm[[Dp01]][[x]]$qfSciRevw <<- as.integer(inpList$dp01AgrSub$qfqm[[Dp01]][[x]]$qfSciRevw) 
+    #inpList$dp01AgrSub$qfqm[[Dp01]][[x]]$qfSciRevw <<- as.integer(inpList$dp01AgrSub$qfqm[[Dp01]][[x]]$qfSciRevw) 
     #Write 1-min output to HDF5
     rhdf5::h5writeDataset.data.frame(obj = inpList$dp01AgrSub$qfqm[[Dp01]][[x]], h5loc = idQfqm01, name = x, DataFrameAsCompound = TRUE)})
   }
