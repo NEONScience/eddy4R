@@ -46,6 +46,8 @@
 #   Natchaya Pingintha-Durden (2024-11-25)
 #     update the number of missing data from 0 to 35
 #     add tryCatch() when kmean can not be determine
+#   Natchaya Pingintha-Durden (2025-01-28)
+#     bug fixes to remove excessive validation periods
 ####################################################################################################
 def.shft.time.isoCo2 <- function (
   dataList, 
@@ -125,6 +127,13 @@ def.shft.time.isoCo2 <- function (
 	lowTmp <- lowTmp[complete.cases(lowTmp$rtioMoleDryCo2), ]
 	medTmp <- medTmp[complete.cases(medTmp$rtioMoleDryCo2), ]
 	highTmp <- highTmp[complete.cases(highTmp$rtioMoleDryCo2), ]
+	
+	#use only first validation period to determine time shift; remove extra validation
+	#Remove rows where the time difference from the first detected time is greater than 610 seconds. 
+	#Note: The validation period is 600 seconds, with an additional 10 seconds for buffering.
+	lowTmp <- lowTmp[difftime(lowTmp$time, lowTmp$time[1], units = "secs") <= 610, ]
+	medTmp <- medTmp[difftime(medTmp$time, medTmp$time[1], units = "secs") <= 610, ]
+	highTmp <- highTmp[difftime(highTmp$time, highTmp$time[1], units = "secs") <= 610, ]
 	
 	# need to stop if some df are missing or less than 1 minute avialable data (~35):
 	if (nrow(lowTmp) <= 35 || nrow(medTmp) <= 35 || nrow(highTmp) <= 35) {
