@@ -47,7 +47,8 @@
 #     update the number of missing data from 0 to 35
 #     add tryCatch() when kmean can not be determine
 #   Natchaya Pingintha-Durden (2025-01-28)
-#     bug fixes to remove excessive validation periods
+#     bug fixes to remove excessive validation periods;
+#     increase the available data from 35 to 270 points
 ####################################################################################################
 def.shft.time.isoCo2 <- function (
   dataList, 
@@ -128,15 +129,41 @@ def.shft.time.isoCo2 <- function (
 	medTmp <- medTmp[complete.cases(medTmp$rtioMoleDryCo2), ]
 	highTmp <- highTmp[complete.cases(highTmp$rtioMoleDryCo2), ]
 	
-	#use only first validation period to determine time shift; remove extra validation
-	#Remove rows where the time difference from the first detected time is greater than 610 seconds. 
+	#determine if there are more than one validation
+
+	#keep rows where the time difference from the first detected time is less than 610 seconds. 
 	#Note: The validation period is 600 seconds, with an additional 10 seconds for buffering.
-	lowTmp <- lowTmp[difftime(lowTmp$time, lowTmp$time[1], units = "secs") <= 610, ]
-	medTmp <- medTmp[difftime(medTmp$time, medTmp$time[1], units = "secs") <= 610, ]
-	highTmp <- highTmp[difftime(highTmp$time, highTmp$time[1], units = "secs") <= 610, ]
+	lowTmp01 <- lowTmp[difftime(lowTmp$time, lowTmp$time[1], units = "secs") <= 610, ]
+	medTmp01 <- medTmp[difftime(medTmp$time, medTmp$time[1], units = "secs") <= 610, ]
+	highTmp01 <- highTmp[difftime(highTmp$time, highTmp$time[1], units = "secs") <= 610, ]
 	
-	# need to stop if some df are missing or less than 1 minute avialable data (~35):
-	if (nrow(lowTmp) <= 35 || nrow(medTmp) <= 35 || nrow(highTmp) <= 35) {
+	#keep rows where the time difference from the first detected time is greather than 610 seconds.
+	lowTmp02 <- lowTmp[difftime(lowTmp$time, lowTmp$time[1], units = "secs") > 610, ]
+	medTmp02 <- medTmp[difftime(medTmp$time, medTmp$time[1], units = "secs") > 610, ]
+	highTmp02 <- highTmp[difftime(highTmp$time, highTmp$time[1], units = "secs") > 610, ]
+	
+	#use only validation period that has more data to determine time shift;
+	lowTmp <- if (nrow(lowTmp01) > nrow(lowTmp02)) lowTmp01 else lowTmp02
+	#medTmp <- if (nrow(medTmp01) > nrow(medTmp02)) medTmp01 else medTmp02
+	#highTmp <- if (nrow(highTmp01) > nrow(highTmp02)) highTmp01 else highTmp02
+	#use the time difference to determine which validation should be retained for analysis
+	#get low-med-high occurred within the same half-hour period
+	
+	if (nrow(medTmp02 != 0)) {
+	  medTmp <- if (abs(difftime(medTmp01$time[1], lowTmp$time[1], units = "secs")) <= abs(difftime(medTmp02$time[1], lowTmp$time[1], units = "secs"))) medTmp01 else medTmp02
+	} else {
+	  medTmp <- medTmp01
+	}
+	#
+	if (nrow(highTmp02 != 0)) {
+	  highTmp <- if (abs(difftime(highTmp01$time[1], lowTmp$time[1], units = "secs")) <= abs(difftime(highTmp02$time[1], lowTmp$time[1], units = "secs"))) highTmp01 else highTmp02
+	} else {
+	  highTmp <- highTmp01
+	}
+	
+	
+	# need to stop if some df are missing or less than 9 minute available data (~30*9):
+	if (nrow(lowTmp) <= 270 || nrow(medTmp) <= 270 || nrow(highTmp) <= 270) {
 		return(rpt) # some reference data missing, following steps will fail,
 						 # so just return the input list
 	}
