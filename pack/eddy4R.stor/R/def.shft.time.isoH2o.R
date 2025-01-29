@@ -35,6 +35,8 @@
 #     added a failsafe in case all data at some/all measurement level are missing
 #   Natchaya Pingintha-Durden (2024-09-19)
 #     fixed issues when time correction cannot be determined due to NaN data in stusN2
+#   Natchaya Pingintha-Durden (2025-01-28)
+#     bug fixes to remove excessive validation periods;
 ####################################################################################################
 def.shft.time.isoH2o <- function (
   dataList, 
@@ -90,11 +92,31 @@ def.shft.time.isoH2o <- function (
   medData <- subset(medData, select=-c(dlta18OH2oRefeMed, dlta2HH2oRefeMed))
   highData <- subset(highData, select=-c(dlta18OH2oRefeHigh, dlta2HH2oRefeHigh))
   
-  # add level name
+  #add level name
   lowData  <- dplyr::mutate(lowData, level = 3)       
   medData  <- dplyr::mutate(medData, level = 2)
   highData <- dplyr::mutate(highData, level = 1)
   
+  #remove rows where validation is not part of the actual validation used in determining the time-shift
+  #calculate time difference between rows
+  lowData<- lowData %>% 
+    mutate(lag = abs(as.numeric(difftime(time, lag(time), units = "sec"))))
+  medData<- medData %>% 
+    mutate(lag = abs(as.numeric(difftime(time, lag(time), units = "sec"))))
+  highData<- highData %>% 
+    mutate(lag = abs(as.numeric(difftime(time, lag(time), units = "sec"))))
+  #detect the last index when time lag greater than 30s 
+  idxLow <- which(lowData$lag > 30)[length(which(lowData$lag > 30))]
+  idxMed <- which(medData$lag > 30)[length(which(medData$lag > 30))]
+  idxHigh <- which(highData$lag > 30)[length(which(highData$lag > 30))]
+  
+  #and remove all rows above index
+  
+  lowData <- if (length(idxLow) == 0) lowData[,!(names(lowData) %in% c("lag"))] else lowData[-c(1:idxLow-1), !(names(lowData) %in% c("lag"))]
+  medData <- if (length(idxMed) == 0) medData[,!(names(medData) %in% c("lag"))] else medData[-c(1:idxMed-1), !(names(medData) %in% c("lag"))]
+  highData <- if (length(idxHigh) == 0) highData[,!(names(highData) %in% c("lag"))] else highData[-c(1:idxHigh-1), !(names(highData) %in% c("lag"))]
+  
+  #
   #Determine time offset ############################
   #get data from all level
   wrkData <- lapply(lvlMeasTow, function (x){
