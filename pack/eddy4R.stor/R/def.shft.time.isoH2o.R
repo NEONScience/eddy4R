@@ -229,7 +229,35 @@ def.shft.time.isoH2o <- function (
                                          CredPsto= CredPsto)
   valvVali <- tmpData[[1]]
   
+  ###############################################################################
+  #get first index when vaporizer 3-way valve turn on (1)
+  idxValvHead <- head(which(valvVali$data == 1), n=1)
+  #get first index when ValvCrdH2o turn on (not equal to 0). 
+  idxValvCrdH2oHead <-  head(which(valvCrdH2o$data != 0), n=1)
+  #get last index when vaporizer 3-way valve turn on (1)
+  idxValvTail <- tail(which(valvVali$data == 0), n=1)
+  #get last index when ValvCrdH2o turn on (not equal to 0)
+  idxValvCrdH2oTail <-  tail(which(valvCrdH2o$data != 0), n=1)
   
+  #calculate time difference between valvCrdH2o and vaporizer 3-way valve 
+  if (length(idxValvHead) == 0 || length(idxValvCrdH2oHead) == 0){
+    #assign NA to time difference between valvCrdH2o and vaporizer 3-way valve 
+    timeOfstHead  <- NA
+  } else {
+    timeOfstHead  <- hms::as_hms(difftime(as.POSIXct(valvCrdH2o$time[idxValvCrdH2oHead], format="%Y-%m-%dT%H:%M:%S", tz="GMT"),
+                                          as.POSIXct(valvVali$time[idxValvHead], format="%Y-%m-%dT%H:%M:%S", tz="GMT")))
+  }
+  
+  if (length(idxValvTail) == 0 || length(idxValvCrdH2oTail) == 0){
+    #assign NA to time difference between valvCrdH2o and vaporizer 3-way valve 
+    timeOfstTail  <- NA
+  } else {
+    timeOfstTail  <- hms::as_hms(difftime(as.POSIXct(valvCrdH2o$time[idxValvCrdH2oTail], format="%Y-%m-%dT%H:%M:%S", tz="GMT"), 
+                                          as.POSIXct(valvVali$time[idxValvTail], format="%Y-%m-%dT%H:%M:%S", tz="GMT")))
+  }
+  
+  
+##############################################################################################  
   #return the input list if data from both timeOfstHeand timeOfstTail cannot be determined:
   if (is.na(timeOfstHead) & is.na(timeOfstTail)) {return(rpt)}
   
