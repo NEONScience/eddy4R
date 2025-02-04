@@ -43,7 +43,9 @@ def.shft.time.isoH2o <- function (
   qfqmList, 
   valvVali,
   site, 
-  lvls
+  lvls,
+  Date,
+  CredPsto ="sa-dev-issom-presto;OoV8Q@TN69%L36P*wpMa",
 ){
   #dataList <- DATA$crdH2o
   #qfqmList <- qfqmFlag$crdH2o
@@ -52,12 +54,19 @@ def.shft.time.isoH2o <- function (
   #lvls <- Para$Flow$Site$LvlMeasTow
   library(dplyr)
   library(xts)
+  library(geoNEON)
+
+  
+  
   #define report output (dataList and qfqmList)
   rpt <- list()
   rpt$dataList <- dataList
   rpt$qfqmList <- qfqmList
   rpt$timeOfstMean <- NA
   
+########################################################################################  
+  #Method 1: using dp0p to determine time offset 
+########################################################################################
   #determine number of measurement levels 
   lvlTow <- lvls
   
@@ -151,7 +160,7 @@ def.shft.time.isoH2o <- function (
   
   #return the input list if data from all stusN2 are missing:
   if (all(is.na(allData$stusN2))) {return(rpt)}
-  
+
   ###############################################################################
   #get first index when vaporizer 3-way valve turn on (1)
   idxValvHead <- head(which(allData$valv == 1), n=1)
@@ -184,6 +193,42 @@ def.shft.time.isoH2o <- function (
       timeOfstTail  <- hms::as_hms(difftime(as.POSIXct(allData$time[idxValvCrdH2oTail], format="%Y-%m-%dT%H:%M:%S", tz="GMT"), 
                                             as.POSIXct(allData$time[idxValvTail], format="%Y-%m-%dT%H:%M:%S", tz="GMT")))
       }
+  
+  
+########################################################################################  
+  #Method 2: using dp00 to determine time offset 
+########################################################################################
+  #get domain
+  Dom <- geoNEON::getLocBySite(site)$domainID
+  #begin and end time do not use 12:00 to 14:00
+  bgn <- strftime(as.Date(Date, format = "%Y-%m-%d"), format = "%Y-%m-%dT%H:%MZ")
+  end <- strftime(as.Date(Date, format = "%Y-%m-%d") + 1, format = "%Y-%m-%dT%H:%MZ")
+  timeBgn <- base::as.POSIXct(bgn,tz="GMT",format="%Y-%m-%dT%H:%MZ") # Begin date to grab.
+  timeEnd <- base::as.POSIXct(end,tz="GMT",format="%Y-%m-%dT%H:%MZ") # End date to grab.
+  #extract dp00 ValvCrdH2o from Picarro
+  idValvCrdH2o <- paste0(paste0("NEON.",Dom,".",site,".","DP0.00103", sep=""), ".","001.02338.700.000.000", sep="")
+  #get data
+  tmpData <- som::wrap.extr.neon.dp.psto(idDp=idValvCrdH2o,
+                                         timeBgn=timeBgn,
+                                         timeEnd=timeEnd,
+                                         #DirOut=DirDataOut,
+                                         Freq=NULL,
+                                         MethRglr = "none",
+                                         CredPsto= CredPsto)
+  valvCrdH2o <- tmpData[[1]]
+  
+  #extract dp00 vaporizer 3-way valve (crdH2oValvVali)
+  idValvVali <- paste0(paste0("NEON.",Dom,".",site,".","DP0.00115", sep=""), ".","001.02352.700.000.000", sep="")
+  #get data
+  tmpData <- som::wrap.extr.neon.dp.psto(idDp=idValvVali,
+                                         timeBgn=timeBgn,
+                                         timeEnd=timeEnd,
+                                         #DirOut=DirDataOut,
+                                         Freq=NULL,
+                                         MethRglr = "none",
+                                         CredPsto= CredPsto)
+  valvVali <- tmpData[[1]]
+  
   
   #return the input list if data from both timeOfstHeand timeOfstTail cannot be determined:
   if (is.na(timeOfstHead) & is.na(timeOfstTail)) {return(rpt)}
