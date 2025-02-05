@@ -240,16 +240,18 @@ def.shft.time.isoH2o <- function (
   idxValvCrdH2oTail <-  tail(which(valvCrdH2o$data != 0), n=1)
   
   #calculate time difference between valvCrdH2o and vaporizer 3-way valve 
-  if (length(idxValvHead) == 0 || length(idxValvCrdH2oHead) == 0){
+  if (length(idxValvHead) == 0 || length(idxValvCrdH2oHead) == 0 || valvVali$data[1] == 0){
     #assign NA to time difference between valvCrdH2o and vaporizer 3-way valve 
+    #when no valve data or the validation started from the day before
     timeOfstHead  <- NA
   } else {
     timeOfstHead  <- hms::as_hms(difftime(as.POSIXct(valvCrdH2o$time[idxValvCrdH2oHead], format="%Y-%m-%dT%H:%M:%S", tz="GMT"),
                                           as.POSIXct(valvVali$time[idxValvHead], format="%Y-%m-%dT%H:%M:%S", tz="GMT")))
   }
   
-  if (length(idxValvTail) == 0 || length(idxValvCrdH2oTail) == 0){
+  if (length(idxValvTail) == 0 || length(idxValvCrdH2oTail) == 0 || valvVali$data[nrow(valvVali)] == 1){
     #assign NA to time difference between valvCrdH2o and vaporizer 3-way valve 
+    #when no valve data or the validation end the day after
     timeOfstTail  <- NA
   } else {
     timeOfstTail  <- hms::as_hms(difftime(as.POSIXct(valvCrdH2o$time[idxValvCrdH2oTail], format="%Y-%m-%dT%H:%M:%S", tz="GMT"), 
