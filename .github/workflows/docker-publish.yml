@@ -15,10 +15,10 @@ on:
 
 env:
   # Use github and google registries
-#  GHCR_REGISTRY: ghcr.io
+  GHCR_REGISTRY: ghcr.io
   GCP_ARTIFACT_HOST: ${{ vars.SHARED_WIF_LOCATON }}-docker.pkg.dev
   GCP_REGISTRY: ${{ vars.SHARED_WIF_LOCATON }}-docker.pkg.dev/${{ vars.SHARED_WIF_PROJECT }}/${{ vars.SHARED_WIF_REPO }}
-#  GHCR_NS: battelleecology
+  GHCR_NS: neonscience 
   # Use docker.io for Docker Hub if empty
   REGISTRY: ghcr.io
   # github.repository as <account>/<repo>
