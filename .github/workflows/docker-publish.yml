@@ -23,7 +23,7 @@ env:
   REGISTRY: ghcr.io
   #github.repository as <account>/<repo>
   IMAGE_NAME: ${{ github.repository }}
-  Get just the repo name from the event
+  #Get just the repo name from the event
   REPO_NAME: ${{ github.event.repository.name }}
 
 jobs:
