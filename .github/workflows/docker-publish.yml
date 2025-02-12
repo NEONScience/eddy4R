@@ -15,10 +15,10 @@ on:
 
 env:
   # Use github and google registries
-  GHCR_REGISTRY: ghcr.io
+#  GHCR_REGISTRY: ghcr.io
   GCP_ARTIFACT_HOST: ${{ vars.SHARED_WIF_LOCATON }}-docker.pkg.dev
   GCP_REGISTRY: ${{ vars.SHARED_WIF_LOCATON }}-docker.pkg.dev/${{ vars.SHARED_WIF_PROJECT }}/${{ vars.SHARED_WIF_REPO }}
-  GHCR_NS: battelleecology
+#  GHCR_NS: battelleecology
   # Use docker.io for Docker Hub if empty
   REGISTRY: ghcr.io
   # github.repository as <account>/<repo>
@@ -61,12 +61,12 @@ jobs:
           password: ${{ steps.auth.outputs.access_token }}
 
       # Login to github registry
-      - name: Log into registry ${{ env.GHCR_REGISTRY }}
-        uses: docker/login-action@v3
-        with:
-          registry: ${{ env.GHCR_REGISTRY }}
-          username: ${{ github.actor }}
-          password: ${{ secrets.GITHUB_TOKEN }}
+#      - name: Log into registry ${{ env.GHCR_REGISTRY }}
+#        uses: docker/login-action@v3
+#        with:
+#          registry: ${{ env.GHCR_REGISTRY }}
+#          username: ${{ github.actor }}
+#          password: ${{ secrets.GITHUB_TOKEN }}
 
       #Setup configuration for R
       - name: "Set up R"
