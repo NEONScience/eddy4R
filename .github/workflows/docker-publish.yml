@@ -18,12 +18,12 @@ env:
   GHCR_REGISTRY: ghcr.io
   GCP_ARTIFACT_HOST: ${{ vars.SHARED_WIF_LOCATON }}-docker.pkg.dev
   GCP_REGISTRY: ${{ vars.SHARED_WIF_LOCATON }}-docker.pkg.dev/${{ vars.SHARED_WIF_PROJECT }}/${{ vars.SHARED_WIF_REPO }}
-  #GHCR_NS: neonscience 
+  GHCR_NS: neonscience 
   # Use docker.io for Docker Hub if empty
   REGISTRY: ghcr.io
-  # github.repository as <account>/<repo>
-  # IMAGE_NAME: ${{ github.repository }}
-  # Get just the repo name from the event
+  #github.repository as <account>/<repo>
+  IMAGE_NAME: ${{ github.repository }}
+  Get just the repo name from the event
   REPO_NAME: ${{ github.event.repository.name }}
 
 jobs:
@@ -60,13 +60,13 @@ jobs:
           username: 'oauth2accesstoken'
           password: ${{ steps.auth.outputs.access_token }}
 
-  #    # Login to github registry
-  #    - name: Log into registry ${{ env.GHCR_REGISTRY }}
-  #      uses: docker/login-action@v3
-  #      with:
-  #        registry: ${{ env.GHCR_REGISTRY }}
-  #        username: ${{ github.actor }}
-  #        password: ${{ secrets.GITHUB_TOKEN }}
+      # Login to github registry
+      - name: Log into registry ${{ env.GHCR_REGISTRY }}
+        uses: docker/login-action@v3
+        with:
+          registry: ${{ env.GHCR_REGISTRY }}
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
 
       #Setup configuration for R
       - name: "Set up R"
@@ -83,7 +83,7 @@ jobs:
         with:
           images: |
             ${{ env.GCP_REGISTRY }}/${{ env.REPO_NAME }}
-            #${{ env.GHCR_REGISTRY }}/${{ env.GHCR_NS }}/${{ env.REPO_NAME }}
+            ${{ env.GHCR_REGISTRY }}/${{ env.GHCR_NS }}/${{ env.REPO_NAME }}
           tags: |
             type=schedule
             type=ref,event=branch
