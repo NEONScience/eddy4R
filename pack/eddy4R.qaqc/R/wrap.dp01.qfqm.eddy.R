@@ -111,7 +111,7 @@ wrap.dp01.qfqm.eddy <- function(
 
 
   #assign default qfSciRevw
-  lapply(names(tmp), function(x) tmp[[x]]$qfqm$qfSciRevw <<- 0)
+  lapply(names(tmp), function(x) tmp[[x]]$qfqm$qfSciRevw <<- NaN)
   #Only report expanded quality metrics if producing expanded file
   if(RptExpd == TRUE){
     #calculate quality metrics (pass, fail, NA for each flag)
@@ -128,7 +128,7 @@ wrap.dp01.qfqm.eddy <- function(
   lapply(names(tmp), function(x) rpt$qmAlph[[x]] <<- tmp[[x]]$qfqm$qmAlph)
   lapply(names(tmp), function(x) rpt$qmBeta[[x]] <<- tmp[[x]]$qfqm$qmBeta)
   lapply(names(tmp), function(x) rpt$qfFinl[[x]] <<- as.integer(tmp[[x]]$qfqm$qfFinl))
-  lapply(names(tmp), function(x) rpt$qfSciRevw[[x]] <<- as.integer(tmp[[x]]$qfqm$qfSciRevw))
+  lapply(names(tmp), function(x) rpt$qfSciRevw[[x]] <<- tmp[[x]]$qfqm$qfSciRevw)
 
   # Convert output to dataframe's
   rpt$qmAlph <- base::rbind.data.frame(rpt$qmAlph)

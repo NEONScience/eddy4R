@@ -33,6 +33,8 @@
 #     original creation developed Rich's core work for def.shft.time.isoCo2
 #   Natchaya Pingintha-Durden (2024-08-20)
 #     added a failsafe in case all data at some/all measurement level are missing
+#   Natchaya Pingintha-Durden (2024-09-19)
+#     fixed issues when time correction cannot be determined due to NaN data in stusN2
 ####################################################################################################
 def.shft.time.isoH2o <- function (
   dataList, 
@@ -125,6 +127,9 @@ def.shft.time.isoH2o <- function (
   allData <- do.call(rbind, list(highData, medData, lowData, wrkLvlData))
   allData <- allData[order(allData$time), ]
   
+  #return the input list if data from all stusN2 are missing:
+  if (all(is.na(allData$stusN2))) {return(rpt)}
+  
   ###############################################################################
   #get first index when vaporizer 3-way valve turn on (1)
   idxValvHead <- head(which(allData$valv == 1), n=1)
@@ -138,7 +143,8 @@ def.shft.time.isoH2o <- function (
   
   
   #calculate time difference between valvCrdH2o and vaporizer 3-way valve 
-  if ((idxValvHead == 1 | idxValvCrdH2oHead == 1) & allData$injNum[1] != 1){
+  if (((idxValvHead == 1 | idxValvCrdH2oHead == 1) & allData$injNum[1] != 1) ||
+      length(idxValvHead) == 0 || length(idxValvCrdH2oHead) == 0){
     #assign NA to time difference between valvCrdH2o and vaporizer 3-way valve 
     #if the first injection occurred in previous day and the time difference cannot determine
     timeOfstHead  <- NA
@@ -147,7 +153,8 @@ def.shft.time.isoH2o <- function (
                                             as.POSIXct(allData$time[idxValvHead], format="%Y-%m-%dT%H:%M:%S", tz="GMT")))
       }
   
-  if ((idxValvTail == nrow(allData) | idxValvCrdH2oTail == nrow(allData)) & allData$injNum[nrow(allData)] != 18){
+  if (((idxValvTail == nrow(allData) | idxValvCrdH2oTail == nrow(allData)) & allData$injNum[nrow(allData)] != 18) ||
+      length(idxValvTail) == 0 || length(idxValvCrdH2oTail) == 0){
     #assign NA to time difference between valvCrdH2o and vaporizer 3-way valve 
     #if the last injection (injNum = 18) occurred in next day and the time difference cannot determine
     timeOfstTail  <- NA
@@ -156,6 +163,9 @@ def.shft.time.isoH2o <- function (
                                             as.POSIXct(allData$time[idxValvTail], format="%Y-%m-%dT%H:%M:%S", tz="GMT")))
       }
   
+  #return the input list if data from both timeOfstHeand timeOfstTail cannot be determined:
+  if (is.na(timeOfstHead) & is.na(timeOfstTail)) {return(rpt)}
+
   #get mean ofset
   timeOfstMean <- as.numeric(mean(c(timeOfstHead, timeOfstTail), na.rm = TRUE))
   

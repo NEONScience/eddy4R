@@ -43,6 +43,9 @@
 #     add header and apply eddy4R terms
 #   Natchaya Pingintha-Durden (2024-08-20)
 #     added a failsafe in case all data at some/all measurement level are missing
+#   Natchaya Pingintha-Durden (2024-11-25)
+#     update the number of missing data from 0 to 35
+#     add tryCatch() when kmean can not be determine
 ####################################################################################################
 def.shft.time.isoCo2 <- function (
   dataList, 
@@ -123,8 +126,8 @@ def.shft.time.isoCo2 <- function (
 	medTmp <- medTmp[complete.cases(medTmp$rtioMoleDryCo2), ]
 	highTmp <- highTmp[complete.cases(highTmp$rtioMoleDryCo2), ]
 	
-	# need to stop if some df are missing:
-	if (nrow(lowTmp) == 0 || nrow(medTmp) == 0 || nrow(highTmp) == 0) {
+	# need to stop if some df are missing or less than 1 minute avialable data (~35):
+	if (nrow(lowTmp) <= 35 || nrow(medTmp) <= 35 || nrow(highTmp) <= 35) {
 		return(rpt) # some reference data missing, following steps will fail,
 						 # so just return the input list
 	}
@@ -147,9 +150,39 @@ def.shft.time.isoCo2 <- function (
 	
 	#when ofstLow, ofstMed or ofstHigh is NA using  k-mean clustering method determine the index
 	#using k-mean clustering method determine if there is a time offset, and exit if there is not.
-	kmeanLow <- stats::kmeans(lowTmp$rtioMoleDryCo2, centers = 2)
-	kmeanMed <- stats::kmeans(medTmp$rtioMoleDryCo2, centers = 2)
-	kmeanHigh <- stats::kmeans(highTmp$rtioMoleDryCo2, centers = 2)
+	#Error could happened when kmeans not able to distinct data. To eliminate this error, centers needs to change from 2 to 1
+	#List of temporary variables
+	kmeanTmp <- list("kmeanLow", "kmeanMed", "kmeanHigh")
+	
+	#Function for the next job (to handle error and change centers)
+	nextJob <- function(tmpTab, idx) {
+	  cat("Proceeding to the next job with centers = 1...\n")
+	  # Assign result with centers = 1
+	  tmp <- stats::kmeans(tmpTab$rtioMoleDryCo2, centers = 1)
+	  return(tmp)
+	}
+	
+	for (idx in 1:3) {
+	  #Select appropriate tmpTab based on idx
+	  if (idx == 1) tmpTab <- lowTmp
+	  if (idx == 2) tmpTab <- medTmp
+	  if (idx == 3) tmpTab <- highTmp
+	  
+	  #Attempt to perform kmeans clustering
+	  tryCatch({
+	    # Attempt with centers = 2
+	    kmeanTmp[[idx]] <- stats::kmeans(tmpTab$rtioMoleDryCo2, centers = 2)
+	  }, error = function(e) {
+	    #If error occurs, print message and proceed to the next job
+	    cat("Error with centers = 2, changing to centers = 1: ", e$message, "\n")
+	    #Call nextJob to attempt with centers = 1
+	    kmeanTmp[[idx]] <<- nextJob(tmpTab, idx)
+	  })
+	}
+	#Assign kmean to each table
+	kmeanLow <- kmeanTmp[[1]]
+	kmeanMed <- kmeanTmp[[2]]
+	kmeanHigh <- kmeanTmp[[3]]
 	
 	#get index when cluster group changed
 	ofstKmeanLow <- which(kmeanLow$cluster != kmeanLow$cluster[1])[1]
@@ -166,6 +199,10 @@ def.shft.time.isoCo2 <- function (
 	if (length(ofstMed) > 1) {ofstMed <- ofstMed[1]}
 	if (length(ofstHigh) > 1) {ofstHigh <- ofstHigh[1]}
 	
+	#return rpt when one of ofst is NA
+	if (is.na(ofstLow) | is.na(ofstMed) | is.na(ofstMed)) {
+	  return(rpt) 
+	}
 	
 	# get step and time offsets.
 	stepOffsetLow <- hms::as_hms(difftime(as.POSIXct(lowTmp$time[ofstLow], format="%Y-%m-%dT%H:%M:%S", tz="GMT"), 
