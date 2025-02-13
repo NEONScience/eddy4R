@@ -242,13 +242,13 @@ def.shft.time.isoH2o <- function (
   #check if the valvCrdH2o is reliable for determining the time shift 
   #by checking diff-time when the valve switches from off to on, ensuring that there is no significant jump, 
   #and vice versa when the valve switches from on to off
-  if (length(length(idxValvCrdH2oHead) == 0)){
+  if (length(idxValvCrdH2oHead) == 0){
     timeCritHead <- NA
     } else {
       timeCritHead <- hms::as_hms(difftime(as.POSIXct(valvCrdH2o$time[idxValvCrdH2oHead], format="%Y-%m-%dT%H:%M:%S", tz="GMT"),
                        as.POSIXct(valvCrdH2o$time[idxValvCrdH2oHead-1], format="%Y-%m-%dT%H:%M:%S", tz="GMT")))
     }
-  if (length(length(idxValvCrdH2oTailHead) == 0)){
+  if (length(idxValvCrdH2oTail) == 0){
     timeCritTail <- NA
   } else {
     timeCritTail <- hms::as_hms(difftime(as.POSIXct(valvCrdH2o$time[idxValvCrdH2oTail], format="%Y-%m-%dT%H:%M:%S", tz="GMT"), 
@@ -260,18 +260,20 @@ def.shft.time.isoH2o <- function (
   if (is.na(timeCritHead) || is.na(timeCritTail) || as.numeric(timeCritHead) > 5 || as.numeric(timeCritTail) > 5 ) {return(rpt)}
   
   #calculate time difference between valvCrdH2o and vaporizer 3-way valve 
-  if (length(idxValvHead) == 0 || length(idxValvCrdH2oHead) == 0 || valvVali$data[1] == 0){
+  if (length(idxValvHead) == 0 || length(idxValvCrdH2oHead) == 0 || valvVali$data[1] == 0 || length(which(valvVali$data == 1)) > 18){
     #assign NA to time difference between valvCrdH2o and vaporizer 3-way valve 
     #when no valve data or the validation started from the day before
+    #when injection more than 18 (assuming training period or sensor malfunction)
     timeOfstHead  <- NA
   } else {
     timeOfstHead  <- hms::as_hms(difftime(as.POSIXct(valvCrdH2o$time[idxValvCrdH2oHead], format="%Y-%m-%dT%H:%M:%S", tz="GMT"),
                                           as.POSIXct(valvVali$time[idxValvHead], format="%Y-%m-%dT%H:%M:%S", tz="GMT")))
   }
   
-  if (length(idxValvTail) == 0 || length(idxValvCrdH2oTail) == 0 || valvVali$data[nrow(valvVali)] == 1){
+  if (length(idxValvTail) == 0 || length(idxValvCrdH2oTail) == 0 || valvVali$data[nrow(valvVali)] == 1 || length(which(valvVali$data == 1)) > 18){
     #assign NA to time difference between valvCrdH2o and vaporizer 3-way valve 
     #when no valve data or the validation end the day after
+    #when injection more than 18 (assuming training period or sensor malfunction)
     timeOfstTail  <- NA
   } else {
     timeOfstTail  <- hms::as_hms(difftime(as.POSIXct(valvCrdH2o$time[idxValvCrdH2oTail], format="%Y-%m-%dT%H:%M:%S", tz="GMT"), 
