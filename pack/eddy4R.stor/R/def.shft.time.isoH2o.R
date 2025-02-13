@@ -234,10 +234,30 @@ def.shft.time.isoH2o <- function (
   idxValvHead <- head(which(valvVali$data == 1), n=1)
   #get first index when ValvCrdH2o turn on (not equal to 0). 
   idxValvCrdH2oHead <-  head(which(valvCrdH2o$data != 0), n=1)
-  #get last index when vaporizer 3-way valve turn on (1)
+  #get last index when vaporizer 3-way valve turn off (0)
   idxValvTail <- tail(which(valvVali$data == 0), n=1)
-  #get last index when ValvCrdH2o turn on (not equal to 0)
-  idxValvCrdH2oTail <-  tail(which(valvCrdH2o$data != 0), n=1)
+  #get last index after ValvCrdH2o turn on (not equal to 0)
+  idxValvCrdH2oTail <-  tail(which(valvCrdH2o$data != 0), n=1)+1
+  
+  #check if the valvCrdH2o is reliable for determining the time shift 
+  #by checking diff-time when the valve switches from off to on, ensuring that there is no significant jump, 
+  #and vice versa when the valve switches from on to off
+  if (length(length(idxValvCrdH2oHead) == 0)){
+    timeCritHead <- NA
+    } else {
+      timeCritHead <- hms::as_hms(difftime(as.POSIXct(valvCrdH2o$time[idxValvCrdH2oHead], format="%Y-%m-%dT%H:%M:%S", tz="GMT"),
+                       as.POSIXct(valvCrdH2o$time[idxValvCrdH2oHead-1], format="%Y-%m-%dT%H:%M:%S", tz="GMT")))
+    }
+  if (length(length(idxValvCrdH2oTailHead) == 0)){
+    timeCritTail <- NA
+  } else {
+    timeCritTail <- hms::as_hms(difftime(as.POSIXct(valvCrdH2o$time[idxValvCrdH2oTail], format="%Y-%m-%dT%H:%M:%S", tz="GMT"), 
+                       as.POSIXct(valvCrdH2o$time[idxValvCrdH2oTail-1], format="%Y-%m-%dT%H:%M:%S", tz="GMT")))
+  }
+  
+  #return the input list if data from either timeCritHeand or timeCritTail cannot be determined;
+  #or greater then ~5 sec (Picarro is normally send out signal ~1 sec)
+  if (is.na(timeCritHead) || is.na(timeCritTail) || as.numeric(timeCritHead) > 5 || as.numeric(timeCritTail) > 5 ) {return(rpt)}
   
   #calculate time difference between valvCrdH2o and vaporizer 3-way valve 
   if (length(idxValvHead) == 0 || length(idxValvCrdH2oHead) == 0 || valvVali$data[1] == 0){
