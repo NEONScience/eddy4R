@@ -165,7 +165,7 @@ def.shft.time.isoH2o <- function (
   
   #return the input list if data from both timeOfstHeand timeOfstTail cannot be determined:
   if (is.na(timeOfstHead) & is.na(timeOfstTail)) {return(rpt)}
-  
+
   #get mean ofset
   timeOfstMean <- as.numeric(mean(c(timeOfstHead, timeOfstTail), na.rm = TRUE))
   
