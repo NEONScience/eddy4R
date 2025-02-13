@@ -7,9 +7,9 @@ name: Docker
 
 on:
   push:
-    branches: [ deve-test ]
+    branches: [ deve ]
     # tags as releases.
-    tags: [ '*-ghtest*' ]
+    #tags: [ '*-neon-*' ]
   pull_request:
     branches: [ dev-test ]
 
