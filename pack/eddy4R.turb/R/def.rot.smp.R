@@ -20,8 +20,7 @@
 #' @export
 #' 
 
-def.rot.smp = function(data, MethRot = c("single","double","none")[2]{
-  
+def.rot.smp = function(data, MethRot = c("single","double","none")[2]){
   
   # rotation angle (mnPSI_uv = veloYaxsXaxsMean)
   veloYaxsXaxsMean = eddy4R.base::def.pol.cart(matrix(c(mean(data$veloYaxsErth, na.rm = TRUE),
