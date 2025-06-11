@@ -93,6 +93,8 @@
 #     adjusting data input for crdCh4 validation time periods
 #   Chris Florian (2021-06-07)
 #     updating list to remove the CH4 reference values from qfqm
+#   David Durden (2024-11-14)
+#     updating default qfSciRevw to be NA
 #   Natchaya Pingintha-Durden (2024-11-26)
 #     bug fix for report NaN values when the validation occurred between 2 days and the start and end time cannot be determined
 ##############################################################################################
@@ -256,10 +258,10 @@ wrap.dp01.qfqm.ecse <- function(
             rpt[[1]]$qmAlph <- as.data.frame(matrix(0, nrow = 1, ncol = ncol(wrk$data)))
             rpt[[1]]$qmBeta <- as.data.frame(matrix(1, nrow = 1, ncol = ncol(wrk$data)))
             rpt[[1]]$qfFinl <- as.data.frame(matrix(1, nrow = 1, ncol = ncol(wrk$data)))
-            rpt[[1]]$qfSciRevw <- as.data.frame(matrix(0, nrow = 1, ncol = ncol(wrk$data)))
+            rpt[[1]]$qfSciRevw <- as.data.frame(matrix(NaN, nrow = 1, ncol = ncol(wrk$data)))
             #change data type
             rpt[[1]]$qfFinl[,1:ncol(wrk$data)] <- sapply(rpt[[1]]$qfFinl[,1:ncol(wrk$data)], as.integer)
-            rpt[[1]]$qfSciRevw[,1:ncol(wrk$data)] <- sapply(rpt[[1]]$qfSciRevw[,1:ncol(wrk$data)], as.integer)
+            #rpt[[1]]$qfSciRevw[,1:ncol(wrk$data)] <- sapply(rpt[[1]]$qfSciRevw[,1:ncol(wrk$data)], as.integer)
             
             for(idxQf in NameQf){
               #assign name to each column
@@ -295,10 +297,10 @@ wrap.dp01.qfqm.ecse <- function(
           rpt[[1]]$qmAlph <- as.data.frame(matrix(0, nrow = 1, ncol = ncol(wrk$data)))
           rpt[[1]]$qmBeta <- as.data.frame(matrix(1, nrow = 1, ncol = ncol(wrk$data)))
           rpt[[1]]$qfFinl <- as.data.frame(matrix(1, nrow = 1, ncol = ncol(wrk$data)))
-          rpt[[1]]$qfSciRevw <- as.data.frame(matrix(0, nrow = 1, ncol = ncol(wrk$data)))
+          rpt[[1]]$qfSciRevw <- as.data.frame(matrix(NaN, nrow = 1, ncol = ncol(wrk$data)))
           #change data type
           rpt[[1]]$qfFinl[,1:ncol(wrk$data)] <- sapply(rpt[[1]]$qfFinl[,1:ncol(wrk$data)], as.integer)
-          rpt[[1]]$qfSciRevw[,1:ncol(wrk$data)] <- sapply(rpt[[1]]$qfSciRevw[,1:ncol(wrk$data)], as.integer)
+          #rpt[[1]]$qfSciRevw[,1:ncol(wrk$data)] <- sapply(rpt[[1]]$qfSciRevw[,1:ncol(wrk$data)], as.integer)
           
           for(idxQf in NameQf){
             #assign name to each column
@@ -561,17 +563,17 @@ wrap.dp01.qfqm.ecse <- function(
           rpt[[1]]$qmAlph <- as.data.frame(matrix(NaN, nrow = 1, ncol = ncol(wrk$data)))
           rpt[[1]]$qmBeta <- as.data.frame(matrix(NaN, nrow = 1, ncol = ncol(wrk$data)))
           rpt[[1]]$qfFinl <- as.data.frame(matrix(NaN, nrow = 1, ncol = ncol(wrk$data)))
-          rpt[[1]]$qfSciRevw <- as.data.frame(matrix(0, nrow = 1, ncol = ncol(wrk$data)))
+          rpt[[1]]$qfSciRevw <- as.data.frame(matrix(NaN, nrow = 1, ncol = ncol(wrk$data)))
           #change data type
-          rpt[[1]]$qfSciRevw[,1:ncol(wrk$data)] <- sapply(rpt[[1]]$qfSciRevw[,1:ncol(wrk$data)], as.integer)
+          #rpt[[1]]$qfSciRevw[,1:ncol(wrk$data)] <- sapply(rpt[[1]]$qfSciRevw[,1:ncol(wrk$data)], as.integer)
           }else{
             rpt[[1]]$qmAlph <- as.data.frame(matrix(0, nrow = 1, ncol = ncol(wrk$data)))
             rpt[[1]]$qmBeta <- as.data.frame(matrix(1, nrow = 1, ncol = ncol(wrk$data)))
             rpt[[1]]$qfFinl <- as.data.frame(matrix(1, nrow = 1, ncol = ncol(wrk$data)))
-            rpt[[1]]$qfSciRevw <- as.data.frame(matrix(0, nrow = 1, ncol = ncol(wrk$data)))
+            rpt[[1]]$qfSciRevw <- as.data.frame(matrix(NaN, nrow = 1, ncol = ncol(wrk$data)))
             #change data type
             rpt[[1]]$qfFinl[,1:ncol(wrk$data)] <- sapply(rpt[[1]]$qfFinl[,1:ncol(wrk$data)], as.integer)
-            rpt[[1]]$qfSciRevw[,1:ncol(wrk$data)] <- sapply(rpt[[1]]$qfSciRevw[,1:ncol(wrk$data)], as.integer)
+            #rpt[[1]]$qfSciRevw[,1:ncol(wrk$data)] <- sapply(rpt[[1]]$qfSciRevw[,1:ncol(wrk$data)], as.integer)
           }
           
           for(idxQf in NameQf){
@@ -832,10 +834,10 @@ wrap.dp01.qfqm.ecse <- function(
           rpt[[1]]$qmAlph <- as.data.frame(matrix(0, nrow = 1, ncol = ncol(wrk$data)))
           rpt[[1]]$qmBeta <- as.data.frame(matrix(1, nrow = 1, ncol = ncol(wrk$data)))
           rpt[[1]]$qfFinl <- as.data.frame(matrix(1, nrow = 1, ncol = ncol(wrk$data)))
-          rpt[[1]]$qfSciRevw <- as.data.frame(matrix(0, nrow = 1, ncol = ncol(wrk$data)))
+          rpt[[1]]$qfSciRevw <- as.data.frame(matrix(NaN, nrow = 1, ncol = ncol(wrk$data)))
           #change data type
           rpt[[1]]$qfFinl[,1:ncol(wrk$data)] <- sapply(rpt[[1]]$qfFinl[,1:ncol(wrk$data)], as.integer)
-          rpt[[1]]$qfSciRevw[,1:ncol(wrk$data)] <- sapply(rpt[[1]]$qfSciRevw[,1:ncol(wrk$data)], as.integer)
+          #rpt[[1]]$qfSciRevw[,1:ncol(wrk$data)] <- sapply(rpt[[1]]$qfSciRevw[,1:ncol(wrk$data)], as.integer)
           
           for(idxQf in NameQf){
             #assign name to each column
@@ -1058,17 +1060,17 @@ wrap.dp01.qfqm.ecse <- function(
             rpt[[1]]$qmAlph <- as.data.frame(matrix(NaN, nrow = 1, ncol = ncol(wrk$data)))
             rpt[[1]]$qmBeta <- as.data.frame(matrix(NaN, nrow = 1, ncol = ncol(wrk$data)))
             rpt[[1]]$qfFinl <- as.data.frame(matrix(NaN, nrow = 1, ncol = ncol(wrk$data)))
-            rpt[[1]]$qfSciRevw <- as.data.frame(matrix(0, nrow = 1, ncol = ncol(wrk$data)))
+            rpt[[1]]$qfSciRevw <- as.data.frame(matrix(NaN, nrow = 1, ncol = ncol(wrk$data)))
             #change data type
-            rpt[[1]]$qfSciRevw[,1:ncol(wrk$data)] <- sapply(rpt[[1]]$qfSciRevw[,1:ncol(wrk$data)], as.integer)
+            #rpt[[1]]$qfSciRevw[,1:ncol(wrk$data)] <- sapply(rpt[[1]]$qfSciRevw[,1:ncol(wrk$data)], as.integer)
           }else{
             rpt[[1]]$qmAlph <- as.data.frame(matrix(0, nrow = 1, ncol = ncol(wrk$data)))
             rpt[[1]]$qmBeta <- as.data.frame(matrix(1, nrow = 1, ncol = ncol(wrk$data)))
             rpt[[1]]$qfFinl <- as.data.frame(matrix(1, nrow = 1, ncol = ncol(wrk$data)))
-            rpt[[1]]$qfSciRevw <- as.data.frame(matrix(0, nrow = 1, ncol = ncol(wrk$data)))
+            rpt[[1]]$qfSciRevw <- as.data.frame(matrix(NaN, nrow = 1, ncol = ncol(wrk$data)))
             #change data type
             rpt[[1]]$qfFinl[,1:ncol(wrk$data)] <- sapply(rpt[[1]]$qfFinl[,1:ncol(wrk$data)], as.integer)
-            rpt[[1]]$qfSciRevw[,1:ncol(wrk$data)] <- sapply(rpt[[1]]$qfSciRevw[,1:ncol(wrk$data)], as.integer)
+            #rpt[[1]]$qfSciRevw[,1:ncol(wrk$data)] <- sapply(rpt[[1]]$qfSciRevw[,1:ncol(wrk$data)], as.integer)
           }
           
           for(idxQf in NameQf){
@@ -1269,10 +1271,10 @@ wrap.dp01.qfqm.ecse <- function(
           rpt[[1]]$qmAlph <- as.data.frame(matrix(0, nrow = 1, ncol = ncol(wrk$data)))
           rpt[[1]]$qmBeta <- as.data.frame(matrix(1, nrow = 1, ncol = ncol(wrk$data)))
           rpt[[1]]$qfFinl <- as.data.frame(matrix(1, nrow = 1, ncol = ncol(wrk$data)))
-          rpt[[1]]$qfSciRevw <- as.data.frame(matrix(0, nrow = 1, ncol = ncol(wrk$data)))
+          rpt[[1]]$qfSciRevw <- as.data.frame(matrix(NaN, nrow = 1, ncol = ncol(wrk$data)))
           #change data type
           rpt[[1]]$qfFinl[,1:ncol(wrk$data)] <- sapply(rpt[[1]]$qfFinl[,1:ncol(wrk$data)], as.integer)
-          rpt[[1]]$qfSciRevw[,1:ncol(wrk$data)] <- sapply(rpt[[1]]$qfSciRevw[,1:ncol(wrk$data)], as.integer)
+          #rpt[[1]]$qfSciRevw[,1:ncol(wrk$data)] <- sapply(rpt[[1]]$qfSciRevw[,1:ncol(wrk$data)], as.integer)
           
           for(idxQf in NameQf){
             #assign name to each column
@@ -1487,17 +1489,17 @@ wrap.dp01.qfqm.ecse <- function(
             rpt[[1]]$qmAlph <- as.data.frame(matrix(NaN, nrow = 1, ncol = ncol(wrk$data)))
             rpt[[1]]$qmBeta <- as.data.frame(matrix(NaN, nrow = 1, ncol = ncol(wrk$data)))
             rpt[[1]]$qfFinl <- as.data.frame(matrix(NaN, nrow = 1, ncol = ncol(wrk$data)))
-            rpt[[1]]$qfSciRevw <- as.data.frame(matrix(0, nrow = 1, ncol = ncol(wrk$data)))
+            rpt[[1]]$qfSciRevw <- as.data.frame(matrix(NaN, nrow = 1, ncol = ncol(wrk$data)))
             #change data type
-            rpt[[1]]$qfSciRevw[,1:ncol(wrk$data)] <- sapply(rpt[[1]]$qfSciRevw[,1:ncol(wrk$data)], as.integer)
+            #rpt[[1]]$qfSciRevw[,1:ncol(wrk$data)] <- sapply(rpt[[1]]$qfSciRevw[,1:ncol(wrk$data)], as.integer)
           }else{
             rpt[[1]]$qmAlph <- as.data.frame(matrix(0, nrow = 1, ncol = ncol(wrk$data)))
             rpt[[1]]$qmBeta <- as.data.frame(matrix(1, nrow = 1, ncol = ncol(wrk$data)))
             rpt[[1]]$qfFinl <- as.data.frame(matrix(1, nrow = 1, ncol = ncol(wrk$data)))
-            rpt[[1]]$qfSciRevw <- as.data.frame(matrix(0, nrow = 1, ncol = ncol(wrk$data)))
+            rpt[[1]]$qfSciRevw <- as.data.frame(matrix(NaN, nrow = 1, ncol = ncol(wrk$data)))
             #change data type
             rpt[[1]]$qfFinl[,1:ncol(wrk$data)] <- sapply(rpt[[1]]$qfFinl[,1:ncol(wrk$data)], as.integer)
-            rpt[[1]]$qfSciRevw[,1:ncol(wrk$data)] <- sapply(rpt[[1]]$qfSciRevw[,1:ncol(wrk$data)], as.integer)
+            #rpt[[1]]$qfSciRevw[,1:ncol(wrk$data)] <- sapply(rpt[[1]]$qfSciRevw[,1:ncol(wrk$data)], as.integer)
           }
           
           for(idxQf in NameQf){
@@ -1693,10 +1695,10 @@ wrap.dp01.qfqm.ecse <- function(
           rpt[[1]]$qmAlph <- as.data.frame(matrix(0, nrow = 1, ncol = ncol(wrk$data)))
           rpt[[1]]$qmBeta <- as.data.frame(matrix(1, nrow = 1, ncol = ncol(wrk$data)))
           rpt[[1]]$qfFinl <- as.data.frame(matrix(1, nrow = 1, ncol = ncol(wrk$data)))
-          rpt[[1]]$qfSciRevw <- as.data.frame(matrix(0, nrow = 1, ncol = ncol(wrk$data)))
+          rpt[[1]]$qfSciRevw <- as.data.frame(matrix(NaN, nrow = 1, ncol = ncol(wrk$data)))
           #change data type
           rpt[[1]]$qfFinl[,1:ncol(wrk$data)] <- sapply(rpt[[1]]$qfFinl[,1:ncol(wrk$data)], as.integer)
-          rpt[[1]]$qfSciRevw[,1:ncol(wrk$data)] <- sapply(rpt[[1]]$qfSciRevw[,1:ncol(wrk$data)], as.integer)
+          #rpt[[1]]$qfSciRevw[,1:ncol(wrk$data)] <- sapply(rpt[[1]]$qfSciRevw[,1:ncol(wrk$data)], as.integer)
           
           for(idxQf in NameQf){
             #assign name to each column
@@ -1902,10 +1904,10 @@ wrap.dp01.qfqm.ecse <- function(
           rpt[[1]]$qmAlph <- as.data.frame(matrix(0, nrow = 1, ncol = ncol(wrk$data)))
           rpt[[1]]$qmBeta <- as.data.frame(matrix(1, nrow = 1, ncol = ncol(wrk$data)))
           rpt[[1]]$qfFinl <- as.data.frame(matrix(1, nrow = 1, ncol = ncol(wrk$data)))
-          rpt[[1]]$qfSciRevw <- as.data.frame(matrix(0, nrow = 1, ncol = ncol(wrk$data)))
+          rpt[[1]]$qfSciRevw <- as.data.frame(matrix(NaN, nrow = 1, ncol = ncol(wrk$data)))
           #change data type
           rpt[[1]]$qfFinl[,1:ncol(wrk$data)] <- sapply(rpt[[1]]$qfFinl[,1:ncol(wrk$data)], as.integer)
-          rpt[[1]]$qfSciRevw[,1:ncol(wrk$data)] <- sapply(rpt[[1]]$qfSciRevw[,1:ncol(wrk$data)], as.integer)
+         # rpt[[1]]$qfSciRevw[,1:ncol(wrk$data)] <- sapply(rpt[[1]]$qfSciRevw[,1:ncol(wrk$data)], as.integer)
           
           for(idxQf in NameQf){
             #assign name to each column
