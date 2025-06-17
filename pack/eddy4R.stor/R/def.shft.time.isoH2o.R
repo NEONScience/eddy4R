@@ -12,6 +12,7 @@
 #' @param \code{dataList} Input data. 
 #' @param \code{qfqmList} Input quality flags. 
 #' @param \code{site} Site location in character format.
+#' @param \code{valvVali} The vaporizer 3-way valve data.
 #' @param \code{lvls} Number of measurement level.
 
 #' @return \code{rpt} is list returned that consists of the  corrected timestamps of data and qfqm and time offset in seconds. 
@@ -37,15 +38,15 @@
 #     fixed issues when time correction cannot be determined due to NaN data in stusN2
 #   Natchaya Pingintha-Durden (2025-01-28)
 #     bug fixes to remove excessive validation periods;
+#   Natchaya Pingintha-Durden (2025-06-17)
+#     removed the 2nd method (using L0p data) from the function
 ####################################################################################################
 def.shft.time.isoH2o <- function (
   dataList, 
   qfqmList, 
   valvVali,
   site, 
-  lvls,
-  Date,
-  CredPsto ="sa-dev-issom-presto;OoV8Q@TN69%L36P*wpMa",
+  lvls
 ){
   #dataList <- DATA$crdH2o
   #qfqmList <- qfqmFlag$crdH2o
@@ -160,7 +161,10 @@ def.shft.time.isoH2o <- function (
   
   #return the input list if data from all stusN2 are missing:
   if (all(is.na(allData$stusN2))) {return(rpt)}
-
+  
+  #return the input list if validation not complete
+  if (!all(1:18 %in% allData$injNum)) {return(rpt)}
+  
   ###############################################################################
   #get first index when vaporizer 3-way valve turn on (1)
   idxValvHead <- head(which(allData$valv == 1), n=1)
@@ -172,10 +176,27 @@ def.shft.time.isoH2o <- function (
   #get last index when ValvCrdH2o turn on (not equal to 0)
   idxValvCrdH2oTail <-  tail(which(allData$valvCrdH2o != 0 & !is.na(allData$dlta18OH2o) & allData$stusN2 == 0), n=1)
   
+  #check if there are all NaN data between valves; 
+  #time difference between valvCrdH2o and vaporizer 3-way valve can not be determined if all valvCrdH2o are NaN
+  if (idxValvHead > idxValvCrdH2oHead) {
+    diffHead <- all(is.na(allData$valvCrdH2o[(idxValvCrdH2oHead+1):(idxValvHead-1)]))
+  } else if (idxValvCrdH2oHead > idxValvHead) {
+    diffHead <- all(is.na(allData$valvCrdH2o[(idxValvHead+1):(idxValvCrdH2oHead-1)]))
+  } else {
+    diffHead  <- FALSE
+  }
+  
+  if (idxValvTail > idxValvCrdH2oTail) {
+    diffTail <- all(is.na(allData$valvCrdH2o[(idxValvCrdH2oTail+1):(idxValvTail-1)]))
+  } else if (idxValvCrdH2oTail > idxValvTail) {
+    diffTail <- all(is.na(allData$valvCrdH2o[(idxValvTail+1):(idxValvCrdH2oTail-1)]))
+  } else {
+    diffTail  <- FALSE
+  }
   
   #calculate time difference between valvCrdH2o and vaporizer 3-way valve 
   if (((idxValvHead == 1 | idxValvCrdH2oHead == 1) & allData$injNum[1] != 1) ||
-      length(idxValvHead) == 0 || length(idxValvCrdH2oHead) == 0){
+      length(idxValvHead) == 0 || length(idxValvCrdH2oHead) == 0 || diffHead == TRUE){
     #assign NA to time difference between valvCrdH2o and vaporizer 3-way valve 
     #if the first injection occurred in previous day and the time difference cannot determine
     timeOfstHead  <- NA
@@ -185,7 +206,7 @@ def.shft.time.isoH2o <- function (
       }
   
   if (((idxValvTail == nrow(allData) | idxValvCrdH2oTail == nrow(allData)) & allData$injNum[nrow(allData)] != 18) ||
-      length(idxValvTail) == 0 || length(idxValvCrdH2oTail) == 0){
+      length(idxValvTail) == 0 || length(idxValvCrdH2oTail) == 0 || diffTail == TRUE){
     #assign NA to time difference between valvCrdH2o and vaporizer 3-way valve 
     #if the last injection (injNum = 18) occurred in next day and the time difference cannot determine
     timeOfstTail  <- NA
@@ -193,92 +214,6 @@ def.shft.time.isoH2o <- function (
       timeOfstTail  <- hms::as_hms(difftime(as.POSIXct(allData$time[idxValvCrdH2oTail], format="%Y-%m-%dT%H:%M:%S", tz="GMT"), 
                                             as.POSIXct(allData$time[idxValvTail], format="%Y-%m-%dT%H:%M:%S", tz="GMT")))
       }
-  
-  
-########################################################################################  
-  #Method 2: using dp00 to determine time offset 
-########################################################################################
-  #get domain
-  Dom <- geoNEON::getLocBySite(site)$domainID
-  #begin and end time do not use 12:00 to 14:00
-  bgn <- strftime(as.Date(Date, format = "%Y-%m-%d"), format = "%Y-%m-%dT%H:%MZ")
-  end <- strftime(as.Date(Date, format = "%Y-%m-%d") + 1, format = "%Y-%m-%dT%H:%MZ")
-  timeBgn <- base::as.POSIXct(bgn,tz="GMT",format="%Y-%m-%dT%H:%MZ") # Begin date to grab.
-  timeEnd <- base::as.POSIXct(end,tz="GMT",format="%Y-%m-%dT%H:%MZ") # End date to grab.
-  #extract dp00 ValvCrdH2o from Picarro
-  idValvCrdH2o <- paste0(paste0("NEON.",Dom,".",site,".","DP0.00103", sep=""), ".","001.02338.700.000.000", sep="")
-  #get data
-  tmpData <- som::wrap.extr.neon.dp.psto(idDp=idValvCrdH2o,
-                                         timeBgn=timeBgn,
-                                         timeEnd=timeEnd,
-                                         #DirOut=DirDataOut,
-                                         Freq=NULL,
-                                         MethRglr = "none",
-                                         CredPsto= CredPsto)
-  valvCrdH2o <- tmpData[[1]]
-  
-  #extract dp00 vaporizer 3-way valve (crdH2oValvVali)
-  idValvVali <- paste0(paste0("NEON.",Dom,".",site,".","DP0.00115", sep=""), ".","001.02352.700.000.000", sep="")
-  #get data
-  tmpData <- som::wrap.extr.neon.dp.psto(idDp=idValvVali,
-                                         timeBgn=timeBgn,
-                                         timeEnd=timeEnd,
-                                         #DirOut=DirDataOut,
-                                         Freq=NULL,
-                                         MethRglr = "none",
-                                         CredPsto= CredPsto)
-  valvVali <- tmpData[[1]]
-  
-  ###############################################################################
-  #get first index when vaporizer 3-way valve turn on (1)
-  idxValvHead <- head(which(valvVali$data == 1), n=1)
-  #get first index when ValvCrdH2o turn on (not equal to 0). 
-  idxValvCrdH2oHead <-  head(which(valvCrdH2o$data != 0), n=1)
-  #get last index when vaporizer 3-way valve turn off (0)
-  idxValvTail <- tail(which(valvVali$data == 0), n=1)
-  #get last index after ValvCrdH2o turn on (not equal to 0)
-  idxValvCrdH2oTail <-  tail(which(valvCrdH2o$data != 0), n=1)+1
-  
-  #check if the valvCrdH2o is reliable for determining the time shift 
-  #by checking diff-time when the valve switches from off to on, ensuring that there is no significant jump, 
-  #and vice versa when the valve switches from on to off
-  if (length(idxValvCrdH2oHead) == 0){
-    timeCritHead <- NA
-    } else {
-      timeCritHead <- hms::as_hms(difftime(as.POSIXct(valvCrdH2o$time[idxValvCrdH2oHead], format="%Y-%m-%dT%H:%M:%S", tz="GMT"),
-                       as.POSIXct(valvCrdH2o$time[idxValvCrdH2oHead-1], format="%Y-%m-%dT%H:%M:%S", tz="GMT")))
-    }
-  if (length(idxValvCrdH2oTail) == 0){
-    timeCritTail <- NA
-  } else {
-    timeCritTail <- hms::as_hms(difftime(as.POSIXct(valvCrdH2o$time[idxValvCrdH2oTail], format="%Y-%m-%dT%H:%M:%S", tz="GMT"), 
-                       as.POSIXct(valvCrdH2o$time[idxValvCrdH2oTail-1], format="%Y-%m-%dT%H:%M:%S", tz="GMT")))
-  }
-  
-  #return the input list if data from either timeCritHeand or timeCritTail cannot be determined;
-  #or greater then ~5 sec (Picarro is normally send out signal ~1 sec)
-  if (is.na(timeCritHead) || is.na(timeCritTail) || as.numeric(timeCritHead) > 5 || as.numeric(timeCritTail) > 5 ) {return(rpt)}
-  
-  #calculate time difference between valvCrdH2o and vaporizer 3-way valve 
-  if (length(idxValvHead) == 0 || length(idxValvCrdH2oHead) == 0 || valvVali$data[1] == 0 || length(which(valvVali$data == 1)) > 18){
-    #assign NA to time difference between valvCrdH2o and vaporizer 3-way valve 
-    #when no valve data or the validation started from the day before
-    #when injection more than 18 (assuming training period or sensor malfunction)
-    timeOfstHead  <- NA
-  } else {
-    timeOfstHead  <- hms::as_hms(difftime(as.POSIXct(valvCrdH2o$time[idxValvCrdH2oHead], format="%Y-%m-%dT%H:%M:%S", tz="GMT"),
-                                          as.POSIXct(valvVali$time[idxValvHead], format="%Y-%m-%dT%H:%M:%S", tz="GMT")))
-  }
-  
-  if (length(idxValvTail) == 0 || length(idxValvCrdH2oTail) == 0 || valvVali$data[nrow(valvVali)] == 1 || length(which(valvVali$data == 1)) > 18){
-    #assign NA to time difference between valvCrdH2o and vaporizer 3-way valve 
-    #when no valve data or the validation end the day after
-    #when injection more than 18 (assuming training period or sensor malfunction)
-    timeOfstTail  <- NA
-  } else {
-    timeOfstTail  <- hms::as_hms(difftime(as.POSIXct(valvCrdH2o$time[idxValvCrdH2oTail], format="%Y-%m-%dT%H:%M:%S", tz="GMT"), 
-                                          as.POSIXct(valvVali$time[idxValvTail], format="%Y-%m-%dT%H:%M:%S", tz="GMT")))
-  }
   
   
 ##############################################################################################  
