@@ -40,6 +40,8 @@
 #     bug fixes to remove excessive validation periods;
 #   Natchaya Pingintha-Durden (2025-06-17)
 #     removed the 2nd method (using L0p data) from the function
+#   Natchaya Pingintha-Durden (2025-06-18)
+#     excluded training periods in the determination of idxValvHead
 ####################################################################################################
 def.shft.time.isoH2o <- function (
   dataList, 
@@ -167,12 +169,12 @@ def.shft.time.isoH2o <- function (
   
   ###############################################################################
   #get first index when vaporizer 3-way valve turn on (1)
-  idxValvHead <- head(which(allData$valv == 1), n=1)
+  idxValvHead <- head(which(allData$valv == 1 & allData$typeH2o != "training" & !is.na(allData$dlta18OH2o)), n=1)
   #get first index when ValvCrdH2o turn on (not equal to 0). 
   #Note: ValvCrdH2o should be 0 during sampling, however, we detected an unusual value
   idxValvCrdH2oHead <-  head(which(allData$valvCrdH2o != 0 & !is.na(allData$dlta18OH2o) & allData$stusN2 == 0), n=1)
   #get last index when vaporizer 3-way valve turn on (1)
-  idxValvTail <- tail(which(allData$valv == 1), n=1)
+  idxValvTail <- tail(which(allData$valv == 1 & allData$typeH2o != "training" & !is.na(allData$dlta18OH2o)), n=1)
   #get last index when ValvCrdH2o turn on (not equal to 0)
   idxValvCrdH2oTail <-  tail(which(allData$valvCrdH2o != 0 & !is.na(allData$dlta18OH2o) & allData$stusN2 == 0), n=1)
   
@@ -236,8 +238,8 @@ def.shft.time.isoH2o <- function (
     print("Missing offset in file and environment...getting ready to skip.")
   }
   
-  #only proceed if timeOffset is greater than +/- 60 s
-  if (is.na(timeOfstMean) | (timeOfstMean < 60 & timeOfstMean > -60)) {
+  #only proceed if timeOffset is between +/- 1 and 9 minutes (e.g., 60 < x < 540 or -540 > x > -60)
+  if (is.na(timeOfstMean) | timeOfstMean < -540 | timeOfstMean > 540 | (timeOfstMean < 60 & timeOfstMean > -60)) {
     return(rpt) 
   }
   
