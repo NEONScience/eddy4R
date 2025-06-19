@@ -49,6 +49,8 @@
 #   Natchaya Pingintha-Durden (2025-01-28)
 #     bug fixes to remove excessive validation periods;
 #     increase the available data from 35 to 270 points
+#   Natchaya Pingintha-Durden (2025-06-19)
+#     bug fixes for cases where offsets fell within the 1-minute cutoff margin
 ####################################################################################################
 def.shft.time.isoCo2 <- function (
   dataList, 
@@ -247,6 +249,24 @@ def.shft.time.isoCo2 <- function (
 	                                      as.POSIXct(medTmp$time[1], format="%Y-%m-%dT%H:%M:%S", tz="GMT")))
 	stepOffsetHigh <- hms::as_hms(difftime(as.POSIXct(highTmp$time[ofstHigh], format="%Y-%m-%dT%H:%M:%S", tz="GMT"), 
 	                                       as.POSIXct(highTmp$time[1], format="%Y-%m-%dT%H:%M:%S", tz="GMT")))
+	
+	# Assign NA to 'ofst' if the step and time offsets fall within the 0–1 or 9–10 minute margins to eliminate errors.
+	# For example: stepOffsetLow = 00:00:02, stepOffsetMed = 00:09:56, and stepOffsetHigh = 00:00:03,
+	# which would result in timeOfstMean = 200.3333; an incorrect value.
+	
+	if (as.numeric(stepOffsetLow) < -540 | as.numeric(stepOffsetLow) > 540 | (as.numeric(stepOffsetLow) < 60 & as.numeric(stepOffsetLow) > -60)){
+	  ofstLow <- NA
+	}
+	if (as.numeric(stepOffsetMed) < -540 | as.numeric(stepOffsetMed) > 540 | (as.numeric(stepOffsetMed) < 60 & as.numeric(stepOffsetMed) > -60)) {
+	  ofstMed <- NA
+	}
+	if (as.numeric(stepOffsetHigh) < -540 | as.numeric(stepOffsetHigh) > 540 | (as.numeric(stepOffsetHigh) < 60 & as.numeric(stepOffsetHigh) > -60)) {
+	  ofstHigh <- NA
+	}
+	#return rpt when one of ofst is NA
+	if (is.na(ofstLow) | is.na(ofstMed) | is.na(ofstMed)) {
+	  return(rpt) 
+	}
 	
 	#determine if the Picarro timeStamp is ahead (lead) or behind (lag) compared to correct timeStamp
 	#for lead scenario the difference between cluster center should be positive, positive, and negative
