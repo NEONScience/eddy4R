@@ -45,6 +45,8 @@ def.rot.2d = function(data, MethRot = c("single","double","none")[2]){
     attributes(data)$rotAngXaxs <- rotAngXaxs
     #Add attribute for Yaxs rotation
     attributes(data)$rotAngYaxs <- ifelse(MethRot == "double", rotAngYaxs, NA)
+    #return rotated data and coefficients
+    return(data)
     
   }
   
