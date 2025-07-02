@@ -7,7 +7,8 @@
 #' @description 
 #' Wrapper function  to remove high frequency data points that have failed quality flags from a data.frame
 #' @param inpList List consisting of \code{ff::ffdf} file-backed objects, in the format provided by function \code{eddy4R.base::wrap.hdf5.read()}. Of types numeric and integer.
-#' @param Sens Character string indicating which sensor will remove high frequency data points that have failed quality flags. Defaults to NULL.
+#' @param Sens Character string indicating which sensor will remove high frequency data points that have failed quality flags. Defaults to NULL.#' 
+#' @param DspkSensRmv Character string indicating which sensor will be removed from despiking algorithm. Defaults to "amrs".
 #' @param qfRmv Character string indicating which quality flag will exclude in the processing. Defaults to NULL.
 #' @param Vrbs Optional. A logical {FALSE/TRUE} value indicating whether to:\cr
 #' \code{Vrbs = FALSE}: (Default) cleaned data set with the bad high frequency quality flagged data replaced with NaN's as part of the \code{inpList} in the same format., or \cr
