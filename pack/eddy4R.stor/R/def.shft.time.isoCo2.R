@@ -51,6 +51,9 @@
 #     increase the available data from 35 to 270 points
 #   Natchaya Pingintha-Durden (2025-06-19)
 #     bug fixes for cases where offsets fell within the 1-minute cutoff margin
+#   Natchaya Pingintha-Durden (2025-07-02)
+#     using the standard deviation method instead of the cutoff margin 
+#     for cases where offsets fall within the 1-minute threshold
 ####################################################################################################
 def.shft.time.isoCo2 <- function (
   dataList, 
@@ -254,19 +257,19 @@ def.shft.time.isoCo2 <- function (
 	# For example: stepOffsetLow = 00:00:02, stepOffsetMed = 00:09:56, and stepOffsetHigh = 00:00:03,
 	# which would result in timeOfstMean = 200.3333; an incorrect value.
 	
-	if (as.numeric(stepOffsetLow) < -540 | as.numeric(stepOffsetLow) > 540 | (as.numeric(stepOffsetLow) < 60 & as.numeric(stepOffsetLow) > -60)){
-	  ofstLow <- NA
-	}
-	if (as.numeric(stepOffsetMed) < -540 | as.numeric(stepOffsetMed) > 540 | (as.numeric(stepOffsetMed) < 60 & as.numeric(stepOffsetMed) > -60)) {
-	  ofstMed <- NA
-	}
-	if (as.numeric(stepOffsetHigh) < -540 | as.numeric(stepOffsetHigh) > 540 | (as.numeric(stepOffsetHigh) < 60 & as.numeric(stepOffsetHigh) > -60)) {
-	  ofstHigh <- NA
-	}
+	# if (as.numeric(stepOffsetLow) < -540 | as.numeric(stepOffsetLow) > 540 | (as.numeric(stepOffsetLow) < 60 & as.numeric(stepOffsetLow) > -60)){
+	#   ofstLow <- NA
+	# }
+	# if (as.numeric(stepOffsetMed) < -540 | as.numeric(stepOffsetMed) > 540 | (as.numeric(stepOffsetMed) < 60 & as.numeric(stepOffsetMed) > -60)) {
+	#   ofstMed <- NA
+	# }
+	# if (as.numeric(stepOffsetHigh) < -540 | as.numeric(stepOffsetHigh) > 540 | (as.numeric(stepOffsetHigh) < 60 & as.numeric(stepOffsetHigh) > -60)) {
+	#   ofstHigh <- NA
+	# }
 	#return rpt when one of ofst is NA
-	if (is.na(ofstLow) | is.na(ofstMed) | is.na(ofstMed)) {
-	  return(rpt) 
-	}
+	# if (is.na(ofstLow) | is.na(ofstMed) | is.na(ofstMed)) {
+	#   return(rpt) 
+	# }
 	
 	#determine if the Picarro timeStamp is ahead (lead) or behind (lag) compared to correct timeStamp
 	#for lead scenario the difference between cluster center should be positive, positive, and negative
@@ -298,6 +301,15 @@ def.shft.time.isoCo2 <- function (
 
 	# define a mean time offset (in seconds) to use in remainder of code.
 	timeOfstMean <- as.numeric(mean(c(timeOffsetLow, timeOffsetMed, timeOffsetHigh), na.rm = TRUE))
+	
+	#Using the standard deviation method instead of the cutoff margin for cases where offsets fall within the 1-minute threshold.
+	timeOfstSd <- as.numeric(sd(c(timeOffsetLow, timeOffsetMed, timeOffsetHigh), na.rm = TRUE))
+	
+	#only proceed if timeOffSd is less than 60 s
+	#for cases where one offset fall within the 0–1 and the rest fall in 9–10 minute margins, timeOffSd obviously high, e.g. >300)
+	if (is.na(timeOfstSd) | timeOfstSd > 60) {
+	  return(rpt) 
+	}
 	
 	#reset timeOfstMean for testing purpose
 	timeOfstMean <- ifelse(test == TRUE, ofstTest, timeOfstMean)
