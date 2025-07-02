@@ -57,10 +57,7 @@ def.shft.time.isoH2o <- function (
   #lvls <- Para$Flow$Site$LvlMeasTow
   library(dplyr)
   library(xts)
-  library(geoNEON)
 
-  
-  
   #define report output (dataList and qfqmList)
   rpt <- list()
   rpt$dataList <- dataList
