@@ -47,13 +47,15 @@
 #    added despiking routine and output qfSpk and qfNull
 #   David Durden (2021-10-7)
 #    not removing identified spike in presAtm data stream as patch for 2021 data release
+#   David Durden (2025-07-01)
+#    adding argument to remove sensors from despiking routing, adding amrs as default to remove
 ##############################################################################################
 
 
 wrap.qf.rmv.data <- function(
   inpList,
   Sens = NULL,
-  DspkSensRmv = c("amrs",NA),
+  DspkSensRmv = c("amrs",NA)[1],
   qfRmv = NULL,
   Vrbs = FALSE, 
   MethMeas = c("ecte",  "ecse")[1],
@@ -82,12 +84,11 @@ wrap.qf.rmv.data <- function(
   base::names(outList) <- Sens
  
   #Determine the sensors to run through despiking
-  if (!is.na(DspkSensRmv)){
-    Sens <- Sens[!Sens%in%DspkSensRmv]
-  }
+  SensDspk <- Sens[!Sens%in%DspkSensRmv]
+  
   
   #Despiking routine 
-base::lapply(Sens, function(x){ 
+base::lapply(SensDspk, function(x){ 
     #x <- Sens[1] #for testing
     #print(x)
     varDspk <- names(outList[[x]]$inpData)[!names(outList[[x]]$inpData) %in% c("time","idx","frtSet00")]
@@ -123,14 +124,14 @@ base::lapply(Sens, function(x){
     #Outputting the data ffdf's
     rpt$data[[x]] <<- ff::as.ffdf(outList[[x]]$inpData) 
     rpt$data[[x]] <<- eddy4R.base::def.unit.var(samp = rpt$data[[x]], refe = inpList$data[[x]]) #Copy units
-    rpt$qfqm[[x]] <<- ifelse(x == "amrs", ff::as.ffdf(base::cbind(rpt$qfqm[[x]][], outList[[x]]$qfNull)), ff::as.ffdf(base::cbind(rpt$qfqm[[x]][], outList[[x]]$qfNull, as.data.frame(outList[[x]]$qfSpk))))
+    rpt$qfqm[[x]] <<- ifelse(x %in% SensDspk, ff::as.ffdf(base::cbind(rpt$qfqm[[x]][], outList[[x]]$qfNull, as.data.frame(outList[[x]]$qfSpk))), ff::as.ffdf(base::cbind(rpt$qfqm[[x]][], outList[[x]]$qfNull)))
   })
   }else{
   base::lapply(base::names(outList), function(x) {
     #Outputting the data ffdf's
     rpt$data[[x]] <<- as.data.frame(outList[[x]]$inpData) 
     rpt$data[[x]] <<- eddy4R.base::def.unit.var(samp = rpt$data[[x]], refe = inpList$data[[x]]) #Copy units
-    rpt$qfqm[[x]] <<- ifelse(x == "amrs", as.data.frame(base::cbind(rpt$qfqm[[x]][], outList[[x]]$qfNull)), as.data.frame(base::cbind(rpt$qfqm[[x]][], outList[[x]]$qfNull, as.data.frame(outList[[x]]$qfSpk))))
+    rpt$qfqm[[x]] <<- ifelse(x %in% SensDspk, as.data.frame(base::cbind(rpt$qfqm[[x]][], outList[[x]]$qfNull, as.data.frame(outList[[x]]$qfSpk))), as.data.frame(base::cbind(rpt$qfqm[[x]][], outList[[x]]$qfNull)))
   })
   }#End MethFf if statment
 
