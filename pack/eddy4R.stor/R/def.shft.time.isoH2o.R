@@ -12,6 +12,7 @@
 #' @param \code{dataList} Input data. 
 #' @param \code{qfqmList} Input quality flags. 
 #' @param \code{site} Site location in character format.
+#' @param \code{valvVali} The vaporizer 3-way valve data.
 #' @param \code{lvls} Number of measurement level.
 
 #' @return \code{rpt} is list returned that consists of the  corrected timestamps of data and qfqm and time offset in seconds. 
@@ -35,6 +36,12 @@
 #     added a failsafe in case all data at some/all measurement level are missing
 #   Natchaya Pingintha-Durden (2024-09-19)
 #     fixed issues when time correction cannot be determined due to NaN data in stusN2
+#   Natchaya Pingintha-Durden (2025-01-28)
+#     bug fixes to remove excessive validation periods;
+#   Natchaya Pingintha-Durden (2025-06-17)
+#     removed the 2nd method (using L0p data) from the function
+#   Natchaya Pingintha-Durden (2025-06-18)
+#     excluded training periods in the determination of idxValvHead
 ####################################################################################################
 def.shft.time.isoH2o <- function (
   dataList, 
@@ -50,12 +57,16 @@ def.shft.time.isoH2o <- function (
   #lvls <- Para$Flow$Site$LvlMeasTow
   library(dplyr)
   library(xts)
+
   #define report output (dataList and qfqmList)
   rpt <- list()
   rpt$dataList <- dataList
   rpt$qfqmList <- qfqmList
   rpt$timeOfstMean <- NA
   
+########################################################################################  
+  #Method 1: using dp0p to determine time offset 
+########################################################################################
   #determine number of measurement levels 
   lvlTow <- lvls
   
@@ -90,11 +101,31 @@ def.shft.time.isoH2o <- function (
   medData <- subset(medData, select=-c(dlta18OH2oRefeMed, dlta2HH2oRefeMed))
   highData <- subset(highData, select=-c(dlta18OH2oRefeHigh, dlta2HH2oRefeHigh))
   
-  # add level name
+  #add level name
   lowData  <- dplyr::mutate(lowData, level = 3)       
   medData  <- dplyr::mutate(medData, level = 2)
   highData <- dplyr::mutate(highData, level = 1)
   
+  #remove rows where validation is not part of the actual validation used in determining the time-shift
+  #calculate time difference between rows
+  lowData<- lowData %>% 
+    mutate(lag = abs(as.numeric(difftime(time, lag(time), units = "sec"))))
+  medData<- medData %>% 
+    mutate(lag = abs(as.numeric(difftime(time, lag(time), units = "sec"))))
+  highData<- highData %>% 
+    mutate(lag = abs(as.numeric(difftime(time, lag(time), units = "sec"))))
+  #detect the last index when time lag greater than 30s 
+  idxLow <- which(lowData$lag > 30)[length(which(lowData$lag > 30))]
+  idxMed <- which(medData$lag > 30)[length(which(medData$lag > 30))]
+  idxHigh <- which(highData$lag > 30)[length(which(highData$lag > 30))]
+  
+  #and remove all rows above index
+  
+  lowData <- if (length(idxLow) == 0) lowData[,!(names(lowData) %in% c("lag"))] else lowData[-c(1:idxLow-1), !(names(lowData) %in% c("lag"))]
+  medData <- if (length(idxMed) == 0) medData[,!(names(medData) %in% c("lag"))] else medData[-c(1:idxMed-1), !(names(medData) %in% c("lag"))]
+  highData <- if (length(idxHigh) == 0) highData[,!(names(highData) %in% c("lag"))] else highData[-c(1:idxHigh-1), !(names(highData) %in% c("lag"))]
+  
+  #
   #Determine time offset ############################
   #get data from all level
   wrkData <- lapply(lvlMeasTow, function (x){
@@ -130,21 +161,41 @@ def.shft.time.isoH2o <- function (
   #return the input list if data from all stusN2 are missing:
   if (all(is.na(allData$stusN2))) {return(rpt)}
   
+  #return the input list if validation not complete
+  if (!all(1:18 %in% allData$injNum)) {return(rpt)}
+  
   ###############################################################################
   #get first index when vaporizer 3-way valve turn on (1)
-  idxValvHead <- head(which(allData$valv == 1), n=1)
+  idxValvHead <- head(which(allData$valv == 1 & allData$typeH2o != "training" & !is.na(allData$dlta18OH2o)), n=1)
   #get first index when ValvCrdH2o turn on (not equal to 0). 
   #Note: ValvCrdH2o should be 0 during sampling, however, we detected an unusual value
   idxValvCrdH2oHead <-  head(which(allData$valvCrdH2o != 0 & !is.na(allData$dlta18OH2o) & allData$stusN2 == 0), n=1)
   #get last index when vaporizer 3-way valve turn on (1)
-  idxValvTail <- tail(which(allData$valv == 1), n=1)
+  idxValvTail <- tail(which(allData$valv == 1 & allData$typeH2o != "training" & !is.na(allData$dlta18OH2o)), n=1)
   #get last index when ValvCrdH2o turn on (not equal to 0)
   idxValvCrdH2oTail <-  tail(which(allData$valvCrdH2o != 0 & !is.na(allData$dlta18OH2o) & allData$stusN2 == 0), n=1)
   
+  #check if there are all NaN data between valves; 
+  #time difference between valvCrdH2o and vaporizer 3-way valve can not be determined if all valvCrdH2o are NaN
+  if (idxValvHead > idxValvCrdH2oHead) {
+    diffHead <- all(is.na(allData$valvCrdH2o[(idxValvCrdH2oHead+1):(idxValvHead-1)]))
+  } else if (idxValvCrdH2oHead > idxValvHead) {
+    diffHead <- all(is.na(allData$valvCrdH2o[(idxValvHead+1):(idxValvCrdH2oHead-1)]))
+  } else {
+    diffHead  <- FALSE
+  }
+  
+  if (idxValvTail > idxValvCrdH2oTail) {
+    diffTail <- all(is.na(allData$valvCrdH2o[(idxValvCrdH2oTail+1):(idxValvTail-1)]))
+  } else if (idxValvCrdH2oTail > idxValvTail) {
+    diffTail <- all(is.na(allData$valvCrdH2o[(idxValvTail+1):(idxValvCrdH2oTail-1)]))
+  } else {
+    diffTail  <- FALSE
+  }
   
   #calculate time difference between valvCrdH2o and vaporizer 3-way valve 
   if (((idxValvHead == 1 | idxValvCrdH2oHead == 1) & allData$injNum[1] != 1) ||
-      length(idxValvHead) == 0 || length(idxValvCrdH2oHead) == 0){
+      length(idxValvHead) == 0 || length(idxValvCrdH2oHead) == 0 || diffHead == TRUE){
     #assign NA to time difference between valvCrdH2o and vaporizer 3-way valve 
     #if the first injection occurred in previous day and the time difference cannot determine
     timeOfstHead  <- NA
@@ -154,7 +205,7 @@ def.shft.time.isoH2o <- function (
       }
   
   if (((idxValvTail == nrow(allData) | idxValvCrdH2oTail == nrow(allData)) & allData$injNum[nrow(allData)] != 18) ||
-      length(idxValvTail) == 0 || length(idxValvCrdH2oTail) == 0){
+      length(idxValvTail) == 0 || length(idxValvCrdH2oTail) == 0 || diffTail == TRUE){
     #assign NA to time difference between valvCrdH2o and vaporizer 3-way valve 
     #if the last injection (injNum = 18) occurred in next day and the time difference cannot determine
     timeOfstTail  <- NA
@@ -163,6 +214,8 @@ def.shft.time.isoH2o <- function (
                                             as.POSIXct(allData$time[idxValvTail], format="%Y-%m-%dT%H:%M:%S", tz="GMT")))
       }
   
+  
+##############################################################################################  
   #return the input list if data from both timeOfstHeand timeOfstTail cannot be determined:
   if (is.na(timeOfstHead) & is.na(timeOfstTail)) {return(rpt)}
   
@@ -182,8 +235,8 @@ def.shft.time.isoH2o <- function (
     print("Missing offset in file and environment...getting ready to skip.")
   }
   
-  #only proceed if timeOffset is greater than +/- 60 s
-  if (is.na(timeOfstMean) | (timeOfstMean < 60 & timeOfstMean > -60)) {
+  #only proceed if timeOffset is between +/- 1 and 9 minutes (e.g., 60 < x < 540 or -540 > x > -60)
+  if (is.na(timeOfstMean) | timeOfstMean < -540 | timeOfstMean > 540 | (timeOfstMean < 60 & timeOfstMean > -60)) {
     return(rpt) 
   }
   
