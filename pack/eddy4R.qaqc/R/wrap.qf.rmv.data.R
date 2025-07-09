@@ -125,15 +125,27 @@ base::lapply(SensDspk, function(x){
     #Outputting the data ffdf's
     rpt$data[[x]] <<- ff::as.ffdf(outList[[x]]$inpData) 
     rpt$data[[x]] <<- eddy4R.base::def.unit.var(samp = rpt$data[[x]], refe = inpList$data[[x]]) #Copy units
-    rpt$qfqm[[x]] <<- ifelse(x %in% SensDspk, ff::as.ffdf(base::cbind(rpt$qfqm[[x]][], outList[[x]]$qfNull, as.data.frame(outList[[x]]$qfSpk))), ff::as.ffdf(base::cbind(rpt$qfqm[[x]][], outList[[x]]$qfNull)))
-  })
+  
+    #If statement to check if sensor was despiked
+    if(x %in% SensDspk){
+      rpt$qfqm[[x]] <<- ff::as.ffdf(base::cbind(rpt$qfqm[[x]][], outList[[x]]$qfNull, as.data.frame(outList[[x]]$qfSpk)))
+     }else{
+       rpt$qfqm[[x]] <<- ff::as.ffdf(base::cbind(rpt$qfqm[[x]][], outList[[x]]$qfNull))
+     }#end if statement for despiking
+     
+    })
   }else{
   base::lapply(base::names(outList), function(x) {
     #Outputting the data ffdf's
     rpt$data[[x]] <<- as.data.frame(outList[[x]]$inpData) 
     rpt$data[[x]] <<- eddy4R.base::def.unit.var(samp = rpt$data[[x]], refe = inpList$data[[x]]) #Copy units
-    rpt$qfqm[[x]] <<- ifelse(x %in% SensDspk, as.data.frame(base::cbind(rpt$qfqm[[x]][], outList[[x]]$qfNull, as.data.frame(outList[[x]]$qfSpk))), as.data.frame(base::cbind(rpt$qfqm[[x]][], outList[[x]]$qfNull)))
-  })
+    #If statement to check if sensor was despiked
+    if(x %in% SensDspk){
+      rpt$qfqm[[x]] <<- base::as.data.frame(base::cbind(rpt$qfqm[[x]][], outList[[x]]$qfNull, as.data.frame(outList[[x]]$qfSpk)))
+    }else{
+      rpt$qfqm[[x]] <<- base::as.data.frame(base::cbind(rpt$qfqm[[x]][], outList[[x]]$qfNull))
+    }#end if statement for despiking
+ })#End lapply for outList
   }#End MethFf if statment
 
   #If verbose is true write out all the information about the quality flags applied to the raw data
