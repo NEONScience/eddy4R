@@ -135,10 +135,10 @@ if(MethSubAgr == TRUE){
     }})
   #Writing linear regression coefficients and its se to attribute of rtioMoleDryCo2Vali
   if (Dp01 == "co2Turb"){
-  if (!is.null(attributes(inpList$dp01AgrSub$data$co2Turb$rtioMoleDryCo2Vali)$coef) == TRUE){
+  if (!is.null(attributes(inpList$dp01AgrSub$data$co2Turb$rtioMoleDryCo2Vali)$valiCoef) == TRUE){
     dgid <- rhdf5::H5Dopen(idData01, "rtioMoleDryCo2Vali")
-    rhdf5::h5writeAttribute(attributes(inpList$dp01AgrSub$data$co2Turb$rtioMoleDryCo2Vali)$coef, h5obj = dgid, name = "valiCoef")
-    rhdf5::h5writeAttribute(attributes(inpList$dp01AgrSub$data$co2Turb$rtioMoleDryCo2Vali)$coefSe, h5obj = dgid, name = "valiCoefSe")
+    rhdf5::h5writeAttribute(attributes(inpList$dp01AgrSub$data$co2Turb$rtioMoleDryCo2Vali)$valiCoef, h5obj = dgid, name = "valiCoef")
+    rhdf5::h5writeAttribute(attributes(inpList$dp01AgrSub$data$co2Turb$rtioMoleDryCo2Vali)$valiCoefSe, h5obj = dgid, name = "valiCoefSe")
     rhdf5::h5writeAttribute(attributes(inpList$dp01AgrSub$data$co2Turb$rtioMoleDryCo2Vali)$scal, h5obj = dgid, name = "valiScal")
     rhdf5::h5writeAttribute(attributes(inpList$dp01AgrSub$data$co2Turb$rtioMoleDryCo2Vali)$qfEvalThsh, h5obj = dgid, name = "qfEvalThsh")
     rhdf5::h5writeAttribute(attributes(inpList$dp01AgrSub$data$co2Turb$rtioMoleDryCo2Vali)$evalCoef, h5obj = dgid, name = "evalCoef")

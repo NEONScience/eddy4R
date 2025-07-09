@@ -46,6 +46,14 @@
 #   Natchaya Pingintha-Durden (2024-11-25)
 #     update the number of missing data from 0 to 35
 #     add tryCatch() when kmean can not be determine
+#   Natchaya Pingintha-Durden (2025-01-28)
+#     bug fixes to remove excessive validation periods;
+#     increase the available data from 35 to 270 points
+#   Natchaya Pingintha-Durden (2025-06-19)
+#     bug fixes for cases where offsets fell within the 1-minute cutoff margin
+#   Natchaya Pingintha-Durden (2025-07-02)
+#     using the standard deviation method instead of the cutoff margin 
+#     for cases where offsets fall within the 1-minute threshold
 ####################################################################################################
 def.shft.time.isoCo2 <- function (
   dataList, 
@@ -126,8 +134,41 @@ def.shft.time.isoCo2 <- function (
 	medTmp <- medTmp[complete.cases(medTmp$rtioMoleDryCo2), ]
 	highTmp <- highTmp[complete.cases(highTmp$rtioMoleDryCo2), ]
 	
-	# need to stop if some df are missing or less than 1 minute avialable data (~35):
-	if (nrow(lowTmp) <= 35 || nrow(medTmp) <= 35 || nrow(highTmp) <= 35) {
+	#determine if there are more than one validation
+
+	#keep rows where the time difference from the first detected time is less than 610 seconds. 
+	#Note: The validation period is 600 seconds, with an additional 10 seconds for buffering.
+	lowTmp01 <- lowTmp[difftime(lowTmp$time, lowTmp$time[1], units = "secs") <= 610, ]
+	medTmp01 <- medTmp[difftime(medTmp$time, medTmp$time[1], units = "secs") <= 610, ]
+	highTmp01 <- highTmp[difftime(highTmp$time, highTmp$time[1], units = "secs") <= 610, ]
+	
+	#keep rows where the time difference from the first detected time is greather than 610 seconds.
+	lowTmp02 <- lowTmp[difftime(lowTmp$time, lowTmp$time[1], units = "secs") > 610, ]
+	medTmp02 <- medTmp[difftime(medTmp$time, medTmp$time[1], units = "secs") > 610, ]
+	highTmp02 <- highTmp[difftime(highTmp$time, highTmp$time[1], units = "secs") > 610, ]
+	
+	#use only validation period that has more data to determine time shift;
+	lowTmp <- if (nrow(lowTmp01) > nrow(lowTmp02)) lowTmp01 else lowTmp02
+	#medTmp <- if (nrow(medTmp01) > nrow(medTmp02)) medTmp01 else medTmp02
+	#highTmp <- if (nrow(highTmp01) > nrow(highTmp02)) highTmp01 else highTmp02
+	#use the time difference to determine which validation should be retained for analysis
+	#get low-med-high occurred within the same half-hour period
+	
+	if (nrow(medTmp02 != 0)) {
+	  medTmp <- if (abs(difftime(medTmp01$time[1], lowTmp$time[1], units = "secs")) <= abs(difftime(medTmp02$time[1], lowTmp$time[1], units = "secs"))) medTmp01 else medTmp02
+	} else {
+	  medTmp <- medTmp01
+	}
+	#
+	if (nrow(highTmp02 != 0)) {
+	  highTmp <- if (abs(difftime(highTmp01$time[1], lowTmp$time[1], units = "secs")) <= abs(difftime(highTmp02$time[1], lowTmp$time[1], units = "secs"))) highTmp01 else highTmp02
+	} else {
+	  highTmp <- highTmp01
+	}
+	
+	
+	# need to stop if some df are missing or less than 9 minute available data (~30*9):
+	if (nrow(lowTmp) <= 270 || nrow(medTmp) <= 270 || nrow(highTmp) <= 270) {
 		return(rpt) # some reference data missing, following steps will fail,
 						 # so just return the input list
 	}
@@ -212,6 +253,24 @@ def.shft.time.isoCo2 <- function (
 	stepOffsetHigh <- hms::as_hms(difftime(as.POSIXct(highTmp$time[ofstHigh], format="%Y-%m-%dT%H:%M:%S", tz="GMT"), 
 	                                       as.POSIXct(highTmp$time[1], format="%Y-%m-%dT%H:%M:%S", tz="GMT")))
 	
+	# Assign NA to 'ofst' if the step and time offsets fall within the 0–1 or 9–10 minute margins to eliminate errors.
+	# For example: stepOffsetLow = 00:00:02, stepOffsetMed = 00:09:56, and stepOffsetHigh = 00:00:03,
+	# which would result in timeOfstMean = 200.3333; an incorrect value.
+	
+	# if (as.numeric(stepOffsetLow) < -540 | as.numeric(stepOffsetLow) > 540 | (as.numeric(stepOffsetLow) < 60 & as.numeric(stepOffsetLow) > -60)){
+	#   ofstLow <- NA
+	# }
+	# if (as.numeric(stepOffsetMed) < -540 | as.numeric(stepOffsetMed) > 540 | (as.numeric(stepOffsetMed) < 60 & as.numeric(stepOffsetMed) > -60)) {
+	#   ofstMed <- NA
+	# }
+	# if (as.numeric(stepOffsetHigh) < -540 | as.numeric(stepOffsetHigh) > 540 | (as.numeric(stepOffsetHigh) < 60 & as.numeric(stepOffsetHigh) > -60)) {
+	#   ofstHigh <- NA
+	# }
+	#return rpt when one of ofst is NA
+	# if (is.na(ofstLow) | is.na(ofstMed) | is.na(ofstMed)) {
+	#   return(rpt) 
+	# }
+	
 	#determine if the Picarro timeStamp is ahead (lead) or behind (lag) compared to correct timeStamp
 	#for lead scenario the difference between cluster center should be positive, positive, and negative
 	#for lag scenario the difference between cluster center should be negative, positive, and positive
@@ -242,6 +301,15 @@ def.shft.time.isoCo2 <- function (
 
 	# define a mean time offset (in seconds) to use in remainder of code.
 	timeOfstMean <- as.numeric(mean(c(timeOffsetLow, timeOffsetMed, timeOffsetHigh), na.rm = TRUE))
+	
+	#Using the standard deviation method instead of the cutoff margin for cases where offsets fall within the 1-minute threshold.
+	timeOfstSd <- as.numeric(sd(c(timeOffsetLow, timeOffsetMed, timeOffsetHigh), na.rm = TRUE))
+	
+	#only proceed if timeOffSd is less than 60 s
+	#for cases where one offset fall within the 0–1 and the rest fall in 9–10 minute margins, timeOffSd obviously high, e.g. >300)
+	if (is.na(timeOfstSd) | timeOfstSd > 60) {
+	  return(rpt) 
+	}
 	
 	#reset timeOfstMean for testing purpose
 	timeOfstMean <- ifelse(test == TRUE, ofstTest, timeOfstMean)
