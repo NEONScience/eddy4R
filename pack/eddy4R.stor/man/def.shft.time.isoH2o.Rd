@@ -13,6 +13,8 @@ def.shft.time.isoH2o(dataList, qfqmList, valvVali, site, lvls)
 
 \item{\code{site}}{Site location in character format.}
 
+\item{\code{valvVali}}{The vaporizer 3-way valve data.}
+
 \item{\code{lvls}}{Number of measurement level.}
 }
 \value{
