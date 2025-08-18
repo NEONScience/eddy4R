@@ -54,6 +54,8 @@
 #    removed unnecessary qfqm unit attributes when writing the basic file
 #   Chris Florian (2021-08-09)
 #    adding qfValiThsh to rtioMoleDryCo2Vali attributes
+#   David Durden (2025-08-09)
+#    changing qfShdw to integer
 ##############################################################################################
 
 
@@ -157,7 +159,7 @@ lapply(names(inpList$qfqm[[Dp01]]), function(x)  {
   #convert to integer
   inpList$qfqm[[Dp01]][[x]]$qfFinl <<- as.integer(inpList$qfqm[[Dp01]][[x]]$qfFinl)
   #convert to integer
-  #inpList$qfqm[[Dp01]][[x]]$qfSciRevw <<- as.integer(inpList$qfqm[[Dp01]][[x]]$qfSciRevw)
+  if(Dp01 == "soni") {inpList$qfqm[[Dp01]][[x]]$qfShdw <<- as.integer(inpList$qfqm[[Dp01]][[x]]$qfShdw)}
   #Write 30-min qfqm output to HDF5
   rhdf5::h5writeDataset.data.frame(obj = inpList$qfqm[[Dp01]][[x]][,c("qfFinl","timeBgn","timeEnd")], h5loc = idQfqm30, name = x, DataFrameAsCompound = TRUE)})
 
@@ -167,7 +169,7 @@ lapply(names(inpList$dp01AgrSub$qfqm[[Dp01]]), function(x)  {
   #convert to integer
   inpList$dp01AgrSub$qfqm[[Dp01]][[x]]$qfFinl <<- as.integer(inpList$dp01AgrSub$qfqm[[Dp01]][[x]]$qfFinl) 
   #convert to integer
-  #inpList$dp01AgrSub$qfqm[[Dp01]][[x]]$qfSciRevw <<- as.integer(inpList$dp01AgrSub$qfqm[[Dp01]][[x]]$qfSciRevw) 
+  if(Dp01 == "soni") {inpList$dp01AgrSub$qfqm[[Dp01]][[x]]$qfShdw <<- as.integer(inpList$dp01AgrSub$qfqm[[Dp01]][[x]]$qfShdw)} 
   #Write 1-min output to HDF5
   rhdf5::h5writeDataset.data.frame(obj = inpList$dp01AgrSub$qfqm[[Dp01]][[x]][,c("qfFinl","timeBgn","timeEnd")], h5loc = idQfqm01, name = x, DataFrameAsCompound = TRUE)})
   }
@@ -178,7 +180,7 @@ lapply(names(inpList$dp01AgrSub$qfqm[[Dp01]]), function(x)  {
     #convert to integer
     inpList$qfqm[[Dp01]][[x]]$qfFinl <<- as.integer(inpList$qfqm[[Dp01]][[x]]$qfFinl) 
     #convert to integer
-    #inpList$qfqm[[Dp01]][[x]]$qfSciRevw <<- as.integer(inpList$qfqm[[Dp01]][[x]]$qfSciRevw)
+    if(Dp01 == "soni") {inpList$qfqm[[Dp01]][[x]]$qfShdw <<- as.integer(inpList$qfqm[[Dp01]][[x]]$qfShdw)}
     #Write 30-min qfqm output to HDF5
     rhdf5::h5writeDataset.data.frame(obj = inpList$qfqm[[Dp01]][[x]], h5loc = idQfqm30, name = x, DataFrameAsCompound = TRUE)})
 
@@ -189,7 +191,7 @@ if(MethSubAgr == TRUE){
     #convert to integer
     inpList$dp01AgrSub$qfqm[[Dp01]][[x]]$qfFinl <<- as.integer(inpList$dp01AgrSub$qfqm[[Dp01]][[x]]$qfFinl) 
     #convert to integer
-    #inpList$dp01AgrSub$qfqm[[Dp01]][[x]]$qfSciRevw <<- as.integer(inpList$dp01AgrSub$qfqm[[Dp01]][[x]]$qfSciRevw) 
+    if(Dp01 == "soni") {inpList$dp01AgrSub$qfqm[[Dp01]][[x]]$qfShdw <<- as.integer(inpList$dp01AgrSub$qfqm[[Dp01]][[x]]$qfShdw)} 
     #Write 1-min output to HDF5
     rhdf5::h5writeDataset.data.frame(obj = inpList$dp01AgrSub$qfqm[[Dp01]][[x]], h5loc = idQfqm01, name = x, DataFrameAsCompound = TRUE)})
   }
