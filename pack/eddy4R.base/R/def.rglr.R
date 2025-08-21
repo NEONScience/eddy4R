@@ -235,6 +235,10 @@ def.rglr <- function(
     PrcsSec <- 3
   }
 
+  if(IdxWndw %in% c("IdxWndwMinNotNa","IdxWndwMaxNotNa","WndwMin","WndwMax")){
+    library(dplyr)  
+  }
+  
   # POSIX time has some issues with sub-second precision, often rounding down to a lower value without an 
   # obvious reason. As a result, use numeric representation of time and round to a specified precision. 
   # When returning to POSIX time, ensure use of POSIXlt so that down-rounding does not occur.
@@ -409,50 +413,49 @@ def.rglr <- function(
         
       if (IdxWndw %in% c("IdxWndwMinNotNa","IdxWndwMaxNotNa","WndwMin","WndwMax")){
         
-        # Create non-NA mask
-        varData <- dataMeas[, idxVar]
-        maskNotNa <- !is.na(varData)
-        
         # Create a data frame with bin, original index, and non-NA status
         binData <- data.frame(
           bin = idxRglr,
           idxOrig = seq_along(idxRglr),
-          notNa = maskNotNa,
-          valu = varData
+          valu = dataMeas[, idxVar]
         )
         
         # Keep only non-NA values and get the first/last (minimum/maximum original index) per bin
-        binData <- binData[binData$notNa, ]
         if(nrow(binData) > 0){
           
           if (IdxWndw == "IdxWndwMinNotNa"){
-            # Find minimum original index per bin (first non-NA)
-            setSlct <- aggregate(idxOrig ~ bin, data = binData, FUN = min)
-            
-            # Assign values to the regularized data
-            dataRglr[setSlct$bin, idxVar] <- varData[setSlct$idxOrig]
+            # Find first non-NA value per bin
+            slct <- binData %>%
+              dplyr::filter(!is.na(valu)) %>%
+              dplyr::arrange(bin,idxOrig) %>%
+              dplyr::filter(!duplicated(bin))          
             
           } else if (IdxWndw == "IdxWndwMaxNotNa"){
-            # Find maximum original index per bin (last non-NA)
-            setSlct <- aggregate(idxOrig ~ bin, data = binData, FUN = max)
-            
-            # Assign values to the regularized data
-            dataRglr[setSlct$bin, idxVar] <- varData[setSlct$idxOrig]
+            # Find first non-NA value per bin
+            slct <- binData %>%
+              dplyr::filter(!is.na(valu)) %>%
+              dplyr::arrange(bin,dplyr::desc(idxOrig)) %>%
+              dplyr::filter(!duplicated(bin))          
             
           } else if (IdxWndw == "WndwMin"){
             # Find maximum value per bin 
-            setSlct <- aggregate(valu ~ bin, data = binData, FUN = min)
+            slct <- binData %>%
+              dplyr::filter(!is.na(valu)) %>%
+              dplyr::arrange(bin,valu) %>%
+              dplyr::filter(!duplicated(bin))          
             
-            # Assign values to the regularized data
-            dataRglr[setSlct$bin, idxVar] <- setSlct$valu
-          
           } else if (IdxWndw == "WndwMax"){
             # Find maximum value per bin 
-            setSlct <- aggregate(valu ~ bin, data = binData, FUN = max)
+            slct <- binData %>%
+              dplyr::filter(!is.na(valu)) %>%
+              dplyr::arrange(bin,dplyr::desc(valu)) %>%
+              dplyr::filter(!duplicated(bin))          
             
-            # Assign values to the regularized data
-            dataRglr[setSlct$bin, idxVar] <- setSlct$valu
           }
+          
+          # Assign values to the regularized data
+          dataRglr[slct$bin, idxVar] <- slct$valu
+          
           
         }
       } else {
