@@ -22,7 +22,7 @@
 #' Method "CybiEcTimeMeas" is a modification of CybiEc that replaces the regularized timestamp with the actual value of \code{timeMeas} for the observation (if any) that was selected following the binning options specified in \code{WndwRglr} and \code{idxWndw}. \cr
 #' Method "zoo" implements the regularization method using the zoo::na.approx function. This method can only handle up to millisecond precision (PrcsSec=3)
 #' @param WndwRglr Position of the window for binning in the "CybiEc" method. \code{WndwRglr} can be centered [Cntr], leading [Lead], or trailing [Trlg] (defaults to centered).\cr
-#' @param IdxWndw Determines which observation to allocate to a bin if multiple observations fall into a single bin when using the "CybiEc" method.. \code{IdxWndw} can be set to closest [Clst], first [IdxWndwMin], or last [IdxWndwMax] (defaults to closest).\cr
+#' @param IdxWndw Determines which observation to allocate to a bin if multiple observations fall into a single bin when using the "CybiEc" method.. \code{IdxWndw} can be set to closest index [Clst], first index [IdxWndwMin], last index [IdxWndwMax], first index with a non-NA value per column[IdxWndwMinNotNa], last index with a non-NA value per column [IdxWndwMaxNotNa], minimum value per column [WndwMax], or maximum value per column [WndwMax] (defaults to closest).\cr
 #' @param DropNotNumc Logical. TRUE (default) for removing any non-numeric data columns prior to regularization (this is done automatically for zoo method). FALSE to attempt to regularize all data columns.
 #' @param RptTimeWndw Logical. TRUE for including the start and end time of each bin with the output, in list element timeWndw. Defaults to FALSE. Not available as TRUE for zoo method.
 #' @param PrcsSec A single numeric (integer) value indicating the operational precision of the seconds field of time vectors. Defaults to 6 (microsecond-precision). Values higher than 6 cannot be guaranteed to produce desired results.
@@ -115,6 +115,10 @@
 #     bug fix. Sometimes class returns 'array', which was causing an error when forcing the type of 
 #     each regularized variable to the same as that in the input data frame. 
 #     Replaced 'class' with 'typeof' to fix. 
+#   Cove Sturtevant (2025-08-21)
+#     Add additional options for IdxWndw for MethRglr=CybiEc
+#     - Choose first/last non-NA value per column
+#     - Choose min/max (non-NA) value per column
 ##############################################################################################
 
 def.rglr <- function(
@@ -127,7 +131,7 @@ def.rglr <- function(
   FreqRglr,
   MethRglr= c("CybiEc", "CybiEcTimeMeas", "zoo")[1],
   WndwRglr = c("Cntr", "Lead", "Trlg")[1],
-  IdxWndw = c("Clst","IdxWndwMin","IdxWndwMax")[1],
+  IdxWndw = c("Clst","IdxWndwMin","IdxWndwMax","IdxWndwMinNotNa","IdxWndwMaxNotNa","WndwMin","WndwMax")[1],
   DropNotNumc = TRUE,
   RptTimeWndw = FALSE,
   PrcsSec = 6
@@ -140,13 +144,17 @@ def.rglr <- function(
   }
 
   # Error-check
-  if(!(IdxWndw %in% c("Clst","IdxWndwMin","IdxWndwMax"))){
-    stop(base::paste0('Unrecognized value for input IdxWndw. Options are "Clst","IdxWndwMin","IdxWndwMax" (case-sensitive). This parameter is used only for MethRglr=CybiEc.'))
+  if(!(IdxWndw %in% c("Clst","IdxWndwMin","IdxWndwMax","IdxWndwMinNotNa","IdxWndwMaxNotNa","WndwMin","WndwMax"))){
+    stop(base::paste0('Unrecognized value for input IdxWndw. Options are "Clst","IdxWndwMin","IdxWndwMax","IdxWndwMinNotNa","IdxWndwMaxNotNa","WndwMin","WndwMax" (case-sensitive). This parameter is used only for MethRglr=CybiEc.'))
   }
   
   # Error-check
   if(!(MethRglr %in% c("zoo","CybiEcTimeMeas","CybiEc"))){
     stop(base::paste0('Unrecognized value for input MethRglr. Options are "zoo","CybiEc", and "CybiEcTimeMeas" (case-sensitive)'))
+  }
+  
+  if(IdxWndw %in% c("IdxWndwMinNotNa","IdxWndwMaxNotNa","WndwMin","WndwMax") && MethRglr != 'CybiEc'){
+    stop('IdxWndw = IdxWndwMinNotNa, IdxWndwMaxNotNa, WndwMin, and WndwMax" are only options for MethRglr=CybiEc')
   }
   
   # Error-check
@@ -380,11 +388,14 @@ def.rglr <- function(
         #Determine the closest values to the regularized timestamp by minimum absolute deviation and change the value in the logic vector.
         idxGood <- sapply(WndwDupl, function(x) setDupl[which.min(abs(timeRglrNumc[x]-timeMeasNumc[setDupl]))])
         dupl[idxGood] <- FALSE
-      } else if(IdxWndw == "IdxWndwMin"){
+      } else if(IdxWndw %in% c("IdxWndwMin","IdxWndwMinNotNa")){
         dupl <- base::duplicated(idxRglr) # which fall into an already occupied bin with higher indices flagged as duplicates.
-      } else if(IdxWndw == "IdxWndwMax"){
+      } else if(IdxWndw %in% c("IdxWndwMax","IdxWndwMaxNotNa")){
         dupl <- base::duplicated(idxRglr, fromLast = TRUE) # which fall into an already occupied bin with lower indices flagged as duplicates.
-      }}else{dupl <- rep(FALSE, length(idxRglr))} #If no duplicates exist, all equal FALSE
+      }
+    } else {
+      dupl <- rep(FALSE, length(idxRglr)) #If no duplicates exist, all equal FALSE
+    } 
     
     # Pull the value that chosen by IdxWndw within each bin 
     classData <- lapply(dataMeas,base::class) # Get the type of each variable so we can make sure the output gets the same
@@ -396,9 +407,62 @@ def.rglr <- function(
         base::class(dataRglr[[idxVar]]) <- classData[[idxVar]],
         error=function(e){base::class(dataRglr[[idxVar]]) <- typeData[[idxVar]]})
         
+      if (IdxWndw %in% c("IdxWndwMinNotNa","IdxWndwMaxNotNa","WndwMin","WndwMax")){
+        
+        # Create non-NA mask
+        varData <- dataMeas[, idxVar]
+        maskNotNa <- !is.na(varData)
+        
+        # Create a data frame with bin, original index, and non-NA status
+        binData <- data.frame(
+          bin = idxRglr,
+          idxOrig = seq_along(idxRglr),
+          notNa = maskNotNa,
+          valu = varData
+        )
+        
+        # Keep only non-NA values and get the first/last (minimum/maximum original index) per bin
+        binData <- binData[binData$notNa, ]
+        if(nrow(binData) > 0){
+          
+          if (IdxWndw == "IdxWndwMinNotNa"){
+            # Find minimum original index per bin (first non-NA)
+            setSlct <- aggregate(idxOrig ~ bin, data = binData, FUN = min)
+            
+            # Assign values to the regularized data
+            dataRglr[setSlct$bin, idxVar] <- varData[setSlct$idxOrig]
+            
+          } else if (IdxWndw == "IdxWndwMaxNotNa"){
+            # Find maximum original index per bin (last non-NA)
+            setSlct <- aggregate(idxOrig ~ bin, data = binData, FUN = max)
+            
+            # Assign values to the regularized data
+            dataRglr[setSlct$bin, idxVar] <- varData[setSlct$idxOrig]
+            
+          } else if (IdxWndw == "WndwMin"){
+            # Find maximum value per bin 
+            setSlct <- aggregate(valu ~ bin, data = binData, FUN = min)
+            
+            # Assign values to the regularized data
+            dataRglr[setSlct$bin, idxVar] <- setSlct$valu
+          
+          } else if (IdxWndw == "WndwMax"){
+            # Find maximum value per bin 
+            setSlct <- aggregate(valu ~ bin, data = binData, FUN = max)
+            
+            # Assign values to the regularized data
+            dataRglr[setSlct$bin, idxVar] <- setSlct$valu
+          }
+          
+        }
+      } else {
       
-      # place the value falling into each bin
-      dataRglr[idxRglr[!dupl],idxVar] <- dataMeas[which(!dupl),idxVar]
+        # place the value falling into each bin
+        dataRglr[idxRglr[!dupl],idxVar] <- dataMeas[which(!dupl),idxVar]
+        
+      }
+      
+      
     }
     base::names(dataRglr) <- nameVar # Assign names same as dataMeas
 
