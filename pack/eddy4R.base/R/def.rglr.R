@@ -23,6 +23,7 @@
 #' Method "zoo" implements the regularization method using the zoo::na.approx function. This method can only handle up to millisecond precision (PrcsSec=3)
 #' @param WndwRglr Position of the window for binning in the "CybiEc" method. \code{WndwRglr} can be centered [Cntr], leading [Lead], or trailing [Trlg] (defaults to centered).\cr
 #' @param IdxWndw Determines which observation to allocate to a bin if multiple observations fall into a single bin when using the "CybiEc" method.. \code{IdxWndw} can be set to closest index [Clst], first index [IdxWndwMin], last index [IdxWndwMax], first index with a non-NA value per column[IdxWndwMinNotNa], last index with a non-NA value per column [IdxWndwMaxNotNa], minimum value per column [WndwMax], or maximum value per column [WndwMax] (defaults to closest).\cr
+#' @param ValuFill Single value with which to fill missing values. Applicable only to MethRglr="CybiEc" or "CybiEcTimeMeas". Defaults to NA \cr
 #' @param DropNotNumc Logical. TRUE (default) for removing any non-numeric data columns prior to regularization (this is done automatically for zoo method). FALSE to attempt to regularize all data columns.
 #' @param RptTimeWndw Logical. TRUE for including the start and end time of each bin with the output, in list element timeWndw. Defaults to FALSE. Not available as TRUE for zoo method.
 #' @param PrcsSec A single numeric (integer) value indicating the operational precision of the seconds field of time vectors. Defaults to 6 (microsecond-precision). Values higher than 6 cannot be guaranteed to produce desired results.
@@ -119,6 +120,7 @@
 #     Add additional options for IdxWndw for MethRglr=CybiEc
 #     - Choose first/last non-NA value per column
 #     - Choose min/max (non-NA) value per column
+#     - Choose the value to fill missing values with (defaults to NA)
 ##############################################################################################
 
 def.rglr <- function(
@@ -132,6 +134,7 @@ def.rglr <- function(
   MethRglr= c("CybiEc", "CybiEcTimeMeas", "zoo")[1],
   WndwRglr = c("Cntr", "Lead", "Trlg")[1],
   IdxWndw = c("Clst","IdxWndwMin","IdxWndwMax","IdxWndwMinNotNa","IdxWndwMaxNotNa","WndwMin","WndwMax")[1],
+  ValuFill = base::as.numeric(NA),
   DropNotNumc = TRUE,
   RptTimeWndw = FALSE,
   PrcsSec = 6
@@ -404,7 +407,7 @@ def.rglr <- function(
     # Pull the value that chosen by IdxWndw within each bin 
     classData <- lapply(dataMeas,base::class) # Get the type of each variable so we can make sure the output gets the same
     typeData <- lapply(dataMeas,base::typeof)
-    dataRglr <- base::data.frame(base::matrix(data=NA*1.5,nrow=numRglr,ncol=numVar)) # initialize, multiply by 1.5 to give numeric
+    dataRglr <- base::data.frame(base::matrix(data=ValuFill,nrow=numRglr,ncol=numVar)) # initialize
     for(idxVar in 1:numVar){
       # Give the column its original class
       base::class(dataRglr[[idxVar]]) <- tryCatch(
