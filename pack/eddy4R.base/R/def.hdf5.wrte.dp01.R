@@ -160,6 +160,7 @@ lapply(names(inpList$qfqm[[Dp01]]), function(x)  {
   inpList$qfqm[[Dp01]][[x]]$qfFinl <<- as.integer(inpList$qfqm[[Dp01]][[x]]$qfFinl)
   #convert to integer
   if(Dp01 == "soni") {inpList$qfqm[[Dp01]][[x]]$qfShdw <<- as.integer(inpList$qfqm[[Dp01]][[x]]$qfShdw)}
+
   #Write 30-min qfqm output to HDF5
   rhdf5::h5writeDataset.data.frame(obj = inpList$qfqm[[Dp01]][[x]][,c("qfFinl","timeBgn","timeEnd")], h5loc = idQfqm30, name = x, DataFrameAsCompound = TRUE)})
 
@@ -170,6 +171,7 @@ lapply(names(inpList$dp01AgrSub$qfqm[[Dp01]]), function(x)  {
   inpList$dp01AgrSub$qfqm[[Dp01]][[x]]$qfFinl <<- as.integer(inpList$dp01AgrSub$qfqm[[Dp01]][[x]]$qfFinl) 
   #convert to integer
   if(Dp01 == "soni") {inpList$dp01AgrSub$qfqm[[Dp01]][[x]]$qfShdw <<- as.integer(inpList$dp01AgrSub$qfqm[[Dp01]][[x]]$qfShdw)} 
+
   #Write 1-min output to HDF5
   rhdf5::h5writeDataset.data.frame(obj = inpList$dp01AgrSub$qfqm[[Dp01]][[x]][,c("qfFinl","timeBgn","timeEnd")], h5loc = idQfqm01, name = x, DataFrameAsCompound = TRUE)})
   }
@@ -181,6 +183,7 @@ lapply(names(inpList$dp01AgrSub$qfqm[[Dp01]]), function(x)  {
     inpList$qfqm[[Dp01]][[x]]$qfFinl <<- as.integer(inpList$qfqm[[Dp01]][[x]]$qfFinl) 
     #convert to integer
     if(Dp01 == "soni") {inpList$qfqm[[Dp01]][[x]]$qfShdw <<- as.integer(inpList$qfqm[[Dp01]][[x]]$qfShdw)}
+    
     #Write 30-min qfqm output to HDF5
     rhdf5::h5writeDataset.data.frame(obj = inpList$qfqm[[Dp01]][[x]], h5loc = idQfqm30, name = x, DataFrameAsCompound = TRUE)})
 
@@ -192,6 +195,7 @@ if(MethSubAgr == TRUE){
     inpList$dp01AgrSub$qfqm[[Dp01]][[x]]$qfFinl <<- as.integer(inpList$dp01AgrSub$qfqm[[Dp01]][[x]]$qfFinl) 
     #convert to integer
     if(Dp01 == "soni") {inpList$dp01AgrSub$qfqm[[Dp01]][[x]]$qfShdw <<- as.integer(inpList$dp01AgrSub$qfqm[[Dp01]][[x]]$qfShdw)} 
+
     #Write 1-min output to HDF5
     rhdf5::h5writeDataset.data.frame(obj = inpList$dp01AgrSub$qfqm[[Dp01]][[x]], h5loc = idQfqm01, name = x, DataFrameAsCompound = TRUE)})
   }

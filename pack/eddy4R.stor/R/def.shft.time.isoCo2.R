@@ -133,7 +133,7 @@ def.shft.time.isoCo2 <- function (
 	lowTmp <- lowTmp[complete.cases(lowTmp$rtioMoleDryCo2), ]
 	medTmp <- medTmp[complete.cases(medTmp$rtioMoleDryCo2), ]
 	highTmp <- highTmp[complete.cases(highTmp$rtioMoleDryCo2), ]
-	
+
 	#determine if there are more than one validation
 
 	#keep rows where the time difference from the first detected time is less than 610 seconds. 
@@ -169,6 +169,7 @@ def.shft.time.isoCo2 <- function (
 	
 	# need to stop if some df are missing or less than 9 minute available data (~30*9):
 	if (nrow(lowTmp) <= 270 || nrow(medTmp) <= 270 || nrow(highTmp) <= 270) {
+
 		return(rpt) # some reference data missing, following steps will fail,
 						 # so just return the input list
 	}

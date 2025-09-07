@@ -196,6 +196,7 @@ def.shft.time.isoH2o <- function (
   #calculate time difference between valvCrdH2o and vaporizer 3-way valve 
   if (((idxValvHead == 1 | idxValvCrdH2oHead == 1) & allData$injNum[1] != 1) ||
       length(idxValvHead) == 0 || length(idxValvCrdH2oHead) == 0 || diffHead == TRUE){
+
     #assign NA to time difference between valvCrdH2o and vaporizer 3-way valve 
     #if the first injection occurred in previous day and the time difference cannot determine
     timeOfstHead  <- NA
@@ -216,6 +217,7 @@ def.shft.time.isoH2o <- function (
   
   
 ##############################################################################################  
+
   #return the input list if data from both timeOfstHeand timeOfstTail cannot be determined:
   if (is.na(timeOfstHead) & is.na(timeOfstTail)) {return(rpt)}
 
