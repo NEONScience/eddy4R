@@ -71,7 +71,8 @@ def.stna <- function(
   Perc = TRUE,
   ...
 ) {
-  
+
+
   #-----------------------------------------------------------
   #BASIC SETUP
   
@@ -80,7 +81,8 @@ def.stna <- function(
       data = data,
       AlgBase = "mean",
       SlctPot = corTempPot,
-      PresPot = presTempPot
+      PresPot = presTempPot,
+      ...
     )
   
   if(MethStna %in% c(1, 3)) { 
@@ -92,7 +94,8 @@ def.stna <- function(
       data = data,
       AlgBase = "trnd",
       SlctPot = corTempPot,
-      PresPot = presTempPot
+      PresPot = presTempPot,
+      ...
     )
     
     #deviation [%]
@@ -126,7 +129,8 @@ def.stna <- function(
                                          refe = data),
         AlgBase = "mean",
         SlctPot = corTempPot,
-        PresPot = presTempPot
+        PresPot = presTempPot,
+        ...
       )$mean[,whrVar]
     )
     

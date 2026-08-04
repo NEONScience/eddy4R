@@ -3,6 +3,8 @@
 export(def.flux.stor)
 export(def.itpl.spce)
 export(def.itpl.time)
+export(def.shft.time.isoCo2)
+export(def.shft.time.isoH2o)
 export(def.time.rate.diff)
 export(wrap.dp01.ecse)
 export(wrap.prd.day.ecse)

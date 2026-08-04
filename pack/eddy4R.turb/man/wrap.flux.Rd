@@ -9,6 +9,9 @@ wrap.flux(
   AlgBase = c("mean", "trnd", "ord03")[1],
   SlctPot = FALSE,
   PresPot = eddy4R.base::IntlNatu$Pres00,
+  ListGasSclr = list(rtioMoleDryCo2 = list(Conv = "densMoleAirDry", Unit =
+    base::data.frame(InpVect = "m s-1", InpSclr = "molCo2 mol-1Dry", Conv = "mol m-3",
+    Out = "mol m-2 s-1"), NameOut = "fluxCo2")),
   ...
 )
 }
@@ -20,6 +23,8 @@ wrap.flux(
 \item{SlctPot}{A logical TRUE or FALSE: use potential temperature and densities? [-]}
 
 \item{PresPot}{A vector of length 1 and of class "numeric". If is.true(SlctPot) it provides the reference pressure level for which potential temperature and densities are calculated. [-]}
+
+\item{ListGasSclr}{A list of gas scalars in data (not including water vapor) to pass to def.flux.sclr() function that includes the Unit data frame. A data frame with the entries InpVect, InpSclr, Conv, Out, of class "character". To ensure consistent units of the returned object, Unit needs to be specified with the constraint that Unit$Out = Unit$InpVect * Unit$InpSclr * Unit$Conv. If the function call argument conv is not specified, then Unit$Conv should be supplied as = "-". The Conv list is character variable that is used to grab the conversion factor from variables in the statStaDiff$base data.frame. If desired conversion factor is not available in can be added directly to data. This defaults to "densMoleAirDry" which is calculated in the function to provide molar fluxes [mol m-2 s-1]. Lastly, NameOut is a character variable for the output name (e.g. "fluxCo2")}
 
 \item{...}{Additional arguments that can be passed to the wrapper function.}
 }

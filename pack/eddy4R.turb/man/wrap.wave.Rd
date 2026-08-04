@@ -2,35 +2,35 @@
 % Please edit documentation in R/wrap.wave.R
 \name{wrap.wave}
 \alias{wrap.wave}
-\title{Wrapper function: Calculate Wavelet spectrum/cospectrum and frequency response correction}
+\title{Wrapper function: Calculate Wavelet cospectra and frequency response correction}
 \usage{
 wrap.wave(
   dfInp,
-  DiffScal = 1/8,
-  FuncWave = Waves::morlet(),
+  FuncWave = "haar",
   FreqSamp = 20,
-  SetPrd = NULL,
+  zeroPad = FALSE,
   ThshMiss = 0.1,
-  paraStbl
+  init = c(3, 5),
+  paraStbl = NULL
 )
 }
 \arguments{
 \item{dfInp}{data.frame, consisting of the input data to perform the wavelet transformation}
 
-\item{DiffScal}{numeric, determining the step difference in scales for the wavelet transformation}
+\item{FuncWave}{numeric, wavelet function to be used within 'wavelets' package, defaults to orthogonal 'haar'}
 
-\item{FuncWave}{Waves package function, denoting the type of mother wavelet function to be used in the transformation}
+\item{FreqSamp}{numeric, sampling frequency, defaults to 20Hz for NEON data}
 
-\item{FreqSamp}{numeric, that determines the time series objects points}
-
-\item{SetPrd}{numeric, which wavelengths/spatial scales to consider if you want to only consider high frequency values}
+\item{zeroPad}{logical, should zero padding of time series be applied? Not currently implemented, for potential future use.}
 
 \item{ThshMiss}{numeric, dimensionless fraction of missing values in each column of data allowed before the quality flag is tripped. Defaults to 0.1 or 10 percent.}
 
-\item{paraStbl}{stability parameter (numeric)}
+\item{init}{numeric, initial parameter values to perform optimization of fitting nonlinear model to frequency-weighted vertical wind speed and find frequency peak occurs at. Passed on to eddy4R.turb::def.spec.peak.R}
+
+\item{paraStbl}{stability parameter (numeric). Not currently implemented.}
 }
 \value{
-An list constaining wavelet spectra, quality flags if data was available to perform correction, and frequency reponse correction parameters if activated.
+An list containing wavelet cospectra, quality flags if data was available to perform correction, and correction coefficients (coefCor) for each variable.
 }
 \description{
 Wrapper function. Calculate Wavelet spectrum/cospectrum using the Waves package. The frequency response correction using Wavelet techniques described in Norbo and Katul, 2012 (NK12)
@@ -40,12 +40,14 @@ Currently none.
 }
 \references{
 License: GNU AFFERO GENERAL PUBLIC LICENSE Version 3, 19 November 2007.
+Nordbo, A., Katul, G. A Wavelet-Based Correction Method for Eddy-Covariance High-Frequency Losses in Scalar Concentration Measurements. Boundary-Layer Meteorol 146, 81-102 (2013). https://doi.org/10.1007/s10546-012-9759-9
 }
 \seealso{
 Currently none.
 }
 \author{
-David Durden \email{ddurden@battelleecology.org}
+Adam Young \email{younga1@battelleecology.org}
+David Durden
 }
 \keyword{NK12,}
 \keyword{Wavelet,}

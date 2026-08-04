@@ -49,15 +49,18 @@
 #     replace negative idxBgn to 1 in specEnd method
 #   Natchaya Pingintha-Durden (2018-03-09)
 #     replace negative idxEnd to 1 in specEnd method
-#   Natchaya Natchaya Pingintha-Durden (2018-11-16)
+#   Natchaya Pingintha-Durden (2018-11-16)
 #     fixed bug to accounting for FreqLoca
+#   Rich Fiorella (2020-10-23)
+#      add specBgnIso option that allows trimming at end of measurements
+#
 ##############################################################################################
 
 def.idx.agr <- function(
   time,
   PrdAgr,
   FreqLoca,
-  MethIdx = c("rglr", "specBgn", "specEnd")[1], 
+  MethIdx = c("rglr", "specBgn", "specBgnIso", "specEnd")[1], 
   crdH2oVali = FALSE,
   data = NULL,
   CritTime = 0
@@ -107,6 +110,36 @@ def.idx.agr <- function(
     }#close if statement of length(which(!is.na(data))) > 0 
   }#close if statement of MethIdx %in% "specBgn"
 
+  #specBgnIso method #########################################################################  
+  if (MethIdx %in% "specBgnIso"){
+    if (is.null(data)){base::stop("Missing input data")}
+    
+    if(length(which(!is.na(data))) > 0){
+      #determine the indices which have data  
+      whrMsm <- which(!is.na(data))
+      #assign the begin index
+      whrBgn <- whrMsm[1]
+      #calculate the difference between indices
+      whrMsmDif <- sapply(1:(length(whrMsm)-1), function(xx) whrMsm[(xx + 1)] - whrMsm[xx])
+      
+      #determine the rest of beginning indicies
+      if(length(which(whrMsmDif > 2)) > 0){
+        whrBgn <- c(whrBgn, whrMsm[which(whrMsmDif > 2) + 1])
+      }
+      #determine idxBgn
+      #cut off some of the last data point
+      #CritTime <- 0
+      #PrdAgr <- 120 
+      idxBgn <- whrBgn + (CritTime*FreqLoca)
+      #Beginning time based on indices
+      timeBgn <- time[idxBgn]
+      #determine the Ending indices
+      idxEnd <- idxBgn + ((PrdAgr*FreqLoca) - (CritTime*FreqLoca) - 1)
+      #Ending time based on indices
+      timeEnd <- time[idxEnd]
+    }#close if statement of length(which(!is.na(data))) > 0 
+  }#close if statement of MethIdx %in% "specBgn" 
+  
 #specEnd method #########################################################################  
   if (MethIdx %in% "specEnd"){
     if (is.null(data)){base::stop("Missing input data")}
