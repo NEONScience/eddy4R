@@ -12,14 +12,14 @@ library(geoNEON)
 # -----------------------------
 # 1) SITE SETTINGS
 # -----------------------------
-site  <- "PUUM"         # NEON site
+site  <- "NIWO"         # NEON site
 AngZaxsSoniInst <- NULL          #Azimuth angle of sonic anemometer deployment
 
 #Get site level geolocation metadata
 locSite <- geoNEON::getLocBySite(site = site, type = "site")
 if(is.null(AngZaxsSoniInst)){
-locSens <- geoNEON::getLocBySite(site = site, type = "TIS", history = F,token = Sys.getenv("NEON_API_TOKEN"))
-AngZaxsSoniInst <- as.numeric(locSens[grep("3D Wind L",locSens$locationDescription),]$gammaOrientation)
+  locSens <- geoNEON::getLocBySite(site = site, type = "TIS", history = F,token = Sys.getenv("NEON_API_TOKEN"))
+  AngZaxsSoniInst <- as.numeric(locSens[grep("3D Wind L",locSens$locationDescription),]$gammaOrientation)
 }
 
 tower_lat   <- as.numeric(locSite$decimalLatitude)        # tower latitude (WGS84)
@@ -77,7 +77,7 @@ for (yr in years) {
               include.provisional = FALSE,
               check.size = check_size,
               savepath = dirDnld,
-             # token = if (nzchar(api_token)) api_token else NA_character_,
+              # token = if (nzchar(api_token)) api_token else NA_character_,
               progress = TRUE)
   }, silent = TRUE)
 }
@@ -112,15 +112,15 @@ years_aspect <- sapply(files_aspect, extract_year)
 mosaic_crop <- function(flist, aoi_poly, aoi_ext) {
   rlist <- lapply(flist, function(f) {
     r <- try(rast(f), silent = TRUE)
-   # if (inherits(r, "try-error")) return(NULL)
+    # if (inherits(r, "try-error")) return(NULL)
     # quick intersect test
-   # if (!relate(r, vect(aoi_poly), "intersects")[1]) return(NULL)
+    # if (!relate(r, vect(aoi_poly), "intersects")[1]) return(NULL)
     r
   })
   rlist <- Filter(Negate(is.null), rlist)
   if (length(rlist) == 0) return(NULL)
   rmos <- if (length(rlist) > 1) do.call(mosaic, c(rlist, list(fun = "mean"))) else rlist[[1]]
- # if (!compareGeom(rmos, vect(aoi_poly), stopOnError = FALSE)) {
+  # if (!compareGeom(rmos, vect(aoi_poly), stopOnError = FALSE)) {
   #  rmos <- project(rmos, crs(vect(aoi_poly)))
   #}
   crop(rmos, aoi_ext)
@@ -180,7 +180,8 @@ compute_sonic_pitch_roll <- function(slope_deg, aspect_deg, sonic_azimuth_deg) {
   # Return degrees
   list(
     pitch_deg = rad2deg(pitch_rad),
-    roll_deg  = rad2deg(roll_rad)
+    roll_deg  = rad2deg(roll_rad),
+    sonic_azimuth_deg = sonic_azimuth_deg
   )
 }
 
@@ -235,7 +236,7 @@ write.csv(slope_aspect_summary,
           file.path(dirOut, paste0(site,"_slope_aspect_mean_by_year_1km_box.csv")),
           row.names = FALSE)
 write.csv(outAng,
-          file.path(dirOut, paste0(site,"_soni_pitch_roll.csv")),
+          file.path(dirOut, paste0(site,"_soni_pitch_roll_azimuth.csv")),
           row.names = FALSE)
 
 
