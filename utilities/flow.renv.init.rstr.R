@@ -34,7 +34,7 @@
 
 # ------ Choose options --------
 #Be sure to set repos to pull packages from (example from last release):
-options(repos = c( CRANNew = "https://packagemanager.rstudio.com/cran/2023-09-22", GCPFIX = "https://packagemanager.rstudio.com/cran/2023-04-17", FIX = "https://packagemanager.rstudio.com/cran/2022-11-30", CRAN =  "https://packagemanager.rstudio.com/cran/2022-02-28"))
+options(repos = c( CRANNew = "https://packagemanager.rstudio.com/cran/2023-10-22", GCPFIX = "https://packagemanager.rstudio.com/cran/2023-04-17", FIX = "https://packagemanager.rstudio.com/cran/2022-11-30", CRAN =  "https://packagemanager.rstudio.com/cran/2022-02-28"))
 
 
 
@@ -42,7 +42,7 @@ options(repos = c( CRANNew = "https://packagemanager.rstudio.com/cran/2023-09-22
 #dirWork <- '~/NEON-IS-data-processing/pack/NEONprocIS.wq'
 #dirWork <- '~/R/NEON-IS-data-processing-homeDir/pack/NEONprocIS.base'
 dirWork <- "/home/ddurden/eddy/code/eddy4R_ddurden"
-PackIgnr <- c("eddy4R.base", "eddy4R.turb", "eddy4R.erf", "eddy4R.stor", "eddy4R.qaqc","som","Noble", "eddy4R.ucrt", "Waves", "accs", "NEONprocIS.base") # These should already be in the respective docker containers
+PackIgnr <- c("eddy4R.base", "eddy4R.turb", "eddy4R.erf", "eddy4R.stor", "eddy4R.qaqc","eddy4R.maps","som","Noble", "eddy4R.ucrt", "Waves", "accs", "NEONprocIS.base") # These should already be in the respective docker containers
 
 # Keep and use the local project that renv creates when creating/updating the lockfile 
 # in dirWork? If TRUE, note .Rprofile and .Rproj files will be created/retained in dirWork, 

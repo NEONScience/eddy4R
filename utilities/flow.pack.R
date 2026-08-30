@@ -58,8 +58,9 @@ namePack <- c("eddy4R.base",
               "eddy4R.turb",
               "eddy4R.qaqc",
               "eddy4R.stor",
+              "eddy4R.maps",
               "Waves"
-              )[1:5]
+              )[1:6]
 
 
 

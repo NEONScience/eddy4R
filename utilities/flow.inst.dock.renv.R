@@ -101,10 +101,11 @@ renv::consent(provided=TRUE)
 
 # 4.2 specify base directory for repo clone NameDirRepo and for packages
 NameDirRepo <- "/home/eddy/eddy4R"
+#NameDirRepo <- "/home/ddurden/eddy/code/eddy4R_ddurden"
 
 #Dealing with bioconductor
 install.packages("BiocManager")
-BiocManager::install(version = "3.12")
+BiocManager::install(version = "3.16")
 renv::install("bioc::EBImage")
 
 #Restore dependencies using renv
@@ -112,7 +113,7 @@ renv::restore(lockfile=paste0(NameDirRepo,"/renv.lock"))
 
 #base::library(devtools)
 
-NameDirPack <- c( "pack/eddy4R.base", "pack/eddy4R.turb", "pack/eddy4R.stor", "pack/eddy4R.qaqc","pack/Waves")
+NameDirPack <- c( "pack/eddy4R.base", "pack/eddy4R.turb", "pack/eddy4R.stor", "pack/eddy4R.qaqc","pack/eddy4R.maps","pack/Waves")
 Dir <- paste(NameDirRepo, NameDirPack, sep = "/")
 
 # 4.3 actual installation
@@ -149,3 +150,4 @@ renv::install(packages = "REddyProc@1.2"#,
                         # repos=c("https://cran.rstudio.com/",              # for dependencies on CRAN packages
                         #         "http://R-Forge.R-project.org")           # for REddyProc on R-Forge
 )
+#library(stars)

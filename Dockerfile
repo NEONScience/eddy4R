@@ -1,6 +1,6 @@
 # start with the ropensci image including debian:testing, r-base, rocker/rstudio, rocker/hadleyverse
 # https://hub.docker.com/r/rocker/ropensci/
-FROM quay.io/battelleecology/rstudio:4.0.5
+FROM 	ghcr.io/rocker-org/geospatial:4.2.2
 
 WORKDIR /home/eddy/eddy4R
 
