@@ -9,11 +9,30 @@ library(remotes)
 #install_github('NEONScience/NEON-geolocation/geoNEON', dependencies=TRUE)
 library(geoNEON)
 
+
+#############################################################
+#Workflow parameters
+#############################################################
+
 # -----------------------------
 # 1) SITE SETTINGS
 # -----------------------------
-site  <- "NIWO"         # NEON site
-AngZaxsSoniInst <- NULL          #Azimuth angle of sonic anemometer deployment
+#Which NEON site are we grabbing data from (4-letter ID)
+setSite <- c("BARR","CLBJ","MLBS","DSNY","NIWO","ORNL","OSBS",
+             "SCBI","LENO","TALL","CPER","BART","HARV","BLAN",
+             "SERC","JERC","GUAN","LAJA","STEI","TREE","UNDE",
+             "KONA","KONZ","UKFS","GRSM","DELA","DCFS","NOGP",
+             "WOOD","RMNP","OAES","YELL","MOAB","STER","JORN",
+             "SRER","ONAQ","ABBY","WREF","SJER","SOAP","TEAK",
+             "TOOL","BONA","DEJU","HEAL","PUUM") [1:47]
+
+
+
+setSite  <- "KONA"         # NEON site if just running a single site (comment out if running all sites)
+AngZaxsSoniInst <- 110          #Azimuth angle of sonic anemometer deployment
+
+#Loop around setSite
+for(site in setSite){
 
 #Get site level geolocation metadata
 locSite <- geoNEON::getLocBySite(site = site, type = "site")
@@ -31,7 +50,7 @@ utm_zone <- as.numeric(locSite$utmZoneNumber)
 dpID        <- "DP3.30025.001"   # Slope & Aspect – LiDAR (1‑km tiles)
 years       <- 2013:as.integer(format(Sys.Date(), "%Y"))
 
-dirBase <- paste0("/home/root/eddy/data/neon_slope_aspect")
+dirBase <- paste0("/home/root/eddy/data/neon_slope_aspect/reorientation")
 dirDnld <- paste0(dirBase,"/dnld")
 dirOut <- paste0(dirBase,"/out")
 dir.create(dirBase, showWarnings = FALSE, recursive = TRUE)
@@ -249,3 +268,5 @@ write.csv(outAng,
 
 #Clean up files
 unlink(list.files(dirDnld, full.names = TRUE), recursive = TRUE)
+
+} #End for loop around site set
