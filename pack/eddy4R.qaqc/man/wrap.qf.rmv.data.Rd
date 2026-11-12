@@ -7,6 +7,7 @@
 wrap.qf.rmv.data(
   inpList,
   Sens = NULL,
+  DspkSensRmv = c("amrs", NA)[1],
   qfRmv = NULL,
   Vrbs = FALSE,
   MethMeas = c("ecte", "ecse")[1],
@@ -16,7 +17,9 @@ wrap.qf.rmv.data(
 \arguments{
 \item{inpList}{List consisting of \code{ff::ffdf} file-backed objects, in the format provided by function \code{eddy4R.base::wrap.hdf5.read()}. Of types numeric and integer.}
 
-\item{Sens}{Character string indicating which sensor will remove high frequency data points that have failed quality flags. Defaults to NULL.}
+\item{Sens}{Character string indicating which sensor will remove high frequency data points that have failed quality flags. Defaults to NULL.#'}
+
+\item{DspkSensRmv}{Character string indicating which sensor will be removed from despiking algorithm. Defaults to "amrs".}
 
 \item{qfRmv}{Character string indicating which quality flag will exclude in the processing. Defaults to NULL.}
 

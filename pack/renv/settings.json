@@ -1,0 +1,30 @@
+{
+  "bioconductor.version": null,
+  "external.libraries": [],
+  "ignored.packages": [
+    "eddy4R.base",
+    "eddy4R.turb",
+    "eddy4R.erf",
+    "eddy4R.stor",
+    "eddy4R.qaqc",
+    "eddy4R.maps",
+    "som",
+    "Noble",
+    "eddy4R.ucrt",
+    "Waves",
+    "accs",
+    "NEONprocIS.base"
+  ],
+  "package.dependency.fields": [
+    "Imports",
+    "Depends",
+    "LinkingTo"
+  ],
+  "r.version": null,
+  "snapshot.type": "implicit",
+  "use.cache": true,
+  "vcs.ignore.cellar": true,
+  "vcs.ignore.library": true,
+  "vcs.ignore.local": true,
+  "vcs.manage.ignores": true
+}

@@ -4,12 +4,14 @@
 \alias{def.rot.enu.ned}
 \title{Definition function: Coordinate transformation from the east-north-up (Enu) coordiante system to the north-east-down (Ned) coordiante system}
 \usage{
-def.rot.enu.ned(angEnu, Meth = c("vec", "ang"))
+def.rot.enu.ned(angEnu, Meth = c("vec", "ang"), unitOut = c("rad", "deg")[1])
 }
 \arguments{
 \item{angEnu}{Angle in east-north-up. [rad]}
 
 \item{Meth}{A vector of class "character" containing the method to use vector or angular, Meth = c("vec", "ang"). [-]}
+
+\item{unitOut}{Output units in either radians [rad] or degrees [deg], defaults to radians.}
 }
 \value{
 Azimuth angle in the North-east-down local coordinate system. [rad]

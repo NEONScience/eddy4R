@@ -9,8 +9,8 @@ def.bin(
   depe,
   RngMinMax = NULL,
   NumBin,
-  widtBin = c("lin", "log10", "exp10", "logExp", "expLog"),
-  meanFunc = c("mean", "median")
+  WidtBin = c("lin", "log10", "exp10", "logExp", "expLog"),
+  Func = c("mean", "median", "sd")
 )
 }
 \arguments{
@@ -22,19 +22,19 @@ def.bin(
 
 \item{NumBin}{An object of class numeric or integer containing the number of bins. []}
 
-\item{widtBin}{An object of class string containing the functions ("lin", "log10", "exp10", "logExp", "expLog") to determine bin width distribution of the independent variable. []}
+\item{WidtBin}{An object of class string containing the functions ("lin", "log10", "exp10", "logExp", "expLog") to determine bin width distribution of the independent variable. []}
 
-\item{meanFunc}{An object of class string containing the arithmetic "mean" and "median". []}
+\item{Func}{An object of class string containing the arithmetic "mean", "median", or "sd". []}
 }
 \value{
-\code{idep} A list object of class "numeric" containing the resulted binning of independent variable and of the same length as {widtBin} and \code{depe} a matrix containing the the resulted binning of dependent variable and of the same length as {widtBin}. \cr
+\code{idep} A list object of class "numeric" containing the resulted binning of independent variable and of the same length as {WidtBin} and \code{depe} a matrix containing the the resulted binning of dependent variable and of the same length as {WidtBin}. \cr
 }
 \description{
 Function definition. Smooth data using Binning method.
 }
 \examples{
-def.bin(idep = rnorm(5000), depe = rnorm(5000), RngMinMax = NULL, NumBin = 23, widtBin = "log10", meanFunc = "mean" )
-def.bin(idep = rnorm(500), depe = rnorm(500), RngMinMax = c(0.1, 0.4), NumBin = 12, widtBin = "lin", meanFunc = "median" )
+def.bin(idep = rnorm(5000), depe = rnorm(5000), RngMinMax = NULL, NumBin = 23, WidtBin = "log10", Func = "mean" )
+def.bin(idep = rnorm(500), depe = rnorm(500), RngMinMax = c(0.1, 0.4), NumBin = 12, WidtBin = "lin", Func = "median" )
 }
 \references{
 License: GNU AFFERO GENERAL PUBLIC LICENSE Version 3, 19 November 2007
