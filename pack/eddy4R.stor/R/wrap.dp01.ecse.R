@@ -82,6 +82,8 @@
 #     updating the columns used to select data from 15 to 8 for ch4Conc to get rid of extra dataframes 
 #   Rich Fiorella (2022-09-20)
 #     based on analysis done for ATM ISO TWG, changing isoCo2 to 6 minute product from 9 minute
+#   Natchaya Pingintha-Durden (2024-11-26)
+#     bug fix for report NaN values when the validation occurred between 2 days and the start and end time cannot be determined
 ##############################################################################################
 wrap.dp01.ecse <- function(
   dp01 = c("co2Stor", "h2oStor", "tempAirLvl", "tempAirTop", "isoCo2", "isoH2o", "ch4Conc")[1],
@@ -430,6 +432,30 @@ wrap.dp01.ecse <- function(
           wrk$idx$timeEnd <- as.POSIXct(ifelse(is.na(wrk$idx$timeEnd), data$time[length(data$time)], wrk$idx$timeEnd), origin = "1970-01-01", tz = "UTC")
           
           #idxAgr2 <- 0
+          #report NaN values when the validation occurred between 2 days and the start and end time cannot be determined
+          if (length(wrk$idx$idxBgn) == 0) {
+            rpt[[1]] <- list()
+            
+            for(idxStat in NameStat){
+              #idxStat <- NameStat[1]
+              rpt[[1]][[idxStat]] <- as.data.frame(matrix(NaN, nrow = 1, ncol = ncol(wrk$data)))
+              #assign name to each column
+              names(rpt[[1]][[idxStat]]) <- names(wrk$data)
+              
+            }; rm(idxStat)
+            #add both time begin and time end to rpt
+            rpt[[1]]$timeBgn <- list()
+            rpt[[1]]$timeEnd <- list()
+            
+            #output time for dp01
+            for(idxVar in names(wrk$data)){
+              rpt[[1]]$timeBgn[[idxVar]] <- data$time[1]
+              rpt[[1]]$timeEnd[[idxVar]] <- data$time[length(data$time)]
+              #unit
+              attributes(rpt[[1]]$mean[[idxVar]])$unit <- attributes(wrk$data[[idxVar]])$unit
+              
+            }; rm(idxVar) 
+          } else{
           for (idxAgr in 1:length(wrk$idx$idxBgn)){
             #idxAgr <- 1
             #only use the middle 2 min before the last 20 s
@@ -457,7 +483,7 @@ wrap.dp01.ecse <- function(
               rpt[[idxAgr]]$timeBgn[[idxVar]] <- wrk$idx$timeBgn[idxAgr]
               rpt[[idxAgr]]$timeEnd[[idxVar]] <- wrk$idx$timeEnd[idxAgr]
             }; rm(idxVar)
-          }#; rm(idxAgr)
+          }}#; rm(idxAgr)
           
         } else {
           
@@ -498,6 +524,16 @@ wrap.dp01.ecse <- function(
           #if last timeEnd is NA, replce that time to the last time value in data$time
           wrk$idx$timeEnd <- as.POSIXct(ifelse(is.na(wrk$idx$timeEnd), data$time[length(data$time)], wrk$idx$timeEnd), origin = "1970-01-01", tz = "UTC")
           
+          #replace data with NaN values when the validation occurred between 2 days and the start and end time cannot be determined
+          if (length(wrk$idx$idxBgn) == 0) {
+            tmpAttr <- list()
+            for (idxData in names(wrk$data)){
+              #defined attributes 
+              tmpAttr[[idxData]] <- attributes(wrk$data[[idxData]])
+              wrk$data[[idxData]] <- NaN
+              attributes(wrk$data[[idxData]]) <- tmpAttr[[idxData]]
+            }
+          } else {
           whrSamp <- wrk$idx$idxBgn[1]:wrk$idx$idxEnd[1]
           if (length (wrk$idx$idxBgn) > 1 ){
             for(ii in 2:length (wrk$idx$idxBgn)){
@@ -505,6 +541,7 @@ wrap.dp01.ecse <- function(
             }
           }
           wrk$data[-whrSamp, ] <- NaN
+          }
         } else {#end of if no measurement data at all in the whole day
           tmpAttr <- list()
           for (idxData in c("frt00", "presEnvHut", "rhEnvHut", "rtioMoleWetH2oEnvHut", "tempEnvHut")){
@@ -851,6 +888,30 @@ wrap.dp01.ecse <- function(
           wrk$idx$timeEnd <- as.POSIXct(ifelse(is.na(wrk$idx$timeEnd), data$time[length(data$time)], wrk$idx$timeEnd), origin = "1970-01-01", tz = "UTC")
           
           #idxAgr2 <- 0
+          #report NaN values when the validation occurred between 2 days and the start and end time cannot be determined
+          if (length(wrk$idx$idxBgn) == 0) {
+            rpt[[1]] <- list()
+            
+            for(idxStat in NameStat){
+              #idxStat <- NameStat[1]
+              rpt[[1]][[idxStat]] <- as.data.frame(matrix(NaN, nrow = 1, ncol = ncol(wrk$data)))
+              #assign name to each column
+              names(rpt[[1]][[idxStat]]) <- names(wrk$data)
+              
+            }; rm(idxStat)
+            #add both time begin and time end to rpt
+            rpt[[1]]$timeBgn <- list()
+            rpt[[1]]$timeEnd <- list()
+            
+            #output time for dp01
+            for(idxVar in names(wrk$data)){
+              rpt[[1]]$timeBgn[[idxVar]] <- data$time[1]
+              rpt[[1]]$timeEnd[[idxVar]] <- data$time[length(data$time)]
+              #unit
+              attributes(rpt[[1]]$mean[[idxVar]])$unit <- attributes(wrk$data[[idxVar]])$unit
+              
+            }; rm(idxVar) 
+          } else{#
           for (idxAgr in 1:length(wrk$idx$idxBgn)){
             #idxAgr <- 1
             #determine input data for each idxAgr
@@ -885,7 +946,7 @@ wrap.dp01.ecse <- function(
               rpt[[idxAgr]]$timeEnd[[idxVar]] <- wrk$idx$timeEnd[idxAgr]
             }; rm(idxVar)
             
-          }#; rm(idxAgr)
+          }}#; rm(idxAgr)
           
         } else {
           
@@ -928,6 +989,17 @@ wrap.dp01.ecse <- function(
           #if last timeEnd is NA, replce that time to the last time value in data$time
           wrk$idx$timeEnd <- as.POSIXct(ifelse(is.na(wrk$idx$timeEnd), data$time[length(data$time)], wrk$idx$timeEnd), origin = "1970-01-01", tz = "UTC")
           
+          #replace data with NaN values when the validation occurred between 2 days and the start and end time cannot be determined
+          if (length(wrk$idx$idxBgn) == 0) {
+            tmpAttr <- list()
+            for (idxData in names(wrk$data)){
+              #defined attributes 
+              tmpAttr[[idxData]] <- attributes(wrk$data[[idxData]])
+              wrk$data[[idxData]] <- NaN
+              attributes(wrk$data[[idxData]]) <- tmpAttr[[idxData]]
+            }
+          } else {
+            
           whrSamp <- wrk$idx$idxBgn[1]:wrk$idx$idxEnd[1]
           if (length (wrk$idx$idxBgn) > 1 ){
             for(ii in 2:length (wrk$idx$idxBgn)){
@@ -935,6 +1007,7 @@ wrap.dp01.ecse <- function(
             }
           }
           wrk$data[-whrSamp, ] <- NaN
+          }
         } else {#end of if no measurement data at all in the whole day
           tmpAttr <- list()
           for (idxData in c("presEnvHut", "rhEnvHut", "rtioMoleWetH2oEnvHut", "tempEnvHut")){
@@ -1219,6 +1292,30 @@ wrap.dp01.ecse <- function(
           wrk$idx$timeEnd <- as.POSIXct(ifelse(is.na(wrk$idx$timeEnd), data$time[length(data$time)], wrk$idx$timeEnd), origin = "1970-01-01", tz = "UTC")
           
           #idxAgr2 <- 0
+          #report NaN values when the validation occurred between 2 days and the start and end time cannot be determined
+          if (length(wrk$idx$idxBgn) == 0) {
+            rpt[[1]] <- list()
+            
+            for(idxStat in NameStat){
+              #idxStat <- NameStat[1]
+              rpt[[1]][[idxStat]] <- as.data.frame(matrix(NaN, nrow = 1, ncol = ncol(wrk$data)))
+              #assign name to each column
+              names(rpt[[1]][[idxStat]]) <- names(wrk$data)
+              
+            }; rm(idxStat)
+            #add both time begin and time end to rpt
+            rpt[[1]]$timeBgn <- list()
+            rpt[[1]]$timeEnd <- list()
+            
+            #output time for dp01
+            for(idxVar in names(wrk$data)){
+              rpt[[1]]$timeBgn[[idxVar]] <- data$time[1]
+              rpt[[1]]$timeEnd[[idxVar]] <- data$time[length(data$time)]
+              #unit
+              attributes(rpt[[1]]$mean[[idxVar]])$unit <- attributes(wrk$data[[idxVar]])$unit
+              
+            }; rm(idxVar)
+          } else{
           for (idxAgr in 1:length(wrk$idx$idxBgn)){
             #idxAgr <- 1
             #determine input data for each idxAgr
@@ -1253,7 +1350,7 @@ wrap.dp01.ecse <- function(
               rpt[[idxAgr]]$timeEnd[[idxVar]] <- wrk$idx$timeEnd[idxAgr]
             }; rm(idxVar)
             
-          }#; rm(idxAgr)
+          }}#; rm(idxAgr)
           
         } else {
           
@@ -1296,6 +1393,16 @@ wrap.dp01.ecse <- function(
           #if last timeEnd is NA, replce that time to the last time value in data$time
           wrk$idx$timeEnd <- as.POSIXct(ifelse(is.na(wrk$idx$timeEnd), data$time[length(data$time)], wrk$idx$timeEnd), origin = "1970-01-01", tz = "UTC")
           
+          #replace data with NaN values when the validation occurred between 2 days and the start and end time cannot be determined
+          if (length(wrk$idx$idxBgn) == 0) {
+            tmpAttr <- list()
+            for (idxData in names(wrk$data)){
+              #defined attributes 
+              tmpAttr[[idxData]] <- attributes(wrk$data[[idxData]])
+              wrk$data[[idxData]] <- NaN
+              attributes(wrk$data[[idxData]]) <- tmpAttr[[idxData]]
+            }
+          } else {
           whrSamp <- wrk$idx$idxBgn[1]:wrk$idx$idxEnd[1]
           if (length (wrk$idx$idxBgn) > 1 ){
             for(ii in 2:length (wrk$idx$idxBgn)){
@@ -1303,6 +1410,7 @@ wrap.dp01.ecse <- function(
             }
           }
           wrk$data[-whrSamp, ] <- NaN
+          }
         } else {#end of if no measurement data at all in the whole day
           tmpAttr <- list()
           for (idxData in c("presEnvHut", "rhEnvHut", "rtioMoleWetH2oEnvHut", "tempEnvHut")){

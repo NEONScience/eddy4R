@@ -93,6 +93,10 @@
 #     adjusting data input for crdCh4 validation time periods
 #   Chris Florian (2021-06-07)
 #     updating list to remove the CH4 reference values from qfqm
+#   David Durden (2024-11-14)
+#     updating default qfSciRevw to be NA
+#   Natchaya Pingintha-Durden (2024-11-26)
+#     bug fix for report NaN values when the validation occurred between 2 days and the start and end time cannot be determined
 ##############################################################################################
 wrap.dp01.qfqm.ecse <- function(
   dp01 = c("co2Stor", "h2oStor", "tempAirLvl", "tempAirTop", "isoCo2", "isoH2o", "ch4Conc")[1],
@@ -254,10 +258,10 @@ wrap.dp01.qfqm.ecse <- function(
             rpt[[1]]$qmAlph <- as.data.frame(matrix(0, nrow = 1, ncol = ncol(wrk$data)))
             rpt[[1]]$qmBeta <- as.data.frame(matrix(1, nrow = 1, ncol = ncol(wrk$data)))
             rpt[[1]]$qfFinl <- as.data.frame(matrix(1, nrow = 1, ncol = ncol(wrk$data)))
-            rpt[[1]]$qfSciRevw <- as.data.frame(matrix(0, nrow = 1, ncol = ncol(wrk$data)))
+            rpt[[1]]$qfSciRevw <- as.data.frame(matrix(NaN, nrow = 1, ncol = ncol(wrk$data)))
             #change data type
             rpt[[1]]$qfFinl[,1:ncol(wrk$data)] <- sapply(rpt[[1]]$qfFinl[,1:ncol(wrk$data)], as.integer)
-            rpt[[1]]$qfSciRevw[,1:ncol(wrk$data)] <- sapply(rpt[[1]]$qfSciRevw[,1:ncol(wrk$data)], as.integer)
+            #rpt[[1]]$qfSciRevw[,1:ncol(wrk$data)] <- sapply(rpt[[1]]$qfSciRevw[,1:ncol(wrk$data)], as.integer)
             
             for(idxQf in NameQf){
               #assign name to each column
@@ -293,10 +297,10 @@ wrap.dp01.qfqm.ecse <- function(
           rpt[[1]]$qmAlph <- as.data.frame(matrix(0, nrow = 1, ncol = ncol(wrk$data)))
           rpt[[1]]$qmBeta <- as.data.frame(matrix(1, nrow = 1, ncol = ncol(wrk$data)))
           rpt[[1]]$qfFinl <- as.data.frame(matrix(1, nrow = 1, ncol = ncol(wrk$data)))
-          rpt[[1]]$qfSciRevw <- as.data.frame(matrix(0, nrow = 1, ncol = ncol(wrk$data)))
+          rpt[[1]]$qfSciRevw <- as.data.frame(matrix(NaN, nrow = 1, ncol = ncol(wrk$data)))
           #change data type
           rpt[[1]]$qfFinl[,1:ncol(wrk$data)] <- sapply(rpt[[1]]$qfFinl[,1:ncol(wrk$data)], as.integer)
-          rpt[[1]]$qfSciRevw[,1:ncol(wrk$data)] <- sapply(rpt[[1]]$qfSciRevw[,1:ncol(wrk$data)], as.integer)
+          #rpt[[1]]$qfSciRevw[,1:ncol(wrk$data)] <- sapply(rpt[[1]]$qfSciRevw[,1:ncol(wrk$data)], as.integer)
           
           for(idxQf in NameQf){
             #assign name to each column
@@ -481,6 +485,50 @@ wrap.dp01.qfqm.ecse <- function(
           wrk$idx$timeEnd <- as.POSIXct(ifelse(is.na(wrk$idx$timeEnd), data$time[length(data$time)], wrk$idx$timeEnd), origin = "1970-01-01", tz = "UTC")
           
           #idxAgr2 <- 0
+          #report NaN values when the validation occurred between 2 days and the start and end time cannot be determined
+          if (length(wrk$idx$idxBgn) == 0) {
+            rpt[[1]] <- list()
+            #idxStat <- NameQf[1]
+            if(lvl %in% c("co2Arch")){
+              rpt[[1]]$qmAlph <- as.data.frame(matrix(NaN, nrow = 1, ncol = ncol(wrk$data)))
+              rpt[[1]]$qmBeta <- as.data.frame(matrix(NaN, nrow = 1, ncol = ncol(wrk$data)))
+              rpt[[1]]$qfFinl <- as.data.frame(matrix(NaN, nrow = 1, ncol = ncol(wrk$data)))
+              rpt[[1]]$qfSciRevw <- as.data.frame(matrix(0, nrow = 1, ncol = ncol(wrk$data)))
+              #change data type
+              rpt[[1]]$qfSciRevw[,1:ncol(wrk$data)] <- sapply(rpt[[1]]$qfSciRevw[,1:ncol(wrk$data)], as.integer)
+            }else{
+              rpt[[1]]$qmAlph <- as.data.frame(matrix(0, nrow = 1, ncol = ncol(wrk$data)))
+              rpt[[1]]$qmBeta <- as.data.frame(matrix(1, nrow = 1, ncol = ncol(wrk$data)))
+              rpt[[1]]$qfFinl <- as.data.frame(matrix(1, nrow = 1, ncol = ncol(wrk$data)))
+              rpt[[1]]$qfSciRevw <- as.data.frame(matrix(0, nrow = 1, ncol = ncol(wrk$data)))
+              #change data type
+              rpt[[1]]$qfFinl[,1:ncol(wrk$data)] <- sapply(rpt[[1]]$qfFinl[,1:ncol(wrk$data)], as.integer)
+              rpt[[1]]$qfSciRevw[,1:ncol(wrk$data)] <- sapply(rpt[[1]]$qfSciRevw[,1:ncol(wrk$data)], as.integer)
+            }
+            
+            for(idxQf in NameQf){
+              #assign name to each column
+              names(rpt[[1]][[idxQf]]) <- names(wrk$data)
+              #not report lvlIrga
+              rpt[[1]][[idxQf]] <- rpt[[1]][[idxQf]][which(!(names(rpt[[1]][[idxQf]]) %in% c("rtioMoleDryCo2Refe")))]
+            }; rm(idxQf)
+            
+            #add both time begin and time end to rpt
+            rpt[[1]]$timeBgn <- list()
+            rpt[[1]]$timeEnd <- list()
+            
+            #output time for dp01
+            for(idxVar in names(wrk$data)[which(!(names(wrk$data) %in% c("rtioMoleDryCo2Refe")))]){
+              rpt[[1]]$timeBgn[[idxVar]] <- data$time[1]
+              rpt[[1]]$timeEnd[[idxVar]] <- data$time[length(data$time)]
+              #unit
+              attributes(rpt[[1]]$qmAlph[[idxVar]])$unit <- "-"
+              attributes(rpt[[1]]$qmBeta[[idxVar]])$unit <- "-"
+              attributes(rpt[[1]]$qfFinl[[idxVar]])$unit <- "NA"
+              attributes(rpt[[1]]$qfSciRevw[[idxVar]])$unit <- "NA"
+            }; rm(idxVar)
+            
+          } else{
           for (idxAgr in 1:length(wrk$idx$idxBgn)){
             #idxAgr <- 1
             #wrk$inpMask for qfqm
@@ -505,7 +553,7 @@ wrap.dp01.qfqm.ecse <- function(
               rpt[[idxAgr]]$timeBgn[[idxVar]] <- wrk$idx$timeBgn[idxAgr]
               rpt[[idxAgr]]$timeEnd[[idxVar]] <- wrk$idx$timeEnd[idxAgr]
             }; rm(idxVar)
-          }#; rm(idxAgr)
+          }}#; rm(idxAgr)
           
         } else {
           
@@ -515,17 +563,17 @@ wrap.dp01.qfqm.ecse <- function(
           rpt[[1]]$qmAlph <- as.data.frame(matrix(NaN, nrow = 1, ncol = ncol(wrk$data)))
           rpt[[1]]$qmBeta <- as.data.frame(matrix(NaN, nrow = 1, ncol = ncol(wrk$data)))
           rpt[[1]]$qfFinl <- as.data.frame(matrix(NaN, nrow = 1, ncol = ncol(wrk$data)))
-          rpt[[1]]$qfSciRevw <- as.data.frame(matrix(0, nrow = 1, ncol = ncol(wrk$data)))
+          rpt[[1]]$qfSciRevw <- as.data.frame(matrix(NaN, nrow = 1, ncol = ncol(wrk$data)))
           #change data type
-          rpt[[1]]$qfSciRevw[,1:ncol(wrk$data)] <- sapply(rpt[[1]]$qfSciRevw[,1:ncol(wrk$data)], as.integer)
+          #rpt[[1]]$qfSciRevw[,1:ncol(wrk$data)] <- sapply(rpt[[1]]$qfSciRevw[,1:ncol(wrk$data)], as.integer)
           }else{
             rpt[[1]]$qmAlph <- as.data.frame(matrix(0, nrow = 1, ncol = ncol(wrk$data)))
             rpt[[1]]$qmBeta <- as.data.frame(matrix(1, nrow = 1, ncol = ncol(wrk$data)))
             rpt[[1]]$qfFinl <- as.data.frame(matrix(1, nrow = 1, ncol = ncol(wrk$data)))
-            rpt[[1]]$qfSciRevw <- as.data.frame(matrix(0, nrow = 1, ncol = ncol(wrk$data)))
+            rpt[[1]]$qfSciRevw <- as.data.frame(matrix(NaN, nrow = 1, ncol = ncol(wrk$data)))
             #change data type
             rpt[[1]]$qfFinl[,1:ncol(wrk$data)] <- sapply(rpt[[1]]$qfFinl[,1:ncol(wrk$data)], as.integer)
-            rpt[[1]]$qfSciRevw[,1:ncol(wrk$data)] <- sapply(rpt[[1]]$qfSciRevw[,1:ncol(wrk$data)], as.integer)
+            #rpt[[1]]$qfSciRevw[,1:ncol(wrk$data)] <- sapply(rpt[[1]]$qfSciRevw[,1:ncol(wrk$data)], as.integer)
           }
           
           for(idxQf in NameQf){
@@ -565,6 +613,15 @@ wrap.dp01.qfqm.ecse <- function(
           #if last timeEnd is NA, replce that time to the last time value in data$time
           wrk$idx$timeEnd <- as.POSIXct(ifelse(is.na(wrk$idx$timeEnd), data$time[length(data$time)], wrk$idx$timeEnd), origin = "1970-01-01", tz = "UTC")
           
+          #replace data with NaN values when the validation occurred between 2 days and the start and end time cannot be determined
+          if (length(wrk$idx$idxBgn) == 0) {
+            wrk$data[] <- NaN
+            for (idxSens in names(wrk$qfqm)){
+              #replace all qf that not belong to that measurement level by NaN
+              wrk$qfqm[[idxSens]][] <- NaN
+            }
+            
+          } else {
           whrSamp <- wrk$idx$idxBgn[1]:wrk$idx$idxEnd[1]
           if (length (wrk$idx$idxBgn) > 1 ){
             for(ii in 2:length (wrk$idx$idxBgn)){
@@ -576,6 +633,7 @@ wrap.dp01.qfqm.ecse <- function(
             #replace all qf that not belong to that measurement level by NaN
             wrk$qfqm[[idxSens]][-whrSamp, 1:length(wrk$qfqm[[idxSens]])] <- NaN
           }
+          }#close else if length(wrk$idx$idxBgn) > 0
         } #else {#end of if no measurement data at all in the whole day
         #   wrk$data$frt00 <- NaN #assign NaN to frt00 data
         # }
@@ -776,10 +834,10 @@ wrap.dp01.qfqm.ecse <- function(
           rpt[[1]]$qmAlph <- as.data.frame(matrix(0, nrow = 1, ncol = ncol(wrk$data)))
           rpt[[1]]$qmBeta <- as.data.frame(matrix(1, nrow = 1, ncol = ncol(wrk$data)))
           rpt[[1]]$qfFinl <- as.data.frame(matrix(1, nrow = 1, ncol = ncol(wrk$data)))
-          rpt[[1]]$qfSciRevw <- as.data.frame(matrix(0, nrow = 1, ncol = ncol(wrk$data)))
+          rpt[[1]]$qfSciRevw <- as.data.frame(matrix(NaN, nrow = 1, ncol = ncol(wrk$data)))
           #change data type
           rpt[[1]]$qfFinl[,1:ncol(wrk$data)] <- sapply(rpt[[1]]$qfFinl[,1:ncol(wrk$data)], as.integer)
-          rpt[[1]]$qfSciRevw[,1:ncol(wrk$data)] <- sapply(rpt[[1]]$qfSciRevw[,1:ncol(wrk$data)], as.integer)
+          #rpt[[1]]$qfSciRevw[,1:ncol(wrk$data)] <- sapply(rpt[[1]]$qfSciRevw[,1:ncol(wrk$data)], as.integer)
           
           for(idxQf in NameQf){
             #assign name to each column
@@ -920,6 +978,49 @@ wrap.dp01.qfqm.ecse <- function(
           wrk$idx$timeEnd <- as.POSIXct(ifelse(is.na(wrk$idx$timeEnd), data$time[length(data$time)], wrk$idx$timeEnd), origin = "1970-01-01", tz = "UTC")
           
           #idxAgr2 <- 0
+          #report NaN values when the validation occurred between 2 days and the start and end time cannot be determined
+          if (length(wrk$idx$idxBgn) == 0) {
+            rpt[[1]] <- list()
+            
+            if(lvl %in% c("co2Arch")){
+              rpt[[1]]$qmAlph <- as.data.frame(matrix(NaN, nrow = 1, ncol = ncol(wrk$data)))
+              rpt[[1]]$qmBeta <- as.data.frame(matrix(NaN, nrow = 1, ncol = ncol(wrk$data)))
+              rpt[[1]]$qfFinl <- as.data.frame(matrix(NaN, nrow = 1, ncol = ncol(wrk$data)))
+              rpt[[1]]$qfSciRevw <- as.data.frame(matrix(0, nrow = 1, ncol = ncol(wrk$data)))
+              #change data type
+              rpt[[1]]$qfSciRevw[,1:ncol(wrk$data)] <- sapply(rpt[[1]]$qfSciRevw[,1:ncol(wrk$data)], as.integer)
+            }else{
+              rpt[[1]]$qmAlph <- as.data.frame(matrix(0, nrow = 1, ncol = ncol(wrk$data)))
+              rpt[[1]]$qmBeta <- as.data.frame(matrix(1, nrow = 1, ncol = ncol(wrk$data)))
+              rpt[[1]]$qfFinl <- as.data.frame(matrix(1, nrow = 1, ncol = ncol(wrk$data)))
+              rpt[[1]]$qfSciRevw <- as.data.frame(matrix(0, nrow = 1, ncol = ncol(wrk$data)))
+              #change data type
+              rpt[[1]]$qfFinl[,1:ncol(wrk$data)] <- sapply(rpt[[1]]$qfFinl[,1:ncol(wrk$data)], as.integer)
+              rpt[[1]]$qfSciRevw[,1:ncol(wrk$data)] <- sapply(rpt[[1]]$qfSciRevw[,1:ncol(wrk$data)], as.integer)
+            }
+            
+            for(idxQf in NameQf){
+              #assign name to each column
+              names(rpt[[1]][[idxQf]]) <- names(wrk$data)
+              #not report lvlIrga
+              rpt[[1]][[idxQf]] <- rpt[[1]][[idxQf]][which(!(names(rpt[[1]][[idxQf]]) %in% c("rtioMoleDryCo2Refe", "dlta13CCo2Refe", "idGas")))]
+            }; rm(idxQf)
+            
+            #add both time begin and time end to rpt
+            rpt[[1]]$timeBgn <- list()
+            rpt[[1]]$timeEnd <- list()
+            
+            #output time for dp01
+            for(idxVar in names(wrk$data)[which(!(names(wrk$data) %in% c("rtioMoleDryCo2Refe", "dlta13CCo2Refe", "idGas")))]){
+              rpt[[1]]$timeBgn[[idxVar]] <- data$time[1]
+              rpt[[1]]$timeEnd[[idxVar]] <- data$time[length(data$time)]
+              #unit
+              attributes(rpt[[1]]$qmAlph[[idxVar]])$unit <- "-"
+              attributes(rpt[[1]]$qmBeta[[idxVar]])$unit <- "-"
+              attributes(rpt[[1]]$qfFinl[[idxVar]])$unit <- "NA"
+              attributes(rpt[[1]]$qfSciRevw[[idxVar]])$unit <- "NA"
+            }; rm(idxVar)
+          } else {
           for (idxAgr in 1:length(wrk$idx$idxBgn)){
             #idxAgr <- 1
             #determine input data for each idxAgr
@@ -949,7 +1050,7 @@ wrap.dp01.qfqm.ecse <- function(
               rpt[[idxAgr]]$timeEnd[[idxVar]] <- wrk$idx$timeEnd[idxAgr]
             }; rm(idxVar)
             
-          }#; rm(idxAgr)
+          }}#; rm(idxAgr)
           
         } else {
           
@@ -959,17 +1060,17 @@ wrap.dp01.qfqm.ecse <- function(
             rpt[[1]]$qmAlph <- as.data.frame(matrix(NaN, nrow = 1, ncol = ncol(wrk$data)))
             rpt[[1]]$qmBeta <- as.data.frame(matrix(NaN, nrow = 1, ncol = ncol(wrk$data)))
             rpt[[1]]$qfFinl <- as.data.frame(matrix(NaN, nrow = 1, ncol = ncol(wrk$data)))
-            rpt[[1]]$qfSciRevw <- as.data.frame(matrix(0, nrow = 1, ncol = ncol(wrk$data)))
+            rpt[[1]]$qfSciRevw <- as.data.frame(matrix(NaN, nrow = 1, ncol = ncol(wrk$data)))
             #change data type
-            rpt[[1]]$qfSciRevw[,1:ncol(wrk$data)] <- sapply(rpt[[1]]$qfSciRevw[,1:ncol(wrk$data)], as.integer)
+            #rpt[[1]]$qfSciRevw[,1:ncol(wrk$data)] <- sapply(rpt[[1]]$qfSciRevw[,1:ncol(wrk$data)], as.integer)
           }else{
             rpt[[1]]$qmAlph <- as.data.frame(matrix(0, nrow = 1, ncol = ncol(wrk$data)))
             rpt[[1]]$qmBeta <- as.data.frame(matrix(1, nrow = 1, ncol = ncol(wrk$data)))
             rpt[[1]]$qfFinl <- as.data.frame(matrix(1, nrow = 1, ncol = ncol(wrk$data)))
-            rpt[[1]]$qfSciRevw <- as.data.frame(matrix(0, nrow = 1, ncol = ncol(wrk$data)))
+            rpt[[1]]$qfSciRevw <- as.data.frame(matrix(NaN, nrow = 1, ncol = ncol(wrk$data)))
             #change data type
             rpt[[1]]$qfFinl[,1:ncol(wrk$data)] <- sapply(rpt[[1]]$qfFinl[,1:ncol(wrk$data)], as.integer)
-            rpt[[1]]$qfSciRevw[,1:ncol(wrk$data)] <- sapply(rpt[[1]]$qfSciRevw[,1:ncol(wrk$data)], as.integer)
+            #rpt[[1]]$qfSciRevw[,1:ncol(wrk$data)] <- sapply(rpt[[1]]$qfSciRevw[,1:ncol(wrk$data)], as.integer)
           }
           
           for(idxQf in NameQf){
@@ -1009,6 +1110,15 @@ wrap.dp01.qfqm.ecse <- function(
           #if last timeEnd is NA, replce that time to the last time value in data$time
           wrk$idx$timeEnd <- as.POSIXct(ifelse(is.na(wrk$idx$timeEnd), data$time[length(data$time)], wrk$idx$timeEnd), origin = "1970-01-01", tz = "UTC")
           
+          #replace data with NaN values when the validation occurred between 2 days and the start and end time cannot be determined
+          if (length(wrk$idx$idxBgn) == 0) {
+            wrk$data[] <- NaN
+            for (idxSens in names(wrk$qfqm)){
+              #replace all qf that not belong to that measurement level by NaN
+              wrk$qfqm[[idxSens]][] <- NaN
+            }
+            
+          } else {
           whrSamp <- wrk$idx$idxBgn[1]:wrk$idx$idxEnd[1]
           if (length (wrk$idx$idxBgn) > 1 ){
             for(ii in 2:length (wrk$idx$idxBgn)){
@@ -1020,7 +1130,8 @@ wrap.dp01.qfqm.ecse <- function(
             #replace all qf that not belong to that measurement level by NaN
             wrk$qfqm[[idxSens]][-whrSamp, 1:length(wrk$qfqm[[idxSens]])] <- NaN
           }
-        } 
+          }#close else if length(wrk$idx$idxBgn) > 0
+        }
         
         for(idxAgr in c(1:length(idxTime[[paste0(PrdAgr, "min")]]$Bgn))) {
           #idxAgr <- 1
@@ -1160,10 +1271,10 @@ wrap.dp01.qfqm.ecse <- function(
           rpt[[1]]$qmAlph <- as.data.frame(matrix(0, nrow = 1, ncol = ncol(wrk$data)))
           rpt[[1]]$qmBeta <- as.data.frame(matrix(1, nrow = 1, ncol = ncol(wrk$data)))
           rpt[[1]]$qfFinl <- as.data.frame(matrix(1, nrow = 1, ncol = ncol(wrk$data)))
-          rpt[[1]]$qfSciRevw <- as.data.frame(matrix(0, nrow = 1, ncol = ncol(wrk$data)))
+          rpt[[1]]$qfSciRevw <- as.data.frame(matrix(NaN, nrow = 1, ncol = ncol(wrk$data)))
           #change data type
           rpt[[1]]$qfFinl[,1:ncol(wrk$data)] <- sapply(rpt[[1]]$qfFinl[,1:ncol(wrk$data)], as.integer)
-          rpt[[1]]$qfSciRevw[,1:ncol(wrk$data)] <- sapply(rpt[[1]]$qfSciRevw[,1:ncol(wrk$data)], as.integer)
+          #rpt[[1]]$qfSciRevw[,1:ncol(wrk$data)] <- sapply(rpt[[1]]$qfSciRevw[,1:ncol(wrk$data)], as.integer)
           
           for(idxQf in NameQf){
             #assign name to each column
@@ -1296,6 +1407,49 @@ wrap.dp01.qfqm.ecse <- function(
           wrk$idx$timeEnd <- as.POSIXct(ifelse(is.na(wrk$idx$timeEnd), data$time[length(data$time)], wrk$idx$timeEnd), origin = "1970-01-01", tz = "UTC")
           
           #idxAgr2 <- 0
+          #report NaN values when the validation occurred between 2 days and the start and end time cannot be determined
+          if (length(wrk$idx$idxBgn) == 0) {
+            rpt[[1]] <- list()
+            
+            if(lvl %in% c("co2Arch")){
+              rpt[[1]]$qmAlph <- as.data.frame(matrix(NaN, nrow = 1, ncol = ncol(wrk$data)))
+              rpt[[1]]$qmBeta <- as.data.frame(matrix(NaN, nrow = 1, ncol = ncol(wrk$data)))
+              rpt[[1]]$qfFinl <- as.data.frame(matrix(NaN, nrow = 1, ncol = ncol(wrk$data)))
+              rpt[[1]]$qfSciRevw <- as.data.frame(matrix(0, nrow = 1, ncol = ncol(wrk$data)))
+              #change data type
+              rpt[[1]]$qfSciRevw[,1:ncol(wrk$data)] <- sapply(rpt[[1]]$qfSciRevw[,1:ncol(wrk$data)], as.integer)
+            }else{
+              rpt[[1]]$qmAlph <- as.data.frame(matrix(0, nrow = 1, ncol = ncol(wrk$data)))
+              rpt[[1]]$qmBeta <- as.data.frame(matrix(1, nrow = 1, ncol = ncol(wrk$data)))
+              rpt[[1]]$qfFinl <- as.data.frame(matrix(1, nrow = 1, ncol = ncol(wrk$data)))
+              rpt[[1]]$qfSciRevw <- as.data.frame(matrix(0, nrow = 1, ncol = ncol(wrk$data)))
+              #change data type
+              rpt[[1]]$qfFinl[,1:ncol(wrk$data)] <- sapply(rpt[[1]]$qfFinl[,1:ncol(wrk$data)], as.integer)
+              rpt[[1]]$qfSciRevw[,1:ncol(wrk$data)] <- sapply(rpt[[1]]$qfSciRevw[,1:ncol(wrk$data)], as.integer)
+            }
+            
+            for(idxQf in NameQf){
+              #assign name to each column
+              names(rpt[[1]][[idxQf]]) <- names(wrk$data)
+              #not report lvlIrga
+              rpt[[1]][[idxQf]] <- rpt[[1]][[idxQf]][which(!(names(rpt[[1]][[idxQf]]) %in% c("rtioMoleDryCh4Refe", "idGas")))]
+            }; rm(idxQf)
+            
+            #add both time begin and time end to rpt
+            rpt[[1]]$timeBgn <- list()
+            rpt[[1]]$timeEnd <- list()
+            
+            #output time for dp01
+            for(idxVar in names(wrk$data)[which(!(names(wrk$data) %in% c("rtioMoleDryCh4Refe", "idGas")))]){
+              rpt[[1]]$timeBgn[[idxVar]] <- data$time[1]
+              rpt[[1]]$timeEnd[[idxVar]] <- data$time[length(data$time)]
+              #unit
+              attributes(rpt[[1]]$qmAlph[[idxVar]])$unit <- "-"
+              attributes(rpt[[1]]$qmBeta[[idxVar]])$unit <- "-"
+              attributes(rpt[[1]]$qfFinl[[idxVar]])$unit <- "NA"
+              attributes(rpt[[1]]$qfSciRevw[[idxVar]])$unit <- "NA"
+            }; rm(idxVar)
+          } else {
           for (idxAgr in 1:length(wrk$idx$idxBgn)){
             #idxAgr <- 1
             #determine input data for each idxAgr
@@ -1325,7 +1479,7 @@ wrap.dp01.qfqm.ecse <- function(
               rpt[[idxAgr]]$timeEnd[[idxVar]] <- wrk$idx$timeEnd[idxAgr]
             }; rm(idxVar)
             
-          }#; rm(idxAgr)
+          }}#; rm(idxAgr)
           
         } else {
           
@@ -1335,17 +1489,17 @@ wrap.dp01.qfqm.ecse <- function(
             rpt[[1]]$qmAlph <- as.data.frame(matrix(NaN, nrow = 1, ncol = ncol(wrk$data)))
             rpt[[1]]$qmBeta <- as.data.frame(matrix(NaN, nrow = 1, ncol = ncol(wrk$data)))
             rpt[[1]]$qfFinl <- as.data.frame(matrix(NaN, nrow = 1, ncol = ncol(wrk$data)))
-            rpt[[1]]$qfSciRevw <- as.data.frame(matrix(0, nrow = 1, ncol = ncol(wrk$data)))
+            rpt[[1]]$qfSciRevw <- as.data.frame(matrix(NaN, nrow = 1, ncol = ncol(wrk$data)))
             #change data type
-            rpt[[1]]$qfSciRevw[,1:ncol(wrk$data)] <- sapply(rpt[[1]]$qfSciRevw[,1:ncol(wrk$data)], as.integer)
+            #rpt[[1]]$qfSciRevw[,1:ncol(wrk$data)] <- sapply(rpt[[1]]$qfSciRevw[,1:ncol(wrk$data)], as.integer)
           }else{
             rpt[[1]]$qmAlph <- as.data.frame(matrix(0, nrow = 1, ncol = ncol(wrk$data)))
             rpt[[1]]$qmBeta <- as.data.frame(matrix(1, nrow = 1, ncol = ncol(wrk$data)))
             rpt[[1]]$qfFinl <- as.data.frame(matrix(1, nrow = 1, ncol = ncol(wrk$data)))
-            rpt[[1]]$qfSciRevw <- as.data.frame(matrix(0, nrow = 1, ncol = ncol(wrk$data)))
+            rpt[[1]]$qfSciRevw <- as.data.frame(matrix(NaN, nrow = 1, ncol = ncol(wrk$data)))
             #change data type
             rpt[[1]]$qfFinl[,1:ncol(wrk$data)] <- sapply(rpt[[1]]$qfFinl[,1:ncol(wrk$data)], as.integer)
-            rpt[[1]]$qfSciRevw[,1:ncol(wrk$data)] <- sapply(rpt[[1]]$qfSciRevw[,1:ncol(wrk$data)], as.integer)
+            #rpt[[1]]$qfSciRevw[,1:ncol(wrk$data)] <- sapply(rpt[[1]]$qfSciRevw[,1:ncol(wrk$data)], as.integer)
           }
           
           for(idxQf in NameQf){
@@ -1385,6 +1539,15 @@ wrap.dp01.qfqm.ecse <- function(
           #if last timeEnd is NA, replce that time to the last time value in data$time
           wrk$idx$timeEnd <- as.POSIXct(ifelse(is.na(wrk$idx$timeEnd), data$time[length(data$time)], wrk$idx$timeEnd), origin = "1970-01-01", tz = "UTC")
           
+          #replace data with NaN values when the validation occurred between 2 days and the start and end time cannot be determined
+          if (length(wrk$idx$idxBgn) == 0) {
+            wrk$data[] <- NaN
+            for (idxSens in names(wrk$qfqm)){
+              #replace all qf that not belong to that measurement level by NaN
+              wrk$qfqm[[idxSens]][] <- NaN
+            }
+            
+          } else {
           whrSamp <- wrk$idx$idxBgn[1]:wrk$idx$idxEnd[1]
           if (length (wrk$idx$idxBgn) > 1 ){
             for(ii in 2:length (wrk$idx$idxBgn)){
@@ -1396,7 +1559,8 @@ wrap.dp01.qfqm.ecse <- function(
             #replace all qf that not belong to that measurement level by NaN
             wrk$qfqm[[idxSens]][-whrSamp, 1:length(wrk$qfqm[[idxSens]])] <- NaN
           }
-        } 
+          } #close else if length(wrk$idx$idxBgn) > 0
+        }
         
         for(idxAgr in c(1:length(idxTime[[paste0(PrdAgr, "min")]]$Bgn))) {
           #idxAgr <- 1
@@ -1531,10 +1695,10 @@ wrap.dp01.qfqm.ecse <- function(
           rpt[[1]]$qmAlph <- as.data.frame(matrix(0, nrow = 1, ncol = ncol(wrk$data)))
           rpt[[1]]$qmBeta <- as.data.frame(matrix(1, nrow = 1, ncol = ncol(wrk$data)))
           rpt[[1]]$qfFinl <- as.data.frame(matrix(1, nrow = 1, ncol = ncol(wrk$data)))
-          rpt[[1]]$qfSciRevw <- as.data.frame(matrix(0, nrow = 1, ncol = ncol(wrk$data)))
+          rpt[[1]]$qfSciRevw <- as.data.frame(matrix(NaN, nrow = 1, ncol = ncol(wrk$data)))
           #change data type
           rpt[[1]]$qfFinl[,1:ncol(wrk$data)] <- sapply(rpt[[1]]$qfFinl[,1:ncol(wrk$data)], as.integer)
-          rpt[[1]]$qfSciRevw[,1:ncol(wrk$data)] <- sapply(rpt[[1]]$qfSciRevw[,1:ncol(wrk$data)], as.integer)
+          #rpt[[1]]$qfSciRevw[,1:ncol(wrk$data)] <- sapply(rpt[[1]]$qfSciRevw[,1:ncol(wrk$data)], as.integer)
           
           for(idxQf in NameQf){
             #assign name to each column
@@ -1740,10 +1904,10 @@ wrap.dp01.qfqm.ecse <- function(
           rpt[[1]]$qmAlph <- as.data.frame(matrix(0, nrow = 1, ncol = ncol(wrk$data)))
           rpt[[1]]$qmBeta <- as.data.frame(matrix(1, nrow = 1, ncol = ncol(wrk$data)))
           rpt[[1]]$qfFinl <- as.data.frame(matrix(1, nrow = 1, ncol = ncol(wrk$data)))
-          rpt[[1]]$qfSciRevw <- as.data.frame(matrix(0, nrow = 1, ncol = ncol(wrk$data)))
+          rpt[[1]]$qfSciRevw <- as.data.frame(matrix(NaN, nrow = 1, ncol = ncol(wrk$data)))
           #change data type
           rpt[[1]]$qfFinl[,1:ncol(wrk$data)] <- sapply(rpt[[1]]$qfFinl[,1:ncol(wrk$data)], as.integer)
-          rpt[[1]]$qfSciRevw[,1:ncol(wrk$data)] <- sapply(rpt[[1]]$qfSciRevw[,1:ncol(wrk$data)], as.integer)
+         # rpt[[1]]$qfSciRevw[,1:ncol(wrk$data)] <- sapply(rpt[[1]]$qfSciRevw[,1:ncol(wrk$data)], as.integer)
           
           for(idxQf in NameQf){
             #assign name to each column

@@ -8,6 +8,7 @@
 
 #' @param angEnu Angle in east-north-up. [rad]
 #' @param Meth A vector of class "character" containing the method to use vector or angular, Meth = c("vec", "ang"). [-]
+#' @param unitOut Output units in either radians [rad] or degrees [deg], defaults to radians.
 
 #' @return Azimuth angle in the North-east-down local coordinate system. [rad]
 
@@ -27,10 +28,12 @@
 #     original creation
 #   Natchaya P-Durden (2018-04-03)
 #     add defined parameters in the function header
+#   David Durden (2025-08-05)
+#     Add option to output as degrees
 ##############################################################################################
 
 # Rotation from East-North-Up to North-East-Down coordinates
-def.rot.enu.ned <- function(angEnu, Meth = c("vec", "ang")) {
+def.rot.enu.ned <- function(angEnu, Meth = c("vec", "ang"), unitOut = c("rad","deg")[1]) {
  
   #Get rid of negative values
   angEnu <- ((2*pi) + angEnu)%%(2*pi)
@@ -40,6 +43,10 @@ def.rot.enu.ned <- function(angEnu, Meth = c("vec", "ang")) {
   angNed <- ((2*pi) + angNed)%%(2*pi)
   #Assign unit
   attr(x = angNed, which = "unit") <- "rad"
+  
+  #Convert output units if needed
+  angNed <- eddy4R.base::def.unit.conv(data = angNed, unitFrom = attributes(angNed)$unit, unitTo = unitOut, MethGc = FALSE)$data
+  
   #Return the value
   return(angNed)
   

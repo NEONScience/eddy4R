@@ -100,7 +100,8 @@
 #     Changing qfSpkPresAtm to quality indicator and fixing soni tempAir flags
 #   Chris Florian (2021-11-12)
 #     Removing the step test from Picarro data products, it was not working as intended due to NaNs introduced during regularization
-
+#   David Durden (2025-07-08)
+#    Removing amrs qfSpk flags
 ##############################################################################################
 
 def.dp01.grp.qf <- function(
@@ -896,74 +897,74 @@ if (MethMeas == "ecte") {
       setQf$accXaxs <- data.frame("qfRngAccXaxs" = qfInp$amrs$qfRngAccXaxs,
                                   "qfStepAccXaxs" = qfInp$amrs$qfStepAccXaxs,
                                   "qfPersAccXaxs" = qfInp$amrs$qfPersAccXaxs,
-                                  "qfSpkAccXaxs" = qfInp$amrs$qfSpkAccXaxs,
+                                 # "qfSpkAccXaxs" = qfInp$amrs$qfSpkAccXaxs,
                                   "qfNullAccXaxs" = qfInp$amrs$qfNullAccXaxs
                                   )
       
       setQf$accYaxs <- data.frame("qfRngAccYaxs" = qfInp$amrs$qfRngAccYaxs,
                                   "qfStepAccYaxs" = qfInp$amrs$qfStepAccYaxs,
                                   "qfPersAccYaxs" = qfInp$amrs$qfPersAccYaxs,
-                                  "qfSpkAccYaxs" = qfInp$amrs$qfSpkAccYaxs,
+                                 # "qfSpkAccYaxs" = qfInp$amrs$qfSpkAccYaxs,
                                   "qfNullAccYaxs" = qfInp$amrs$qfNullAccYaxs)
       
       setQf$accZaxs <- data.frame("qfRngAccZaxs" = qfInp$amrs$qfRngAccZaxs,
                                   "qfStepAccZaxs" = qfInp$amrs$qfStepAccZaxs,
                                   "qfPersAccZaxs" = qfInp$amrs$qfPersAccZaxs,
-                                  "qfSpkAccZaxs" = qfInp$amrs$qfSpkAccZaxs,
+                                  #"qfSpkAccZaxs" = qfInp$amrs$qfSpkAccZaxs,
                                   "qfNullAccZaxs" = qfInp$amrs$qfNullAccZaxs)
       
       setQf$accXaxsDiff <- data.frame("qfRngAccXaxsDiff" = qfInp$amrs$qfRngAccXaxsDiff,
                                       "qfStepAccXaxsDiff" = qfInp$amrs$qfStepAccXaxsDiff,
                                       "qfPersAccXaxsDiff" = qfInp$amrs$qfPersAccXaxsDiff,
-                                      "qfSpkAccXaxsDiff" = qfInp$amrs$qfSpkAccXaxsDiff,
+                                     # "qfSpkAccXaxsDiff" = qfInp$amrs$qfSpkAccXaxsDiff,
                                       "qfNullAccXaxsDiff" = qfInp$amrs$qfNullAccXaxsDiff)
       
       setQf$accYaxsDiff <- data.frame("qfRngAccYaxsDiff" = qfInp$amrs$qfRngAccYaxsDiff,
                                       "qfStepAccYaxsDiff" = qfInp$amrs$qfStepAccYaxsDiff,
                                       "qfPersAccYaxsDiff" = qfInp$amrs$qfPersAccYaxsDiff,
-                                      "qfSpkAccYaxsDiff" = qfInp$amrs$qfSpkAccYaxsDiff,
+                                     # "qfSpkAccYaxsDiff" = qfInp$amrs$qfSpkAccYaxsDiff,
                                       "qfNullAccYaxsDiff" = qfInp$amrs$qfNullAccYaxsDiff)
       
       setQf$accZaxsDiff <- data.frame("qfRngAccZaxsDiff" = qfInp$amrs$qfRngAccZaxsDiff,
                                       "qfStepAccZaxsDiff" = qfInp$amrs$qfStepAccZaxsDiff,
                                       "qfPersAccZaxsDiff" = qfInp$amrs$qfPersAccZaxsDiff,
-                                      "qfSpkAccZaxsDiff" = qfInp$amrs$qfSpkAccZaxsDiff,
+                                      #"qfSpkAccZaxsDiff" = qfInp$amrs$qfSpkAccZaxsDiff,
                                       "qfNullAccZaxsDiff" = qfInp$amrs$qfNullAccZaxsDiff)
       
       setQf$avelXaxs <- data.frame("qfRngAvelXaxs" = qfInp$amrs$qfRngAvelXaxs,
                                    "qfStepAvelXaxs" = qfInp$amrs$qfStepAvelXaxs,
                                    "qfPersAvelXaxs" = qfInp$amrs$qfPersAvelXaxs,
-                                   "qfSpkAvelXaxs" = qfInp$amrs$qfSpkAvelXaxs,
+                                 #  "qfSpkAvelXaxs" = qfInp$amrs$qfSpkAvelXaxs,
                                    "qfNullAvelXaxs" = qfInp$amrs$qfNullAvelXaxs)
       
       setQf$avelYaxs <- data.frame("qfRngAvelYaxs" = qfInp$amrs$qfRngAvelYaxs,
                                    "qfStepAvelYaxs" = qfInp$amrs$qfStepAvelYaxs,
                                    "qfPersAvelYaxs" = qfInp$amrs$qfPersAvelYaxs,
-                                   "qfSpkAvelYaxs" = qfInp$amrs$qfSpkAvelYaxs,
+                                  # "qfSpkAvelYaxs" = qfInp$amrs$qfSpkAvelYaxs,
                                    "qfNullAvelYaxs" = qfInp$amrs$qfNullAvelYaxs)
       
       setQf$avelZaxs <- data.frame("qfRngAvelZaxs" = qfInp$amrs$qfRngAvelZaxs,
                                    "qfStepAvelZaxs" = qfInp$amrs$qfStepAvelZaxs,
                                    "qfPersAvelZaxs" = qfInp$amrs$qfPersAvelZaxs,
-                                   "qfSpkAvelZaxs" = qfInp$amrs$qfSpkAvelZaxs,
+                                  # "qfSpkAvelZaxs" = qfInp$amrs$qfSpkAvelZaxs,
                                    "qfNullAvelZaxs" = qfInp$amrs$qfNullAvelZaxs)
       
       setQf$angXaxs <- data.frame("qfRngAngXaxs" = qfInp$amrs$qfRngAngXaxs,
                                   "qfStepAngXaxs" = qfInp$amrs$qfStepAngXaxs,
                                   "qfPersAngXaxs" = qfInp$amrs$qfPersAngXaxs,
-                                  "qfSpkAngXaxs" = qfInp$amrs$qfSpkAngXaxs,
+                                 # "qfSpkAngXaxs" = qfInp$amrs$qfSpkAngXaxs,
                                   "qfNullAngXaxs" = qfInp$amrs$qfNullAngXaxs)
       
       setQf$angYaxs <- data.frame("qfRngAngYaxs" = qfInp$amrs$qfRngAngYaxs,
                                   "qfStepAngYaxs" = qfInp$amrs$qfStepAngYaxs,
                                   "qfPersAngYaxs" = qfInp$amrs$qfPersAngYaxs,
-                                  "qfSpkAngYaxs" = qfInp$amrs$qfSpkAngYaxs,
+                                 # "qfSpkAngYaxs" = qfInp$amrs$qfSpkAngYaxs,
                                   "qfNullAngYaxs" = qfInp$amrs$qfNullAngYaxs)
       
       setQf$angZaxs <- data.frame("qfRngAngZaxs" = qfInp$amrs$qfRngAngZaxs,
                                   "qfStepAngZaxs" = qfInp$amrs$qfStepAngZaxs,
                                   "qfPersAngZaxs" = qfInp$amrs$qfPersAngZaxs,
-                                  "qfSpkAngZaxs" = qfInp$amrs$qfSpkAngZaxs,
+                                 # "qfSpkAngZaxs" = qfInp$amrs$qfSpkAngZaxs,
                                   "qfNullAngZaxs" = qfInp$amrs$qfNullAngZaxs)
     
     #grouping qulity flags that related to L1 sub-data product

@@ -7,7 +7,8 @@
 #' @description 
 #' Wrapper function  to remove high frequency data points that have failed quality flags from a data.frame
 #' @param inpList List consisting of \code{ff::ffdf} file-backed objects, in the format provided by function \code{eddy4R.base::wrap.hdf5.read()}. Of types numeric and integer.
-#' @param Sens Character string indicating which sensor will remove high frequency data points that have failed quality flags. Defaults to NULL.
+#' @param Sens Character string indicating which sensor will remove high frequency data points that have failed quality flags. Defaults to NULL.#' 
+#' @param DspkSensRmv Character string indicating which sensor will be removed from despiking algorithm. Defaults to "amrs".
 #' @param qfRmv Character string indicating which quality flag will exclude in the processing. Defaults to NULL.
 #' @param Vrbs Optional. A logical {FALSE/TRUE} value indicating whether to:\cr
 #' \code{Vrbs = FALSE}: (Default) cleaned data set with the bad high frequency quality flagged data replaced with NaN's as part of the \code{inpList} in the same format., or \cr
@@ -47,12 +48,15 @@
 #    added despiking routine and output qfSpk and qfNull
 #   David Durden (2021-10-7)
 #    not removing identified spike in presAtm data stream as patch for 2021 data release
+#   David Durden (2025-07-01)
+#    adding argument to remove sensors from despiking routing, adding amrs as default to remove
 ##############################################################################################
 
 
 wrap.qf.rmv.data <- function(
   inpList,
   Sens = NULL,
+  DspkSensRmv = c("amrs",NA)[1],
   qfRmv = NULL,
   Vrbs = FALSE, 
   MethMeas = c("ecte",  "ecse")[1],
@@ -80,8 +84,12 @@ wrap.qf.rmv.data <- function(
   #Apply names to the output list
   base::names(outList) <- Sens
  
+  #Determine the sensors to run through despiking
+  SensDspk <- Sens[!Sens%in%DspkSensRmv]
+  
+  
   #Despiking routine 
-base::lapply(Sens, function(x){ 
+base::lapply(SensDspk, function(x){ 
     #x <- Sens[1] #for testing
     #print(x)
     varDspk <- names(outList[[x]]$inpData)[!names(outList[[x]]$inpData) %in% c("time","idx","frtSet00")]
@@ -105,7 +113,7 @@ base::lapply(Sens, function(x){
         #Create flag name
         nameQf <- base::paste0("qfSpk",base::toupper(base::substring(y,1,1)),base::substring(y,2,base::nchar(y)))
         #Output despiking flag
-        outList[[x]]$qfSpk[[nameQf]] <<- tmp$qfSpk
+        outList[[x]]$qfSpk[[nameQf]] <<- base::as.integer(tmp$qfSpk)
         
       })  #End lapply for variables
   })#End lapply around sensors
@@ -117,15 +125,27 @@ base::lapply(Sens, function(x){
     #Outputting the data ffdf's
     rpt$data[[x]] <<- ff::as.ffdf(outList[[x]]$inpData) 
     rpt$data[[x]] <<- eddy4R.base::def.unit.var(samp = rpt$data[[x]], refe = inpList$data[[x]]) #Copy units
-    rpt$qfqm[[x]] <<- ff::as.ffdf(base::cbind(rpt$qfqm[[x]][], outList[[x]]$qfNull, as.data.frame(outList[[x]]$qfSpk)))
-  })
+  
+    #If statement to check if sensor was despiked
+    if(x %in% SensDspk){
+      rpt$qfqm[[x]] <<- ff::as.ffdf(base::cbind(rpt$qfqm[[x]][], outList[[x]]$qfNull, as.data.frame(outList[[x]]$qfSpk)))
+     }else{
+       rpt$qfqm[[x]] <<- ff::as.ffdf(base::cbind(rpt$qfqm[[x]][], outList[[x]]$qfNull))
+     }#end if statement for despiking
+     
+    })
   }else{
   base::lapply(base::names(outList), function(x) {
     #Outputting the data ffdf's
     rpt$data[[x]] <<- as.data.frame(outList[[x]]$inpData) 
     rpt$data[[x]] <<- eddy4R.base::def.unit.var(samp = rpt$data[[x]], refe = inpList$data[[x]]) #Copy units
-    rpt$qfqm[[x]] <<- as.data.frame(base::cbind(rpt$qfqm[[x]][], outList[[x]]$qfNull, as.data.frame(outList[[x]]$qfSpk)))
-  })
+    #If statement to check if sensor was despiked
+    if(x %in% SensDspk){
+      rpt$qfqm[[x]] <<- base::as.data.frame(base::cbind(rpt$qfqm[[x]][], outList[[x]]$qfNull, as.data.frame(outList[[x]]$qfSpk)))
+    }else{
+      rpt$qfqm[[x]] <<- base::as.data.frame(base::cbind(rpt$qfqm[[x]][], outList[[x]]$qfNull))
+    }#end if statement for despiking
+ })#End lapply for outList
   }#End MethFf if statment
 
   #If verbose is true write out all the information about the quality flags applied to the raw data
