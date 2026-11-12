@@ -14,7 +14,9 @@ def.rglr(
   FreqRglr,
   MethRglr = c("CybiEc", "CybiEcTimeMeas", "zoo")[1],
   WndwRglr = c("Cntr", "Lead", "Trlg")[1],
-  IdxWndw = c("Clst", "IdxWndwMin", "IdxWndwMax")[1],
+  IdxWndw = c("Clst", "IdxWndwMin", "IdxWndwMax", "IdxWndwMinNotNa", "IdxWndwMaxNotNa",
+    "WndwMin", "WndwMax")[1],
+  ValuFill = base::as.numeric(NA),
   DropNotNumc = TRUE,
   RptTimeWndw = FALSE,
   PrcsSec = 6
@@ -43,7 +45,9 @@ Method "zoo" implements the regularization method using the zoo::na.approx funct
 
 \item{WndwRglr}{Position of the window for binning in the "CybiEc" method. \code{WndwRglr} can be centered [Cntr], leading [Lead], or trailing [Trlg] (defaults to centered).\cr}
 
-\item{IdxWndw}{Determines which observation to allocate to a bin if multiple observations fall into a single bin when using the "CybiEc" method.. \code{IdxWndw} can be set to closest [Clst], first [IdxWndwMin], or last [IdxWndwMax] (defaults to closest).\cr}
+\item{IdxWndw}{Determines which observation to allocate to a bin if multiple observations fall into a single bin when using the "CybiEc" method.. \code{IdxWndw} can be set to closest index [Clst], first index [IdxWndwMin], last index [IdxWndwMax], first index with a non-NA value per column[IdxWndwMinNotNa], last index with a non-NA value per column [IdxWndwMaxNotNa], minimum value per column [WndwMax], or maximum value per column [WndwMax] (defaults to closest).\cr}
+
+\item{ValuFill}{Single value with which to fill missing values. Applicable only to MethRglr="CybiEc" or "CybiEcTimeMeas". Defaults to NA \cr}
 
 \item{DropNotNumc}{Logical. TRUE (default) for removing any non-numeric data columns prior to regularization (this is done automatically for zoo method). FALSE to attempt to regularize all data columns.}
 
