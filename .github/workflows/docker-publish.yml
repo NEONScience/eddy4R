@@ -7,7 +7,7 @@ name: Docker
 
 on:
   push:
-    branches: [ deve ]
+    branches: [ deve, maps ]
     # tags as releases.
     #tags: [ '*-neon-*' ]
   pull_request:
